@@ -1,0 +1,35 @@
+{
+  "name": "turvadev-pretender",
+  "main": "src/worker.js",
+  "workers_dev": true,
+  "preview_urls": false,
+  "compatibility_date": "2026-04-09",
+  "routes": [
+    {
+      "pattern": "mta-sts.turva.dev/*",
+      "zone_name": "turva.dev"
+    },
+    {
+      "pattern": "turva.dev/*",
+      "zone_name": "turva.dev"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": false,
+      "persist": true,
+      "head_sampling_rate": 1
+    }
+  },
+  "vars": {
+    "PRERENDER_TOKEN": "V5Aw0AWsLMuY87YK0mwP"
+  }
+}
