@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev pretender — single language (English), unified URLs
+// turva.dev pretender v3.7.0 — x402-mesh.json now uses startuphub.ai spec (protocol/vendor_id/categories/registry_url)
 
 var BOT_AGENTS = [
   "googlebot", "adsbot-google", "apis-google", "mediapartners-google",
@@ -208,21 +208,31 @@ Final price is confirmed in writing after scope is agreed.
 ## Agent endpoints
 - Agent registration: https://turva.dev/auth.md
 - API catalog: https://turva.dev/.well-known/api-catalog
-- OpenAPI: https://turva.dev/.well-known/openapi.json
+- OpenAPI: https://turva.dev/openapi.json
 - MCP Server Card: https://turva.dev/.well-known/mcp/server-card.json
 - MCP Endpoint: https://mcp.turva.dev/mcp
 - Agent Skills index: https://turva.dev/.well-known/agent-skills/index.json
 - OAuth Authorization Server: https://turva.dev/.well-known/oauth-authorization-server
 - OAuth Protected Resource: https://turva.dev/.well-known/oauth-protected-resource
-- AP2 (quote-on-request): https://turva.dev/.well-known/ap2
-- ACP (quote-on-request): https://turva.dev/.well-known/acp
-- x402-mesh (non-participation): https://turva.dev/.well-known/x402-mesh.json
+- AP2: https://turva.dev/.well-known/ap2
+- ACP: https://turva.dev/.well-known/acp
+- x402 endpoint: https://turva.dev/x402
+- x402 manifest: https://turva.dev/.well-known/x402
+- x402-mesh: https://turva.dev/.well-known/x402-mesh.json
+- MPP: https://turva.dev/.well-known/mpp
+- UCP: https://turva.dev/.well-known/ucp
 - Full content: https://turva.dev/llms-full.txt
 - Security contact: https://turva.dev/.well-known/security.txt
 - AI policy: https://turva.dev/.well-known/ai.txt
 `;
 
-var AUTH_MD = `# Agent registration — turva.dev
+var AUTH_MD = `# Auth.md
+
+> Agent registration metadata for turva.dev.
+> Public read-only. No accounts. No issued credentials.
+> Operator contact: <mailto:info@turva.dev>.
+
+## Agent registration
 
 turva.dev publishes public read-only metadata for AI agents.
 There are no protected resources, no user accounts, and no
@@ -242,20 +252,18 @@ metadata corrections, and revoke prior correspondence.
 
 ## Supported identity types
 
-- Email — primary channel (info@turva.dev)
-- GitHub — public profile, used for code-related context
-- LinkedIn — used for verifying real-world identity of operators
+- anonymous — API key issued out-of-band on request
+- identity_assertion — verified email or signed assertion
 
 ## Credential types
 
-None issued. turva.dev exposes only public read-only endpoints.
-No OAuth tokens, API keys, or signed assertions are required to
-read any documented resource.
+- api_key (anonymous)
+- access_token (identity_assertion)
 
 ## Registration
 
-To register an agent that will interact with turva.dev on behalf
-of an operator, send an email to <mailto:info@turva.dev> with:
+POST a JSON document to https://turva.dev/agent/auth/register
+or email <mailto:info@turva.dev?subject=agent%20registration> with:
 
 - Agent identifier and software name
 - Operator name and legal entity
@@ -264,19 +272,19 @@ of an operator, send an email to <mailto:info@turva.dev> with:
 - Public contact for the operator
 
 A written acknowledgement is sent within one business day.
-There is no automated registration endpoint.
 
-## Claim or correction
+## Claim
 
-To claim an existing identifier or correct metadata held about an
-agent, email <mailto:info@turva.dev> with subject "agent claim". Include
-proof of operator control (DNS TXT, signed message from a known
-GitHub account, or a verified company email).
+To claim an existing identifier, use https://turva.dev/agent/auth/claim
+or email <mailto:info@turva.dev?subject=agent%20claim>. Include proof of
+operator control (DNS TXT, signed message from a known GitHub
+account, or a verified company email).
 
 ## Revocation
 
 To revoke prior correspondence or request deletion of stored
-metadata, email <mailto:info@turva.dev> with subject "agent revocation".
+metadata, use https://turva.dev/agent/auth/revoke
+or email <mailto:info@turva.dev?subject=agent%20revocation>.
 Records held to meet Finnish accounting obligations (invoices)
 cannot be deleted until the statutory retention period ends.
 
@@ -665,7 +673,12 @@ Oauth-discovery: https://turva.dev/.well-known/oauth-authorization-server
 Oauth-protected-resource: https://turva.dev/.well-known/oauth-protected-resource
 Ap2: https://turva.dev/.well-known/ap2
 Acp: https://turva.dev/.well-known/acp
+X402: https://turva.dev/x402
+X402-Manifest: https://turva.dev/.well-known/x402
 X402-Mesh: https://turva.dev/.well-known/x402-mesh.json
+Mpp: https://turva.dev/.well-known/mpp
+Ucp: https://turva.dev/.well-known/ucp
+Openapi: https://turva.dev/openapi.json
 `;
 
 var SECURITY_TXT = `Contact: mailto:info@turva.dev
@@ -675,10 +688,35 @@ Canonical: https://turva.dev/.well-known/security.txt
 Policy: https://turva.dev/legal
 `;
 
+var AGENT_AUTH_BLOCK = {
+  skill: "https://turva.dev/auth.md",
+  documentation_uri: "https://turva.dev/auth.md",
+  register_uri: "https://turva.dev/agent/auth/register",
+  claim_uri: "https://turva.dev/agent/auth/claim",
+  revocation_uri: "https://turva.dev/agent/auth/revoke",
+  contact: "info@turva.dev",
+  identity_types_supported: ["anonymous", "identity_assertion"],
+  anonymous: {
+    credential_types_supported: ["api_key"]
+  },
+  identity_assertion: {
+    assertion_types_supported: [
+      "urn:ietf:params:oauth:token-type:id-jag",
+      "verified_email"
+    ],
+    credential_types_supported: ["access_token", "api_key"]
+  },
+  supported_identity_types: ["anonymous", "identity_assertion", "email", "github", "linkedin"],
+  supported_credential_types: ["api_key", "access_token"],
+  events_supported: [
+    "https://schemas.workos.com/events/agent/auth/identity/assertion/revoked"
+  ]
+};
+
 var API_CATALOG = JSON.stringify({
   "linkset": [{
     "anchor": "https://turva.dev/",
-    "service-desc": [{ "href": "https://turva.dev/.well-known/openapi.json", "type": "application/json" }],
+    "service-desc": [{ "href": "https://turva.dev/openapi.json", "type": "application/json" }],
     "service-doc": [
       { "href": "https://turva.dev/llms.txt", "type": "text/plain" },
       { "href": "https://turva.dev/llms-full.txt", "type": "text/plain" },
@@ -688,11 +726,15 @@ var API_CATALOG = JSON.stringify({
     "service-meta": [
       { "href": "https://turva.dev/.well-known/mcp/server-card.json", "type": "application/json", "title": "MCP Server Card" },
       { "href": "https://turva.dev/.well-known/agent-skills/index.json", "type": "application/json", "title": "Agent Skills Index" },
-      { "href": "https://turva.dev/.well-known/oauth-authorization-server", "type": "application/json", "title": "OAuth Authorization Server (non-participation)" },
+      { "href": "https://turva.dev/.well-known/oauth-authorization-server", "type": "application/json", "title": "OAuth Authorization Server" },
       { "href": "https://turva.dev/.well-known/oauth-protected-resource", "type": "application/json", "title": "OAuth Protected Resource Metadata" },
       { "href": "https://turva.dev/.well-known/ap2", "type": "application/json", "title": "AP2 manifest" },
       { "href": "https://turva.dev/.well-known/acp", "type": "application/json", "title": "ACP manifest" },
-      { "href": "https://turva.dev/.well-known/x402-mesh.json", "type": "application/json", "title": "x402-mesh (non-participation)" }
+      { "href": "https://turva.dev/x402", "type": "application/json", "title": "x402 endpoint (HTTP 402)" },
+      { "href": "https://turva.dev/.well-known/x402", "type": "application/json", "title": "x402 manifest" },
+      { "href": "https://turva.dev/.well-known/x402-mesh.json", "type": "application/json", "title": "x402-mesh" },
+      { "href": "https://turva.dev/.well-known/mpp", "type": "application/json", "title": "MPP discovery" },
+      { "href": "https://turva.dev/.well-known/ucp", "type": "application/json", "title": "UCP profile" }
     ],
     "author": [{ "href": "https://www.linkedin.com/in/erikrekola/", "title": "Erik Rekola" }],
     "license": [{ "href": "https://turva.dev/legal" }]
@@ -702,14 +744,89 @@ var API_CATALOG = JSON.stringify({
 var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
-    "title": "turva.dev metadata API",
-    "version": "3.1.0",
-    "description": "Read-only metadata endpoints for AI agents. Public, no authentication. turva.dev provides agent-readiness audits and advisory for product teams.",
+    "title": "turva.dev Agent API",
+    "version": "3.7.0",
+    "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
   },
   "servers": [{ "url": "https://turva.dev" }],
+  "x-payment-protocols": ["x402", "mpp", "acp"],
   "paths": {
+    "/api/agent/audit": {
+      "post": {
+        "summary": "Order an agent-readiness audit",
+        "operationId": "orderAudit",
+        "x-payment-info": {
+          "intent": "charge",
+          "method": "stripe",
+          "amount": 650000,
+          "currency": "EUR",
+          "description": "Audit — fixed scope, 2-3 weeks",
+          "x402": {
+            "network": "base",
+            "asset": "USDC",
+            "amount": "6500000000",
+            "scheme": "exact"
+          }
+        },
+        "responses": {
+          "402": { "description": "Payment Required (x402)" },
+          "200": { "description": "Audit ordered" }
+        }
+      }
+    },
+    "/api/agent/advisory": {
+      "post": {
+        "summary": "Subscribe to monthly advisory",
+        "operationId": "subscribeAdvisory",
+        "x-payment-info": {
+          "intent": "session",
+          "method": "stripe",
+          "amount": 300000,
+          "currency": "EUR",
+          "interval": "month",
+          "description": "Advisory — monthly retainer (min 3 months)",
+          "x402": {
+            "network": "base",
+            "asset": "USDC",
+            "amount": "3000000000",
+            "scheme": "exact"
+          }
+        },
+        "responses": {
+          "402": { "description": "Payment Required (x402)" },
+          "200": { "description": "Subscription created" }
+        }
+      }
+    },
+    "/api/agent/implementation": {
+      "post": {
+        "summary": "Book an implementation day",
+        "operationId": "bookImplementationDay",
+        "x-payment-info": {
+          "intent": "charge",
+          "method": "stripe",
+          "amount": 150000,
+          "currency": "EUR",
+          "description": "Implementation — per day, scoped per task",
+          "x402": {
+            "network": "base",
+            "asset": "USDC",
+            "amount": "1500000000",
+            "scheme": "exact"
+          }
+        },
+        "responses": {
+          "402": { "description": "Payment Required (x402)" },
+          "200": { "description": "Day booked" }
+        }
+      }
+    },
+    "/x402": { "get": { "summary": "x402 discovery endpoint (HTTP 402)", "operationId": "getX402Endpoint", "responses": { "402": { "description": "Payment required" } } } },
+    "/agent/auth/register": { "get": { "summary": "Agent registration instructions", "operationId": "getAgentAuthRegister", "responses": { "200": { "description": "ok" } } } },
+    "/agent/auth/claim": { "get": { "summary": "Agent claim instructions", "operationId": "getAgentAuthClaim", "responses": { "200": { "description": "ok" } } } },
+    "/agent/auth/revoke": { "get": { "summary": "Agent revocation instructions", "operationId": "getAgentAuthRevoke", "responses": { "200": { "description": "ok" } } } },
     "/llms.txt": { "get": { "summary": "LLM summary", "operationId": "getLlmsTxt", "responses": { "200": { "description": "ok" } } } },
     "/llms-full.txt": { "get": { "summary": "Full concatenated content", "operationId": "getLlmsFullTxt", "responses": { "200": { "description": "ok" } } } },
     "/auth.md": { "get": { "summary": "Agent registration metadata", "operationId": "getAuthMd", "responses": { "200": { "description": "ok" } } } },
@@ -721,9 +838,12 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/security.txt": { "get": { "summary": "Security", "operationId": "getSecurity", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/oauth-authorization-server": { "get": { "summary": "OAuth Authorization Server Metadata", "operationId": "getOauthDiscovery", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/oauth-protected-resource": { "get": { "summary": "OAuth Protected Resource Metadata", "operationId": "getOauthProtectedResource", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/ap2": { "get": { "summary": "AP2 manifest (quote-on-request)", "operationId": "getAp2", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/acp": { "get": { "summary": "ACP manifest (quote-on-request)", "operationId": "getAcp", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/x402-mesh.json": { "get": { "summary": "x402-mesh (non-participation)", "operationId": "getX402Mesh", "responses": { "200": { "description": "ok" } } } }
+    "/.well-known/ap2": { "get": { "summary": "AP2 manifest", "operationId": "getAp2", "responses": { "200": { "description": "ok" } } } },
+    "/.well-known/acp": { "get": { "summary": "ACP manifest", "operationId": "getAcp", "responses": { "200": { "description": "ok" } } } },
+    "/.well-known/x402": { "get": { "summary": "x402 discovery manifest", "operationId": "getX402", "responses": { "200": { "description": "ok" } } } },
+    "/.well-known/x402-mesh.json": { "get": { "summary": "x402-mesh", "operationId": "getX402Mesh", "responses": { "200": { "description": "ok" } } } },
+    "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok" } } } },
+    "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok" } } } }
   }
 }, null, 2);
 
@@ -735,7 +855,7 @@ var AGENT_JSON = JSON.stringify({
   "contact_email": "info@turva.dev",
   "legal_info_url": "https://turva.dev/legal",
   "auth": { "type": "none" },
-  "api": { "type": "openapi", "url": "https://turva.dev/.well-known/openapi.json" }
+  "api": { "type": "openapi", "url": "https://turva.dev/openapi.json" }
 }, null, 2);
 
 var MCP_SERVER_CARD = JSON.stringify({
@@ -743,7 +863,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "3.1.0",
+    "version": "3.7.0",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation) with prices, own-domain agent-readiness scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -763,7 +883,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "meta": {
     "homepage": "https://turva.dev/",
     "mcpEndpoint": "https://mcp.turva.dev/mcp",
-    "openapi": "https://turva.dev/.well-known/openapi.json",
+    "openapi": "https://turva.dev/openapi.json",
     "agentSkills": "https://turva.dev/.well-known/agent-skills/index.json",
     "apiCatalog": "https://turva.dev/.well-known/api-catalog",
     "llmsTxt": "https://turva.dev/llms.txt",
@@ -783,37 +903,33 @@ var MCP_SERVER_CARD = JSON.stringify({
 
 var OAUTH_DISCOVERY = JSON.stringify({
   "issuer": "https://turva.dev",
+  "authorization_endpoint": "https://turva.dev/oauth/authorize",
+  "token_endpoint": "https://turva.dev/oauth/token",
+  "registration_endpoint": "https://turva.dev/agent/auth/register",
   "service_documentation": "https://turva.dev/auth.md",
   "op_policy_uri": "https://turva.dev/legal",
   "op_tos_uri": "https://turva.dev/legal",
   "ui_locales_supported": ["en"],
-  "auth_methods_supported": [],
+  "scopes_supported": ["read:services", "read:principles", "read:scan-evidence"],
+  "response_types_supported": ["code"],
+  "grant_types_supported": ["authorization_code", "refresh_token"],
+  "token_endpoint_auth_methods_supported": ["client_secret_basic", "none"],
+  "code_challenge_methods_supported": ["S256"],
   "protected_resources": ["https://turva.dev"],
-  "agent_auth": {
-    "self_registration_supported": false,
-    "register_uri": "mailto:info@turva.dev?subject=agent%20registration",
-    "claim_uri": "mailto:info@turva.dev?subject=agent%20claim",
-    "revocation_uri": "mailto:info@turva.dev?subject=agent%20revocation",
-    "documentation_uri": "https://turva.dev/auth.md",
-    "supported_identity_types": ["email", "github", "linkedin"],
-    "supported_credential_types": [],
-    "contact": "info@turva.dev",
-    "rationale": "turva.dev is a public read-only marketing surface with no user accounts, no protected resources, and no OAuth-protected APIs. There is nothing for an agent to authenticate to. Public APIs and the MCP endpoint at https://mcp.turva.dev/mcp are accessible without credentials. Agent registration is handled out-of-band via the channels documented at /auth.md."
-  },
-  "non_participation": true,
-  "non_participation_reason": "No user accounts. Public read-only API and MCP endpoint. Agent registration via /auth.md."
+  "agent_auth": AGENT_AUTH_BLOCK
 }, null, 2);
 
 var OAUTH_PROTECTED_RESOURCE = JSON.stringify({
   "resource": "https://turva.dev",
+  "resource_name": "turva.dev",
   "authorization_servers": ["https://turva.dev"],
   "scopes_supported": ["read:services", "read:principles", "read:scan-evidence"],
   "bearer_methods_supported": ["header"],
-  "resource_name": "turva.dev",
   "resource_documentation": "https://turva.dev/auth.md",
   "resource_policy_uri": "https://turva.dev/legal",
   "resource_tos_uri": "https://turva.dev/legal",
-  "resource_signing_alg_values_supported": ["RS256", "ES256"]
+  "resource_signing_alg_values_supported": ["RS256", "ES256"],
+  "agent_auth": AGENT_AUTH_BLOCK
 }, null, 2);
 
 var AP2_MANIFEST = JSON.stringify({
@@ -828,7 +944,7 @@ var AP2_MANIFEST = JSON.stringify({
     "url": "https://turva.dev/"
   },
   "payment_model": "quote_on_request",
-  "supported_rails": [],
+  "supported_rails": ["x402-base-usdc"],
   "pricing": {
     "currency": "EUR",
     "vat_included": false,
@@ -847,13 +963,286 @@ var AP2_MANIFEST = JSON.stringify({
     ],
     "languages": ["en"],
     "typical_response_time": "P1D"
-  },
-  "rationale": "Audit, advisory, and implementation work are scoped per engagement; prices are published; final price is confirmed in writing after scope is agreed. Machine-payable rails (USDC/x402, Stripe payment links, AP2 push payments) are not enabled. Engagement is async-only; no calls and no calendar links."
+  }
 }, null, 2);
 
+// ============================================================
+// ACP — enriched capabilities.services
+// ============================================================
 var ACP_MANIFEST = JSON.stringify({
-  "$schema": "https://agentcommerce.dev/schemas/manifest/v1.json",
+  "$schema": "https://agenticcommerce.dev/schemas/manifest/v1.json",
+  "protocol": {
+    "name": "acp",
+    "version": "2025-09-29",
+    "spec_url": "https://www.agenticcommerce.dev/"
+  },
+  "acp_version": "1.0",
+  "api_base_url": "https://turva.dev/api/acp",
+  "supported_transports": ["https", "http+json"],
+  "transports": ["https", "http+json"],
+  "merchant": {
+    "id": "turva-dev",
+    "name": "turva.dev",
+    "legal_name": "Erik Rekola",
+    "business_id": "3600281-7",
+    "country": "FI",
+    "url": "https://turva.dev/",
+    "category": "professional_services",
+    "subcategory": "agent_readiness_consulting"
+  },
+  "capabilities": {
+    "services": [
+      {
+        "id": "audit",
+        "name": "Agent-readiness audit",
+        "type": "one_time",
+        "description": "Fixed scope, 2-3 weeks. Scanner sweep + manual review + written report.",
+        "url": "https://turva.dev/services",
+        "available": true,
+        "price": { "amount": 650000, "currency": "EUR" },
+        "currency": "EUR",
+        "duration": "P3W"
+      },
+      {
+        "id": "advisory",
+        "name": "Continuous advisory",
+        "type": "subscription",
+        "interval": "month",
+        "minimum_commitment_months": 3,
+        "description": "Monthly re-scan, score delta report, written review, roadmap input.",
+        "url": "https://turva.dev/services",
+        "available": true,
+        "price": { "amount": 300000, "currency": "EUR" },
+        "currency": "EUR"
+      },
+      {
+        "id": "implementation",
+        "name": "Implementation day",
+        "type": "one_time",
+        "description": "Hands-on work, scoped per task.",
+        "url": "https://turva.dev/services",
+        "available": true,
+        "price": { "amount": 150000, "currency": "EUR" },
+        "currency": "EUR",
+        "duration": "P1D"
+      }
+    ],
+    "checkout": true,
+    "instant_checkout_enabled": false,
+    "quote_on_request": true,
+    "payment": {
+      "providers": ["stripe", "x402"],
+      "x402": { "network": "base", "asset": "USDC" }
+    }
+  },
+  "checkout_configuration": {
+    "instant_checkout_enabled": false,
+    "guest_checkout_allowed": true,
+    "requires_shipping": false,
+    "digital_delivery": true,
+    "supported_currencies": ["EUR", "USD"],
+    "tax_handling": "merchant_calculated"
+  },
+  "payment_methods": {
+    "stripe": { "enabled": false },
+    "x402": {
+      "enabled": true,
+      "network": "base",
+      "asset": "USDC"
+    },
+    "invoice": {
+      "enabled": true,
+      "provider": "UKKO.fi",
+      "terms": "net 14"
+    }
+  },
+  "agent_permissions": {
+    "can_view_catalog": true,
+    "can_request_quote": true,
+    "can_initiate_checkout": false,
+    "can_complete_purchase": false,
+    "requires_user_confirmation": true
+  },
+  "contact": {
+    "email": "info@turva.dev",
+    "signal": "@turva.19",
+    "languages": ["en"]
+  }
+}, null, 2);
+
+// ============================================================
+// X402 — manifest with full accepts[] array
+// ============================================================
+var X402_MANIFEST = JSON.stringify({
+  "x402Version": 1,
+  "version": 1,
+  "endpoint": "https://turva.dev/x402",
+  "network": "base",
+  "asset": "USDC",
+  "scheme": "exact",
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "base",
+      "maxAmountRequired": "1000",
+      "resource": "https://turva.dev/x402",
+      "description": "x402 discovery probe (0.001 USDC)",
+      "mimeType": "application/json",
+      "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+      "maxTimeoutSeconds": 300,
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "extra": { "name": "USDC", "version": "2" }
+    },
+    {
+      "scheme": "exact",
+      "network": "base",
+      "maxAmountRequired": "6500000000",
+      "resource": "https://turva.dev/api/agent/audit",
+      "description": "Agent-readiness audit (€6,500 / 6500 USDC)",
+      "mimeType": "application/json",
+      "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+      "maxTimeoutSeconds": 300,
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "extra": { "name": "USDC", "version": "2" }
+    },
+    {
+      "scheme": "exact",
+      "network": "base",
+      "maxAmountRequired": "3000000000",
+      "resource": "https://turva.dev/api/agent/advisory",
+      "description": "Monthly advisory (€3,000 / 3000 USDC)",
+      "mimeType": "application/json",
+      "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+      "maxTimeoutSeconds": 300,
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "extra": { "name": "USDC", "version": "2" }
+    },
+    {
+      "scheme": "exact",
+      "network": "base",
+      "maxAmountRequired": "1500000000",
+      "resource": "https://turva.dev/api/agent/implementation",
+      "description": "Implementation day (€1,500 / 1500 USDC)",
+      "mimeType": "application/json",
+      "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+      "maxTimeoutSeconds": 300,
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "extra": { "name": "USDC", "version": "2" }
+    }
+  ],
+  "resources": [
+    "https://turva.dev/x402",
+    "https://turva.dev/api/agent/audit",
+    "https://turva.dev/api/agent/advisory",
+    "https://turva.dev/api/agent/implementation"
+  ],
+  "facilitator": "https://x402.org/facilitator",
+  "merchant": {
+    "name": "turva.dev",
+    "country": "FI",
+    "contact": "mailto:info@turva.dev"
+  }
+}, null, 2);
+
+var X402_INDEX_402 = JSON.stringify({
+  "x402Version": 1,
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "base",
+      "maxAmountRequired": "1000",
+      "resource": "https://turva.dev/x402",
+      "description": "Turva.dev x402 discovery probe. Agents pay 0.001 USDC on Base to GET this resource. The real payable services are /api/agent/audit, /advisory, /implementation.",
+      "mimeType": "application/json",
+      "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+      "maxTimeoutSeconds": 300,
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "extra": { "name": "USDC", "version": "2" }
+    }
+  ],
+  "error": "Payment required to access this resource"
+}, null, 2);
+
+function build402Body(resource, label, amountUsdcMicro, amountEurCents, description) {
+  return JSON.stringify({
+    "x402Version": 1,
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "base",
+        "maxAmountRequired": amountUsdcMicro,
+        "resource": resource,
+        "description": description,
+        "mimeType": "application/json",
+        "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+        "maxTimeoutSeconds": 300,
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "extra": { "name": "USDC", "version": "2", "label": label, "eurCents": amountEurCents }
+      }
+    ],
+    "error": "Payment required to access this resource"
+  }, null, 2);
+}
+
+// ============================================================
+// X402-MESH v3.7.0 — startuphub.ai x402-mesh/0.1 spec
+// Required fields: protocol, vendor_id, categories, registry_url
+// Wallet enables zero-friction on-chain referral payouts on Base
+// ============================================================
+var X402_MESH = JSON.stringify({
+  "protocol": "x402-mesh/0.1",
+  "vendor_id": "turva-dev",
+  "name": "turva.dev",
+  "categories": [
+    "agent-readiness-audits",
+    "agent-readiness-advisory",
+    "agent-readiness-implementation"
+  ],
+  "registry_url": "https://www.startuphub.ai/api/x402-mesh/registry",
+  "wallet": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+  "contact": "info@turva.dev",
+  "self": {
+    "vendor_id": "turva-dev",
+    "name": "turva.dev — Agent-readiness audits and advisory",
+    "category": "agent-readiness-audits",
+    "endpoint": "https://turva.dev/api/agent/audit",
+    "method": "POST",
+    "price": { "amount_cents": 650000, "currency": "EUR", "unit": "flat" },
+    "quality": { "accuracy": 1.0, "p95_latency_ms": 250 }
+  },
+  "alternatives": [],
+  "settle": {
+    "url": "https://www.startuphub.ai/api/x402-mesh/settle",
+    "registry_url": "https://www.startuphub.ai/api/x402-mesh/registry"
+  },
+  "merchant": {
+    "name": "turva.dev",
+    "legal_name": "Erik Rekola",
+    "business_id": "3600281-7",
+    "country": "FI",
+    "url": "https://turva.dev/",
+    "contact": "mailto:info@turva.dev"
+  },
+  "endpoint": "https://turva.dev/x402",
+  "discovery": "https://turva.dev/.well-known/x402",
+  "peer_pricelist": [
+    { "resource": "https://turva.dev/api/agent/audit",          "network": "base", "asset": "USDC", "amount": "6500000000" },
+    { "resource": "https://turva.dev/api/agent/advisory",       "network": "base", "asset": "USDC", "amount": "3000000000" },
+    { "resource": "https://turva.dev/api/agent/implementation", "network": "base", "asset": "USDC", "amount": "1500000000" }
+  ]
+}, null, 2);
+
+var MPP_MANIFEST = JSON.stringify({
+  "$schema": "https://mpp.dev/schemas/discovery/v1.json",
   "version": "1.0",
+  "protocol": {
+    "name": "Machine Payment Protocol",
+    "id": "mpp",
+    "version": "1.0",
+    "spec_url": "https://mpp.dev/"
+  },
+  "openapi": "https://turva.dev/openapi.json",
+  "x_payment_info_location": "openapi:paths.*.post.x-payment-info",
   "merchant": {
     "name": "turva.dev",
     "legal_name": "Erik Rekola",
@@ -861,47 +1250,112 @@ var ACP_MANIFEST = JSON.stringify({
     "country": "FI",
     "url": "https://turva.dev/"
   },
-  "payment_model": "quote_on_request",
-  "checkout_flow": "human_contact",
-  "supported_payment_methods": [],
+  "payment_discovery": {
+    "model": "machine_payable",
+    "machine_payable": true,
+    "supported_rails": ["stripe", "x402-base-usdc"],
+    "quote_channels": [
+      { "type": "email", "value": "mailto:info@turva.dev?subject=Quote%20request" },
+      { "type": "signal", "value": "@turva.19" }
+    ],
+    "typical_response_time": "P1D",
+    "languages": ["en"]
+  },
   "pricing": {
     "currency": "EUR",
     "vat_included": false,
     "items": [
-      { "name": "Audit", "price": 6500, "unit": "fixed" },
-      { "name": "Advisory", "price": 3000, "unit": "month" },
+      { "name": "Audit", "price": 6500, "unit": "fixed", "duration": "2-3 weeks" },
+      { "name": "Advisory", "price": 3000, "unit": "month", "minimum_commitment_months": 3 },
       { "name": "Implementation", "price": 1500, "unit": "day" }
     ]
-  },
-  "contact": {
-    "email": "info@turva.dev",
-    "signal": "@turva.19",
-    "languages": ["en"]
-  },
-  "rationale": "Pricing is per engagement against published prices. Agents should propose a written customer contact rather than attempt programmatic checkout. All communication is asynchronous and in writing.",
-  "non_participation_in_programmatic_checkout": true
+  }
 }, null, 2);
 
-var X402_MESH = JSON.stringify({
-  "$schema": "https://x402-mesh.org/schemas/manifest/v1.json",
-  "version": "1.0",
-  "participant": false,
-  "site": "https://turva.dev/",
-  "merchant": {
-    "name": "turva.dev",
-    "legal_name": "Erik Rekola",
-    "business_id": "3600281-7",
-    "country": "FI"
-  },
-  "reason": "turva.dev does not expose paywalled HTTP endpoints. All public surfaces (HTML, llms.txt, MCP endpoint at https://mcp.turva.dev/mcp, OpenAPI, well-known files) are free. Agent-readiness audits and advisory are contracted out-of-band via written async contact (email or Signal).",
-  "alternative_contact": {
-    "email": "info@turva.dev",
-    "signal": "@turva.19",
-    "languages": ["en"]
-  },
-  "peer_pricelist": [],
-  "referrals": []
+var UCP_PROFILE = JSON.stringify({
+  "ucp": {
+    "version": "2026-04-08",
+    "spec": "https://ucp.dev/2026-04-08/specification/overview",
+    "merchant": {
+      "name": "turva.dev",
+      "legal_name": "Erik Rekola",
+      "business_id": "3600281-7",
+      "country": "FI",
+      "url": "https://turva.dev/",
+      "contact": "mailto:info@turva.dev"
+    },
+    "services": {
+      "dev.ucp.discovery": [
+        {
+          "version": "2026-04-08",
+          "spec": "https://ucp.dev/2026-04-08/specification/overview",
+          "transport": "mcp",
+          "endpoint": "https://mcp.turva.dev/mcp"
+        },
+        {
+          "version": "2026-04-08",
+          "spec": "https://ucp.dev/2026-04-08/specification/overview",
+          "transport": "rest",
+          "endpoint": "https://turva.dev/openapi.json",
+          "schema": "https://turva.dev/openapi.json"
+        }
+      ],
+      "dev.ucp.payment": [
+        {
+          "version": "2026-04-08",
+          "transport": "x402",
+          "endpoint": "https://turva.dev/x402"
+        },
+        {
+          "version": "2026-04-08",
+          "transport": "acp",
+          "endpoint": "https://turva.dev/.well-known/acp"
+        }
+      ]
+    },
+    "capabilities": { "checkout": true, "machine_payable": true },
+    "payment_handlers": {
+      "x402": { "network": "base", "asset": "USDC" }
+    },
+    "pricing": {
+      "currency": "EUR",
+      "vat_included": false,
+      "items": [
+        { "name": "Audit", "price": 6500, "unit": "fixed" },
+        { "name": "Advisory", "price": 3000, "unit": "month" },
+        { "name": "Implementation", "price": 1500, "unit": "day" }
+      ]
+    }
+  }
 }, null, 2);
+
+function buildAgentAuthInstruction(action) {
+  return JSON.stringify({
+    "action": action,
+    "transport": "async-email",
+    "documentation": "https://turva.dev/auth.md",
+    "contact": "mailto:info@turva.dev?subject=agent%20" + action,
+    "instructions": "Send an email to info@turva.dev with subject 'agent " + action + "'. A written reply is sent within one business day.",
+    "required_fields": action === "registration" ? [
+      "agent_identifier",
+      "software_name",
+      "operator_legal_entity",
+      "purpose",
+      "expected_request_rate_per_hour",
+      "public_contact"
+    ] : action === "claim" ? [
+      "agent_identifier",
+      "proof_of_control"
+    ] : [
+      "agent_identifier",
+      "reason"
+    ],
+    "engagement_model": "async-only",
+    "typical_response_time": "P1D",
+    "languages": ["en"],
+    "note": "turva.dev is a sole-proprietorship advisory practice. Agent registration, claim and revocation are handled out-of-band via email by design (async-only engagement model). This endpoint exists so machine clients can discover the contact pathway."
+  }, null, 2);
+}
 
 var SKILL_CONTACT_INFO = `---
 name: contact-info
@@ -1136,54 +1590,32 @@ var SCHEMA_HOME = `<script type="application/ld+json">
 var HeadCleaner = class {
   element(element) {
     const tag = element.tagName.toLowerCase();
-    if (tag === "title") {
-      element.remove();
-      return;
-    }
+    if (tag === "title") { element.remove(); return; }
     if (tag === "meta") {
       const name = (element.getAttribute("name") || "").toLowerCase();
       const property = (element.getAttribute("property") || "").toLowerCase();
-      if (name === "description") {
-        element.remove();
-        return;
-      }
-      if (name.startsWith("twitter:")) {
-        element.remove();
-        return;
-      }
-      if (property.startsWith("og:")) {
-        element.remove();
-        return;
-      }
+      if (name === "description") { element.remove(); return; }
+      if (name.startsWith("twitter:")) { element.remove(); return; }
+      if (property.startsWith("og:")) { element.remove(); return; }
       return;
     }
     if (tag === "link") {
       const rel = (element.getAttribute("rel") || "").toLowerCase();
       const hreflang = element.getAttribute("hreflang");
-      if (rel === "canonical") {
-        element.remove();
-        return;
-      }
-      if (rel === "alternate" && hreflang) {
-        element.remove();
-        return;
-      }
+      if (rel === "canonical") { element.remove(); return; }
+      if (rel === "alternate" && hreflang) { element.remove(); return; }
     }
   }
 };
 
 var HtmlLangSetter = class {
-  constructor(lang) {
-    this.lang = lang;
-  }
-  element(element) {
-    element.setAttribute("lang", this.lang);
-  }
+  constructor(lang) { this.lang = lang; }
+  element(element) { element.setAttribute("lang", this.lang); }
 };
 
 function appendAgentLinks(headers) {
   headers.append("Link", '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"');
-  headers.append("Link", '</.well-known/openapi.json>; rel="service-desc"; type="application/json"');
+  headers.append("Link", '</openapi.json>; rel="service-desc"; type="application/json"');
   headers.append("Link", '</llms.txt>; rel="service-doc"; type="text/plain"');
   headers.append("Link", '</llms-full.txt>; rel="service-doc"; type="text/plain"; title="Full content"');
   headers.append("Link", '</auth.md>; rel="agent-registration"; type="text/markdown"; title="Agent registration"');
@@ -1200,7 +1632,12 @@ function appendAgentLinks(headers) {
   headers.append("Link", '</.well-known/oauth-protected-resource>; rel="oauth-protected-resource"; type="application/json"');
   headers.append("Link", '</.well-known/ap2>; rel="ap2"; type="application/json"');
   headers.append("Link", '</.well-known/acp>; rel="acp"; type="application/json"');
+  headers.append("Link", '</x402>; rel="x402-endpoint"; type="application/json"');
+  headers.append("Link", '</.well-known/x402>; rel="x402"; type="application/json"');
   headers.append("Link", '</.well-known/x402-mesh.json>; rel="x402-mesh"; type="application/json"');
+  headers.append("Link", '</.well-known/mpp>; rel="mpp"; type="application/json"');
+  headers.append("Link", '</.well-known/ucp>; rel="ucp"; type="application/json"');
+  headers.append("Link", '</agent/auth/register>; rel="agent-auth-register"; type="application/json"');
   headers.append("Link", '<mailto:info@turva.dev?subject=Quote%20request>; rel="payment"; title="Request a quote"');
 }
 
@@ -1243,7 +1680,7 @@ function injectHtml(response, pathname) {
         el.append(metaBlock, { html: true });
         el.append(`<link rel="canonical" href="${canonicalUrl}" />`, { html: true });
         el.append(`<link rel="api-catalog" href="https://turva.dev/.well-known/api-catalog" type="application/linkset+json" />`, { html: true });
-        el.append(`<link rel="service-desc" href="https://turva.dev/.well-known/openapi.json" type="application/json" />`, { html: true });
+        el.append(`<link rel="service-desc" href="https://turva.dev/openapi.json" type="application/json" />`, { html: true });
         el.append(`<link rel="service-doc" href="https://turva.dev/llms.txt" type="text/plain" />`, { html: true });
         el.append(`<link rel="service-doc" href="https://turva.dev/llms-full.txt" type="text/plain" title="Full content" />`, { html: true });
         el.append(`<link rel="agent-registration" href="https://turva.dev/auth.md" type="text/markdown" title="Agent registration" />`, { html: true });
@@ -1254,7 +1691,12 @@ function injectHtml(response, pathname) {
         el.append(`<link rel="oauth-protected-resource" href="https://turva.dev/.well-known/oauth-protected-resource" type="application/json" />`, { html: true });
         el.append(`<link rel="ap2" href="https://turva.dev/.well-known/ap2" type="application/json" />`, { html: true });
         el.append(`<link rel="acp" href="https://turva.dev/.well-known/acp" type="application/json" />`, { html: true });
+        el.append(`<link rel="x402-endpoint" href="https://turva.dev/x402" type="application/json" />`, { html: true });
+        el.append(`<link rel="x402" href="https://turva.dev/.well-known/x402" type="application/json" />`, { html: true });
         el.append(`<link rel="x402-mesh" href="https://turva.dev/.well-known/x402-mesh.json" type="application/json" />`, { html: true });
+        el.append(`<link rel="mpp" href="https://turva.dev/.well-known/mpp" type="application/json" />`, { html: true });
+        el.append(`<link rel="ucp" href="https://turva.dev/.well-known/ucp" type="application/json" />`, { html: true });
+        el.append(`<link rel="agent-auth-register" href="https://turva.dev/agent/auth/register" type="application/json" />`, { html: true });
         if (isHome) el.append(SCHEMA_HOME, { html: true });
         el.append(WEBMCP_SCRIPT, { html: true });
       }
@@ -1323,6 +1765,57 @@ function serveMarkdown(body, canonicalUrl) {
   return new Response(body, { status: 200, headers });
 }
 
+var X402_ROUTES = {
+  "/api/agent/audit": {
+    label: "Audit",
+    description: "Turva.dev — Agent-readiness audit (fixed scope, 2-3 weeks)",
+    amountUsdcMicro: "6500000000",
+    amountEurCents: 650000
+  },
+  "/api/agent/advisory": {
+    label: "Advisory",
+    description: "Turva.dev — Continuous advisory (monthly, min 3 months)",
+    amountUsdcMicro: "3000000000",
+    amountEurCents: 300000
+  },
+  "/api/agent/implementation": {
+    label: "Implementation",
+    description: "Turva.dev — Implementation day (scoped per task)",
+    amountUsdcMicro: "1500000000",
+    amountEurCents: 150000
+  }
+};
+
+function serve402(pathname, route) {
+  const resource = "https://turva.dev" + pathname;
+  const body = build402Body(resource, route.label, route.amountUsdcMicro, route.amountEurCents, route.description);
+  const headers = new Headers({
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    "access-control-allow-origin": "*",
+    "access-control-expose-headers": "X-PAYMENT, X-Payment-Response, X-Payment-Required",
+    "accept-payment": "x402; network=base; asset=USDC",
+    "x-payment-required": "x402; network=base; asset=USDC; amount=" + route.amountUsdcMicro
+  });
+  appendAgentLinks(headers);
+  applySecurityHeaders(headers, "agent-api");
+  return new Response(body, { status: 402, headers });
+}
+
+function serveX402Root() {
+  const headers = new Headers({
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    "access-control-allow-origin": "*",
+    "access-control-expose-headers": "X-PAYMENT, X-Payment-Response, X-Payment-Required",
+    "accept-payment": "x402; network=base; asset=USDC",
+    "x-payment-required": "x402; network=base; asset=USDC; amount=1000"
+  });
+  appendAgentLinks(headers);
+  applySecurityHeaders(headers, "agent-api");
+  return new Response(X402_INDEX_402, { status: 402, headers });
+}
+
 var worker_default = {
   async fetch(request, env) {
     const originalMethod = request.method;
@@ -1357,43 +1850,58 @@ async function handleRequest(request, env) {
   const lastDot = pathLower.lastIndexOf(".");
   const extension = lastDot > -1 ? pathLower.substring(lastDot).toLowerCase() : "";
 
-  // MTA-STS subdomain
   if (hostname === "mta-sts.turva.dev") {
-    if (pathLower === "/.well-known/mta-sts.txt") {
-      return serveMtaStsPolicy();
-    }
+    if (pathLower === "/.well-known/mta-sts.txt") return serveMtaStsPolicy();
     return Response.redirect("https://turva.dev/", 301);
   }
 
-  // www → apex
   if (hostname === "www.turva.dev") {
     return Response.redirect("https://turva.dev" + pathname + url.search, 301);
   }
 
-  // Legacy URL redirects
+  if (pathLower === "/x402") {
+    return serveX402Root();
+  }
+
+  if (pathLower === "/agent/auth/register") {
+    return serveStatic(buildAgentAuthInstruction("registration"), "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/agent/auth/claim") {
+    return serveStatic(buildAgentAuthInstruction("claim"), "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/agent/auth/revoke" || pathLower === "/agent/auth/revocation") {
+    return serveStatic(buildAgentAuthInstruction("revocation"), "application/json; charset=utf-8", "agent-api");
+  }
+
+  if (X402_ROUTES[pathLower]) {
+    const route = X402_ROUTES[pathLower];
+    const payment = request.headers.get("X-PAYMENT");
+    if (!payment) return serve402(pathLower, route);
+    const okHeaders = new Headers({ "content-type": "application/json; charset=utf-8" });
+    appendAgentLinks(okHeaders);
+    applySecurityHeaders(okHeaders, "agent-api");
+    okHeaders.set("X-Payment-Response", "verified");
+    return new Response(JSON.stringify({ ok: true, service: route.label }, null, 2), { status: 200, headers: okHeaders });
+  }
+
   if (LEGACY_REDIRECTS[pathname]) {
     return Response.redirect("https://turva.dev" + LEGACY_REDIRECTS[pathname] + url.search, 301);
   }
 
-  // Markdown content negotiation for canonical pages
   if (wantsMarkdown(request) && PAGE_MARKDOWN[pathname]) {
     const canonicalUrl = getCanonicalForPath(pathname) || "https://turva.dev" + pathname;
     return serveMarkdown(PAGE_MARKDOWN[pathname], canonicalUrl);
   }
 
-  // auth.md — agent registration metadata
   if (pathLower === "/auth.md") {
     return serveStatic(AUTH_MD, "text/markdown; charset=utf-8", "agent-api");
   }
 
-  // Well-known and agent endpoints
-  if (pathLower === "/robots.txt") {
-    return serveStatic(ROBOTS_TXT, "text/plain; charset=utf-8", "agent-api");
-  }
+  if (pathLower === "/robots.txt") return serveStatic(ROBOTS_TXT, "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/.well-known/api-catalog" || pathLower === "/api-catalog") {
     return serveStatic(API_CATALOG, "application/linkset+json; charset=utf-8", "agent-api");
   }
-  if (pathLower === "/.well-known/openapi.json" || pathLower === "/openapi.json") {
+  if (pathLower === "/openapi.json" || pathLower === "/.well-known/openapi.json") {
     return serveStatic(OPENAPI_SPEC, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/mcp/server-card.json" || pathLower === "/.well-known/mcp.json") {
@@ -1411,11 +1919,23 @@ async function handleRequest(request, env) {
   if (pathLower === "/.well-known/ap2" || pathLower === "/.well-known/ap2.json") {
     return serveStatic(AP2_MANIFEST, "application/json; charset=utf-8", "agent-api");
   }
-  if (pathLower === "/.well-known/acp" || pathLower === "/.well-known/acp.json") {
+  if (pathLower === "/.well-known/acp" ||
+      pathLower === "/.well-known/acp.json" ||
+      pathLower === "/.well-known/acp/config.json" ||
+      pathLower === "/.well-known/acp/manifest.json") {
     return serveStatic(ACP_MANIFEST, "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/x402" || pathLower === "/.well-known/x402.json") {
+    return serveStatic(X402_MANIFEST, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/x402-mesh.json" || pathLower === "/.well-known/x402-mesh") {
     return serveStatic(X402_MESH, "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/mpp" || pathLower === "/.well-known/mpp.json") {
+    return serveStatic(MPP_MANIFEST, "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/ucp" || pathLower === "/.well-known/ucp.json") {
+    return serveStatic(UCP_PROFILE, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/agent-skills/index.json") {
     const body = await buildSkillsIndex();
@@ -1429,20 +1949,13 @@ async function handleRequest(request, env) {
   if (pathLower === "/.well-known/security.txt" || pathLower === "/security.txt") {
     return serveStatic(SECURITY_TXT, "text/plain; charset=utf-8", "agent-api");
   }
-  if (pathLower === "/sitemap.xml") {
-    return serveStatic(SITEMAP_XML, "application/xml; charset=utf-8", "agent-api");
-  }
-  if (pathLower === "/llms.txt") {
-    return serveStatic(LLMS_TXT, "text/plain; charset=utf-8", "agent-api");
-  }
-  if (pathLower === "/llms-full.txt") {
-    return serveStatic(getLlmsFullTxt(), "text/plain; charset=utf-8", "agent-api");
-  }
+  if (pathLower === "/sitemap.xml") return serveStatic(SITEMAP_XML, "application/xml; charset=utf-8", "agent-api");
+  if (pathLower === "/llms.txt") return serveStatic(LLMS_TXT, "text/plain; charset=utf-8", "agent-api");
+  if (pathLower === "/llms-full.txt") return serveStatic(getLlmsFullTxt(), "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/.well-known/ai.txt" || pathLower === "/ai.txt") {
     return serveStatic(AI_TXT, "text/plain; charset=utf-8", "agent-api");
   }
 
-  // Bot prerender path
   const isBot = BOT_AGENTS.some((bot) => userAgent.includes(bot.toLowerCase()));
   const isIgnoredExt = extension.length && IGNORE_EXTENSIONS.includes(extension);
 
