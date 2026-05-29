@@ -1832,9 +1832,10 @@ var worker_default = {
       const response = await handleRequest(workingRequest, env);
       return isHead ? stripBody(response) : response;
     } catch (err) {
+      console.error("Worker error:", err && err.stack ? err.stack : String(err));
       const errHeaders = new Headers({ "content-type": "text/plain; charset=utf-8" });
       applySecurityHeaders(errHeaders, "default");
-      const errResponse = new Response(err.stack || String(err), { status: 500, headers: errHeaders });
+      const errResponse = new Response("Internal Server Error", { status: 500, headers: errHeaders });
       return isHead ? stripBody(errResponse) : errResponse;
     }
   }
