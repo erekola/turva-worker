@@ -2,7 +2,7 @@
 
 Cloudflare Worker that serves deterministic head metadata, JSON-LD, and `/.well-known/` manifests for [turva.dev](https://turva.dev). AI agents and scanners read the same payload regardless of CMS state.
 
-This repository is the open-source reference implementation behind turva.dev, which ranks #1 worldwide on both independent agent-readiness leaderboards, 100 / 100 in every category. The Worker is public on purpose: a buyer can read every line before deciding anything.
+This repository is the open-source reference implementation behind turva.dev, which ranks #1 worldwide on the StartupHub agent-readiness leaderboard and scores a perfect 100 / 100 Level 5 Agent-Native on Cloudflare Agent-Ready. The Worker is public on purpose: a buyer can read every line before deciding anything.
 
 ## What it does
 
