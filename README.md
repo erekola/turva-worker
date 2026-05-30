@@ -100,7 +100,8 @@ If you want an audit of your domain against the same scanner set and a tailored 
 
 ## Security
 
-Responsible disclosure: see [SECURITY.md](SECURITY.md). Contact: <mailto:info@turva.dev>
+Responsible disclosure: see [SECURITY.md](SECURITY.md). Contact: [info@turva.dev](mailto:info@turva.dev)
+
 
 ## License
 
