@@ -6,9 +6,9 @@ This repository is the open-source reference implementation behind turva.dev, wh
 
 ## What it does
 
-- Injects a canonical `<head>` (meta, OpenGraph, JSON-LD, canonical) on every HTML response.
-- Serves `/.well-known/` files agents look for: `ai.txt`, `llms.txt`, `agents.json`, `mcp/server-card.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, `auth`.
-- Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
+* Injects a canonical `&lt;head&gt;` (meta, OpenGraph, JSON-LD, canonical) on every HTML response.
+* Serves `/.well-known/` files agents look for: `ai.txt`, `llms.txt`, `agents.json`, `mcp/server-card.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, `auth`.
+* Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
 
 ## Scanner results
 
@@ -34,17 +34,30 @@ These six category scores come from the startuphub.ai scan. The Cloudflare Agent
 | Commerce | 100 / 100 |
 | Quality | 100 / 100 |
 
+## Web security
+
+Agent-readiness is one axis; the domain's own web security is another. We publish turva.dev's own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-05-30.
+
+| Scanner | Result |
+|---|---|
+| Hardenize | All 13 categories passed |
+| Internet.nl | 98 / 100 |
+
+The missing 2 points on Internet.nl are a deliberate tradeoff: TLS 1.2 is kept enabled for broad client compatibility, while everything else passes. We document the choice rather than hide it.
+
 ## Verify
 
 Every claim above is publicly auditable. Run the scanners yourself or open the company record.
 
-- StartupHub leaderboard: https://www.startuphub.ai/agent-readiness
-- isitagentready scan: https://isitagentready.com/turva.dev
-- Company (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7
+* StartupHub leaderboard: https://www.startuphub.ai/agent-readiness
+* isitagentready scan: https://isitagentready.com/turva.dev
+* Hardenize report: https://www.hardenize.com/report/turva.dev/
+* Internet.nl report: https://internet.nl/site/turva.dev/
+* Company (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7
 
 ## How it works
 
-The Worker sits in front of the origin. Every HTML response is intercepted, the `<head>` is replaced with a canonical block built from a single source-of-truth object in the Worker. Non-HTML agent routes (`/.well-known/*`, `robots.txt`, `sitemap.xml`, `/x402`) are served directly from the Worker, bypassing the origin.
+The Worker sits in front of the origin. Every HTML response is intercepted, the `&lt;head&gt;` is replaced with a canonical block built from a single source-of-truth object in the Worker. Non-HTML agent routes (`/.well-known/*`, `robots.txt`, `sitemap.xml`, `/x402`) are served directly from the Worker, bypassing the origin.
 
 A CMS change, theme update, or misconfigured plugin cannot break the metadata that agents and scanners see.
 
@@ -70,15 +83,14 @@ A CMS change, theme update, or misconfigured plugin cannot break the metadata th
 ## Deploy
 
 Requires a Cloudflare account and `wrangler` CLI.
-
-```powershell
+```
 cd turvadev-pretender
 npm install
 npx wrangler secret put PRERENDER_TOKEN
 npx wrangler deploy
 ```
 
-Route the Worker to your domain under **Workers & Pages, your-worker, Settings, Domains & Routes**.
+Route the Worker to your domain under **Workers &amp; Pages, your-worker, Settings, Domains &amp; Routes**.
 
 ## Use it for your own site
 
@@ -88,7 +100,7 @@ If you want an audit of your domain against the same scanner set and a tailored 
 
 ## Security
 
-Responsible disclosure: see [SECURITY.md](SECURITY.md). Contact: info@turva.dev
+Responsible disclosure: see [SECURITY.md](SECURITY.md). Contact: <mailto:info@turva.dev>
 
 ## License
 
