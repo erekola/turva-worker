@@ -82,7 +82,7 @@ A CMS change, theme update, or misconfigured plugin cannot break the metadata th
 
 ## Deploy
 
-Requires a Cloudflare account and `wrangler` CLI.
+Requires a Cloudflare account and `wrangler` CLI. `PRERENDER_TOKEN` is required, not optional: the Worker uses it to authenticate against the origin, and without it the Worker will not serve pages correctly. Set the secret before deploying.
 ```
 cd turvadev-pretender
 npm install
@@ -94,7 +94,7 @@ Route the Worker to your domain under **Workers &amp; Pages, your-worker, Settin
 
 ## Use it for your own site
 
-MIT licensed. Fork it, replace the source-of-truth object with your own data, deploy.
+MIT licensed. Fork it, replace the source-of-truth object with your own data, set the required `PRERENDER_TOKEN` secret, deploy.
 
 If you want an audit of your domain against the same scanner set and a tailored configuration, see [turva.dev](https://turva.dev) or [Erik Rekola on LinkedIn](https://www.linkedin.com/in/erikrekola).
 
