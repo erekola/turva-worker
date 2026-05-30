@@ -2,6 +2,8 @@
 
 Cloudflare Worker that serves deterministic head metadata, JSON-LD, and `/.well-known/` manifests for [turva.dev](https://turva.dev). AI agents and scanners read the same payload regardless of CMS state.
 
+This repository is the open-source reference implementation behind turva.dev, which ranks #1 worldwide on both independent agent-readiness leaderboards, 100 / 100 in every category. The Worker is public on purpose: a buyer can read every line before deciding anything.
+
 ## What it does
 
 - Injects a canonical `<head>` (meta, OpenGraph, JSON-LD, canonical) on every HTML response.
@@ -10,24 +12,35 @@ Cloudflare Worker that serves deterministic head metadata, JSON-LD, and `/.well-
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-05-28.
+Measured on `https://turva.dev` on 2026-05-28. Two independent public scanners, listed once each.
 
 | Scanner | Result |
 |---|---|
-| turva.dev agent-readiness scanner | 100 / 100 (A+) |
-| startuphub.ai leaderboard | #1 of top 100 sites |
-| isitagentready.com 100 / 100 |
+| Cloudflare Agent-Ready (isitagentready.com) | 100 / 100, Level 5 Agent-Native |
+| startuphub.ai Agent Readiness | 100 / 100 (A+), #1 of top 100 sites |
 
-Sub-scores on the turva.dev scanner:
+Cloudflare Agent-Ready and isitagentready.com are the same scanner on two domains, so they count as one result.
+
+### startuphub.ai category breakdown
+
+These six category scores come from the startuphub.ai scan. The Cloudflare Agent-Ready scan uses a different model (no Quality category, Commerce optional), so this breakdown is StartupHub's.
 
 | Category | Score |
 |---|---|
-| Discoverability | 100/100 |
-| Content | 100/100 |
-| Access Control | 100/100 |
-| Capabilities | 100/100 |
-| Commerce | 100/100 |
-| Quality | 100/100 |
+| Discoverability | 100 / 100 |
+| Content | 100 / 100 |
+| Access Control | 100 / 100 |
+| Capabilities | 100 / 100 |
+| Commerce | 100 / 100 |
+| Quality | 100 / 100 |
+
+## Verify
+
+Every claim above is publicly auditable. Run the scanners yourself or open the company record.
+
+- StartupHub leaderboard: https://www.startuphub.ai/agent-readiness
+- isitagentready scan: https://isitagentready.com/turva.dev
+- Company (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7
 
 ## How it works
 
@@ -65,13 +78,17 @@ npx wrangler secret put PRERENDER_TOKEN
 npx wrangler deploy
 ```
 
-Route the Worker to your domain under **Workers & Pages → your-worker → Settings → Domains & Routes**.
+Route the Worker to your domain under **Workers & Pages, your-worker, Settings, Domains & Routes**.
 
 ## Use it for your own site
 
 MIT licensed. Fork it, replace the source-of-truth object with your own data, deploy.
 
-If you want an audit of your domain against the same scanner set and a tailored configuration, see [turva.dev](https://turva.dev).
+If you want an audit of your domain against the same scanner set and a tailored configuration, see [turva.dev](https://turva.dev) or [Erik Rekola on LinkedIn](https://www.linkedin.com/in/erikrekola).
+
+## Security
+
+Responsible disclosure: see [SECURITY.md](SECURITY.md). Contact: info@turva.dev
 
 ## License
 
