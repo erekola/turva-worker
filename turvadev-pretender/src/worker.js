@@ -1876,13 +1876,12 @@ async function handleRequest(request, env) {
 
   if (X402_ROUTES[pathLower]) {
     const route = X402_ROUTES[pathLower];
-    const payment = request.headers.get("X-PAYMENT");
-    if (!payment) return serve402(pathLower, route);
-    const okHeaders = new Headers({ "content-type": "application/json; charset=utf-8" });
-    appendAgentLinks(okHeaders);
-    applySecurityHeaders(okHeaders, "agent-api");
-    okHeaders.set("X-Payment-Response", "verified");
-    return new Response(JSON.stringify({ ok: true, service: route.label }, null, 2), { status: 200, headers: okHeaders });
+    // x402 settlement is not wired up: this is a quote-on-request service with
+    // no facilitator or on-chain settlement, so an X-PAYMENT header cannot be
+    // verified here. We must never report an unverified payment as paid, so every
+    // request to a payable route returns the 402 challenge until real facilitator
+    // verification exists, whether or not an X-PAYMENT header is present.
+    return serve402(pathLower, route);
   }
 
   if (LEGACY_REDIRECTS[pathname]) {
