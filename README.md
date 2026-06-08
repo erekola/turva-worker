@@ -36,7 +36,7 @@ These six category scores come from the startuphub.ai scan. The Cloudflare Agent
 
 ## Web security
 
-Agent-readiness is one axis; the domain's own web security is another. We publish turva.dev's own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-05-30.
+Agent-readiness is one axis; the domain's own web security is another. We publish turva.dev's own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-08.
 
 | Scanner | Result |
 |---|---|
