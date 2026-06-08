@@ -12,7 +12,7 @@ This repository is the open-source reference implementation behind turva.dev, wh
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-06-01. Two independent public scanners, listed once each.
+Measured on `https://turva.dev` on 2026-06-08. Two independent public scanners, listed once each.
 
 | Scanner | Result |
 |---|---|
