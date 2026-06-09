@@ -152,3 +152,9 @@ Thumbs.db
 # Security analysis artifacts, do not commit to the public repo
 THREAT_MODEL.md
 VULN-FINDINGS.*
+
+# Local secrets, never commit
+.dev.vars
+.dev.vars.*
+.env
+.env.*
