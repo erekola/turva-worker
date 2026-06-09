@@ -1514,27 +1514,27 @@ function getCanonicalForPath(pathname) {
 
 var META_BY_PATH = {
   "/": {
-    title: "Agent-readiness audits and advisory — turva.dev",
+    title: "Agent-readiness audits and advisory · turva.dev",
     description: "Agent-readiness audits and advisory for product teams. Independent measurement of how readable your site and APIs are by AI agents. Async-only.",
     imageAlt: "Agent-readiness audits and advisory"
   },
   "/services": {
-    title: "Services — turva.dev",
+    title: "Services · turva.dev",
     description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day. Agent-readiness work for product teams. Async-only, one business day response.",
     imageAlt: "turva.dev services and pricing"
   },
   "/company": {
-    title: "Company — turva.dev",
+    title: "Company · turva.dev",
     description: "turva.dev is operated by Erik Rekola as a Finnish sole proprietorship. Business ID 3600281-7, based in Tampere. Eleven years of engineering experience.",
     imageAlt: "turva.dev company information"
   },
   "/contact": {
-    title: "Contact — turva.dev",
+    title: "Contact · turva.dev",
     description: "Contact turva.dev via email, Signal or LinkedIn. Async-only engagement. Response within one business day. No calls, no calendar links.",
     imageAlt: "Contact turva.dev"
   },
   "/legal": {
-    title: "Legal — turva.dev",
+    title: "Legal · turva.dev",
     description: "Terms of engagement, privacy practices and GDPR information for turva.dev. Finnish law applies. No tracking, no analytics, no third-party scripts.",
     imageAlt: "Legal and privacy"
   }
