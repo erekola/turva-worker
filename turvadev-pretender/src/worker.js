@@ -437,28 +437,29 @@ for EU B2B, 0% for non-EU.
 
   "/company": `# Company
 
-turva.dev is operated by Erik Rekola as a Finnish sole proprietorship
-(toiminimi). Based in Tampere, serving clients remotely worldwide.
+turva.dev is operated by Erik Rekola.
 
 ## Business details
 
 - **Trade name:** turva.dev
-- **Operator:** Erik Rekola
 - **Business ID:** 3600281-7
-- **Register:** https://tietopalvelu.ytj.fi/yritys/3600281-7
-- **Form:** Sole proprietorship (toiminimi)
-- **VAT-registered:** Yes
-- **Location:** Tampere, Finland
+- **Country of registration:** Finland
+- **Form:** Sole proprietorship
 
 ## About the operator
 
-Erik Rekola has eleven years of experience as an engineer in
-industrial settings, including roles at UPM, Franke, Thermo Fisher
-Scientific and ASM International.
+Erik has eleven years of experience as an engineer in industrial
+settings, including roles at UPM, Franke, Thermo Fisher Scientific
+and ASM International.
 
 The work covered measurement, process engineering and the
 documentation of complex systems. The same approach now applies to
 a different subject: how websites and APIs are read by AI agents.
+
+## Location
+
+Tampere, Pirkanmaa, Finland.
+All work is delivered remotely. No on-site engagements.
 
 ## Why this service exists
 
@@ -488,7 +489,15 @@ scanners as the referee.
 - **Email:** <mailto:info@turva.dev>
 - **Signal:** @turva.19
 - **LinkedIn:** https://www.linkedin.com/in/erikrekola/
-`,
+
+## Invoicing
+
+Payment terms are fourteen days net unless agreed otherwise in
+writing.
+
+VAT is added to invoices according to Finnish law. Reverse charge
+applies to EU B2B customers with a valid VAT ID. Non-EU customers
+are invoiced without VAT.`,
 
   "/contact": `# Contact
 
@@ -556,8 +565,8 @@ Advisory deliverables are written reviews and a monthly summary.
 Implementation deliverables are source code committed to the
 agreed repository.
 
-**Payment.** Invoices are issued through UKKO.fi. Payment terms
-are fourteen days net. Late payment interest follows Finnish law.
+**Payment.** Payment terms are fourteen days net. Late payment
+interest follows Finnish law.
 
 **Confidentiality.** Information shared during an engagement is
 treated as confidential. A separate non-disclosure agreement can
@@ -1052,7 +1061,6 @@ var ACP_MANIFEST = JSON.stringify({
     },
     "invoice": {
       "enabled": true,
-      "provider": "UKKO.fi",
       "terms": "net 14"
     }
   },
@@ -1699,6 +1707,8 @@ function injectHtml(response, pathname) {
         el.append(`<link rel="agent-auth-register" href="https://turva.dev/agent/auth/register" type="application/json" />`, { html: true });
         if (isHome) el.append(SCHEMA_HOME, { html: true });
         el.append(WEBMCP_SCRIPT, { html: true });
+        // TEMP dark-theme override (live site). Loads last in <head>, wins the cascade. Remove once Sitejet theme is finalized.
+        el.append(`<style id="turva-dark-override">html,body{background-color:#0A1316!important;color:#F2F4F3!important;}body .ed-element[class*="preset-text"],body .ed-element[class*="preset-text"] p,body .ed-element[class*="preset-text"] li,body .ed-element[class*="preset-text"] span,body .ed-element[class*="preset-text"] strong,body .ed-element[class*="preset-text"] td,body .ed-element[class*="preset-boxes"] p,body .ed-element[class*="preset-boxes"] li,body .ed-element[class*="preset-boxes"] span,body .ed-element[class*="preset-pricing"] td,body .ed-element[class*="preset-pricing"] span,body .ed-element[class*="preset-accordion"] p,body .ed-element[class*="preset-accordion"] span,body .ed-element[class*="preset-table"] td,body .ed-element[class*="preset-footer"],body .ed-element[class*="preset-footer"] p,body .ed-element[class*="preset-footer"] li,body .ed-element[class*="preset-footer"] span{color:#F2F4F3!important;}body .ed-element.ed-element.ed-element h1,body .ed-element.ed-element.ed-element h2,body .ed-element.ed-element.ed-element h3,body .ed-element.ed-element.ed-element h4,body .ed-element.ed-element.ed-element h5,body .ed-element.ed-element.ed-element h6{color:#5DF18F!important;}body .ed-element[class*="preset-text"] a,body .ed-element[class*="preset-boxes"] a,body .ed-element[class*="preset-footer"] a{color:#5DF18F!important;}body .ed-element[class*="preset-section"],body .ed-element[class*="preset-container"],body .ed-element[class*="preset-columns"],body .ed-element[class*="preset-column"],body .ed-element[class*="preset-text-with-image"],body .ed-element[class*="preset-boxes"],body .ed-element[class*="preset-slider"],body .ed-element[class*="preset-pricing"],body .ed-element[class*="preset-footer"]{background-color:transparent!important;}body .ed-element[class*="contact-form"] input,body .ed-element[class*="contact-form"] textarea,body .ed-element[class*="contact-form"] select{background-color:rgba(255,255,255,0.05)!important;color:#F2F4F3!important;border-color:rgba(255,255,255,0.25)!important;}body .ed-element[class*="contact-form"] ::placeholder{color:#9AA3A0!important;}</style>`, { html: true });
       }
     })
     .transform(response);
