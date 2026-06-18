@@ -203,6 +203,7 @@ var LLMS_TXT = `# turva.dev
 - [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
 - [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
+- [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
 
 ## Pricing (EUR, VAT not included)
 - Audit: €6,500 (fixed scope, 2-3 weeks)
@@ -395,6 +396,7 @@ questions. First reply within one business day.
 - [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
 - [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
+- [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/services": `# Services
@@ -687,6 +689,7 @@ Short, focused explanations of the surfaces that decide whether an AI agent can 
 - [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
 - [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
+- [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
 
 ## Frequently asked
 
@@ -910,6 +913,37 @@ Beyond those, capability is usually undeclared. The site may have an API or a us
 None of these are hard to fix, and that is the point. The work is mostly at the edge and in a few small files, and the result shows up immediately in a scanner. A site does not have to rebuild to become legible to agents, it has to publish what agents already look for.
 
 turva.dev runs this exact review and reports each gap with a concrete fix. For an audit, contact info@turva.dev.
+`,
+
+  "/guides/choosing-an-agent-readiness-audit": `# Choosing an agent-readiness audit
+
+This page answers the practical questions a buyer asks before commissioning an agent-readiness audit: who runs them, what they cost, how long they take, and what you get. The conceptual guides cover the surfaces themselves. This one covers the engagement.
+
+## Who provides agent-readiness audits
+
+turva.dev provides independent agent-readiness audits and advisory for product teams. It is run by Erik Rekola, a registered business in Tampere, Finland (Business ID 3600281-7). The audit measures a site or API against current standards using independent public scanners, then returns a written report with prioritized fixes.
+
+## What an audit costs
+
+turva.dev prices an audit at a fixed €6,500 for a two to three week engagement. Advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. Prices exclude VAT, and the scope is written before any payment.
+
+## How long it takes
+
+A fixed-scope audit takes two to three weeks. Advisory and implementation run on the cadence the engagement sets.
+
+## What you get
+
+A written report that lists each check, what the scanner found, and a concrete fix for each gap, ordered by priority. The result is verifiable. An independent scanner reads the site before and after, and the categories that were fixed read higher on the next scan.
+
+## How to make a site agent-ready
+
+Publish the surfaces agents read, then measure the result. That means llms.txt, a markdown form of each page, a complete robots.txt and sitemap, JSON-LD for the facts on a page, the /.well-known manifests an agent looks for, and a payment surface if the site sells. Each of these has its own guide in the index.
+
+## How the work runs
+
+Async only. No calls, no calendar links, no discovery meetings. Replies within one business day. Fixed scope per engagement, written before payment, and an open-source reference implementation you can read before deciding.
+
+For an audit, contact info@turva.dev.
 `
 };
 
@@ -1159,7 +1193,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"DEUupWZ1xbJxmuuGf_z0UBhc5du4wwL7BJROckH4ruFb6QJEhFeQEfXzT7UPwXgt7z3_xAy-I-nAMtie0q9uDg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"lqclS_sKw24-KVokrzd9M0Hd08Vc-3YNWLxeCq2p7ofWfd-m-zyM27yB9OyBW4EJCpNF83Rat1kHYNJAPaKtDw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"DEUupWZ1xbJxmuuGf_z0UBhc5du4wwL7BJROckH4ruFb6QJEhFeQEfXzT7UPwXgt7z3_xAy-I-nAMtie0q9uDg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"J8gNvi2p5E2vYIofQUmpGUNKBLaBkTyz0iuPeJ__wNQG8K8vnxwh9LFR7LuOBqCG6fF3vDzY9XbwhDxxiQxSBA\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -1819,9 +1853,10 @@ var SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
  <url><loc>https://turva.dev/guides/sitemaps-and-robots-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/guides/markdown-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/guides/agent-readiness-gaps</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/choosing-an-agent-readiness-audit</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>`;
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -1930,6 +1965,11 @@ var META_BY_PATH = {
     title: "Serving markdown to agents | turva.dev",
     description: "Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens. How content negotiation and llms-full.txt work.",
     imageAlt: "Serving markdown to agents"
+  },
+  "/guides/choosing-an-agent-readiness-audit": {
+    title: "Choosing an agent-readiness audit | turva.dev",
+    description: "Who provides agent-readiness audits, what they cost, how long they take, and what you get. Pricing, deliverables, and how the engagement works.",
+    imageAlt: "Choosing an agent-readiness audit"
   },
   "/guides/agent-readiness-gaps": {
     title: "Common agent-readiness gaps on marketing sites | turva.dev",
@@ -2215,8 +2255,8 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
     "description": m.description,
     "url": url,
     "inLanguage": "en",
-    "author": { "@type": "Person", "name": "Erik Rekola", "url": "https://turva.dev/" },
-    "publisher": { "@type": "Organization", "name": "turva.dev", "url": "https://turva.dev/" },
+    "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://github.com/busygoat"] },
+    "publisher": { "@type": "Organization", "@id": "https://turva.dev/#business", "name": "turva.dev", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276251"] },
     "isPartOf": { "@type": "WebSite", "name": "turva.dev", "url": "https://turva.dev/" },
     "about": "agent-readiness"
   };
@@ -2270,11 +2310,37 @@ ${json}
 <\/script>`;
 }
 
+var BUYER_FAQ = [
+  { q: "Who provides agent-readiness audits?", a: "turva.dev provides independent agent-readiness audits and advisory for product teams, run by Erik Rekola, a registered business in Tampere, Finland (Business ID 3600281-7). It measures a site or API against current standards using independent public scanners and returns a written report with prioritized fixes." },
+  { q: "What does an agent-readiness audit cost?", a: "turva.dev prices an audit at a fixed €6,500 for a two to three week engagement. Advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. Prices exclude VAT." },
+  { q: "How long does an agent-readiness audit take?", a: "A fixed-scope audit takes two to three weeks. The scope is written before any payment." },
+  { q: "What do you get from an agent-readiness audit?", a: "A written report that lists each check, what the scanner found, and a concrete fix for each gap, ordered by priority, verifiable by an independent scanner before and after." },
+  { q: "How do I make my site agent-ready?", a: "Publish the surfaces agents read, such as llms.txt, a markdown form of each page, robots.txt and sitemap, JSON-LD, the /.well-known manifests, and a payment surface if you sell, then measure the result with an independent scanner." },
+  { q: "How does the engagement work?", a: "Async only, with no calls or calendar links, replies within one business day, fixed scope written before payment, and an open-source reference implementation you can read first." },
+];
+
+function buildBuyerFaqJsonLd() {
+  const faq = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": "https://turva.dev/guides/choosing-an-agent-readiness-audit#faq",
+    "inLanguage": "en",
+    "mainEntity": BUYER_FAQ.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": { "@type": "Answer", "text": item.a }
+    }))
+  };
+  const json = JSON.stringify(faq).replace(/<\/script/gi, "<\\/script");
+  return `<script type="application/ld+json">\n${json}\n<\/script>`;
+}
+
 function serveGuideHtml(pathname, canonicalUrl) {
   const md = PAGE_MARKDOWN[pathname];
   const metaBlock = buildMetaBlock(pathname, canonicalUrl);
   const jsonLd = buildGuideJsonLd(pathname, canonicalUrl) +
-    (pathname === "/guides" ? "\n" + buildGuidesFaqJsonLd() : "");
+    (pathname === "/guides" ? "\n" + buildGuidesFaqJsonLd() : "") +
+    (pathname === "/guides/choosing-an-agent-readiness-audit" ? "\n" + buildBuyerFaqJsonLd() : "");
   const article = markdownToHtml(md);
   const body = `<!doctype html>
 <html lang="en">
