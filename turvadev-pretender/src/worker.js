@@ -2217,11 +2217,20 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
+var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/busygoat", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 6500, "currency": "EUR", "unit": "fixed", "duration": "2-3 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-06-08" }, null, 2);
+
 function wantsMarkdown(request) {
   const accept = (request.headers.get("Accept") || "").toLowerCase();
   if (!accept) return false;
   const parts = accept.split(",").map((p) => p.trim().split(";")[0].trim());
   return parts.includes("text/markdown");
+}
+
+function wantsJson(request) {
+  const accept = (request.headers.get("Accept") || "").toLowerCase();
+  if (!accept) return false;
+  const parts = accept.split(",").map((p) => p.trim().split(";")[0].trim());
+  return parts.includes("application/json");
 }
 
 function serveMarkdown(body, canonicalUrl) {
@@ -2571,6 +2580,10 @@ async function handleRequest(request, env) {
 
   if (LEGACY_REDIRECTS[pathname]) {
     return Response.redirect("https://turva.dev" + LEGACY_REDIRECTS[pathname] + url.search, 301);
+  }
+
+  if (wantsJson(request) && pathname === "/") {
+    return serveStatic(HOME_JSON, "application/json; charset=utf-8", "agent-api");
   }
 
   if (wantsMarkdown(request) && PAGE_MARKDOWN[pathname]) {
