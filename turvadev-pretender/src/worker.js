@@ -1146,10 +1146,13 @@ var OPENAPI_SPEC = JSON.stringify({
 var AGENT_JSON = JSON.stringify({
   "schema_version": "v1",
   "name": "turva.dev",
+  "name_for_human": "turva.dev",
+  "name_for_model": "turva_dev",
   "description_for_human": "Agent-readiness audits and advisory for product teams.",
   "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. Independent scanners measure the site or API, a written report names the prioritized fixes, the next scan verifies the result. Async-only engagement. Pricing (EUR, VAT not included): Audit €6,500 (fixed, 2-3 weeks), Advisory €3,000/month (minimum 3 months), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
   "contact_email": "info@turva.dev",
   "legal_info_url": "https://turva.dev/legal",
+  "logo_url": "https://turva.dev/og.jpg",
   "auth": { "type": "none" },
   "api": { "type": "openapi", "url": "https://turva.dev/openapi.json" }
 }, null, 2);
