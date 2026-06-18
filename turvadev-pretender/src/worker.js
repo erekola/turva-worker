@@ -2218,6 +2218,7 @@ function serveMtaStsPolicy() {
 }
 
 var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/busygoat", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 6500, "currency": "EUR", "unit": "fixed", "duration": "2-3 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-06-08" }, null, 2);
+var API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentsJson": "https://turva.dev/.well-known/agents.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 function wantsMarkdown(request) {
   const accept = (request.headers.get("Accept") || "").toLowerCase();
@@ -2230,7 +2231,7 @@ function wantsJson(request) {
   const accept = (request.headers.get("Accept") || "").toLowerCase();
   if (!accept) return false;
   const parts = accept.split(",").map((p) => p.trim().split(";")[0].trim());
-  return parts.includes("application/json");
+  return parts.includes("application/json") && !parts.includes("text/html");
 }
 
 function serveMarkdown(body, canonicalUrl) {
@@ -2617,6 +2618,9 @@ async function handleRequest(request, env) {
   }
   if (pathLower === "/.well-known/agent.json" || pathLower === "/.well-known/ai-plugin.json") {
     return serveStatic(AGENT_JSON, "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/api" || pathLower === "/api/" || pathLower === "/api/v1" || pathLower === "/api/v1/") {
+    return serveStatic(API_INDEX_JSON, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/jwks.json") {
     return serveStatic(JWKS_JSON, "application/json; charset=utf-8", "agent-api");
