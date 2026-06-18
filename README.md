@@ -55,6 +55,10 @@ Every claim above is publicly auditable. Run the scanners yourself or open the c
 * Internet.nl report: https://internet.nl/site/turva.dev/
 * Company (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7
 
+## Agent-readiness reference
+
+A consolidated, self-contained reference to the surfaces agents read, with a short definition of each and a link to its full guide, is in [docs/agent-readiness.md](docs/agent-readiness.md).
+
 ## Agent-readiness guides
 
 Plain-language explanations of the surfaces this Worker implements, and why each one matters to an AI agent. Published on turva.dev.
