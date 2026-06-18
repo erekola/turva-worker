@@ -1157,6 +1157,10 @@ var AGENT_JSON = JSON.stringify({
   "api": { "type": "openapi", "url": "https://turva.dev/openapi.json" }
 }, null, 2);
 
+// --- signed manifests (provenance) ---
+var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"DEUupWZ1xbJxmuuGf_z0UBhc5du4wwL7BJROckH4ruFb6QJEhFeQEfXzT7UPwXgt7z3_xAy-I-nAMtie0q9uDg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"lqclS_sKw24-KVokrzd9M0Hd08Vc-3YNWLxeCq2p7ofWfd-m-zyM27yB9OyBW4EJCpNF83Rat1kHYNJAPaKtDw\"\n    }\n  }\n}";
+
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
   "serverInfo": {
@@ -2012,6 +2016,7 @@ function appendAgentLinks(headers) {
   headers.append("Link", '</openapi.json>; rel="service-desc"; type="application/json"');
   headers.append("Link", '</llms.txt>; rel="service-doc"; type="text/plain"');
   headers.append("Link", '</llms-full.txt>; rel="service-doc"; type="text/plain"; title="Full content"');
+  headers.append("Link", '</.well-known/signatures.json>; rel="signature"; type="application/json"');
   headers.append("Link", '</auth.md>; rel="agent-registration"; type="text/markdown"; title="Agent registration"');
   headers.append("Link", '</.well-known/mcp/server-card.json>; rel="service-meta"; type="application/json"');
   headers.append("Link", '</.well-known/agent-skills/index.json>; rel="agent-skills"; type="application/json"');
@@ -2497,6 +2502,12 @@ async function handleRequest(request, env) {
   }
   if (pathLower === "/.well-known/agent.json" || pathLower === "/.well-known/ai-plugin.json") {
     return serveStatic(AGENT_JSON, "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/jwks.json") {
+    return serveStatic(JWKS_JSON, "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/signatures.json") {
+    return serveStatic(SIGNATURES_JSON, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/oauth-authorization-server" || pathLower === "/.well-known/openid-configuration") {
     return serveStatic(OAUTH_DISCOVERY, "application/json; charset=utf-8", "agent-api");
