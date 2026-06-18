@@ -189,6 +189,7 @@ var LLMS_TXT = `# turva.dev
 ## Guides
 - [Agent-readiness guides](https://turva.dev/guides)
 - [What an agent-readiness audit is](https://turva.dev/guides/agent-readiness-audit)
+- [How to get your site cited by AI assistants](https://turva.dev/guides/get-cited-by-ai-assistants)
 - [llms.txt explained](https://turva.dev/guides/llms-txt)
 - [MCP server cards explained](https://turva.dev/guides/mcp-server-card)
 - [What agents.json is](https://turva.dev/guides/agents-json)
@@ -382,6 +383,7 @@ questions. First reply within one business day.
 ## Guides
 - [Agent-readiness guides](https://turva.dev/guides)
 - [What an agent-readiness audit is](https://turva.dev/guides/agent-readiness-audit)
+- [How to get your site cited by AI assistants](https://turva.dev/guides/get-cited-by-ai-assistants)
 - [llms.txt explained](https://turva.dev/guides/llms-txt)
 - [MCP server cards explained](https://turva.dev/guides/mcp-server-card)
 - [What agents.json is](https://turva.dev/guides/agents-json)
@@ -671,6 +673,7 @@ Short, focused explanations of the surfaces that decide whether an AI agent can 
 
 ## Discovery and content
 - [What an agent-readiness audit is](https://turva.dev/guides/agent-readiness-audit)
+- [How to get your site cited by AI assistants](https://turva.dev/guides/get-cited-by-ai-assistants)
 - [llms.txt explained](https://turva.dev/guides/llms-txt)
 - [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
 - [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
@@ -944,6 +947,33 @@ Publish the surfaces agents read, then measure the result. That means llms.txt, 
 Async only. No calls, no calendar links, no discovery meetings. Replies within one business day. Fixed scope per engagement, written before payment, and an open-source reference implementation you can read before deciding.
 
 For an audit, contact info@turva.dev.
+`,
+
+  "/guides/get-cited-by-ai-assistants": `# How to get your site cited by AI assistants
+
+When a person asks ChatGPT, Perplexity, Claude, or Gemini a question, the assistant answers from sources it can read and trust. Getting cited means being one of those sources. A site is cited when the assistant can reach its content, read it cheaply, confirm the facts, and find corroboration elsewhere. This guide covers what that takes.
+
+## Be readable, not just rendered
+
+An assistant that does not run JavaScript sees an empty shell where a client-rendered page should be. The first requirement is that the content arrives in the response: a prerendered or static page, a markdown form served through content negotiation, and an llms.txt that maps the site. A page an assistant cannot read is a page it cannot cite.
+
+## State your facts as data
+
+Prose can be summarised wrongly. JSON-LD states the facts of a page, such as the organisation, the service, and the price, as data an assistant reads without inference. Structured data also ties a page to an entity an assistant already knows, which is why a Wikidata item and consistent sameAs links raise the odds that the assistant attributes the content to the right source.
+
+## Be corroborated
+
+An assistant is more likely to cite a claim it can confirm in more than one place. A site that only references itself is weaker than one that independent sources also describe. Open-source code, a public company record, listings in directories an assistant trusts, and genuine third-party mentions all raise confidence. The signal is consistency across sources, not volume.
+
+## Be indexed where the assistant searches
+
+Several assistants retrieve through a search index before they answer. If a site is not indexed where the assistant looks, it cannot be cited regardless of quality. Submitting URLs through the index protocols a site supports, and keeping the sitemap and llms.txt current, is how new content reaches that layer.
+
+## Measure it
+
+Whether a site is cited is observable. Ask the assistants the questions a buyer would ask and record which sources they name. Repeat on a schedule. The sources that appear, and the ones that do not, tell you where the work is. turva.dev runs this check monthly against its own queries.
+
+For an audit of how legible and citable a site is to assistants, contact info@turva.dev.
 `
 };
 
@@ -1193,7 +1223,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"DEUupWZ1xbJxmuuGf_z0UBhc5du4wwL7BJROckH4ruFb6QJEhFeQEfXzT7UPwXgt7z3_xAy-I-nAMtie0q9uDg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"J8gNvi2p5E2vYIofQUmpGUNKBLaBkTyz0iuPeJ__wNQG8K8vnxwh9LFR7LuOBqCG6fF3vDzY9XbwhDxxiQxSBA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"DEUupWZ1xbJxmuuGf_z0UBhc5du4wwL7BJROckH4ruFb6QJEhFeQEfXzT7UPwXgt7z3_xAy-I-nAMtie0q9uDg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"uzcQdNJrx_vEBAtJKAIjSq2ficdDKoP-ByB9SOpJnPLsPG56m0xd6az3YKW5lAy28BYjgNQ2Jyd21l8StnQNDw\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -1854,9 +1884,10 @@ var SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
  <url><loc>https://turva.dev/guides/markdown-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/guides/agent-readiness-gaps</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/guides/choosing-an-agent-readiness-audit</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+ <url><loc>https://turva.dev/guides/get-cited-by-ai-assistants</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>`;
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -1965,6 +1996,11 @@ var META_BY_PATH = {
     title: "Serving markdown to agents | turva.dev",
     description: "Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens. How content negotiation and llms-full.txt work.",
     imageAlt: "Serving markdown to agents"
+  },
+  "/guides/get-cited-by-ai-assistants": {
+    title: "How to get your site cited by AI assistants | turva.dev",
+    description: "What it takes to be a source AI assistants cite: readable content, structured data, corroboration across sources, indexing where assistants search, and measurement.",
+    imageAlt: "How to get your site cited by AI assistants"
   },
   "/guides/choosing-an-agent-readiness-audit": {
     title: "Choosing an agent-readiness audit | turva.dev",
