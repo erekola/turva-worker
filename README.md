@@ -55,6 +55,27 @@ Every claim above is publicly auditable. Run the scanners yourself or open the c
 * Internet.nl report: https://internet.nl/site/turva.dev/
 * Company (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7
 
+## Agent-readiness guides
+
+Plain-language explanations of the surfaces this Worker implements, and why each one matters to an AI agent. Published on turva.dev.
+
+* [Agent-readiness guides (index)](https://turva.dev/guides)
+* [What an agent-readiness audit is](https://turva.dev/guides/agent-readiness-audit)
+* [llms.txt explained](https://turva.dev/guides/llms-txt)
+* [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
+* [Response headers that help agents](https://turva.dev/guides/response-headers-for-agents)
+* [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
+* [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
+* [MCP server cards explained](https://turva.dev/guides/mcp-server-card)
+* [What agents.json is](https://turva.dev/guides/agents-json)
+* [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
+* [How agents authenticate](https://turva.dev/guides/agent-authentication)
+* [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
+* [x402 and agent payments](https://turva.dev/guides/x402-agent-payments)
+* [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
+* [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
+* [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
+
 ## How it works
 
 The Worker sits in front of the origin. Every HTML response is intercepted, the `&lt;head&gt;` is replaced with a canonical block built from a single source-of-truth object in the Worker. Non-HTML agent routes (`/.well-known/*`, `robots.txt`, `sitemap.xml`, `/x402`) are served directly from the Worker, bypassing the origin.

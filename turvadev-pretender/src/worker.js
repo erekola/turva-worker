@@ -29,6 +29,8 @@ var IGNORE_EXTENSIONS = [
   ".torrent", ".woff", ".ttf", ".svg", ".webmanifest", ".json", ".md"
 ];
 
+const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
+
 var LEGACY_REDIRECTS = {
   "/en": "/", "/en/": "/",
   "/en/packages": "/services", "/en/packages/": "/services",
@@ -183,6 +185,24 @@ var LLMS_TXT = `# turva.dev
 - [Company](https://turva.dev/company)
 - [Contact](https://turva.dev/contact)
 - [Legal](https://turva.dev/legal)
+
+## Guides
+- [Agent-readiness guides](https://turva.dev/guides)
+- [What an agent-readiness audit is](https://turva.dev/guides/agent-readiness-audit)
+- [llms.txt explained](https://turva.dev/guides/llms-txt)
+- [MCP server cards explained](https://turva.dev/guides/mcp-server-card)
+- [What agents.json is](https://turva.dev/guides/agents-json)
+- [x402 and agent payments](https://turva.dev/guides/x402-agent-payments)
+- [Response headers that help agents](https://turva.dev/guides/response-headers-for-agents)
+- [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
+- [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
+- [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
+- [How agents authenticate](https://turva.dev/guides/agent-authentication)
+- [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
+- [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
+- [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
+- [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
+- [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
 
 ## Pricing (EUR, VAT not included)
 - Audit: €6,500 (fixed scope, 2-3 weeks)
@@ -357,6 +377,24 @@ questions. First reply within one business day.
 - [Contact](https://turva.dev/contact)
 - [Legal](https://turva.dev/legal)
 - [Agent registration](https://turva.dev/auth.md)
+
+## Guides
+- [Agent-readiness guides](https://turva.dev/guides)
+- [What an agent-readiness audit is](https://turva.dev/guides/agent-readiness-audit)
+- [llms.txt explained](https://turva.dev/guides/llms-txt)
+- [MCP server cards explained](https://turva.dev/guides/mcp-server-card)
+- [What agents.json is](https://turva.dev/guides/agents-json)
+- [x402 and agent payments](https://turva.dev/guides/x402-agent-payments)
+- [Response headers that help agents](https://turva.dev/guides/response-headers-for-agents)
+- [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
+- [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
+- [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
+- [How agents authenticate](https://turva.dev/guides/agent-authentication)
+- [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
+- [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
+- [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
+- [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
+- [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
 `,
 
   "/services": `# Services
@@ -623,6 +661,255 @@ This page is updated when the terms change. The current version
 applies to engagements started after the date below.
 
 Last updated: 2026-05-28.
+`,
+
+  "/guides": `# Agent-readiness guides
+
+Short, focused explanations of the surfaces that decide whether an AI agent can discover, read, and act on a website or an API. Each guide covers one topic.
+
+## Discovery and content
+- [What an agent-readiness audit is](https://turva.dev/guides/agent-readiness-audit)
+- [llms.txt explained](https://turva.dev/guides/llms-txt)
+- [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
+- [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
+- [Response headers that help agents](https://turva.dev/guides/response-headers-for-agents)
+- [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
+
+## Capability and trust
+- [MCP server cards explained](https://turva.dev/guides/mcp-server-card)
+- [What agents.json is](https://turva.dev/guides/agents-json)
+- [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
+- [How agents authenticate](https://turva.dev/guides/agent-authentication)
+- [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
+
+## Commerce and strategy
+- [x402 and agent payments](https://turva.dev/guides/x402-agent-payments)
+- [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
+- [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
+- [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
+
+## Frequently asked
+
+### What is an agent-readiness audit?
+An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API, scored against current standards by an independent scanner rather than a self-assessment.
+
+### Do I need llms.txt on my site?
+If you want models and agents to read your real content rather than guess from a cached snippet, llms.txt gives them a curated map of what matters. It does not replace robots.txt or a sitemap, it complements them.
+
+### How do I get my site cited by AI assistants?
+A model cites content it can read cleanly and corroborate. That means machine-readable surfaces such as llms.txt and structured data, a markdown form that does not exhaust the token budget, and being indexed where the assistant searches.
+
+### What is an MCP server card?
+An MCP server card is a JSON file, usually at /.well-known/mcp/server-card.json, that lets an agent discover a site's Model Context Protocol server and the tools it exposes, so the agent can call them without a human wiring up the connection.
+
+### Is agent-readiness the same as SEO?
+No. SEO makes a site rank for a person to click. Agent-readiness makes a site legible and usable by an agent that reads and acts. A site can rank well and still be opaque to agents.
+
+### How is agent-readiness measured?
+By an independent scanner that reads the live site and reports a score with a category breakdown. The categories that get fixed read higher on the next scan, so the claim is the number rather than an assertion.
+
+For an audit, contact info@turva.dev.
+`,
+
+  "/guides/agent-readiness-audit": `# What an agent-readiness audit is
+
+An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API. It is a technical review of the surfaces that automated clients actually use, scored against current standards rather than opinion.
+
+Most sites are built for human readers and search crawlers. AI agents read differently. They look for machine-readable entry points such as llms.txt, a sitemap, response headers, structured data, and well-known manifests. When those are missing, the agent either guesses or gives up, and the site becomes invisible to that class of client even when the underlying product is strong.
+
+The audit checks the parts an agent reaches first. Discovery covers robots.txt, the sitemap, and the response headers that let an agent find resources without parsing a full HTML page. Content covers llms.txt, markdown content negotiation, and whether the site can return a clean text version that saves an agent most of the tokens an HTML page would cost. Capabilities cover an MCP server card, an OpenAPI description, an API catalog, and OAuth discovery, so an agent can enumerate what the site offers and authenticate safely. Commerce covers payment surfaces such as x402 and structured pricing, so an agent can transact. Access control and quality cover the headers, signals, and metadata that tell an agent how it is allowed to behave.
+
+The result is a list. Each check passes or fails, and each failure comes with a concrete fix. The point is that the outcome is verifiable. An independent scanner reads the site before and after, and the categories that were fixed read higher on the next scan. The claim is the number, not an assertion.
+
+turva.dev applies the same standard to its own site. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. The audit a client receives runs the same checks against their site.
+
+For an audit, contact info@turva.dev. Engagement is async and evidence-based, and production credentials are not requested.
+`,
+
+  "/guides/llms-txt": `# llms.txt explained
+
+llms.txt is a plain text file at the root of a site that tells AI agents and language models what the site contains and where the important content lives. It works like a guide written for machines. A human reads the rendered page, an agent reads llms.txt and follows the links it lists.
+
+The format is simple. The file opens with the site name and a short summary, then lists the key pages and resources as markdown links, often grouped under headings. Some sites also publish llms-full.txt, a single file that bundles the full text of the site so an agent can read everything in one request instead of crawling many pages.
+
+The reason it matters is cost and clarity. A normal HTML page carries navigation, scripts, and styling that an agent has to wade through, and that spends tokens and invites mistakes. A llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a small fraction of the HTML, which is the difference between an agent reading the page reliably and an agent truncating it.
+
+llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt. A sitemap lists every URL for crawlers. robots.txt sets crawl rules. llms.txt is a curated, human-written map of what matters, aimed at models. The three work together.
+
+Whether a site needs one depends on whether it wants to be legible to agents. If buyers, researchers, or assistants will ever ask a model about what the site does, a clear llms.txt raises the odds that the model reads the real content rather than guessing from a cached snippet.
+
+turva.dev publishes llms.txt and llms-full.txt and serves markdown on request. For an audit of how legible a site is to agents, contact info@turva.dev.
+`,
+
+  "/guides/mcp-server-card": `# MCP server cards explained
+
+An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. It usually lives at /.well-known/mcp/server-card.json. An agent reads the card, sees which tools the server exposes, and can then call them without a human wiring up the connection first.
+
+The Model Context Protocol is a standard way for agents to use external tools and data. A server implements the protocol and exposes a set of tools, and the card is how that server announces itself. Without a card, an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live.
+
+A useful card states the server name, the endpoint, and the tools available, in a shape an agent can parse deterministically. turva.dev publishes a server card that points to a read-only MCP server, which exposes the same agent-readiness data that the site shows to people. That means an agent can query the data directly rather than scraping a page.
+
+A server card sits in the same family as other well-known manifests an agent looks for, such as an API catalog, an OpenAPI description, and OAuth discovery. Each one removes a guess. The card answers what tools exist, the API catalog answers what endpoints exist, and OAuth discovery answers how to authenticate. Together they let an agent move from finding a site to operating it.
+
+For sites that want to expose a capability to agents, the card is the cheapest high-value step, because it turns an invisible server into a discoverable one. For an audit of a site's capability surface, contact info@turva.dev.
+`,
+
+  "/guides/agents-json": `# What agents.json is
+
+agents.json is a machine-readable file that declares what an AI agent can do on a site and how. Where llms.txt tells an agent what the site contains, agents.json describes the actions and endpoints an agent is allowed to use, so an automated client can move from reading to doing without a human wiring it up.
+
+The file lists the operations a site exposes to agents, often pointing at an OpenAPI description or specific endpoints, along with the authentication an agent needs. An agent reads it, learns which actions exist, and calls them within the rules the site sets.
+
+The reason it matters is that most sites expose actions only through a human interface, a form or a checkout flow that a person clicks through. An agent cannot reliably reverse-engineer that. A declared action surface removes the guesswork and turns a site from something an agent can read into something an agent can operate.
+
+agents.json sits beside the other declarations an agent looks for. An MCP server card lists tools, an API catalog lists endpoints, and OAuth discovery describes how to authenticate. Each one removes a guess, and together they let an agent act on a user's behalf safely.
+
+A site does not need agents.json to be readable, but it needs something like it to be operable. If the goal is for agents to complete tasks rather than just summarise the page, declaring the action surface is the step that makes that possible.
+
+For an audit of a site's capability and action surface, contact info@turva.dev.
+`,
+
+  "/guides/x402-agent-payments": `# x402 and agent payments
+
+x402 is a way for a site to ask an agent to pay before it returns a resource, using the long-reserved HTTP 402 Payment Required status. It lets an automated client discover a price, pay, and continue, without a human stepping in to enter card details.
+
+When an agent requests a paid resource, the server responds with 402 and a manifest that states what is being sold and how to pay. The agent reads the terms, completes the payment through a supported method, and retries the request. The transaction happens in the protocol, not in a checkout page built for human eyes.
+
+This matters because agent commerce is held back by payment, not by capability. An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A declared payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search.
+
+x402 belongs to a small family of agent payment standards, alongside agent payments discovery such as AP2. A site that publishes these signals tells agents that it is open for automated business, and in the case of the open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
+
+turva.dev publishes an x402 endpoint and manifest and participates in the x402-mesh peer pricelist. For an audit of a site's commerce surface for agents, contact info@turva.dev.
+`,
+
+  "/guides/response-headers-for-agents": `# Response headers that help agents
+
+Response headers are the metadata a server sends with every page, and the right ones let an AI agent work without parsing the full HTML. They are the cheapest place to make a site more legible to automated clients, because an agent reads them before it reads the body.
+
+A Link header can point an agent straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the agent finds them without crawling. A Vary header that includes Accept tells caches and agents that the site can return different formats for the same URL, which is what makes markdown content negotiation reliable. RateLimit headers let a well-behaved agent throttle itself instead of guessing. Content-Language and a clean content type remove ambiguity about what the agent is reading.
+
+The reason headers matter is order. An agent fetches the response, reads the status and headers first, and decides what to do next from them. If the headers already say where the structured data is and what formats are available, the agent can skip the expensive step of parsing a page built for human display.
+
+Headers are easy to get wrong in ways that hurt agents. A missing Vary header breaks content negotiation. An immutable header set on the wrong response can stop an agent from seeing an update. The fix is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response.
+
+For an audit of a site's response and discovery surface, contact info@turva.dev.
+`,
+
+  "/guides/seo-vs-agent-readiness": `# SEO and agent-readiness are not the same
+
+Search engine optimisation makes a site rank in a list of links for a person to click. Agent-readiness makes a site legible and usable by an AI agent that reads, decides, and sometimes acts on the user's behalf. The two overlap, but optimising for one does not deliver the other.
+
+SEO is built around keywords, backlinks, and a results page where a human chooses. The page is the destination. Agent-readiness is built around machine-readable surfaces such as llms.txt, structured data, response headers, and well-known manifests, where the agent is the reader and the page may never be seen by a person at all. A site can rank well on Google and still be opaque to an agent, and a site can be highly legible to agents while ranking modestly in classic search.
+
+The gap is widening as people ask assistants instead of typing queries. When an answer comes from a model rather than a list of links, the question is not where a site ranks but whether the model can read the site cleanly and is willing to cite it. That depends on the discovery and content surface, not on the usual ranking signals.
+
+This is why ranking on a search engine does not predict presence in an AI answer. They are scored on different things. A site that wants both has to do both, and the agent-readiness side is the one most teams have not started.
+
+turva.dev measures the agent-readiness side and reports exactly which checks pass or fail. For an audit, contact info@turva.dev.
+`,
+
+  "/guides/json-ld-structured-data": `# JSON-LD and structured data for agents
+
+JSON-LD is a block of structured data in a page that states facts in a form a machine can read without interpreting prose. It tells an agent what the page is about, who runs it, what it sells, and at what price, as data rather than as sentences an agent has to parse and might misread.
+
+A human reads a price from a layout and a currency symbol. An agent reading raw HTML has to guess which number is the price and which is a shipping estimate. A JSON-LD Offer with a price and a currency removes the guess. The same applies to the organisation behind a site, the services it offers, and the questions it answers, each expressed as a typed object an agent can rely on.
+
+Structured data also connects a page to the wider graph an agent builds. Declared types such as Organization, Service, FAQPage, and Article let an agent place a page in context and decide whether to trust and cite it. A page that states its facts as data is easier for a model to summarise correctly and to attribute.
+
+The cost of getting it wrong is silent. An agent does not report that it failed to parse a price, it just acts on a worse guess. Clean JSON-LD is one of the cheapest ways to make a page legible, and it sits in the same family as the response headers and well-known manifests an agent reads first.
+
+turva.dev declares JSON-LD for its organisation, the people behind it, its services, and its guides, and the next scan reads the structured data as present. For an audit of a site's structured data, contact info@turva.dev.
+`,
+
+  "/guides/well-known-for-agents": `# The /.well-known directory for agents
+
+The /.well-known directory is a standard place at the root of a site where agents look for machine-readable descriptions of what the site offers. Instead of crawling pages and guessing, an agent fetches a predictable path and reads a manifest that points it to everything else.
+
+The idea comes from a long-standing web convention and now carries the files agents care about. An API catalog at a well-known path, defined by RFC 9727, lets an agent enumerate a site's public APIs from a single URL. A server card describes an MCP server and its tools. OAuth metadata describes how to authenticate. Payment and agent-payment manifests describe how to transact. security.txt says where to report a problem.
+
+The value is that discovery becomes a lookup rather than a search. An agent that knows the convention can ask one predictable question and get a map, which is faster and far more reliable than inferring structure from rendered HTML. A site that publishes a complete well-known surface is announcing its capabilities in the language agents already speak.
+
+A missing or thin well-known directory does not break a site for people, but it leaves an agent to guess, and most agents will simply move on. Publishing the manifests an agent expects is the difference between a capability that exists and a capability an agent can find.
+
+turva.dev publishes an API catalog, a server card, OAuth metadata, payment manifests, and a security contact under /.well-known. For an audit of a site's discovery surface, contact info@turva.dev.
+`,
+
+  "/guides/agent-authentication": `# How agents authenticate
+
+Agent authentication is how an automated client proves who it is and gains scoped access to a site, without a human logging in first. It is the step that turns a read-only agent into one that can act on a user's behalf, and it has to be discoverable or the agent cannot begin.
+
+The pattern follows existing standards. OAuth discovery at a well-known path tells an agent where to request access and what scopes exist. An authorization server and a protected resource description let the agent ask for a token tied to a specific permission rather than a blanket login. When a site also advertises an agent registration flow, an agent can register and claim access on a user's behalf without someone provisioning credentials by hand.
+
+The reason this matters is trust and blast radius. A site that exposes capability without scoped, discoverable auth either stays closed to agents or invites unsafe workarounds. Proper discovery lets an agent request the least access it needs, and lets the site grant capability without handing over a password the agent should never see.
+
+A short auth description, sometimes published as an auth.md, gives an agent a human-readable entry point to the same flow. Together with OAuth discovery it answers the agent's first question about any action, which is how do I get permission to do this safely.
+
+turva.dev publishes OAuth discovery, a protected resource description, and an agent registration entry point, and it never requests production credentials in an engagement. For an audit of a site's authentication surface, contact info@turva.dev.
+`,
+
+  "/guides/measurement-led-agent-readiness": `# Why agent-readiness should be measured, not asserted
+
+Agent-readiness is a property you can measure, so it should be measured rather than claimed. A checklist that a team fills in by hand records intentions. An independent scanner records what an agent actually finds when it reads the site, and those two often disagree.
+
+The difference shows up the moment something changes. A header gets dropped in a deploy, or a manifest starts returning the wrong content type. A self-assessment still reads as done, because nobody re-ticked the box. A scan reads the live site and the category drops, which is the only signal that matches what an agent experiences.
+
+Measurement also makes a result legible to a buyer. A claim that a site is agent-ready is an assertion. A score from an independent scanner, with a category breakdown and a date, is evidence that can be checked. The honest version of the claim is the number, and the number can be re-run by anyone.
+
+This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com.
+
+For an audit that reports measured results rather than a checklist, contact info@turva.dev.
+`,
+
+  "/guides/prerendering-for-agents": `# Prerendering and why agents see empty pages
+
+Many sites render their content with JavaScript in the browser, which means the first response an agent receives is an almost empty shell. A person waits a moment and the page fills in. An agent that reads the raw response sees a loading state and little else, and it judges the site on that.
+
+This is the single most common reason a capable site is invisible to agents. The content exists, but it arrives after the agent has already read and moved on. Search crawlers have partly adapted to this over years. Many AI agents and fetchers have not, and they take the first response at face value.
+
+The fix is to serve the real content in the first response for clients that need it. Prerendering renders the page on the server or at the edge and returns finished HTML, so an agent reads the content immediately. A cleaner option for agents is to serve a markdown version of the page on request, which skips the rendering question entirely and costs a fraction of the tokens.
+
+The decision is not all or nothing. A site can keep its interactive experience for people and serve prerendered or markdown content to agents and bots, deciding by the request. On turva.dev that decision lives in a Cloudflare Worker that detects the client and returns the right form.
+
+For an audit of how a site renders for agents, contact info@turva.dev.
+`,
+
+  "/guides/sitemaps-and-robots-for-agents": `# Sitemaps, robots.txt and agent access
+
+robots.txt and the sitemap are the oldest machine-readable files on the web, and they still decide whether an agent is allowed in and what it can find. An agent reads robots.txt to learn the rules and the sitemap to learn the map, before it reads any page.
+
+robots.txt does two jobs for agents. It sets crawl rules, and it can name AI crawlers explicitly, so a site states whether it welcomes GPTBot and similar clients rather than leaving them to guess. A Content-Signal directive can go further and declare how content may be used, separating ordinary search from AI input and training, which gives a site granular control instead of an all-or-nothing block.
+
+The sitemap answers the other question, which is what exists. A complete sitemap lists every canonical URL with a last-modified date, so an agent can find the real pages without inferring them from navigation. A page that is not in the sitemap is a page an agent may never reach.
+
+Getting these wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident removes a site from that assistant's answers. A stale sitemap hides new pages. The files are small and the fix is fast, which is why they are the first thing a readiness review checks.
+
+turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a complete sitemap. For an audit of a site's crawl and access surface, contact info@turva.dev.
+`,
+
+  "/guides/markdown-for-agents": `# Serving markdown to agents
+
+An HTML page is built for a browser, and an agent that reads it pays for all the markup, scripts, and layout it does not need. Serving a markdown version of the same page gives an agent the content without the wrapper, which is both cheaper and less error-prone.
+
+The mechanism is content negotiation. An agent sends an Accept header asking for text/markdown, and the server returns the markdown form of the page at the same URL. A site can also publish llms-full.txt, a single file that bundles the whole site as text, so an agent can read everything in one request instead of fetching many pages.
+
+The saving is large. On turva.dev the markdown form of a page costs a small fraction of the tokens the HTML would, and the difference decides whether an agent reads a page in full or truncates it halfway. A model that runs out of budget on markup is a model that answers from a partial reading.
+
+Markdown delivery is not a separate site, it is the same content offered in a second form. The page stays as it is for people, and an agent that asks for text gets text. Paired with a clear llms.txt that lists where the content lives, it makes a site fast and reliable to read at machine speed.
+
+turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. For an audit of a site's content surface for agents, contact info@turva.dev.
+`,
+
+  "/guides/agent-readiness-gaps": `# Common agent-readiness gaps on marketing sites
+
+Most marketing sites are strong for people and weak for agents, and the gaps are predictable. A readiness review tends to find the same handful of misses, each of which quietly removes the site from an agent's view.
+
+The first is rendering. A site that builds its content with JavaScript returns an empty shell to an agent, so the content never arrives in the first response. The second is discovery. No llms.txt and a thin or missing sitemap, so an agent has nothing to read but rendered pages. The third is cost. Only HTML is offered, with no markdown form, so an agent spends its budget on markup and truncates the page.
+
+Beyond those, capability is usually undeclared. The site may have an API or a useful action, but with no server card or OAuth discovery, an agent cannot find or use it. Structured data is often missing too, so prices and facts are left for the agent to infer from layout.
+
+None of these are hard to fix, and that is the point. The work is mostly at the edge and in a few small files, and the result shows up immediately in a scanner. A site does not have to rebuild to become legible to agents, it has to publish what agents already look for.
+
+turva.dev runs this exact review and reports each gap with a concrete fix. For an audit, contact info@turva.dev.
 `
 };
 
@@ -1509,9 +1796,25 @@ var SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
  <url><loc>https://turva.dev/contact</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/legal</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
  <url><loc>https://turva.dev/auth.md</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>
+ <url><loc>https://turva.dev/guides</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+ <url><loc>https://turva.dev/guides/agent-readiness-audit</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/llms-txt</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/mcp-server-card</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/agents-json</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/x402-agent-payments</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/response-headers-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/seo-vs-agent-readiness</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/json-ld-structured-data</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/well-known-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/agent-authentication</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/measurement-led-agent-readiness</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/prerendering-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/sitemaps-and-robots-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/markdown-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/agent-readiness-gaps</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>`;
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -1545,6 +1848,86 @@ var META_BY_PATH = {
     title: "Legal · turva.dev",
     description: "Terms of engagement, privacy practices and GDPR information for turva.dev. Finnish law applies. No tracking, no analytics, no third-party scripts.",
     imageAlt: "Legal and privacy"
+  },
+  "/guides": {
+    title: "Agent-readiness guides | turva.dev",
+    description: "Short, focused guides on the surfaces that make a website or API readable and usable by AI agents. Audits, llms.txt, MCP, structured data, payments and more.",
+    imageAlt: "Agent-readiness guides"
+  },
+  "/guides/agent-readiness-audit": {
+    title: "What an agent-readiness audit is | turva.dev",
+    description: "An agent-readiness audit measures how well AI agents can discover, read, and act on a website or API, scored against current standards by independent scanners.",
+    imageAlt: "What an agent-readiness audit is"
+  },
+  "/guides/llms-txt": {
+    title: "llms.txt explained | turva.dev",
+    description: "llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives. What it is, why it matters, and how it differs from robots.txt and sitemaps.",
+    imageAlt: "llms.txt explained"
+  },
+  "/guides/mcp-server-card": {
+    title: "MCP server cards explained | turva.dev",
+    description: "An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and the tools it exposes. What it is and why it matters.",
+    imageAlt: "MCP server cards explained"
+  },
+  "/guides/agents-json": {
+    title: "What agents.json is | turva.dev",
+    description: "agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one. What it is and why it matters.",
+    imageAlt: "What agents.json is"
+  },
+  "/guides/x402-agent-payments": {
+    title: "x402 and agent payments | turva.dev",
+    description: "x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout. How agent payments work and why they matter.",
+    imageAlt: "x402 and agent payments"
+  },
+  "/guides/response-headers-for-agents": {
+    title: "Response headers that help agents | turva.dev",
+    description: "The right HTTP response headers let AI agents work without parsing full HTML. Link, Vary, RateLimit and content type headers explained for agent-readiness.",
+    imageAlt: "Response headers that help agents"
+  },
+  "/guides/seo-vs-agent-readiness": {
+    title: "SEO and agent-readiness are not the same | turva.dev",
+    description: "SEO makes a site rank for people to click. Agent-readiness makes a site legible and usable by AI agents. Why ranking on Google does not predict presence in AI answers.",
+    imageAlt: "SEO and agent-readiness are not the same"
+  },
+  "/guides/json-ld-structured-data": {
+    title: "JSON-LD and structured data for agents | turva.dev",
+    description: "JSON-LD states a page's facts as data an AI agent can read without parsing prose. How structured data makes prices, organisations and services legible to agents.",
+    imageAlt: "JSON-LD and structured data for agents"
+  },
+  "/guides/well-known-for-agents": {
+    title: "The /.well-known directory for agents | turva.dev",
+    description: "The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata.",
+    imageAlt: "The /.well-known directory for agents"
+  },
+  "/guides/agent-authentication": {
+    title: "How agents authenticate | turva.dev",
+    description: "Agent authentication lets an automated client gain scoped access without a human login. OAuth discovery, protected resources and agent registration explained.",
+    imageAlt: "How agents authenticate"
+  },
+  "/guides/measurement-led-agent-readiness": {
+    title: "Why agent-readiness should be measured, not asserted | turva.dev",
+    description: "A hand-filled checklist records intentions. An independent scanner records what an agent actually finds. Why measured agent-readiness beats self-assessment.",
+    imageAlt: "Why agent-readiness should be measured, not asserted"
+  },
+  "/guides/prerendering-for-agents": {
+    title: "Prerendering and why agents see empty pages | turva.dev",
+    description: "JavaScript-rendered sites return an empty shell to agents, so the content never arrives. Why prerendering and markdown delivery fix the most common agent gap.",
+    imageAlt: "Prerendering and why agents see empty pages"
+  },
+  "/guides/sitemaps-and-robots-for-agents": {
+    title: "Sitemaps, robots.txt and agent access | turva.dev",
+    description: "robots.txt and the sitemap decide whether an agent is allowed in and what it can find. AI bot rules, Content Signals and complete sitemaps explained.",
+    imageAlt: "Sitemaps, robots.txt and agent access"
+  },
+  "/guides/markdown-for-agents": {
+    title: "Serving markdown to agents | turva.dev",
+    description: "Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens. How content negotiation and llms-full.txt work.",
+    imageAlt: "Serving markdown to agents"
+  },
+  "/guides/agent-readiness-gaps": {
+    title: "Common agent-readiness gaps on marketing sites | turva.dev",
+    description: "Most marketing sites are strong for people and weak for agents. The predictable gaps in rendering, discovery, cost, capability and structured data, and how to fix them.",
+    imageAlt: "Common agent-readiness gaps on marketing sites"
   }
 };
 
@@ -1775,6 +2158,164 @@ function serveMarkdown(body, canonicalUrl) {
   return new Response(body, { status: 200, headers });
 }
 
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function renderInline(text) {
+  let out = escapeHtml(text);
+  out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, label, href) => {
+    return `<a href="${escapeHtml(href)}">${label}</a>`;
+  });
+  out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  out = out.replace(/(^|[\s(])(info@turva\.dev)/g, '$1<a href="mailto:info@turva.dev">$2</a>');
+  return out;
+}
+
+function markdownToHtml(md) {
+  const blocks = md.replace(/\r\n/g, "\n").split(/\n{2,}/);
+  const html = [];
+  for (const block of blocks) {
+    const trimmed = block.trim();
+    if (!trimmed) continue;
+    if (trimmed.startsWith("## ")) {
+      html.push(`<h2>${renderInline(trimmed.slice(3).trim())}</h2>`);
+    } else if (trimmed.startsWith("# ")) {
+      html.push(`<h1>${renderInline(trimmed.slice(2).trim())}</h1>`);
+    } else if (/^- /.test(trimmed)) {
+      const items = trimmed.split("\n").filter((l) => /^- /.test(l.trim())).map((l) => `<li>${renderInline(l.trim().slice(2).trim())}</li>`).join("");
+      html.push(`<ul>${items}</ul>`);
+    } else {
+      html.push(`<p>${renderInline(trimmed)}</p>`);
+    }
+  }
+  return html.join("\n");
+}
+
+// Guide pages are worker-owned content that does not exist on the Sitejet
+// origin, so they are rendered to HTML here rather than proxied. Agents that
+// send Accept: text/markdown are served PAGE_MARKDOWN earlier; this is the
+// human/HTML representation.
+function buildGuideJsonLd(pathname, canonicalUrl) {
+  const m = META_BY_PATH[pathname] || META_BY_PATH["/"];
+  const headline = m.title.replace(/ \| turva\.dev$/, "");
+  const url = canonicalUrl || "https://turva.dev" + pathname;
+  const article = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": headline,
+    "description": m.description,
+    "url": url,
+    "inLanguage": "en",
+    "author": { "@type": "Person", "name": "Erik Rekola", "url": "https://turva.dev/" },
+    "publisher": { "@type": "Organization", "name": "turva.dev", "url": "https://turva.dev/" },
+    "isPartOf": { "@type": "WebSite", "name": "turva.dev", "url": "https://turva.dev/" },
+    "about": "agent-readiness"
+  };
+  const json = JSON.stringify(article).replace(/<\/script/gi, "<\\/script");
+  return `<script type="application/ld+json">
+${json}
+<\/script>`;
+}
+
+var GUIDES_FAQ = [
+  {
+    q: "What is an agent-readiness audit?",
+    a: "An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API, scored against current standards by an independent scanner rather than a self-assessment."
+  },
+  {
+    q: "Do I need llms.txt on my site?",
+    a: "If you want models and agents to read your real content rather than guess from a cached snippet, llms.txt gives them a curated map of what matters. It does not replace robots.txt or a sitemap, it complements them."
+  },
+  {
+    q: "How do I get my site cited by AI assistants?",
+    a: "A model cites content it can read cleanly and corroborate. That means machine-readable surfaces such as llms.txt and structured data, a markdown form that does not exhaust the token budget, and being indexed where the assistant searches."
+  },
+  {
+    q: "What is an MCP server card?",
+    a: "An MCP server card is a JSON file, usually at /.well-known/mcp/server-card.json, that lets an agent discover a site's Model Context Protocol server and the tools it exposes, so the agent can call them without a human wiring up the connection."
+  },
+  {
+    q: "Is agent-readiness the same as SEO?",
+    a: "No. SEO makes a site rank for a person to click. Agent-readiness makes a site legible and usable by an agent that reads and acts. A site can rank well and still be opaque to agents."
+  },
+  {
+    q: "How is agent-readiness measured?",
+    a: "By an independent scanner that reads the live site and reports a score with a category breakdown. The categories that get fixed read higher on the next scan, so the claim is the number rather than an assertion."
+  }
+];
+
+function buildGuidesFaqJsonLd() {
+  const faq = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "inLanguage": "en",
+    "mainEntity": GUIDES_FAQ.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": { "@type": "Answer", "text": item.a }
+    }))
+  };
+  const json = JSON.stringify(faq).replace(/<\/script/gi, "<\\/script");
+  return `<script type="application/ld+json">
+${json}
+<\/script>`;
+}
+
+function serveGuideHtml(pathname, canonicalUrl) {
+  const md = PAGE_MARKDOWN[pathname];
+  const metaBlock = buildMetaBlock(pathname, canonicalUrl);
+  const jsonLd = buildGuideJsonLd(pathname, canonicalUrl) +
+    (pathname === "/guides" ? "\n" + buildGuidesFaqJsonLd() : "");
+  const article = markdownToHtml(md);
+  const body = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+${metaBlock}
+${jsonLd}
+<link rel="canonical" href="${canonicalUrl}" />
+<link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
+<style>
+html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;}
+main{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 4rem;}
+h1{color:#5DF18F;font-size:2rem;line-height:1.2;margin:0 0 1.5rem;}
+h2{color:#5DF18F;font-size:1.35rem;margin:2.25rem 0 0.75rem;}
+p{margin:0 0 1.1rem;}
+ul{margin:0 0 1.1rem 1.25rem;padding:0;}
+li{margin:0 0 0.35rem;}
+a{color:#5DF18F;}
+nav{margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.15);font-size:0.95rem;}
+nav a{margin-right:1.25rem;}
+</style>
+</head>
+<body>
+<main>
+<article>
+${article}
+</article>
+<nav>
+<a href="https://turva.dev/">Home</a>
+<a href="https://turva.dev/guides">Guides</a>
+<a href="https://turva.dev/services">Services</a>
+<a href="https://turva.dev/contact">Contact</a>
+</nav>
+</main>
+</body>
+</html>`;
+  const headers = new Headers({
+    "content-type": "text/html; charset=utf-8",
+    "cache-control": "public, max-age=3600",
+    "vary": "Accept",
+    "content-language": "en"
+  });
+  appendAgentLinks(headers);
+  applySecurityHeaders(headers, "html");
+  headers.append("Link", `<${canonicalUrl}>; rel="alternate"; type="text/markdown"`);
+  return new Response(body, { status: 200, headers });
+}
+
 var X402_ROUTES = {
   "/api/agent/audit": {
     label: "Audit",
@@ -1848,6 +2389,30 @@ var worker_default = {
       const errResponse = new Response("Internal Server Error", { status: 500, headers: errHeaders });
       return isHead ? stripBody(errResponse) : errResponse;
     }
+  },
+  async scheduled(event, env, ctx) {
+    try {
+      const urlList = Array.from(CANONICAL_PATHS).map((p) =>
+        p === "/" ? "https://turva.dev/" : "https://turva.dev" + p
+      );
+      const body = JSON.stringify({
+        host: "turva.dev",
+        key: INDEXNOW_KEY,
+        keyLocation: "https://turva.dev/" + INDEXNOW_KEY + ".txt",
+        urlList
+      });
+      ctx.waitUntil(
+        fetch("https://api.indexnow.org/indexnow", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body
+        }).catch((err) => {
+          console.error("IndexNow submit failed:", err && err.stack ? err.stack : String(err));
+        })
+      );
+    } catch (err) {
+      console.error("IndexNow scheduled error:", err && err.stack ? err.stack : String(err));
+    }
   }
 };
 
@@ -1903,10 +2468,20 @@ async function handleRequest(request, env) {
     return serveMarkdown(PAGE_MARKDOWN[pathname], canonicalUrl);
   }
 
+  // Guide pages are worker-owned and not present on the Sitejet origin, so the
+  // worker renders the HTML representation directly instead of proxying. The
+  // /guides hub is rendered through the same path as the /guides/* sub-pages.
+  if ((pathname === "/guides" || pathname.startsWith("/guides/")) && PAGE_MARKDOWN[pathname]) {
+    return serveGuideHtml(pathname, "https://turva.dev" + pathname);
+  }
+
   if (pathLower === "/auth.md") {
     return serveStatic(AUTH_MD, "text/markdown; charset=utf-8", "agent-api");
   }
 
+  if (pathname === "/" + INDEXNOW_KEY + ".txt") {
+    return serveStatic(INDEXNOW_KEY, "text/plain; charset=utf-8", "agent-api");
+  }
   if (pathLower === "/robots.txt") return serveStatic(ROBOTS_TXT, "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/.well-known/api-catalog" || pathLower === "/api-catalog") {
     return serveStatic(API_CATALOG, "application/linkset+json; charset=utf-8", "agent-api");
