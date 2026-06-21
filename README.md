@@ -1,12 +1,12 @@
 # turvadev-pretender
 
-Cloudflare Worker that serves deterministic head metadata, JSON-LD, and `/.well-known/` manifests for [turva.dev](https://turva.dev). AI agents and scanners read the same payload regardless of CMS state.
+Cloudflare Worker that renders every page of [turva.dev](https://turva.dev) at the edge, with deterministic head metadata, JSON-LD, and `/.well-known/` manifests. AI agents and scanners read the same payload as humans, straight from the Worker.
 
 This repository is the open-source reference implementation behind turva.dev, which ranks #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and scores a perfect 100 / 100 Level 5 Agent-Native on Cloudflare Agent-Ready. The Worker is public on purpose: a buyer can read every line before deciding anything.
 
 ## What it does
 
-* Injects a canonical `&lt;head&gt;` (meta, OpenGraph, JSON-LD, canonical) on every HTML response.
+* Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `&lt;head&gt;` (meta, OpenGraph, JSON-LD, canonical).
 * Serves `/.well-known/` files agents look for: `ai.txt`, `llms.txt`, `agents.json`, `mcp/server-card.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, `auth`.
 * Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
 
@@ -82,15 +82,15 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 
 ## How it works
 
-The Worker sits in front of the origin. Every HTML response is intercepted, the `&lt;head&gt;` is replaced with a canonical block built from a single source-of-truth object in the Worker. Non-HTML agent routes (`/.well-known/*`, `robots.txt`, `sitemap.xml`, `/x402`) are served directly from the Worker, bypassing the origin.
+The Worker renders the whole site at the edge. Every page is built from a single source-of-truth object in the Worker: page content as markdown, plus a shared canonical `&lt;head&gt;` and JSON-LD. There is no separate CMS or origin to proxy. Agent routes (`/.well-known/*`, `robots.txt`, `sitemap.xml`, `/x402`) are served from the same Worker, and static assets such as images come from Workers Assets.
 
-A CMS change, theme update, or misconfigured plugin cannot break the metadata that agents and scanners see.
+Because the site has no CMS, theme, or plugins, nothing can drift between what humans see and what agents and scanners see.
 
 ## Endpoints
 
 | Path | Purpose |
 |---|---|
-| `/` and all HTML routes | Head injection on origin response |
+| `/` and all HTML routes | Rendered by the Worker from markdown |
 | `/.well-known/ai.txt` | AI agent disclosure |
 | `/.well-known/llms.txt` | LLM consumption guide |
 | `/.well-known/agents.json` | Agent skills manifest |
@@ -107,11 +107,10 @@ A CMS change, theme update, or misconfigured plugin cannot break the metadata th
 
 ## Deploy
 
-Requires a Cloudflare account and `wrangler` CLI. `PRERENDER_TOKEN` is required, not optional: the Worker uses it to authenticate against the origin, and without it the Worker will not serve pages correctly. Set the secret before deploying.
+Requires a Cloudflare account and the `wrangler` CLI. No runtime secret is needed; the Worker renders the whole site itself.
 ```
 cd turvadev-pretender
 npm install
-npx wrangler secret put PRERENDER_TOKEN
 npx wrangler deploy
 ```
 
@@ -119,7 +118,7 @@ Route the Worker to your domain under **Workers &amp; Pages, your-worker, Settin
 
 ## Use it for your own site
 
-MIT licensed. Fork it, replace the source-of-truth object with your own data, set the required `PRERENDER_TOKEN` secret, deploy.
+MIT licensed. Fork it, replace the source-of-truth object with your own data, and deploy.
 
 If you want an audit of your domain against the same scanner set and a tailored configuration, see [turva.dev](https://turva.dev) or [Erik Rekola on LinkedIn](https://www.linkedin.com/in/erikrekola).
 
