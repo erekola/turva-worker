@@ -1,6 +1,9 @@
 {
   "name": "turvadev-pretender",
   "main": "src/worker.js",
+  "assets": {
+    "directory": "./public"
+  },
   "workers_dev": true,
   "preview_urls": false,
   "compatibility_date": "2026-04-09",

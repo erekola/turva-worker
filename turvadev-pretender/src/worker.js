@@ -205,6 +205,13 @@ var LLMS_TXT = `# turva.dev
 - [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
 - [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
+- [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery)
+
+## Build log
+- [Build log](https://turva.dev/blog)
+- [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity)
+- [Passing the agent commerce checks without faking them](https://turva.dev/blog/honest-agent-commerce-checks)
+- [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender)
 
 ## Pricing (EUR, VAT not included)
 - Audit: €6,500 (fixed scope, 2-3 weeks)
@@ -327,6 +334,132 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog": `# Build log
+
+Notes on how turva.dev is built and measured. Each entry is dated, and the claims are verifiable by independent agent-readiness scanners.
+
+- [Owning your fediverse identity](/blog/owning-your-fediverse-identity). 2026-06-21.
+- [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks). 2026-06-21.
+- [Moving turva.dev off prerender.io](/blog/moving-off-prerender). 2026-06-20.
+`,
+  "/blog/moving-off-prerender": `# Moving turva.dev off prerender.io
+
+2026-06-20
+
+For a while the turva.dev homepage was rendered by a third party. The page was built on Sitejet, served to people as a JavaScript app, and served to agents through prerender.io, which returned a finished HTML snapshot so a crawler did not read an empty shell. It worked and it scored well, but it was a workaround. A site that sells agent-readiness should not depend on a separate service to be readable by agents.
+
+Today the homepage moved into the Cloudflare Worker that already fronts the domain. The Worker renders the finished HTML itself, on every request, at the edge. There is no client-side hydration step and no prerender hop. An agent reads the real content in the first response, and so does a person.
+
+## What the Worker returns
+
+The Worker decides by the request. A browser asking for HTML gets the rendered page. An agent that sends Accept: text/markdown gets a markdown version of the same content, at a fraction of the tokens. An agent that sends Accept: application/json gets a structured summary of the business and its services. The same facts, in the form the client asked for.
+
+## What this removed
+
+The prerender.io branch is gone from the Worker. No request is sent to an external prerender service, and the token it used is no longer read. Sitejet now serves only static assets such as the social image, and those move to the Worker next. The page is one codebase, under version control, open source at github.com/busygoat/turvadev-pretender.
+
+## The result is measured, not asserted
+
+The change was verified the same way the service verifies client work: by independent scanners, before and after. StartupHub read 100/100, grade A+, with all six categories at 100. isitagentready read Level 5, Agent-Native. The homepage migration did not drop a point.
+
+One more note. This change was planned and deployed in a single session with an AI agent, and the result was checked by two independent scanners with no stake in the outcome. The claims on this site are measurements anyone can reproduce. Either the next scan reads the same or higher, or it does not.
+
+Written contact only. Email info@turva.dev, Signal @turva.19. First reply within one business day.
+`,
+  "/blog/honest-agent-commerce-checks": `# Passing the agent commerce checks without faking them
+
+2026-06-21
+
+turva.dev measures its own agent-readiness with two independent scanners. On startuphub.ai it ranks first among the publicly-scanned sites on the agent-readiness leaderboard at 100/100. On isitagentready.com, which checks 21 separate standards, it reaches Level 5. This is the log of taking the isitagentready commerce checks from mostly red to mostly green, without claiming a single capability the site does not actually have.
+
+## What was failing
+
+The site sat at Level 5, but four checks in the discovery and commerce categories were red: the A2A Agent Card, AP2 agent payments, ACP discovery, and x402. Each red check is a claim an agent cannot verify. The job was to clear them honestly and to keep the startuphub.ai score at 100 while doing it.
+
+## The A2A Agent Card
+
+An A2A Agent Card is a JSON file at /.well-known/agent-card.json that describes an agent interface, including its name, version, transport, and the skills it offers. turva now publishes one that points at its read-only HTTP and JSON surface, with skills that mirror the existing agent-skills index. The change was additive, a new file and a route, so it could not move the startuphub.ai score. The check went green.
+
+## The AP2 trap
+
+AP2 is the Agent Payments Protocol. A merchant declares support by adding an extension entry to its A2A card. The isitagentready fix text gave the extension URI as github.com/google-agentic-commerce/AP2/tree/v0.1.0. I used exactly that, and the check stayed red. The scanner validates against the real specification, which uses github.com/google-agentic-commerce/ap2/tree/v0.1, lowercase, version v0.1. The helper text was wrong and the spec was right. Once the URI matched the spec, AP2 went green. The lesson is to copy protocol identifiers from the specification, not from a fix message.
+
+## ACP, the honest way
+
+ACP is the Agentic Commerce Protocol. Its discovery document at /.well-known/acp.json had the wrong shape. The capabilities.services field has to be an array of strings from a closed set, and the site was sending an array of custom service objects. Editing that one field would have turned the check green on its own, because the scanner only reads the discovery file. It never calls the checkout endpoint.
+
+That was the shortcut, and it was the wrong one. A discovery document that says it supports checkout while the checkout URL returns nothing is a broken promise to any agent that follows it. So the site got a real, if minimal, checkout endpoint instead. POST /api/acp/checkout_sessions creates a genuine session for the audit. The session comes back in the not_ready_for_payment state with a message that the engagement is scoped and confirmed in writing within one business day. That is not a workaround. It is the actual model, async and quote first, so instant agent payment is not offered. The check is green because the claim is true.
+
+## What stays red, on purpose
+
+Two checks remain red and will stay that way. isitagentready reports x402 as missing, yet the site serves a working x402 endpoint that returns HTTP 402 with payment terms, and startuphub.ai reads it as present. The isitagentready probe looks at paths the site does not use for that purpose, and the only way to satisfy it would disturb surfaces that are already correct. Web Bot Auth is for sites that send signed bot requests to other sites, and turva only receives traffic, so it has no bot to authenticate. Publishing signing keys it never uses would be the same hollow signal the ACP shortcut would have been. Both scanners treat this check as informational rather than a failure.
+
+## The rule
+
+Every change was additive, and the startuphub.ai score read 100/100 on every re-scan. The principle is the one the whole site runs on. A scanner number is worth something only if it reflects what an agent actually finds, so a green check that lies is worth less than an honest red one. The worker that produces these results is open source at github.com/busygoat/turvadev-pretender, readable line by line.
+
+For an agent-readiness audit that reports measured results, contact info@turva.dev.
+`,
+  "/guides/agent-commerce-discovery": `# Agent commerce discovery: A2A, AP2, and ACP
+
+Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Three machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration inside it, and an ACP discovery document. Each answers a different question, and an agent reads them before it sends a single commerce request.
+
+## The A2A Agent Card
+
+An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that describes an agent interface. It states the agent's name, version, and description, the interface it exposes with a service URL and a transport, the capabilities it declares, and the skills it offers, each skill carrying an id, a name, and a description. The Agent2Agent protocol uses the card so one agent can discover another and know how to reach it.
+
+The card is most useful when its skills mirror surfaces an agent can already reach, such as a service catalog or contact information. A skill that points nowhere is worse than no skill at all.
+
+## AP2 and the version that matters
+
+AP2 is the Agent Payments Protocol. A merchant declares support not as a separate file but as an extension entry inside the A2A Agent Card. The entry carries the extension URI, a role such as merchant, and a flag marking it required.
+
+The detail that trips people up is the URI. Some helper guides write it as github.com/google-agentic-commerce/AP2/tree/v0.1.0, with an uppercase name and a three-part version. The specification uses github.com/google-agentic-commerce/ap2/tree/v0.1, lowercase, version v0.1. A scanner that validates against the specification rejects the uppercase form even when everything else is correct. Copy the URI from the spec, not from a fix message.
+
+## ACP discovery and checkout
+
+ACP is the Agentic Commerce Protocol, and it has two parts that are easy to confuse. The first is a discovery document at /.well-known/acp.json. The second is the checkout API the document points to.
+
+The discovery document is small and strict. It states the protocol name acp and a version, the api_base_url, a transports array, and a capabilities.services array. The services value is a closed set of strings such as checkout, not a list of product objects. Sending the wrong type is the most common reason an otherwise complete document fails validation.
+
+A discovery check usually reads only the document, not the checkout endpoint behind it. That makes it tempting to declare a service the site does not implement, because the check passes either way. An agent that trusts the document and calls the checkout URL would then reach nothing.
+
+## A minimal honest checkout
+
+A checkout endpoint does not have to support instant payment to be real. The ACP checkout session carries a status field, and one of its values is not_ready_for_payment. A site that sells through a written quote can create a genuine session, return it in that state, and attach a message that the engagement is confirmed in writing first. The agent receives a well-formed session that reflects how the business actually works, and the discovery claim holds because the endpoint behind it answers.
+
+## Publish what is true
+
+These surfaces exist so an agent can act without guessing, which only holds when every claim resolves to something real. A card whose skills lead nowhere breaks the same way a checkout that never responds does, because the agent follows the signal and finds nothing. Publish what is true, and back each declaration with a surface that answers.
+
+turva.dev publishes an A2A Agent Card, an AP2 merchant declaration, and an ACP discovery document with a working checkout endpoint, verified by independent scanners. For an audit of a site's agent commerce surface, contact info@turva.dev.
+`,
+  "/blog/owning-your-fediverse-identity": `# Owning your fediverse identity
+
+2026-06-21
+
+turva.dev runs on one rule: own the surfaces that carry your value, do not rent them. That rule moved the homepage off a third-party renderer, and it applies to identity too. My fediverse handle is now [@erik@turva.dev](https://social.turva.dev/@erik), on infrastructure I control, not a username on someone else's server.
+
+## Why the handle matters
+
+A platform handle is a dependency. If the server you joined changes its rules, slows down, or shuts off, your identity and your followers are stuck on it. The same logic that says frontier model access is not a moat says a platform username is not an identity. The address people use to find you should resolve to a domain you own.
+
+## How the split works
+
+Mastodon lets the handle domain and the server domain differ. The account lives at social.turva.dev, but the handle is [@erik@turva.dev](https://social.turva.dev/@erik). For that to work, turva.dev has to answer the discovery requests a remote server makes before it can reach the account.
+
+The Cloudflare Worker that already fronts the apex does this. It redirects the well-known paths the fediverse asks for, host-meta and webfinger and nodeinfo, to the instance. Everything else the apex serves stays exactly as it was: the guides, the markdown, the agent manifests, the structured data. The same Worker that makes the site legible to agents now also carries the identity.
+
+## Verified, not asserted
+
+The profile links to turva.dev, and turva.dev links back to the profile with a rel="me" relation. Mastodon checks both directions and marks the link verified. It is the same standard as the rest of the site. The claim is checkable rather than taken on trust.
+
+## The principle
+
+Identity is infrastructure. If it lives on a domain you own, you can change servers, change hosts, or self-host later without changing your address or losing your followers. Renting the frontier is fine. Renting your name is not.
+
+Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). For an agent-readiness audit, contact info@turva.dev.
+`,
   "/": `# Agent-readiness audits and advisory
 
 Agent-readiness audits and advisory for product teams. Independent
@@ -399,6 +532,7 @@ questions. First reply within one business day.
 - [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
 - [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
+- [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery)
 `,
 
   "/services": `# Services
@@ -588,7 +722,7 @@ privacy practices of the site, and the default terms for engagements.
 ## Operator
 
 turva.dev is operated by Erik Rekola, Business ID 3600281-7,
-registered in Finland as a sole proprietorship (toiminimi).
+registered in Finland as a sole proprietorship.
 VAT-registered.
 
 Contact: <mailto:info@turva.dev>
@@ -664,14 +798,19 @@ cookies and do not require consent under EU law.
 This page is updated when the terms change. The current version
 applies to engagements started after the date below.
 
-Last updated: 2026-05-28.
+Last updated: 2026-06-20.
 `,
 
   "/guides": `# Agent-readiness guides
 
-Short, focused explanations of the surfaces that decide whether an AI agent can discover, read, and act on a website or an API. Each guide covers one topic.
+These short guides explain, in plain language, what makes a website or an API easy for AI agents to read and use. Each one covers a single topic and takes a few minutes to read. They are free, and they cover the same surfaces an agent-readiness audit measures.
+
+Not sure where to start? The first guide explains what an agent-readiness audit is.
 
 ## Discovery and content
+
+How an agent finds your site and reads it without getting lost.
+
 - [What an agent-readiness audit is](https://turva.dev/guides/agent-readiness-audit)
 - [How to get your site cited by AI assistants](https://turva.dev/guides/get-cited-by-ai-assistants)
 - [llms.txt explained](https://turva.dev/guides/llms-txt)
@@ -681,6 +820,9 @@ Short, focused explanations of the surfaces that decide whether an AI agent can 
 - [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
 
 ## Capability and trust
+
+How a site tells an agent what it is allowed to do, and shows it is safe to use.
+
 - [MCP server cards explained](https://turva.dev/guides/mcp-server-card)
 - [What agents.json is](https://turva.dev/guides/agents-json)
 - [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
@@ -688,7 +830,11 @@ Short, focused explanations of the surfaces that decide whether an AI agent can 
 - [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
 
 ## Commerce and strategy
+
+Paying agents, how this differs from SEO, and how to choose and measure an audit.
+
 - [x402 and agent payments](https://turva.dev/guides/x402-agent-payments)
+- [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery)
 - [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
 - [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
@@ -696,22 +842,28 @@ Short, focused explanations of the surfaces that decide whether an AI agent can 
 
 ## Frequently asked
 
-### What is an agent-readiness audit?
+**What is an agent-readiness audit?**
+
 An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API, scored against current standards by an independent scanner rather than a self-assessment.
 
-### Do I need llms.txt on my site?
+**Do I need llms.txt on my site?**
+
 If you want models and agents to read your real content rather than guess from a cached snippet, llms.txt gives them a curated map of what matters. It does not replace robots.txt or a sitemap, it complements them.
 
-### How do I get my site cited by AI assistants?
+**How do I get my site cited by AI assistants?**
+
 A model cites content it can read cleanly and corroborate. That means machine-readable surfaces such as llms.txt and structured data, a markdown form that does not exhaust the token budget, and being indexed where the assistant searches.
 
-### What is an MCP server card?
+**What is an MCP server card?**
+
 An MCP server card is a JSON file, usually at /.well-known/mcp/server-card.json, that lets an agent discover a site's Model Context Protocol server and the tools it exposes, so the agent can call them without a human wiring up the connection.
 
-### Is agent-readiness the same as SEO?
+**Is agent-readiness the same as SEO?**
+
 No. SEO makes a site rank for a person to click. Agent-readiness makes a site legible and usable by an agent that reads and acts. A site can rank well and still be opaque to agents.
 
-### How is agent-readiness measured?
+**How is agent-readiness measured?**
+
 By an independent scanner that reads the live site and reports a score with a category breakdown. The categories that get fixed read higher on the next scan, so the claim is the number rather than an assertion.
 
 For an audit, contact info@turva.dev.
@@ -1085,6 +1237,7 @@ var API_CATALOG = JSON.stringify({
     ],
     "service-meta": [
       { "href": "https://turva.dev/.well-known/mcp/server-card.json", "type": "application/json", "title": "MCP Server Card" },
+      { "href": "https://turva.dev/.well-known/agent-card.json", "type": "application/json", "title": "A2A Agent Card" },
       { "href": "https://turva.dev/.well-known/agent-skills/index.json", "type": "application/json", "title": "Agent Skills Index" },
       { "href": "https://turva.dev/.well-known/oauth-authorization-server", "type": "application/json", "title": "OAuth Authorization Server" },
       { "href": "https://turva.dev/.well-known/oauth-protected-resource", "type": "application/json", "title": "OAuth Protected Resource Metadata" },
@@ -1334,111 +1487,120 @@ var AP2_MANIFEST = JSON.stringify({
 }, null, 2);
 
 // ============================================================
-// ACP — enriched capabilities.services
+// ACP — spec-compliant discovery (services = closed string enum). Real checkout: /api/acp/checkout_sessions
 // ============================================================
 var ACP_MANIFEST = JSON.stringify({
-  "$schema": "https://agenticcommerce.dev/schemas/manifest/v1.json",
   "protocol": {
     "name": "acp",
-    "version": "2025-09-29",
-    "spec_url": "https://www.agenticcommerce.dev/"
+    "version": "2026-01-16",
+    "supported_versions": ["2026-01-16"],
+    "documentation_url": "https://turva.dev/services"
   },
-  "acp_version": "1.0",
   "api_base_url": "https://turva.dev/api/acp",
-  "supported_transports": ["https", "http+json"],
-  "transports": ["https", "http+json"],
-  "merchant": {
-    "id": "turva-dev",
-    "name": "turva.dev",
-    "legal_name": "Erik Rekola",
-    "business_id": "3600281-7",
-    "country": "FI",
-    "url": "https://turva.dev/",
-    "category": "professional_services",
-    "subcategory": "agent_readiness_consulting"
-  },
+  "transports": ["rest"],
   "capabilities": {
-    "services": [
-      {
-        "id": "audit",
-        "name": "Agent-readiness audit",
-        "type": "one_time",
-        "description": "Fixed scope, 2-3 weeks. Scanner sweep + manual review + written report.",
-        "url": "https://turva.dev/services",
-        "available": true,
-        "price": { "amount": 650000, "currency": "EUR" },
-        "currency": "EUR",
-        "duration": "P3W"
-      },
-      {
-        "id": "advisory",
-        "name": "Continuous advisory",
-        "type": "subscription",
-        "interval": "month",
-        "minimum_commitment_months": 3,
-        "description": "Monthly re-scan, score delta report, written review, roadmap input.",
-        "url": "https://turva.dev/services",
-        "available": true,
-        "price": { "amount": 300000, "currency": "EUR" },
-        "currency": "EUR"
-      },
-      {
-        "id": "implementation",
-        "name": "Implementation day",
-        "type": "one_time",
-        "description": "Hands-on work, scoped per task.",
-        "url": "https://turva.dev/services",
-        "available": true,
-        "price": { "amount": 150000, "currency": "EUR" },
-        "currency": "EUR",
-        "duration": "P1D"
-      }
-    ],
-    "checkout": true,
-    "instant_checkout_enabled": false,
-    "quote_on_request": true,
-    "payment": {
-      "providers": ["stripe", "x402"],
-      "x402": { "network": "base", "asset": "USDC" }
-    }
-  },
-  "checkout_configuration": {
-    "instant_checkout_enabled": false,
-    "guest_checkout_allowed": true,
-    "requires_shipping": false,
-    "digital_delivery": true,
-    "supported_currencies": ["EUR", "USD"],
-    "tax_handling": "merchant_calculated"
-  },
-  "payment_methods": {
-    "stripe": { "enabled": false },
-    "x402": {
-      "enabled": true,
-      "network": "base",
-      "asset": "USDC"
-    },
-    "invoice": {
-      "enabled": true,
-      "terms": "net 14"
-    }
-  },
-  "agent_permissions": {
-    "can_view_catalog": true,
-    "can_request_quote": true,
-    "can_initiate_checkout": false,
-    "can_complete_purchase": false,
-    "requires_user_confirmation": true
-  },
-  "contact": {
-    "email": "info@turva.dev",
-    "signal": "@turva.19",
-    "languages": ["en"]
+    "services": ["checkout"],
+    "supported_currencies": ["eur"]
   }
 }, null, 2);
 
 // ============================================================
 // X402 — manifest with full accepts[] array
 // ============================================================
+var A2A_AGENT_CARD = JSON.stringify({
+  "protocolVersion": "0.3.0",
+  "name": "turva.dev",
+  "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
+  "url": "https://turva.dev",
+  "preferredTransport": "HTTP+JSON",
+  "version": "3.7.0",
+  "provider": {
+    "organization": "turva.dev",
+    "url": "https://turva.dev/"
+  },
+  "documentationUrl": "https://turva.dev/llms.txt",
+  "iconUrl": "https://turva.dev/og.jpg",
+  "supportedInterfaces": [
+    {
+      "url": "https://turva.dev",
+      "transport": "HTTP+JSON"
+    }
+  ],
+  "additionalInterfaces": [
+    {
+      "url": "https://turva.dev",
+      "transport": "HTTP+JSON"
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": false,
+    "extensions": [
+      {
+        "uri": "https://github.com/google-agentic-commerce/ap2/tree/v0.1",
+        "description": "AP2 agent payments. turva.dev acts as merchant. Payment is quote-on-request, settled via x402 on Base (USDC).",
+        "required": true,
+        "params": {
+          "roles": [
+            "merchant"
+          ]
+        }
+      }
+    ]
+  },
+  "defaultInputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "skills": [
+    {
+      "id": "services",
+      "name": "Service catalog",
+      "description": "List the service offerings of turva.dev with prices in EUR (audit, advisory, implementation).",
+      "tags": [
+        "services",
+        "pricing",
+        "agent-readiness"
+      ],
+      "examples": [
+        "What does an agent-readiness audit cost?",
+        "List turva.dev services"
+      ]
+    },
+    {
+      "id": "contact-info",
+      "name": "Contact channels",
+      "description": "Get the primary contact channels for turva.dev (email, Signal, LinkedIn, business ID). Async-only engagement, no calls.",
+      "tags": [
+        "contact",
+        "async"
+      ],
+      "examples": [
+        "How do I contact turva.dev?",
+        "What is the turva.dev email?"
+      ]
+    },
+    {
+      "id": "company-info",
+      "name": "Company information",
+      "description": "Get business details and background about turva.dev and its operator Erik Rekola, including the registered business ID.",
+      "tags": [
+        "company",
+        "about"
+      ],
+      "examples": [
+        "Who runs turva.dev?",
+        "What is turva.dev's business ID?"
+      ]
+    }
+  ]
+}, null, 2);
+
 var X402_MANIFEST = JSON.stringify({
   "x402Version": 1,
   "version": 1,
@@ -1885,9 +2047,14 @@ var SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
  <url><loc>https://turva.dev/guides/agent-readiness-gaps</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/guides/choosing-an-agent-readiness-audit</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
  <url><loc>https://turva.dev/guides/get-cited-by-ai-assistants</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+ <url><loc>https://turva.dev/guides/agent-commerce-discovery</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/blog</loc><lastmod>2026-06-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/blog/moving-off-prerender</loc><lastmod>2026-06-20</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+ <url><loc>https://turva.dev/blog/honest-agent-commerce-checks</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+ <url><loc>https://turva.dev/blog/owning-your-fediverse-identity</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>`;
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -1897,6 +2064,34 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog": {
+    title: "Build log | turva.dev",
+    description: "Notes on how turva.dev is built and measured. Dated entries, each claim verifiable by independent agent-readiness scanners.",
+    imageAlt: "turva.dev build log"
+  },
+  "/blog/moving-off-prerender": {
+    title: "Moving turva.dev off prerender.io | turva.dev",
+    description: "The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop. Verified 100/100 by independent scanners.",
+    date: "2026-06-20",
+    imageAlt: "Moving turva.dev off prerender.io"
+  },
+  "/blog/honest-agent-commerce-checks": {
+    title: "Passing the agent commerce checks without faking them | turva.dev",
+    description: "How turva.dev cleared the isitagentready commerce checks (A2A Agent Card, AP2, ACP) honestly, without faking a capability, while holding 100/100 on startuphub.ai.",
+    date: "2026-06-21",
+    imageAlt: "Passing the agent commerce checks without faking them"
+  },
+  "/guides/agent-commerce-discovery": {
+    title: "Agent commerce discovery: A2A, AP2, and ACP | turva.dev",
+    description: "A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, the AP2 version trap, and backing a discovery claim with a real endpoint.",
+    imageAlt: "Agent commerce discovery: A2A, AP2, and ACP"
+  },
+  "/blog/owning-your-fediverse-identity": {
+    title: "Owning your fediverse identity | turva.dev",
+    description: "Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification served from the Cloudflare Worker. Own your identity, do not rent it.",
+    date: "2026-06-21",
+    imageAlt: "Owning your fediverse identity"
+  },
   "/": {
     title: "Agent-readiness audits and advisory · turva.dev",
     description: "Agent-readiness audits and advisory for product teams. Independent measurement of how readable your site and APIs are by AI agents. Async-only.",
@@ -2017,9 +2212,18 @@ var META_BY_PATH = {
 function buildMetaBlock(pathname, canonicalUrl) {
   const m = META_BY_PATH[pathname] || META_BY_PATH["/"];
   const url = canonicalUrl || "https://turva.dev" + pathname;
+  const isArticle = pathname.startsWith("/guides/") || pathname.startsWith("/blog/");
+  const ogType = isArticle ? "article" : "website";
+  let articleMeta = "";
+  if (isArticle) {
+    articleMeta = `\n<meta property="article:author" content="https://www.linkedin.com/in/erikrekola/" />\n<meta property="article:section" content="${pathname.startsWith("/blog/") ? "Build log" : "Guides"}" />`;
+    if (m.date) {
+      articleMeta += `\n<meta property="article:published_time" content="${m.date}" />\n<meta property="article:modified_time" content="${m.date}" />`;
+    }
+  }
   return `<title>${m.title}</title>
 <meta name="description" content="${m.description}" />
-<meta property="og:type" content="website" />
+<meta property="og:type" content="${ogType}" />
 <meta property="og:site_name" content="turva.dev" />
 <meta property="og:title" content="${m.title}" />
 <meta property="og:description" content="${m.description}" />
@@ -2033,15 +2237,15 @@ function buildMetaBlock(pathname, canonicalUrl) {
 <meta name="twitter:title" content="${m.title}" />
 <meta name="twitter:description" content="${m.description}" />
 <meta name="twitter:image" content="https://turva.dev/og.jpg" />
-<meta name="twitter:image:alt" content="${m.imageAlt}" />`;
+<meta name="twitter:image:alt" content="${m.imageAlt}" />${articleMeta}`;
 }
 
 var PRICE_VALID_UNTIL = "2026-12-31";
 
 var SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","description":"Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/busygoat","https://www.wikidata.org/wiki/Q140276251"]},
-{"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/busygoat","https://www.wikidata.org/wiki/Q140276321"]},
+{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/busygoat","https://www.wikidata.org/wiki/Q140276251"]},
+{"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/busygoat","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 {"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"1500","highPrice":"6500","offerCount":"3","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services","itemListElement":[
 {"@type":"Offer","name":"Audit","description":"Fixed scope, 2-3 weeks. Scanner sweep across Cloudflare AI Audit, Internet.nl, Hardenize and StartupHub agent-readiness, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"6500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"6500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€6,500 fixed price, two to three weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
@@ -2061,32 +2265,6 @@ var SCHEMA_HOME = `<script type="application/ld+json">
 ]}
 <\/script>`;
 
-var HeadCleaner = class {
-  element(element) {
-    const tag = element.tagName.toLowerCase();
-    if (tag === "title") { element.remove(); return; }
-    if (tag === "meta") {
-      const name = (element.getAttribute("name") || "").toLowerCase();
-      const property = (element.getAttribute("property") || "").toLowerCase();
-      if (name === "description") { element.remove(); return; }
-      if (name.startsWith("twitter:")) { element.remove(); return; }
-      if (property.startsWith("og:")) { element.remove(); return; }
-      return;
-    }
-    if (tag === "link") {
-      const rel = (element.getAttribute("rel") || "").toLowerCase();
-      const hreflang = element.getAttribute("hreflang");
-      if (rel === "canonical") { element.remove(); return; }
-      if (rel === "alternate" && hreflang) { element.remove(); return; }
-    }
-  }
-};
-
-var HtmlLangSetter = class {
-  constructor(lang) { this.lang = lang; }
-  element(element) { element.setAttribute("lang", this.lang); }
-};
-
 function appendAgentLinks(headers) {
   headers.append("Link", '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"');
   headers.append("Link", '</openapi.json>; rel="service-desc"; type="application/json"');
@@ -2096,6 +2274,7 @@ function appendAgentLinks(headers) {
   headers.append("Link", '</auth.md>; rel="agent-registration"; type="text/markdown"; title="Agent registration"');
   headers.append("Link", '</.well-known/mcp/server-card.json>; rel="service-meta"; type="application/json"');
   headers.append("Link", '</.well-known/agent-skills/index.json>; rel="agent-skills"; type="application/json"');
+  headers.append("Link", '</.well-known/agent-card.json>; rel="service-meta"; type="application/json"; title="A2A Agent Card"');
   headers.append("Link", '</llms.txt>; rel="describedby"; type="text/plain"');
   headers.append("Link", '</sitemap.xml>; rel="sitemap"; type="application/xml"');
   headers.append("Link", '</.well-known/security.txt>; rel="security-txt"; type="text/plain"');
@@ -2114,83 +2293,74 @@ function appendAgentLinks(headers) {
   headers.append("Link", '</.well-known/ucp>; rel="ucp"; type="application/json"');
   headers.append("Link", '</agent/auth/register>; rel="agent-auth-register"; type="application/json"');
   headers.append("Link", '<mailto:info@turva.dev?subject=Quote%20request>; rel="payment"; title="Request a quote"');
+  headers.append("Link", '<https://social.turva.dev/@erik>; rel="me"');
 }
 
-function injectHtml(response, pathname) {
-  const ct = response.headers.get("content-type") || "";
-  if (!ct.includes("text/html")) {
-    const headers2 = new Headers(response.headers);
-    applySecurityHeaders(headers2, "default");
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers: headers2
-    });
-  }
+var FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"/><path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
-  const canonicalUrl = getCanonicalForPath(pathname);
-  const isCanonicalPage = canonicalUrl !== null;
-  const isHome = pathname === "/";
-
-  if (!isCanonicalPage) {
-    const headers2 = new Headers(response.headers);
-    appendAgentLinks(headers2);
-    applySecurityHeaders(headers2, "html");
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers: headers2
-    });
-  }
-
-  const metaBlock = buildMetaBlock(pathname, canonicalUrl);
-
-  const transformed = new HTMLRewriter()
-    .on("html", new HtmlLangSetter("en"))
-    .on("title", new HeadCleaner())
-    .on("meta", new HeadCleaner())
-    .on("link", new HeadCleaner())
-    .on("head", {
-      element(el) {
-        el.append(metaBlock, { html: true });
-        el.append(`<link rel="canonical" href="${canonicalUrl}" />`, { html: true });
-        el.append(`<link rel="api-catalog" href="https://turva.dev/.well-known/api-catalog" type="application/linkset+json" />`, { html: true });
-        el.append(`<link rel="service-desc" href="https://turva.dev/openapi.json" type="application/json" />`, { html: true });
-        el.append(`<link rel="service-doc" href="https://turva.dev/llms.txt" type="text/plain" />`, { html: true });
-        el.append(`<link rel="service-doc" href="https://turva.dev/llms-full.txt" type="text/plain" title="Full content" />`, { html: true });
-        el.append(`<link rel="agent-registration" href="https://turva.dev/auth.md" type="text/markdown" title="Agent registration" />`, { html: true });
-        el.append(`<link rel="service-meta" href="https://turva.dev/.well-known/mcp/server-card.json" type="application/json" />`, { html: true });
-        el.append(`<link rel="agent-skills" href="https://turva.dev/.well-known/agent-skills/index.json" type="application/json" />`, { html: true });
-        el.append(`<link rel="payment" href="mailto:info@turva.dev?subject=Quote%20request" title="Request a quote" />`, { html: true });
-        el.append(`<link rel="oauth-authorization-server" href="https://turva.dev/.well-known/oauth-authorization-server" type="application/json" />`, { html: true });
-        el.append(`<link rel="oauth-protected-resource" href="https://turva.dev/.well-known/oauth-protected-resource" type="application/json" />`, { html: true });
-        el.append(`<link rel="ap2" href="https://turva.dev/.well-known/ap2" type="application/json" />`, { html: true });
-        el.append(`<link rel="acp" href="https://turva.dev/.well-known/acp" type="application/json" />`, { html: true });
-        el.append(`<link rel="x402-endpoint" href="https://turva.dev/x402" type="application/json" />`, { html: true });
-        el.append(`<link rel="x402" href="https://turva.dev/.well-known/x402" type="application/json" />`, { html: true });
-        el.append(`<link rel="x402-mesh" href="https://turva.dev/.well-known/x402-mesh.json" type="application/json" />`, { html: true });
-        el.append(`<link rel="mpp" href="https://turva.dev/.well-known/mpp" type="application/json" />`, { html: true });
-        el.append(`<link rel="ucp" href="https://turva.dev/.well-known/ucp" type="application/json" />`, { html: true });
-        el.append(`<link rel="agent-auth-register" href="https://turva.dev/agent/auth/register" type="application/json" />`, { html: true });
-        if (isHome) el.append(SCHEMA_HOME, { html: true });
-        el.append(WEBMCP_SCRIPT, { html: true });
-        // TEMP dark-theme override (live site). Loads last in <head>, wins the cascade. Remove once Sitejet theme is finalized.
-        el.append(`<style id="turva-dark-override">html,body{background-color:#0A1316!important;color:#F2F4F3!important;}body .ed-element[class*="preset-text"],body .ed-element[class*="preset-text"] p,body .ed-element[class*="preset-text"] li,body .ed-element[class*="preset-text"] span,body .ed-element[class*="preset-text"] strong,body .ed-element[class*="preset-text"] td,body .ed-element[class*="preset-boxes"] p,body .ed-element[class*="preset-boxes"] li,body .ed-element[class*="preset-boxes"] span,body .ed-element[class*="preset-pricing"] td,body .ed-element[class*="preset-pricing"] span,body .ed-element[class*="preset-accordion"] p,body .ed-element[class*="preset-accordion"] span,body .ed-element[class*="preset-table"] td,body .ed-element[class*="preset-footer"],body .ed-element[class*="preset-footer"] p,body .ed-element[class*="preset-footer"] li,body .ed-element[class*="preset-footer"] span{color:#F2F4F3!important;}body .ed-element.ed-element.ed-element h1,body .ed-element.ed-element.ed-element h2,body .ed-element.ed-element.ed-element h3,body .ed-element.ed-element.ed-element h4,body .ed-element.ed-element.ed-element h5,body .ed-element.ed-element.ed-element h6{color:#5DF18F!important;}body .ed-element[class*="preset-text"] a,body .ed-element[class*="preset-boxes"] a,body .ed-element[class*="preset-footer"] a{color:#5DF18F!important;}body .ed-element[class*="preset-section"],body .ed-element[class*="preset-container"],body .ed-element[class*="preset-columns"],body .ed-element[class*="preset-column"],body .ed-element[class*="preset-text-with-image"],body .ed-element[class*="preset-boxes"],body .ed-element[class*="preset-slider"],body .ed-element[class*="preset-pricing"],body .ed-element[class*="preset-footer"]{background-color:transparent!important;}body .ed-element[class*="contact-form"] input,body .ed-element[class*="contact-form"] textarea,body .ed-element[class*="contact-form"] select{background-color:rgba(255,255,255,0.05)!important;color:#F2F4F3!important;border-color:rgba(255,255,255,0.25)!important;}body .ed-element[class*="contact-form"] ::placeholder{color:#9AA3A0!important;}body .ed-element[class*="preset-footer"] a[href*="startuphub.ai"]{color:#F2F4F3!important;}</style>`, { html: true });
-      }
-    })
-    .transform(response);
-
-  const headers = new Headers(transformed.headers);
+function serve404(pathname) {
+  const body = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+<title>Page not found | turva.dev</title>
+<style>
+html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;}
+main{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 4rem;}
+h1{color:#5DF18F;font-size:2rem;line-height:1.2;margin:0 0 1rem;}
+p{margin:0 0 1.1rem;}
+a{color:#5DF18F;}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:16px clamp(20px,5vw,72px);}
+.turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
+.turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
+.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
+.turva-nav .nv-word b{color:#5DF18F;}
+.turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;}
+.turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
+.turva-nav .nv-menu a:hover{color:#F2F4F3;}
+@media (max-width:560px){.turva-nav .nv-menu{gap:16px;}.turva-nav .nv-menu a{font-size:14px;}}
+${FOOTER_CSS}
+</style>
+</head>
+<body>
+<nav class="turva-nav">
+  <a class="nv-brand" href="/">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
+      <path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+    <span class="nv-word">turva<b>·</b>dev</span>
+  </a>
+  <ul class="nv-menu">
+    <li><a href="/">home</a></li>
+    <li><a href="/services">services</a></li>
+    <li><a href="/guides">guides</a></li>
+    <li><a href="/blog">blog</a></li>
+    <li><a href="/company">company</a></li>
+    <li><a href="/legal">legal</a></li>
+    <li><a href="/contact">contact</a></li>
+  </ul>
+</nav>
+<main>
+<h1>Page not found</h1>
+<p>The page at ${escapeHtml(pathname)} does not exist. It may have moved.</p>
+<p>Try the <a href="/">home page</a>, the <a href="/guides">guides</a>, or the <a href="/blog">build log</a>.</p>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  const headers = new Headers({
+    "content-type": "text/html; charset=utf-8",
+    "cache-control": "no-store",
+    "content-language": "en"
+  });
   appendAgentLinks(headers);
   applySecurityHeaders(headers, "html");
-  headers.set("Vary", "Accept");
-  headers.set("Content-Language", "en");
-  headers.append("Link", `<${canonicalUrl}>; rel="alternate"; type="text/markdown"`);
-  return new Response(transformed.body, {
-    status: transformed.status,
-    statusText: transformed.statusText,
-    headers
-  });
+  return new Response(body, { status: 404, headers });
 }
 
 function stripBody(response) {
@@ -2258,11 +2428,25 @@ function escapeHtml(s) {
 
 function renderInline(text) {
   let out = escapeHtml(text);
+  out = out.replace(/&lt;mailto:(.+?)&gt;/g, '<a href="mailto:$1">$1</a>');
+  out = out.replace(/&lt;(https?:\/\/.+?)&gt;/g, '<a href="$1">$1</a>');
   out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, label, href) => {
     return `<a href="${escapeHtml(href)}">${label}</a>`;
   });
   out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   out = out.replace(/(^|[\s(])(info@turva\.dev)/g, '$1<a href="mailto:info@turva.dev">$2</a>');
+  out = out.replace(/(^|[\s(])(https?:\/\/[^\s<)"]+)/g, function(m, pre, url) {
+    var tm = url.match(/[.,;:!?]+$/);
+    var tail = "";
+    if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
+    return pre + '<a href="' + url + '">' + url + '</a>' + tail;
+  });
+  out = out.replace(/(^|[\s(])((?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/[^\s<)"]*)/gi, function(m, pre, url) {
+    var tm = url.match(/[.,;:!?]+$/);
+    var tail = "";
+    if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
+    return pre + '<a href="https://' + url + '">' + url + '</a>' + tail;
+  });
   return out;
 }
 
@@ -2294,22 +2478,56 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
   const m = META_BY_PATH[pathname] || META_BY_PATH["/"];
   const headline = m.title.replace(/ \| turva\.dev$/, "");
   const url = canonicalUrl || "https://turva.dev" + pathname;
+  const isGuide = pathname === "/guides" || pathname.startsWith("/guides/");
+  const isBlogPost = pathname.startsWith("/blog/");
+  const isBlogHub = pathname === "/blog";
   const article = {
     "@context": "https://schema.org",
-    "@type": "TechArticle",
+    "@type": isGuide ? "TechArticle" : (isBlogPost ? "BlogPosting" : (isBlogHub ? "Blog" : "WebPage")),
     "headline": headline,
     "description": m.description,
     "url": url,
+    "image": { "@type": "ImageObject", "url": "https://turva.dev/og.jpg", "width": 1200, "height": 630 },
     "inLanguage": "en",
     "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://github.com/busygoat"] },
     "publisher": { "@type": "Organization", "@id": "https://turva.dev/#business", "name": "turva.dev", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276251"] },
     "isPartOf": { "@type": "WebSite", "name": "turva.dev", "url": "https://turva.dev/" },
     "about": "agent-readiness"
   };
+  if (isBlogPost && m.date) {
+    article.datePublished = m.date;
+    article.dateModified = m.date;
+  }
+  if (isGuide || isBlogPost) {
+    article.mainEntityOfPage = { "@type": "WebPage", "@id": url };
+  }
+  if (isBlogHub) {
+    const posts = Object.keys(PAGE_MARKDOWN).filter((k) => k.startsWith("/blog/")).map((k) => {
+      const pm = META_BY_PATH[k] || {};
+      const item = { "@type": "BlogPosting", "headline": (pm.title || "").split(" | turva.dev")[0], "url": "https://turva.dev" + k };
+      if (pm.date) { item.datePublished = pm.date; item.dateModified = pm.date; }
+      return item;
+    });
+    if (posts.length) article.blogPost = posts;
+  }
   const json = JSON.stringify(article).replace(/<\/script/gi, "<\\/script");
+  let breadcrumb = "";
+  if (isBlogPost || pathname.startsWith("/guides/")) {
+    const section = isBlogPost ? { name: "Build log", url: "https://turva.dev/blog" } : { name: "Guides", url: "https://turva.dev/guides" };
+    const bc = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://turva.dev/" },
+        { "@type": "ListItem", "position": 2, "name": section.name, "item": section.url },
+        { "@type": "ListItem", "position": 3, "name": headline, "item": url }
+      ]
+    };
+    breadcrumb = "\n<script type=\"application/ld+json\">\n" + JSON.stringify(bc).replace(/<\/script/gi, "<\\/script") + "\n<\/script>";
+  }
   return `<script type="application/ld+json">
 ${json}
-<\/script>`;
+<\/script>` + breadcrumb;
 }
 
 var GUIDES_FAQ = [
@@ -2381,20 +2599,231 @@ function buildBuyerFaqJsonLd() {
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
+var GUIDE_PAGE_FAQ = {
+  "/guides/agent-commerce-discovery": [
+    {
+      "q": "What is an A2A Agent Card?",
+      "a": "An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that describes an agent interface, including its name, version, transport, and the skills it offers, so another agent can discover it and know how to reach it."
+    },
+    {
+      "q": "What is the correct AP2 extension URI?",
+      "a": "AP2 support is declared as an extension inside the A2A Agent Card, using the URI https://github.com/google-agentic-commerce/ap2/tree/v0.1 (lowercase, version v0.1). Some fix texts show an uppercase v0.1.0 form, which validators reject."
+    }
+  ],
+  "/guides/agent-readiness-audit": [
+    {
+      "q": "What is an agent-readiness audit?",
+      "a": "An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API. It is a technical review of the surfaces automated clients use, scored against current standards rather than opinion."
+    },
+    {
+      "q": "What does an agent-readiness audit check?",
+      "a": "It checks the surfaces an agent reaches first, covering discovery, content, capabilities, commerce, access control, and quality. Each check passes or fails, and each failure comes with a concrete fix an independent scanner can verify before and after."
+    }
+  ],
+  "/guides/llms-txt": [
+    {
+      "q": "What is llms.txt?",
+      "a": "llms.txt is a plain text file at the root of a site that tells AI agents and language models what the site contains and where the important content lives. It does not replace robots.txt or a sitemap, it complements them."
+    },
+    {
+      "q": "Does llms.txt help with search ranking?",
+      "a": "No. llms.txt is not a ranking trick. It gives models a curated map of the content so they read the real page rather than guessing from a cached snippet."
+    }
+  ],
+  "/guides/mcp-server-card": [
+    {
+      "q": "What is an MCP server card?",
+      "a": "An MCP server card is a small JSON file, usually at /.well-known/mcp/server-card.json, that describes a site's Model Context Protocol server so an agent can find it, learn which tools it exposes, and call them without a human wiring up the connection."
+    },
+    {
+      "q": "Why publish an MCP server card?",
+      "a": "Without a card an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live. The card turns an invisible server into a discoverable one."
+    }
+  ],
+  "/guides/agents-json": [
+    {
+      "q": "What is agents.json?",
+      "a": "agents.json is a machine-readable file that declares what an AI agent can do on a site and how. It describes the actions and endpoints an agent is allowed to use, often pointing at an OpenAPI description, along with the authentication an agent needs."
+    },
+    {
+      "q": "How is agents.json different from llms.txt?",
+      "a": "llms.txt tells an agent what the site contains. agents.json describes the actions an agent can take, so a site moves from something an agent can read to something an agent can operate."
+    }
+  ],
+  "/guides/x402-agent-payments": [
+    {
+      "q": "What is x402?",
+      "a": "x402 is a way for a site to ask an agent to pay before it returns a resource, using the HTTP 402 Payment Required status. It lets an automated client discover a price, pay, and continue without a human entering card details."
+    },
+    {
+      "q": "Why does agent commerce need a payment surface like x402?",
+      "a": "Agent commerce is held back by payment, not by capability. An agent can find a product and compare options, then stall at a checkout flow built for a person. A declared payment surface lets the agent complete the purchase the same way it completed the search."
+    }
+  ],
+  "/guides/response-headers-for-agents": [
+    {
+      "q": "Which response headers help AI agents?",
+      "a": "A Link header points an agent at machine-readable resources such as an API catalog or a markdown version of the page. A Vary header that includes Accept makes markdown content negotiation reliable. RateLimit headers let a well-behaved agent throttle itself, and Content-Language with a clean content type removes ambiguity."
+    },
+    {
+      "q": "Why do response headers matter to agents?",
+      "a": "An agent reads the status and headers before the body and decides what to do from them. If the headers already say where the structured data is and what formats are available, the agent can skip parsing a page built for human display."
+    }
+  ],
+  "/guides/seo-vs-agent-readiness": [
+    {
+      "q": "Is agent-readiness the same as SEO?",
+      "a": "No. SEO makes a site rank in a list of links for a person to click. Agent-readiness makes a site legible and usable by an AI agent that reads, decides, and sometimes acts. A site can rank well and still be opaque to agents."
+    },
+    {
+      "q": "Why does search ranking not predict presence in AI answers?",
+      "a": "They are scored on different things. A search engine ranks pages by keywords and backlinks. An assistant cites a site when it can read the content cleanly and corroborate it, which depends on the discovery and content surface rather than ranking signals."
+    }
+  ],
+  "/guides/json-ld-structured-data": [
+    {
+      "q": "What is JSON-LD?",
+      "a": "JSON-LD is a block of structured data in a page that states facts in a form a machine can read without interpreting prose. It tells an agent what the page is about, who runs it, what it sells, and at what price, as data rather than sentences."
+    },
+    {
+      "q": "Why does structured data matter for agents?",
+      "a": "An agent reading raw HTML has to guess which number is a price and which is a shipping estimate. A JSON-LD Offer with a price and a currency removes the guess, and declared types let an agent place a page in context and decide whether to trust and cite it."
+    }
+  ],
+  "/guides/well-known-for-agents": [
+    {
+      "q": "What is the /.well-known directory?",
+      "a": "The /.well-known directory is a standard place at the root of a site where agents look for machine-readable descriptions of what the site offers. An agent fetches a predictable path and reads a manifest that points it to everything else."
+    },
+    {
+      "q": "What files do agents look for under /.well-known?",
+      "a": "An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment and agent-payment manifests, and a security contact. Each one turns discovery into a lookup rather than a search."
+    }
+  ],
+  "/guides/agent-authentication": [
+    {
+      "q": "How do AI agents authenticate?",
+      "a": "An agent proves who it is through discoverable standards such as OAuth discovery at a well-known path, which tells it where to request access and what scopes exist. It can then request a token tied to a specific permission rather than a blanket login."
+    },
+    {
+      "q": "Why does scoped, discoverable auth matter?",
+      "a": "A site that exposes capability without scoped auth either stays closed to agents or invites unsafe workarounds. Proper discovery lets an agent request the least access it needs without handling a password it should never see."
+    }
+  ],
+  "/guides/measurement-led-agent-readiness": [
+    {
+      "q": "Why should agent-readiness be measured rather than asserted?",
+      "a": "A checklist filled in by hand records intentions. An independent scanner records what an agent actually finds when it reads the site, and the two often disagree, especially after a deploy drops a header or changes a content type."
+    },
+    {
+      "q": "What makes a measured result more credible to a buyer?",
+      "a": "A claim that a site is agent-ready is an assertion. A score from an independent scanner, with a category breakdown and a date, is evidence anyone can re-run. The honest version of the claim is the number."
+    }
+  ],
+  "/guides/prerendering-for-agents": [
+    {
+      "q": "Why do AI agents see empty pages?",
+      "a": "Many sites render content with JavaScript in the browser, so the first response is an almost empty shell. A person waits and the page fills in, but an agent reads the raw response, sees a loading state, and judges the site on that."
+    },
+    {
+      "q": "How do you fix empty pages for agents?",
+      "a": "Serve the real content in the first response for clients that need it, through prerendering at the server or edge, or serve a markdown version of the page on request, which skips rendering and costs a fraction of the tokens."
+    }
+  ],
+  "/guides/sitemaps-and-robots-for-agents": [
+    {
+      "q": "How do robots.txt and the sitemap affect AI agents?",
+      "a": "An agent reads robots.txt to learn the rules and the sitemap to learn the map before it reads any page. robots.txt can name AI crawlers explicitly, and the sitemap lists every canonical URL so an agent finds the real pages without inferring them from navigation."
+    },
+    {
+      "q": "What is a Content-Signal directive in robots.txt?",
+      "a": "A Content-Signal directive declares how content may be used, separating ordinary search from AI input and training. It gives a site granular control instead of an all-or-nothing block."
+    }
+  ],
+  "/guides/markdown-for-agents": [
+    {
+      "q": "Why serve markdown to AI agents?",
+      "a": "An HTML page is built for a browser, and an agent that reads it pays for all the markup, scripts, and layout it does not need. A markdown version gives the content without the wrapper, which is cheaper and less error-prone."
+    },
+    {
+      "q": "How does an agent request the markdown version?",
+      "a": "Through content negotiation. An agent sends an Accept header asking for text/markdown and the server returns the markdown form at the same URL. A site can also publish llms-full.txt to bundle the whole site as text in one request."
+    }
+  ],
+  "/guides/agent-readiness-gaps": [
+    {
+      "q": "What are the most common agent-readiness gaps on marketing sites?",
+      "a": "Client-side rendering that returns an empty shell, no llms.txt and a thin or missing sitemap, and HTML-only delivery with no markdown form. Capability is usually undeclared and structured data is often missing, so prices and facts are left for the agent to infer."
+    },
+    {
+      "q": "Are agent-readiness gaps hard to fix?",
+      "a": "No. The work is mostly at the edge and in a few small files, and the result shows up immediately in a scanner. A site does not have to rebuild to become legible to agents, it has to publish what agents already look for."
+    }
+  ],
+  "/guides/get-cited-by-ai-assistants": [
+    {
+      "q": "How do you get a site cited by AI assistants?",
+      "a": "A site is cited when the assistant can reach its content, read it cheaply, confirm the facts, and find corroboration elsewhere. That means readable content in the first response, facts stated as data, independent corroboration, and being indexed where the assistant searches."
+    },
+    {
+      "q": "Why does corroboration matter for citation?",
+      "a": "An assistant is more likely to cite a claim it can confirm in more than one place. Open-source code, a public company record, trusted directory listings, and genuine third-party mentions raise confidence. The signal is consistency across sources, not volume."
+    }
+  ]
+};
+
+function buildGuidePageFaqJsonLd(pathname, canonicalUrl) {
+  const items = GUIDE_PAGE_FAQ[pathname];
+  if (!items || !items.length) return "";
+  const url = canonicalUrl || "https://turva.dev" + pathname;
+  const faq = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": url + "#faq",
+    "inLanguage": "en",
+    "mainEntity": items.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": { "@type": "Answer", "text": item.a }
+    }))
+  };
+  const json = JSON.stringify(faq).replace(/<\/script/gi, "<\\/script");
+  return `<script type="application/ld+json">\n${json}\n<\/script>`;
+}
+
+var FOOTER_CSS = `.turva-footer{box-sizing:border-box;width:100%;background:#0A1316;border-top:1px solid rgba(255,255,255,0.12);padding:2.25rem clamp(20px,5vw,72px);font-size:0.95rem;color:#F2F4F3;display:flex;flex-direction:column;gap:0.4rem;}
+.turva-footer .ft-row{display:flex;align-items:center;gap:11px;color:#F2F4F3;text-decoration:none;}
+.turva-footer a.ft-row:hover{color:#5DF18F;}
+.turva-footer .ft-row svg{flex:0 0 auto;width:18px;height:18px;}`;
+
+var FOOTER_HTML = `<footer class="turva-footer">
+  <div class="ft-row"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.4-7-11a7 7 0 0 1 14 0c0 4.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Tampere, Finland</span></div>
+  <a class="ft-row" href="mailto:info@turva.dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>info@turva.dev</span></a>
+  <div class="ft-row"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg><span>@turva.19</span></div>
+  <a class="ft-row" href="https://www.linkedin.com/in/erikrekola/"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.4 8.9h3.1V21H3.4zM9.2 8.9h2.97v1.65h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V21h-3.1v-5.35c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9.2z"/></svg><span>LinkedIn</span></a>
+  <a class="ft-row" rel="me" href="https://social.turva.dev/@erik"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M21.327 8.566c0-4.339-2.843-5.61-2.843-5.61-1.433-.658-3.894-.935-6.451-.956h-.063c-2.557.021-5.016.298-6.45.956 0 0-2.843 1.272-2.843 5.61 0 .993-.019 2.181.012 3.441.103 4.243.778 8.425 4.701 9.463 1.809.479 3.362.579 4.612.51 2.268-.126 3.541-.809 3.541-.809l-.075-1.646s-1.621.511-3.441.449c-1.804-.062-3.707-.194-3.999-2.409a4.523 4.523 0 0 1-.04-.621s1.77.433 4.014.536c1.372.063 2.658-.08 3.965-.236 2.506-.299 4.688-1.843 4.962-3.254.434-2.223.398-5.424.398-5.424zm-3.353 5.59h-2.081V9.057c0-1.075-.452-1.62-1.357-1.62-1 0-1.501.647-1.501 1.927v2.791h-2.069V9.364c0-1.28-.501-1.927-1.502-1.927-.905 0-1.357.546-1.357 1.62v5.099H5.626V8.903c0-1.074.273-1.927.823-2.558.566-.631 1.307-.955 2.228-.955 1.065 0 1.872.41 2.405 1.228l.518.869.519-.869c.533-.818 1.34-1.228 2.405-1.228.92 0 1.662.324 2.228.955.549.631.822 1.484.822 2.558v5.253z"/></svg><span>Mastodon</span></a>
+  <a class="ft-row" href="https://www.startuphub.ai/startups/turva-dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg><span>StartupHub</span></a>
+  <div class="ft-row"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 9.8V20h14V9.8"/></svg><span>turva.dev · Y: 3600281-7</span></div>
+  <div class="ft-row"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.6a3.5 3.5 0 1 0 0 4.8"/></svg><span>2026 turva.dev · All rights reserved</span></div>
+</footer>`;
+
 function serveGuideHtml(pathname, canonicalUrl) {
   const md = PAGE_MARKDOWN[pathname];
   const metaBlock = buildMetaBlock(pathname, canonicalUrl);
   const jsonLd = buildGuideJsonLd(pathname, canonicalUrl) +
     (pathname === "/guides" ? "\n" + buildGuidesFaqJsonLd() : "") +
-    (pathname === "/guides/choosing-an-agent-readiness-audit" ? "\n" + buildBuyerFaqJsonLd() : "");
+    (pathname === "/guides/choosing-an-agent-readiness-audit" ? "\n" + buildBuyerFaqJsonLd() : "") +
+    (GUIDE_PAGE_FAQ[pathname] ? "\n" + buildGuidePageFaqJsonLd(pathname, canonicalUrl) : "");
   const article = markdownToHtml(md);
   const body = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 ${metaBlock}
 ${jsonLd}
+${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
 <link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
 <style>
@@ -2406,22 +2835,289 @@ p{margin:0 0 1.1rem;}
 ul{margin:0 0 1.1rem 1.25rem;padding:0;}
 li{margin:0 0 0.35rem;}
 a{color:#5DF18F;}
-nav{margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.15);font-size:0.95rem;}
-nav a{margin-right:1.25rem;}
+main nav{margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.15);font-size:0.95rem;}
+main nav a{margin-right:1.25rem;}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:16px clamp(20px,5vw,72px);}
+.turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
+.turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
+.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
+.turva-nav .nv-word b{color:#5DF18F;}
+.turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;}
+.turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
+.turva-nav .nv-menu a:hover{color:#F2F4F3;}
+@media (max-width:560px){.turva-nav .nv-menu{gap:16px;}.turva-nav .nv-menu a{font-size:14px;}}
+${FOOTER_CSS}
 </style>
 </head>
 <body>
+<nav class="turva-nav">
+  <a class="nv-brand" href="/">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
+      <path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+    <span class="nv-word">turva<b>·</b>dev</span>
+  </a>
+  <ul class="nv-menu">
+    <li><a href="/">home</a></li>
+    <li><a href="/services">services</a></li>
+    <li><a href="/guides">guides</a></li>
+    <li><a href="/blog">blog</a></li>
+    <li><a href="/company">company</a></li>
+    <li><a href="/legal">legal</a></li>
+    <li><a href="/contact">contact</a></li>
+  </ul>
+</nav>
 <main>
 <article>
 ${article}
 </article>
-<nav>
-<a href="https://turva.dev/">Home</a>
-<a href="https://turva.dev/guides">Guides</a>
-<a href="https://turva.dev/services">Services</a>
-<a href="https://turva.dev/contact">Contact</a>
-</nav>
 </main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  const headers = new Headers({
+    "content-type": "text/html; charset=utf-8",
+    "cache-control": "public, max-age=3600",
+    "vary": "Accept",
+    "content-language": "en"
+  });
+  appendAgentLinks(headers);
+  applySecurityHeaders(headers, "html");
+  headers.append("Link", `<${canonicalUrl}>; rel="alternate"; type="text/markdown"`);
+  return new Response(body, { status: 200, headers });
+}
+
+var HOME_MARKDOWN = `# Agent-readiness audits
+
+Get your product truly agent-ready. Measured by two independent scanners, fixed in priority order, fully auditable.
+
+#1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 100/100 verified by two independent scanners. Business ID 3600281-7.
+
+## Independent agent-readiness scan of turva.dev
+
+Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. Verified 100/100, A+, ranked #1 of all publicly-scanned sites on the startuphub.ai leaderboard.
+
+## Evidence
+
+turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-08.
+
+- startuphub.ai leaderboard: #1 of top 100 sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
+- isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/turva.dev
+
+The Cloudflare Worker that produces these results is open source: https://github.com/busygoat/turvadev-pretender. You can read every line before you hire me.
+
+Backed by a registered company, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: https://tietopalvelu.ytj.fi/yritys/3600281-7
+
+## The process has three stages and no surprises
+
+First, measurement. Two independent agent-readiness scanners read the current state of the site or API and produce a numeric baseline plus a categorized list of where points are missing.
+
+Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need an agent-readiness background to follow it.
+
+Then the fixes. I implement them, or your engineering team does the work with the report as the spec. Both routes are supported and the choice is yours.
+
+All communication runs async. No calls and no calendar links. Live meetings are not part of how this work is done. Short questions go through Signal, longer documents through email and CryptPad. Everything stays in writing, which means the work and the trail are auditable end-to-end.
+
+Production credentials are not requested. Write access to repositories is not taken by default. Read access is enough for the audit, and write access is scoped per task if implementation is purchased separately.
+
+The result shows up in scanner numbers. That is the contract. The next scan reads higher than the previous one, in the categories the report named, by the dates the report named.
+
+## Services
+
+- Audit. Fixed scope, two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
+- Advisory. Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.
+- Implementation. On request. Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.
+- MCP server design. On request. Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.
+- Internal workshops. On request, async-first. Recorded session or written guide. Topics include how scanners read your site, what x402 and AP2 actually require in practice, and how to keep agent-readiness intact after the audit period ends.
+
+## Who I am
+
+The work is done by one person under a registered company. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, moved from general security work into agent-readiness, and kept only the tools and methods that hold up in daily client work.
+
+The reason this service exists is narrow on purpose. Agent-readiness is a measurable property of a site, an API, or a product surface. Either the scanners read it higher next week than this week, or they do not. That is the question I answer.
+
+## Contact
+
+Written contact only. Email for longer messages, Signal for short questions. The first reply is in writing within one business day. No calls and no calendar links at any stage of the engagement.
+
+- Email: <mailto:info@turva.dev>
+- Signal: @turva.19
+- LinkedIn: https://www.linkedin.com/in/erikrekola/
+`;
+
+function serveHomeHtml(canonicalUrl) {
+  const metaBlock = buildMetaBlock("/", canonicalUrl);
+  const body = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+${metaBlock}
+${SCHEMA_HOME}
+${WEBMCP_SCRIPT}
+<link rel="canonical" href="${canonicalUrl}" />
+<link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
+<style>
+html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;}
+main{max-width:46rem;margin:0 auto;padding:2.5rem 1.25rem 4rem;}
+h1{color:#5DF18F;font-size:2.3rem;line-height:1.15;margin:0 0 1rem;}
+h2{color:#5DF18F;font-size:1.35rem;margin:2.5rem 0 0.75rem;}
+p{margin:0 0 1.1rem;}
+ul{margin:0 0 1.1rem 1.25rem;padding:0;}
+li{margin:0 0 0.5rem;}
+a{color:#5DF18F;}
+strong{color:#F2F4F3;}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:16px clamp(20px,5vw,72px);}
+.turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
+.turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
+.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
+.turva-nav .nv-word b{color:#5DF18F;}
+.turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;}
+.turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
+.turva-nav .nv-menu a:hover{color:#F2F4F3;}
+.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
+@media (max-width:560px){.turva-nav .nv-menu{gap:16px;}.turva-nav .nv-menu a{font-size:14px;}}
+.eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
+.lede{font-size:1.15rem;color:#C9D1CE;margin:0 0 1.5rem;}
+.badges{display:flex;flex-wrap:wrap;gap:.6rem;list-style:none;margin:0 0 2rem;padding:0;}
+.badges li{margin:0;display:flex;align-items:center;gap:.4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;background:rgba(93,241,143,0.07);border:1px solid rgba(93,241,143,0.25);border-radius:999px;padding:.32rem .8rem;}
+.badges li b{color:#5DF18F;}
+.terminal{border:1px solid rgba(255,255,255,0.14);border-radius:12px;overflow:hidden;background:#06100F;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9rem;margin:0 0 1.25rem;box-shadow:0 18px 40px -24px rgba(0,0,0,0.8);}
+.terminal .tm-bar{display:flex;align-items:center;gap:.5rem;padding:.6rem .85rem;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.08);}
+.terminal .tm-dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+.terminal .tm-dot.r{background:#ff5f56;}.terminal .tm-dot.y{background:#ffbd2e;}.terminal .tm-dot.g{background:#27c93f;}
+.terminal .tm-title{margin-left:.5rem;color:#9AA3A0;font-size:.8rem;}
+.terminal .tm-body{padding:1rem .95rem 1.15rem;line-height:1.7;}
+.terminal .tm-cmd{color:#F2F4F3;}
+.terminal .tm-cmd .pr{color:#5DF18F;margin-right:.5rem;}
+.terminal .tm-out{color:#9AA3A0;}
+.terminal .tm-out b{color:#5DF18F;font-weight:600;}
+.terminal .cursor{display:inline-block;width:.55rem;height:1.05rem;vertical-align:-0.18rem;background:#5DF18F;margin-left:.2rem;animation:blink 1.1s steps(1) infinite;}
+@keyframes blink{50%{opacity:0;}}
+.scoreboard{border:1px solid rgba(255,255,255,0.14);border-radius:12px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.3rem;margin:0 0 2.5rem;}
+.sb-head{font-size:.95rem;color:#F2F4F3;font-weight:600;margin:0 0 .25rem;}
+.sb-scanner{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;color:#9AA3A0;text-decoration:none;margin:0 0 1rem;}
+.sb-scanner:hover{color:#5DF18F;}
+.sb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:0 0 1rem;}
+@media (max-width:520px){.sb-grid{grid-template-columns:repeat(2,1fr);}}
+.sb-cell{background:rgba(93,241,143,0.06);border:1px solid rgba(93,241,143,0.18);border-radius:8px;padding:.6rem .65rem;}
+.sb-cell .cat{display:block;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .25rem;}
+.sb-cell .val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;color:#5DF18F;font-weight:700;}
+.sb-summary{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}
+.sb-summary b{color:#5DF18F;}
+.sb-summary .pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
+.contact-card{border:1px solid rgba(255,255,255,0.14);border-radius:12px;background:rgba(255,255,255,0.02);padding:1.2rem 1.2rem 1rem;margin:.5rem 0 0;}
+.contact-card .ch{display:flex;align-items:center;gap:.6rem;margin:0 0 .6rem;font-size:1rem;color:#F2F4F3;text-decoration:none;}
+.contact-card a.ch:hover{color:#5DF18F;}
+.contact-card .ch:last-child{margin-bottom:0;}
+.contact-card .ch svg{flex:0 0 auto;width:18px;height:18px;}
+.cta-row{margin:1.25rem 0 0;}
+.cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;text-decoration:none;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;}
+.cta-btn:hover{background:#7df7a6;}
+${FOOTER_CSS}
+</style>
+</head>
+<body>
+<nav class="turva-nav">
+  <a class="nv-brand" href="/">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
+      <path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+    <span class="nv-word">turva<b>·</b>dev</span>
+  </a>
+  <ul class="nv-menu">
+    <li><a href="/" aria-current="page">home</a></li>
+    <li><a href="/services">services</a></li>
+    <li><a href="/guides">guides</a></li>
+    <li><a href="/blog">blog</a></li>
+    <li><a href="/company">company</a></li>
+    <li><a href="/legal">legal</a></li>
+    <li><a href="/contact">contact</a></li>
+  </ul>
+</nav>
+<main>
+  <section class="hero">
+    <p class="eyebrow">agent-readiness · independently verified</p>
+    <h1>Agent-readiness audits</h1>
+    <p class="lede">Get your product truly agent-ready. Measured by two independent scanners, fixed in priority order, fully auditable.</p>
+    <ul class="badges">
+      <li><b>#1</b> on startuphub.ai</li>
+      <li><b>&#10003;</b> 100/100 verified</li>
+      <li>Business ID 3600281-7</li>
+    </ul>
+    <div class="terminal" aria-label="verification terminal">
+      <div class="tm-bar"><span class="tm-dot r"></span><span class="tm-dot y"></span><span class="tm-dot g"></span><span class="tm-title">turva@audit · verify independent report</span></div>
+      <div class="tm-body">
+        <div class="tm-cmd"><span class="pr">&#8250;</span>turva verify --source startuphub.ai</div>
+        <div class="tm-out">&#10003; startuphub.ai &middot; <b>100/100</b> &middot; A+ &middot; #1 ranked</div>
+        <div class="tm-out">&#10003; isitagentready.com &middot; <b>level 5</b> &middot; agent-native<span class="cursor"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scoreboard" aria-label="agent-readiness scan result">
+    <div class="sb-head">independent agent-readiness scan of turva.dev</div>
+    <a class="sb-scanner" href="https://www.startuphub.ai/agent-readiness">scanner: startuphub.ai &middot; 3rd-party &#8599;</a>
+    <div class="sb-grid">
+      <div class="sb-cell"><span class="cat">discoverability</span><span class="val">100/100</span></div>
+      <div class="sb-cell"><span class="cat">content</span><span class="val">100/100</span></div>
+      <div class="sb-cell"><span class="cat">access-control</span><span class="val">100/100</span></div>
+      <div class="sb-cell"><span class="cat">capabilities</span><span class="val">100/100</span></div>
+      <div class="sb-cell"><span class="cat">commerce</span><span class="val">100/100</span></div>
+      <div class="sb-cell"><span class="cat">quality</span><span class="val">100/100</span></div>
+    </div>
+    <div class="sb-summary"><span>verified</span> <b>100/100</b> <span class="pill">#1 ranked</span> <span class="pill">A+</span></div>
+  </section>
+
+  <article>
+    <h2>Audits, advisory, and implementation for product teams</h2>
+
+    <h2>Evidence</h2>
+    <p>turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-08.</p>
+    <ul>
+      <li>startuphub.ai leaderboard: #1 of top 100 sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
+      <li>isitagentready.com: 100/100, Level 5 (Agent-Native). <a href="https://isitagentready.com/turva.dev">isitagentready.com/turva.dev</a></li>
+    </ul>
+    <p>The Cloudflare Worker that produces these results is open source: <a href="https://github.com/busygoat/turvadev-pretender">github.com/busygoat/turvadev-pretender</a>. You can read every line before you hire me.</p>
+    <p>Backed by a registered company, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">tietopalvelu.ytj.fi/yritys/3600281-7</a></p>
+
+    <h2>The process has three stages and no surprises</h2>
+    <p>First, measurement. Two independent agent-readiness scanners read the current state of the site or API and produce a numeric baseline plus a categorized list of where points are missing.</p>
+    <p>Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need an agent-readiness background to follow it.</p>
+    <p>Then the fixes. I implement them, or your engineering team does the work with the report as the spec. Both routes are supported and the choice is yours.</p>
+    <p>All communication runs async. No calls and no calendar links. Live meetings are not part of how this work is done. Short questions go through Signal, longer documents through email and CryptPad. Everything stays in writing, which means the work and the trail are auditable end-to-end.</p>
+    <p>Production credentials are not requested. Write access to repositories is not taken by default. Read access is enough for the audit, and write access is scoped per task if implementation is purchased separately.</p>
+    <p>The result shows up in scanner numbers. That is the contract. The next scan reads higher than the previous one, in the categories the report named, by the dates the report named.</p>
+
+    <h2>Services</h2>
+    <ul>
+      <li><strong>Audit.</strong> Fixed scope, two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.</li>
+      <li><strong>Advisory.</strong> Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.</li>
+      <li><strong>Implementation.</strong> On request. Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.</li>
+      <li><strong>MCP server design.</strong> On request. Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.</li>
+      <li><strong>Internal workshops.</strong> On request, async-first. Recorded session or written guide. Topics include how scanners read your site, what x402 and AP2 actually require in practice, and how to keep agent-readiness intact after the audit period ends.</li>
+    </ul>
+
+    <h2>Who I am</h2>
+    <p>The work is done by one person under a registered company. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, moved from general security work into agent-readiness, and kept only the tools and methods that hold up in daily client work.</p>
+    <p>The reason this service exists is narrow on purpose. Agent-readiness is a measurable property of a site, an API, or a product surface. Either the scanners read it higher next week than this week, or they do not. That is the question I answer.</p>
+
+    <h2>Contact me</h2>
+    <p>Ready to see where your site or API stands? Two scans, one report, a prioritized fix list. The baseline is measured before any work begins, and the same scanners read the result after. Async-only engagement. No calls and no calendar links. The first reply lands in writing within one business day.</p>
+    <div class="contact-card">
+      <a class="ch" href="mailto:info@turva.dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>info@turva.dev</span></a>
+      <div class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg><span>Signal @turva.19</span></div>
+      <a class="ch" href="https://www.linkedin.com/in/erikrekola/"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.4 8.9h3.1V21H3.4zM9.2 8.9h2.97v1.65h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V21h-3.1v-5.35c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9.2z"/></svg><span>LinkedIn</span></a>
+    </div>
+    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a></div>
+  </article>
+</main>
+${FOOTER_HTML}
 </body>
 </html>`;
   const headers = new Headers({
@@ -2456,6 +3152,110 @@ var X402_ROUTES = {
     amountEurCents: 150000
   }
 };
+
+var ACP_SERVICES = {
+  audit: { item: "audit", name: "Agent-readiness audit", amount: 650000, description: "Fixed scope, 2-3 weeks. Independent scanner sweep, manual review, written report with prioritized fixes." },
+  advisory: { item: "advisory", name: "Continuous advisory", amount: 300000, description: "Monthly re-scan, score delta report, written review, roadmap input. Minimum three months." },
+  implementation: { item: "implementation", name: "Implementation day", amount: 150000, description: "Hands-on Worker-level work, scoped per task." }
+};
+
+function buildAcpCheckoutSession(serviceId, sessionId) {
+  const svc = ACP_SERVICES[serviceId] || ACP_SERVICES.audit;
+  return {
+    "id": sessionId,
+    "status": "not_ready_for_payment",
+    "currency": "eur",
+    "line_items": [{
+      "id": "line_item_" + svc.item,
+      "item": { "id": svc.item, "quantity": 1 },
+      "base_amount": svc.amount,
+      "discount": 0,
+      "subtotal": svc.amount,
+      "tax": 0,
+      "total": svc.amount,
+      "name": svc.name,
+      "description": svc.description
+    }],
+    "fulfillment_options": [{
+      "type": "digital",
+      "id": "fulfillment_digital",
+      "title": "Async written delivery",
+      "description": "Delivered in writing. No calls, no calendar links.",
+      "totals": [{ "type": "total", "display_text": "Delivery", "amount": 0 }]
+    }],
+    "selected_fulfillment_options": [{ "type": "digital", "option_id": "fulfillment_digital", "item_ids": [svc.item] }],
+    "totals": [
+      { "type": "items_base_amount", "display_text": "Item(s) total", "amount": svc.amount },
+      { "type": "subtotal", "display_text": "Subtotal", "amount": svc.amount },
+      { "type": "tax", "display_text": "VAT (added on invoice)", "amount": 0 },
+      { "type": "total", "display_text": "Total (excl. VAT)", "amount": svc.amount }
+    ],
+    "messages": [{
+      "type": "info",
+      "resolution": "requires_buyer_review",
+      "content_type": "plain",
+      "content": "This engagement is scoped and confirmed in writing before payment. turva confirms scope and a fixed quote within one business day. Engagement is async only, with no calls and no calendar links. Agent-initiated instant payment is not available."
+    }],
+    "links": [
+      { "type": "terms_of_use", "url": "https://turva.dev/legal" },
+      { "type": "privacy_policy", "url": "https://turva.dev/legal" }
+    ]
+  };
+}
+
+function acpHeaders() {
+  const h = new Headers({
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    "access-control-allow-origin": "*",
+    "api-version": "2026-01-16"
+  });
+  appendAgentLinks(h);
+  applySecurityHeaders(h, "agent-api");
+  return h;
+}
+
+async function serveAcpCheckout(request, pathLower) {
+  const method = request.method;
+  const base = "/api/acp/checkout_sessions";
+  if (pathLower === base) {
+    if (method !== "POST") {
+      return new Response(JSON.stringify({ "type": "invalid_request", "code": "method_not_allowed", "message": "Use POST to create a checkout session." }, null, 2), { status: 405, headers: acpHeaders() });
+    }
+    let reqBody = {};
+    try { reqBody = await request.json(); } catch (e) { reqBody = {}; }
+    let serviceId = "audit";
+    if (reqBody && Array.isArray(reqBody.items) && reqBody.items[0] && reqBody.items[0].id) {
+      serviceId = String(reqBody.items[0].id).toLowerCase();
+    }
+    const session = buildAcpCheckoutSession(serviceId, "acp_sess_" + crypto.randomUUID());
+    return new Response(JSON.stringify(session, null, 2), { status: 201, headers: acpHeaders() });
+  }
+  const rest = pathLower.slice(base.length + 1);
+  const parts = rest.split("/");
+  const sessionId = parts[0] || ("acp_sess_" + crypto.randomUUID());
+  const action = parts[1] || "";
+  if (!action) {
+    if (method !== "GET") {
+      return new Response(JSON.stringify({ "type": "invalid_request", "code": "method_not_allowed", "message": "Use GET to retrieve a checkout session." }, null, 2), { status: 405, headers: acpHeaders() });
+    }
+    const session = buildAcpCheckoutSession("audit", sessionId);
+    return new Response(JSON.stringify(session, null, 2), { status: 200, headers: acpHeaders() });
+  }
+  if (action === "cancel") {
+    if (method !== "POST") {
+      return new Response(JSON.stringify({ "type": "invalid_request", "code": "method_not_allowed", "message": "Use POST to cancel a checkout session." }, null, 2), { status: 405, headers: acpHeaders() });
+    }
+    const session = buildAcpCheckoutSession("audit", sessionId);
+    session.status = "canceled";
+    session.messages = [{ "type": "info", "content_type": "plain", "content": "Checkout session has been canceled." }];
+    return new Response(JSON.stringify(session, null, 2), { status: 200, headers: acpHeaders() });
+  }
+  if (action === "complete") {
+    return new Response(JSON.stringify({ "type": "processing_error", "code": "intervention_required", "message": "This engagement is confirmed in writing before payment. turva confirms scope and a fixed quote within one business day, then invoices directly. Agent-initiated instant completion is not available. Contact info@turva.dev.", "param": "$.payment_data" }, null, 2), { status: 422, headers: acpHeaders() });
+  }
+  return new Response(JSON.stringify({ "type": "invalid_request", "code": "not_found", "message": "Unknown checkout session route." }, null, 2), { status: 404, headers: acpHeaders() });
+}
 
 function serve402(pathname, route) {
   const resource = "https://turva.dev" + pathname;
@@ -2541,7 +3341,6 @@ async function handleRequest(request, env) {
   const pathname = url.pathname;
   const hostname = url.hostname;
   const userAgent = request.headers.get("User-Agent")?.toLowerCase() || "";
-  const isPrerender = request.headers.get("X-Prerender");
   const pathLower = pathname.toLowerCase();
   const lastDot = pathLower.lastIndexOf(".");
   const extension = lastDot > -1 ? pathLower.substring(lastDot).toLowerCase() : "";
@@ -2555,8 +3354,14 @@ async function handleRequest(request, env) {
     return Response.redirect("https://turva.dev" + pathname + url.search, 301);
   }
 
+  if (pathLower === "/.well-known/host-meta" || pathLower === "/.well-known/webfinger" || pathLower === "/.well-known/nodeinfo") {
+    return Response.redirect("https://social.turva.dev" + pathname + url.search, 301);
+  }
   if (pathLower === "/x402") {
     return serveX402Root();
+  }
+  if (pathLower === "/api/acp/checkout_sessions" || pathLower.startsWith("/api/acp/checkout_sessions/")) {
+    return serveAcpCheckout(request, pathLower);
   }
 
   if (pathLower === "/agent/auth/register") {
@@ -2587,15 +3392,22 @@ async function handleRequest(request, env) {
     return serveStatic(HOME_JSON, "application/json; charset=utf-8", "agent-api");
   }
 
+  if (wantsMarkdown(request) && pathname === "/") {
+    return serveMarkdown(HOME_MARKDOWN, "https://turva.dev/");
+  }
+
   if (wantsMarkdown(request) && PAGE_MARKDOWN[pathname]) {
     const canonicalUrl = getCanonicalForPath(pathname) || "https://turva.dev" + pathname;
     return serveMarkdown(PAGE_MARKDOWN[pathname], canonicalUrl);
   }
 
-  // Guide pages are worker-owned and not present on the Sitejet origin, so the
-  // worker renders the HTML representation directly instead of proxying. The
-  // /guides hub is rendered through the same path as the /guides/* sub-pages.
-  if ((pathname === "/guides" || pathname.startsWith("/guides/")) && PAGE_MARKDOWN[pathname]) {
+  // Worker-rendered HTML pages. The homepage, guides, and the four text pages
+  // (services, company, legal, contact) are rendered directly by the worker
+  // rather than proxied from Sitejet.
+  if (pathname === "/") {
+    return serveHomeHtml("https://turva.dev/");
+  }
+  if ((pathname === "/guides" || pathname.startsWith("/guides/") || pathname === "/blog" || pathname.startsWith("/blog/") || pathname === "/services" || pathname === "/company" || pathname === "/legal" || pathname === "/contact") && PAGE_MARKDOWN[pathname]) {
     return serveGuideHtml(pathname, "https://turva.dev" + pathname);
   }
 
@@ -2643,6 +3455,11 @@ async function handleRequest(request, env) {
       pathLower === "/.well-known/acp/manifest.json") {
     return serveStatic(ACP_MANIFEST, "application/json; charset=utf-8", "agent-api");
   }
+  if (pathLower === "/.well-known/agent-card.json" ||
+      pathLower === "/.well-known/agent.json" ||
+      pathLower === "/.well-known/a2a/agent-card.json") {
+    return serveStatic(A2A_AGENT_CARD, "application/json; charset=utf-8", "agent-api");
+  }
   if (pathLower === "/.well-known/x402" || pathLower === "/.well-known/x402.json") {
     return serveStatic(X402_MANIFEST, "application/json; charset=utf-8", "agent-api");
   }
@@ -2673,37 +3490,14 @@ async function handleRequest(request, env) {
   if (pathLower === "/.well-known/ai.txt" || pathLower === "/ai.txt") {
     return serveStatic(AI_TXT, "text/plain; charset=utf-8", "agent-api");
   }
-
-  const isBot = BOT_AGENTS.some((bot) => userAgent.includes(bot.toLowerCase()));
-  const isIgnoredExt = extension.length && IGNORE_EXTENSIONS.includes(extension);
-
-  if (isPrerender || !isBot || isIgnoredExt) {
-    const response = await fetch(request);
-    return injectHtml(response, pathname);
+  if (pathLower === "/favicon.ico" || pathLower === "/favicon.svg") {
+    return serveStatic(FAVICON_SVG, "image/svg+xml; charset=utf-8", "agent-api");
   }
 
-  if (env && env.PRERENDER_TOKEN) {
-    const newURL = `https://service.prerender.io/${request.url}`;
-    const newHeaders = new Headers(request.headers);
-    newHeaders.set("X-Prerender-Token", env.PRERENDER_TOKEN);
-    newHeaders.set("X-Prerender-Int-Type", "CloudFlare");
-    const prerenderResponse = await fetch(new Request(newURL, { headers: newHeaders, redirect: "manual" }));
-    const botHeaders = new Headers(prerenderResponse.headers);
-    appendAgentLinks(botHeaders);
-    applySecurityHeaders(botHeaders, "html");
-    botHeaders.set("Vary", "Accept");
-    botHeaders.set("Content-Language", "en");
-    const canonicalUrl = getCanonicalForPath(pathname) || "https://turva.dev" + pathname;
-    botHeaders.append("Link", `<${canonicalUrl}>; rel="alternate"; type="text/markdown"`);
-    return new Response(prerenderResponse.body, {
-      status: prerenderResponse.status,
-      statusText: prerenderResponse.statusText,
-      headers: botHeaders
-    });
-  }
-
-  const response = await fetch(request);
-  return injectHtml(response, pathname);
+  // Every page is rendered by the worker and static assets (og.jpg) come from
+  // Workers Assets. Nothing is proxied to an origin any more, so an unmatched
+  // path is a genuine 404 rendered by the worker. The Sitejet origin no longer exists.
+  return serve404(pathname);
 }
 
 export {
