@@ -12,7 +12,7 @@ This repository is the open-source reference implementation behind turva.dev, wh
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-06-08. Two independent public scanners, listed once each.
+Measured on `https://turva.dev` on 2026-06-21. Two independent public scanners, listed once each.
 
 | Scanner | Result |
 |---|---|
@@ -36,7 +36,7 @@ These six category scores come from the startuphub.ai scan. The Cloudflare Agent
 
 ## Web security
 
-Agent-readiness is one axis; the domain's own web security is another. We publish turva.dev's own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-08.
+Agent-readiness is one axis; the domain's own web security is another. We publish turva.dev's own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-20.
 
 | Scanner | Result |
 |---|---|
