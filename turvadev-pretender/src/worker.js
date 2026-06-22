@@ -196,6 +196,9 @@ var LLMS_TXT = `# turva.dev
 - [x402 and agent payments](https://turva.dev/guides/x402-agent-payments)
 - [Response headers that help agents](https://turva.dev/guides/response-headers-for-agents)
 - [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
+- [Agent-readiness, AEO and GEO: how they relate](https://turva.dev/guides/agent-readiness-aeo-geo)
+- [Letting agents act on data: the decision envelope](https://turva.dev/guides/letting-agents-act-on-data)
+- [AI agent use cases: where agents read data and make decisions](https://turva.dev/guides/ai-agent-use-cases)
 - [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
 - [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
 - [How agents authenticate](https://turva.dev/guides/agent-authentication)
@@ -206,9 +209,11 @@ var LLMS_TXT = `# turva.dev
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
 - [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
 - [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery)
+- [Agentic commerce readiness: selling to AI shopping agents](https://turva.dev/guides/agentic-commerce-readiness)
 
 ## Build log
 - [Build log](https://turva.dev/blog)
+- [What makes an AI agent's decisions reliable](https://turva.dev/blog/reliable-agent-decisions)
 - [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity)
 - [Passing the agent commerce checks without faking them](https://turva.dev/blog/honest-agent-commerce-checks)
 - [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender)
@@ -338,9 +343,42 @@ var PAGE_MARKDOWN = {
 
 Notes on how turva.dev is built and measured. Each entry is dated, and the claims are verifiable by independent agent-readiness scanners.
 
+- [What makes an AI agent's decisions reliable](/blog/reliable-agent-decisions). 2026-06-22.
 - [Owning your fediverse identity](/blog/owning-your-fediverse-identity). 2026-06-21.
 - [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks). 2026-06-21.
 - [Moving turva.dev off prerender.io](/blog/moving-off-prerender). 2026-06-20.
+`,
+  "/blog/reliable-agent-decisions": `# What makes an AI agent's decisions reliable
+
+2026-06-22
+
+Across the audits I have run, one thing keeps surfacing. An agent that is instructed well, and given the right settings, can take in data and make the correct decision, every time the rules call for it. The capability is real, and it is wider than most of the conversation around it. The limits are rarely the model. They sit in two places that are easy to overlook.
+
+## A decision is only as good as its inputs
+
+The decision an agent reaches is bounded by the data that reaches the agent. In a clean datacenter that is invisible, so it gets ignored. Move the same agent to where the work actually happens and it becomes the whole problem. A link drops as a crane passes over it. A satellite hop adds the better part of a second. One lost packet stalls every packet queued behind it, and the agent waits on stale input while the moment it needed to act goes by.
+
+The agent did not get worse. Its inputs did. Most of the reliability of an autonomous decision lives in the unglamorous layer below the model, where data either arrives in order and on time or it does not. A site or a system that wants an agent to act on live data has to earn that layer first.
+
+## The right decision is the one the settings allow
+
+A correct decision is not an agent doing whatever it infers. It is an agent acting inside an envelope that was defined for it. The settings are the decision, made ahead of time by a person who knew the stakes. Draw the envelope loosely and a capable agent will still do something, just not the thing you wanted. Draw it well and the same agent is one you can leave alone.
+
+This is the part that gets skipped when people picture autonomy. They imagine judgment appearing from nowhere. In practice the judgment is front-loaded into permissions and thresholds, and into an explicit list of what the agent may touch and what it may not. Good autonomy looks less like a clever model and more like a well-set boundary.
+
+## The hardest case is where no one can step in
+
+The clearest test of all this is the environment where a person cannot be in the loop. Distance and latency, with help too far away to matter in the seconds that count. When the round trip to a human is longer than the decision can wait, the decision has to be made locally, under rules agreed in advance.
+
+The fields that operate in those conditions worked this out first, because they had no choice. They learned to package a human expert's judgment into something a machine could carry to the far end and apply without asking. That discipline used to look exotic. It is now the same thing any team needs before it lets an agent act on a system that matters.
+
+## The point is not to remove the person
+
+Autonomy is not the absence of people. The strongest setups take an expert's judgment and place it where the work is, then let the machine handle the parts that have to be instant or exact. The person sees what the agent sees and acts through the same channel, and the agent extends their reach instead of standing in for them.
+
+This is why I have stopped describing my work as only agent-readiness. Reading a site is the first step, the precondition for everything after it. What an agent can actually do once the inputs are clean and the envelope is set, with a person kept where judgment belongs, is the rest of the distance. That is the work I am moving toward.
+
+For an agent-readiness audit, or a conversation about letting agents act on your systems safely, contact info@turva.dev.
 `,
   "/blog/moving-off-prerender": `# Moving turva.dev off prerender.io
 
@@ -433,6 +471,11 @@ A checkout endpoint does not have to support instant payment to be real. The ACP
 These surfaces exist so an agent can act without guessing, which only holds when every claim resolves to something real. A card whose skills lead nowhere breaks the same way a checkout that never responds does, because the agent follows the signal and finds nothing. Publish what is true, and back each declaration with a surface that answers.
 
 turva.dev publishes an A2A Agent Card, an AP2 merchant declaration, and an ACP discovery document with a working checkout endpoint, verified by independent scanners. For an audit of a site's agent commerce surface, contact info@turva.dev.
+
+## Related
+
+- [x402 and agent payments](/guides/x402-agent-payments)
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
 `,
   "/blog/owning-your-fediverse-identity": `# Owning your fediverse identity
 
@@ -462,8 +505,10 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 `,
   "/": `# Agent-readiness audits and advisory
 
-Agent-readiness audits and advisory for product teams. Independent
-measurement of how readable your site and APIs are by AI agents.
+Independent agent-readiness audits and advisory for product teams. I measure how readable your site and APIs are by AI agents, then help with what that measurement leads to.
+
+The wider work is everything downstream of readiness. It covers the data an agent acts on, so it arrives intact even over links that drop or lag, and the envelope of permissions and thresholds that decides what an agent may do, so the decisions it makes are the ones you intended. Agent-readiness is where this starts, not where it ends.
+
 Based in Tampere, Finland. Async-only engagement.
 
 ## How I work
@@ -494,6 +539,7 @@ named.
 - **Audit.** €6,500. Two to three weeks. Fixed scope.
 - **Advisory.** €3,000 per month. Monthly retainer. Minimum three months.
 - **Implementation.** €1,500 per day. Scoped per task.
+- **Agent operations.** Price on request. The work beyond readiness: the data an agent acts on, and the decisions it is allowed to make.
 
 See [Services](https://turva.dev/services) for the full description.
 
@@ -523,6 +569,9 @@ questions. First reply within one business day.
 - [x402 and agent payments](https://turva.dev/guides/x402-agent-payments)
 - [Response headers that help agents](https://turva.dev/guides/response-headers-for-agents)
 - [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
+- [Agent-readiness, AEO and GEO: how they relate](https://turva.dev/guides/agent-readiness-aeo-geo)
+- [Letting agents act on data: the decision envelope](https://turva.dev/guides/letting-agents-act-on-data)
+- [AI agent use cases: where agents read data and make decisions](https://turva.dev/guides/ai-agent-use-cases)
 - [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
 - [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
 - [How agents authenticate](https://turva.dev/guides/agent-authentication)
@@ -533,11 +582,12 @@ questions. First reply within one business day.
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
 - [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
 - [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery)
+- [Agentic commerce readiness: selling to AI shopping agents](https://turva.dev/guides/agentic-commerce-readiness)
 `,
 
   "/services": `# Services
 
-Three offerings. Async-only. One business day response.
+Four offerings. Async-only. One business day response.
 
 ## Audit
 
@@ -599,6 +649,22 @@ Typical work:
 - Signed content and agent authentication patterns
 
 Scoped repository write access per task. No retainer.
+
+## Agent operations
+
+**Price on request. Scoped per engagement.**
+
+The work beyond readiness, for teams moving from "an agent can read us" to "an agent can act on a system that matters." Two things decide whether an agent acts correctly. The data it works from has to arrive intact, even over links that drop or lag. And the decisions it is allowed to make have to sit inside an envelope of permissions and thresholds you set deliberately.
+
+Typical work:
+- Review of the data path an agent depends on, and where it breaks under real network conditions
+- The permission and threshold envelope that bounds what an agent may decide and act on
+- Where a human stays in the loop, and how control passes between person and agent
+- Guardrails and verification so an agent's decisions can be checked after the fact
+
+Scope and price vary with the system. Email <mailto:info@turva.dev> with what you are building, and I respond within one business day with a fixed quote.
+
+Suited for teams letting agents act on data and decisions that matter, not only read a marketing site.
 
 ## How to start
 
@@ -835,7 +901,11 @@ Paying agents, how this differs from SEO, and how to choose and measure an audit
 
 - [x402 and agent payments](https://turva.dev/guides/x402-agent-payments)
 - [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery)
+- [Agentic commerce readiness: selling to AI shopping agents](https://turva.dev/guides/agentic-commerce-readiness)
 - [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
+- [Agent-readiness, AEO and GEO: how they relate](https://turva.dev/guides/agent-readiness-aeo-geo)
+- [Letting agents act on data: the decision envelope](https://turva.dev/guides/letting-agents-act-on-data)
+- [AI agent use cases: where agents read data and make decisions](https://turva.dev/guides/ai-agent-use-cases)
 - [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
 - [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
@@ -882,6 +952,12 @@ The result is a list. Each check passes or fails, and each failure comes with a 
 turva.dev applies the same standard to its own site. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. The audit a client receives runs the same checks against their site.
 
 For an audit, contact info@turva.dev. Engagement is async and evidence-based, and production credentials are not requested.
+
+## Related
+
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+- [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
 `,
 
   "/guides/llms-txt": `# llms.txt explained
@@ -897,6 +973,12 @@ llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt.
 Whether a site needs one depends on whether it wants to be legible to agents. If buyers, researchers, or assistants will ever ask a model about what the site does, a clear llms.txt raises the odds that the model reads the real content rather than guessing from a cached snippet.
 
 turva.dev publishes llms.txt and llms-full.txt and serves markdown on request. For an audit of how legible a site is to agents, contact info@turva.dev.
+
+## Related
+
+- [Serving markdown to agents](/guides/markdown-for-agents)
+- [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
+- [Agent-readiness, AEO and GEO: how they relate](/guides/agent-readiness-aeo-geo)
 `,
 
   "/guides/mcp-server-card": `# MCP server cards explained
@@ -910,6 +992,12 @@ A useful card states the server name, the endpoint, and the tools available, in 
 A server card sits in the same family as other well-known manifests an agent looks for, such as an API catalog, an OpenAPI description, and OAuth discovery. Each one removes a guess. The card answers what tools exist, the API catalog answers what endpoints exist, and OAuth discovery answers how to authenticate. Together they let an agent move from finding a site to operating it.
 
 For sites that want to expose a capability to agents, the card is the cheapest high-value step, because it turns an invisible server into a discoverable one. For an audit of a site's capability surface, contact info@turva.dev.
+
+## Related
+
+- [What agents.json is](/guides/agents-json)
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [How agents authenticate](/guides/agent-authentication)
 `,
 
   "/guides/agents-json": `# What agents.json is
@@ -925,6 +1013,12 @@ agents.json sits beside the other declarations an agent looks for. An MCP server
 A site does not need agents.json to be readable, but it needs something like it to be operable. If the goal is for agents to complete tasks rather than just summarise the page, declaring the action surface is the step that makes that possible.
 
 For an audit of a site's capability and action surface, contact info@turva.dev.
+
+## Related
+
+- [MCP server cards explained](/guides/mcp-server-card)
+- [How agents authenticate](/guides/agent-authentication)
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
 `,
 
   "/guides/x402-agent-payments": `# x402 and agent payments
@@ -938,6 +1032,11 @@ This matters because agent commerce is held back by payment, not by capability. 
 x402 belongs to a small family of agent payment standards, alongside agent payments discovery such as AP2. A site that publishes these signals tells agents that it is open for automated business, and in the case of the open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
 
 turva.dev publishes an x402 endpoint and manifest and participates in the x402-mesh peer pricelist. For an audit of a site's commerce surface for agents, contact info@turva.dev.
+
+## Related
+
+- [Agent commerce discovery: A2A, AP2, and ACP](/guides/agent-commerce-discovery)
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
 `,
 
   "/guides/response-headers-for-agents": `# Response headers that help agents
@@ -951,6 +1050,12 @@ The reason headers matter is order. An agent fetches the response, reads the sta
 Headers are easy to get wrong in ways that hurt agents. A missing Vary header breaks content negotiation. An immutable header set on the wrong response can stop an agent from seeing an update. The fix is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response.
 
 For an audit of a site's response and discovery surface, contact info@turva.dev.
+
+## Related
+
+- [Serving markdown to agents](/guides/markdown-for-agents)
+- [Prerendering and why agents see empty pages](/guides/prerendering-for-agents)
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
 `,
 
   "/guides/seo-vs-agent-readiness": `# SEO and agent-readiness are not the same
@@ -964,6 +1069,12 @@ The gap is widening as people ask assistants instead of typing queries. When an 
 This is why ranking on a search engine does not predict presence in an AI answer. They are scored on different things. A site that wants both has to do both, and the agent-readiness side is the one most teams have not started.
 
 turva.dev measures the agent-readiness side and reports exactly which checks pass or fail. For an audit, contact info@turva.dev.
+
+## Related
+
+- [Agent-readiness, AEO and GEO: how they relate](/guides/agent-readiness-aeo-geo)
+- [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
 `,
 
   "/guides/json-ld-structured-data": `# JSON-LD and structured data for agents
@@ -977,6 +1088,12 @@ Structured data also connects a page to the wider graph an agent builds. Declare
 The cost of getting it wrong is silent. An agent does not report that it failed to parse a price, it just acts on a worse guess. Clean JSON-LD is one of the cheapest ways to make a page legible, and it sits in the same family as the response headers and well-known manifests an agent reads first.
 
 turva.dev declares JSON-LD for its organisation, the people behind it, its services, and its guides, and the next scan reads the structured data as present. For an audit of a site's structured data, contact info@turva.dev.
+
+## Related
+
+- [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
+- [llms.txt explained](/guides/llms-txt)
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
 `,
 
   "/guides/well-known-for-agents": `# The /.well-known directory for agents
@@ -990,6 +1107,12 @@ The value is that discovery becomes a lookup rather than a search. An agent that
 A missing or thin well-known directory does not break a site for people, but it leaves an agent to guess, and most agents will simply move on. Publishing the manifests an agent expects is the difference between a capability that exists and a capability an agent can find.
 
 turva.dev publishes an API catalog, a server card, OAuth metadata, payment manifests, and a security contact under /.well-known. For an audit of a site's discovery surface, contact info@turva.dev.
+
+## Related
+
+- [MCP server cards explained](/guides/mcp-server-card)
+- [How agents authenticate](/guides/agent-authentication)
+- [Sitemaps, robots.txt and agent access](/guides/sitemaps-and-robots-for-agents)
 `,
 
   "/guides/agent-authentication": `# How agents authenticate
@@ -1003,6 +1126,12 @@ The reason this matters is trust and blast radius. A site that exposes capabilit
 A short auth description, sometimes published as an auth.md, gives an agent a human-readable entry point to the same flow. Together with OAuth discovery it answers the agent's first question about any action, which is how do I get permission to do this safely.
 
 turva.dev publishes OAuth discovery, a protected resource description, and an agent registration entry point, and it never requests production credentials in an engagement. For an audit of a site's authentication surface, contact info@turva.dev.
+
+## Related
+
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [MCP server cards explained](/guides/mcp-server-card)
+- [What agents.json is](/guides/agents-json)
 `,
 
   "/guides/measurement-led-agent-readiness": `# Why agent-readiness should be measured, not asserted
@@ -1016,6 +1145,12 @@ Measurement also makes a result legible to a buyer. A claim that a site is agent
 This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com.
 
 For an audit that reports measured results rather than a checklist, contact info@turva.dev.
+
+## Related
+
+- [What an agent-readiness audit is](/guides/agent-readiness-audit)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
+- [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
 `,
 
   "/guides/prerendering-for-agents": `# Prerendering and why agents see empty pages
@@ -1029,6 +1164,12 @@ The fix is to serve the real content in the first response for clients that need
 The decision is not all or nothing. A site can keep its interactive experience for people and serve prerendered or markdown content to agents and bots, deciding by the request. On turva.dev that decision lives in a Cloudflare Worker that detects the client and returns the right form.
 
 For an audit of how a site renders for agents, contact info@turva.dev.
+
+## Related
+
+- [Serving markdown to agents](/guides/markdown-for-agents)
+- [Response headers that help agents](/guides/response-headers-for-agents)
+- [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
 `,
 
   "/guides/sitemaps-and-robots-for-agents": `# Sitemaps, robots.txt and agent access
@@ -1042,6 +1183,12 @@ The sitemap answers the other question, which is what exists. A complete sitemap
 Getting these wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident removes a site from that assistant's answers. A stale sitemap hides new pages. The files are small and the fix is fast, which is why they are the first thing a readiness review checks.
 
 turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a complete sitemap. For an audit of a site's crawl and access surface, contact info@turva.dev.
+
+## Related
+
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [Response headers that help agents](/guides/response-headers-for-agents)
+- [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
 `,
 
   "/guides/markdown-for-agents": `# Serving markdown to agents
@@ -1055,6 +1202,12 @@ The saving is large. On turva.dev the markdown form of a page costs a small frac
 Markdown delivery is not a separate site, it is the same content offered in a second form. The page stays as it is for people, and an agent that asks for text gets text. Paired with a clear llms.txt that lists where the content lives, it makes a site fast and reliable to read at machine speed.
 
 turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. For an audit of a site's content surface for agents, contact info@turva.dev.
+
+## Related
+
+- [llms.txt explained](/guides/llms-txt)
+- [Response headers that help agents](/guides/response-headers-for-agents)
+- [Prerendering and why agents see empty pages](/guides/prerendering-for-agents)
 `,
 
   "/guides/agent-readiness-gaps": `# Common agent-readiness gaps on marketing sites
@@ -1068,6 +1221,12 @@ Beyond those, capability is usually undeclared. The site may have an API or a us
 None of these are hard to fix, and that is the point. The work is mostly at the edge and in a few small files, and the result shows up immediately in a scanner. A site does not have to rebuild to become legible to agents, it has to publish what agents already look for.
 
 turva.dev runs this exact review and reports each gap with a concrete fix. For an audit, contact info@turva.dev.
+
+## Related
+
+- [What an agent-readiness audit is](/guides/agent-readiness-audit)
+- [Prerendering and why agents see empty pages](/guides/prerendering-for-agents)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/choosing-an-agent-readiness-audit": `# Choosing an agent-readiness audit
@@ -1099,8 +1258,144 @@ Publish the surfaces agents read, then measure the result. That means llms.txt, 
 Async only. No calls, no calendar links, no discovery meetings. Replies within one business day. Fixed scope per engagement, written before payment, and an open-source reference implementation you can read before deciding.
 
 For an audit, contact info@turva.dev.
+
+## Related
+
+- [What an agent-readiness audit is](/guides/agent-readiness-audit)
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+- [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
 `,
 
+  "/guides/agent-readiness-aeo-geo": `# Agent-readiness, AEO and GEO: how they relate
+
+Three terms describe overlapping work, and the difference matters when you decide what to fix. Answer engine optimization (AEO) is about the pages, so an AI engine can quote them as the answer to a question. Generative engine optimization (GEO) is about the signal around the pages, so an engine trusts the source enough to cite it. Agent-readiness is wider than both, because it also covers whether an agent can act on the site, not only read and cite it.
+
+## At a glance
+
+| Discipline | What it optimizes | Who consumes it | A typical fix |
+| --- | --- | --- | --- |
+| SEO | Ranking on a results page | A person choosing a link | Keywords, backlinks, page speed |
+| AEO | A page an engine can quote | An AI answer engine | Schema, quotable passages, clear facts |
+| GEO | The trust signal around the page | An engine deciding what to cite | Citations, directories, a resolved entity |
+| Agent-readiness | What an agent can read and act on | An AI agent that acts | llms.txt, MCP, APIs, commerce endpoints |
+
+## Answer engine optimization
+
+AEO engineers the page itself. Structure, schema, source density, and passages an engine can lift cleanly. The practical test is whether the first sentence under a heading stands alone as a quotable answer, and whether the facts on the page are stated as data rather than buried in prose. Most of what makes a page AEO-ready also makes it agent-readable, because both depend on a machine reading the content without guessing.
+
+## Generative engine optimization
+
+GEO engineers the trust signal. Directories, citations across independent sources, a consistent description of who you are, and a knowledge-graph entity an engine can resolve. An engine cites a source when several places agree on the same thing. AEO gives the engine something to quote. GEO gives it a reason to trust the quote. One without the other underperforms.
+
+## Where agent-readiness goes further
+
+AEO and GEO stop at being read and cited. Agent-readiness adds the surfaces an agent needs to do something. An MCP server it can call, an API catalog it can enumerate, authentication it can pass, and commerce endpoints it can transact against. A site can be perfectly quotable and still give an agent nothing to act on. The reverse is also common, an API an agent could use that no engine can find.
+
+## How to sequence the work
+
+Measure first, because the three overlap and you do not want to pay for the same fix twice. A scan shows which AEO and agent surfaces are present and which are missing. The page-level gaps are usually AEO and agent-readiness work, fixable on the site itself. The trust gaps are GEO work, earned offsite over time. The point of measuring is to spend effort where an engine or an agent actually changes its behaviour, not where a checklist says you should.
+
+For a measured audit across agent-readiness, AEO and the agent surfaces an engine cannot see, contact info@turva.dev.
+
+## Related
+
+- [SEO and agent-readiness are not the same](/guides/seo-vs-agent-readiness)
+- [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
+- [llms.txt explained](/guides/llms-txt)
+`,
+  "/guides/agentic-commerce-readiness": `# Agentic commerce readiness
+
+An AI shopping agent buys on a person's behalf. It reads a catalog, compares options, and completes a checkout without a human filling in a form. Agentic commerce readiness is the work of making a site one of those agents can actually transact with, rather than one it skips because the path is unclear or blocked.
+
+## What an agent needs to buy
+
+An agent needs three things in machine-readable form. It needs to find the offer, with a price and currency it can parse rather than infer from a layout. It needs a checkout it can drive through a protocol, not a page built for a mouse. And it needs the purchase to behave predictably, so the same call produces the same result every time. A catalog that looks perfect to a person can still be opaque to an agent on all three counts.
+
+## The protocols in play
+
+Checkout is becoming a protocol rather than a page. Stripe and OpenAI shipped Instant Checkout inside ChatGPT in 2025. Google and Shopify introduced a universal commerce protocol in early 2026. The discovery layer is settling on a small set of standards. An A2A Agent Card describes the interface, AP2 declares agent payments inside it, ACP carries the checkout, and x402 lets an agent meet a price with HTTP 402 and continue. A site does not need all of them, but it needs the ones its buyers' agents speak, declared where an agent looks.
+
+## Where sites fail the agent
+
+Most catalogs lose the agent before checkout. A price that lives only in rendered HTML, a CAPTCHA wall, a maintenance interstitial, or a discovery file that claims a capability the endpoint does not answer. Each one ends the purchase silently. The agent does not complain, it moves to a competitor whose path resolves. The failure looks like no traffic rather than a broken page, which is why it goes unmeasured.
+
+## Readiness is testable
+
+Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built and verified its own agent commerce surface this way, across A2A, AP2, ACP and x402, checked by independent scanners.
+
+For an audit of whether AI shopping agents can discover and complete a purchase on your site, contact info@turva.dev.
+
+## Related
+
+- [Agent commerce discovery: A2A, AP2, and ACP](/guides/agent-commerce-discovery)
+- [x402 and agent payments](/guides/x402-agent-payments)
+- [The /.well-known directory for agents](/guides/well-known-for-agents)`,
+  "/guides/letting-agents-act-on-data": `# Letting agents act on data
+
+Reading a site is the first step. The harder one is letting an agent act on a system that matters, where a wrong move has a cost. That depends on two things the model does not provide on its own. The data the agent works from has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set.
+
+## A decision is only as good as its inputs
+
+An agent's decision is bounded by the data that reaches it. In a clean environment that is invisible. Where the work happens it is the whole problem, because a dropped link, a delayed hop, or a single lost packet leaves the agent acting on stale input. The model did not get worse, its inputs did. Reliability lives in the layer below the model, where data either arrives in order and on time or it does not.
+
+## The envelope is the real control
+
+A correct decision is not an agent doing whatever it infers. It is an agent acting inside an envelope defined for it, the permissions, the thresholds, and the explicit list of what it may touch and what it may not. The judgment is front-loaded into that boundary by a person who knew the stakes. Draw it loosely and a capable agent still does something, just not what you wanted. Draw it well and the same agent is one you can leave alone.
+
+## Keep a person where judgment belongs
+
+Letting agents act is not removing people. The stronger pattern carries a human expert's judgment to where the work is and lets the agent handle the parts that have to be instant or exact, with a clear point where control passes back. The hardest version is where no person can step in fast enough, so the decision has to be made locally under rules agreed in advance. The fields that work under that constraint learned the discipline first.
+
+## Make it checkable
+
+An agent that acts has to be auditable. Log what it decided and why, keep the envelope explicit rather than implied, and verify after the fact that it stayed inside the boundary. Guardrails that cannot be checked are not guardrails. This is the difference between an agent that is impressive in a demo and one you would let touch a real operation.
+
+This is the work behind the Agent operations engagement. For a review of the data path, the decision envelope, and where a human stays in the loop, contact info@turva.dev.
+
+## Related
+
+- [How agents authenticate](/guides/agent-authentication)
+- [Agentic commerce readiness](/guides/agentic-commerce-readiness)
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)`,
+  "/guides/ai-agent-use-cases": `# AI agent use cases
+
+An AI agent is useful wherever data moves and a decision follows. It reads a machine-readable surface, decides inside the limits it was given, and acts on what it finds. The cases below are grouped by what the agent does, not by industry, because the same pattern repeats across all of them.
+
+## Commerce and transactions
+
+An agent reads a product catalog, weighs the options against a buyer's constraints, and completes a checkout through a protocol rather than a form. The work is making the offer, the price, and the checkout legible and reliable enough for the agent to finish without a human in the loop.
+
+## Monitoring and response
+
+An agent watches an API, a feed, or a system and acts the moment a threshold is crossed, with no one having to be watching. The work is a clean data path so the signal arrives in time, and a tight envelope so the agent takes only the actions it is allowed to.
+
+## Field and frontline support
+
+An agent guides a person doing physical work, drawing on the same data an expert would and answering from it in the moment. The agent extends the expert's reach instead of standing in for the person at the far end.
+
+## Operations under bad connectivity
+
+An agent runs a remote system over a link that drops, holding its last safe state and resuming cleanly when data returns. This is where the data path matters most, because one lost packet can stall every decision queued behind it.
+
+## Back-office and data work
+
+An agent reconciles records across systems, flags only what does not match, and routes the rest. The value is consistency, a decision the agent makes the same way every time, with a trail you can audit afterwards.
+
+## Autonomy at the edge
+
+An agent makes a time-critical call locally, where the round trip to a human is too slow to matter. The decision has to sit inside rules agreed in advance, because there is no one to ask. The fields that operate under that constraint learned the discipline first.
+
+## The common thread
+
+These are examples, not a closed list. The same discipline carries from one case to the next. The question is rarely whether an agent could do the work. It is whether the data reaching it is clean and the envelope around it is set, because those two decide whether the agent makes the right call or a fast wrong one.
+
+If you want an agent to do one of these reliably, or to measure how ready your site or API is for agents in the first place, contact info@turva.dev.
+
+## Related
+
+- [Agentic commerce readiness](/guides/agentic-commerce-readiness)
+- [Letting agents act on data: the decision envelope](/guides/letting-agents-act-on-data)
+- [What an agent-readiness audit is](/guides/agent-readiness-audit)`,
   "/guides/get-cited-by-ai-assistants": `# How to get your site cited by AI assistants
 
 When a person asks ChatGPT, Perplexity, Claude, or Gemini a question, the assistant answers from sources it can read and trust. Getting cited means being one of those sources. A site is cited when the assistant can reach its content, read it cheaply, confirm the facts, and find corroboration elsewhere. This guide covers what that takes.
@@ -1126,6 +1421,12 @@ Several assistants retrieve through a search index before they answer. If a site
 Whether a site is cited is observable. Ask the assistants the questions a buyer would ask and record which sources they name. Repeat on a schedule. The sources that appear, and the ones that do not, tell you where the work is. turva.dev runs this check monthly against its own queries.
 
 For an audit of how legible and citable a site is to assistants, contact info@turva.dev.
+
+## Related
+
+- [Agent-readiness, AEO and GEO: how they relate](/guides/agent-readiness-aeo-geo)
+- [SEO and agent-readiness are not the same](/guides/seo-vs-agent-readiness)
+- [llms.txt explained](/guides/llms-txt)
 `
 };
 
@@ -2037,6 +2338,10 @@ var SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
  <url><loc>https://turva.dev/guides/x402-agent-payments</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/guides/response-headers-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/guides/seo-vs-agent-readiness</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/agent-readiness-aeo-geo</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/agentic-commerce-readiness</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/letting-agents-act-on-data</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/guides/ai-agent-use-cases</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/guides/json-ld-structured-data</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/guides/well-known-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/guides/agent-authentication</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -2048,13 +2353,14 @@ var SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
  <url><loc>https://turva.dev/guides/choosing-an-agent-readiness-audit</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
  <url><loc>https://turva.dev/guides/get-cited-by-ai-assistants</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
  <url><loc>https://turva.dev/guides/agent-commerce-discovery</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/blog</loc><lastmod>2026-06-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/blog</loc><lastmod>2026-06-22</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/blog/moving-off-prerender</loc><lastmod>2026-06-20</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
  <url><loc>https://turva.dev/blog/honest-agent-commerce-checks</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
  <url><loc>https://turva.dev/blog/owning-your-fediverse-identity</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+ <url><loc>https://turva.dev/blog/reliable-agent-decisions</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>`;
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -2068,6 +2374,12 @@ var META_BY_PATH = {
     title: "Build log | turva.dev",
     description: "Notes on how turva.dev is built and measured. Dated entries, each claim verifiable by independent agent-readiness scanners.",
     imageAlt: "turva.dev build log"
+  },
+  "/blog/reliable-agent-decisions": {
+    title: "What makes an AI agent's decisions reliable | turva.dev",
+    description: "What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do. Notes from running agent-readiness audits.",
+    date: "2026-06-22",
+    imageAlt: "What makes an AI agent's decisions reliable"
   },
   "/blog/moving-off-prerender": {
     title: "Moving turva.dev off prerender.io | turva.dev",
@@ -2094,12 +2406,12 @@ var META_BY_PATH = {
   },
   "/": {
     title: "Agent-readiness audits and advisory · turva.dev",
-    description: "Agent-readiness audits and advisory for product teams. Independent measurement of how readable your site and APIs are by AI agents. Async-only.",
+    description: "Agent-readiness audits and advisory for product teams, and the wider work wherever AI agents read data and make decisions, from checkout to monitoring to remote operations. Independent, measured, async-only.",
     imageAlt: "Agent-readiness audits and advisory"
   },
   "/services": {
     title: "Services · turva.dev",
-    description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day. Agent-readiness work for product teams. Async-only, one business day response.",
+    description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day, plus bespoke agent operations on request. Agent-readiness and the wider work for product teams. Async-only.",
     imageAlt: "turva.dev services and pricing"
   },
   "/company": {
@@ -2192,6 +2504,26 @@ var META_BY_PATH = {
     description: "Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens. How content negotiation and llms-full.txt work.",
     imageAlt: "Serving markdown to agents"
   },
+  "/guides/agent-readiness-aeo-geo": {
+    title: "Agent-readiness, AEO and GEO: how they relate | turva.dev",
+    description: "How answer engine optimization (AEO), generative engine optimization (GEO) and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice.",
+    imageAlt: "Agent-readiness, AEO and GEO: how they relate"
+  },
+  "/guides/agentic-commerce-readiness": {
+    title: "Agentic commerce readiness: selling to AI shopping agents | turva.dev",
+    description: "What an AI shopping agent needs to discover an offer, drive a checkout protocol, and complete a purchase. Agentic commerce readiness explained with A2A, AP2, ACP and x402.",
+    imageAlt: "Agentic commerce readiness: selling to AI shopping agents"
+  },
+  "/guides/letting-agents-act-on-data": {
+    title: "Letting agents act on data: the decision envelope | turva.dev",
+    description: "Reading a site is the first step. Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds. How to make agent decisions reliable and checkable.",
+    imageAlt: "Letting agents act on data: the decision envelope"
+  },
+  "/guides/ai-agent-use-cases": {
+    title: "AI agent use cases: where agents read data and make decisions | turva.dev",
+    description: "AI agent use cases across commerce, monitoring, field support, remote operations, back-office data work and edge autonomy. The common pattern, and what makes each one reliable.",
+    imageAlt: "AI agent use cases: where agents read data and make decisions"
+  },
   "/guides/get-cited-by-ai-assistants": {
     title: "How to get your site cited by AI assistants | turva.dev",
     description: "What it takes to be a source AI assistants cite: readable content, structured data, corroboration across sources, indexing where assistants search, and measurement.",
@@ -2244,7 +2576,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 
 var SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/busygoat","https://www.wikidata.org/wiki/Q140276251"]},
+{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/busygoat","https://www.wikidata.org/wiki/Q140276251"]},
 {"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/busygoat","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 {"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"1500","highPrice":"6500","offerCount":"3","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services","itemListElement":[
@@ -2387,7 +2719,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/busygoat", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 6500, "currency": "EUR", "unit": "fixed", "duration": "2-3 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-06-08" }, null, 2);
+var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/busygoat", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 6500, "currency": "EUR", "unit": "fixed", "duration": "2-3 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-06-08" }, null, 2);
 var API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentsJson": "https://turva.dev/.well-known/agents.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 function wantsMarkdown(request) {
@@ -2889,15 +3221,29 @@ ${FOOTER_HTML}
   return new Response(body, { status: 200, headers });
 }
 
-var HOME_MARKDOWN = `# Agent-readiness audits
+var HOME_MARKDOWN = `# Audits and advisory for products that AI agents read and act on
 
-Get your product truly agent-ready. Measured by two independent scanners, fixed in priority order, fully auditable.
+Independent, measured audits and advisory for the way AI agents read your site and act on it. Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make.
 
 #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 100/100 verified by two independent scanners. Business ID 3600281-7.
 
 ## Independent agent-readiness scan of turva.dev
 
 Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. Verified 100/100, A+, ranked #1 of all publicly-scanned sites on the startuphub.ai leaderboard.
+
+## Where this applies
+
+The pattern is narrow, but where it fits is not. Anywhere data moves and a decision follows, an agent can be the thing that reads the data and makes the call, as long as the inputs are clean and the envelope is set. A few examples:
+
+- An agent reading a product catalog and completing a checkout for a buyer.
+- An agent watching an API and acting the moment a threshold is crossed, without waiting for a person.
+- An agent guiding a technician in the field, working from the same data the expert would.
+- An agent triaging incoming requests and resolving the routine ones on its own.
+- An agent operating a remote system over a link that drops, holding its last safe state until the data returns.
+- An agent reconciling records across systems and flagging only what does not match.
+- An agent making a time-critical call locally, where the round trip to a human is too slow to matter.
+
+These are examples, not the list. The list does not really end. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.
 
 ## Evidence
 
@@ -2912,9 +3258,9 @@ Backed by a registered company, publicly verifiable: Business ID 3600281-7, regi
 
 ## The process has three stages and no surprises
 
-First, measurement. Two independent agent-readiness scanners read the current state of the site or API and produce a numeric baseline plus a categorized list of where points are missing.
+First, measurement. For agent-readiness, two independent scanners read the current state of the site or API and produce a numeric baseline with a categorized list of what is missing. For the wider work, the data path and the decision envelope are tested the way an agent would hit them, so the starting point is a fact rather than an opinion.
 
-Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need an agent-readiness background to follow it.
+Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need a background in any of this to follow it.
 
 Then the fixes. I implement them, or your engineering team does the work with the report as the spec. Both routes are supported and the choice is yours.
 
@@ -2922,7 +3268,7 @@ All communication runs async. No calls and no calendar links. Live meetings are 
 
 Production credentials are not requested. Write access to repositories is not taken by default. Read access is enough for the audit, and write access is scoped per task if implementation is purchased separately.
 
-The result shows up in scanner numbers. That is the contract. The next scan reads higher than the previous one, in the categories the report named, by the dates the report named.
+The result is checkable, not asserted. For agent-readiness that is the scanner number, higher on the next scan in the categories and by the dates the report named. For the wider work it is the same test, the data path holding under load and the envelope doing exactly what it claims. Either the next measurement confirms it or it does not.
 
 ## Services
 
@@ -2936,7 +3282,7 @@ The result shows up in scanner numbers. That is the contract. The next scan read
 
 The work is done by one person under a registered company. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, moved from general security work into agent-readiness, and kept only the tools and methods that hold up in daily client work.
 
-The reason this service exists is narrow on purpose. Agent-readiness is a measurable property of a site, an API, or a product surface. Either the scanners read it higher next week than this week, or they do not. That is the question I answer.
+The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on either arrives intact or it does not, and the boundary you set either holds or it does not. Measurable either way, which is the only kind of claim I make.
 
 ## Contact
 
@@ -3042,9 +3388,9 @@ ${FOOTER_CSS}
 </nav>
 <main>
   <section class="hero">
-    <p class="eyebrow">agent-readiness · independently verified</p>
-    <h1>Agent-readiness audits</h1>
-    <p class="lede">Get your product truly agent-ready. Measured by two independent scanners, fixed in priority order, fully auditable.</p>
+    <p class="eyebrow">where data moves and decisions matter · independently verified</p>
+    <h1>Audits and advisory for products that AI agents read and act on</h1>
+    <p class="lede">Independent, measured audits and advisory for the way AI agents read your site and act on it. Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make.</p>
     <ul class="badges">
       <li><b>#1</b> on startuphub.ai</li>
       <li><b>&#10003;</b> 100/100 verified</li>
@@ -3076,6 +3422,21 @@ ${FOOTER_CSS}
 
   <article>
     <h2>Audits, advisory, and implementation for product teams</h2>
+    <p>An AI agent does not browse a site the way a person does. It reads machine-readable surfaces and acts on the parts it can reach, once it trusts what it found. I measure how a site, an API or a product holds up to that, fix what the measurement names, and stay on as the product changes.</p>
+    <p>The measurable core is agent-readiness, scored by independent scanners and provable on the next scan. The wider work begins where readability ends. The data an agent acts on has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set. The first makes an agent able to read you. The second makes it safe to let one act.</p>
+
+    <h2>Where this applies</h2>
+    <p>The pattern is narrow, but where it fits is not. Anywhere data moves and a decision follows, an agent can be the thing that reads the data and makes the call, as long as the inputs are clean and the envelope is set. A few examples:</p>
+    <ul>
+      <li>An agent reading a product catalog and completing a checkout for a buyer.</li>
+      <li>An agent watching an API and acting the moment a threshold is crossed, without waiting for a person.</li>
+      <li>An agent guiding a technician in the field, working from the same data the expert would.</li>
+      <li>An agent triaging incoming requests and resolving the routine ones on its own.</li>
+      <li>An agent operating a remote system over a link that drops, holding its last safe state until the data returns.</li>
+      <li>An agent reconciling records across systems and flagging only what does not match.</li>
+      <li>An agent making a time-critical call locally, where the round trip to a human is too slow to matter.</li>
+    </ul>
+    <p>These are examples, not the list. The list does not really end. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.</p>
 
     <h2>Evidence</h2>
     <p>turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-08.</p>
@@ -3087,28 +3448,29 @@ ${FOOTER_CSS}
     <p>Backed by a registered company, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">tietopalvelu.ytj.fi/yritys/3600281-7</a></p>
 
     <h2>The process has three stages and no surprises</h2>
-    <p>First, measurement. Two independent agent-readiness scanners read the current state of the site or API and produce a numeric baseline plus a categorized list of where points are missing.</p>
-    <p>Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need an agent-readiness background to follow it.</p>
+    <p>First, measurement. For agent-readiness, two independent scanners read the current state of the site or API and produce a numeric baseline with a categorized list of what is missing. For the wider work, the data path and the decision envelope are tested the way an agent would hit them, so the starting point is a fact rather than an opinion.</p>
+    <p>Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need a background in any of this to follow it.</p>
     <p>Then the fixes. I implement them, or your engineering team does the work with the report as the spec. Both routes are supported and the choice is yours.</p>
     <p>All communication runs async. No calls and no calendar links. Live meetings are not part of how this work is done. Short questions go through Signal, longer documents through email and CryptPad. Everything stays in writing, which means the work and the trail are auditable end-to-end.</p>
     <p>Production credentials are not requested. Write access to repositories is not taken by default. Read access is enough for the audit, and write access is scoped per task if implementation is purchased separately.</p>
-    <p>The result shows up in scanner numbers. That is the contract. The next scan reads higher than the previous one, in the categories the report named, by the dates the report named.</p>
+    <p>The result is checkable, not asserted. For agent-readiness that is the scanner number, higher on the next scan in the categories and by the dates the report named. For the wider work it is the same test, the data path holding under load and the envelope doing exactly what it claims. Either the next measurement confirms it or it does not.</p>
 
     <h2>Services</h2>
     <ul>
       <li><strong>Audit.</strong> Fixed scope, two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.</li>
       <li><strong>Advisory.</strong> Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.</li>
       <li><strong>Implementation.</strong> On request. Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.</li>
+      <li><strong>Agent operations.</strong> On request. The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.</li>
       <li><strong>MCP server design.</strong> On request. Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.</li>
       <li><strong>Internal workshops.</strong> On request, async-first. Recorded session or written guide. Topics include how scanners read your site, what x402 and AP2 actually require in practice, and how to keep agent-readiness intact after the audit period ends.</li>
     </ul>
 
     <h2>Who I am</h2>
     <p>The work is done by one person under a registered company. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, moved from general security work into agent-readiness, and kept only the tools and methods that hold up in daily client work.</p>
-    <p>The reason this service exists is narrow on purpose. Agent-readiness is a measurable property of a site, an API, or a product surface. Either the scanners read it higher next week than this week, or they do not. That is the question I answer.</p>
+    <p>The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on either arrives intact or it does not, and the boundary you set either holds or it does not. Measurable either way, which is the only kind of claim I make.</p>
 
     <h2>Contact me</h2>
-    <p>Ready to see where your site or API stands? Two scans, one report, a prioritized fix list. The baseline is measured before any work begins, and the same scanners read the result after. Async-only engagement. No calls and no calendar links. The first reply lands in writing within one business day.</p>
+    <p>Ready to see where your site, API or product stands with AI agents? It starts with a measured baseline, a written report, and a prioritized list of what to fix first. For agent-readiness that baseline comes from two independent scanners. For the wider work it comes from testing the data path and the decision envelope directly. Async-only engagement. No calls and no calendar links. The first reply lands in writing within one business day.</p>
     <div class="contact-card">
       <a class="ch" href="mailto:info@turva.dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>info@turva.dev</span></a>
       <div class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg><span>Signal @turva.19</span></div>

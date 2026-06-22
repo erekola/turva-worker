@@ -4,6 +4,8 @@ Cloudflare Worker that renders every page of [turva.dev](https://turva.dev) at t
 
 This repository is the open-source reference implementation behind turva.dev, which ranks first of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and scores a perfect 100/100 Level 5 Agent-Native on Cloudflare Agent-Ready. The Worker is public on purpose: a buyer can read every line before deciding anything.
 
+turva.dev offers agent-readiness audits and advisory, and the wider work of making the data agents act on and the decisions they make reliable, across use cases from commerce and monitoring to operations under bad connectivity.
+
 ## What it does
 
 * Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `&lt;head&gt;` (meta, OpenGraph, JSON-LD, canonical).
@@ -12,7 +14,7 @@ This repository is the open-source reference implementation behind turva.dev, wh
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-06-21. Two independent public scanners, listed once each.
+Measured on `https://turva.dev` on 2026-06-22. Two independent public scanners, listed once each.
 
 | Scanner | Result |
 |---|---|
@@ -79,6 +81,13 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 * [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
 * [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
 * [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
+* [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
+* [How to get your site cited by AI assistants](https://turva.dev/guides/get-cited-by-ai-assistants)
+* [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery)
+* [Agent-readiness, AEO and GEO: how they relate](https://turva.dev/guides/agent-readiness-aeo-geo)
+* [Agentic commerce readiness](https://turva.dev/guides/agentic-commerce-readiness)
+* [Letting agents act on data: the decision envelope](https://turva.dev/guides/letting-agents-act-on-data)
+* [AI agent use cases](https://turva.dev/guides/ai-agent-use-cases)
 
 ## How it works
 
