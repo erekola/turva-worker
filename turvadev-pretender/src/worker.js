@@ -503,50 +503,73 @@ Identity is infrastructure. If it lives on a domain you own, you can change serv
 
 Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). For an agent-readiness audit, contact info@turva.dev.
 `,
-  "/": `# Agent-readiness audits and advisory
+  "/": `# Audits and advisory for products that AI agents read and act on
 
-Independent agent-readiness audits and advisory for product teams. I measure how readable your site and APIs are by AI agents, then help with what that measurement leads to.
+Independent, measured audits and advisory for the way AI agents read your site and act on it. Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make.
 
-The wider work is everything downstream of readiness. It covers the data an agent acts on, so it arrives intact even over links that drop or lag, and the envelope of permissions and thresholds that decides what an agent may do, so the decisions it makes are the ones you intended. Agent-readiness is where this starts, not where it ends.
+#1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 100/100 verified by two independent scanners. Business ID 3600281-7.
 
-Based in Tampere, Finland. Async-only engagement.
+## Independent agent-readiness scan of turva.dev
 
-## How I work
+Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. Verified 100/100, A+, ranked #1 of all publicly-scanned sites on the startuphub.ai leaderboard.
 
-The process has three stages and no surprises.
+## Where this applies
 
-First, measurement. Independent agent-readiness scanners (Cloudflare
-AI Audit, Internet.nl, Hardenize, StartupHub) read the current state
-of the site or API and produce a numeric baseline.
+The pattern is narrow, but where it fits is not. Anywhere data moves and a decision follows, an agent can be the thing that reads the data and makes the call, as long as the inputs are clean and the envelope is set. A few examples:
 
-Then a written report. Findings ranked by score impact and
-implementation cost, written so the reader does not need an
-agent-readiness background to follow it.
+- An agent reading a product catalog and completing a checkout for a buyer.
+- An agent watching an API and acting the moment a threshold is crossed, without waiting for a person.
+- An agent guiding a technician in the field, working from the same data the expert would.
+- An agent triaging incoming requests and resolving the routine ones on its own.
+- An agent operating a remote system over a link that drops, holding its last safe state until the data returns.
+- An agent reconciling records across systems and flagging only what does not match.
+- An agent making a time-critical call locally, where the round trip to a human is too slow to matter.
 
-Then the fixes, if you want them. I implement them, or your
-engineering team does the work with the report as the spec.
+These are examples, not the list. The list does not really end. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.
 
-All communication runs async. No calls and no calendar links.
-Production credentials are not requested. Write access to
-repositories is scoped per task if implementation is purchased.
+## Evidence
 
-The result is verified by re-running the scanners. The next scan
-reads higher than the previous one, in the categories the report
-named.
+turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-08.
+
+- startuphub.ai leaderboard: #1 of top 100 sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
+- isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/turva.dev
+
+The Cloudflare Worker that produces these results is open source: https://github.com/busygoat/turvadev-pretender. You can read every line before you hire me.
+
+Backed by a registered company, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: https://tietopalvelu.ytj.fi/yritys/3600281-7
+
+## The process has three stages and no surprises
+
+First, measurement. For agent-readiness, two independent scanners read the current state of the site or API and produce a numeric baseline with a categorized list of what is missing. For the wider work, the data path and the decision envelope are tested the way an agent would hit them, so the starting point is a fact rather than an opinion.
+
+Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need a background in any of this to follow it.
+
+Then the fixes. I implement them, or your engineering team does the work with the report as the spec. Both routes are supported and the choice is yours.
+
+All communication runs async. No calls and no calendar links. Live meetings are not part of how this work is done. Short questions go through Signal, longer documents through email and CryptPad. Everything stays in writing, which means the work and the trail are auditable end-to-end.
+
+Production credentials are not requested. Write access to repositories is not taken by default. Read access is enough for the audit, and write access is scoped per task if implementation is purchased separately.
+
+The result is checkable, not asserted. For agent-readiness that is the scanner number, higher on the next scan in the categories and by the dates the report named. For the wider work it is the same test, the data path holding under load and the envelope doing exactly what it claims. Either the next measurement confirms it or it does not.
 
 ## Services
 
-- **Audit.** €6,500. Two to three weeks. Fixed scope.
-- **Advisory.** €3,000 per month. Monthly retainer. Minimum three months.
-- **Implementation.** €1,500 per day. Scoped per task.
-- **Agent operations.** Price on request. The work beyond readiness: the data an agent acts on, and the decisions it is allowed to make.
+- Audit. Fixed scope, two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
+- Advisory. Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.
+- Implementation. On request. Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.
+- Agent operations. On request. The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
+- MCP server design. On request. Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.
+- Internal workshops. On request, async-first. Recorded session or written guide. Topics include how scanners read your site, what x402 and AP2 actually require in practice, and how to keep agent-readiness intact after the audit period ends.
 
-See [Services](https://turva.dev/services) for the full description.
+## Who I am
+
+The work is done by one person under a registered company. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, moved from general security work into agent-readiness, and kept only the tools and methods that hold up in daily client work.
+
+The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on either arrives intact or it does not, and the boundary you set either holds or it does not. Measurable either way, which is the only kind of claim I make.
 
 ## Contact
 
-Written contact only. Email for longer messages, Signal for short
-questions. First reply within one business day.
+Written contact only. Email for longer messages, Signal for short questions. The first reply is in writing within one business day. No calls and no calendar links at any stage of the engagement.
 
 - Email: <mailto:info@turva.dev>
 - Signal: @turva.19
@@ -597,8 +620,7 @@ A measurement of how agent-ready your site and APIs are today, with
 a prioritised list of what to fix first.
 
 What you get:
-- Scanner sweep across Cloudflare AI Audit, Internet.nl, Hardenize
-  and StartupHub agent-readiness
+- Two independent scanners run against the site or API
 - Manual review of /.well-known/ manifests, JSON-LD, head metadata
   and HTTP headers
 - Review of robots.txt, sitemap.xml, ai.txt and llms.txt against
@@ -1698,7 +1720,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   },
   "tools": [
     { "name": "get_services", "description": "Service catalog with prices in EUR." },
-    { "name": "get_scan_evidence", "description": "Latest public agent-readiness scan results for turva.dev (Cloudflare AI Audit, Internet.nl, Hardenize, StartupHub)." },
+    { "name": "get_scan_evidence", "description": "Latest public agent-readiness scan results for turva.dev (startuphub.ai and isitagentready.com)." },
     { "name": "get_principles", "description": "Engagement principles: async-only, no calls, no calendar links, no production credentials, scoped repo access." }
   ],
   "meta": {
@@ -2580,7 +2602,7 @@ var SCHEMA_HOME = `<script type="application/ld+json">
 {"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/busygoat","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 {"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"1500","highPrice":"6500","offerCount":"3","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services","itemListElement":[
-{"@type":"Offer","name":"Audit","description":"Fixed scope, 2-3 weeks. Scanner sweep across Cloudflare AI Audit, Internet.nl, Hardenize and StartupHub agent-readiness, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"6500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"6500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€6,500 fixed price, two to three weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, 2-3 weeks. Two independent scanners run against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"6500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"6500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€6,500 fixed price, two to three weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Cloudflare Workers, MCP servers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}},
@@ -3275,6 +3297,7 @@ The result is checkable, not asserted. For agent-readiness that is the scanner n
 - Audit. Fixed scope, two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
 - Advisory. Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.
 - Implementation. On request. Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.
+- Agent operations. On request. The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
 - MCP server design. On request. Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.
 - Internal workshops. On request, async-first. Recorded session or written guide. Topics include how scanners read your site, what x402 and AP2 actually require in practice, and how to keep agent-readiness intact after the audit period ends.
 
