@@ -1,8 +1,8 @@
 # turvadev-pretender
 
-Cloudflare Worker that renders every page of [turva.dev](https://turva.dev) at the edge, with deterministic head metadata, JSON-LD, and `/.well-known/` manifests. AI agents and scanners read the same payload as humans, straight from the Worker.
+Cloudflare Worker that renders every page of [turva.dev](https://turva.dev) at the edge, with a deterministic head and matching `/.well-known/` manifests. AI agents and scanners read the same payload as humans, straight from the Worker.
 
-This repository is the open-source reference implementation behind turva.dev, which ranks #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and scores a perfect 100 / 100 Level 5 Agent-Native on Cloudflare Agent-Ready. The Worker is public on purpose: a buyer can read every line before deciding anything.
+This repository is the open-source reference implementation behind turva.dev, which ranks first of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and scores a perfect 100/100 Level 5 Agent-Native on Cloudflare Agent-Ready. The Worker is public on purpose: a buyer can read every line before deciding anything.
 
 ## What it does
 
@@ -16,8 +16,8 @@ Measured on `https://turva.dev` on 2026-06-21. Two independent public scanners, 
 
 | Scanner | Result |
 |---|---|
-| Cloudflare Agent-Ready (isitagentready.com) | 100 / 100, Level 5 Agent-Native |
-| startuphub.ai Agent Readiness | 100 / 100 (A+), #1 of top 100 sites |
+| Cloudflare Agent-Ready (isitagentready.com) | 100/100, Level 5 Agent-Native |
+| startuphub.ai Agent Readiness | 100/100 (A+), first of all publicly-scanned sites on the leaderboard |
 
 Cloudflare Agent-Ready and isitagentready.com are the same scanner on two domains, so they count as one result.
 
@@ -27,23 +27,23 @@ These six category scores come from the startuphub.ai scan. The Cloudflare Agent
 
 | Category | Score |
 |---|---|
-| Discoverability | 100 / 100 |
-| Content | 100 / 100 |
-| Access Control | 100 / 100 |
-| Capabilities | 100 / 100 |
-| Commerce | 100 / 100 |
-| Quality | 100 / 100 |
+| Discoverability | 100/100 |
+| Content | 100/100 |
+| Access Control | 100/100 |
+| Capabilities | 100/100 |
+| Commerce | 100/100 |
+| Quality | 100/100 |
 
 ## Web security
 
-Agent-readiness is one axis; the domain's own web security is another. We publish turva.dev's own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-20.
+Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-20.
 
 | Scanner | Result |
 |---|---|
 | Hardenize | All 13 categories passed |
-| Internet.nl | 98 / 100 |
+| Internet.nl | 98/100 |
 
-The missing 2 points on Internet.nl are a deliberate tradeoff: TLS 1.2 is kept enabled for broad client compatibility, while everything else passes. We document the choice rather than hide it.
+The missing 2 points on Internet.nl are a deliberate tradeoff: TLS 1.2 is kept enabled for broad client compatibility, while everything else passes. The choice is documented, not hidden.
 
 ## Verify
 
@@ -84,7 +84,7 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 
 The Worker renders the whole site at the edge. Every page is built from a single source-of-truth object in the Worker: page content as markdown, plus a shared canonical `&lt;head&gt;` and JSON-LD. There is no separate CMS or origin to proxy. Agent routes (`/.well-known/*`, `robots.txt`, `sitemap.xml`, `/x402`) are served from the same Worker, and static assets such as images come from Workers Assets.
 
-Because the site has no CMS, theme, or plugins, nothing can drift between what humans see and what agents and scanners see.
+Because the site has no CMS or plugins, nothing can drift between what humans see and what agents and scanners see.
 
 ## Endpoints
 
@@ -118,7 +118,7 @@ Route the Worker to your domain under **Workers &amp; Pages, your-worker, Settin
 
 ## Use it for your own site
 
-MIT licensed. Fork it, replace the source-of-truth object with your own data, and deploy.
+MIT licensed. Fork it, replace the source-of-truth object with your own data, then deploy.
 
 If you want an audit of your domain against the same scanner set and a tailored configuration, see [turva.dev](https://turva.dev) or [Erik Rekola on LinkedIn](https://www.linkedin.com/in/erikrekola).
 
