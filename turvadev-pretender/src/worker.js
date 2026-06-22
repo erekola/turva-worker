@@ -980,6 +980,7 @@ For an audit, contact info@turva.dev. Engagement is async and evidence-based, an
 - [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 - [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
 - [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
+- [AI agent use cases](/guides/ai-agent-use-cases)
 `,
 
   "/guides/llms-txt": `# llms.txt explained
@@ -1154,6 +1155,7 @@ turva.dev publishes OAuth discovery, a protected resource description, and an ag
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
 - [MCP server cards explained](/guides/mcp-server-card)
 - [What agents.json is](/guides/agents-json)
+- [Letting agents act on data: the decision envelope](/guides/letting-agents-act-on-data)
 `,
 
   "/guides/measurement-led-agent-readiness": `# Why agent-readiness should be measured, not asserted
@@ -1173,6 +1175,7 @@ For an audit that reports measured results rather than a checklist, contact info
 - [What an agent-readiness audit is](/guides/agent-readiness-audit)
 - [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 - [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
+- [Letting agents act on data: the decision envelope](/guides/letting-agents-act-on-data)
 `,
 
   "/guides/prerendering-for-agents": `# Prerendering and why agents see empty pages
@@ -1378,7 +1381,8 @@ This is the work behind the Agent operations engagement. For a review of the dat
 
 - [How agents authenticate](/guides/agent-authentication)
 - [Agentic commerce readiness](/guides/agentic-commerce-readiness)
-- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)`,
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+- [AI agent use cases](/guides/ai-agent-use-cases)`,
   "/guides/ai-agent-use-cases": `# AI agent use cases
 
 An AI agent is useful wherever data moves and a decision follows. It reads a machine-readable surface, decides inside the limits it was given, and acts on what it finds. The cases below are grouped by what the agent does, not by industry, because the same pattern repeats across all of them.
@@ -1699,7 +1703,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"DEUupWZ1xbJxmuuGf_z0UBhc5du4wwL7BJROckH4ruFb6QJEhFeQEfXzT7UPwXgt7z3_xAy-I-nAMtie0q9uDg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"uzcQdNJrx_vEBAtJKAIjSq2ficdDKoP-ByB9SOpJnPLsPG56m0xd6az3YKW5lAy28BYjgNQ2Jyd21l8StnQNDw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"WTE3VsWw3WEGHWfybyQ3AmySUEAPzQOlH3C-z2NDlfRLJwCu2kk1KfL00y8F_kzjVY2wEpYAgN7HF4sUBCoNCw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YEsvdTXfBTsm579U9fcW0BwPAszkt3Eryr8gPPZxT7BUxfCT1sLVErwyG1IPDvDZCanujLzyPykI3ZD3y22SAQ\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
