@@ -14,7 +14,7 @@ turva.dev offers agent-readiness audits and advisory, and the wider work of maki
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-06-22. Two independent public scanners, listed once each.
+Measured on `https://turva.dev` on 2026-06-24. Two independent public scanners, listed once each.
 
 | Scanner | Result |
 |---|---|
@@ -38,7 +38,7 @@ These six category scores come from the startuphub.ai scan. The Cloudflare Agent
 
 ## Web security
 
-Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-20.
+Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-24.
 
 | Scanner | Result |
 |---|---|
