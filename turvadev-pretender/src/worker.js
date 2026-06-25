@@ -286,8 +286,8 @@ metadata corrections, and revoke prior correspondence.
 
 ## Supported identity types
 
-- anonymous — API key issued out-of-band on request
-- identity_assertion — verified email or signed assertion
+- anonymous: API key issued out-of-band on request
+- identity_assertion: verified email or signed assertion
 
 ## Credential types
 
@@ -529,7 +529,7 @@ These are examples, not the list. The list does not really end. The same discipl
 
 ## Evidence
 
-turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-08.
+turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-24.
 
 - startuphub.ai leaderboard: #1 of top 100 sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
 - isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/turva.dev
@@ -891,7 +891,7 @@ Last updated: 2026-06-20.
 
   "/guides": `# Agent-readiness guides
 
-These short guides explain, in plain language, what makes a website or an API easy for AI agents to read and use. Each one covers a single topic and takes a few minutes to read. They are free, and they cover the same surfaces an agent-readiness audit measures.
+These short guides explain, in plain language, what makes a website or an API easy for AI agents to read and use. Each one covers a single topic and takes a few minutes to read. They are free, and they cover the same surfaces an [agent-readiness audit](/services) measures.
 
 Not sure where to start? The first guide explains what an agent-readiness audit is.
 
@@ -1527,6 +1527,8 @@ Canonical: https://turva.dev/.well-known/security.txt
 Policy: https://turva.dev/legal
 `;
 
+var MCP_REGISTRY_AUTH = "v=MCPv1; k=ed25519; p=ObG30Um8l6QhTDd7Xztiekz8e575d6H2TViwi6Atu8k=\n";
+
 var AGENT_AUTH_BLOCK = {
   skill: "https://turva.dev/auth.md",
   documentation_uri: "https://turva.dev/auth.md",
@@ -1602,7 +1604,7 @@ var OPENAPI_SPEC = JSON.stringify({
           "method": "stripe",
           "amount": 650000,
           "currency": "EUR",
-          "description": "Audit — fixed scope, 2-3 weeks",
+          "description": "Audit: fixed scope, 2-3 weeks",
           "x402": {
             "network": "base",
             "asset": "USDC",
@@ -1626,7 +1628,7 @@ var OPENAPI_SPEC = JSON.stringify({
           "amount": 300000,
           "currency": "EUR",
           "interval": "month",
-          "description": "Advisory — monthly retainer (min 3 months)",
+          "description": "Advisory: monthly retainer (min 3 months)",
           "x402": {
             "network": "base",
             "asset": "USDC",
@@ -1649,7 +1651,7 @@ var OPENAPI_SPEC = JSON.stringify({
           "method": "stripe",
           "amount": 150000,
           "currency": "EUR",
-          "description": "Implementation — per day, scoped per task",
+          "description": "Implementation: per day, scoped per task",
           "x402": {
             "network": "base",
             "asset": "USDC",
@@ -2058,7 +2060,7 @@ var X402_MESH = JSON.stringify({
   "contact": "info@turva.dev",
   "self": {
     "vendor_id": "turva-dev",
-    "name": "turva.dev — Agent-readiness audits and advisory",
+    "name": "turva.dev: Agent-readiness audits and advisory",
     "category": "agent-readiness-audits",
     "endpoint": "https://turva.dev/api/agent/audit",
     "method": "POST",
@@ -3149,20 +3151,28 @@ function buildGuidePageFaqJsonLd(pathname, canonicalUrl) {
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
-var FOOTER_CSS = `.turva-footer{box-sizing:border-box;width:100%;background:#0A1316;border-top:1px solid rgba(255,255,255,0.12);padding:2.25rem clamp(20px,5vw,72px);font-size:0.95rem;color:#F2F4F3;display:flex;flex-direction:column;gap:0.4rem;}
-.turva-footer .ft-row{display:flex;align-items:center;gap:11px;color:#F2F4F3;text-decoration:none;}
-.turva-footer a.ft-row:hover{color:#5DF18F;}
-.turva-footer .ft-row svg{flex:0 0 auto;width:18px;height:18px;}`;
+var FOOTER_CSS = `.tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:1.9rem clamp(20px,5vw,72px);display:flex;flex-direction:column;gap:1rem;}
+.tv-foot .foot-brand{display:flex;align-items:center;gap:9px;}
+.tv-foot .foot-brand svg{display:block;width:22px;height:22px;}
+.tv-foot .foot-links{display:flex;flex-wrap:wrap;gap:0.6rem 1.4rem;}
+.tv-foot .ft-row{display:flex;align-items:center;gap:9px;color:#C9D1CE;font-size:0.9rem;text-decoration:none;}
+.tv-foot a.ft-row:hover{color:#5DF18F;}
+.tv-foot .ft-row svg{flex:0 0 auto;width:17px;height:17px;}
+.tv-foot .foot-meta{font-size:0.8rem;color:#6F7A77;border-top:0.5px solid rgba(255,255,255,0.08);padding-top:0.9rem;}`;
 
-var FOOTER_HTML = `<footer class="turva-footer">
-  <div class="ft-row"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.4-7-11a7 7 0 0 1 14 0c0 4.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Tampere, Finland</span></div>
-  <a class="ft-row" href="mailto:info@turva.dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>info@turva.dev</span></a>
-  <div class="ft-row"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg><span>@turva.19</span></div>
-  <a class="ft-row" href="https://www.linkedin.com/in/erikrekola/"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.4 8.9h3.1V21H3.4zM9.2 8.9h2.97v1.65h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V21h-3.1v-5.35c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9.2z"/></svg><span>LinkedIn</span></a>
-  <a class="ft-row" rel="me" href="https://social.turva.dev/@erik"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M21.327 8.566c0-4.339-2.843-5.61-2.843-5.61-1.433-.658-3.894-.935-6.451-.956h-.063c-2.557.021-5.016.298-6.45.956 0 0-2.843 1.272-2.843 5.61 0 .993-.019 2.181.012 3.441.103 4.243.778 8.425 4.701 9.463 1.809.479 3.362.579 4.612.51 2.268-.126 3.541-.809 3.541-.809l-.075-1.646s-1.621.511-3.441.449c-1.804-.062-3.707-.194-3.999-2.409a4.523 4.523 0 0 1-.04-.621s1.77.433 4.014.536c1.372.063 2.658-.08 3.965-.236 2.506-.299 4.688-1.843 4.962-3.254.434-2.223.398-5.424.398-5.424zm-3.353 5.59h-2.081V9.057c0-1.075-.452-1.62-1.357-1.62-1 0-1.501.647-1.501 1.927v2.791h-2.069V9.364c0-1.28-.501-1.927-1.502-1.927-.905 0-1.357.546-1.357 1.62v5.099H5.626V8.903c0-1.074.273-1.927.823-2.558.566-.631 1.307-.955 2.228-.955 1.065 0 1.872.41 2.405 1.228l.518.869.519-.869c.533-.818 1.34-1.228 2.405-1.228.92 0 1.662.324 2.228.955.549.631.822 1.484.822 2.558v5.253z"/></svg><span>Mastodon</span></a>
-  <a class="ft-row" href="https://www.startuphub.ai/startups/turva-dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg><span>StartupHub</span></a>
-  <div class="ft-row"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 9.8V20h14V9.8"/></svg><span>turva.dev · Y: 3600281-7</span></div>
-  <div class="ft-row"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.6a3.5 3.5 0 1 0 0 4.8"/></svg><span>2026 turva.dev · All rights reserved</span></div>
+var FOOTER_HTML = `<footer class="tv-foot">
+  <div class="foot-brand">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle><path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    <span class="nv-word">turva<b>·</b>dev</span>
+  </div>
+  <div class="foot-links">
+    <a class="ft-row" href="mailto:info@turva.dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>info@turva.dev</span></a>
+    <div class="ft-row"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg><span>Signal @turva.19</span></div>
+    <a class="ft-row" href="https://www.linkedin.com/in/erikrekola/"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.4 8.9h3.1V21H3.4zM9.2 8.9h2.97v1.65h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V21h-3.1v-5.35c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9.2z"/></svg><span>LinkedIn</span></a>
+    <a class="ft-row" rel="me" href="https://social.turva.dev/@erik"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M21.327 8.566c0-4.339-2.843-5.61-2.843-5.61-1.433-.658-3.894-.935-6.451-.956h-.063c-2.557.021-5.016.298-6.45.956 0 0-2.843 1.272-2.843 5.61 0 .993-.019 2.181.012 3.441.103 4.243.778 8.425 4.701 9.463 1.809.479 3.362.579 4.612.51 2.268-.126 3.541-.809 3.541-.809l-.075-1.646s-1.621.511-3.441.449c-1.804-.062-3.707-.194-3.999-2.409a4.523 4.523 0 0 1-.04-.621s1.77.433 4.014.536c1.372.063 2.658-.08 3.965-.236 2.506-.299 4.688-1.843 4.962-3.254.434-2.223.398-5.424.398-5.424zm-3.353 5.59h-2.081V9.057c0-1.075-.452-1.62-1.357-1.62-1 0-1.501.647-1.501 1.927v2.791h-2.069V9.364c0-1.28-.501-1.927-1.502-1.927-.905 0-1.357.546-1.357 1.62v5.099H5.626V8.903c0-1.074.273-1.927.823-2.558.566-.631 1.307-.955 2.228-.955 1.065 0 1.872.41 2.405 1.228l.518.869.519-.869c.533-.818 1.34-1.228 2.405-1.228.92 0 1.662.324 2.228.955.549.631.822 1.484.822 2.558v5.253z"/></svg><span>Mastodon</span></a>
+    <a class="ft-row" href="https://www.startuphub.ai/startups/turva-dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg><span>StartupHub</span></a>
+  </div>
+  <div class="foot-meta">Tampere, Finland · Y: 3600281-7 · 2026 turva.dev · All rights reserved</div>
 </footer>`;
 
 function serveGuideHtml(pathname, canonicalUrl) {
@@ -3185,26 +3195,31 @@ ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
 <link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
 <style>
-html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;}
-main{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 4rem;}
-h1{color:#5DF18F;font-size:2rem;line-height:1.2;margin:0 0 1.5rem;}
-h2{color:#5DF18F;font-size:1.35rem;margin:2.25rem 0 0.75rem;}
-p{margin:0 0 1.1rem;}
-ul{margin:0 0 1.1rem 1.25rem;padding:0;}
-li{margin:0 0 0.35rem;}
-a{color:#5DF18F;}
-main nav{margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.15);font-size:0.95rem;}
-main nav a{margin-right:1.25rem;}
-.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:16px clamp(20px,5vw,72px);}
+html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+main{max-width:44rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
+article h1{color:#5DF18F;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 1rem;font-weight:700;}
+article h1 + p{font-size:1.12rem;color:#F2F4F3;}
+article h2{color:#5DF18F;font-size:1.4rem;font-weight:700;letter-spacing:-0.015em;margin:2.1rem 0 0.85rem;padding-top:1.6rem;border-top:0.5px solid rgba(255,255,255,0.08);}
+article p{margin:0 0 1.05rem;color:#C9D1CE;}
+article a{color:#5DF18F;text-decoration:none;}
+article a:hover{text-decoration:underline;}
+article ul{list-style:none;margin:0 0 1.1rem;padding:0;}
+article li{position:relative;padding:0 0 0 1.45rem;margin:0 0 0.5rem;color:#C9D1CE;}
+article li::before{content:"›";position:absolute;left:0.45rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+article strong{color:#F2F4F3;}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
 .turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
-.turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;}
+.turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
-@media (max-width:560px){.turva-nav .nv-menu{gap:16px;}.turva-nav .nv-menu a{font-size:14px;}}
+.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
+.turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
+.turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
+@media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
 ${FOOTER_CSS}
 </style>
 </head>
@@ -3226,6 +3241,7 @@ ${FOOTER_CSS}
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
   </ul>
+  <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>
 <main>
 <article>
@@ -3273,7 +3289,7 @@ These are examples, not the list. The list does not really end. The same discipl
 
 ## Evidence
 
-turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-08.
+turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-24.
 
 - startuphub.ai leaderboard: #1 of top 100 sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
 - isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/turva.dev
@@ -3334,63 +3350,101 @@ ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
 <link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
 <style>
-html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;}
-main{max-width:46rem;margin:0 auto;padding:2.5rem 1.25rem 4rem;}
-h1{color:#5DF18F;font-size:2.3rem;line-height:1.15;margin:0 0 1rem;}
-h2{color:#5DF18F;font-size:1.35rem;margin:2.5rem 0 0.75rem;}
-p{margin:0 0 1.1rem;}
-ul{margin:0 0 1.1rem 1.25rem;padding:0;}
-li{margin:0 0 0.5rem;}
-a{color:#5DF18F;}
+html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+main{max-width:46rem;margin:0 auto;padding:0 clamp(20px,5vw,72px) 3rem;}
+h1{color:#5DF18F;font-size:2.4rem;line-height:1.1;letter-spacing:-0.02em;margin:0 0 1.1rem;font-weight:700;}
+h2{color:#F2F4F3;font-size:1.45rem;margin:0 0 0.85rem;font-weight:700;letter-spacing:-0.015em;}
+p{margin:0 0 1.05rem;color:#C9D1CE;}
+a{color:#5DF18F;text-decoration:none;}
+a:hover{text-decoration:underline;}
 strong{color:#F2F4F3;}
-.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:16px clamp(20px,5vw,72px);}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
 .turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
-.turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;}
+.turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
-@media (max-width:560px){.turva-nav .nv-menu{gap:16px;}.turva-nav .nv-menu a{font-size:14px;}}
-.eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
-.lede{font-size:1.15rem;color:#C9D1CE;margin:0 0 1.5rem;}
-.badges{display:flex;flex-wrap:wrap;gap:.6rem;list-style:none;margin:0 0 2rem;padding:0;}
-.badges li{margin:0;display:flex;align-items:center;gap:.4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;background:rgba(93,241,143,0.07);border:1px solid rgba(93,241,143,0.25);border-radius:999px;padding:.32rem .8rem;}
+.turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
+.turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
+.hero{padding:2.8rem 0 2rem;}
+.eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1.1rem;}
+.lede{font-size:1.16rem;line-height:1.55;color:#C9D1CE;margin:0;max-width:40rem;}
+.hero-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(258px,1fr);gap:1.6rem;align-items:center;margin:1.7rem 0 0;}
+.badges{display:flex;flex-wrap:wrap;gap:.55rem;list-style:none;margin:0 0 1.3rem;padding:0;}
+.badges li{display:flex;align-items:center;gap:.4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;color:#C9D1CE;background:rgba(93,241,143,0.06);border:1px solid rgba(93,241,143,0.22);border-radius:999px;padding:.32rem .8rem;}
 .badges li b{color:#5DF18F;}
-.terminal{border:1px solid rgba(255,255,255,0.14);border-radius:12px;overflow:hidden;background:#06100F;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9rem;margin:0 0 1.25rem;box-shadow:0 18px 40px -24px rgba(0,0,0,0.8);}
-.terminal .tm-bar{display:flex;align-items:center;gap:.5rem;padding:.6rem .85rem;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.08);}
-.terminal .tm-dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
-.terminal .tm-dot.r{background:#ff5f56;}.terminal .tm-dot.y{background:#ffbd2e;}.terminal .tm-dot.g{background:#27c93f;}
-.terminal .tm-title{margin-left:.5rem;color:#9AA3A0;font-size:.8rem;}
-.terminal .tm-body{padding:1rem .95rem 1.15rem;line-height:1.7;}
-.terminal .tm-cmd{color:#F2F4F3;}
-.terminal .tm-cmd .pr{color:#5DF18F;margin-right:.5rem;}
-.terminal .tm-out{color:#9AA3A0;}
-.terminal .tm-out b{color:#5DF18F;font-weight:600;}
-.terminal .cursor{display:inline-block;width:.55rem;height:1.05rem;vertical-align:-0.18rem;background:#5DF18F;margin-left:.2rem;animation:blink 1.1s steps(1) infinite;}
-@keyframes blink{50%{opacity:0;}}
-.scoreboard{border:1px solid rgba(255,255,255,0.14);border-radius:12px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.3rem;margin:0 0 2.5rem;}
-.sb-head{font-size:.95rem;color:#F2F4F3;font-weight:600;margin:0 0 .25rem;}
-.sb-scanner{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;color:#9AA3A0;text-decoration:none;margin:0 0 1rem;}
-.sb-scanner:hover{color:#5DF18F;}
-.sb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:0 0 1rem;}
-@media (max-width:520px){.sb-grid{grid-template-columns:repeat(2,1fr);}}
-.sb-cell{background:rgba(93,241,143,0.06);border:1px solid rgba(93,241,143,0.18);border-radius:8px;padding:.6rem .65rem;}
-.sb-cell .cat{display:block;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .25rem;}
-.sb-cell .val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;color:#5DF18F;font-weight:700;}
-.sb-summary{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}
-.sb-summary b{color:#5DF18F;}
-.sb-summary .pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
-.contact-card{border:1px solid rgba(255,255,255,0.14);border-radius:12px;background:rgba(255,255,255,0.02);padding:1.2rem 1.2rem 1rem;margin:.5rem 0 0;}
+.cta{display:flex;flex-wrap:wrap;gap:.7rem;margin:0;}
+.btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.65rem 1.15rem;font-size:.92rem;transition:background-color .15s ease;}
+.btn:hover{background:#7df7a6;text-decoration:none;}
+.btn-ghost{display:inline-block;color:#F2F4F3;font-weight:600;border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:.65rem 1.15rem;font-size:.92rem;transition:border-color .15s ease,color .15s ease;}
+.btn-ghost:hover{border-color:#5DF18F;color:#5DF18F;text-decoration:none;}
+.terminal{border:1px solid rgba(255,255,255,0.14);border-radius:12px;overflow:hidden;background:#06100F;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.84rem;}
+.tm-bar{display:flex;align-items:center;gap:.5rem;padding:.55rem .8rem;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.08);}
+.tm-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+.tm-dot.r{background:#ff5f56;}.tm-dot.y{background:#ffbd2e;}.tm-dot.g{background:#27c93f;}
+.tm-title{margin-left:.45rem;color:#9AA3A0;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tm-body{padding:.9rem .85rem 1.05rem;line-height:1.75;}
+.tm-cmd{color:#F2F4F3;word-break:break-word;}
+.tm-cmd .pr{color:#5DF18F;margin-right:.5rem;}
+.tm-out{color:#9AA3A0;}
+.tm-out b{color:#5DF18F;font-weight:600;}
+.cursor{display:inline-block;width:.5rem;height:1rem;vertical-align:-0.16rem;background:#5DF18F;margin-left:.2rem;animation:tvb 1.1s steps(1) infinite;}
+@keyframes tvb{50%{opacity:0;}}
+.board{margin:0 0 1rem;border:1px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.25rem;}
+.board-top{display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline;justify-content:space-between;margin:0 0 .9rem;}
+.board-head{font-size:.92rem;color:#F2F4F3;font-weight:600;}
+.board-src{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;color:#9AA3A0;text-decoration:none;}
+.board-src:hover{color:#5DF18F;}
+.board-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;margin:0 0 1rem;}
+.cell{background:rgba(93,241,143,0.06);border:1px solid rgba(93,241,143,0.18);border-radius:9px;padding:.6rem .65rem;transition:border-color .15s ease,transform .15s ease;}
+.cell:hover{border-color:rgba(93,241,143,0.45);transform:translateY(-1px);}
+.cell .cat{display:block;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .25rem;}
+.cell .val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.02rem;color:#5DF18F;font-weight:700;}
+.board-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}
+.board-sum b{color:#5DF18F;}
+.pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
+.sec{padding:1.9rem 0;border-top:0.5px solid rgba(255,255,255,0.07);}
+.sec-label{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#5DF18F;margin:0 0 .55rem;}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:.6rem;margin:0 0 1.1rem;}
+.ex{position:relative;background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:.7rem .8rem .7rem 1.7rem;font-size:.9rem;color:#C9D1CE;transition:border-color .15s ease,transform .15s ease;}
+.ex:hover{border-color:rgba(93,241,143,0.38);transform:translateY(-1px);}
+.ex::before{content:"›";position:absolute;left:.75rem;top:.62rem;color:#5DF18F;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:.6rem;margin:.3rem 0 1.2rem;}
+.stat{background:rgba(93,241,143,0.05);border:1px solid rgba(93,241,143,0.18);border-radius:12px;padding:.95rem 1rem;transition:border-color .15s ease,transform .15s ease;}
+.stat:hover{border-color:rgba(93,241,143,0.5);transform:translateY(-1px);}
+.stat-v{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.55rem;font-weight:700;color:#5DF18F;line-height:1;margin:0 0 .4rem;}
+.stat-l{display:block;font-size:.82rem;color:#9AA3A0;line-height:1.45;}
+.evlist{margin:0 0 1.05rem;padding:0 0 0 1.2rem;color:#C9D1CE;}
+.evlist li{margin:0 0 .5rem;font-size:.92rem;}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:.7rem;margin:.2rem 0 1.3rem;}
+.step{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:1rem;transition:border-color .15s ease,transform .15s ease;}
+.step:hover{border-color:rgba(93,241,143,0.38);transform:translateY(-1px);}
+.step-n{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#5DF18F;font-weight:700;margin:0 0 .3rem;}
+.step-t{display:block;font-size:1rem;font-weight:700;color:#F2F4F3;margin:0 0 .45rem;}
+.step p{font-size:.86rem;margin:0;color:#9AA3A0;line-height:1.55;}
+.notes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.7rem;}
+.notes li{position:relative;padding:0 0 0 1.6rem;font-size:.92rem;color:#C9D1CE;line-height:1.6;}
+.notes li::before{content:"✓";position:absolute;left:0;top:0;color:#5DF18F;font-weight:700;}
+.svcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:.7rem;margin:.2rem 0 0;}
+.svc{position:relative;background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:1.05rem 1.05rem 1.1rem;transition:border-color .15s ease,transform .15s ease;}
+.svc:hover{border-color:rgba(93,241,143,0.4);transform:translateY(-1px);}
+.svc-tag{position:absolute;top:.95rem;right:1rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;letter-spacing:.03em;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.22);border-radius:999px;padding:.12rem .55rem;}
+.svc-t{display:block;font-size:1.05rem;font-weight:700;color:#5DF18F;margin:0 3.5rem .45rem 0;}
+.svc p{font-size:.86rem;margin:0;color:#9AA3A0;line-height:1.55;}
+.contact{border-top:1px solid rgba(93,241,143,0.2);}
+.contact-card{border:1px solid rgba(255,255,255,0.14);border-radius:14px;background:rgba(93,241,143,0.04);padding:1.2rem 1.2rem 1rem;margin:.4rem 0 0;}
 .contact-card .ch{display:flex;align-items:center;gap:.6rem;margin:0 0 .6rem;font-size:1rem;color:#F2F4F3;text-decoration:none;}
-.contact-card a.ch:hover{color:#5DF18F;}
+.contact-card a.ch:hover{color:#5DF18F;text-decoration:none;}
 .contact-card .ch:last-child{margin-bottom:0;}
 .contact-card .ch svg{flex:0 0 auto;width:18px;height:18px;}
 .cta-row{margin:1.25rem 0 0;}
-.cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;text-decoration:none;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;}
-.cta-btn:hover{background:#7df7a6;}
+.cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;transition:background-color .15s ease;}
+.cta-btn:hover{background:#7df7a6;text-decoration:none;}
+@media (max-width:640px){.board-grid{grid-template-columns:repeat(2,1fr);}.hero-row{grid-template-columns:1fr;}.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
 ${FOOTER_CSS}
 </style>
 </head>
@@ -3412,90 +3466,136 @@ ${FOOTER_CSS}
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
   </ul>
+  <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>
 <main>
   <section class="hero">
     <p class="eyebrow">where data moves and decisions matter · independently verified</p>
     <h1>Audits and advisory for products that AI agents read and act on</h1>
     <p class="lede">Independent, measured audits and advisory for the way AI agents read your site and act on it. Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make.</p>
-    <ul class="badges">
-      <li><b>#1</b> on startuphub.ai</li>
-      <li><b>&#10003;</b> 100/100 verified</li>
-      <li>Business ID 3600281-7</li>
-    </ul>
-    <div class="terminal" aria-label="verification terminal">
-      <div class="tm-bar"><span class="tm-dot r"></span><span class="tm-dot y"></span><span class="tm-dot g"></span><span class="tm-title">turva@audit · verify independent report</span></div>
-      <div class="tm-body">
-        <div class="tm-cmd"><span class="pr">&#8250;</span>turva verify --source startuphub.ai</div>
-        <div class="tm-out">&#10003; startuphub.ai &middot; <b>100/100</b> &middot; A+ &middot; #1 ranked</div>
-        <div class="tm-out">&#10003; isitagentready.com &middot; <b>level 5</b> &middot; agent-native<span class="cursor"></span></div>
+    <div class="hero-row">
+      <div class="hero-left">
+        <ul class="badges">
+          <li><b>#1</b> on startuphub.ai</li>
+          <li><b>&#10003;</b> 100/100 verified</li>
+          <li>Business ID 3600281-7</li>
+        </ul>
+        <div class="cta">
+          <a class="btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a>
+          <a class="btn-ghost" href="https://github.com/busygoat/turvadev-pretender">Read the source</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="terminal" aria-label="verification terminal">
+          <div class="tm-bar"><span class="tm-dot r"></span><span class="tm-dot y"></span><span class="tm-dot g"></span><span class="tm-title">turva@audit · verify</span></div>
+          <div class="tm-body">
+            <div class="tm-cmd"><span class="pr">&#8250;</span>turva verify --source startuphub.ai</div>
+            <div class="tm-out">&#10003; startuphub.ai &middot; <b>100/100</b> &middot; A+ &middot; #1 ranked</div>
+            <div class="tm-out">&#10003; isitagentready.com &middot; <b>level 5</b> &middot; agent-native<span class="cursor"></span></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="scoreboard" aria-label="agent-readiness scan result">
-    <div class="sb-head">independent agent-readiness scan of turva.dev</div>
-    <a class="sb-scanner" href="https://www.startuphub.ai/agent-readiness">scanner: startuphub.ai &middot; 3rd-party &#8599;</a>
-    <div class="sb-grid">
-      <div class="sb-cell"><span class="cat">discoverability</span><span class="val">100/100</span></div>
-      <div class="sb-cell"><span class="cat">content</span><span class="val">100/100</span></div>
-      <div class="sb-cell"><span class="cat">access-control</span><span class="val">100/100</span></div>
-      <div class="sb-cell"><span class="cat">capabilities</span><span class="val">100/100</span></div>
-      <div class="sb-cell"><span class="cat">commerce</span><span class="val">100/100</span></div>
-      <div class="sb-cell"><span class="cat">quality</span><span class="val">100/100</span></div>
+  <section class="board" aria-label="agent-readiness scan result">
+    <div class="board-top">
+      <span class="board-head">independent agent-readiness scan of turva.dev</span>
+      <a class="board-src" href="https://www.startuphub.ai/agent-readiness">scanner: startuphub.ai &middot; 3rd-party &#8599;</a>
     </div>
-    <div class="sb-summary"><span>verified</span> <b>100/100</b> <span class="pill">#1 ranked</span> <span class="pill">A+</span></div>
+    <div class="board-grid">
+      <div class="cell"><span class="cat">discoverability</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">content</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">access-control</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">capabilities</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">commerce</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">quality</span><span class="val">100/100</span></div>
+    </div>
+    <div class="board-sum"><span>verified</span> <b>100/100</b> <span class="pill">#1 ranked</span> <span class="pill">A+</span></div>
   </section>
 
-  <article>
+  <section class="sec">
     <h2>Audits, advisory, and implementation for product teams</h2>
     <p>An AI agent does not browse a site the way a person does. It reads machine-readable surfaces and acts on the parts it can reach, once it trusts what it found. I measure how a site, an API or a product holds up to that, fix what the measurement names, and stay on as the product changes.</p>
     <p>The measurable core is agent-readiness, scored by independent scanners and provable on the next scan. The wider work begins where readability ends. The data an agent acts on has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set. The first makes an agent able to read you. The second makes it safe to let one act.</p>
+  </section>
 
+  <section class="sec">
     <h2>Where this applies</h2>
     <p>The pattern is narrow, but where it fits is not. Anywhere data moves and a decision follows, an agent can be the thing that reads the data and makes the call, as long as the inputs are clean and the envelope is set. A few examples:</p>
-    <ul>
-      <li>An agent reading a product catalog and completing a checkout for a buyer.</li>
-      <li>An agent watching an API and acting the moment a threshold is crossed, without waiting for a person.</li>
-      <li>An agent guiding a technician in the field, working from the same data the expert would.</li>
-      <li>An agent triaging incoming requests and resolving the routine ones on its own.</li>
-      <li>An agent operating a remote system over a link that drops, holding its last safe state until the data returns.</li>
-      <li>An agent reconciling records across systems and flagging only what does not match.</li>
-      <li>An agent making a time-critical call locally, where the round trip to a human is too slow to matter.</li>
-    </ul>
+    <div class="exgrid">
+      <div class="ex">An agent reading a product catalog and completing a checkout for a buyer.</div>
+      <div class="ex">An agent watching an API and acting the moment a threshold is crossed, without waiting for a person.</div>
+      <div class="ex">An agent guiding a technician in the field, working from the same data the expert would.</div>
+      <div class="ex">An agent triaging incoming requests and resolving the routine ones on its own.</div>
+      <div class="ex">An agent operating a remote system over a link that drops, holding its last safe state until the data returns.</div>
+      <div class="ex">An agent reconciling records across systems and flagging only what does not match.</div>
+      <div class="ex">An agent making a time-critical call locally, where the round trip to a human is too slow to matter.</div>
+    </div>
     <p>These are examples, not the list. The list does not really end. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.</p>
+  </section>
 
+  <section class="sec">
     <h2>Evidence</h2>
-    <p>turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-08.</p>
-    <ul>
+    <p>turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-24.</p>
+    <div class="stats">
+      <div class="stat"><span class="stat-v">#1</span><span class="stat-l">of publicly-scanned sites on startuphub.ai</span></div>
+      <div class="stat"><span class="stat-v">100/100</span><span class="stat-l">verified by two independent scanners</span></div>
+      <div class="stat"><span class="stat-v">Level 5</span><span class="stat-l">agent-native, isitagentready.com</span></div>
+    </div>
+    <ul class="evlist">
       <li>startuphub.ai leaderboard: #1 of top 100 sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
       <li>isitagentready.com: 100/100, Level 5 (Agent-Native). <a href="https://isitagentready.com/turva.dev">isitagentready.com/turva.dev</a></li>
     </ul>
     <p>The Cloudflare Worker that produces these results is open source: <a href="https://github.com/busygoat/turvadev-pretender">github.com/busygoat/turvadev-pretender</a>. You can read every line before you hire me.</p>
     <p>Backed by a registered company, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">tietopalvelu.ytj.fi/yritys/3600281-7</a></p>
+  </section>
 
+  <section class="sec">
     <h2>The process has three stages and no surprises</h2>
-    <p>First, measurement. For agent-readiness, two independent scanners read the current state of the site or API and produce a numeric baseline with a categorized list of what is missing. For the wider work, the data path and the decision envelope are tested the way an agent would hit them, so the starting point is a fact rather than an opinion.</p>
-    <p>Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need a background in any of this to follow it.</p>
-    <p>Then the fixes. I implement them, or your engineering team does the work with the report as the spec. Both routes are supported and the choice is yours.</p>
-    <p>All communication runs async. No calls and no calendar links. Live meetings are not part of how this work is done. Short questions go through Signal, longer documents through email and CryptPad. Everything stays in writing, which means the work and the trail are auditable end-to-end.</p>
-    <p>Production credentials are not requested. Write access to repositories is not taken by default. Read access is enough for the audit, and write access is scoped per task if implementation is purchased separately.</p>
-    <p>The result is checkable, not asserted. For agent-readiness that is the scanner number, higher on the next scan in the categories and by the dates the report named. For the wider work it is the same test, the data path holding under load and the envelope doing exactly what it claims. Either the next measurement confirms it or it does not.</p>
-
-    <h2>Services</h2>
-    <ul>
-      <li><strong>Audit.</strong> Fixed scope, two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.</li>
-      <li><strong>Advisory.</strong> Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.</li>
-      <li><strong>Implementation.</strong> On request. Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.</li>
-      <li><strong>Agent operations.</strong> On request. The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.</li>
-      <li><strong>MCP server design.</strong> On request. Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.</li>
-      <li><strong>Internal workshops.</strong> On request, async-first. Recorded session or written guide. Topics include how scanners read your site, what x402 and AP2 actually require in practice, and how to keep agent-readiness intact after the audit period ends.</li>
+    <div class="steps">
+      <div class="step">
+        <span class="step-n">01</span>
+        <span class="step-t">Measurement</span>
+        <p>For agent-readiness, two independent scanners read the current state of the site or API and produce a numeric baseline with a categorized list of what is missing. For the wider work, the data path and the decision envelope are tested the way an agent would hit them, so the starting point is a fact rather than an opinion.</p>
+      </div>
+      <div class="step">
+        <span class="step-n">02</span>
+        <span class="step-t">A written report</span>
+        <p>Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need a background in any of this to follow it.</p>
+      </div>
+      <div class="step">
+        <span class="step-n">03</span>
+        <span class="step-t">The fixes</span>
+        <p>I implement them, or your engineering team does the work with the report as the spec. Both routes are supported and the choice is yours.</p>
+      </div>
+    </div>
+    <ul class="notes">
+      <li>All communication runs async. No calls and no calendar links. Live meetings are not part of how this work is done. Short questions go through Signal, longer documents through email and CryptPad. Everything stays in writing, which means the work and the trail are auditable end-to-end.</li>
+      <li>Production credentials are not requested. Write access to repositories is not taken by default. Read access is enough for the audit, and write access is scoped per task if implementation is purchased separately.</li>
+      <li>The result is checkable, not asserted. For agent-readiness that is the scanner number, higher on the next scan in the categories and by the dates the report named. For the wider work it is the same test, the data path holding under load and the envelope doing exactly what it claims. Either the next measurement confirms it or it does not.</li>
     </ul>
+  </section>
 
+  <section class="sec">
+    <h2>Services</h2>
+    <div class="svcgrid">
+      <div class="svc"><span class="svc-tag">2 to 3 weeks</span><span class="svc-t">Audit</span><p>Fixed scope, two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.</p></div>
+      <div class="svc"><span class="svc-tag">monthly</span><span class="svc-t">Advisory</span><p>Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.</p></div>
+      <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">Implementation</span><p>Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.</p></div>
+      <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">Agent operations</span><p>The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.</p></div>
+      <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">MCP server design</span><p>Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.</p></div>
+      <div class="svc"><span class="svc-tag">async-first</span><span class="svc-t">Internal workshops</span><p>Recorded session or written guide. Topics include how scanners read your site, what x402 and AP2 actually require in practice, and how to keep agent-readiness intact after the audit period ends.</p></div>
+    </div>
+  </section>
+
+  <section class="sec">
     <h2>Who I am</h2>
     <p>The work is done by one person under a registered company. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, moved from general security work into agent-readiness, and kept only the tools and methods that hold up in daily client work.</p>
     <p>The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on either arrives intact or it does not, and the boundary you set either holds or it does not. Measurable either way, which is the only kind of claim I make.</p>
+  </section>
 
+  <section class="sec contact">
     <h2>Contact me</h2>
     <p>Ready to see where your site, API or product stands with AI agents? It starts with a measured baseline, a written report, and a prioritized list of what to fix first. For agent-readiness that baseline comes from two independent scanners. For the wider work it comes from testing the data path and the decision envelope directly. Async-only engagement. No calls and no calendar links. The first reply lands in writing within one business day.</p>
     <div class="contact-card">
@@ -3504,7 +3604,7 @@ ${FOOTER_CSS}
       <a class="ch" href="https://www.linkedin.com/in/erikrekola/"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.4 8.9h3.1V21H3.4zM9.2 8.9h2.97v1.65h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V21h-3.1v-5.35c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9.2z"/></svg><span>LinkedIn</span></a>
     </div>
     <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a></div>
-  </article>
+  </section>
 </main>
 ${FOOTER_HTML}
 </body>
@@ -3521,22 +3621,496 @@ ${FOOTER_HTML}
   return new Response(body, { status: 200, headers });
 }
 
+function serveServicesHtml(canonicalUrl) {
+  const metaBlock = buildMetaBlock("/services", canonicalUrl);
+  const jsonLd = buildGuideJsonLd("/services", canonicalUrl);
+  const body = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+${metaBlock}
+${jsonLd}
+${WEBMCP_SCRIPT}
+<link rel="canonical" href="${canonicalUrl}" />
+<link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
+<style>
+html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+main{max-width:46rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
+h1{color:#5DF18F;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 0.6rem;font-weight:700;}
+.intro{font-size:1.12rem;color:#C9D1CE;margin:0 0 1.8rem;}
+a{color:#5DF18F;text-decoration:none;}
+a:hover{text-decoration:underline;}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
+.turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
+.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
+.turva-nav .nv-word b{color:#5DF18F;}
+.turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
+.turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
+.turva-nav .nv-menu a:hover{color:#F2F4F3;}
+.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
+.turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
+.turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
+@media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
+.pcard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.5rem 1.5rem 1.3rem;margin:0 0 1.1rem;transition:border-color .15s ease;}
+.pcard:hover{border-color:rgba(93,241,143,0.35);}
+.pcard-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;border-bottom:0.5px solid rgba(255,255,255,0.08);padding-bottom:.85rem;margin-bottom:1rem;}
+.pcard-t{font-size:1.3rem;font-weight:700;color:#5DF18F;letter-spacing:-0.01em;margin-right:auto;}
+.pcard-price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.45rem;font-weight:700;color:#F2F4F3;}
+.pcard-meta{flex-basis:100%;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;}
+.pcard p{color:#C9D1CE;margin:0 0 .9rem;font-size:.97rem;}
+.pcard .lbl{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;margin:1.1rem 0 .5rem;}
+.pcard ul{list-style:none;margin:0 0 .3rem;padding:0;}
+.pcard li{position:relative;padding:0 0 0 1.55rem;margin:0 0 .45rem;color:#C9D1CE;font-size:.95rem;line-height:1.5;}
+.pcard ul.get li::before{content:"✓";position:absolute;left:0;top:0;color:#5DF18F;font-weight:700;}
+.pcard ul.nope li{color:#9AA3A0;}
+.pcard ul.nope li::before{content:"·";position:absolute;left:.4rem;top:-.05rem;color:#6F7A77;font-weight:700;}
+.pcard .suited{margin:1rem 0 0;color:#9AA3A0;font-size:.92rem;}
+.start{border-top:0.5px solid rgba(255,255,255,0.1);margin-top:1.6rem;padding-top:1.8rem;}
+.start h2{color:#F2F4F3;font-size:1.4rem;font-weight:700;letter-spacing:-0.015em;margin:0 0 .85rem;}
+.start p{color:#C9D1CE;margin:0 0 1rem;}
+.cta-row{margin:1.1rem 0 1.3rem;}
+.cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;}
+.cta-btn:hover{background:#7df7a6;text-decoration:none;}
+.fine{font-size:.85rem;color:#9AA3A0;margin:0;}
+${FOOTER_CSS}
+</style>
+</head>
+<body>
+<nav class="turva-nav">
+  <a class="nv-brand" href="/">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
+      <path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+    <span class="nv-word">turva<b>·</b>dev</span>
+  </a>
+  <ul class="nv-menu">
+    <li><a href="/">home</a></li>
+    <li><a href="/services" aria-current="page">services</a></li>
+    <li><a href="/guides">guides</a></li>
+    <li><a href="/blog">blog</a></li>
+    <li><a href="/company">company</a></li>
+    <li><a href="/legal">legal</a></li>
+    <li><a href="/contact">contact</a></li>
+  </ul>
+  <span class="nv-status"><span class="nv-dot"></span>100/100</span>
+</nav>
+<main>
+  <h1>Services</h1>
+  <p class="intro">Four offerings. Async-only. One business day response.</p>
+
+  <div class="pcard">
+    <div class="pcard-head"><span class="pcard-t">Audit</span><span class="pcard-price">&#8364;6,500</span><span class="pcard-meta">Two to three weeks &middot; Fixed scope</span></div>
+    <p>A measurement of how agent-ready your site and APIs are today, with a prioritised list of what to fix first.</p>
+    <p class="lbl">What you get</p>
+    <ul class="get">
+      <li>Two independent scanners run against the site or API</li>
+      <li>Manual review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers</li>
+      <li>Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms</li>
+      <li>Written report with findings ranked by score impact and implementation cost</li>
+      <li>One round of written follow-up questions</li>
+    </ul>
+    <p class="lbl">What you do not get</p>
+    <ul class="nope">
+      <li>Calls or meetings</li>
+      <li>Implementation of the fixes (separate engagement)</li>
+      <li>Ongoing monitoring (separate engagement)</li>
+    </ul>
+    <p class="suited">Suited for teams that want a clear picture of where they stand before deciding what to do about it.</p>
+  </div>
+
+  <div class="pcard">
+    <div class="pcard-head"><span class="pcard-t">Advisory</span><span class="pcard-price">&#8364;3,000</span><span class="pcard-meta">per month &middot; Monthly retainer &middot; Minimum three months</span></div>
+    <p>Ongoing input on agent-readiness as part of your product roadmap, with tracking of how the scores change over time.</p>
+    <p class="lbl">What you get</p>
+    <ul class="get">
+      <li>Monthly re-scan and score delta report</li>
+      <li>Written review of any agent-readiness related work your team ships, within one business day</li>
+      <li>Roadmap input on what to ship next and why</li>
+      <li>Async channel for questions (email or shared doc)</li>
+      <li>Quarterly summary of measurable progress</li>
+    </ul>
+    <p class="suited">Suited for teams treating agent-readiness as an ongoing product responsibility rather than a one-off cleanup.</p>
+  </div>
+
+  <div class="pcard">
+    <div class="pcard-head"><span class="pcard-t">Implementation</span><span class="pcard-price">&#8364;1,500</span><span class="pcard-meta">per day &middot; Scoped per task</span></div>
+    <p>Hands-on work on the fixes the audit identified, or new agent-ready infrastructure built from scratch.</p>
+    <p class="lbl">Typical work</p>
+    <ul class="get">
+      <li>Cloudflare Workers for head metadata and /.well-known/ files served at the edge</li>
+      <li>MCP servers exposing read-only product data to agents</li>
+      <li>JSON-LD generators for product, organisation and article schemas</li>
+      <li>ai.txt and llms.txt authoring</li>
+      <li>Signed content and agent authentication patterns</li>
+    </ul>
+    <p class="suited">Scoped repository write access per task. No retainer.</p>
+  </div>
+
+  <div class="pcard">
+    <div class="pcard-head"><span class="pcard-t">Agent operations</span><span class="pcard-price">Price on request</span><span class="pcard-meta">Scoped per engagement</span></div>
+    <p>The work beyond readiness, for teams moving from "an agent can read us" to "an agent can act on a system that matters." Two things decide whether an agent acts correctly. The data it works from has to arrive intact, even over links that drop or lag. And the decisions it is allowed to make have to sit inside an envelope of permissions and thresholds you set deliberately.</p>
+    <p class="lbl">Typical work</p>
+    <ul class="get">
+      <li>Review of the data path an agent depends on, and where it breaks under real network conditions</li>
+      <li>The permission and threshold envelope that bounds what an agent may decide and act on</li>
+      <li>Where a human stays in the loop, and how control passes between person and agent</li>
+      <li>Guardrails and verification so an agent's decisions can be checked after the fact</li>
+    </ul>
+    <p>Scope and price vary with the system. Email <a href="mailto:info@turva.dev">info@turva.dev</a> with what you are building, and I respond within one business day with a fixed quote.</p>
+    <p class="suited">Suited for teams letting agents act on data and decisions that matter, not only read a marketing site.</p>
+  </div>
+
+  <div class="start">
+    <h2>How to start</h2>
+    <p>Email <a href="mailto:info@turva.dev">info@turva.dev</a> with the site or API you want audited. I respond within one business day with a fixed quote and a start date.</p>
+    <p>No calls, no calendar links, no discovery sessions.</p>
+    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a></div>
+    <p class="fine">All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.</p>
+  </div>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  const headers = new Headers({
+    "content-type": "text/html; charset=utf-8",
+    "cache-control": "public, max-age=3600",
+    "vary": "Accept",
+    "content-language": "en"
+  });
+  appendAgentLinks(headers);
+  applySecurityHeaders(headers, "html");
+  headers.append("Link", `<${canonicalUrl}>; rel="alternate"; type="text/markdown"`);
+  return new Response(body, { status: 200, headers });
+}
+
+var CARDPAGE_CSS = `html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+main{max-width:46rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
+h1{color:#5DF18F;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 0.6rem;font-weight:700;}
+.intro{font-size:1.12rem;color:#C9D1CE;margin:0 0 1.8rem;}
+a{color:#5DF18F;text-decoration:none;}
+a:hover{text-decoration:underline;}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
+.turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
+.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
+.turva-nav .nv-word b{color:#5DF18F;}
+.turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
+.turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
+.turva-nav .nv-menu a:hover{color:#F2F4F3;}
+.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
+.turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
+.turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
+@media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
+.scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.4rem 1.5rem 1.2rem;margin:0 0 1rem;}
+.scard h2{color:#5DF18F;font-size:1.2rem;font-weight:700;letter-spacing:-0.01em;margin:0 0 .85rem;}
+.scard p{color:#C9D1CE;margin:0 0 .85rem;font-size:.97rem;}
+.scard p:last-child{margin-bottom:0;}
+.scard ul{list-style:none;margin:0;padding:0;}
+.scard li{position:relative;padding:0 0 0 1.5rem;margin:0 0 .5rem;color:#C9D1CE;font-size:.95rem;line-height:1.5;}
+.scard li::before{content:"›";position:absolute;left:.3rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+.scard li:last-child{margin-bottom:0;}
+.scard .note{margin-top:.85rem;}
+.kvs{display:grid;grid-template-columns:max-content 1fr;gap:.55rem .7rem;align-items:baseline;}
+.kv{display:contents;}
+.kv .k{color:#9AA3A0;font-size:.88rem;}
+.kv .v{color:#5DF18F;font-weight:600;word-break:break-word;}
+main>p{color:#C9D1CE;margin:0 0 1.3rem;}
+.gv{color:#5DF18F;font-weight:600;}
+.scard .sub{color:#9AA3A0;font-size:.95rem;margin:-.4rem 0 .9rem;}
+.faq .q{color:#F2F4F3;font-weight:700;font-size:1rem;margin:1.15rem 0 .4rem;}
+.faq .q:first-child{margin-top:0;}
+.faq p{color:#C9D1CE;margin:0 0 .2rem;font-size:.95rem;}
+.dl{display:flex;flex-direction:column;gap:.75rem;}
+.dl p{margin:0;color:#C9D1CE;font-size:.95rem;line-height:1.55;}
+.dl .term{color:#5DF18F;font-weight:700;}
+.post{display:block;border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.05rem 1.35rem;margin:0 0 .75rem;text-decoration:none;transition:border-color .15s ease;}
+.post:hover{border-color:rgba(93,241,143,0.4);}
+.post .pt{display:block;color:#5DF18F;font-weight:700;font-size:1.1rem;letter-spacing:-0.01em;margin:0 0 .28rem;}
+.post .pd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}`;
+
+function cardPageHead(metaBlock, jsonLd, canonicalUrl) {
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+${metaBlock}
+${jsonLd}
+${WEBMCP_SCRIPT}
+<link rel="canonical" href="${canonicalUrl}" />
+<link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
+<style>
+${CARDPAGE_CSS}
+${FOOTER_CSS}
+</style>
+</head>
+<body>`;
+}
+
+function cardPageNav(current) {
+  const items = [["/","home"],["/services","services"],["/guides","guides"],["/blog","blog"],["/company","company"],["/legal","legal"],["/contact","contact"]];
+  const lis = items.map(([href,label]) => `    <li><a href="${href}"${href === current ? ' aria-current="page"' : ''}>${label}</a></li>`).join("\n");
+  return `<nav class="turva-nav">
+  <a class="nv-brand" href="/">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
+      <path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+    <span class="nv-word">turva<b>·</b>dev</span>
+  </a>
+  <ul class="nv-menu">
+${lis}
+  </ul>
+  <span class="nv-status"><span class="nv-dot"></span>100/100</span>
+</nav>`;
+}
+
+function cardPageHeaders(canonicalUrl) {
+  const headers = new Headers({
+    "content-type": "text/html; charset=utf-8",
+    "cache-control": "public, max-age=3600",
+    "vary": "Accept",
+    "content-language": "en"
+  });
+  appendAgentLinks(headers);
+  applySecurityHeaders(headers, "html");
+  headers.append("Link", `<${canonicalUrl}>; rel="alternate"; type="text/markdown"`);
+  return headers;
+}
+
+function serveCompanyHtml(canonicalUrl) {
+  const head = cardPageHead(buildMetaBlock("/company", canonicalUrl), buildGuideJsonLd("/company", canonicalUrl), canonicalUrl);
+  const body = `${head}
+${cardPageNav("/company")}
+<main>
+  <h1>Company</h1>
+  <p class="intro">turva.dev is operated by Erik Rekola.</p>
+  <div class="scard"><h2>Business details</h2><div class="kvs">
+    <div class="kv"><span class="k">Trade name</span><span class="v">turva.dev</span></div>
+    <div class="kv"><span class="k">Business ID</span><span class="v">3600281-7</span></div>
+    <div class="kv"><span class="k">Country of registration</span><span class="v">Finland</span></div>
+    <div class="kv"><span class="k">Form</span><span class="v">Sole proprietorship</span></div>
+  </div></div>
+  <div class="scard"><h2>About the operator</h2>
+    <p>Erik has eleven years of experience as an engineer in industrial settings, including roles at UPM, Franke, Thermo Fisher Scientific and ASM International.</p>
+    <p>The work covered measurement, process engineering and the documentation of complex systems. The same approach now applies to a different subject: how websites and APIs are read by AI agents.</p>
+  </div>
+  <div class="scard"><h2>Location</h2><p>Tampere, Pirkanmaa, Finland. All work is delivered remotely. No on-site engagements.</p></div>
+  <div class="scard"><h2>Why this service exists</h2>
+    <p>Agent-readiness is a measurable property of a site, an API, or a product surface. Either the scanners read it higher next week than this week, or they do not. That is the question this service answers.</p>
+    <p>Most websites and APIs were built before AI agents were a meaningful class of clients. The protocols (MCP, well-known manifests, structured discovery, JSON-LD) exist, but few sites implement them correctly. The result is a measurable gap between what an agent can read and what a human can read.</p>
+    <p>This service closes that gap on a per-project basis, with independent scanners as the referee.</p>
+  </div>
+  <div class="scard"><h2>Operating principles</h2><ul>
+    <li>Async-only engagement. No calls, no calendar links.</li>
+    <li>All work delivered remotely.</li>
+    <li>Production credentials are not requested.</li>
+    <li>Write access scoped per task and only if implementation is purchased.</li>
+    <li>Every claim is verifiable against public scanner output.</li>
+  </ul></div>
+  <div class="scard"><h2>Contact</h2><div class="kvs">
+    <div class="kv"><span class="k">Email</span><a class="v" href="mailto:info@turva.dev">info@turva.dev</a></div>
+    <div class="kv"><span class="k">Signal</span><span class="v">@turva.19</span></div>
+    <div class="kv"><span class="k">LinkedIn</span><a class="v" href="https://www.linkedin.com/in/erikrekola/">linkedin.com/in/erikrekola</a></div>
+  </div></div>
+  <div class="scard"><h2>Invoicing</h2>
+    <p>Payment terms are fourteen days net unless agreed otherwise in writing.</p>
+    <p>VAT is added to invoices according to Finnish law. Reverse charge applies to EU B2B customers with a valid VAT ID. Non-EU customers are invoiced without VAT.</p>
+  </div>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
+}
+
+function serveContactHtml(canonicalUrl) {
+  const head = cardPageHead(buildMetaBlock("/contact", canonicalUrl), buildGuideJsonLd("/contact", canonicalUrl), canonicalUrl);
+  const body = `${head}
+${cardPageNav("/contact")}
+<main>
+  <h1>Contact</h1>
+  <p class="intro">Written contact only. Email for longer messages, Signal for short questions. The first reply is in writing within one business day. No calls and no calendar links at any stage of the engagement.</p>
+  <div class="scard"><h2>Channels</h2><div class="kvs">
+    <div class="kv"><span class="k">Email</span><a class="v" href="mailto:info@turva.dev">info@turva.dev</a></div>
+    <div class="kv"><span class="k">Signal</span><span class="v">@turva.19</span></div>
+    <div class="kv"><span class="k">LinkedIn</span><a class="v" href="https://www.linkedin.com/in/erikrekola/">linkedin.com/in/erikrekola</a></div>
+  </div></div>
+  <div class="scard"><h2>Response times</h2><ul>
+    <li>Email and Signal: within one business day</li>
+    <li>Weekends: no guaranteed response time</li>
+  </ul></div>
+  <div class="scard"><h2>What to include in a first message</h2>
+    <p>A useful first message includes:</p>
+    <ul>
+      <li>The site or API to be audited (URL)</li>
+      <li>Any current scanner results, if you have run them</li>
+      <li>The scope you have in mind (audit, advisory, implementation)</li>
+    </ul>
+    <p class="note">If you do not have scanner results yet, that is fine. The audit starts with running them.</p>
+  </div>
+  <div class="scard"><h2>Geographic service area</h2><p>Based in Tampere, Finland. Service delivered remotely worldwide. All work is asynchronous and written.</p></div>
+  <div class="scard"><h2>Business details</h2><div class="kvs">
+    <div class="kv"><span class="k">Business ID</span><span class="v">3600281-7</span></div>
+    <div class="kv"><span class="k">Register</span><a class="v" href="https://tietopalvelu.ytj.fi/yritys/3600281-7">tietopalvelu.ytj.fi/yritys/3600281-7</a></div>
+    <div class="kv"><span class="k">Agent registration</span><a class="v" href="https://turva.dev/auth.md">turva.dev/auth.md</a></div>
+  </div></div>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
+}
+
+function serveLegalHtml(canonicalUrl) {
+  const head = cardPageHead(buildMetaBlock("/legal", canonicalUrl), buildGuideJsonLd("/legal", canonicalUrl), canonicalUrl);
+  const body = `${head}
+${cardPageNav("/legal")}
+<main>
+  <h1>Legal</h1>
+  <p class="intro">This page covers the terms under which turva.dev operates, the privacy practices of the site, and the default terms for engagements.</p>
+  <div class="scard"><h2>Operator</h2>
+    <p>turva.dev is operated by Erik Rekola, Business ID <span class="gv">3600281-7</span>, registered in Finland as a sole proprietorship. VAT-registered.</p>
+    <p>Contact: <a href="mailto:info@turva.dev">info@turva.dev</a></p>
+  </div>
+  <div class="scard"><h2>Terms of engagement</h2>
+    <p>The following terms apply to audit, advisory and implementation engagements unless replaced by a written agreement.</p>
+    <div class="dl">
+      <p><span class="term">Scope.</span> Each engagement has a defined scope agreed in writing before work starts. Scope changes require a new written agreement and may affect price and timeline.</p>
+      <p><span class="term">Deliverables.</span> Audit deliverables are a written report. Advisory deliverables are written reviews and a monthly summary. Implementation deliverables are source code committed to the agreed repository.</p>
+      <p><span class="term">Payment.</span> Payment terms are fourteen days net. Late payment interest follows Finnish law.</p>
+      <p><span class="term">Confidentiality.</span> Information shared during an engagement is treated as confidential. A separate non-disclosure agreement can be signed on request.</p>
+      <p><span class="term">Liability.</span> Liability is limited to the value of the engagement. turva.dev is not liable for indirect or consequential damages.</p>
+      <p><span class="term">Intellectual property.</span> The client owns the deliverables produced for them. Generic methods, templates and reusable code remain with turva.dev.</p>
+      <p><span class="term">Governing law.</span> Finnish law applies. Disputes are resolved in the District Court of Pirkanmaa, Finland.</p>
+    </div>
+  </div>
+  <div class="scard"><h2>Privacy</h2>
+    <p>This site does not use analytics cookies, tracking pixels or third-party scripts.</p>
+    <div class="dl">
+      <p><span class="term">Server logs.</span> The hosting provider (Cloudflare) records standard request logs including IP address, user agent and requested path. Logs are retained according to Cloudflare's standard retention policy.</p>
+      <p><span class="term">Email.</span> Email communication is stored in standard email infrastructure for as long as needed to deliver the work and meet accounting obligations under Finnish law (six years for invoice records).</p>
+      <p><span class="term">Client data.</span> Data shared by a client during an engagement is stored only on systems necessary to deliver the work, and deleted within thirty days of engagement closure unless retention is required by law.</p>
+    </div>
+    <p class="note">No data is sold or shared with third parties.</p>
+  </div>
+  <div class="scard"><h2>Rights under GDPR</h2>
+    <p>You have the right to access, correct or request deletion of personal data held about you. Send the request to <a href="mailto:info@turva.dev">info@turva.dev</a>.</p>
+    <p>The supervisory authority in Finland is the Data Protection Ombudsman (tietosuojavaltuutettu.fi).</p>
+  </div>
+  <div class="scard"><h2>Cookies</h2>
+    <p>This site sets no cookies of its own. Cloudflare may set cookies required for bot management and security. These are technical cookies and do not require consent under EU law.</p>
+  </div>
+  <div class="scard"><h2>Updates</h2>
+    <p>This page is updated when the terms change. The current version applies to engagements started after the date below.</p>
+    <p>Last updated: <span class="gv">2026-06-20</span>.</p>
+  </div>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
+}
+
+function serveGuidesHtml(canonicalUrl) {
+  const head = cardPageHead(buildMetaBlock("/guides", canonicalUrl), buildGuideJsonLd("/guides", canonicalUrl) + "\n" + buildGuidesFaqJsonLd(), canonicalUrl);
+  const body = `${head}
+${cardPageNav("/guides")}
+<main>
+  <h1>Agent-readiness guides</h1>
+  <p class="intro">These short guides explain, in plain language, what makes a website or an API easy for AI agents to read and use. Each one covers a single topic and takes a few minutes to read. They are free, and they cover the same surfaces an <a href="/services">agent-readiness audit</a> measures.</p>
+  <p>Not sure where to start? The first guide explains what an agent-readiness audit is.</p>
+  <div class="scard"><h2>Discovery and content</h2><p class="sub">How an agent finds your site and reads it without getting lost.</p><ul>
+    <li><a href="/guides/agent-readiness-audit">What an agent-readiness audit is</a></li>
+    <li><a href="/guides/get-cited-by-ai-assistants">How to get your site cited by AI assistants</a></li>
+    <li><a href="/guides/llms-txt">llms.txt explained</a></li>
+    <li><a href="/guides/markdown-for-agents">Serving markdown to agents</a></li>
+    <li><a href="/guides/sitemaps-and-robots-for-agents">Sitemaps, robots.txt and agent access</a></li>
+    <li><a href="/guides/response-headers-for-agents">Response headers that help agents</a></li>
+    <li><a href="/guides/prerendering-for-agents">Prerendering and why agents see empty pages</a></li>
+  </ul></div>
+  <div class="scard"><h2>Capability and trust</h2><p class="sub">How a site tells an agent what it is allowed to do, and shows it is safe to use.</p><ul>
+    <li><a href="/guides/mcp-server-card">MCP server cards explained</a></li>
+    <li><a href="/guides/agents-json">What agents.json is</a></li>
+    <li><a href="/guides/well-known-for-agents">The /.well-known directory for agents</a></li>
+    <li><a href="/guides/agent-authentication">How agents authenticate</a></li>
+    <li><a href="/guides/json-ld-structured-data">JSON-LD and structured data for agents</a></li>
+  </ul></div>
+  <div class="scard"><h2>Commerce and strategy</h2><p class="sub">Paying agents, how this differs from SEO, and how to choose and measure an audit.</p><ul>
+    <li><a href="/guides/x402-agent-payments">x402 and agent payments</a></li>
+    <li><a href="/guides/agent-commerce-discovery">Agent commerce discovery: A2A, AP2, and ACP</a></li>
+    <li><a href="/guides/agentic-commerce-readiness">Agentic commerce readiness: selling to AI shopping agents</a></li>
+    <li><a href="/guides/seo-vs-agent-readiness">SEO and agent-readiness are not the same</a></li>
+    <li><a href="/guides/agent-readiness-aeo-geo">Agent-readiness, AEO and GEO: how they relate</a></li>
+    <li><a href="/guides/letting-agents-act-on-data">Letting agents act on data: the decision envelope</a></li>
+    <li><a href="/guides/ai-agent-use-cases">AI agent use cases: where agents read data and make decisions</a></li>
+    <li><a href="/guides/measurement-led-agent-readiness">Why agent-readiness should be measured, not asserted</a></li>
+    <li><a href="/guides/agent-readiness-gaps">Common agent-readiness gaps on marketing sites</a></li>
+    <li><a href="/guides/choosing-an-agent-readiness-audit">Choosing an agent-readiness audit</a></li>
+  </ul></div>
+  <div class="scard"><h2>Frequently asked</h2><div class="faq">
+    <p class="q">What is an agent-readiness audit?</p>
+    <p>An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API, scored against current standards by an independent scanner rather than a self-assessment.</p>
+    <p class="q">Do I need llms.txt on my site?</p>
+    <p>If you want models and agents to read your real content rather than guess from a cached snippet, llms.txt gives them a curated map of what matters. It does not replace robots.txt or a sitemap, it complements them.</p>
+    <p class="q">How do I get my site cited by AI assistants?</p>
+    <p>A model cites content it can read cleanly and corroborate. That means machine-readable surfaces such as llms.txt and structured data, a markdown form that does not exhaust the token budget, and being indexed where the assistant searches.</p>
+    <p class="q">What is an MCP server card?</p>
+    <p>An MCP server card is a JSON file, usually at /.well-known/mcp/server-card.json, that lets an agent discover a site's Model Context Protocol server and the tools it exposes, so the agent can call them without a human wiring up the connection.</p>
+    <p class="q">Is agent-readiness the same as SEO?</p>
+    <p>No. SEO makes a site rank for a person to click. Agent-readiness makes a site legible and usable by an agent that reads and acts. A site can rank well and still be opaque to agents.</p>
+    <p class="q">How is agent-readiness measured?</p>
+    <p>By an independent scanner that reads the live site and reports a score with a category breakdown. The categories that get fixed read higher on the next scan, so the claim is the number rather than an assertion.</p>
+  </div></div>
+  <p>For an audit, contact <a href="mailto:info@turva.dev">info@turva.dev</a>.</p>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
+}
+
+function serveBlogHtml(canonicalUrl) {
+  const head = cardPageHead(buildMetaBlock("/blog", canonicalUrl), buildGuideJsonLd("/blog", canonicalUrl), canonicalUrl);
+  const body = `${head}
+${cardPageNav("/blog")}
+<main>
+  <h1>Build log</h1>
+  <p class="intro">Notes on how turva.dev is built and measured. Each entry is dated, and the claims are verifiable by independent agent-readiness scanners.</p>
+  <a class="post" href="/blog/reliable-agent-decisions"><span class="pt">What makes an AI agent's decisions reliable</span><span class="pd">2026-06-22</span></a>
+  <a class="post" href="/blog/owning-your-fediverse-identity"><span class="pt">Owning your fediverse identity</span><span class="pd">2026-06-21</span></a>
+  <a class="post" href="/blog/honest-agent-commerce-checks"><span class="pt">Passing the agent commerce checks without faking them</span><span class="pd">2026-06-21</span></a>
+  <a class="post" href="/blog/moving-off-prerender"><span class="pt">Moving turva.dev off prerender.io</span><span class="pd">2026-06-20</span></a>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
+}
+
 var X402_ROUTES = {
   "/api/agent/audit": {
     label: "Audit",
-    description: "Turva.dev — Agent-readiness audit (fixed scope, 2-3 weeks)",
+    description: "Turva.dev: Agent-readiness audit (fixed scope, 2-3 weeks)",
     amountUsdcMicro: "6500000000",
     amountEurCents: 650000
   },
   "/api/agent/advisory": {
     label: "Advisory",
-    description: "Turva.dev — Continuous advisory (monthly, min 3 months)",
+    description: "Turva.dev: Continuous advisory (monthly, min 3 months)",
     amountUsdcMicro: "3000000000",
     amountEurCents: 300000
   },
   "/api/agent/implementation": {
     label: "Implementation",
-    description: "Turva.dev — Implementation day (scoped per task)",
+    description: "Turva.dev: Implementation day (scoped per task)",
     amountUsdcMicro: "1500000000",
     amountEurCents: 150000
   }
@@ -3796,6 +4370,24 @@ async function handleRequest(request, env) {
   if (pathname === "/") {
     return serveHomeHtml("https://turva.dev/");
   }
+  if (pathname === "/services") {
+    return serveServicesHtml("https://turva.dev/services");
+  }
+  if (pathname === "/company") {
+    return serveCompanyHtml("https://turva.dev/company");
+  }
+  if (pathname === "/contact") {
+    return serveContactHtml("https://turva.dev/contact");
+  }
+  if (pathname === "/legal") {
+    return serveLegalHtml("https://turva.dev/legal");
+  }
+  if (pathname === "/guides") {
+    return serveGuidesHtml("https://turva.dev/guides");
+  }
+  if (pathname === "/blog") {
+    return serveBlogHtml("https://turva.dev/blog");
+  }
   if ((pathname === "/guides" || pathname.startsWith("/guides/") || pathname === "/blog" || pathname.startsWith("/blog/") || pathname === "/services" || pathname === "/company" || pathname === "/legal" || pathname === "/contact") && PAGE_MARKDOWN[pathname]) {
     return serveGuideHtml(pathname, "https://turva.dev" + pathname);
   }
@@ -3872,6 +4464,9 @@ async function handleRequest(request, env) {
   }
   if (pathLower === "/.well-known/security.txt" || pathLower === "/security.txt") {
     return serveStatic(SECURITY_TXT, "text/plain; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/mcp-registry-auth") {
+    return serveStatic(MCP_REGISTRY_AUTH, "text/plain; charset=utf-8", "agent-api");
   }
   if (pathLower === "/sitemap.xml") return serveStatic(SITEMAP_XML, "application/xml; charset=utf-8", "agent-api");
   if (pathLower === "/llms.txt") return serveStatic(LLMS_TXT, "text/plain; charset=utf-8", "agent-api");
