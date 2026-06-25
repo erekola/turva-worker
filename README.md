@@ -89,11 +89,11 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 * [Letting agents act on data: the decision envelope](https://turva.dev/guides/letting-agents-act-on-data)
 * [AI agent use cases](https://turva.dev/guides/ai-agent-use-cases)
 
-## Build log
+## Blog
 
 Notes on building and operating turva.dev, written as the work happens. Published on turva.dev.
 
-* [Build log (index)](https://turva.dev/blog)
+* [Blog (index)](https://turva.dev/blog)
 * [When an agent can prove it is Claude](https://turva.dev/blog/verifiable-agent-identity)
 * [What makes an AI agent's decisions reliable](https://turva.dev/blog/reliable-agent-decisions)
 * [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity)

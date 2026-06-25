@@ -339,7 +339,7 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
-  "/blog": `# Build log
+  "/blog": `# Blog
 
 Notes on how turva.dev is built and measured. Each entry is dated, and the claims are verifiable by independent agent-readiness scanners.
 
@@ -2431,9 +2431,9 @@ function getCanonicalForPath(pathname) {
 
 var META_BY_PATH = {
   "/blog": {
-    title: "Build log | turva.dev",
+    title: "Blog | turva.dev",
     description: "Notes on how turva.dev is built and measured. Dated entries, each claim verifiable by independent agent-readiness scanners.",
-    imageAlt: "turva.dev build log"
+    imageAlt: "turva.dev blog"
   },
   "/blog/verifiable-agent-identity": {
     title: "When an agent can prove it is Claude | turva.dev",
@@ -2614,7 +2614,7 @@ function buildMetaBlock(pathname, canonicalUrl) {
   const ogType = isArticle ? "article" : "website";
   let articleMeta = "";
   if (isArticle) {
-    articleMeta = `\n<meta property="article:author" content="https://www.linkedin.com/in/erikrekola/" />\n<meta property="article:section" content="${pathname.startsWith("/blog/") ? "Build log" : "Guides"}" />`;
+    articleMeta = `\n<meta property="article:author" content="https://www.linkedin.com/in/erikrekola/" />\n<meta property="article:section" content="${pathname.startsWith("/blog/") ? "Blog" : "Guides"}" />`;
     if (m.date) {
       articleMeta += `\n<meta property="article:published_time" content="${m.date}" />\n<meta property="article:modified_time" content="${m.date}" />`;
     }
@@ -2746,7 +2746,7 @@ ${FOOTER_CSS}
 <main>
 <h1>Page not found</h1>
 <p>The page at ${escapeHtml(pathname)} does not exist. It may have moved.</p>
-<p>Try the <a href="/">home page</a>, the <a href="/guides">guides</a>, or the <a href="/blog">build log</a>.</p>
+<p>Try the <a href="/">home page</a>, the <a href="/guides">guides</a>, or the <a href="/blog">blog</a>.</p>
 </main>
 ${FOOTER_HTML}
 </body>
@@ -2911,7 +2911,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
   const json = JSON.stringify(article).replace(/<\/script/gi, "<\\/script");
   let breadcrumb = "";
   if (isBlogPost || pathname.startsWith("/guides/")) {
-    const section = isBlogPost ? { name: "Build log", url: "https://turva.dev/blog" } : { name: "Guides", url: "https://turva.dev/guides" };
+    const section = isBlogPost ? { name: "Blog", url: "https://turva.dev/blog" } : { name: "Guides", url: "https://turva.dev/guides" };
     const bc = {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
@@ -4120,7 +4120,7 @@ function serveBlogHtml(canonicalUrl) {
   const body = `${head}
 ${cardPageNav("/blog")}
 <main>
-  <h1>Build log</h1>
+  <h1>Blog</h1>
   <p class="intro">Notes on how turva.dev is built and measured. Each entry is dated, and the claims are verifiable by independent agent-readiness scanners.</p>
   <a class="post" href="/blog/verifiable-agent-identity"><span class="pt">When an agent can prove it is Claude</span><span class="pd">2026-06-25</span></a>
   <a class="post" href="/blog/reliable-agent-decisions"><span class="pt">What makes an AI agent's decisions reliable</span><span class="pd">2026-06-22</span></a>
