@@ -715,7 +715,7 @@ Typical work:
 - Where a human stays in the loop, and how control passes between person and agent
 - Guardrails and verification so an agent's decisions can be checked after the fact
 
-Scope and price vary with the system. Email <mailto:info@turva.dev> with what you are building, and I respond within one business day with a fixed quote.
+Scope and price vary with the system.
 
 Suited for teams letting agents act on data and decisions that matter, not only read a marketing site.
 
@@ -3799,7 +3799,7 @@ ${FOOTER_CSS}
       <li>Where a human stays in the loop, and how control passes between person and agent</li>
       <li>Guardrails and verification so an agent's decisions can be checked after the fact</li>
     </ul>
-    <p>Scope and price vary with the system. Email <a href="mailto:info@turva.dev">info@turva.dev</a> with what you are building, and I respond within one business day with a fixed quote.</p>
+    <p>Scope and price vary with the system.</p>
     <p class="suited">Suited for teams letting agents act on data and decisions that matter, not only read a marketing site.</p>
   </div>
 
