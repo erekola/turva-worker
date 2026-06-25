@@ -89,6 +89,16 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 * [Letting agents act on data: the decision envelope](https://turva.dev/guides/letting-agents-act-on-data)
 * [AI agent use cases](https://turva.dev/guides/ai-agent-use-cases)
 
+## Build log
+
+Notes on building and operating turva.dev, written as the work happens. Published on turva.dev.
+
+* [Build log (index)](https://turva.dev/blog)
+* [What makes an AI agent's decisions reliable](https://turva.dev/blog/reliable-agent-decisions)
+* [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity)
+* [Passing the agent commerce checks without faking them](https://turva.dev/blog/honest-agent-commerce-checks)
+* [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender)
+
 ## How it works
 
 The Worker renders the whole site at the edge. Every page is built from a single source-of-truth object in the Worker: page content as markdown, plus a shared canonical `&lt;head&gt;` and JSON-LD. There is no separate CMS or origin to proxy. Agent routes (`/.well-known/*`, `robots.txt`, `sitemap.xml`, `/x402`) are served from the same Worker, and static assets such as images come from Workers Assets.
