@@ -341,7 +341,7 @@ cannot be deleted until the statutory retention period ends.
 var PAGE_MARKDOWN = {
   "/blog": `# Blog
 
-Notes on how turva.dev is built and measured. Each entry is dated, and the claims are verifiable by independent agent-readiness scanners.
+Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
 - [When an agent can prove it is Claude](/blog/verifiable-agent-identity). 2026-06-25.
 - [What makes an AI agent's decisions reliable](/blog/reliable-agent-decisions). 2026-06-22.
@@ -2432,7 +2432,7 @@ function getCanonicalForPath(pathname) {
 var META_BY_PATH = {
   "/blog": {
     title: "Blog | turva.dev",
-    description: "Notes on how turva.dev is built and measured. Dated entries, each claim verifiable by independent agent-readiness scanners.",
+    description: "Notes on AI agents, and the work of letting them read a site and act on a system safely. Dated entries, with anything measurable checked against independent scanners.",
     imageAlt: "turva.dev blog"
   },
   "/blog/verifiable-agent-identity": {
@@ -4121,7 +4121,7 @@ function serveBlogHtml(canonicalUrl) {
 ${cardPageNav("/blog")}
 <main>
   <h1>Blog</h1>
-  <p class="intro">Notes on how turva.dev is built and measured. Each entry is dated, and the claims are verifiable by independent agent-readiness scanners.</p>
+  <p class="intro">Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.</p>
   <a class="post" href="/blog/verifiable-agent-identity"><span class="pt">When an agent can prove it is Claude</span><span class="pd">2026-06-25</span></a>
   <a class="post" href="/blog/reliable-agent-decisions"><span class="pt">What makes an AI agent's decisions reliable</span><span class="pd">2026-06-22</span></a>
   <a class="post" href="/blog/owning-your-fediverse-identity"><span class="pt">Owning your fediverse identity</span><span class="pd">2026-06-21</span></a>

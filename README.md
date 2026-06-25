@@ -91,7 +91,7 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 
 ## Blog
 
-Notes on building and operating turva.dev, written as the work happens. Published on turva.dev.
+Notes on AI agents and the work of letting them read a site and act on a system safely. Published on turva.dev.
 
 * [Blog (index)](https://turva.dev/blog)
 * [When an agent can prove it is Claude](https://turva.dev/blog/verifiable-agent-identity)
