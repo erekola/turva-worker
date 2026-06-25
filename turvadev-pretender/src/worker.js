@@ -343,10 +343,41 @@ var PAGE_MARKDOWN = {
 
 Notes on how turva.dev is built and measured. Each entry is dated, and the claims are verifiable by independent agent-readiness scanners.
 
+- [When an agent can prove it is Claude](/blog/verifiable-agent-identity). 2026-06-25.
 - [What makes an AI agent's decisions reliable](/blog/reliable-agent-decisions). 2026-06-22.
 - [Owning your fediverse identity](/blog/owning-your-fediverse-identity). 2026-06-21.
 - [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks). 2026-06-21.
 - [Moving turva.dev off prerender.io](/blog/moving-off-prerender). 2026-06-20.
+`,
+  "/blog/verifiable-agent-identity": `# When an agent can prove it is Claude
+
+2026-06-25
+
+A site that wants to let an AI agent act has a problem it rarely says out loud. It cannot tell which agent is actually at the door. A user-agent string is just text, and anything can send it. An IP range drifts as providers move their infrastructure around. So the site guesses, and the guess collapses into one of two bad defaults. Block too much, and the helpful agent never reaches the page. Trust too much, and anything wearing the right header walks straight in.
+
+## What the tag actually is
+
+Web Bot Auth is the piece that removes the guess. It comes from active work at the IETF and is already in production at Cloudflare, and it lets an agent prove who it is on every request. The agent generates a signing key and publishes the public half at a fixed location, /.well-known/http-message-signatures-directory. It then signs each request it sends. The receiving site, or Cloudflare at its edge, checks that signature against the published key. A match is a verifiable claim about the sender. Copying the header does not reproduce it, because only the holder of the private key can sign.
+
+Cloudflare calls the end-user-directed form of this a signed agent, and opened the program in August 2025 with a first cohort: ChatGPT agent, Goose, Browserbase, and Anchor Browser. The list lives in the public bots and agents directory on Cloudflare Radar, readable by anyone, customer or not. That public directory is the part that matters to me, because it makes the identity checkable by a third party instead of asserted by the agent itself.
+
+## Where Claude stands today
+
+Claude is not on the signed list yet, and the gap is not academic. A site that switches on Cloudflare's Block AI Bots rule can, right now, block Claude's own request to a server it was asked to reach. Operators have run into exactly that and had to add a manual exception to let Claude back through, which is why there is an open request to register Claude as a verified bot.
+
+I am writing this ahead of the fact rather than after it, because the mechanism is live and the direction is set. The day Claude carries a signed identity, the request a site has to guess about today becomes one it can verify in a millisecond at the edge. Nothing else about the site has to change for that to pay off.
+
+## Why this lands on my desk
+
+An agent-readiness audit has mostly answered one question: can an agent read this site. Verifiable identity adds the other half. Can the site tell which agent is reading, and admit it on purpose. The two questions are different, and the second one is where most marketing sites have nothing in place at all.
+
+The concrete uses are easy to name. Validate Web Bot Auth signatures at the edge instead of pattern-matching user-agent strings that anyone can fake. Base allow rules on the public directory rather than on IP lists kept by hand. The decision envelope, the set of actions an agent is permitted to take, should then turn on a verified identity rather than on an unverified claim. A site built this way can open a real capability to a known agent and keep it closed to everything else, without falling back on the blunt switch that blocks every bot at once.
+
+## The honest version
+
+None of this is live for Claude on the day I publish this, and I will not write as though it were. The directory is public for a reason. Check it, and admit what it actually says rather than what a vendor page claims. When the entry appears, the work on the receiving side is already done, and the audit has a new line that can be measured rather than asserted.
+
+For an agent-readiness audit that covers how your site recognizes and admits AI agents, contact info@turva.dev.
 `,
   "/blog/reliable-agent-decisions": `# What makes an AI agent's decisions reliable
 
@@ -2381,14 +2412,15 @@ var SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
  <url><loc>https://turva.dev/guides/choosing-an-agent-readiness-audit</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
  <url><loc>https://turva.dev/guides/get-cited-by-ai-assistants</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
  <url><loc>https://turva.dev/guides/agent-commerce-discovery</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/blog</loc><lastmod>2026-06-22</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+ <url><loc>https://turva.dev/blog</loc><lastmod>2026-06-25</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
  <url><loc>https://turva.dev/blog/moving-off-prerender</loc><lastmod>2026-06-20</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
  <url><loc>https://turva.dev/blog/honest-agent-commerce-checks</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
  <url><loc>https://turva.dev/blog/owning-your-fediverse-identity</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
  <url><loc>https://turva.dev/blog/reliable-agent-decisions</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+ <url><loc>https://turva.dev/blog/verifiable-agent-identity</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>`;
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -2402,6 +2434,12 @@ var META_BY_PATH = {
     title: "Build log | turva.dev",
     description: "Notes on how turva.dev is built and measured. Dated entries, each claim verifiable by independent agent-readiness scanners.",
     imageAlt: "turva.dev build log"
+  },
+  "/blog/verifiable-agent-identity": {
+    title: "When an agent can prove it is Claude | turva.dev",
+    description: "Web Bot Auth gives an AI agent a verifiable, signed identity a site can check. What the tag is, where Claude stands today, and how agent-readiness uses it.",
+    date: "2026-06-25",
+    imageAlt: "When an agent can prove it is Claude"
   },
   "/blog/reliable-agent-decisions": {
     title: "What makes an AI agent's decisions reliable | turva.dev",
@@ -4084,6 +4122,7 @@ ${cardPageNav("/blog")}
 <main>
   <h1>Build log</h1>
   <p class="intro">Notes on how turva.dev is built and measured. Each entry is dated, and the claims are verifiable by independent agent-readiness scanners.</p>
+  <a class="post" href="/blog/verifiable-agent-identity"><span class="pt">When an agent can prove it is Claude</span><span class="pd">2026-06-25</span></a>
   <a class="post" href="/blog/reliable-agent-decisions"><span class="pt">What makes an AI agent's decisions reliable</span><span class="pd">2026-06-22</span></a>
   <a class="post" href="/blog/owning-your-fediverse-identity"><span class="pt">Owning your fediverse identity</span><span class="pd">2026-06-21</span></a>
   <a class="post" href="/blog/honest-agent-commerce-checks"><span class="pt">Passing the agent commerce checks without faking them</span><span class="pd">2026-06-21</span></a>
