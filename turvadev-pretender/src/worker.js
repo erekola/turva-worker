@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev pretender v3.10.0 - MCP server-card tools reconciled with the live server, version strings unified, lastVerified synced, dead request-parsing vars removed, escapeHtml and markdown link rendering hardened
+// turva.dev worker v3.10.0 - MCP server-card tools reconciled with the live server, version strings unified, lastVerified synced, dead request-parsing vars removed, escapeHtml and markdown link rendering hardened
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -429,7 +429,7 @@ The Worker decides by the request. A browser asking for HTML gets the rendered p
 
 ## What this removed
 
-The prerender.io branch is gone from the Worker. No request is sent to an external prerender service, and the token it used is no longer read. Sitejet now serves only static assets such as the social image, and those move to the Worker next. The page is one codebase, under version control, open source at github.com/busygoat/turvadev-pretender.
+The prerender.io branch is gone from the Worker. No request is sent to an external prerender service, and the token it used is no longer read. Sitejet now serves only static assets such as the social image, and those move to the Worker next. The page is one codebase, under version control, open source at github.com/busygoat/turva-worker.
 
 ## The result is measured, not asserted
 
@@ -469,7 +469,7 @@ Two checks remain red and will stay that way. isitagentready reports x402 as mis
 
 ## The rule
 
-Every change was additive, and the startuphub.ai score read 100/100 on every re-scan. The principle is the one the whole site runs on. A scanner number is worth something only if it reflects what an agent actually finds, so a green check that lies is worth less than an honest red one. The worker that produces these results is open source at github.com/busygoat/turvadev-pretender, readable line by line.
+Every change was additive, and the startuphub.ai score read 100/100 on every re-scan. The principle is the one the whole site runs on. A scanner number is worth something only if it reflects what an agent actually finds, so a green check that lies is worth less than an honest red one. The worker that produces these results is open source at github.com/busygoat/turva-worker, readable line by line.
 
 For an agent-readiness audit that reports measured results, contact info@turva.dev.
 `,
@@ -569,7 +569,7 @@ turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites o
 - startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
 - isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/turva.dev
 
-The Cloudflare Worker that produces these results is open source: https://github.com/busygoat/turvadev-pretender. You can read every line before you hire me.
+The Cloudflare Worker that produces these results is open source: https://github.com/busygoat/turva-worker. You can read every line before you hire me.
 
 Backed by a registered company, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: https://tietopalvelu.ytj.fi/yritys/3600281-7
 
@@ -3481,7 +3481,7 @@ ${FOOTER_CSS}
         </ul>
         <div class="cta">
           <a class="btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a>
-          <a class="btn-ghost" href="https://github.com/busygoat/turvadev-pretender">Read the source</a>
+          <a class="btn-ghost" href="https://github.com/busygoat/turva-worker">Read the source</a>
         </div>
       </div>
       <div class="hero-right">
@@ -3546,7 +3546,7 @@ ${FOOTER_CSS}
       <li>startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
       <li>isitagentready.com: 100/100, Level 5 (Agent-Native). <a href="https://isitagentready.com/turva.dev">isitagentready.com/turva.dev</a></li>
     </ul>
-    <p>The Cloudflare Worker that produces these results is open source: <a href="https://github.com/busygoat/turvadev-pretender">github.com/busygoat/turvadev-pretender</a>. You can read every line before you hire me.</p>
+    <p>The Cloudflare Worker that produces these results is open source: <a href="https://github.com/busygoat/turva-worker">github.com/busygoat/turva-worker</a>. You can read every line before you hire me.</p>
     <p>Backed by a registered company, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">tietopalvelu.ytj.fi/yritys/3600281-7</a></p>
   </section>
 

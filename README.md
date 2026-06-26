@@ -1,4 +1,4 @@
-# turvadev-pretender
+# turva-worker
 
 Cloudflare Worker that renders every page of [turva.dev](https://turva.dev) at the edge, with a deterministic head and matching `/.well-known/` manifests. AI agents and scanners read the same payload as humans, straight from the Worker.
 
