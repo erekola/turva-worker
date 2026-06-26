@@ -1,5 +1,5 @@
 {
-  "name": "turvadev-pretender",
+  "name": "turva-worker",
   "main": "src/worker.js",
   "assets": {
     "directory": "./public"
