@@ -2,7 +2,7 @@
 
 Cloudflare Worker that renders every page of [turva.dev](https://turva.dev) at the edge, with a deterministic head and matching `/.well-known/` manifests. AI agents and scanners read the same payload as humans, straight from the Worker.
 
-This repository is the open-source reference implementation behind turva.dev, which ranks first of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and scores a perfect 100/100 Level 5 Agent-Native on Cloudflare Agent-Ready. The Worker is public on purpose: a buyer can read every line before deciding anything.
+This repository is the open-source reference implementation behind turva.dev, which ranks first of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and scores a perfect 100/100 Level 5 Agent-Native on Cloudflare Agent-Ready. The Worker is public on purpose: a buyer can read every line before deciding anything.
 
 turva.dev offers agent-readiness audits and advisory, and the wider work of making the data agents act on and the decisions they make reliable, across use cases from commerce and monitoring to operations under bad connectivity.
 
@@ -19,7 +19,7 @@ Measured on `https://turva.dev` on 2026-06-26. Two independent public scanners, 
 | Scanner | Result |
 |---|---|
 | Cloudflare Agent-Ready (isitagentready.com) | 100/100, Level 5 Agent-Native |
-| startuphub.ai Agent Readiness | 100/100 (A+), first of all publicly-scanned sites on the leaderboard |
+| startuphub.ai Agent Readiness | 100/100 (A+), first of publicly-scanned sites on the leaderboard |
 
 Cloudflare Agent-Ready and isitagentready.com are the same scanner on two domains, so they count as one result.
 

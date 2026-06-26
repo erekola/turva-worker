@@ -544,11 +544,11 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 
 Independent, measured audits and advisory for the way AI agents read your site and act on it. Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make.
 
-#1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 100/100 verified by two independent scanners. Business ID 3600281-7.
+#1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 100/100 verified by two independent scanners. Business ID 3600281-7.
 
 ## Independent agent-readiness scan of turva.dev
 
-Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. Verified 100/100, A+, ranked #1 of all publicly-scanned sites on the startuphub.ai leaderboard.
+Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. Verified 100/100, A+, ranked #1 of publicly-scanned sites on the startuphub.ai leaderboard.
 
 ## Where this applies
 
@@ -566,9 +566,9 @@ These are examples, not the list. The list does not really end. The same discipl
 
 ## Evidence
 
-turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-26.
+turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-26.
 
-- startuphub.ai leaderboard: #1 of top 100 sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
+- startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
 - isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/turva.dev
 
 The Cloudflare Worker that produces these results is open source: https://github.com/busygoat/turvadev-pretender. You can read every line before you hire me.
@@ -3537,14 +3537,14 @@ ${FOOTER_CSS}
 
   <section class="sec">
     <h2>Evidence</h2>
-    <p>turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-26.</p>
+    <p>turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-26.</p>
     <div class="stats">
       <div class="stat"><span class="stat-v">#1</span><span class="stat-l">of publicly-scanned sites on startuphub.ai</span></div>
       <div class="stat"><span class="stat-v">100/100</span><span class="stat-l">verified by two independent scanners</span></div>
       <div class="stat"><span class="stat-v">Level 5</span><span class="stat-l">agent-native, isitagentready.com</span></div>
     </div>
     <ul class="evlist">
-      <li>startuphub.ai leaderboard: #1 of top 100 sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
+      <li>startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
       <li>isitagentready.com: 100/100, Level 5 (Agent-Native). <a href="https://isitagentready.com/turva.dev">isitagentready.com/turva.dev</a></li>
     </ul>
     <p>The Cloudflare Worker that produces these results is open source: <a href="https://github.com/busygoat/turvadev-pretender">github.com/busygoat/turvadev-pretender</a>. You can read every line before you hire me.</p>
@@ -4222,6 +4222,29 @@ async function serveAcpCheckout(request, pathLower) {
   return new Response(JSON.stringify({ "type": "invalid_request", "code": "not_found", "message": "Unknown checkout session route." }, null, 2), { status: 404, headers: acpHeaders() });
 }
 
+function serveOauthClosed(kind) {
+  // turva.dev publishes OAuth Authorization Server metadata so an agent can
+  // discover scopes and the registration entry point. It runs no interactive
+  // login and issues no tokens automatically, because nothing on the site sits
+  // behind a token. These endpoints therefore answer with a spec-valid error
+  // that points to the out-of-band agent-auth flow, instead of a 404, so the
+  // discovery document never advertises a path that does not respond.
+  var error = kind === "authorize" ? "access_denied" : "invalid_request";
+  var body = JSON.stringify({
+    error: error,
+    error_description: "turva.dev does not run an interactive OAuth login or issue tokens automatically. Agent access is arranged out of band. Register at https://turva.dev/agent/auth/register, read https://turva.dev/auth.md, or contact info@turva.dev.",
+    registration_endpoint: "https://turva.dev/agent/auth/register",
+    service_documentation: "https://turva.dev/auth.md"
+  }, null, 2);
+  var headers = new Headers({
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store"
+  });
+  appendAgentLinks(headers);
+  applySecurityHeaders(headers, "agent-api");
+  return new Response(body, { status: 400, headers });
+}
+
 function serve402(pathname, route) {
   const resource = "https://turva.dev" + pathname;
   const body = build402Body(resource, route.label, route.amountUsdcMicro, route.amountEurCents, route.description);
@@ -4338,6 +4361,12 @@ async function handleRequest(request, env) {
   if (pathLower === "/agent/auth/revoke" || pathLower === "/agent/auth/revocation") {
     return serveStatic(buildAgentAuthInstruction("revocation"), "application/json; charset=utf-8", "agent-api");
   }
+  if (pathLower === "/oauth/authorize") {
+    return serveOauthClosed("authorize");
+  }
+  if (pathLower === "/oauth/token") {
+    return serveOauthClosed("token");
+  }
 
   if (X402_ROUTES[pathLower]) {
     const route = X402_ROUTES[pathLower];
@@ -4439,7 +4468,6 @@ async function handleRequest(request, env) {
     return serveStatic(ACP_MANIFEST, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/agent-card.json" ||
-      pathLower === "/.well-known/agent.json" ||
       pathLower === "/.well-known/a2a/agent-card.json") {
     return serveStatic(A2A_AGENT_CARD, "application/json; charset=utf-8", "agent-api");
   }
