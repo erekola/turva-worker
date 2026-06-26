@@ -1,35 +1,10 @@
 // src/worker.js
-// turva.dev pretender v3.7.0 — x402-mesh.json now uses startuphub.ai spec (protocol/vendor_id/categories/registry_url)
-
-var BOT_AGENTS = [
-  "googlebot", "adsbot-google", "apis-google", "mediapartners-google",
-  "google-safety", "feedfetcher-google", "googleproducer", "google-site-verification",
-  "bingbot", "yandexbot", "yabrowser", "yahoo", "baiduspider", "naver",
-  "seznambot", "sznprohlizec", "qwantbot", "ecosia", "duckduckbot", "duckassistbot",
-  "applebot", "facebookexternalhit", "facebookcatalog", "facebookbot",
-  "meta-externalagent", "twitterbot", "linkedinbot", "whatsapp", "slackbot",
-  "pinterest", "pinterestbot", "tiktok", "tiktokspider", "bytespider",
-  "discordbot", "semrushbot", "ahrefsbot", "chrome-lighthouse", "screaming-frog",
-  "oncrawlbot", "botifybot", "deepcrawl", "lumar", "rogerbot", "dotbot",
-  "gptbot", "chatgpt", "oai-searchbot", "chatgpt-user", "claudebot",
-  "google-extended", "perplexitybot", "perplexity-user", "youbot", "amazonbot",
-  "anthropic-ai", "claude-web", "claude-user", "ccbot", "mistralai-user",
-  "embedly", "quora link preview", "showyoubot", "outbrain", "pinterest/0.",
-  "developers.google.com/+/web/snippet", "vkshare", "w3c_validator", "redditbot",
-  "flipboard", "tumblr", "bitlybot", "skypeuripreview", "nuzzel",
-  "google page speed", "qwantify", "bitrix link preview", "xing-contenttabreceiver",
-  "google-inspectiontool", "telegrambot", "integration-test"
-];
-
-var IGNORE_EXTENSIONS = [
-  ".js", ".css", ".xml", ".less", ".png", ".jpg", ".jpeg", ".gif", ".pdf",
-  ".doc", ".txt", ".ico", ".rss", ".zip", ".mp3", ".rar", ".exe", ".wmv",
-  ".avi", ".ppt", ".mpg", ".mpeg", ".tif", ".wav", ".mov", ".psd", ".ai",
-  ".xls", ".mp4", ".m4a", ".swf", ".dat", ".dmg", ".iso", ".flv", ".m4v",
-  ".torrent", ".woff", ".ttf", ".svg", ".webmanifest", ".json", ".md"
-];
+// turva.dev pretender v3.9.0 - sitemap generated per-page from one source (honest lastmod), home markdown derived from llms-full source, x402 wallet hoisted to consts, unused sec-label rule removed
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
+
+var X402_PAY_TO = "0x023184fe62881ed1d938192b7a4b09d0119d7d39";
+var X402_USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 
 var LEGACY_REDIRECTS = {
   "/en": "/", "/en/": "/",
@@ -71,7 +46,7 @@ max_age: 604800
 
 var CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:",
+  "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline' https: data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
@@ -343,11 +318,42 @@ var PAGE_MARKDOWN = {
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [What an agent pays to read your site](/blog/cheaper-pages-for-agents). 2026-06-26.
 - [When an agent can prove it is Claude](/blog/verifiable-agent-identity). 2026-06-25.
 - [What makes an AI agent's decisions reliable](/blog/reliable-agent-decisions). 2026-06-22.
 - [Owning your fediverse identity](/blog/owning-your-fediverse-identity). 2026-06-21.
 - [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks). 2026-06-21.
 - [Moving turva.dev off prerender.io](/blog/moving-off-prerender). 2026-06-20.
+`,
+  "/blog/cheaper-pages-for-agents": `# What an agent pays to read your site
+
+2026-06-26
+
+When an AI agent visits your site to check a price or finish a task for someone, it pays to read the page. That cost is counted in tokens, and a normal HTML page is expensive. Navigation, styling, scripts and structured data all arrive whether the agent needs them or not. The agent either spends its budget getting past that markup or runs out of room and reads only part of the page. Both outcomes are yours to deal with, because they decide whether the agent gets your facts right.
+
+## Your surface sets the cost
+
+Most advice about agent token cost is aimed at the people building agents. Cache the prompt, route easy work to a cheaper model. That is real, but it misses the half of the bill that the publisher controls. If your page is heavy, every agent that reads it pays for that weight, on every visit. You cannot tune someone else's model, but you can decide how much your own content costs to read.
+
+## The same page, served as clean text
+
+The mechanism is content negotiation. The site keeps serving its normal HTML to browsers, and when an agent asks for the markdown form of a page it gets the same content with the markup stripped out. Nothing is hidden and nothing is duplicated. One URL answers in the format the client asked for.
+
+On turva.dev the homepage as markdown costs roughly a third of the HTML, a couple of thousand tokens against several thousand. An llms.txt sits alongside it as a map of the whole site, so an agent can read the structure in one request instead of crawling it page by page.
+
+## What it buys you
+
+A cheaper page is a more reliable one. When the content fits comfortably inside the agent's budget, the agent reads all of it instead of stopping halfway, so it quotes your real price and your real terms rather than a guess. For anything that ends in a transaction, that is the difference between a completed action and a wrong one.
+
+It also widens who can reach you. The assistants that answer questions and cite sources read better from clean text, so your pages are more likely to be used in full and represented accurately. The work an agent does against your site gets cheaper for whoever runs it, which makes you the easier site to integrate with when an agent is choosing where to act.
+
+The benefit is measurable. Independent scanners check for markdown content negotiation and for an llms.txt, and the result shows up as a higher score in the categories that name it. You do not take the improvement on faith. You read the number before the change and after it.
+
+## A small change that lasts
+
+None of this is a rebuild. It is a small piece of code at the edge that picks the response format from the request header, and it keeps working as the site grows. The Worker that does it on turva.dev is public, so you can read exactly what it does before deciding whether it belongs on your own site.
+
+For an audit of how cheaply agents can read your site, contact info@turva.dev.
 `,
   "/blog/verifiable-agent-identity": `# When an agent can prove it is Claude
 
@@ -560,7 +566,7 @@ These are examples, not the list. The list does not really end. The same discipl
 
 ## Evidence
 
-turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-24.
+turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-26.
 
 - startuphub.ai leaderboard: #1 of top 100 sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
 - isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/turva.dev
@@ -1976,9 +1982,9 @@ var X402_MANIFEST = JSON.stringify({
       "resource": "https://turva.dev/x402",
       "description": "x402 discovery probe (0.001 USDC)",
       "mimeType": "application/json",
-      "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+      "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
-      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "asset": X402_USDC_BASE,
       "extra": { "name": "USDC", "version": "2" }
     },
     {
@@ -1988,9 +1994,9 @@ var X402_MANIFEST = JSON.stringify({
       "resource": "https://turva.dev/api/agent/audit",
       "description": "Agent-readiness audit (€6,500 / 6500 USDC)",
       "mimeType": "application/json",
-      "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+      "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
-      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "asset": X402_USDC_BASE,
       "extra": { "name": "USDC", "version": "2" }
     },
     {
@@ -2000,9 +2006,9 @@ var X402_MANIFEST = JSON.stringify({
       "resource": "https://turva.dev/api/agent/advisory",
       "description": "Monthly advisory (€3,000 / 3000 USDC)",
       "mimeType": "application/json",
-      "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+      "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
-      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "asset": X402_USDC_BASE,
       "extra": { "name": "USDC", "version": "2" }
     },
     {
@@ -2012,9 +2018,9 @@ var X402_MANIFEST = JSON.stringify({
       "resource": "https://turva.dev/api/agent/implementation",
       "description": "Implementation day (€1,500 / 1500 USDC)",
       "mimeType": "application/json",
-      "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+      "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
-      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "asset": X402_USDC_BASE,
       "extra": { "name": "USDC", "version": "2" }
     }
   ],
@@ -2042,9 +2048,9 @@ var X402_INDEX_402 = JSON.stringify({
       "resource": "https://turva.dev/x402",
       "description": "Turva.dev x402 discovery probe. Agents pay 0.001 USDC on Base to GET this resource. The real payable services are /api/agent/audit, /advisory, /implementation.",
       "mimeType": "application/json",
-      "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+      "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
-      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "asset": X402_USDC_BASE,
       "extra": { "name": "USDC", "version": "2" }
     }
   ],
@@ -2062,9 +2068,9 @@ function build402Body(resource, label, amountUsdcMicro, amountEurCents, descript
         "resource": resource,
         "description": description,
         "mimeType": "application/json",
-        "payTo": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+        "payTo": X402_PAY_TO,
         "maxTimeoutSeconds": 300,
-        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "asset": X402_USDC_BASE,
         "extra": { "name": "USDC", "version": "2", "label": label, "eurCents": amountEurCents }
       }
     ],
@@ -2087,7 +2093,7 @@ var X402_MESH = JSON.stringify({
     "agent-readiness-implementation"
   ],
   "registry_url": "https://www.startuphub.ai/api/x402-mesh/registry",
-  "wallet": "0x023184fe62881ed1d938192b7a4b09d0119d7d39",
+  "wallet": X402_PAY_TO,
   "contact": "info@turva.dev",
   "self": {
     "vendor_id": "turva-dev",
@@ -2380,47 +2386,69 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-05-28";
-var SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
- <url><loc>https://turva.dev/</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
- <url><loc>https://turva.dev/services</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
- <url><loc>https://turva.dev/company</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/contact</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/legal</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
- <url><loc>https://turva.dev/auth.md</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>
- <url><loc>https://turva.dev/guides</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
- <url><loc>https://turva.dev/guides/agent-readiness-audit</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/llms-txt</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/mcp-server-card</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/agents-json</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/x402-agent-payments</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/response-headers-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/seo-vs-agent-readiness</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/agent-readiness-aeo-geo</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/agentic-commerce-readiness</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/letting-agents-act-on-data</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/ai-agent-use-cases</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/json-ld-structured-data</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/well-known-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/agent-authentication</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/measurement-led-agent-readiness</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/prerendering-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/sitemaps-and-robots-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/markdown-for-agents</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/agent-readiness-gaps</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/guides/choosing-an-agent-readiness-audit</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
- <url><loc>https://turva.dev/guides/get-cited-by-ai-assistants</loc><lastmod>${SITEMAP_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
- <url><loc>https://turva.dev/guides/agent-commerce-discovery</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/blog</loc><lastmod>2026-06-25</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
- <url><loc>https://turva.dev/blog/moving-off-prerender</loc><lastmod>2026-06-20</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
- <url><loc>https://turva.dev/blog/honest-agent-commerce-checks</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
- <url><loc>https://turva.dev/blog/owning-your-fediverse-identity</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
- <url><loc>https://turva.dev/blog/reliable-agent-decisions</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
- <url><loc>https://turva.dev/blog/verifiable-agent-identity</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-</urlset>`;
+var SITEMAP_LASTMOD = "2026-06-24";
+var SITEMAP_ENTRIES = [
+  ["/", "weekly", "1.0"],
+  ["/services", "monthly", "0.9"],
+  ["/company", "monthly", "0.7"],
+  ["/contact", "monthly", "0.7"],
+  ["/legal", "yearly", "0.3"],
+  ["/auth.md", "yearly", "0.4"],
+  ["/guides", "monthly", "0.8"],
+  ["/guides/agent-readiness-audit", "monthly", "0.7"],
+  ["/guides/llms-txt", "monthly", "0.7"],
+  ["/guides/mcp-server-card", "monthly", "0.7"],
+  ["/guides/agents-json", "monthly", "0.7"],
+  ["/guides/x402-agent-payments", "monthly", "0.7"],
+  ["/guides/response-headers-for-agents", "monthly", "0.7"],
+  ["/guides/seo-vs-agent-readiness", "monthly", "0.7"],
+  ["/guides/agent-readiness-aeo-geo", "monthly", "0.7"],
+  ["/guides/agentic-commerce-readiness", "monthly", "0.7"],
+  ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
+  ["/guides/ai-agent-use-cases", "monthly", "0.7"],
+  ["/guides/json-ld-structured-data", "monthly", "0.7"],
+  ["/guides/well-known-for-agents", "monthly", "0.7"],
+  ["/guides/agent-authentication", "monthly", "0.7"],
+  ["/guides/measurement-led-agent-readiness", "monthly", "0.7"],
+  ["/guides/prerendering-for-agents", "monthly", "0.7"],
+  ["/guides/sitemaps-and-robots-for-agents", "monthly", "0.7"],
+  ["/guides/markdown-for-agents", "monthly", "0.7"],
+  ["/guides/agent-readiness-gaps", "monthly", "0.7"],
+  ["/guides/choosing-an-agent-readiness-audit", "monthly", "0.8"],
+  ["/guides/get-cited-by-ai-assistants", "monthly", "0.8"],
+  ["/guides/agent-commerce-discovery", "monthly", "0.7"],
+  ["/blog", "weekly", "0.7"],
+  ["/blog/cheaper-pages-for-agents", "monthly", "0.6"],
+  ["/blog/moving-off-prerender", "monthly", "0.6"],
+  ["/blog/honest-agent-commerce-checks", "monthly", "0.6"],
+  ["/blog/owning-your-fediverse-identity", "monthly", "0.6"],
+  ["/blog/reliable-agent-decisions", "monthly", "0.6"],
+  ["/blog/verifiable-agent-identity", "monthly", "0.6"],
+];
+function buildSitemapXml() {
+  const rows = SITEMAP_ENTRIES.map(function(e) {
+    const path = e[0], cf = e[1], pr = e[2];
+    let lastmod;
+    if (path.indexOf("/blog/") === 0) {
+      lastmod = (META_BY_PATH[path] && META_BY_PATH[path].date) || SITEMAP_LASTMOD;
+    } else if (path === "/blog") {
+      const ds = Object.keys(META_BY_PATH).filter(function(k) { return k.indexOf("/blog/") === 0; }).map(function(k) { return META_BY_PATH[k].date; }).filter(Boolean).sort();
+      lastmod = ds.length ? ds[ds.length - 1] : SITEMAP_LASTMOD;
+    } else {
+      lastmod = SITEMAP_LASTMOD;
+    }
+    const loc = "https://turva.dev" + (path === "/" ? "/" : path);
+    return " <url><loc>" + loc + "</loc><lastmod>" + lastmod + "</lastmod><changefreq>" + cf + "</changefreq><priority>" + pr + "</priority></url>";
+  }).join("\n");
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows + "\n</urlset>";
+}
+var _sitemapCache = null;
+function getSitemapXml() {
+  if (_sitemapCache === null) _sitemapCache = buildSitemapXml();
+  return _sitemapCache;
+}
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -2434,6 +2462,12 @@ var META_BY_PATH = {
     title: "Blog | turva.dev",
     description: "Notes on AI agents, and the work of letting them read a site and act on a system safely. Dated entries, with anything measurable checked against independent scanners.",
     imageAlt: "turva.dev blog"
+  },
+  "/blog/cheaper-pages-for-agents": {
+    title: "What an agent pays to read your site | turva.dev",
+    description: "An agent pays to read your site in tokens, and an HTML-only page is expensive. How markdown content negotiation cuts that cost and makes your pages more reliable for agents.",
+    date: "2026-06-26",
+    imageAlt: "What an agent pays to read your site"
   },
   "/blog/verifiable-agent-identity": {
     title: "When an agent can prove it is Claude | turva.dev",
@@ -3301,78 +3335,7 @@ ${FOOTER_HTML}
   return new Response(body, { status: 200, headers });
 }
 
-var HOME_MARKDOWN = `# Audits and advisory for products that AI agents read and act on
-
-Independent, measured audits and advisory for the way AI agents read your site and act on it. Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make.
-
-#1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 100/100 verified by two independent scanners. Business ID 3600281-7.
-
-## Independent agent-readiness scan of turva.dev
-
-Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. Verified 100/100, A+, ranked #1 of all publicly-scanned sites on the startuphub.ai leaderboard.
-
-## Where this applies
-
-The pattern is narrow, but where it fits is not. Anywhere data moves and a decision follows, an agent can be the thing that reads the data and makes the call, as long as the inputs are clean and the envelope is set. A few examples:
-
-- An agent reading a product catalog and completing a checkout for a buyer.
-- An agent watching an API and acting the moment a threshold is crossed, without waiting for a person.
-- An agent guiding a technician in the field, working from the same data the expert would.
-- An agent triaging incoming requests and resolving the routine ones on its own.
-- An agent operating a remote system over a link that drops, holding its last safe state until the data returns.
-- An agent reconciling records across systems and flagging only what does not match.
-- An agent making a time-critical call locally, where the round trip to a human is too slow to matter.
-
-These are examples, not the list. The list does not really end. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.
-
-## Evidence
-
-turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-24.
-
-- startuphub.ai leaderboard: #1 of top 100 sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
-- isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/turva.dev
-
-The Cloudflare Worker that produces these results is open source: https://github.com/busygoat/turvadev-pretender. You can read every line before you hire me.
-
-Backed by a registered company, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: https://tietopalvelu.ytj.fi/yritys/3600281-7
-
-## The process has three stages and no surprises
-
-First, measurement. For agent-readiness, two independent scanners read the current state of the site or API and produce a numeric baseline with a categorized list of what is missing. For the wider work, the data path and the decision envelope are tested the way an agent would hit them, so the starting point is a fact rather than an opinion.
-
-Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need a background in any of this to follow it.
-
-Then the fixes. I implement them, or your engineering team does the work with the report as the spec. Both routes are supported and the choice is yours.
-
-All communication runs async. No calls and no calendar links. Live meetings are not part of how this work is done. Short questions go through Signal, longer documents through email and CryptPad. Everything stays in writing, which means the work and the trail are auditable end-to-end.
-
-Production credentials are not requested. Write access to repositories is not taken by default. Read access is enough for the audit, and write access is scoped per task if implementation is purchased separately.
-
-The result is checkable, not asserted. For agent-readiness that is the scanner number, higher on the next scan in the categories and by the dates the report named. For the wider work it is the same test, the data path holding under load and the envelope doing exactly what it claims. Either the next measurement confirms it or it does not.
-
-## Services
-
-- Audit. Fixed scope, two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
-- Advisory. Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.
-- Implementation. On request. Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.
-- Agent operations. On request. The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
-- MCP server design. On request. Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.
-- Internal workshops. On request, async-first. Recorded session or written guide. Topics include how scanners read your site, what x402 and AP2 actually require in practice, and how to keep agent-readiness intact after the audit period ends.
-
-## Who I am
-
-The work is done by one person under a registered company. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, moved from general security work into agent-readiness, and kept only the tools and methods that hold up in daily client work.
-
-The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on either arrives intact or it does not, and the boundary you set either holds or it does not. Measurable either way, which is the only kind of claim I make.
-
-## Contact
-
-Written contact only. Email for longer messages, Signal for short questions. The first reply is in writing within one business day. No calls and no calendar links at any stage of the engagement.
-
-- Email: <mailto:info@turva.dev>
-- Signal: @turva.19
-- LinkedIn: https://www.linkedin.com/in/erikrekola/
-`;
+var HOME_MARKDOWN = PAGE_MARKDOWN["/"].slice(0, PAGE_MARKDOWN["/"].indexOf("\n## More"));
 
 function serveHomeHtml(canonicalUrl) {
   const metaBlock = buildMetaBlock("/", canonicalUrl);
@@ -3446,7 +3409,6 @@ strong{color:#F2F4F3;}
 .board-sum b{color:#5DF18F;}
 .pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
 .sec{padding:1.9rem 0;border-top:0.5px solid rgba(255,255,255,0.07);}
-.sec-label{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#5DF18F;margin:0 0 .55rem;}
 .exgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:.6rem;margin:0 0 1.1rem;}
 .ex{position:relative;background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:.7rem .8rem .7rem 1.7rem;font-size:.9rem;color:#C9D1CE;transition:border-color .15s ease,transform .15s ease;}
 .ex:hover{border-color:rgba(93,241,143,0.38);transform:translateY(-1px);}
@@ -3575,7 +3537,7 @@ ${FOOTER_CSS}
 
   <section class="sec">
     <h2>Evidence</h2>
-    <p>turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-24.</p>
+    <p>turva.dev is my own reference build. It is ranked #1 of all publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-06-26.</p>
     <div class="stats">
       <div class="stat"><span class="stat-v">#1</span><span class="stat-l">of publicly-scanned sites on startuphub.ai</span></div>
       <div class="stat"><span class="stat-v">100/100</span><span class="stat-l">verified by two independent scanners</span></div>
@@ -4122,6 +4084,7 @@ ${cardPageNav("/blog")}
 <main>
   <h1>Blog</h1>
   <p class="intro">Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.</p>
+  <a class="post" href="/blog/cheaper-pages-for-agents"><span class="pt">What an agent pays to read your site</span><span class="pd">2026-06-26</span></a>
   <a class="post" href="/blog/verifiable-agent-identity"><span class="pt">When an agent can prove it is Claude</span><span class="pd">2026-06-25</span></a>
   <a class="post" href="/blog/reliable-agent-decisions"><span class="pt">What makes an AI agent's decisions reliable</span><span class="pd">2026-06-22</span></a>
   <a class="post" href="/blog/owning-your-fediverse-identity"><span class="pt">Owning your fediverse identity</span><span class="pd">2026-06-21</span></a>
@@ -4507,7 +4470,7 @@ async function handleRequest(request, env) {
   if (pathLower === "/.well-known/mcp-registry-auth") {
     return serveStatic(MCP_REGISTRY_AUTH, "text/plain; charset=utf-8", "agent-api");
   }
-  if (pathLower === "/sitemap.xml") return serveStatic(SITEMAP_XML, "application/xml; charset=utf-8", "agent-api");
+  if (pathLower === "/sitemap.xml") return serveStatic(getSitemapXml(), "application/xml; charset=utf-8", "agent-api");
   if (pathLower === "/llms.txt") return serveStatic(LLMS_TXT, "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/llms-full.txt") return serveStatic(getLlmsFullTxt(), "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/.well-known/ai.txt" || pathLower === "/ai.txt") {

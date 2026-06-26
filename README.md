@@ -14,7 +14,7 @@ turva.dev offers agent-readiness audits and advisory, and the wider work of maki
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-06-24. Two independent public scanners, listed once each.
+Measured on `https://turva.dev` on 2026-06-26. Two independent public scanners, listed once each.
 
 | Scanner | Result |
 |---|---|
@@ -38,7 +38,7 @@ These six category scores come from the startuphub.ai scan. The Cloudflare Agent
 
 ## Web security
 
-Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-24.
+Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-26.
 
 | Scanner | Result |
 |---|---|
@@ -94,6 +94,7 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 Notes on AI agents and the work of letting them read a site and act on a system safely. Published on turva.dev.
 
 * [Blog (index)](https://turva.dev/blog)
+* [What an agent pays to read your site](https://turva.dev/blog/cheaper-pages-for-agents)
 * [When an agent can prove it is Claude](https://turva.dev/blog/verifiable-agent-identity)
 * [What makes an AI agent's decisions reliable](https://turva.dev/blog/reliable-agent-decisions)
 * [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity)
