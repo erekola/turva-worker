@@ -2,10 +2,12 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 3.7.x   | :white_check_mark: |
-| < 3.7   | :x:                |
+The site is a Cloudflare Worker, continuously deployed from `main`. Only the
+currently deployed version is supported; there are no released version branches.
+
+| Version | Supported |
+| ------- | --------- |
+| Current (deployed from main) | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
