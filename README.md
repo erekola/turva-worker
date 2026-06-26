@@ -11,7 +11,7 @@ What you buy is expertise and implementation, not access to a tool. The scoring 
 ## What it does
 
 * Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `&lt;head&gt;` (meta, OpenGraph, JSON-LD, canonical).
-* Serves `/.well-known/` files agents look for: `ai.txt`, `llms.txt`, `agents.json`, `mcp/server-card.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, `auth`.
+* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, and OAuth discovery (`oauth-authorization-server`).
 * Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
 
 ## Scanner results
@@ -115,15 +115,15 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 |---|---|
 | `/` and all HTML routes | Rendered by the Worker from markdown |
 | `/.well-known/ai.txt` | AI agent disclosure |
-| `/.well-known/llms.txt` | LLM consumption guide |
-| `/.well-known/agents.json` | Agent skills manifest |
+| `/llms.txt` | LLM consumption guide |
+| `/.well-known/agent.json` | ai-plugin / agent manifest |
 | `/.well-known/mcp/server-card.json` | MCP server card |
 | `/.well-known/ap2` | Agent Payments Protocol pointer |
 | `/.well-known/acp` | Agent Commerce Protocol manifest |
 | `/.well-known/x402` | x402 payment manifest |
 | `/.well-known/x402-mesh.json` | x402 mesh manifest |
 | `/.well-known/ucp` | Universal Commerce Profile |
-| `/.well-known/auth` | OAuth / auth discovery |
+| `/.well-known/oauth-authorization-server` | OAuth / auth discovery |
 | `/x402` | HTTP 402 payment-required endpoint |
 | `/robots.txt` | Crawler directives |
 | `/sitemap.xml` | URL index |
