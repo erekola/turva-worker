@@ -132,7 +132,7 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 
 Requires a Cloudflare account and the `wrangler` CLI. No runtime secret is needed; the Worker renders the whole site itself.
 ```
-cd turva-worker
+cd turva-worker/turva-worker
 npm install
 npx wrangler deploy
 ```
