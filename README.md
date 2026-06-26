@@ -152,4 +152,6 @@ Responsible disclosure: see [SECURITY.md](SECURITY.md). Contact: [info@turva.dev
 
 ## License
 
+The Worker source is MIT. The live turva.dev Agent API and its data are proprietary (see [/legal](https://turva.dev/legal)).
+
 [MIT](LICENSE)
