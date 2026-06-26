@@ -80,8 +80,6 @@ function applySecurityHeaders(headers, kind) {
   headers.set("Permissions-Policy", PERMISSIONS_POLICY);
   headers.set("Cross-Origin-Opener-Policy", "same-origin");
   headers.set("RateLimit-Limit", "100");
-  headers.set("RateLimit-Remaining", "99");
-  headers.set("RateLimit-Reset", "60");
   headers.set("RateLimit-Policy", '"default";q=100;w=60');
   if (kind === "html") {
     headers.set("Content-Security-Policy", CSP_HTML);
@@ -4513,5 +4511,8 @@ async function handleRequest(request, env) {
 }
 
 export {
-  worker_default as default
+  worker_default as default,
+  escapeHtml,
+  renderInline,
+  markdownToHtml
 };

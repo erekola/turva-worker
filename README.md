@@ -6,6 +6,8 @@ This repository is the open-source reference implementation behind turva.dev, wh
 
 turva.dev offers agent-readiness audits and advisory, and the wider work of making the data agents act on and the decisions they make reliable, across use cases from commerce and monitoring to operations under bad connectivity.
 
+What you buy is expertise and implementation, not access to a tool. The scoring is done by independent third-party scanners, isitagentready.com and startuphub.ai, so the numbers above are verifiable rather than asserted. This repository is the reference implementation and the manifests behind that work.
+
 ## What it does
 
 * Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `&lt;head&gt;` (meta, OpenGraph, JSON-LD, canonical).
