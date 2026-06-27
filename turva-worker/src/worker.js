@@ -2731,6 +2731,8 @@ function serve404(pathname) {
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+<link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
+<link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
 <title>Page not found | turva.dev</title>
 <style>
 html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;}
@@ -3254,6 +3256,8 @@ function serveGuideHtml(pathname, canonicalUrl) {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+<link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
+<link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
 ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
@@ -3338,6 +3342,8 @@ function serveHomeHtml(canonicalUrl) {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+<link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
+<link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
 ${metaBlock}
 ${SCHEMA_HOME}
 ${WEBMCP_SCRIPT}
@@ -3623,6 +3629,8 @@ function serveServicesHtml(canonicalUrl) {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+<link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
+<link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
 ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
@@ -3834,6 +3842,8 @@ function cardPageHead(metaBlock, jsonLd, canonicalUrl) {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+<link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
+<link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
 ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
