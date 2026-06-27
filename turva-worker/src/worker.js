@@ -46,7 +46,7 @@ max_age: 604800
 
 var CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'sha256-OTSccT1vgUc79X3yf/k04xiZGjg9tx3XWE9u4rcm6ks='",
   "style-src 'self' 'unsafe-inline' https: data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
@@ -1635,8 +1635,7 @@ var OPENAPI_SPEC = JSON.stringify({
         "summary": "Order an agent-readiness audit",
         "operationId": "orderAudit",
         "x-payment-info": {
-          "intent": "charge",
-          "method": "stripe",
+          "model": "quote_on_request",
           "amount": 650000,
           "currency": "EUR",
           "description": "Audit: fixed scope, 2-3 weeks",
@@ -1648,8 +1647,7 @@ var OPENAPI_SPEC = JSON.stringify({
           }
         },
         "responses": {
-          "402": { "description": "Payment Required (x402)" },
-          "200": { "description": "Audit ordered" }
+          "402": { "description": "Payment Required (x402)" }
         }
       }
     },
@@ -1658,8 +1656,7 @@ var OPENAPI_SPEC = JSON.stringify({
         "summary": "Subscribe to monthly advisory",
         "operationId": "subscribeAdvisory",
         "x-payment-info": {
-          "intent": "session",
-          "method": "stripe",
+          "model": "quote_on_request",
           "amount": 300000,
           "currency": "EUR",
           "interval": "month",
@@ -1672,8 +1669,7 @@ var OPENAPI_SPEC = JSON.stringify({
           }
         },
         "responses": {
-          "402": { "description": "Payment Required (x402)" },
-          "200": { "description": "Subscription created" }
+          "402": { "description": "Payment Required (x402)" }
         }
       }
     },
@@ -1682,8 +1678,7 @@ var OPENAPI_SPEC = JSON.stringify({
         "summary": "Book an implementation day",
         "operationId": "bookImplementationDay",
         "x-payment-info": {
-          "intent": "charge",
-          "method": "stripe",
+          "model": "quote_on_request",
           "amount": 150000,
           "currency": "EUR",
           "description": "Implementation: per day, scoped per task",
@@ -1695,8 +1690,7 @@ var OPENAPI_SPEC = JSON.stringify({
           }
         },
         "responses": {
-          "402": { "description": "Payment Required (x402)" },
-          "200": { "description": "Day booked" }
+          "402": { "description": "Payment Required (x402)" }
         }
       }
     },
@@ -1852,7 +1846,7 @@ var AP2_MANIFEST = JSON.stringify({
 }, null, 2);
 
 // ============================================================
-// ACP — spec-compliant discovery (services = closed string enum). Real checkout: /api/acp/checkout_sessions
+// ACP - spec-compliant discovery (services = closed string enum). Real checkout: /api/acp/checkout_sessions
 // ============================================================
 var ACP_MANIFEST = JSON.stringify({
   "protocol": {
@@ -1870,7 +1864,7 @@ var ACP_MANIFEST = JSON.stringify({
 }, null, 2);
 
 // ============================================================
-// X402 — manifest with full accepts[] array
+// X402 - manifest with full accepts[] array
 // ============================================================
 var A2A_AGENT_CARD = JSON.stringify({
   "protocolVersion": "0.3.0",
@@ -2078,7 +2072,7 @@ function build402Body(resource, label, amountUsdcMicro, amountEurCents, descript
 }
 
 // ============================================================
-// X402-MESH v3.10.0 — startuphub.ai x402-mesh/0.1 spec
+// X402-MESH v3.10.0 - startuphub.ai x402-mesh/0.1 spec
 // Required fields: protocol, vendor_id, categories, registry_url
 // Wallet enables zero-friction on-chain referral payouts on Base
 // ============================================================
@@ -2144,9 +2138,9 @@ var MPP_MANIFEST = JSON.stringify({
     "url": "https://turva.dev/"
   },
   "payment_discovery": {
-    "model": "machine_payable",
-    "machine_payable": true,
-    "supported_rails": ["stripe", "x402-base-usdc"],
+    "model": "quote_on_request",
+    "machine_payable": false,
+    "supported_rails": ["x402-base-usdc"],
     "quote_channels": [
       { "type": "email", "value": "mailto:info@turva.dev?subject=Quote%20request" },
       { "type": "signal", "value": "@turva.19" }
@@ -2206,7 +2200,7 @@ var UCP_PROFILE = JSON.stringify({
         }
       ]
     },
-    "capabilities": { "checkout": true, "machine_payable": true },
+    "capabilities": { "checkout": true, "machine_payable": false },
     "payment_handlers": {
       "x402": { "network": "base", "asset": "USDC" }
     },
