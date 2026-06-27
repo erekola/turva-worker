@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.10.0 - MCP server-card tools reconciled with the live server, version strings unified, lastVerified synced, dead request-parsing vars removed, escapeHtml and markdown link rendering hardened
+// turva.dev worker v3.11.0 - honest commerce surface (no unimplemented Stripe method/200s; quote-on-request) and hash-based CSP (no script-src unsafe-inline)
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1622,7 +1622,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.10.0",
+    "version": "3.11.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -1872,7 +1872,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.10.0",
+  "version": "3.11.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -2072,7 +2072,7 @@ function build402Body(resource, label, amountUsdcMicro, amountEurCents, descript
 }
 
 // ============================================================
-// X402-MESH v3.10.0 - startuphub.ai x402-mesh/0.1 spec
+// X402-MESH v3.11.0 - startuphub.ai x402-mesh/0.1 spec
 // Required fields: protocol, vendor_id, categories, registry_url
 // Wallet enables zero-friction on-chain referral payouts on Base
 // ============================================================
