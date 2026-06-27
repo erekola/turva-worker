@@ -179,13 +179,17 @@ var LLMS_TXT = `# turva.dev
 - [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
 - [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
 - [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
+- [Open Knowledge Format (OKF) explained](https://turva.dev/guides/open-knowledge-format)
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
 - [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
 - [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery)
 - [Agentic commerce readiness: selling to AI shopping agents](https://turva.dev/guides/agentic-commerce-readiness)
 
-## Build log
-- [Build log](https://turva.dev/blog)
+## Blog
+- [Blog](https://turva.dev/blog)
+- [What the Open Knowledge Format is, and what it is not](https://turva.dev/blog/open-knowledge-format)
+- [What an agent pays to read your site](https://turva.dev/blog/cheaper-pages-for-agents)
+- [When an agent can prove it is Claude](https://turva.dev/blog/verifiable-agent-identity)
 - [What makes an AI agent's decisions reliable](https://turva.dev/blog/reliable-agent-decisions)
 - [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity)
 - [Passing the agent commerce checks without faking them](https://turva.dev/blog/honest-agent-commerce-checks)
@@ -316,12 +320,41 @@ var PAGE_MARKDOWN = {
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [What the Open Knowledge Format is, and what it is not](/blog/open-knowledge-format). 2026-06-27.
 - [What an agent pays to read your site](/blog/cheaper-pages-for-agents). 2026-06-26.
 - [When an agent can prove it is Claude](/blog/verifiable-agent-identity). 2026-06-25.
 - [What makes an AI agent's decisions reliable](/blog/reliable-agent-decisions). 2026-06-22.
 - [Owning your fediverse identity](/blog/owning-your-fediverse-identity). 2026-06-21.
 - [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks). 2026-06-21.
 - [Moving turva.dev off prerender.io](/blog/moving-off-prerender). 2026-06-20.
+`,
+  "/blog/open-knowledge-format": `# What the Open Knowledge Format is, and what it is not
+
+2026-06-27
+
+Google Cloud shipped the Open Knowledge Format a couple of weeks ago, and the posts about it are running ahead of the spec. OKF is described as your data models turned into plain markdown that humans and agents can read, with no catalog lock-in and no SDK. Most of that is true. Some of it is sold harder than version 0.1 earns. Here is the honest read.
+
+## What it actually is
+
+OKF represents a body of knowledge as a folder of markdown files. Each file is one concept, with a block of YAML frontmatter and a free-form body. The only required field is type. The rest is optional and open. Concepts link to each other with plain markdown links, so the folder reads as a graph. It is vendor-neutral, a person can read it, and an agent can parse it without a client. Google Cloud published it in June 2026 as version 0.1.
+
+## What it is not
+
+It is not a data-model format, even though that is how it is being pitched. A concept can be a metric, a runbook or an API just as easily as a table, so framing it mainly as a way to draw data models narrows it to the one use that makes a good demo.
+
+It is also not a semantic standard yet. Version 0.1 fixes the shape of the files, the folder, the frontmatter and the one required field. It does not fix what any field means or how two teams should agree on the same names. The spec itself is clear that this is structural interoperability, with the semantic half left to producers and to conventions that do not exist yet. A shared folder layout is real progress. It is not the same as a shared meaning, and that gap is the whole reason these formats are hard.
+
+## Why it still matters
+
+The instinct behind OKF is the right one. It wants plain text an agent can read, owned by you, with no service sitting in the middle. It is the same move as serving markdown to agents and publishing an llms.txt, applied to the knowledge behind a site rather than the pages on it. Formalizing that pattern into something portable is useful even at version 0.1, because the alternative is every team inventing its own folder of context files and none of them agreeing.
+
+## How it relates to what I do
+
+An agent-readiness audit asks whether an agent can read your public site. OKF is one layer in from that, the format of the data and context the agent works from once it is inside. The two belong together, and I expect the second to matter more over time, but they are not the same thing and I will not pretend a readiness score measures one by measuring the other.
+
+For now OKF is worth understanding and worth watching. It is early to rebuild a knowledge catalog around it. If you already serve clean text to agents, you are most of the way there already.
+
+For an audit of how legibly AI agents read your site and the data behind it, contact info@turva.dev.
 `,
   "/blog/cheaper-pages-for-agents": `# What an agent pays to read your site
 
@@ -637,6 +670,7 @@ Written contact only. Email for longer messages, Signal for short questions. The
 - [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
 - [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
 - [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
+- [Open Knowledge Format (OKF) explained](https://turva.dev/guides/open-knowledge-format)
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
 - [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
 - [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery)
@@ -924,6 +958,40 @@ applies to engagements started after the date below.
 Last updated: 2026-06-20.
 `,
 
+  "/guides/open-knowledge-format": `# Open Knowledge Format (OKF) explained
+
+The Open Knowledge Format is an open specification from Google Cloud that represents a body of knowledge as a directory of plain markdown files. Each file carries a small block of YAML frontmatter and a free-form body. The goal is a portable way to hand an AI agent the context it needs, readable by a person and parseable by a machine, with no SDK and no catalog to lock into. Google Cloud published it in June 2026 as version 0.1.
+
+## What an OKF bundle contains
+
+A bundle is a folder of markdown files, and the unit inside it is a concept. A concept is anything worth capturing for an agent: a table, a dataset, a metric, a runbook, an API. Every concept is one UTF-8 markdown document with two parts. A YAML frontmatter block at the top, fenced by a line of three dashes above and below, and a markdown body underneath.
+
+The format asks for exactly one field, type. Everything else is optional, including title, description, resource, tags and a timestamp. What types exist and what fields each carries is left to whoever produces the bundle. Concepts reference each other with ordinary markdown links, so the folder becomes a graph of related knowledge rather than a flat list of files.
+
+## Structural interoperability, not yet semantic
+
+Version 0.1 fixes a small set of things and leaves the rest open. It fixes the folder layout, the use of markdown, the YAML frontmatter, two reserved filenames and the single required field. That is structural interoperability: any tool can open a bundle and know where the pieces are.
+
+What it does not fix is meaning. The format does not say what a metric concept must contain, or how two producers should agree on the same field names. That is semantic interoperability, and version 0.1 leaves it to producers and to conventions that have not been written yet. This is the line to keep in mind when reading the announcements around OKF. It standardizes the shape of the files, not yet what the files mean.
+
+## Where OKF fits with agent-readiness
+
+Agent-readiness, the kind measured by independent scanners, is about whether an agent can reach and read your public site at all. OKF sits next to that, one layer in. It is a way to package the internal knowledge an agent works from once it is past the front door: the catalog, the metrics and the rules a decision depends on.
+
+So OKF is not a replacement for an llms.txt or a markdown surface on your site. It is the same instinct, plain text an agent can read without a special client, applied to the data and context behind the site rather than the pages in front of it. For a team thinking about what an agent acts on, not only what it can see, that is the part of the picture OKF addresses.
+
+## What to do with it today
+
+OKF is new and small, version 0.1, and the semantic half is still open. That makes it worth understanding now and worth watching, but early to build an entire knowledge catalog on. If you already serve markdown to agents and keep an llms.txt, you have the instinct OKF formalizes, and adopting it later will be a short step rather than a rebuild.
+
+For an audit of how legibly AI agents can read your site and the data behind it, contact info@turva.dev.
+
+## Related
+
+- [llms.txt explained](/guides/llms-txt)
+- [Serving markdown to agents](/guides/markdown-for-agents)
+- [Letting agents act on data: the decision envelope](/guides/letting-agents-act-on-data)
+`,
   "/guides": `# Agent-readiness guides
 
 These short guides explain, in plain language, what makes a website or an API easy for AI agents to read and use. Each one covers a single topic and takes a few minutes to read. They are free, and they cover the same surfaces an [agent-readiness audit](/services) measures.
@@ -938,6 +1006,7 @@ How an agent finds your site and reads it without getting lost.
 - [How to get your site cited by AI assistants](https://turva.dev/guides/get-cited-by-ai-assistants)
 - [llms.txt explained](https://turva.dev/guides/llms-txt)
 - [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
+- [Open Knowledge Format (OKF) explained](https://turva.dev/guides/open-knowledge-format)
 - [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
 - [Response headers that help agents](https://turva.dev/guides/response-headers-for-agents)
 - [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
@@ -1734,7 +1803,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8uWY2VQdhCIOVPkDp-7KHJMNp5iQ3itOtv4IpRKOhCA22GbueAPIybbatBnGuYmc0Eeyn_9wZvpKjLH44OZGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YEsvdTXfBTsm579U9fcW0BwPAszkt3Eryr8gPPZxT7BUxfCT1sLVErwyG1IPDvDZCanujLzyPykI3ZD3y22SAQ\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8uWY2VQdhCIOVPkDp-7KHJMNp5iQ3itOtv4IpRKOhCA22GbueAPIybbatBnGuYmc0Eeyn_9wZvpKjLH44OZGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Kah5PXMrkMS6GQA3iytpmdZuLdPL1loIZ8nxhToIjyv-fz33wEfKwJYamjYbGcLvjRegO0WTVs8B_CXLoZVXAQ\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -2410,7 +2479,9 @@ var SITEMAP_ENTRIES = [
   ["/guides/choosing-an-agent-readiness-audit", "monthly", "0.8"],
   ["/guides/get-cited-by-ai-assistants", "monthly", "0.8"],
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
+  ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/open-knowledge-format", "monthly", "0.6"],
   ["/blog/cheaper-pages-for-agents", "monthly", "0.6"],
   ["/blog/moving-off-prerender", "monthly", "0.6"],
   ["/blog/honest-agent-commerce-checks", "monthly", "0.6"],
@@ -2441,7 +2512,7 @@ function getSitemapXml() {
   return _sitemapCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -2496,6 +2567,17 @@ var META_BY_PATH = {
     description: "Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification served from the Cloudflare Worker. Own your identity, do not rent it.",
     date: "2026-06-21",
     imageAlt: "Owning your fediverse identity"
+  },
+  "/guides/open-knowledge-format": {
+    title: "Open Knowledge Format (OKF) explained | turva.dev",
+    description: "What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context. The bundle structure, structural versus semantic, and where it fits agent-readiness.",
+    imageAlt: "Open Knowledge Format (OKF) explained"
+  },
+  "/blog/open-knowledge-format": {
+    title: "What the Open Knowledge Format is, and what it is not | turva.dev",
+    description: "Google Cloud shipped the Open Knowledge Format. What it actually is, what it is not yet, and how this markdown spec for AI agents relates to an agent-readiness audit.",
+    date: "2026-06-27",
+    imageAlt: "What the Open Knowledge Format is, and what it is not"
   },
   "/": {
     title: "Agent-readiness audits and advisory · turva.dev",
@@ -4087,6 +4169,7 @@ ${cardPageNav("/blog")}
 <main>
   <h1>Blog</h1>
   <p class="intro">Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.</p>
+  <a class="post" href="/blog/open-knowledge-format"><span class="pt">What the Open Knowledge Format is, and what it is not</span><span class="pd">2026-06-27</span></a>
   <a class="post" href="/blog/cheaper-pages-for-agents"><span class="pt">What an agent pays to read your site</span><span class="pd">2026-06-26</span></a>
   <a class="post" href="/blog/verifiable-agent-identity"><span class="pt">When an agent can prove it is Claude</span><span class="pd">2026-06-25</span></a>
   <a class="post" href="/blog/reliable-agent-decisions"><span class="pt">What makes an AI agent's decisions reliable</span><span class="pd">2026-06-22</span></a>
