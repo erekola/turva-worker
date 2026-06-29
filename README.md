@@ -11,7 +11,7 @@ What you buy is expertise and implementation, not access to a tool. The scoring 
 ## What it does
 
 * Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `&lt;head&gt;` (meta, OpenGraph, JSON-LD, canonical).
-* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, and OAuth discovery (`oauth-authorization-server`).
+* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, and OAuth discovery (`oauth-authorization-server`).
 * Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
 
 ## Scanner results
@@ -90,6 +90,8 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 * [Agentic commerce readiness](https://turva.dev/guides/agentic-commerce-readiness)
 * [Letting agents act on data: the decision envelope](https://turva.dev/guides/letting-agents-act-on-data)
 * [AI agent use cases](https://turva.dev/guides/ai-agent-use-cases)
+* [Open Knowledge Format (OKF) explained](https://turva.dev/guides/open-knowledge-format)
+* [Agentic Resource Discovery and ai-catalog.json](https://turva.dev/guides/agentic-resource-discovery)
 
 ## Blog
 
@@ -102,6 +104,8 @@ Notes on AI agents and the work of letting them read a site and act on a system 
 * [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity)
 * [Passing the agent commerce checks without faking them](https://turva.dev/blog/honest-agent-commerce-checks)
 * [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender)
+* [What the Open Knowledge Format is, and what it is not](https://turva.dev/blog/open-knowledge-format)
+* [Publishing an ai-catalog.json for agentic discovery](https://turva.dev/blog/publishing-an-ai-catalog)
 
 ## How it works
 
@@ -118,6 +122,10 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 | `/llms.txt` | LLM consumption guide |
 | `/.well-known/agent.json` | ai-plugin / agent manifest |
 | `/.well-known/mcp/server-card.json` | MCP server card |
+| `/.well-known/agent-card.json` | A2A agent card |
+| `/.well-known/ai-catalog.json` | Agentic Resource Discovery catalog |
+| `/.well-known/agent-skills/index.json` | Agent skills index |
+| `/openapi.json` | OpenAPI description |
 | `/.well-known/ap2` | Agent Payments Protocol pointer |
 | `/.well-known/acp` | Agent Commerce Protocol manifest |
 | `/.well-known/x402` | x402 payment manifest |
