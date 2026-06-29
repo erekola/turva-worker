@@ -174,6 +174,7 @@ var LLMS_TXT = `# turva.dev
 - [AI agent use cases: where agents read data and make decisions](https://turva.dev/guides/ai-agent-use-cases)
 - [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
 - [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
+- [Agentic Resource Discovery and ai-catalog.json](https://turva.dev/guides/agentic-resource-discovery)
 - [How agents authenticate](https://turva.dev/guides/agent-authentication)
 - [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
 - [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
@@ -187,6 +188,7 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog)
+- [Publishing an ai-catalog.json for agentic discovery](https://turva.dev/blog/publishing-an-ai-catalog)
 - [What the Open Knowledge Format is, and what it is not](https://turva.dev/blog/open-knowledge-format)
 - [What an agent pays to read your site](https://turva.dev/blog/cheaper-pages-for-agents)
 - [When an agent can prove it is Claude](https://turva.dev/blog/verifiable-agent-identity)
@@ -219,6 +221,7 @@ Final price is confirmed in writing after scope is agreed.
 ## Agent endpoints
 - Agent registration: https://turva.dev/auth.md
 - API catalog: https://turva.dev/.well-known/api-catalog
+- AI catalog (ARD): https://turva.dev/.well-known/ai-catalog.json
 - OpenAPI: https://turva.dev/openapi.json
 - MCP Server Card: https://turva.dev/.well-known/mcp/server-card.json
 - MCP Endpoint: https://mcp.turva.dev/mcp
@@ -320,6 +323,7 @@ var PAGE_MARKDOWN = {
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [Publishing an ai-catalog.json for agentic discovery](/blog/publishing-an-ai-catalog). 2026-06-29.
 - [What the Open Knowledge Format is, and what it is not](/blog/open-knowledge-format). 2026-06-27.
 - [What an agent pays to read your site](/blog/cheaper-pages-for-agents). 2026-06-26.
 - [When an agent can prove it is Claude](/blog/verifiable-agent-identity). 2026-06-25.
@@ -447,6 +451,30 @@ Autonomy is not the absence of people. The strongest setups take an expert's jud
 This is why I have stopped describing my work as only agent-readiness. Reading a site is the first step, the precondition for everything after it. What an agent can actually do once the inputs are clean and the envelope is set, with a person kept where judgment belongs, is the rest of the distance. That is the work I am moving toward.
 
 For an agent-readiness audit, or a conversation about letting agents act on your systems safely, contact info@turva.dev.
+`,
+  "/blog/publishing-an-ai-catalog": `# Publishing an ai-catalog.json for agentic discovery
+
+2026-06-29
+
+Google and a Linux Foundation working group published Agentic Resource Discovery in 2026, an open specification for telling agents what a site offers in one machine-readable file at /.well-known/ai-catalog.json. turva.dev now serves one. This is the log of adding it, and of why the change could not move the scanner score either way.
+
+## What the file says
+
+The manifest is a small envelope with a specVersion, a host block, and an entries array. Each entry names one agentic resource with an identifier, a type, a url, and a description. turva.dev publishes four entries, and every one points at a surface that already resolves: the MCP server card, the A2A agent card, the OpenAPI description, and the agent skills index. Nothing in the catalog is aspirational. If a line names a resource, that resource answers.
+
+## Why it is additive
+
+The catalog is a new file and a new route. It does not change a single existing surface, so it cannot lower a score, and because neither independent scanner checks for ai-catalog.json yet, it cannot raise one either. turva.dev already reads 100/100 on startuphub.ai and Level 5 on isitagentready.com, and it read the same after this change. The point of publishing now is not the number. It is that a Google-backed discovery standard exists, and a site that sells agent-readiness should serve the surface before its buyers ask for it.
+
+## Discovery, not ranking
+
+An ai-catalog.json is easy to misread as another search file. It is not. It indexes the agentic resources a site exposes so an agent can find them and call each one through its own protocol. Google confirmed in 2026 that llms.txt does not affect its search results, and the same holds here. Agent-readiness and search ranking remain different things, and neither should be sold as the other.
+
+## Honest about adoption
+
+In a public census in June 2026, none of the named working group members yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at github.com/busygoat/turva-worker.
+
+For an audit of a site's discovery surface, contact info@turva.dev.
 `,
   "/blog/moving-off-prerender": `# Moving turva.dev off prerender.io
 
@@ -665,6 +693,7 @@ Written contact only. Email for longer messages, Signal for short questions. The
 - [AI agent use cases: where agents read data and make decisions](https://turva.dev/guides/ai-agent-use-cases)
 - [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
 - [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
+- [Agentic Resource Discovery and ai-catalog.json](https://turva.dev/guides/agentic-resource-discovery)
 - [How agents authenticate](https://turva.dev/guides/agent-authentication)
 - [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
 - [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
@@ -1018,6 +1047,7 @@ How a site tells an agent what it is allowed to do, and shows it is safe to use.
 - [MCP server cards explained](https://turva.dev/guides/mcp-server-card)
 - [What agents.json is](https://turva.dev/guides/agents-json)
 - [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
+- [Agentic Resource Discovery and ai-catalog.json](https://turva.dev/guides/agentic-resource-discovery)
 - [How agents authenticate](https://turva.dev/guides/agent-authentication)
 - [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
 
@@ -1240,6 +1270,35 @@ turva.dev publishes an API catalog, a server card, OAuth metadata, payment manif
 - [MCP server cards explained](/guides/mcp-server-card)
 - [How agents authenticate](/guides/agent-authentication)
 - [Sitemaps, robots.txt and agent access](/guides/sitemaps-and-robots-for-agents)
+`,
+
+  "/guides/agentic-resource-discovery": `# Agentic Resource Discovery and ai-catalog.json
+
+Agentic Resource Discovery, or ARD, is an open specification for telling AI agents what a site offers, in one machine-readable file. Instead of inferring from pages whether a site has an MCP server, an agent interface, or an API, the site publishes a single index that names each resource and where to reach it. The specification appeared in 2026, is licensed under Apache 2.0, and is maintained by a working group under the Linux Foundation.
+
+## What it is
+
+A site advertises its agentic resources by serving a static JSON manifest at /.well-known/ai-catalog.json. The manifest is a small envelope with a specVersion, a host block that names the operator, and an entries array. Each entry describes one resource with a stable identifier, a display name, a type, a url, and a short description. A resource can be an MCP server, an A2A agent, an API, or a skill set. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
+
+## Where it sits
+
+ARD is a discovery layer, not a transport. It helps an agent find the right resource, which the agent then calls through that resource's own protocol, whether MCP, A2A, or a plain API. Discovery comes first and invocation second. The catalog does not replace the manifests it points to, it indexes them, so a site keeps its server card, its agent card, and its OpenAPI description, and adds one file that ties them together.
+
+## How it relates to llms.txt
+
+An ai-catalog.json is not a ranking trick and it is not a content map. llms.txt tells an agent where a site's content lives. An ai-catalog tells an agent which agentic resources the site exposes and how to reach them. The two are complementary, and neither is about search ranking. Google confirmed in 2026 that llms.txt does not affect its search results, which is the same point agent-readiness has always made. These files are for agents that read and act.
+
+## Why it matters
+
+Adoption is early. In a public census in June 2026, none of the named working group members yet served a discoverable ai-catalog.json, so publishing one now is a forward move rather than table stakes. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
+
+turva.dev serves an ai-catalog.json at /.well-known/ai-catalog.json that indexes its MCP server, its A2A agent, its API, and its agent skills, each of which already resolves on its own. For an audit of a site's discovery surface, contact info@turva.dev.
+
+## Related
+
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [MCP server cards explained](/guides/mcp-server-card)
+- [Agent commerce discovery: A2A, AP2, and ACP](/guides/agent-commerce-discovery)
 `,
 
   "/guides/agent-authentication": `# How agents authenticate
@@ -1609,6 +1668,7 @@ Llms-Full: https://turva.dev/llms-full.txt
 Sitemap: https://turva.dev/sitemap.xml
 Auth: https://turva.dev/auth.md
 Api-catalog: https://turva.dev/.well-known/api-catalog
+Ai-catalog: https://turva.dev/.well-known/ai-catalog.json
 Mcp-server-card: https://turva.dev/.well-known/mcp/server-card.json
 Mcp-endpoint: https://mcp.turva.dev/mcp
 Agent-skills: https://turva.dev/.well-known/agent-skills/index.json
@@ -1669,6 +1729,7 @@ var API_CATALOG = JSON.stringify({
       { "href": "https://turva.dev/", "type": "text/html" }
     ],
     "service-meta": [
+      { "href": "https://turva.dev/.well-known/ai-catalog.json", "type": "application/json", "title": "AI catalog (ARD)" },
       { "href": "https://turva.dev/.well-known/mcp/server-card.json", "type": "application/json", "title": "MCP Server Card" },
       { "href": "https://turva.dev/.well-known/agent-card.json", "type": "application/json", "title": "A2A Agent Card" },
       { "href": "https://turva.dev/.well-known/agent-skills/index.json", "type": "application/json", "title": "Agent Skills Index" },
@@ -1775,6 +1836,7 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/mcp/server-card.json": { "get": { "summary": "MCP Server Card", "operationId": "getMcpCard", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/agent-skills/index.json": { "get": { "summary": "Agent Skills index", "operationId": "getSkillsIndex", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/api-catalog": { "get": { "summary": "API catalog", "operationId": "getApiCatalog", "responses": { "200": { "description": "ok" } } } },
+    "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/security.txt": { "get": { "summary": "Security", "operationId": "getSecurity", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/oauth-authorization-server": { "get": { "summary": "OAuth Authorization Server Metadata", "operationId": "getOauthDiscovery", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/oauth-protected-resource": { "get": { "summary": "OAuth Protected Resource Metadata", "operationId": "getOauthProtectedResource", "responses": { "200": { "description": "ok" } } } },
@@ -1803,7 +1865,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8uWY2VQdhCIOVPkDp-7KHJMNp5iQ3itOtv4IpRKOhCA22GbueAPIybbatBnGuYmc0Eeyn_9wZvpKjLH44OZGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Kah5PXMrkMS6GQA3iytpmdZuLdPL1loIZ8nxhToIjyv-fz33wEfKwJYamjYbGcLvjRegO0WTVs8B_CXLoZVXAQ\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8uWY2VQdhCIOVPkDp-7KHJMNp5iQ3itOtv4IpRKOhCA22GbueAPIybbatBnGuYmc0Eeyn_9wZvpKjLH44OZGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pOvgoL8c2U_5YEnd1vqleee8HrnBymEuXDhCzckXKrTNJ3yV7fvD9Q-NPqa-alBNh-Gvw8_-ubdM6rdvd1p7Dw\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -2025,6 +2087,41 @@ var A2A_AGENT_CARD = JSON.stringify({
         "Who runs turva.dev?",
         "What is turva.dev's business ID?"
       ]
+    }
+  ]
+}, null, 2);
+
+var AI_CATALOG = JSON.stringify({
+  "specVersion": "1.0",
+  "host": { "displayName": "turva.dev", "identifier": "turva.dev" },
+  "entries": [
+    {
+      "identifier": "urn:ai:turva.dev:mcp-server:turva-mcp",
+      "displayName": "turva.dev MCP server",
+      "type": "application/mcp-server+json",
+      "url": "https://turva.dev/.well-known/mcp/server-card.json",
+      "description": "Public read-only MCP server: service catalog, own agent-readiness scores, security evidence, engagement principles."
+    },
+    {
+      "identifier": "urn:ai:turva.dev:agent:a2a",
+      "displayName": "turva.dev A2A agent",
+      "type": "application/a2a-agent-card+json",
+      "url": "https://turva.dev/.well-known/agent-card.json",
+      "description": "A2A agent card describing turva.dev's read-only HTTP and JSON surface."
+    },
+    {
+      "identifier": "urn:ai:turva.dev:api:openapi",
+      "displayName": "turva.dev API",
+      "type": "application/openapi+json",
+      "url": "https://turva.dev/openapi.json",
+      "description": "OpenAPI description of turva.dev's public endpoints."
+    },
+    {
+      "identifier": "urn:ai:turva.dev:skills:index",
+      "displayName": "turva.dev Agent Skills",
+      "type": "application/agent-skills+json",
+      "url": "https://turva.dev/.well-known/agent-skills/index.json",
+      "description": "Index of agent skills published by turva.dev."
     }
   ]
 }, null, 2);
@@ -2470,6 +2567,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/guides/json-ld-structured-data", "monthly", "0.7"],
   ["/guides/well-known-for-agents", "monthly", "0.7"],
+  ["/guides/agentic-resource-discovery", "monthly", "0.7"],
   ["/guides/agent-authentication", "monthly", "0.7"],
   ["/guides/measurement-led-agent-readiness", "monthly", "0.7"],
   ["/guides/prerendering-for-agents", "monthly", "0.7"],
@@ -2482,6 +2580,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
   ["/blog/open-knowledge-format", "monthly", "0.6"],
+  ["/blog/publishing-an-ai-catalog", "monthly", "0.6"],
   ["/blog/cheaper-pages-for-agents", "monthly", "0.6"],
   ["/blog/moving-off-prerender", "monthly", "0.6"],
   ["/blog/honest-agent-commerce-checks", "monthly", "0.6"],
@@ -2512,7 +2611,7 @@ function getSitemapXml() {
   return _sitemapCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -2568,10 +2667,21 @@ var META_BY_PATH = {
     date: "2026-06-21",
     imageAlt: "Owning your fediverse identity"
   },
+  "/guides/agentic-resource-discovery": {
+    title: "Agentic Resource Discovery and ai-catalog.json | turva.dev",
+    description: "Agentic Resource Discovery (ARD) explained: what an ai-catalog.json is, its envelope and entries, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation.",
+    imageAlt: "Agentic Resource Discovery and ai-catalog.json"
+  },
   "/guides/open-knowledge-format": {
     title: "Open Knowledge Format (OKF) explained | turva.dev",
     description: "What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context. The bundle structure, structural versus semantic, and where it fits agent-readiness.",
     imageAlt: "Open Knowledge Format (OKF) explained"
+  },
+  "/blog/publishing-an-ai-catalog": {
+    title: "Publishing an ai-catalog.json for agentic discovery | turva.dev",
+    description: "Google and a Linux Foundation group published Agentic Resource Discovery in 2026. turva.dev now serves an ai-catalog.json indexing its MCP server, A2A agent, API and skills, additive and verified by independent scanners.",
+    date: "2026-06-29",
+    imageAlt: "Publishing an ai-catalog.json for agentic discovery"
   },
   "/blog/open-knowledge-format": {
     title: "What the Open Knowledge Format is, and what it is not | turva.dev",
@@ -2774,6 +2884,7 @@ var SCHEMA_HOME = `<script type="application/ld+json">
 
 function appendAgentLinks(headers) {
   headers.append("Link", '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"');
+  headers.append("Link", '</.well-known/ai-catalog.json>; rel="ai-catalog"; type="application/json"');
   headers.append("Link", '</openapi.json>; rel="service-desc"; type="application/json"');
   headers.append("Link", '</llms.txt>; rel="service-doc"; type="text/plain"');
   headers.append("Link", '</llms-full.txt>; rel="service-doc"; type="text/plain"; title="Full content"');
@@ -3109,6 +3220,16 @@ function buildBuyerFaqJsonLd() {
 }
 
 var GUIDE_PAGE_FAQ = {
+  "/guides/agentic-resource-discovery": [
+    {
+      "q": "What is an ai-catalog.json?",
+      "a": "An ai-catalog.json is a static JSON manifest at /.well-known/ai-catalog.json that lists the agentic resources a site offers, such as its MCP server, A2A agent, and API, each with an identifier, type, url, and description, so agents and registries can discover them from one file."
+    },
+    {
+      "q": "Does Agentic Resource Discovery affect search ranking?",
+      "a": "No. ARD is a discovery layer for AI agents, not a search file. It indexes the resources an agent can call through their own protocols. Google confirmed in 2026 that llms.txt does not affect its search results, and the same applies to an ai-catalog."
+    }
+  ],
   "/guides/agent-commerce-discovery": [
     {
       "q": "What is an A2A Agent Card?",
@@ -4125,6 +4246,7 @@ ${cardPageNav("/guides")}
     <li><a href="/guides/mcp-server-card">MCP server cards explained</a></li>
     <li><a href="/guides/agents-json">What agents.json is</a></li>
     <li><a href="/guides/well-known-for-agents">The /.well-known directory for agents</a></li>
+    <li><a href="/guides/agentic-resource-discovery">Agentic Resource Discovery and ai-catalog.json</a></li>
     <li><a href="/guides/agent-authentication">How agents authenticate</a></li>
     <li><a href="/guides/json-ld-structured-data">JSON-LD and structured data for agents</a></li>
   </ul></div>
@@ -4169,6 +4291,7 @@ ${cardPageNav("/blog")}
 <main>
   <h1>Blog</h1>
   <p class="intro">Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.</p>
+  <a class="post" href="/blog/publishing-an-ai-catalog"><span class="pt">Publishing an ai-catalog.json for agentic discovery</span><span class="pd">2026-06-29</span></a>
   <a class="post" href="/blog/open-knowledge-format"><span class="pt">What the Open Knowledge Format is, and what it is not</span><span class="pd">2026-06-27</span></a>
   <a class="post" href="/blog/cheaper-pages-for-agents"><span class="pt">What an agent pays to read your site</span><span class="pd">2026-06-26</span></a>
   <a class="post" href="/blog/verifiable-agent-identity"><span class="pt">When an agent can prove it is Claude</span><span class="pd">2026-06-25</span></a>
@@ -4522,6 +4645,9 @@ async function handleRequest(request, env) {
   }
   if (pathLower === "/.well-known/mcp/server-card.json" || pathLower === "/.well-known/mcp.json") {
     return serveStatic(MCP_SERVER_CARD, "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/ai-catalog.json" || pathLower === "/.well-known/ai-catalog") {
+    return serveStatic(AI_CATALOG, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/agent.json" || pathLower === "/.well-known/ai-plugin.json") {
     return serveStatic(AGENT_JSON, "application/json; charset=utf-8", "agent-api");
