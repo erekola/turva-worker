@@ -16,7 +16,7 @@ What you buy is expertise and implementation, not access to a tool. The scoring 
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-06-27. Two independent public scanners, listed once each.
+Measured on `https://turva.dev` on 2026-06-30. Two independent public scanners, listed once each.
 
 | Scanner | Result |
 |---|---|
@@ -40,14 +40,14 @@ These six category scores come from the startuphub.ai scan. The Cloudflare Agent
 
 ## Web security
 
-Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-26.
+Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-30.
 
 | Scanner | Result |
 |---|---|
 | Hardenize | All 13 categories passed |
 | Internet.nl | 98/100 |
 
-The missing 2 points on Internet.nl are a deliberate tradeoff: TLS 1.2 is kept enabled for broad client compatibility, while everything else passes. The choice is documented, not hidden.
+On Internet.nl, IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. The result is documented, not hidden.
 
 ## Verify
 
@@ -55,7 +55,7 @@ Every claim above is publicly auditable. Run the scanners yourself or open the c
 
 * StartupHub leaderboard: https://www.startuphub.ai/agent-readiness
 * isitagentready scan: https://isitagentready.com/turva.dev
-* Hardenize report: https://www.hardenize.com/report/turva.dev/
+* Hardenize report: https://www.hardenize.com/ (re-runnable public report; Hardenize keeps no stable per-domain URL)
 * Internet.nl report: https://internet.nl/site/turva.dev/
 * Company (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7
 
