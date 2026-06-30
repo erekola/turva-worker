@@ -632,7 +632,7 @@ turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites o
 
 turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-06-30.
 
-- Hardenize: all 13 categories passed. Re-runnable at https://www.hardenize.com.
+- Hardenize: all 13 categories passed. https://www.hardenize.com/report/turva.dev
 - Internet.nl: 98/100. IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. https://internet.nl/site/turva.dev/
 
 The Cloudflare Worker that produces these results is open source: https://github.com/busygoat/turva-worker. You can read every line before you hire me.
@@ -3756,7 +3756,7 @@ ${FOOTER_CSS}
     </ul>
     <p>turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-06-30.</p>
     <ul class="evlist">
-      <li>Hardenize: all 13 categories passed. Re-runnable at <a href="https://www.hardenize.com">hardenize.com</a>.</li>
+      <li>Hardenize: all 13 categories passed. <a href="https://www.hardenize.com/report/turva.dev">hardenize.com/report/turva.dev</a></li>
       <li>Internet.nl: 98/100. IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. <a href="https://internet.nl/site/turva.dev/">internet.nl/site/turva.dev</a></li>
     </ul>
     <p>The Cloudflare Worker that produces these results is open source: <a href="https://github.com/busygoat/turva-worker">github.com/busygoat/turva-worker</a>. You can read every line before you hire me.</p>
