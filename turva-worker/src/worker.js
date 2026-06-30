@@ -4248,6 +4248,7 @@ ${cardPageNav("/guides")}
     <li><a href="/guides/get-cited-by-ai-assistants">How to get your site cited by AI assistants</a></li>
     <li><a href="/guides/llms-txt">llms.txt explained</a></li>
     <li><a href="/guides/markdown-for-agents">Serving markdown to agents</a></li>
+    <li><a href="/guides/open-knowledge-format">Open Knowledge Format (OKF) explained</a></li>
     <li><a href="/guides/sitemaps-and-robots-for-agents">Sitemaps, robots.txt and agent access</a></li>
     <li><a href="/guides/response-headers-for-agents">Response headers that help agents</a></li>
     <li><a href="/guides/prerendering-for-agents">Prerendering and why agents see empty pages</a></li>
