@@ -2927,13 +2927,14 @@ function serve404(pathname) {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0A1316" />
 <meta name="robots" content="noindex" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
 <title>Page not found | turva.dev</title>
 <style>
-html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;}
+html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;color-scheme:dark;}
 main{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 4rem;}
 h1{color:#5DF18F;font-size:2rem;line-height:1.2;margin:0 0 1rem;}
 p{margin:0 0 1.1rem;}
@@ -3433,7 +3434,9 @@ var FOOTER_CSS = `.tv-foot{box-sizing:border-box;width:100%;background:#06100F;b
 .tv-foot .ft-row{display:flex;align-items:center;gap:9px;color:#C9D1CE;font-size:0.9rem;text-decoration:none;}
 .tv-foot a.ft-row:hover{color:#5DF18F;}
 .tv-foot .ft-row svg{flex:0 0 auto;width:17px;height:17px;}
-.tv-foot .foot-meta{font-size:0.8rem;color:#6F7A77;border-top:0.5px solid rgba(255,255,255,0.08);padding-top:0.9rem;}`;
+.tv-foot .foot-meta{font-size:0.8rem;color:#6F7A77;border-top:0.5px solid rgba(255,255,255,0.08);padding-top:0.9rem;}
+a:focus-visible,button:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;border-radius:2px;}
+@media (prefers-reduced-motion:reduce){.cursor{animation:none;opacity:1;}}`;
 
 var FOOTER_HTML = `<footer class="tv-foot">
   <div class="foot-brand">
@@ -3463,6 +3466,7 @@ function serveGuideHtml(pathname, canonicalUrl) {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0A1316" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
@@ -3472,7 +3476,7 @@ ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
 <link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
 <style>
-html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:44rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
 article h1{color:#5DF18F;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 1rem;font-weight:700;}
 article h1 + p{font-size:1.12rem;color:#F2F4F3;}
@@ -3549,6 +3553,7 @@ function serveHomeHtml(canonicalUrl) {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0A1316" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
@@ -3558,7 +3563,7 @@ ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
 <link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
 <style>
-html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:46rem;margin:0 auto;padding:0 clamp(20px,5vw,72px) 3rem;}
 h1{color:#5DF18F;font-size:2.4rem;line-height:1.1;letter-spacing:-0.02em;margin:0 0 1.1rem;font-weight:700;}
 h2{color:#F2F4F3;font-size:1.45rem;margin:0 0 0.85rem;font-weight:700;letter-spacing:-0.015em;}
@@ -3841,6 +3846,7 @@ function serveServicesHtml(canonicalUrl) {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0A1316" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
@@ -3850,7 +3856,7 @@ ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
 <link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
 <style>
-html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:46rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
 h1{color:#5DF18F;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 0.6rem;font-weight:700;}
 .intro{font-size:1.12rem;color:#C9D1CE;margin:0 0 1.8rem;}
@@ -4002,7 +4008,7 @@ ${FOOTER_HTML}
   return new Response(body, { status: 200, headers });
 }
 
-var CARDPAGE_CSS = `html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+var CARDPAGE_CSS = `html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:46rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
 h1{color:#5DF18F;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 0.6rem;font-weight:700;}
 .intro{font-size:1.12rem;color:#C9D1CE;margin:0 0 1.8rem;}
@@ -4054,6 +4060,7 @@ function cardPageHead(metaBlock, jsonLd, canonicalUrl) {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0A1316" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
