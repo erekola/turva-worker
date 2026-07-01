@@ -136,6 +136,7 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 | `/x402` | HTTP 402 payment-required endpoint |
 | `/robots.txt` | Crawler directives |
 | `/sitemap.xml` | URL index |
+| `/blog/feed.xml` | Blog RSS feed |
 
 ## Deploy
 

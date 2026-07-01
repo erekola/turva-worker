@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.11.0 - honest commerce surface (no unimplemented Stripe method/200s; quote-on-request) and hash-based CSP (no script-src unsafe-inline)
+// turva.dev worker v3.12.0 - blog RSS feed (/blog/feed.xml) and UI polish (nav section highlight, skip link, print styles)
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1832,7 +1832,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.11.0",
+    "version": "3.12.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2083,7 +2083,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.11.0",
+  "version": "3.12.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -2318,7 +2318,7 @@ function build402Body(resource, label, amountUsdcMicro, amountEurCents, descript
 }
 
 // ============================================================
-// X402-MESH v3.11.0 - startuphub.ai x402-mesh/0.1 spec
+// X402-MESH v3.12.0 - startuphub.ai x402-mesh/0.1 spec
 // Required fields: protocol, vendor_id, categories, registry_url
 // Wallet enables zero-friction on-chain referral payouts on Base
 // ============================================================
@@ -2692,6 +2692,47 @@ function getSitemapXml() {
   return _sitemapCache;
 }
 
+var _blogFeedCache = null;
+
+function buildBlogFeedXml() {
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const posts = Object.keys(PAGE_MARKDOWN)
+    .filter((k) => k.startsWith("/blog/"))
+    .map((k) => ({ path: k, meta: META_BY_PATH[k] || {} }))
+    .filter((p) => p.meta.date)
+    .sort((a, b) => b.meta.date.localeCompare(a.meta.date));
+  const items = posts.map(({ path, meta }) => {
+    const url = "https://turva.dev" + path;
+    const title = esc((meta.title || "").replace(/ \| turva\.dev$/, ""));
+    return `    <item>
+      <title>${title}</title>
+      <link>${url}</link>
+      <guid isPermaLink="true">${url}</guid>
+      <pubDate>${new Date(meta.date + "T00:00:00Z").toUTCString()}</pubDate>
+      <description>${esc(meta.description || "")}</description>
+    </item>`;
+  }).join("\n");
+  const lastBuild = new Date(posts[0].meta.date + "T00:00:00Z").toUTCString();
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>turva.dev blog</title>
+    <link>https://turva.dev/blog</link>
+    <description>Notes on AI agents, and the work of letting them read a site and act on a system safely.</description>
+    <language>en</language>
+    <lastBuildDate>${lastBuild}</lastBuildDate>
+    <atom:link href="https://turva.dev/blog/feed.xml" rel="self" type="application/rss+xml" />
+${items}
+  </channel>
+</rss>
+`;
+}
+
+function getBlogFeedXml() {
+  if (_blogFeedCache === null) _blogFeedCache = buildBlogFeedXml();
+  return _blogFeedCache;
+}
+
 var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog"]);
 
 function getCanonicalForPath(pathname) {
@@ -3018,6 +3059,7 @@ function serve404(pathname) {
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
+<link rel="alternate" type="application/rss+xml" title="turva.dev blog" href="https://turva.dev/blog/feed.xml" />
 <title>Page not found | turva.dev</title>
 <style>
 html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;color-scheme:dark;}
@@ -3034,11 +3076,14 @@ a{color:#5DF18F;}
 .turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
+.turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
+.turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
 @media (max-width:560px){.turva-nav .nv-menu{gap:16px;}.turva-nav .nv-menu a{font-size:14px;}}
 ${FOOTER_CSS}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <nav class="turva-nav">
   <a class="nv-brand" href="/">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -3056,8 +3101,9 @@ ${FOOTER_CSS}
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
   </ul>
+  <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>
-<main>
+<main id="main">
 <h1>Page not found</h1>
 <p>The page at ${escapeHtml(pathname)} does not exist. It may have moved.</p>
 <p>Try the <a href="/">home page</a>, the <a href="/guides">guides</a>, or the <a href="/blog">blog</a>.</p>
@@ -3175,6 +3221,8 @@ function markdownToHtml(md) {
     } else if (/^- /.test(trimmed)) {
       const items = trimmed.split("\n").filter((l) => /^- /.test(l.trim())).map((l) => `<li>${renderInline(l.trim().slice(2).trim())}</li>`).join("");
       html.push(`<ul>${items}</ul>`);
+    } else if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+      html.push(`<p class="date">${trimmed}</p>`);
     } else {
       html.push(`<p>${renderInline(trimmed)}</p>`);
     }
@@ -3522,7 +3570,13 @@ var FOOTER_CSS = `.tv-foot{box-sizing:border-box;width:100%;background:#06100F;b
 .tv-foot .ft-row svg{flex:0 0 auto;width:17px;height:17px;}
 .tv-foot .foot-meta{font-size:0.8rem;color:#6F7A77;border-top:0.5px solid rgba(255,255,255,0.08);padding-top:0.9rem;}
 a:focus-visible,button:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;border-radius:2px;}
-@media (prefers-reduced-motion:reduce){.cursor{animation:none;opacity:1;}}`;
+@media (prefers-reduced-motion:reduce){.cursor{animation:none;opacity:1;}}
+::selection{background:#5DF18F;color:#06100F;}
+h1,h2{text-wrap:balance;}
+p,li{text-wrap:pretty;}
+.skip{position:absolute;left:-999px;top:-999px;overflow:hidden;}
+.skip:focus{position:fixed;left:14px;top:12px;z-index:20;background:#5DF18F;color:#06100F;font-weight:700;padding:.55rem .95rem;border-radius:8px;text-decoration:none;}
+@media print{*{background:#fff!important;color:#000!important;}a{text-decoration:underline;}.turva-nav,.tv-foot,.skip,.crumb,.cursor{display:none!important;}}`;
 
 var FOOTER_HTML = `<footer class="tv-foot">
   <div class="foot-brand">
@@ -3547,6 +3601,8 @@ function serveGuideHtml(pathname, canonicalUrl) {
     (pathname === "/guides/choosing-an-agent-readiness-audit" ? "\n" + buildBuyerFaqJsonLd() : "") +
     (GUIDE_PAGE_FAQ[pathname] ? "\n" + buildGuidePageFaqJsonLd(pathname, canonicalUrl) : "");
   const article = markdownToHtml(md);
+  const navSection = pathname.startsWith("/blog/") ? "/blog" : (pathname.startsWith("/guides/") ? "/guides" : "");
+  const crumb = navSection === "/blog" ? '<p class="crumb"><a href="/blog">&#8249; all posts</a></p>\n' : (navSection === "/guides" ? '<p class="crumb"><a href="/guides">&#8249; all guides</a></p>\n' : "");
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -3556,6 +3612,7 @@ function serveGuideHtml(pathname, canonicalUrl) {
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
+<link rel="alternate" type="application/rss+xml" title="turva.dev blog" href="https://turva.dev/blog/feed.xml" />
 ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
@@ -3574,6 +3631,10 @@ article ul{list-style:none;margin:0 0 1.1rem;padding:0;}
 article li{position:relative;padding:0 0 0 1.45rem;margin:0 0 0.5rem;color:#C9D1CE;}
 article li::before{content:"›";position:absolute;left:0.45rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
 article strong{color:#F2F4F3;}
+article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.05em;color:#9AA3A0;margin:-.35rem 0 1.5rem;}
+.crumb{margin:0 0 1.05rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;}
+.crumb a{color:#9AA3A0;}
+.crumb a:hover{color:#5DF18F;text-decoration:none;}
 .turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
@@ -3591,6 +3652,7 @@ ${FOOTER_CSS}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <nav class="turva-nav">
   <a class="nv-brand" href="/">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -3602,16 +3664,16 @@ ${FOOTER_CSS}
   <ul class="nv-menu">
     <li><a href="/">home</a></li>
     <li><a href="/services">services</a></li>
-    <li><a href="/guides">guides</a></li>
-    <li><a href="/blog">blog</a></li>
+    <li><a href="/guides"${navSection === "/guides" ? ' aria-current="true"' : ""}>guides</a></li>
+    <li><a href="/blog"${navSection === "/blog" ? ' aria-current="true"' : ""}>blog</a></li>
     <li><a href="/company">company</a></li>
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
   </ul>
   <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>
-<main>
-<article>
+<main id="main">
+${crumb}<article>
 ${article}
 </article>
 </main>
@@ -3643,6 +3705,7 @@ function serveHomeHtml(canonicalUrl) {
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
+<link rel="alternate" type="application/rss+xml" title="turva.dev blog" href="https://turva.dev/blog/feed.xml" />
 ${metaBlock}
 ${SCHEMA_HOME}
 ${WEBMCP_SCRIPT}
@@ -3747,6 +3810,7 @@ ${FOOTER_CSS}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <nav class="turva-nav">
   <a class="nv-brand" href="/">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -3766,7 +3830,7 @@ ${FOOTER_CSS}
   </ul>
   <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>
-<main>
+<main id="main">
   <section class="hero">
     <p class="eyebrow">where data moves and decisions matter · independently verified</p>
     <h1>Audits and advisory for products that AI agents read and act on</h1>
@@ -3936,6 +4000,7 @@ function serveServicesHtml(canonicalUrl) {
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
+<link rel="alternate" type="application/rss+xml" title="turva.dev blog" href="https://turva.dev/blog/feed.xml" />
 ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
@@ -3986,6 +4051,7 @@ ${FOOTER_CSS}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <nav class="turva-nav">
   <a class="nv-brand" href="/">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -4005,7 +4071,7 @@ ${FOOTER_CSS}
   </ul>
   <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>
-<main>
+<main id="main">
   <h1>Services</h1>
   <p class="intro">Four offerings. Async-only. One business day response.</p>
 
@@ -4153,6 +4219,7 @@ function cardPageHead(metaBlock, jsonLd, canonicalUrl) {
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
+<link rel="alternate" type="application/rss+xml" title="turva.dev blog" href="https://turva.dev/blog/feed.xml" />
 ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
@@ -4163,7 +4230,8 @@ ${CARDPAGE_CSS}
 ${FOOTER_CSS}
 </style>
 </head>
-<body>`;
+<body>
+<a class="skip" href="#main">Skip to content</a>`;
 }
 
 function cardPageNav(current) {
@@ -4201,7 +4269,7 @@ function serveCompanyHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/company", canonicalUrl), buildGuideJsonLd("/company", canonicalUrl), canonicalUrl);
   const body = `${head}
 ${cardPageNav("/company")}
-<main>
+<main id="main">
   <h1>Company</h1>
   <p class="intro">turva.dev is operated by Erik Rekola.</p>
   <div class="scard"><h2>Business details</h2><div class="kvs">
@@ -4247,7 +4315,7 @@ function serveContactHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/contact", canonicalUrl), buildGuideJsonLd("/contact", canonicalUrl), canonicalUrl);
   const body = `${head}
 ${cardPageNav("/contact")}
-<main>
+<main id="main">
   <h1>Contact</h1>
   <p class="intro">Written contact only. Email for longer messages, Signal for short questions. The first reply is in writing within one business day. No calls and no calendar links at any stage of the engagement.</p>
   <div class="scard"><h2>Channels</h2><div class="kvs">
@@ -4285,7 +4353,7 @@ function serveLegalHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/legal", canonicalUrl), buildGuideJsonLd("/legal", canonicalUrl), canonicalUrl);
   const body = `${head}
 ${cardPageNav("/legal")}
-<main>
+<main id="main">
   <h1>Legal</h1>
   <p class="intro">This page covers the terms under which turva.dev operates, the privacy practices of the site, and the default terms for engagements.</p>
   <div class="scard"><h2>Operator</h2>
@@ -4335,7 +4403,7 @@ function serveGuidesHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/guides", canonicalUrl), buildGuideJsonLd("/guides", canonicalUrl) + "\n" + buildGuidesFaqJsonLd(), canonicalUrl);
   const body = `${head}
 ${cardPageNav("/guides")}
-<main>
+<main id="main">
   <h1>Agent-readiness guides</h1>
   <p class="intro">These short guides explain, in plain language, what makes a website or an API easy for AI agents to read and use. Each one covers a single topic and takes a few minutes to read. They are free, and they cover the same surfaces an <a href="/services">agent-readiness audit</a> measures.</p>
   <p>Not sure where to start? The first guide explains what an agent-readiness audit is.</p>
@@ -4395,7 +4463,7 @@ function serveBlogHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/blog", canonicalUrl), buildGuideJsonLd("/blog", canonicalUrl), canonicalUrl);
   const body = `${head}
 ${cardPageNav("/blog")}
-<main>
+<main id="main">
   <h1>Blog</h1>
   <p class="intro">Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.</p>
   <a class="post" href="/blog/two-scanner-audit-method"><span class="pt">What one agent-readiness scanner cannot tell you</span><span class="pd">2026-07-01</span></a>
@@ -4816,6 +4884,7 @@ async function handleRequest(request, env) {
     return serveStatic(MCP_REGISTRY_AUTH, "text/plain; charset=utf-8", "agent-api");
   }
   if (pathLower === "/sitemap.xml") return serveStatic(getSitemapXml(), "application/xml; charset=utf-8", "agent-api");
+  if (pathLower === "/blog/feed.xml") return serveStatic(getBlogFeedXml(), "application/rss+xml; charset=utf-8", "agent-api");
   if (pathLower === "/llms.txt") return serveStatic(LLMS_TXT, "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/llms-full.txt") return serveStatic(getLlmsFullTxt(), "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/.well-known/ai.txt" || pathLower === "/ai.txt") {
