@@ -2714,18 +2714,21 @@ var META_BY_PATH = {
     title: "What one agent-readiness scanner cannot tell you | turva.dev",
     description: "Why every turva.dev audit checks a site against two independent agent-readiness scanners instead of one, and how their different category models catch gaps a single checklist would pass clean.",
     date: "2026-07-01",
+    image: "/og-two-scanner-audit-method.jpg",
     imageAlt: "What one agent-readiness scanner cannot tell you"
   },
   "/blog/publishing-an-ai-catalog": {
     title: "Publishing an ai-catalog.json for agentic discovery | turva.dev",
     description: "Google and a Linux Foundation group published Agentic Resource Discovery in 2026. turva.dev now serves an ai-catalog.json indexing its MCP server, A2A agent, API and skills, additive and verified by independent scanners.",
     date: "2026-06-29",
+    image: "/og-publishing-an-ai-catalog.jpg",
     imageAlt: "Publishing an ai-catalog.json for agentic discovery"
   },
   "/blog/open-knowledge-format": {
     title: "What the Open Knowledge Format is, and what it is not | turva.dev",
     description: "Google Cloud shipped the Open Knowledge Format. What it actually is, what it is not yet, and how this markdown spec for AI agents relates to an agent-readiness audit.",
     date: "2026-06-27",
+    image: "/og-open-knowledge-format.jpg",
     imageAlt: "What the Open Knowledge Format is, and what it is not"
   },
   "/": {
@@ -2870,6 +2873,7 @@ function buildMetaBlock(pathname, canonicalUrl) {
   const url = canonicalUrl || "https://turva.dev" + pathname;
   const isArticle = pathname.startsWith("/guides/") || pathname.startsWith("/blog/");
   const ogType = isArticle ? "article" : "website";
+  const ogImage = "https://turva.dev" + (m.image || "/og.jpg");
   let articleMeta = "";
   if (isArticle) {
     articleMeta = `\n<meta property="article:author" content="https://www.linkedin.com/in/erikrekola/" />\n<meta property="article:section" content="${pathname.startsWith("/blog/") ? "Blog" : "Guides"}" />`;
@@ -2885,14 +2889,14 @@ function buildMetaBlock(pathname, canonicalUrl) {
 <meta property="og:description" content="${m.description}" />
 <meta property="og:url" content="${url}" />
 <meta property="og:locale" content="en_US" />
-<meta property="og:image" content="https://turva.dev/og.jpg" />
+<meta property="og:image" content="${ogImage}" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content="${m.imageAlt}" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="${m.title}" />
 <meta name="twitter:description" content="${m.description}" />
-<meta name="twitter:image" content="https://turva.dev/og.jpg" />
+<meta name="twitter:image" content="${ogImage}" />
 <meta name="twitter:image:alt" content="${m.imageAlt}" />${articleMeta}`;
 }
 
