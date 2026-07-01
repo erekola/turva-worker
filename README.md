@@ -16,7 +16,7 @@ What you buy is expertise and implementation, not access to a tool. The scoring 
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-06-30. Two independent public scanners, listed once each.
+Measured on `https://turva.dev` on 2026-07-01. Two independent public scanners, listed once each.
 
 | Scanner | Result |
 |---|---|
@@ -40,7 +40,7 @@ These six category scores come from the startuphub.ai scan. The Cloudflare Agent
 
 ## Web security
 
-Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-06-30.
+Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-07-01.
 
 | Scanner | Result |
 |---|---|
