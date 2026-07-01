@@ -4034,6 +4034,8 @@ a:hover{text-decoration:underline;}
 .scard ul{list-style:none;margin:0;padding:0;}
 .scard li{position:relative;padding:0 0 0 1.5rem;margin:0 0 .5rem;color:#C9D1CE;font-size:.95rem;line-height:1.5;}
 .scard li::before{content:"›";position:absolute;left:.3rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+.scard li a{color:#5DF18F;text-decoration:none;}
+.scard li a:hover,.scard li a:focus-visible{color:#F2F4F3;text-decoration:underline;}
 .scard li:last-child{margin-bottom:0;}
 .scard .note{margin-top:.85rem;}
 .kvs{display:grid;grid-template-columns:max-content 1fr;gap:.55rem .7rem;align-items:baseline;}
