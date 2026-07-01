@@ -323,6 +323,7 @@ var PAGE_MARKDOWN = {
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [What one agent-readiness scanner cannot tell you](/blog/two-scanner-audit-method). 2026-07-01.
 - [Publishing an ai-catalog.json for agentic discovery](/blog/publishing-an-ai-catalog). 2026-06-29.
 - [What the Open Knowledge Format is, and what it is not](/blog/open-knowledge-format). 2026-06-27.
 - [What an agent pays to read your site](/blog/cheaper-pages-for-agents). 2026-06-26.
@@ -451,6 +452,26 @@ Autonomy is not the absence of people. The strongest setups take an expert's jud
 This is why I have stopped describing my work as only agent-readiness. Reading a site is the first step, the precondition for everything after it. What an agent can actually do once the inputs are clean and the envelope is set, with a person kept where judgment belongs, is the rest of the distance. That is the work I am moving toward.
 
 For an agent-readiness audit, or a conversation about letting agents act on your systems safely, contact info@turva.dev.
+`,
+  "/blog/two-scanner-audit-method": `# What one agent-readiness scanner cannot tell you
+
+2026-07-01
+
+Most agent-readiness checks run one scanner and stop. The report reads well, the grade looks final, and the site moves on. That grade says the site fits one vendor's model of what an agent needs. It says nothing about what that model left out.
+
+## A checklist is not a proof
+
+A scanner is built around a fixed set of checks and a fixed weighting between them. It can only fail a site on something it looks for. When a category sits outside a scanner's model, a real gap in that category passes clean, because nothing in the checklist asked about it. A high grade from a single tool is easy to over-read as finished, while the site can still stop an agent cold on the one thing that tool never checked.
+
+## Where two scanners disagree
+
+turva.dev is scored on two independent scanners with different category models, isitagentready.com and startuphub.ai. isitagentready.com carries no Quality category and marks Commerce as optional. startuphub.ai grades six categories, Discoverability, Content, Access Control, Capabilities, Commerce, and Quality, so both of the categories the first scanner treats as thin get a full reading in the second. Running a site through both at once means a gap sitting in one model's blind spot still shows up in the other's report, before a buyer or an agent finds it the hard way.
+
+## What this changes about an audit
+
+Every audit here checks a site against both scanners, and a claim about the result carries the date it was verified and the categories the report named. A score nobody re-ran after a change is a guess wearing a number. Two readings pointed at the same site is the cheapest way I know to stop fooling yourself about what "done" means, and it is the same discipline that runs on turva.dev itself before any change ships.
+
+For an agent-readiness audit that checks a site against more than one scanner, contact info@turva.dev.
 `,
   "/blog/publishing-an-ai-catalog": `# Publishing an ai-catalog.json for agentic discovery
 
@@ -2584,6 +2605,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/two-scanner-audit-method", "monthly", "0.6"],
   ["/blog/open-knowledge-format", "monthly", "0.6"],
   ["/blog/publishing-an-ai-catalog", "monthly", "0.6"],
   ["/blog/cheaper-pages-for-agents", "monthly", "0.6"],
@@ -2616,7 +2638,7 @@ function getSitemapXml() {
   return _sitemapCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -2681,6 +2703,12 @@ var META_BY_PATH = {
     title: "Open Knowledge Format (OKF) explained | turva.dev",
     description: "What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context. The bundle structure, structural versus semantic, and where it fits agent-readiness.",
     imageAlt: "Open Knowledge Format (OKF) explained"
+  },
+  "/blog/two-scanner-audit-method": {
+    title: "What one agent-readiness scanner cannot tell you | turva.dev",
+    description: "Why every turva.dev audit checks a site against two independent agent-readiness scanners instead of one, and how their different category models catch gaps a single checklist would pass clean.",
+    date: "2026-07-01",
+    imageAlt: "What one agent-readiness scanner cannot tell you"
   },
   "/blog/publishing-an-ai-catalog": {
     title: "Publishing an ai-catalog.json for agentic discovery | turva.dev",
@@ -4312,6 +4340,7 @@ ${cardPageNav("/blog")}
 <main>
   <h1>Blog</h1>
   <p class="intro">Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.</p>
+  <a class="post" href="/blog/two-scanner-audit-method"><span class="pt">What one agent-readiness scanner cannot tell you</span><span class="pd">2026-07-01</span></a>
   <a class="post" href="/blog/publishing-an-ai-catalog"><span class="pt">Publishing an ai-catalog.json for agentic discovery</span><span class="pd">2026-06-29</span></a>
   <a class="post" href="/blog/open-knowledge-format"><span class="pt">What the Open Knowledge Format is, and what it is not</span><span class="pd">2026-06-27</span></a>
   <a class="post" href="/blog/cheaper-pages-for-agents"><span class="pt">What an agent pays to read your site</span><span class="pd">2026-06-26</span></a>

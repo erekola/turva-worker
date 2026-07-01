@@ -106,6 +106,7 @@ Notes on AI agents and the work of letting them read a site and act on a system 
 * [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender)
 * [What the Open Knowledge Format is, and what it is not](https://turva.dev/blog/open-knowledge-format)
 * [Publishing an ai-catalog.json for agentic discovery](https://turva.dev/blog/publishing-an-ai-catalog)
+* [What one agent-readiness scanner cannot tell you](https://turva.dev/blog/two-scanner-audit-method)
 
 ## How it works
 
