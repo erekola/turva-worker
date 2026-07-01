@@ -360,6 +360,12 @@ An agent-readiness audit asks whether an agent can read your public site. OKF is
 For now OKF is worth understanding and worth watching. It is early to rebuild a knowledge catalog around it. If you already serve clean text to agents, you are most of the way there already.
 
 For an audit of how legibly AI agents read your site and the data behind it, contact info@turva.dev.
+
+## Related
+
+- [Serving markdown to agents](/guides/markdown-for-agents)
+- [Agentic Resource Discovery and ai-catalog.json](/guides/agentic-resource-discovery)
+- [llms.txt explained](/guides/llms-txt)
 `,
   "/blog/cheaper-pages-for-agents": `# What an agent pays to read your site
 
@@ -390,6 +396,12 @@ The benefit is measurable. Independent scanners check for markdown content negot
 None of this is a rebuild. It is a small piece of code at the edge that picks the response format from the request header, and it keeps working as the site grows. The Worker that does it on turva.dev is public, so you can read exactly what it does before deciding whether it belongs on your own site.
 
 For an audit of how cheaply agents can read your site, contact info@turva.dev.
+
+## Related
+
+- [Serving markdown to agents](/guides/markdown-for-agents)
+- [Response headers that help agents](/guides/response-headers-for-agents)
+- [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
 `,
   "/blog/verifiable-agent-identity": `# When an agent can prove it is Claude
 
@@ -420,6 +432,12 @@ The concrete uses are easy to name. Validate Web Bot Auth signatures at the edge
 None of this is live for Claude on the day I publish this, and I will not write as though it were. The directory is public for a reason. Check it, and admit what it actually says rather than what a vendor page claims. When the entry appears, the work on the receiving side is already done, and the audit has a new line that can be measured rather than asserted.
 
 For an agent-readiness audit that covers how your site recognizes and admits AI agents, contact info@turva.dev.
+
+## Related
+
+- [How agents authenticate](/guides/agent-authentication)
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [What agents.json is](/guides/agents-json)
 `,
   "/blog/reliable-agent-decisions": `# What makes an AI agent's decisions reliable
 
@@ -452,6 +470,12 @@ Autonomy is not the absence of people. The strongest setups take an expert's jud
 This is why I have stopped describing my work as only agent-readiness. Reading a site is the first step, the precondition for everything after it. What an agent can actually do once the inputs are clean and the envelope is set, with a person kept where judgment belongs, is the rest of the distance. That is the work I am moving toward.
 
 For an agent-readiness audit, or a conversation about letting agents act on your systems safely, contact info@turva.dev.
+
+## Related
+
+- [Letting agents act on data](/guides/letting-agents-act-on-data)
+- [AI agent use cases](/guides/ai-agent-use-cases)
+- [Agentic commerce readiness](/guides/agentic-commerce-readiness)
 `,
   "/blog/two-scanner-audit-method": `# What one agent-readiness scanner cannot tell you
 
@@ -502,6 +526,12 @@ An ai-catalog.json is easy to misread as another search file. It is not. It inde
 In a public census in June 2026, none of the named working group members yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at github.com/busygoat/turva-worker.
 
 For an audit of a site's discovery surface, contact info@turva.dev.
+
+## Related
+
+- [Agentic Resource Discovery and ai-catalog.json](/guides/agentic-resource-discovery)
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [MCP server cards explained](/guides/mcp-server-card)
 `,
   "/blog/moving-off-prerender": `# Moving turva.dev off prerender.io
 
@@ -526,6 +556,12 @@ The change was verified the same way the service verifies client work: by indepe
 One more note. This change was planned and deployed in a single session with an AI agent, and the result was checked by two independent scanners with no stake in the outcome. The claims on this site are measurements anyone can reproduce. Either the next scan reads the same or higher, or it does not.
 
 Written contact only. Email info@turva.dev, Signal @turva.19. First reply within one business day.
+
+## Related
+
+- [Prerendering and why agents see empty pages](/guides/prerendering-for-agents)
+- [Serving markdown to agents](/guides/markdown-for-agents)
+- [What an agent-readiness audit is](/guides/agent-readiness-audit)
 `,
   "/blog/honest-agent-commerce-checks": `# Passing the agent commerce checks without faking them
 
@@ -560,6 +596,12 @@ Two checks remain red and will stay that way. isitagentready reports x402 as mis
 Every change was additive, and the startuphub.ai score read 100/100 on every re-scan. The principle is the one the whole site runs on. A scanner number is worth something only if it reflects what an agent actually finds, so a green check that lies is worth less than an honest red one. The worker that produces these results is open source at github.com/busygoat/turva-worker, readable line by line.
 
 For an agent-readiness audit that reports measured results, contact info@turva.dev.
+
+## Related
+
+- [Agentic commerce readiness](/guides/agentic-commerce-readiness)
+- [x402 and agent payments](/guides/x402-agent-payments)
+- [What an agent-readiness audit is](/guides/agent-readiness-audit)
 `,
   "/guides/agent-commerce-discovery": `# Agent commerce discovery: A2A, AP2, and ACP
 
@@ -625,6 +667,12 @@ The profile links to turva.dev, and turva.dev links back to the profile with a r
 Identity is infrastructure. If it lives on a domain you own, you can change servers, change hosts, or self-host later without changing your address or losing your followers. Renting the frontier is fine. Renting your name is not.
 
 Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). For an agent-readiness audit, contact info@turva.dev.
+
+## Related
+
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [How agents authenticate](/guides/agent-authentication)
+- [What agents.json is](/guides/agents-json)
 `,
   "/": `# Audits and advisory for products that AI agents read and act on
 
