@@ -498,11 +498,11 @@ A scanner is built around a fixed set of checks and a fixed weighting between th
 
 ## Where two scanners disagree
 
-turva.dev is scored on two independent scanners with different category models, isitagentready.com and startuphub.ai. isitagentready.com carries no Quality category and marks Commerce as optional. startuphub.ai grades six categories, Discoverability, Content, Access Control, Capabilities, Commerce, and Quality, so both of the categories the first scanner treats as thin get a full reading in the second. Running a site through both at once means a gap sitting in one model's blind spot still shows up in the other's report, before a buyer or an agent finds it the hard way.
+turva.dev is scored on two independent scanners with different category models, isitagentready.com and startuphub.ai. isitagentready.com carries no Quality category and marks Commerce as optional. startuphub.ai grades six categories, Discoverability, Content, Access Control, Capabilities, Commerce and Quality, so both of the categories the first scanner treats as thin get a full reading in the second. Running a site through both at once means a gap sitting in one model's blind spot still shows up in the other's report, before a buyer or an agent finds it the hard way.
 
 ## What this changes about an audit
 
-Every audit here checks a site against both scanners, and a claim about the result carries the date it was verified and the categories the report named. A score nobody re-ran after a change is a guess wearing a number. Two readings pointed at the same site is the cheapest way I know to stop fooling yourself about what "done" means, and it is the same discipline that runs on turva.dev itself before any change ships.
+Every audit here checks a site against both scanners, and a claim about the result carries the date it was verified and the categories the report named. A score nobody re-ran after a change is a guess wearing a number. Two readings of the same site are the cheapest way I know to stop fooling yourself about what "done" means, and it is the same discipline that runs on turva.dev itself before any change ships.
 
 For an agent-readiness audit that checks a site against more than one scanner, contact info@turva.dev.
 
