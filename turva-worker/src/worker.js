@@ -46,7 +46,7 @@ max_age: 604800
 
 var CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-OTSccT1vgUc79X3yf/k04xiZGjg9tx3XWE9u4rcm6ks='",
+  "script-src 'self' 'sha256-vtqXC7bOXcKVw+5MhYlFWojHT8plqU4b9yPyBtAMmPM='",
   "style-src 'self' 'unsafe-inline' https: data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
@@ -605,7 +605,7 @@ For an agent-readiness audit that reports measured results, contact info@turva.d
 `,
   "/guides/agent-commerce-discovery": `# Agent commerce discovery: A2A, AP2, and ACP
 
-Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Three machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration inside it, and an ACP discovery document. Each answers a different question, and an agent reads them before it sends a single commerce request.
+Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Three machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration, and an ACP discovery document. Each answers a different question, and an agent reads them before it sends a single commerce request.
 
 ## The A2A Agent Card
 
@@ -615,13 +615,15 @@ The card is most useful when its skills mirror surfaces an agent can already rea
 
 ## AP2 and the version that matters
 
-AP2 is the Agent Payments Protocol. A merchant declares support not as a separate file but as an extension entry inside the A2A Agent Card. The entry carries the extension URI, a role such as merchant, and a flag marking it required.
+AP2 is the Agent Payments Protocol. Under the v0.1 specification, which is what deployed sites and scanners still validate against, a merchant declares support not as a separate file but as an extension entry inside the A2A Agent Card. The entry carries the extension URI, a role such as merchant, and a flag marking it required.
 
-The detail that trips people up is the URI. Some helper guides write it as github.com/google-agentic-commerce/AP2/tree/v0.1.0, with an uppercase name and a three-part version. The specification uses github.com/google-agentic-commerce/ap2/tree/v0.1, lowercase, version v0.1. A scanner that validates against the specification rejects the uppercase form even when everything else is correct. Copy the URI from the spec, not from a fix message.
+The detail that trips people up is the URI. Some helper guides write it as github.com/google-agentic-commerce/AP2/tree/v0.1.0, with an uppercase name and a three-part version. The v0.1 specification uses github.com/google-agentic-commerce/ap2/tree/v0.1, lowercase, version v0.1. A scanner that validates against that specification rejects the uppercase form even when everything else is correct. Copy the URI from the spec, not from a fix message.
+
+Note that the current AP2 specification, v0.2 from April 2026, restructures the protocol around checkout and payment mandates and drops the Agent Card extension entirely. The deployed discovery convention and the scanners still follow v0.1, so publish the v0.1 declaration for discoverability today and expect this surface to change as v0.2 adoption arrives.
 
 ## ACP discovery and checkout
 
-ACP is the Agentic Commerce Protocol, and it has two parts that are easy to confuse. The first is a discovery document at /.well-known/acp.json. The second is the checkout API the document points to.
+ACP is the Agentic Commerce Protocol, and it has two parts that are easy to confuse. The first is a discovery document at /.well-known/acp.json, which is still a proposal-stage RFC in the ACP repository rather than part of the released spec snapshots. The second is the checkout API the document points to.
 
 The discovery document is small and strict. It states the protocol name acp and a version, the api_base_url, a transports array, and a capabilities.services array. The services value is a closed set of strings such as checkout, not a list of product objects. Sending the wrong type is the most common reason an otherwise complete document fails validation.
 
@@ -676,7 +678,7 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 `,
   "/": `# Audits and advisory for products that AI agents read and act on
 
-Independent, measured audits and advisory for the way AI agents read your site and act on it. Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make.
+Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.
 
 #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 100/100 verified by two independent scanners. Business ID 3600281-7.
 
@@ -976,7 +978,7 @@ No calls and no calendar links at any stage of the engagement.
 A useful first message includes:
 - The site or API to be audited (URL)
 - Any current scanner results, if you have run them
-- The scope you have in mind (audit, advisory, implementation)
+- The scope you have in mind (audit, advisory, implementation, agent operations, MCP server design)
 
 If you do not have scanner results yet, that is fine. The audit
 starts with running them.
@@ -1233,11 +1235,11 @@ turva.dev publishes llms.txt and llms-full.txt and serves markdown on request. F
 
   "/guides/mcp-server-card": `# MCP server cards explained
 
-An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. It usually lives at /.well-known/mcp/server-card.json. An agent reads the card, sees which tools the server exposes, and can then call them without a human wiring up the connection first.
+An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. It usually lives at /.well-known/mcp/server-card.json, though the path is not yet standardized. The active standards draft, SEP-2127, proposes /.well-known/mcp-server-card instead, so the convention may still move. An agent reads the card, finds the endpoint, and can then connect without a human wiring up the connection first.
 
 The Model Context Protocol is a standard way for agents to use external tools and data. A server implements the protocol and exposes a set of tools, and the card is how that server announces itself. Without a card, an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live.
 
-A useful card states the server name, the endpoint, and the tools available, in a shape an agent can parse deterministically. turva.dev publishes a server card that points to a read-only MCP server, which exposes the same agent-readiness data that the site shows to people. That means an agent can query the data directly rather than scraping a page.
+A useful card states the server name, the endpoint, and the transport, in a shape an agent can parse deterministically. Many published cards, including turva.dev's, also list the tools. The newer draft leaves tool listing to the MCP connection itself, since a live tools/list answer cannot go stale the way a static list can. turva.dev publishes a server card that points to a read-only MCP server, which exposes the same agent-readiness data that the site shows to people. That means an agent can query the data directly rather than scraping a page.
 
 A server card sits in the same family as other well-known manifests an agent looks for, such as an API catalog, an OpenAPI description, and OAuth discovery. Each one removes a guess. The card answers what tools exist, the API catalog answers what endpoints exist, and OAuth discovery answers how to authenticate. Together they let an agent move from finding a site to operating it.
 
@@ -1260,7 +1262,7 @@ The reason it matters is that most sites expose actions only through a human int
 
 agents.json sits beside the other declarations an agent looks for. An MCP server card lists tools, an API catalog lists endpoints, and OAuth discovery describes how to authenticate. Each one removes a guess, and together they let an agent act on a user's behalf safely.
 
-A site does not need agents.json to be readable, but it needs something like it to be operable. If the goal is for agents to complete tasks rather than just summarise the page, declaring the action surface is the step that makes that possible.
+A site does not need agents.json to be readable, but it needs something like it to be operable. The specification itself has stayed at version 0.1.0 since early 2025 and the ecosystem's momentum has moved to MCP and newer discovery surfaces, so treat agents.json as one declaration pattern rather than a settled standard. If the goal is for agents to complete tasks rather than just summarise the page, declaring the action surface is the step that makes that possible.
 
 For an audit of a site's capability and action surface, contact info@turva.dev.
 
@@ -1279,7 +1281,7 @@ When an agent requests a paid resource, the server responds with 402 and a manif
 
 This matters because agent commerce is held back by payment, not by capability. An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A declared payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search.
 
-x402 belongs to a small family of agent payment standards, alongside agent payments discovery such as AP2. A site that publishes these signals tells agents that it is open for automated business, and in the case of the open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
+x402 belongs to a small family of agent payment standards, alongside authorization layers such as AP2. A site that publishes these signals tells agents that it is open for automated business, and in the case of the open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
 
 turva.dev publishes an x402 endpoint and manifest and participates in the x402-mesh peer pricelist. For an audit of a site's commerce surface for agents, contact info@turva.dev.
 
@@ -1350,7 +1352,7 @@ turva.dev declares JSON-LD for its organisation, the people behind it, its servi
 
 The /.well-known directory is a standard place at the root of a site where agents look for machine-readable descriptions of what the site offers. Instead of crawling pages and guessing, an agent fetches a predictable path and reads a manifest that points it to everything else.
 
-The idea comes from a long-standing web convention and now carries the files agents care about. An API catalog at a well-known path, defined by RFC 9727, lets an agent enumerate a site's public APIs from a single URL. A server card describes an MCP server and its tools. OAuth metadata describes how to authenticate. Payment and agent-payment manifests describe how to transact. security.txt says where to report a problem.
+The idea comes from a long-standing web convention and now carries the files agents care about. An API catalog at a well-known path, defined by RFC 9727, lets an agent enumerate a site's public APIs from a single URL. A server card describes an MCP server and how to reach it. OAuth metadata describes how to authenticate. Payment and agent-payment manifests describe how to transact. security.txt says where to report a problem.
 
 The value is that discovery becomes a lookup rather than a search. An agent that knows the convention can ask one predictable question and get a map, which is faster and far more reliable than inferring structure from rendered HTML. A site that publishes a complete well-known surface is announcing its capabilities in the language agents already speak.
 
@@ -1367,7 +1369,7 @@ turva.dev publishes an API catalog, a server card, OAuth metadata, payment manif
 
   "/guides/agentic-resource-discovery": `# Agentic Resource Discovery and ai-catalog.json
 
-Agentic Resource Discovery, or ARD, is an open specification for telling AI agents what a site offers, in one machine-readable file. Instead of inferring from pages whether a site has an MCP server, an agent interface, or an API, the site publishes a single index that names each resource and where to reach it. The specification appeared in 2026, is licensed under Apache 2.0, and is maintained by a working group under the Linux Foundation.
+Agentic Resource Discovery, or ARD, is an open specification for telling AI agents what a site offers, in one machine-readable file. Instead of inferring from pages whether a site has an MCP server, an agent interface, or an API, the site publishes a single index that names each resource and where to reach it. The specification appeared in 2026, is licensed under Apache 2.0, and builds on the AI Catalog data model maintained by a working group under the Linux Foundation.
 
 ## What it is
 
@@ -1594,7 +1596,7 @@ An agent needs three things in machine-readable form. It needs to find the offer
 
 ## The protocols in play
 
-Checkout is becoming a protocol rather than a page. Stripe and OpenAI shipped Instant Checkout inside ChatGPT in 2025. Google and Shopify introduced a universal commerce protocol in early 2026. The discovery layer is settling on a small set of standards. An A2A Agent Card describes the interface, AP2 declares agent payments inside it, ACP carries the checkout, and x402 lets an agent meet a price with HTTP 402 and continue. A site does not need all of them, but it needs the ones its buyers' agents speak, declared where an agent looks.
+Checkout is becoming a protocol rather than a page. Stripe and OpenAI shipped Instant Checkout inside ChatGPT in 2025. Google and Shopify introduced a universal commerce protocol in early 2026. The discovery layer is settling on a small set of standards. An A2A Agent Card describes the interface, AP2 authorizes agent payments, ACP carries the checkout, and x402 lets an agent meet a price with HTTP 402 and continue. A site does not need all of them, but it needs the ones its buyers' agents speak, declared where an agent looks.
 
 ## Where sites fail the agent
 
@@ -1958,7 +1960,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"fRB60T0dEn2-bj661sjPLzaVFoUWjRCZT92O_6M3HSqmUdQeS1Ml51yiB6WJyvarIWQGh3JLe6vW_s_xlAD2Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pOvgoL8c2U_5YEnd1vqleee8HrnBymEuXDhCzckXKrTNJ3yV7fvD9Q-NPqa-alBNh-Gvw8_-ubdM6rdvd1p7Dw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"gIGOZ_wo4nqs0MNAoqK47JPd3WNkwVnn4MLvlR_xDw_z7GAqcts8prLvezVzZsevUel_6qmvBunuWMnX3P79Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pOvgoL8c2U_5YEnd1vqleee8HrnBymEuXDhCzckXKrTNJ3yV7fvD9Q-NPqa-alBNh-Gvw8_-ubdM6rdvd1p7Dw\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -1966,7 +1968,7 @@ var MCP_SERVER_CARD = JSON.stringify({
     "name": "turva-mcp",
     "title": "turva.dev",
     "version": "1.2.0",
-    "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation) with prices, own-domain agent-readiness scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
+    "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
     "type": "streamable-http",
@@ -2144,7 +2146,7 @@ var A2A_AGENT_CARD = JSON.stringify({
     {
       "id": "services",
       "name": "Service catalog",
-      "description": "List the service offerings of turva.dev with prices in EUR (audit, advisory, implementation).",
+      "description": "List the service offerings of turva.dev (audit, advisory, implementation, agent operations, MCP server design). Fixed prices in EUR for audit, advisory and implementation.",
       "tags": [
         "services",
         "pricing",
@@ -2617,7 +2619,7 @@ var WEBMCP_SCRIPT = `<script>
  },
  {
  name: 'get_services',
- description: 'Return the services offered by turva.dev (audit, advisory, implementation) with prices in EUR.',
+ description: 'Return the services offered by turva.dev (audit, advisory, implementation, agent operations, MCP server design). Fixed prices in EUR for audit, advisory and implementation.',
  inputSchema: { type: 'object', properties: {} },
  execute: async function() {
  const r = await fetch('/services', { headers: { Accept: 'text/markdown' } });
@@ -3847,7 +3849,7 @@ ${FOOTER_CSS}
   <section class="hero">
     <p class="eyebrow">where data moves and decisions matter · independently verified</p>
     <h1>Audits and advisory for products that AI agents read and act on</h1>
-    <p class="lede">Independent, measured audits and advisory for the way AI agents read your site and act on it. Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make.</p>
+    <p class="lede">Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.</p>
     <div class="hero-row">
       <div class="hero-left">
         <ul class="badges">
@@ -4360,7 +4362,7 @@ ${cardPageNav("/contact")}
     <ul>
       <li>The site or API to be audited (URL)</li>
       <li>Any current scanner results, if you have run them</li>
-      <li>The scope you have in mind (audit, advisory, implementation)</li>
+      <li>The scope you have in mind (audit, advisory, implementation, agent operations, MCP server design)</li>
     </ul>
     <p class="note">If you do not have scanner results yet, that is fine. The audit starts with running them.</p>
   </div>
