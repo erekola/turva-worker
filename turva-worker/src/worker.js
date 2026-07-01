@@ -735,7 +735,6 @@ The result is checkable, not asserted. For agent-readiness that is the scanner n
 - Implementation. On request. Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.
 - Agent operations. On request. The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
 - MCP server design. On request. Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.
-- Internal workshops. On request, async-first. Recorded session or written guide. Topics include how scanners read your site, what x402 and AP2 actually require in practice, and how to keep agent-readiness intact after the audit period ends.
 
 ## Who I am
 
@@ -788,7 +787,7 @@ Written contact only. Email for longer messages, Signal for short questions. The
 
   "/services": `# Services
 
-Four offerings. Async-only. One business day response.
+Five offerings. Async-only. One business day response.
 
 ## Audit
 
@@ -865,6 +864,20 @@ Typical work:
 Scope and price vary with the system.
 
 Suited for teams letting agents act on data and decisions that matter, not only read a marketing site.
+
+## MCP server design
+
+**Price on request. Scoped per engagement.**
+
+An MCP server built for your product, exposing read-only data to agents over streamable HTTP transport. No auth surface and no logging by default.
+
+Typical work:
+- Read-only discovery tools over your product data
+- Streamable HTTP transport with no auth surface and no logging by default
+- An MCP server card at /.well-known/mcp/server-card.json so agents can discover the server
+- Registry publication so the server is findable in MCP directories
+
+Suited for teams that want agents to read product data through a supported interface rather than scraping HTML.
 
 ## How to start
 
@@ -1852,7 +1865,7 @@ var OPENAPI_SPEC = JSON.stringify({
           "x402": {
             "network": "base",
             "asset": "USDC",
-            "amount": "6500000000",
+            "amount": "7413000000",
             "scheme": "exact"
           }
         },
@@ -1874,7 +1887,7 @@ var OPENAPI_SPEC = JSON.stringify({
           "x402": {
             "network": "base",
             "asset": "USDC",
-            "amount": "3000000000",
+            "amount": "3421000000",
             "scheme": "exact"
           }
         },
@@ -1895,7 +1908,7 @@ var OPENAPI_SPEC = JSON.stringify({
           "x402": {
             "network": "base",
             "asset": "USDC",
-            "amount": "1500000000",
+            "amount": "1711000000",
             "scheme": "exact"
           }
         },
@@ -1945,14 +1958,14 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8uWY2VQdhCIOVPkDp-7KHJMNp5iQ3itOtv4IpRKOhCA22GbueAPIybbatBnGuYmc0Eeyn_9wZvpKjLH44OZGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pOvgoL8c2U_5YEnd1vqleee8HrnBymEuXDhCzckXKrTNJ3yV7fvD9Q-NPqa-alBNh-Gvw8_-ubdM6rdvd1p7Dw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"fRB60T0dEn2-bj661sjPLzaVFoUWjRCZT92O_6M3HSqmUdQeS1Ml51yiB6WJyvarIWQGh3JLe6vW_s_xlAD2Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pOvgoL8c2U_5YEnd1vqleee8HrnBymEuXDhCzckXKrTNJ3yV7fvD9Q-NPqa-alBNh-Gvw8_-ubdM6rdvd1p7Dw\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation) with prices, own-domain agent-readiness scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -1965,7 +1978,7 @@ var MCP_SERVER_CARD = JSON.stringify({
     "prompts": { "listChanged": false }
   },
   "tools": [
-    { "name": "get_services", "description": "Service catalog (audit, advisory, implementation, MCP server design, workshops), the engagement model, and pricing." },
+    { "name": "get_services", "description": "Service catalog (audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
     { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness scores from independent public scanners (startuphub.ai, isitagentready.com), with per-scanner sub-scores, leaderboard rank, measurement date, and verification links." },
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl), with the scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." }
@@ -2229,9 +2242,9 @@ var X402_MANIFEST = JSON.stringify({
     {
       "scheme": "exact",
       "network": "base",
-      "maxAmountRequired": "6500000000",
+      "maxAmountRequired": "7413000000",
       "resource": "https://turva.dev/api/agent/audit",
-      "description": "Agent-readiness audit (€6,500 / 6500 USDC)",
+      "description": "Agent-readiness audit (€6,500 / 7413 USDC)",
       "mimeType": "application/json",
       "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
@@ -2241,9 +2254,9 @@ var X402_MANIFEST = JSON.stringify({
     {
       "scheme": "exact",
       "network": "base",
-      "maxAmountRequired": "3000000000",
+      "maxAmountRequired": "3421000000",
       "resource": "https://turva.dev/api/agent/advisory",
-      "description": "Monthly advisory (€3,000 / 3000 USDC)",
+      "description": "Monthly advisory (€3,000 / 3421 USDC)",
       "mimeType": "application/json",
       "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
@@ -2253,9 +2266,9 @@ var X402_MANIFEST = JSON.stringify({
     {
       "scheme": "exact",
       "network": "base",
-      "maxAmountRequired": "1500000000",
+      "maxAmountRequired": "1711000000",
       "resource": "https://turva.dev/api/agent/implementation",
-      "description": "Implementation day (€1,500 / 1500 USDC)",
+      "description": "Implementation day (€1,500 / 1711 USDC)",
       "mimeType": "application/json",
       "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
@@ -2359,9 +2372,9 @@ var X402_MESH = JSON.stringify({
   "endpoint": "https://turva.dev/x402",
   "discovery": "https://turva.dev/.well-known/x402",
   "peer_pricelist": [
-    { "resource": "https://turva.dev/api/agent/audit",          "network": "base", "asset": "USDC", "amount": "6500000000" },
-    { "resource": "https://turva.dev/api/agent/advisory",       "network": "base", "asset": "USDC", "amount": "3000000000" },
-    { "resource": "https://turva.dev/api/agent/implementation", "network": "base", "asset": "USDC", "amount": "1500000000" }
+    { "resource": "https://turva.dev/api/agent/audit",          "network": "base", "asset": "USDC", "amount": "7413000000" },
+    { "resource": "https://turva.dev/api/agent/advisory",       "network": "base", "asset": "USDC", "amount": "3421000000" },
+    { "resource": "https://turva.dev/api/agent/implementation", "network": "base", "asset": "USDC", "amount": "1711000000" }
   ]
 }, null, 2);
 
@@ -2827,7 +2840,7 @@ var META_BY_PATH = {
   },
   "/services": {
     title: "Services · turva.dev",
-    description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day, plus bespoke agent operations on request. Agent-readiness and the wider work for product teams. Async-only.",
+    description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day, plus agent operations and MCP server design on request. Agent-readiness and the wider work for product teams. Async-only.",
     imageAlt: "turva.dev services and pricing"
   },
   "/company": {
@@ -3952,7 +3965,6 @@ ${FOOTER_CSS}
       <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">Implementation</span><p>Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.</p></div>
       <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">Agent operations</span><p>The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.</p></div>
       <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">MCP server design</span><p>Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.</p></div>
-      <div class="svc"><span class="svc-tag">async-first</span><span class="svc-t">Internal workshops</span><p>Recorded session or written guide. Topics include how scanners read your site, what x402 and AP2 actually require in practice, and how to keep agent-readiness intact after the audit period ends.</p></div>
     </div>
   </section>
 
@@ -4073,7 +4085,7 @@ ${FOOTER_CSS}
 </nav>
 <main id="main">
   <h1>Services</h1>
-  <p class="intro">Four offerings. Async-only. One business day response.</p>
+  <p class="intro">Five offerings. Async-only. One business day response.</p>
 
   <div class="pcard">
     <div class="pcard-head"><span class="pcard-t">Audit</span><span class="pcard-price">&#8364;6,500</span><span class="pcard-meta">Two to three weeks &middot; Fixed scope</span></div>
@@ -4135,6 +4147,19 @@ ${FOOTER_CSS}
     </ul>
     <p>Scope and price vary with the system.</p>
     <p class="suited">Suited for teams letting agents act on data and decisions that matter, not only read a marketing site.</p>
+  </div>
+
+  <div class="pcard">
+    <div class="pcard-head"><span class="pcard-t">MCP server design</span><span class="pcard-price">Price on request</span><span class="pcard-meta">Scoped per engagement</span></div>
+    <p>An MCP server built for your product, exposing read-only data to agents over streamable HTTP transport. No auth surface and no logging by default.</p>
+    <p class="lbl">Typical work</p>
+    <ul class="get">
+      <li>Read-only discovery tools over your product data</li>
+      <li>Streamable HTTP transport with no auth surface and no logging by default</li>
+      <li>An MCP server card at /.well-known/mcp/server-card.json so agents can discover the server</li>
+      <li>Registry publication so the server is findable in MCP directories</li>
+    </ul>
+    <p class="suited">Suited for teams that want agents to read product data through a supported interface rather than scraping HTML.</p>
   </div>
 
   <div class="start">
@@ -4490,19 +4515,19 @@ var X402_ROUTES = {
   "/api/agent/audit": {
     label: "Audit",
     description: "Turva.dev: Agent-readiness audit (fixed scope, 2-3 weeks)",
-    amountUsdcMicro: "6500000000",
+    amountUsdcMicro: "7413000000",
     amountEurCents: 650000
   },
   "/api/agent/advisory": {
     label: "Advisory",
     description: "Turva.dev: Continuous advisory (monthly, min 3 months)",
-    amountUsdcMicro: "3000000000",
+    amountUsdcMicro: "3421000000",
     amountEurCents: 300000
   },
   "/api/agent/implementation": {
     label: "Implementation",
     description: "Turva.dev: Implementation day (scoped per task)",
-    amountUsdcMicro: "1500000000",
+    amountUsdcMicro: "1711000000",
     amountEurCents: 150000
   }
 };
