@@ -16,7 +16,7 @@ What you buy is expertise and implementation, not access to a tool. The scoring 
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-07-01. Two independent public scanners, listed once each.
+Measured on `https://turva.dev` on 2026-07-02. Two independent public scanners, listed once each.
 
 | Scanner | Result |
 |---|---|
