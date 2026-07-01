@@ -472,6 +472,12 @@ turva.dev is scored on two independent scanners with different category models, 
 Every audit here checks a site against both scanners, and a claim about the result carries the date it was verified and the categories the report named. A score nobody re-ran after a change is a guess wearing a number. Two readings pointed at the same site is the cheapest way I know to stop fooling yourself about what "done" means, and it is the same discipline that runs on turva.dev itself before any change ships.
 
 For an agent-readiness audit that checks a site against more than one scanner, contact info@turva.dev.
+
+## Related
+
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+- [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
 `,
   "/blog/publishing-an-ai-catalog": `# Publishing an ai-catalog.json for agentic discovery
 
