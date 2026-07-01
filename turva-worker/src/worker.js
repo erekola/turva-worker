@@ -4207,7 +4207,10 @@ main>p{color:#C9D1CE;margin:0 0 1.3rem;}
 .post{display:block;border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.05rem 1.35rem;margin:0 0 .75rem;text-decoration:none;transition:border-color .15s ease;}
 .post:hover{border-color:rgba(93,241,143,0.4);}
 .post .pt{display:block;color:#5DF18F;font-weight:700;font-size:1.1rem;letter-spacing:-0.01em;margin:0 0 .28rem;}
-.post .pd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}`;
+.post .pd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}
+.feed{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;margin:-1.2rem 0 1.6rem;}
+.feed a{color:#9AA3A0;}
+.feed a:hover{color:#5DF18F;text-decoration:none;}`;
 
 function cardPageHead(metaBlock, jsonLd, canonicalUrl) {
   return `<!doctype html>
@@ -4466,6 +4469,7 @@ ${cardPageNav("/blog")}
 <main id="main">
   <h1>Blog</h1>
   <p class="intro">Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.</p>
+  <p class="feed"><a href="/blog/feed.xml">RSS feed</a></p>
   <a class="post" href="/blog/two-scanner-audit-method"><span class="pt">What one agent-readiness scanner cannot tell you</span><span class="pd">2026-07-01</span></a>
   <a class="post" href="/blog/publishing-an-ai-catalog"><span class="pt">Publishing an ai-catalog.json for agentic discovery</span><span class="pd">2026-06-29</span></a>
   <a class="post" href="/blog/open-knowledge-format"><span class="pt">What the Open Knowledge Format is, and what it is not</span><span class="pd">2026-06-27</span></a>
