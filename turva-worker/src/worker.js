@@ -37,6 +37,15 @@ var LEGACY_REDIRECTS = {
   "/legal/": "/legal"
 };
 
+var GITHUB_OWNERSHIP_TXT = `GitHub ownership statement
+
+The GitHub account busygoat (user id 257120381) is the official GitHub account of turva.dev, operated by Erik Rekola, Business ID 3600281-7, registered in Finland.
+
+This file is served from the turva.dev origin, which only the domain owner controls. Business registration is publicly verifiable at https://tietopalvelu.ytj.fi/yritys/3600281-7.
+
+Reference: GitHub Support ticket 4493199. Published 2026-07-02.
+`;
+
 var MTA_STS_POLICY = `version: STSv1
 mode: enforce
 mx: mx1.alias.proton.me
@@ -4843,6 +4852,7 @@ async function handleRequest(request, env) {
   if (pathname === "/" + INDEXNOW_KEY + ".txt") {
     return serveStatic(INDEXNOW_KEY, "text/plain; charset=utf-8", "agent-api");
   }
+  if (pathLower === "/busygoat.txt") return serveStatic(GITHUB_OWNERSHIP_TXT, "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/robots.txt") return serveStatic(ROBOTS_TXT, "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/.well-known/api-catalog" || pathLower === "/api-catalog") {
     return serveStatic(API_CATALOG, "application/linkset+json; charset=utf-8", "agent-api");
