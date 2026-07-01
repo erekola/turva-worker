@@ -4027,7 +4027,8 @@ a:hover{text-decoration:underline;}
 .turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
 .turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
 @media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
-.scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.4rem 1.5rem 1.2rem;margin:0 0 1rem;}
+.scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.4rem 1.5rem 1.2rem;margin:0 0 1rem;transition:border-color .15s ease;}
+.scard:hover{border-color:rgba(93,241,143,0.35);}
 .scard h2{color:#5DF18F;font-size:1.2rem;font-weight:700;letter-spacing:-0.01em;margin:0 0 .85rem;}
 .scard p{color:#C9D1CE;margin:0 0 .85rem;font-size:.97rem;}
 .scard p:last-child{margin-bottom:0;}
