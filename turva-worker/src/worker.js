@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.12.0 - blog RSS feed (/blog/feed.xml) and UI polish (nav section highlight, skip link, print styles)
+// turva.dev worker v3.13.0 - llms.txt validator (/llms-txt-validator), agent-ready badge (/badge), per-page OG cards, homepage agent-view demo
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -197,6 +197,8 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog)
+- [Agent access is now a setting](https://turva.dev/blog/agent-access-is-now-a-setting)
+- [What one agent-readiness scanner cannot tell you](https://turva.dev/blog/two-scanner-audit-method)
 - [Publishing an ai-catalog.json for agentic discovery](https://turva.dev/blog/publishing-an-ai-catalog)
 - [What the Open Knowledge Format is, and what it is not](https://turva.dev/blog/open-knowledge-format)
 - [What an agent pays to read your site](https://turva.dev/blog/cheaper-pages-for-agents)
@@ -205,6 +207,10 @@ var LLMS_TXT = `# turva.dev
 - [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity)
 - [Passing the agent commerce checks without faking them](https://turva.dev/blog/honest-agent-commerce-checks)
 - [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender)
+
+## Tools
+- [llms.txt validator](https://turva.dev/llms-txt-validator)
+- [The agent-ready badge](https://turva.dev/badge)
 
 ## Pricing (EUR, VAT not included)
 - Audit: €6,500 (fixed scope, 2-3 weeks)
@@ -328,6 +334,73 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/llms-txt-validator": `# llms.txt validator
+
+Enter a domain and this page fetches its /llms.txt and checks the
+structure against the format: one H1 title, an optional blockquote
+summary, H2 sections with link lists. Free, no signup, nothing stored.
+
+## How to use it
+
+- In a browser: open https://turva.dev/llms-txt-validator and enter a domain
+- As an agent: GET https://turva.dev/llms-txt-validator?url=example.com with Accept: application/json
+
+## What it checks
+
+- The file exists at /llms.txt and returns HTTP 200
+- The response is plain text, not an HTML error page
+- The file starts with a single H1 title
+- A blockquote summary follows the title (recommended by the format)
+- H2 sections group the content
+- Markdown links parse and use absolute URLs
+- The file stays small enough to be cheap for an agent to read
+
+## What it does not do
+
+This is a structure check against the llms.txt format, not an
+agent-readiness score. A full audit measures discovery, content,
+access control and more: https://turva.dev/services
+
+## Related
+
+- [llms.txt explained](/guides/llms-txt)
+- [Serving markdown to agents](/guides/markdown-for-agents)
+`,
+
+  "/badge": `# The agent-ready badge
+
+A small SVG badge a site can embed to show it meets public
+agent-readiness criteria, linking back to this page. The badge is
+served from turva.dev, the criteria are listed below, and anyone can
+re-check the claim by running the same public scanners.
+
+## Who may display it
+
+- Sites that have completed a turva.dev agent-readiness audit
+- Sites that score 100/100 on a public agent-readiness scanner (startuphub.ai or isitagentready.com)
+
+## What it is, and what it is not
+
+The badge is a self-declared claim against public criteria, not a
+certification. turva.dev does not police its use. The value of the
+badge is that the claim is checkable: either scanner can be run
+against the displaying site by anyone, at any time.
+
+## How to embed it
+
+Copy this HTML where you want the badge to appear:
+
+    <a href="https://turva.dev/badge"><img src="https://turva.dev/badge.svg" alt="agent-ready, criteria at turva.dev/badge" width="216" height="36" loading="lazy"></a>
+
+The image is 216 by 36 pixels, dark background, under one kilobyte.
+
+## If your site is not there yet
+
+An audit measures where you stand and lists what to fix first.
+Services and prices are at https://turva.dev/services. Email
+<mailto:info@turva.dev> and you get a reply within one business day.
+`,
+
   "/blog": `# Blog
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
@@ -798,6 +871,12 @@ Written contact only. Email for longer messages, Signal for short questions. The
 - Signal: @turva.19
 - LinkedIn: https://www.linkedin.com/in/erikrekola/
 
+## Markdown views
+
+You are reading the markdown view of this page, served with Accept:
+text/markdown content negotiation. Every page on this site has one,
+at the same URL, at a fraction of the token cost of the HTML.
+
 ## More
 - [Services](https://turva.dev/services)
 - [Company](https://turva.dev/company)
@@ -926,6 +1005,12 @@ Typical work:
 - Registry publication so the server is findable in MCP directories
 
 Suited for teams that want agents to read product data through a supported interface rather than scraping HTML.
+
+## The agent-ready badge
+
+Sites that complete an audit, or score 100/100 on a public
+agent-readiness scanner, may display the agent-ready badge.
+Criteria and embed code: https://turva.dev/badge
 
 ## How to start
 
@@ -1269,6 +1354,8 @@ The reason it matters is cost and clarity. A normal HTML page carries navigation
 llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt. A sitemap lists every URL for crawlers. robots.txt sets crawl rules. llms.txt is a curated, human-written map of what matters, aimed at models. The three work together.
 
 Whether a site needs one depends on whether it wants to be legible to agents. If buyers, researchers, or assistants will ever ask a model about what the site does, a clear llms.txt raises the odds that the model reads the real content rather than guessing from a cached snippet.
+
+Check any site's llms.txt structure with the free validator at https://turva.dev/llms-txt-validator.
 
 turva.dev publishes llms.txt and llms-full.txt and serves markdown on request. For an audit of how legible a site is to agents, contact info@turva.dev.
 
@@ -1893,7 +1980,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.12.0",
+    "version": "3.13.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2006,7 +2093,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"gIGOZ_wo4nqs0MNAoqK47JPd3WNkwVnn4MLvlR_xDw_z7GAqcts8prLvezVzZsevUel_6qmvBunuWMnX3P79Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pOvgoL8c2U_5YEnd1vqleee8HrnBymEuXDhCzckXKrTNJ3yV7fvD9Q-NPqa-alBNh-Gvw8_-ubdM6rdvd1p7Dw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YAxS8xV_WjZjvCZIzCL97M-lgOEQNOKUuZ0puIknxRbxQw6HnjdtTKHiXRj3AXZ98tWugfq6y9EWpwQBhGeDCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"gIGOZ_wo4nqs0MNAoqK47JPd3WNkwVnn4MLvlR_xDw_z7GAqcts8prLvezVzZsevUel_6qmvBunuWMnX3P79Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"PNgCFnHgaL0fNChcfRZcreUR8hyGcaDonJDgGGmabT4iaHMonf_6SZmXKoBg7W3e5AI5mV3UHkMMtxTVOjhNCA\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -2144,7 +2231,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.12.0",
+  "version": "3.13.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -2686,7 +2773,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-06-24";
+var SITEMAP_LASTMOD = "2026-07-02";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -2730,6 +2817,8 @@ var SITEMAP_ENTRIES = [
   ["/blog/owning-your-fediverse-identity", "monthly", "0.6"],
   ["/blog/reliable-agent-decisions", "monthly", "0.6"],
   ["/blog/verifiable-agent-identity", "monthly", "0.6"],
+  ["/badge", "monthly", "0.5"],
+  ["/llms-txt-validator", "monthly", "0.6"],
 ];
 function buildSitemapXml() {
   const rows = SITEMAP_ENTRIES.map(function(e) {
@@ -2795,7 +2884,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -2805,66 +2894,89 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/llms-txt-validator": {
+    title: "llms.txt validator | turva.dev",
+    description: "Free llms.txt validator. Fetches a site's /llms.txt and checks the structure against the format: H1 title, blockquote summary, H2 link sections. No signup, JSON output for agents.",
+    image: "/og-llms-txt-validator.jpg",
+    imageAlt: "llms.txt validator"
+  },
+  "/badge": {
+    title: "The agent-ready badge | turva.dev",
+    description: "An embeddable SVG badge for sites that meet public agent-readiness criteria: a turva.dev audit or a 100/100 score on a public scanner. Criteria, terms and embed code.",
+    image: "/og-badge.jpg",
+    imageAlt: "The agent-ready badge"
+  },
   "/blog": {
     title: "Blog | turva.dev",
     description: "Notes on AI agents, and the work of letting them read a site and act on a system safely. Dated entries, with anything measurable checked against independent scanners.",
+    image: "/og-blog.jpg",
     imageAlt: "turva.dev blog"
   },
   "/blog/cheaper-pages-for-agents": {
     title: "What an agent pays to read your site | turva.dev",
     description: "An agent pays to read your site in tokens, and an HTML-only page is expensive. How markdown content negotiation cuts that cost and makes your pages more reliable for agents.",
     date: "2026-06-26",
+    image: "/og-cheaper-pages-for-agents.jpg",
     imageAlt: "What an agent pays to read your site"
   },
   "/blog/verifiable-agent-identity": {
     title: "When an agent can prove it is Claude | turva.dev",
     description: "Web Bot Auth gives an AI agent a verifiable, signed identity a site can check. What the tag is, where Claude stands today, and how agent-readiness uses it.",
     date: "2026-06-25",
+    image: "/og-verifiable-agent-identity.jpg",
     imageAlt: "When an agent can prove it is Claude"
   },
   "/blog/reliable-agent-decisions": {
     title: "What makes an AI agent's decisions reliable | turva.dev",
     description: "What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do. Notes from running agent-readiness audits.",
     date: "2026-06-22",
+    image: "/og-reliable-agent-decisions.jpg",
     imageAlt: "What makes an AI agent's decisions reliable"
   },
   "/blog/moving-off-prerender": {
     title: "Moving turva.dev off prerender.io | turva.dev",
     description: "The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop. Verified 100/100 by independent scanners.",
     date: "2026-06-20",
+    image: "/og-moving-off-prerender.jpg",
     imageAlt: "Moving turva.dev off prerender.io"
   },
   "/blog/honest-agent-commerce-checks": {
     title: "Passing the agent commerce checks without faking them | turva.dev",
     description: "How turva.dev cleared the isitagentready commerce checks (A2A Agent Card, AP2, ACP) honestly, without faking a capability, while holding 100/100 on startuphub.ai.",
     date: "2026-06-21",
+    image: "/og-honest-agent-commerce-checks.jpg",
     imageAlt: "Passing the agent commerce checks without faking them"
   },
   "/guides/agent-commerce-discovery": {
     title: "Agent commerce discovery: A2A, AP2, and ACP | turva.dev",
     description: "A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, the AP2 version trap, and backing a discovery claim with a real endpoint.",
+    image: "/og-guide-agent-commerce-discovery.jpg",
     imageAlt: "Agent commerce discovery: A2A, AP2, and ACP"
   },
   "/blog/owning-your-fediverse-identity": {
     title: "Owning your fediverse identity | turva.dev",
     description: "Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification served from the Cloudflare Worker. Own your identity, do not rent it.",
     date: "2026-06-21",
+    image: "/og-owning-your-fediverse-identity.jpg",
     imageAlt: "Owning your fediverse identity"
   },
   "/guides/agentic-resource-discovery": {
     title: "Agentic Resource Discovery and ai-catalog.json | turva.dev",
     description: "Agentic Resource Discovery (ARD) explained: what an ai-catalog.json is, its envelope and entries, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation.",
+    image: "/og-guide-agentic-resource-discovery.jpg",
     imageAlt: "Agentic Resource Discovery and ai-catalog.json"
   },
   "/guides/open-knowledge-format": {
     title: "Open Knowledge Format (OKF) explained | turva.dev",
     description: "What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context. The bundle structure, structural versus semantic, and where it fits agent-readiness.",
+    image: "/og-guide-open-knowledge-format.jpg",
     imageAlt: "Open Knowledge Format (OKF) explained"
   },
   "/blog/agent-access-is-now-a-setting": {
     title: "Agent access is now a setting | turva.dev",
     description: "Cloudflare's second Content Independence Day moves crawler access, citation payment and x402 rails into CDN configuration. What that changes for agent readiness, with this site's own crawler numbers.",
     date: "2026-07-02",
+    image: "/og-agent-access-is-now-a-setting.jpg",
     imageAlt: "Agent access is now a setting"
   },
   "/blog/two-scanner-audit-method": {
@@ -2896,131 +3008,157 @@ var META_BY_PATH = {
   "/services": {
     title: "Services · turva.dev",
     description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day, plus agent operations and MCP server design on request. Agent-readiness and the wider work for product teams. Async-only.",
+    image: "/og-services.jpg",
     imageAlt: "turva.dev services and pricing"
   },
   "/company": {
     title: "Company · turva.dev",
     description: "turva.dev is operated by Erik Rekola as a Finnish sole proprietorship. Business ID 3600281-7, based in Tampere. Eleven years of engineering experience.",
+    image: "/og-company.jpg",
     imageAlt: "turva.dev company information"
   },
   "/contact": {
     title: "Contact · turva.dev",
     description: "Contact turva.dev via email, Signal or LinkedIn. Async-only engagement. Response within one business day. No calls, no calendar links.",
+    image: "/og-contact.jpg",
     imageAlt: "Contact turva.dev"
   },
   "/legal": {
     title: "Legal · turva.dev",
     description: "Terms of engagement, privacy practices and GDPR information for turva.dev. Finnish law applies. No tracking, no analytics, no third-party scripts.",
+    image: "/og-legal.jpg",
     imageAlt: "Legal and privacy"
   },
   "/guides": {
     title: "Agent-readiness guides | turva.dev",
     description: "Short, focused guides on the surfaces that make a website or API readable and usable by AI agents. Audits, llms.txt, MCP, structured data, payments and more.",
+    image: "/og-guides.jpg",
     imageAlt: "Agent-readiness guides"
   },
   "/guides/agent-readiness-audit": {
     title: "What an agent-readiness audit is | turva.dev",
     description: "An agent-readiness audit measures how well AI agents can discover, read, and act on a website or API, scored against current standards by independent scanners.",
+    image: "/og-guide-agent-readiness-audit.jpg",
     imageAlt: "What an agent-readiness audit is"
   },
   "/guides/llms-txt": {
     title: "llms.txt explained | turva.dev",
     description: "llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives. What it is, why it matters, and how it differs from robots.txt and sitemaps.",
+    image: "/og-guide-llms-txt.jpg",
     imageAlt: "llms.txt explained"
   },
   "/guides/mcp-server-card": {
     title: "MCP server cards explained | turva.dev",
     description: "An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and the tools it exposes. What it is and why it matters.",
+    image: "/og-guide-mcp-server-card.jpg",
     imageAlt: "MCP server cards explained"
   },
   "/guides/agents-json": {
     title: "What agents.json is | turva.dev",
     description: "agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one. What it is and why it matters.",
+    image: "/og-guide-agents-json.jpg",
     imageAlt: "What agents.json is"
   },
   "/guides/x402-agent-payments": {
     title: "x402 and agent payments | turva.dev",
     description: "x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout. How agent payments work and why they matter.",
+    image: "/og-guide-x402-agent-payments.jpg",
     imageAlt: "x402 and agent payments"
   },
   "/guides/response-headers-for-agents": {
     title: "Response headers that help agents | turva.dev",
     description: "The right HTTP response headers let AI agents work without parsing full HTML. Link, Vary, RateLimit and content type headers explained for agent-readiness.",
+    image: "/og-guide-response-headers-for-agents.jpg",
     imageAlt: "Response headers that help agents"
   },
   "/guides/seo-vs-agent-readiness": {
     title: "SEO and agent-readiness are not the same | turva.dev",
     description: "SEO makes a site rank for people to click. Agent-readiness makes a site legible and usable by AI agents. Why ranking on Google does not predict presence in AI answers.",
+    image: "/og-guide-seo-vs-agent-readiness.jpg",
     imageAlt: "SEO and agent-readiness are not the same"
   },
   "/guides/json-ld-structured-data": {
     title: "JSON-LD and structured data for agents | turva.dev",
     description: "JSON-LD states a page's facts as data an AI agent can read without parsing prose. How structured data makes prices, organisations and services legible to agents.",
+    image: "/og-guide-json-ld-structured-data.jpg",
     imageAlt: "JSON-LD and structured data for agents"
   },
   "/guides/well-known-for-agents": {
     title: "The /.well-known directory for agents | turva.dev",
     description: "The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata.",
+    image: "/og-guide-well-known-for-agents.jpg",
     imageAlt: "The /.well-known directory for agents"
   },
   "/guides/agent-authentication": {
     title: "How agents authenticate | turva.dev",
     description: "Agent authentication lets an automated client gain scoped access without a human login. OAuth discovery, protected resources and agent registration explained.",
+    image: "/og-guide-agent-authentication.jpg",
     imageAlt: "How agents authenticate"
   },
   "/guides/measurement-led-agent-readiness": {
     title: "Why agent-readiness should be measured, not asserted | turva.dev",
     description: "A hand-filled checklist records intentions. An independent scanner records what an agent actually finds. Why measured agent-readiness beats self-assessment.",
+    image: "/og-guide-measurement-led-agent-readiness.jpg",
     imageAlt: "Why agent-readiness should be measured, not asserted"
   },
   "/guides/prerendering-for-agents": {
     title: "Prerendering and why agents see empty pages | turva.dev",
     description: "JavaScript-rendered sites return an empty shell to agents, so the content never arrives. Why prerendering and markdown delivery fix the most common agent gap.",
+    image: "/og-guide-prerendering-for-agents.jpg",
     imageAlt: "Prerendering and why agents see empty pages"
   },
   "/guides/sitemaps-and-robots-for-agents": {
     title: "Sitemaps, robots.txt and agent access | turva.dev",
     description: "robots.txt and the sitemap decide whether an agent is allowed in and what it can find. AI bot rules, Content Signals and complete sitemaps explained.",
+    image: "/og-guide-sitemaps-and-robots-for-agents.jpg",
     imageAlt: "Sitemaps, robots.txt and agent access"
   },
   "/guides/markdown-for-agents": {
     title: "Serving markdown to agents | turva.dev",
     description: "Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens. How content negotiation and llms-full.txt work.",
+    image: "/og-guide-markdown-for-agents.jpg",
     imageAlt: "Serving markdown to agents"
   },
   "/guides/agent-readiness-aeo-geo": {
     title: "Agent-readiness, AEO and GEO: how they relate | turva.dev",
     description: "How answer engine optimization (AEO), generative engine optimization (GEO) and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice.",
+    image: "/og-guide-agent-readiness-aeo-geo.jpg",
     imageAlt: "Agent-readiness, AEO and GEO: how they relate"
   },
   "/guides/agentic-commerce-readiness": {
     title: "Agentic commerce readiness: selling to AI shopping agents | turva.dev",
     description: "What an AI shopping agent needs to discover an offer, drive a checkout protocol, and complete a purchase. Agentic commerce readiness explained with A2A, AP2, ACP and x402.",
+    image: "/og-guide-agentic-commerce-readiness.jpg",
     imageAlt: "Agentic commerce readiness: selling to AI shopping agents"
   },
   "/guides/letting-agents-act-on-data": {
     title: "Letting agents act on data: the decision envelope | turva.dev",
     description: "Reading a site is the first step. Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds. How to make agent decisions reliable and checkable.",
+    image: "/og-guide-letting-agents-act-on-data.jpg",
     imageAlt: "Letting agents act on data: the decision envelope"
   },
   "/guides/ai-agent-use-cases": {
     title: "AI agent use cases: where agents read data and make decisions | turva.dev",
     description: "AI agent use cases across commerce, monitoring, field support, remote operations, back-office data work and edge autonomy. The common pattern, and what makes each one reliable.",
+    image: "/og-guide-ai-agent-use-cases.jpg",
     imageAlt: "AI agent use cases: where agents read data and make decisions"
   },
   "/guides/get-cited-by-ai-assistants": {
     title: "How to get your site cited by AI assistants | turva.dev",
     description: "What it takes to be a source AI assistants cite: readable content, structured data, corroboration across sources, indexing where assistants search, and measurement.",
+    image: "/og-guide-get-cited-by-ai-assistants.jpg",
     imageAlt: "How to get your site cited by AI assistants"
   },
   "/guides/choosing-an-agent-readiness-audit": {
     title: "Choosing an agent-readiness audit | turva.dev",
     description: "Who provides agent-readiness audits, what they cost, how long they take, and what you get. Pricing, deliverables, and how the engagement works.",
+    image: "/og-guide-choosing-an-agent-readiness-audit.jpg",
     imageAlt: "Choosing an agent-readiness audit"
   },
   "/guides/agent-readiness-gaps": {
     title: "Common agent-readiness gaps on marketing sites | turva.dev",
     description: "Most marketing sites are strong for people and weak for agents. The predictable gaps in rendering, discovery, cost, capability and structured data, and how to fix them.",
+    image: "/og-guide-agent-readiness-gaps.jpg",
     imageAlt: "Common agent-readiness gaps on marketing sites"
   }
 };
@@ -3315,7 +3453,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
     "headline": headline,
     "description": m.description,
     "url": url,
-    "image": { "@type": "ImageObject", "url": "https://turva.dev/og.jpg", "width": 1200, "height": 630 },
+    "image": { "@type": "ImageObject", "url": "https://turva.dev" + (m.image || "/og.jpg"), "width": 1200, "height": 630 },
     "inLanguage": "en",
     "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://github.com/busygoat"] },
     "publisher": { "@type": "Organization", "@id": "https://turva.dev/#business", "name": "turva.dev", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276251"] },
@@ -3629,7 +3767,8 @@ function buildGuidePageFaqJsonLd(pathname, canonicalUrl) {
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
-var FOOTER_CSS = `.tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:1.9rem clamp(20px,5vw,72px);display:flex;flex-direction:column;gap:1rem;}
+var FOOTER_CSS = `pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-x:auto;white-space:nowrap}.vform{display:flex;gap:10px;margin:6px 0}.vform input{flex:1;min-width:0;background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:10px 12px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:14px}.vform button{background:#5DF18F;color:#06100F;border:0;border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer;font-size:14px}.chk{display:flex;gap:10px;margin:8px 0;align-items:baseline;flex-wrap:wrap}.chk .s{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700}.chk.pass .s{color:#5DF18F}.chk.warn .s{color:#E8C15A}.chk.fail .s{color:#F17F5D}.chk .d{color:#96A79C;font-size:14px}.verr{color:#F17F5D}
+.tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:1.9rem clamp(20px,5vw,72px);display:flex;flex-direction:column;gap:1rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:9px;}
 .tv-foot .foot-brand svg{display:block;width:22px;height:22px;}
 .tv-foot .foot-links{display:flex;flex-wrap:wrap;gap:0.6rem 1.4rem;}
@@ -3943,6 +4082,15 @@ ${FOOTER_CSS}
     </div>
     <div class="board-sum"><span>verified</span> <b>100/100</b> <span class="pill">#1 ranked</span> <span class="pill">A+</span></div>
   </section>
+  <section class="sec">
+    <h2>What an agent sees on this page</h2>
+    <p>Every page on this site is also served as plain markdown to any agent that asks for it, at the same URL, at a fraction of the token cost of the HTML. The block below is generated from the same markdown an agent receives.</p>
+    <div class="aview">
+      <p class="aview-cmd">curl -H "Accept: text/markdown" https://turva.dev/</p>
+      <pre><code>${escapeHtml(HOME_MARKDOWN.split("\n").slice(0, 14).join("\n"))}</code></pre>
+    </div>
+    <p><a href="/guides/markdown-for-agents">How markdown content negotiation works.</a></p>
+  </section>
 
   <section class="sec">
     <h2>Audits, advisory, and implementation for product teams</h2>
@@ -4217,6 +4365,10 @@ ${FOOTER_CSS}
     <p class="suited">Suited for teams that want agents to read product data through a supported interface rather than scraping HTML.</p>
   </div>
 
+  <div class="scard"><h2>The agent-ready badge</h2>
+    <p>Sites that complete an audit, or score 100/100 on a public agent-readiness scanner, may display the <a href="/badge">agent-ready badge</a>.</p>
+  </div>
+
   <div class="start">
     <h2>How to start</h2>
     <p>Email <a href="mailto:info@turva.dev">info@turva.dev</a> with the site or API you want audited. I respond within one business day with a fixed quote and a start date.</p>
@@ -4480,6 +4632,243 @@ ${FOOTER_HTML}
 </body>
 </html>`;
   return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
+}
+
+function serveBadgeHtml(canonicalUrl) {
+  const head = cardPageHead(buildMetaBlock("/badge", canonicalUrl), buildGuideJsonLd("/badge", canonicalUrl), canonicalUrl);
+  const snippet = '<a href="https://turva.dev/badge"><img src="https://turva.dev/badge.svg" alt="agent-ready, criteria at turva.dev/badge" width="216" height="36" loading="lazy"></a>';
+  const body = `${head}
+${cardPageNav("/badge")}
+<main id="main">
+  <h1>The agent-ready badge</h1>
+  <p class="intro">A small SVG badge a site can embed to show it meets public agent-readiness criteria, linking back to this page. The badge is served from turva.dev, the criteria are listed below, and anyone can re-check the claim by running the same public scanners.</p>
+  <div class="scard"><h2>Who may display it</h2><ul>
+    <li>Sites that have completed a turva.dev agent-readiness audit</li>
+    <li>Sites that score 100/100 on a public agent-readiness scanner (startuphub.ai or isitagentready.com)</li>
+  </ul></div>
+  <div class="scard"><h2>What it is, and what it is not</h2>
+    <p>The badge is a self-declared claim against public criteria, not a certification. turva.dev does not police its use. The value of the badge is that the claim is checkable: either scanner can be run against the displaying site by anyone, at any time.</p>
+  </div>
+  <div class="scard"><h2>How to embed it</h2>
+    <p>The badge looks like this:</p>
+    <p><img src="/badge.svg" alt="agent-ready, criteria at turva.dev/badge" width="216" height="36"></p>
+    <p>Copy this HTML where you want it to appear:</p>
+    <pre><code>${escapeHtml(snippet)}</code></pre>
+    <p class="note">The image is 216 by 36 pixels, dark background, under one kilobyte.</p>
+  </div>
+  <div class="scard"><h2>If your site is not there yet</h2>
+    <p>An audit measures where you stand and lists what to fix first. Services and prices are on the <a href="/services">services page</a>. Email <a href="mailto:info@turva.dev">info@turva.dev</a> and you get a reply within one business day.</p>
+  </div>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
+}
+
+// llms.txt validator: fetches a target site's /llms.txt server-side and
+// checks its structure against the llms.txt format. Only https://<host>/llms.txt
+// is ever fetched (the path is fixed), the host must be a public DNS name
+// (no IP literals, no localhost/internal names, no ports, no credentials),
+// the fetch times out after 8 seconds and the body read is capped at 256 KB.
+// Results are never stored and result pages are served with no-store.
+function normalizeHostInput(raw) {
+  let s = String(raw || "").trim().toLowerCase();
+  if (!s) return null;
+  if (!/^[a-z][a-z0-9+.-]*:\/\//.test(s)) s = "https://" + s;
+  let u;
+  try { u = new URL(s); } catch { return null; }
+  if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+  if (u.port && u.port !== "443" && u.port !== "80") return null;
+  if (u.username || u.password) return null;
+  return u.hostname;
+}
+
+function isValidPublicHost(host) {
+  if (!host || host.length > 253) return false;
+  if (host.startsWith("[") || /^\d+\.\d+\.\d+\.\d+$/.test(host)) return false;
+  if (!/^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{1,62}$/.test(host)) return false;
+  const tld = host.split(".").pop();
+  if (["localhost", "local", "internal", "home", "lan", "corp", "test", "invalid"].includes(tld)) return false;
+  return true;
+}
+
+async function fetchLlmsTxt(host) {
+  const target = "https://" + host + "/llms.txt";
+  const res = await fetch(target, {
+    redirect: "follow",
+    signal: AbortSignal.timeout(8000),
+    headers: {
+      "user-agent": "turva-llms-validator/1.0 (+https://turva.dev/llms-txt-validator)",
+      "accept": "text/plain, text/markdown;q=0.9, */*;q=0.1"
+    }
+  });
+  const cap = 262144;
+  let bytes = 0, truncated = false;
+  const chunks = [];
+  if (res.body) {
+    const reader = res.body.getReader();
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.length;
+      if (bytes > cap) {
+        truncated = true;
+        chunks.push(value.slice(0, value.length - (bytes - cap)));
+        bytes = cap;
+        await reader.cancel();
+        break;
+      }
+      chunks.push(value);
+    }
+  }
+  const buf = new Uint8Array(bytes);
+  let o = 0;
+  for (const c of chunks) { buf.set(c, o); o += c.length; }
+  return {
+    status: res.status,
+    contentType: res.headers.get("content-type") || "",
+    text: new TextDecoder("utf-8").decode(buf),
+    bytes,
+    truncated
+  };
+}
+
+function validateLlmsTxt(f) {
+  const checks = [];
+  const add = (id, status, label, detail) => checks.push({ id, status, label, detail });
+  if (f.status !== 200) {
+    add("http-status", "fail", "File exists at /llms.txt", "expected HTTP 200, got " + f.status);
+    return checks;
+  }
+  add("http-status", "pass", "File exists at /llms.txt", "HTTP 200");
+  const ct = f.contentType.toLowerCase();
+  const looksHtml = /^\s*(<!doctype|<html|<head|<body)/i.test(f.text);
+  if (looksHtml) {
+    add("content-type", "fail", "Response is plain text", "the body looks like an HTML page, not an llms.txt file");
+    return checks;
+  }
+  if (ct.includes("text/plain") || ct.includes("text/markdown")) {
+    add("content-type", "pass", "Response is plain text", ct.split(";")[0]);
+  } else {
+    add("content-type", "warn", "Response is plain text", "content-type is " + (ct.split(";")[0] || "missing") + ", text/plain or text/markdown is the convention");
+  }
+  const lines = f.text.split(/\r?\n/);
+  const firstIdx = lines.findIndex((l) => l.trim() !== "");
+  const first = firstIdx === -1 ? "" : lines[firstIdx].trim();
+  if (/^# \S/.test(first)) {
+    add("h1-title", "pass", "Starts with an H1 title", JSON.stringify(first.slice(0, 80)));
+  } else {
+    add("h1-title", "fail", "Starts with an H1 title", "the first non-empty line should be a markdown H1 (# Site name)");
+  }
+  const afterH1 = lines.slice(firstIdx + 1).find((l) => l.trim() !== "") || "";
+  if (afterH1.trim().startsWith("> ")) {
+    add("summary", "pass", "Blockquote summary after the title", JSON.stringify(afterH1.trim().slice(0, 80)));
+  } else {
+    add("summary", "warn", "Blockquote summary after the title", "recommended by the format (> one-line summary), not required");
+  }
+  const h2Count = (f.text.match(/^## /gm) || []).length;
+  if (h2Count > 0) {
+    add("sections", "pass", "H2 sections group the content", h2Count + " section" + (h2Count === 1 ? "" : "s"));
+  } else {
+    add("sections", "warn", "H2 sections group the content", "no H2 sections found; sections are the convention for grouping links");
+  }
+  const links = [...f.text.matchAll(/\[([^\]]*)\]\(([^)\s]+)\)/g)];
+  const absolute = links.filter((m) => /^https?:\/\//.test(m[2])).length;
+  if (links.length === 0) {
+    add("links", "warn", "Markdown links an agent can follow", "no markdown links found");
+  } else if (absolute === links.length) {
+    add("links", "pass", "Markdown links an agent can follow", links.length + " link" + (links.length === 1 ? "" : "s") + ", all absolute URLs");
+  } else {
+    add("links", "warn", "Markdown links an agent can follow", links.length + " links, " + (links.length - absolute) + " relative; absolute URLs travel better when the file is read out of context");
+  }
+  if (f.truncated) {
+    add("size", "warn", "Small enough to be cheap to read", "over 256 KB, read truncated");
+  } else if (f.bytes <= 51200) {
+    add("size", "pass", "Small enough to be cheap to read", f.bytes + " bytes");
+  } else {
+    add("size", "warn", "Small enough to be cheap to read", f.bytes + " bytes; consider moving detail to llms-full.txt");
+  }
+  if (/<[a-z][a-z0-9-]*[\s>]/i.test(f.text)) {
+    add("no-html", "warn", "No HTML markup in the file", "HTML tags found; llms.txt should be plain markdown");
+  } else {
+    add("no-html", "pass", "No HTML markup in the file", "plain markdown");
+  }
+  return checks;
+}
+
+function summarizeChecks(checks) {
+  if (checks.some((c) => c.status === "fail")) return "not valid";
+  if (checks.some((c) => c.status === "warn")) return "valid with warnings";
+  return "valid";
+}
+
+async function serveLlmsValidatorHtml(request, canonicalUrl) {
+  const reqUrl = new URL(request.url);
+  const raw = (reqUrl.searchParams.get("url") || "").slice(0, 300);
+  let result = null;
+  let error = null;
+  if (raw) {
+    const host = normalizeHostInput(raw);
+    if (!host || !isValidPublicHost(host)) {
+      error = "That does not look like a public domain name. Enter a domain like example.com.";
+    } else {
+      try {
+        const fetched = await fetchLlmsTxt(host);
+        result = { target: "https://" + host + "/llms.txt", checks: validateLlmsTxt(fetched) };
+      } catch (err) {
+        error = "Could not fetch https://" + host + "/llms.txt: " + (err && err.name === "TimeoutError" ? "timed out after 8 seconds" : "network error") + ".";
+      }
+    }
+  }
+  if (wantsJson(request)) {
+    const payload = error
+      ? { error }
+      : result
+        ? { target: result.target, summary: summarizeChecks(result.checks), checks: result.checks }
+        : { error: "add ?url=example.com", docs: canonicalUrl };
+    const headers = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+    applySecurityHeaders(headers, "default");
+    return new Response(JSON.stringify(payload, null, 2), { status: 200, headers });
+  }
+  const head = cardPageHead(buildMetaBlock("/llms-txt-validator", canonicalUrl), buildGuideJsonLd("/llms-txt-validator", canonicalUrl), canonicalUrl);
+  const mark = { pass: "\u2713", warn: "!", fail: "\u2717" };
+  let resultHtml = "";
+  if (error) {
+    resultHtml = `<div class="scard"><h2>Result</h2><p class="verr">${escapeHtml(error)}</p></div>`;
+  } else if (result) {
+    const rows = result.checks.map((c) =>
+      `<div class="chk ${c.status}"><span class="s">${mark[c.status]}</span><span class="l">${escapeHtml(c.label)}</span><span class="d">${escapeHtml(c.detail)}</span></div>`
+    ).join("\n    ");
+    resultHtml = `<div class="scard"><h2>Result: ${escapeHtml(summarizeChecks(result.checks))}</h2>
+    <p class="aview-cmd">${escapeHtml(result.target)}</p>
+    ${rows}
+    <p class="note">A structure check against the llms.txt format, not an agent-readiness score.</p>
+  </div>`;
+  }
+  const body = `${head}
+${cardPageNav("/llms-txt-validator")}
+<main id="main">
+  <h1>llms.txt validator</h1>
+  <p class="intro">Enter a domain and this page fetches its /llms.txt and checks the structure against the format: one H1 title, an optional blockquote summary, H2 sections with link lists. Free, no signup, nothing stored.</p>
+  <div class="scard">
+    <form class="vform" method="get" action="/llms-txt-validator">
+      <input type="text" name="url" placeholder="example.com" value="${escapeHtml(raw)}" aria-label="Domain to check" required>
+      <button type="submit">Check</button>
+    </form>
+    <p class="note">Only https://&lt;domain&gt;/llms.txt is fetched. Agents can call this with Accept: application/json.</p>
+  </div>
+  ${resultHtml}
+  <div class="scard"><h2>What it does not do</h2>
+    <p>This is a structure check against the llms.txt format, not an agent-readiness score. A full audit measures discovery, content, access control and more: see <a href="/services">services</a>, or start with <a href="/guides/llms-txt">llms.txt explained</a>.</p>
+  </div>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  const headers = cardPageHeaders(canonicalUrl);
+  if (raw) headers.set("cache-control", "no-store");
+  return new Response(body, { status: 200, headers });
 }
 
 function serveGuidesHtml(canonicalUrl) {
@@ -4885,6 +5274,12 @@ async function handleRequest(request, env) {
   }
   if (pathname === "/blog") {
     return serveBlogHtml("https://turva.dev/blog");
+  }
+  if (pathname === "/badge") {
+    return serveBadgeHtml("https://turva.dev/badge");
+  }
+  if (pathname === "/llms-txt-validator") {
+    return serveLlmsValidatorHtml(request, "https://turva.dev/llms-txt-validator");
   }
   if ((pathname === "/guides" || pathname.startsWith("/guides/") || pathname === "/blog" || pathname.startsWith("/blog/") || pathname === "/services" || pathname === "/company" || pathname === "/legal" || pathname === "/contact") && PAGE_MARKDOWN[pathname]) {
     return serveGuideHtml(pathname, "https://turva.dev" + pathname);

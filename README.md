@@ -138,6 +138,8 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 | `/robots.txt` | Crawler directives |
 | `/sitemap.xml` | URL index |
 | `/blog/feed.xml` | Blog RSS feed |
+| `/llms-txt-validator` | llms.txt structure checker (HTML form, JSON for agents) |
+| `/badge` and `/badge.svg` | Agent-ready badge criteria and embeddable SVG |
 
 ## Deploy
 
