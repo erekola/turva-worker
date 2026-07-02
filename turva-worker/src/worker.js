@@ -2944,32 +2944,32 @@ function getCanonicalForPath(pathname) {
 var META_BY_PATH = {
   "/blog/free-llms-txt-validator": {
     title: "A free llms.txt validator | turva.dev",
-    description: "turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored. Includes the Cloudflare Worker lesson from its first deploy.",
+    description: "turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored.",
     date: "2026-07-02",
     image: "/og-free-llms-txt-validator.jpg",
     imageAlt: "A free llms.txt validator"
   },
   "/llms-txt-validator": {
     title: "llms.txt validator | turva.dev",
-    description: "Free llms.txt validator. Fetches a site's /llms.txt and checks the structure against the format: H1 title, blockquote summary, H2 link sections. No signup, JSON output for agents.",
+    description: "Free llms.txt validator. Fetches a site's /llms.txt and checks the structure: H1 title, blockquote summary, H2 link sections. JSON output for agents.",
     image: "/og-llms-txt-validator.jpg",
     imageAlt: "llms.txt validator"
   },
   "/badge": {
     title: "The agent-ready badge | turva.dev",
-    description: "An embeddable SVG badge for sites that meet public agent-readiness criteria: a turva.dev audit or a 100/100 score on a public scanner. Criteria, terms and embed code.",
+    description: "An embeddable SVG badge for sites that meet public agent-readiness criteria: a turva.dev audit or 100/100 on a public scanner. Criteria and embed code.",
     image: "/og-badge.jpg",
     imageAlt: "The agent-ready badge"
   },
   "/blog": {
     title: "Blog | turva.dev",
-    description: "Notes on AI agents, and the work of letting them read a site and act on a system safely. Dated entries, with anything measurable checked against independent scanners.",
+    description: "Notes on AI agents and the work of letting them read a site and act on a system safely. Dated entries, checked against independent scanners.",
     image: "/og-blog.jpg",
     imageAlt: "turva.dev blog"
   },
   "/blog/cheaper-pages-for-agents": {
     title: "What an agent pays to read your site | turva.dev",
-    description: "An agent pays to read your site in tokens, and an HTML-only page is expensive. How markdown content negotiation cuts that cost and makes your pages more reliable for agents.",
+    description: "An agent pays to read your site in tokens, and an HTML-only page is expensive. How markdown content negotiation cuts that cost.",
     date: "2026-06-26",
     image: "/og-cheaper-pages-for-agents.jpg",
     imageAlt: "What an agent pays to read your site"
@@ -2983,7 +2983,7 @@ var META_BY_PATH = {
   },
   "/blog/reliable-agent-decisions": {
     title: "What makes an AI agent's decisions reliable | turva.dev",
-    description: "What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do. Notes from running agent-readiness audits.",
+    description: "What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do.",
     date: "2026-06-22",
     image: "/og-reliable-agent-decisions.jpg",
     imageAlt: "What makes an AI agent's decisions reliable"
@@ -2997,72 +2997,72 @@ var META_BY_PATH = {
   },
   "/blog/honest-agent-commerce-checks": {
     title: "Passing the agent commerce checks without faking them | turva.dev",
-    description: "How turva.dev cleared the isitagentready commerce checks (A2A Agent Card, AP2, ACP) honestly, without faking a capability, while holding 100/100 on startuphub.ai.",
+    description: "How turva.dev cleared the isitagentready commerce checks honestly, without faking a capability, while holding 100/100 on startuphub.ai.",
     date: "2026-06-21",
     image: "/og-honest-agent-commerce-checks.jpg",
     imageAlt: "Passing the agent commerce checks without faking them"
   },
   "/guides/agent-commerce-discovery": {
     title: "Agent commerce discovery: A2A, AP2, and ACP | turva.dev",
-    description: "A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, the AP2 version trap, and backing a discovery claim with a real endpoint.",
+    description: "A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint.",
     image: "/og-guide-agent-commerce-discovery.jpg",
     imageAlt: "Agent commerce discovery: A2A, AP2, and ACP"
   },
   "/blog/owning-your-fediverse-identity": {
     title: "Owning your fediverse identity | turva.dev",
-    description: "Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification served from the Cloudflare Worker. Own your identity, do not rent it.",
+    description: "Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker.",
     date: "2026-06-21",
     image: "/og-owning-your-fediverse-identity.jpg",
     imageAlt: "Owning your fediverse identity"
   },
   "/guides/agentic-resource-discovery": {
     title: "Agentic Resource Discovery and ai-catalog.json | turva.dev",
-    description: "Agentic Resource Discovery (ARD) explained: what an ai-catalog.json is, its envelope and entries, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation.",
+    description: "Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation.",
     image: "/og-guide-agentic-resource-discovery.jpg",
     imageAlt: "Agentic Resource Discovery and ai-catalog.json"
   },
   "/guides/open-knowledge-format": {
     title: "Open Knowledge Format (OKF) explained | turva.dev",
-    description: "What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context. The bundle structure, structural versus semantic, and where it fits agent-readiness.",
+    description: "What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness.",
     image: "/og-guide-open-knowledge-format.jpg",
     imageAlt: "Open Knowledge Format (OKF) explained"
   },
   "/blog/agent-access-is-now-a-setting": {
     title: "Agent access is now a setting | turva.dev",
-    description: "Cloudflare's second Content Independence Day moves crawler access, citation payment and x402 rails into CDN configuration. What that changes for agent readiness, with this site's own crawler numbers.",
+    description: "Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration. What that changes for agent readiness.",
     date: "2026-07-02",
     image: "/og-agent-access-is-now-a-setting.jpg",
     imageAlt: "Agent access is now a setting"
   },
   "/blog/two-scanner-audit-method": {
     title: "What one agent-readiness scanner cannot tell you | turva.dev",
-    description: "Why every turva.dev audit checks a site against two independent agent-readiness scanners instead of one, and how their different category models catch gaps a single checklist would pass clean.",
+    description: "Why every turva.dev audit checks a site against two independent agent-readiness scanners, and how different category models catch more gaps.",
     date: "2026-07-01",
     image: "/og-two-scanner-audit-method.jpg",
     imageAlt: "What one agent-readiness scanner cannot tell you"
   },
   "/blog/publishing-an-ai-catalog": {
     title: "Publishing an ai-catalog.json for agentic discovery | turva.dev",
-    description: "Google and a Linux Foundation group published Agentic Resource Discovery in 2026. turva.dev now serves an ai-catalog.json indexing its MCP server, A2A agent, API and skills, additive and verified by independent scanners.",
+    description: "Google and a Linux Foundation group published Agentic Resource Discovery in 2026. turva.dev now serves an ai-catalog.json indexing its agent surfaces.",
     date: "2026-06-29",
     image: "/og-publishing-an-ai-catalog.jpg",
     imageAlt: "Publishing an ai-catalog.json for agentic discovery"
   },
   "/blog/open-knowledge-format": {
     title: "What the Open Knowledge Format is, and what it is not | turva.dev",
-    description: "Google Cloud shipped the Open Knowledge Format. What it actually is, what it is not yet, and how this markdown spec for AI agents relates to an agent-readiness audit.",
+    description: "Google Cloud shipped the Open Knowledge Format. What it is, what it is not yet, and how it relates to an agent-readiness audit.",
     date: "2026-06-27",
     image: "/og-open-knowledge-format.jpg",
     imageAlt: "What the Open Knowledge Format is, and what it is not"
   },
   "/": {
     title: "Agent-readiness audits and advisory · turva.dev",
-    description: "Agent-readiness audits and advisory for product teams, and the wider work wherever AI agents read data and make decisions, from checkout to monitoring to remote operations. Independent, measured, async-only.",
+    description: "Agent-readiness audits and advisory for product teams, and the wider work wherever AI agents read data and make decisions. Independent, measured, async-only.",
     imageAlt: "Agent-readiness audits and advisory"
   },
   "/services": {
     title: "Services · turva.dev",
-    description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day, plus agent operations and MCP server design on request. Agent-readiness and the wider work for product teams. Async-only.",
+    description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day, plus agent operations and MCP server design on request. Async-only.",
     image: "/og-services.jpg",
     imageAlt: "turva.dev services and pricing"
   },
@@ -3098,7 +3098,7 @@ var META_BY_PATH = {
   },
   "/guides/llms-txt": {
     title: "llms.txt explained | turva.dev",
-    description: "llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives. What it is, why it matters, and how it differs from robots.txt and sitemaps.",
+    description: "llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives, and how it differs from robots.txt and sitemaps.",
     image: "/og-guide-llms-txt.jpg",
     imageAlt: "llms.txt explained"
   },
@@ -3128,13 +3128,13 @@ var META_BY_PATH = {
   },
   "/guides/seo-vs-agent-readiness": {
     title: "SEO and agent-readiness are not the same | turva.dev",
-    description: "SEO makes a site rank for people to click. Agent-readiness makes a site legible and usable by AI agents. Why ranking on Google does not predict presence in AI answers.",
+    description: "SEO makes a site rank for people to click. Agent-readiness makes a site legible and usable by AI agents. Ranking does not predict presence in AI answers.",
     image: "/og-guide-seo-vs-agent-readiness.jpg",
     imageAlt: "SEO and agent-readiness are not the same"
   },
   "/guides/json-ld-structured-data": {
     title: "JSON-LD and structured data for agents | turva.dev",
-    description: "JSON-LD states a page's facts as data an AI agent can read without parsing prose. How structured data makes prices, organisations and services legible to agents.",
+    description: "JSON-LD states a page's facts as data an AI agent can read without parsing prose. How prices, organisations and services become legible to agents.",
     image: "/og-guide-json-ld-structured-data.jpg",
     imageAlt: "JSON-LD and structured data for agents"
   },
@@ -3176,31 +3176,31 @@ var META_BY_PATH = {
   },
   "/guides/agent-readiness-aeo-geo": {
     title: "Agent-readiness, AEO and GEO: how they relate | turva.dev",
-    description: "How answer engine optimization (AEO), generative engine optimization (GEO) and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice.",
+    description: "How AEO, GEO and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice.",
     image: "/og-guide-agent-readiness-aeo-geo.jpg",
     imageAlt: "Agent-readiness, AEO and GEO: how they relate"
   },
   "/guides/agentic-commerce-readiness": {
     title: "Agentic commerce readiness: selling to AI shopping agents | turva.dev",
-    description: "What an AI shopping agent needs to discover an offer, drive a checkout protocol, and complete a purchase. Agentic commerce readiness explained with A2A, AP2, ACP and x402.",
+    description: "What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase. Explained with A2A, AP2, ACP and x402.",
     image: "/og-guide-agentic-commerce-readiness.jpg",
     imageAlt: "Agentic commerce readiness: selling to AI shopping agents"
   },
   "/guides/letting-agents-act-on-data": {
     title: "Letting agents act on data: the decision envelope | turva.dev",
-    description: "Reading a site is the first step. Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds. How to make agent decisions reliable and checkable.",
+    description: "Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds. How to make that checkable.",
     image: "/og-guide-letting-agents-act-on-data.jpg",
     imageAlt: "Letting agents act on data: the decision envelope"
   },
   "/guides/ai-agent-use-cases": {
     title: "AI agent use cases: where agents read data and make decisions | turva.dev",
-    description: "AI agent use cases across commerce, monitoring, field support, remote operations, back-office data work and edge autonomy. The common pattern, and what makes each one reliable.",
+    description: "AI agent use cases across commerce, monitoring, field support, remote operations and back-office data work, and what makes each one reliable.",
     image: "/og-guide-ai-agent-use-cases.jpg",
     imageAlt: "AI agent use cases: where agents read data and make decisions"
   },
   "/guides/get-cited-by-ai-assistants": {
     title: "How to get your site cited by AI assistants | turva.dev",
-    description: "What it takes to be a source AI assistants cite: readable content, structured data, corroboration across sources, indexing where assistants search, and measurement.",
+    description: "What it takes to be a source AI assistants cite: readable content, structured data, corroboration, indexing where assistants search, and measurement.",
     image: "/og-guide-get-cited-by-ai-assistants.jpg",
     imageAlt: "How to get your site cited by AI assistants"
   },
@@ -3212,7 +3212,7 @@ var META_BY_PATH = {
   },
   "/guides/agent-readiness-gaps": {
     title: "Common agent-readiness gaps on marketing sites | turva.dev",
-    description: "Most marketing sites are strong for people and weak for agents. The predictable gaps in rendering, discovery, cost, capability and structured data, and how to fix them.",
+    description: "Most marketing sites are strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes.",
     image: "/og-guide-agent-readiness-gaps.jpg",
     imageAlt: "Common agent-readiness gaps on marketing sites"
   }
