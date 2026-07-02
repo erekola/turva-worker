@@ -4812,6 +4812,19 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
     const host = normalizeHostInput(raw);
     if (!host || !isValidPublicHost(host)) {
       error = "That does not look like a public domain name. Enter a domain like example.com.";
+    } else if (host === "turva.dev" || host === "www.turva.dev") {
+      // A Worker cannot fetch its own zone, so the site's own llms.txt is
+      // validated directly from the same constant that serves /llms.txt.
+      result = {
+        target: "https://turva.dev/llms.txt",
+        checks: validateLlmsTxt({
+          status: 200,
+          contentType: "text/plain; charset=utf-8",
+          text: LLMS_TXT,
+          bytes: new TextEncoder().encode(LLMS_TXT).length,
+          truncated: false
+        })
+      };
     } else {
       try {
         const fetched = await fetchLlmsTxt(host);
