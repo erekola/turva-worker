@@ -37,15 +37,6 @@ var LEGACY_REDIRECTS = {
   "/legal/": "/legal"
 };
 
-var GITHUB_OWNERSHIP_TXT = `GitHub ownership statement
-
-The GitHub account busygoat (user id 257120381) is the official GitHub account of turva.dev, operated by Erik Rekola, Business ID 3600281-7, registered in Finland.
-
-This file is served from the turva.dev origin, which only the domain owner controls. Business registration is publicly verifiable at https://tietopalvelu.ytj.fi/yritys/3600281-7.
-
-Reference: GitHub Support ticket 4493199. Published 2026-07-02.
-`;
-
 var MTA_STS_POLICY = `version: STSv1
 mode: enforce
 mx: mx1.alias.proton.me
@@ -278,7 +269,7 @@ metadata corrections, and revoke prior correspondence.
 - Register: https://tietopalvelu.ytj.fi/yritys/3600281-7
 - Verified contact: <mailto:info@turva.dev>
 - Public profile: https://www.linkedin.com/in/erikrekola/
-- Source code: https://github.com/busygoat
+- Source code: https://codeberg.org/erekola
 
 ## Supported identity types
 
@@ -307,7 +298,7 @@ A written acknowledgement is sent within one business day.
 
 To claim an existing identifier, use https://turva.dev/agent/auth/claim
 or email <mailto:info@turva.dev?subject=agent%20claim>. Include proof of
-operator control (DNS TXT, signed message from a known GitHub
+operator control (DNS TXT, signed message from a known code hosting
 account, or a verified company email).
 
 ## Revocation
@@ -689,7 +680,7 @@ An ai-catalog.json is easy to misread as another search file. It is not. It inde
 
 ## Honest about adoption
 
-In a public census in June 2026, none of the named working group members yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at github.com/busygoat/turva-worker.
+In a public census in June 2026, none of the named working group members yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at codeberg.org/erekola/turva-worker.
 
 For an audit of a site's discovery surface, contact info@turva.dev.
 
@@ -713,7 +704,7 @@ The Worker decides by the request. A browser asking for HTML gets the rendered p
 
 ## What this removed
 
-The prerender.io branch is gone from the Worker. No request is sent to an external prerender service, and the token it used is no longer read. Sitejet now serves only static assets such as the social image, and those move to the Worker next. The page is one codebase, under version control, open source at github.com/busygoat/turva-worker.
+The prerender.io branch is gone from the Worker. No request is sent to an external prerender service, and the token it used is no longer read. Sitejet now serves only static assets such as the social image, and those move to the Worker next. The page is one codebase, under version control, open source at codeberg.org/erekola/turva-worker.
 
 ## The result is measured, not asserted
 
@@ -759,7 +750,7 @@ Two checks remain red and will stay that way. isitagentready reports x402 as mis
 
 ## The rule
 
-Every change was additive, and the startuphub.ai score read 100/100 on every re-scan. The principle is the one the whole site runs on. A scanner number is worth something only if it reflects what an agent actually finds, so a green check that lies is worth less than an honest red one. The worker that produces these results is open source at github.com/busygoat/turva-worker, readable line by line.
+Every change was additive, and the startuphub.ai score read 100/100 on every re-scan. The principle is the one the whole site runs on. A scanner number is worth something only if it reflects what an agent actually finds, so a green check that lies is worth less than an honest red one. The worker that produces these results is open source at codeberg.org/erekola/turva-worker, readable line by line.
 
 For an agent-readiness audit that reports measured results, contact info@turva.dev.
 
@@ -878,7 +869,7 @@ turva.dev publishes its own web security scans too, on the same principle that t
 - Hardenize: all 13 categories passed. https://www.hardenize.com/report/turva.dev
 - Internet.nl: 98/100. IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. https://internet.nl/site/turva.dev/
 
-The Cloudflare Worker that produces these results is open source: https://github.com/busygoat/turva-worker. You can read every line before you hire me.
+The Cloudflare Worker that produces these results is open source: https://codeberg.org/erekola/turva-worker. You can read every line before you hire me.
 
 Backed by a registered company, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: https://tietopalvelu.ytj.fi/yritys/3600281-7
 
@@ -3254,8 +3245,8 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 
 var SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/busygoat","https://www.wikidata.org/wiki/Q140276251"]},
-{"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/busygoat","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik"]},
+{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://codeberg.org/erekola","https://www.wikidata.org/wiki/Q140276251"]},
+{"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://codeberg.org/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 {"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"1500","highPrice":"6500","offerCount":"3","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services","itemListElement":[
 {"@type":"Offer","name":"Audit","description":"Fixed scope, 2-3 weeks. Two independent scanners run against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"6500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"6500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€6,500 fixed price, two to three weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
@@ -3406,7 +3397,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/busygoat", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 6500, "currency": "EUR", "unit": "fixed", "duration": "2-3 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-07-02" }, null, 2);
+var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://codeberg.org/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 6500, "currency": "EUR", "unit": "fixed", "duration": "2-3 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-07-02" }, null, 2);
 var API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 function wantsMarkdown(request) {
@@ -3510,7 +3501,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
     "url": url,
     "image": { "@type": "ImageObject", "url": "https://turva.dev" + (m.image || "/og.jpg"), "width": 1200, "height": 630 },
     "inLanguage": "en",
-    "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://github.com/busygoat"] },
+    "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://codeberg.org/erekola"] },
     "publisher": { "@type": "Organization", "@id": "https://turva.dev/#business", "name": "turva.dev", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276251"] },
     "isPartOf": { "@type": "WebSite", "name": "turva.dev", "url": "https://turva.dev/" },
     "about": "agent-readiness"
@@ -4106,7 +4097,7 @@ ${FOOTER_CSS}
         </ul>
         <div class="cta">
           <a class="btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a>
-          <a class="btn-ghost" href="https://github.com/busygoat/turva-worker">Read the source</a>
+          <a class="btn-ghost" href="https://codeberg.org/erekola/turva-worker">Read the source</a>
         </div>
       </div>
       <div class="hero-right">
@@ -4185,7 +4176,7 @@ ${FOOTER_CSS}
       <li>Hardenize: all 13 categories passed. <a href="https://www.hardenize.com/report/turva.dev">hardenize.com/report/turva.dev</a></li>
       <li>Internet.nl: 98/100. IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. <a href="https://internet.nl/site/turva.dev/">internet.nl/site/turva.dev</a></li>
     </ul>
-    <p>The Cloudflare Worker that produces these results is open source: <a href="https://github.com/busygoat/turva-worker">github.com/busygoat/turva-worker</a>. You can read every line before you hire me.</p>
+    <p>The Cloudflare Worker that produces these results is open source: <a href="https://codeberg.org/erekola/turva-worker">codeberg.org/erekola/turva-worker</a>. You can read every line before you hire me.</p>
     <p>Backed by a registered company, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">tietopalvelu.ytj.fi/yritys/3600281-7</a></p>
   </section>
 
@@ -5361,7 +5352,6 @@ async function handleRequest(request, env) {
   if (pathname === "/" + INDEXNOW_KEY + ".txt") {
     return serveStatic(INDEXNOW_KEY, "text/plain; charset=utf-8", "agent-api");
   }
-  if (pathLower === "/busygoat.txt") return serveStatic(GITHUB_OWNERSHIP_TXT, "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/robots.txt") return serveStatic(ROBOTS_TXT, "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/.well-known/api-catalog" || pathLower === "/api-catalog") {
     return serveStatic(API_CATALOG, "application/linkset+json; charset=utf-8", "agent-api");

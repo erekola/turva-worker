@@ -63,7 +63,7 @@ These figures describe one site. They are a worked example rather than a target 
 
 ## Provenance and identity
 
-turva.dev is a registered Finnish business (Business ID 3600281-7) and a Wikidata entity (Q140276251), with its founder Erik Rekola as Q140276321. The site's JSON-LD links the Wikidata entities, the company register, LinkedIn, and GitHub through sameAs, so an agent can resolve the same entity across sources.
+turva.dev is a registered Finnish business (Business ID 3600281-7) and a Wikidata entity (Q140276251), with its founder Erik Rekola as Q140276321. The site's JSON-LD links the Wikidata entities, the company register, LinkedIn, and Codeberg through sameAs, so an agent can resolve the same entity across sources.
 
 The site also signs several of its machine-readable manifests. An Ed25519 public key is published at /.well-known/jwks.json, and detached signatures for the ai-plugin, agent, MCP server card, and llms.txt manifests are listed at /.well-known/signatures.json. An agent can fetch a manifest, its signature, and the key, then confirm the manifest is authentic and unmodified. This runs ahead of any single published standard for self-signed manifests, and is offered as a verifiable provenance signal.
 
