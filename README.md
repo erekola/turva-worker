@@ -108,6 +108,7 @@ Notes on AI agents and the work of letting them read a site and act on a system 
 * [Publishing an ai-catalog.json for agentic discovery](https://turva.dev/blog/publishing-an-ai-catalog)
 * [What one agent-readiness scanner cannot tell you](https://turva.dev/blog/two-scanner-audit-method)
 * [Agent access is now a setting](https://turva.dev/blog/agent-access-is-now-a-setting)
+* [A free llms.txt validator](https://turva.dev/blog/free-llms-txt-validator)
 
 ## How it works
 
