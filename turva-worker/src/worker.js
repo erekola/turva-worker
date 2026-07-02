@@ -2950,19 +2950,19 @@ var META_BY_PATH = {
     imageAlt: "A free llms.txt validator"
   },
   "/llms-txt-validator": {
-    title: "llms.txt validator | turva.dev",
+    title: "Free llms.txt validator with JSON output | turva.dev",
     description: "Free llms.txt validator. Fetches a site's /llms.txt and checks the structure: H1 title, blockquote summary, H2 link sections. JSON output for agents.",
     image: "/og-llms-txt-validator.jpg",
     imageAlt: "llms.txt validator"
   },
   "/badge": {
-    title: "The agent-ready badge | turva.dev",
+    title: "The agent-ready badge: criteria and embed code | turva.dev",
     description: "An embeddable SVG badge for sites that meet public agent-readiness criteria: a turva.dev audit or 100/100 on a public scanner. Criteria and embed code.",
     image: "/og-badge.jpg",
     imageAlt: "The agent-ready badge"
   },
   "/blog": {
-    title: "Blog | turva.dev",
+    title: "Blog: notes on AI agents and agent-readiness | turva.dev",
     description: "Notes on AI agents and the work of letting them read a site and act on a system safely. Dated entries, checked against independent scanners.",
     image: "/og-blog.jpg",
     imageAlt: "turva.dev blog"
@@ -3061,25 +3061,25 @@ var META_BY_PATH = {
     imageAlt: "Agent-readiness audits and advisory"
   },
   "/services": {
-    title: "Services · turva.dev",
+    title: "Services: audit, advisory and implementation · turva.dev",
     description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day, plus agent operations and MCP server design on request. Async-only.",
     image: "/og-services.jpg",
     imageAlt: "turva.dev services and pricing"
   },
   "/company": {
-    title: "Company · turva.dev",
+    title: "Company: Erik Rekola, Tampere, Finland · turva.dev",
     description: "turva.dev is operated by Erik Rekola as a Finnish sole proprietorship. Business ID 3600281-7, based in Tampere. Eleven years of engineering experience.",
     image: "/og-company.jpg",
     imageAlt: "turva.dev company information"
   },
   "/contact": {
-    title: "Contact · turva.dev",
+    title: "Contact: email, Signal or LinkedIn, async-only · turva.dev",
     description: "Contact turva.dev via email, Signal or LinkedIn. Async-only engagement. Response within one business day. No calls, no calendar links.",
     image: "/og-contact.jpg",
     imageAlt: "Contact turva.dev"
   },
   "/legal": {
-    title: "Legal · turva.dev",
+    title: "Legal: terms of engagement, privacy and GDPR · turva.dev",
     description: "Terms of engagement, privacy practices and GDPR information for turva.dev. Finnish law applies. No tracking, no analytics, no third-party scripts.",
     image: "/og-legal.jpg",
     imageAlt: "Legal and privacy"
