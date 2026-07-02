@@ -332,6 +332,7 @@ var PAGE_MARKDOWN = {
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [Agent access is now a setting](/blog/agent-access-is-now-a-setting). 2026-07-02.
 - [What one agent-readiness scanner cannot tell you](/blog/two-scanner-audit-method). 2026-07-01.
 - [Publishing an ai-catalog.json for agentic discovery](/blog/publishing-an-ai-catalog). 2026-06-29.
 - [What the Open Knowledge Format is, and what it is not](/blog/open-knowledge-format). 2026-06-27.
@@ -485,6 +486,42 @@ For an agent-readiness audit, or a conversation about letting agents act on your
 - [Letting agents act on data](/guides/letting-agents-act-on-data)
 - [AI agent use cases](/guides/ai-agent-use-cases)
 - [Agentic commerce readiness](/guides/agentic-commerce-readiness)
+`,
+  "/blog/agent-access-is-now-a-setting": `# Agent access is now a setting
+
+2026-07-02
+
+On 1 July 2026 Cloudflare shipped its second Content Independence Day package: crawler controls that split search, agent and training bots for every customer, a research program that tells crawlers which pages actually changed, experiments that turn Pay Per Crawl into Pay Per Use, and a waitlist for a gateway that charges for any resource over x402. Read together, they move decisions that used to live in a site's code into the CDN dashboard. That relocation is what matters for agent readiness.
+
+## The edge can undo everything the page does right
+
+A site can serve clean markdown, an llms.txt, structured data and signed manifests, and none of it counts if a network rule turns the crawler away before the request reaches the page. Cloudflare says more than 20% of the web sits behind its network, and the new controls ship with per-crawler block toggles and defaults that change over time. This site's own crawler list turned out to contain seven blocked entries, including the Internet Archive and an AI search engine that pays publishers. However they got there, nothing in the markup shows it. You find it in the dashboard, or when your content stops appearing in answers.
+
+An agent-readiness review therefore has to read the edge configuration next to the content. robots.txt, the WAF and the AI crawler list must say the same thing the content strategy says, and they must keep saying it, because platform defaults move without a deploy.
+
+## Citations are replacing clicks, and both are measurable now
+
+Cloudflare's stated reason for the package is a 2025 Pew Research Center finding: when Google shows an AI summary, users click a traditional result 8% of the time and a link inside the summary about 1% of the time. The visit is no longer where the value moves. Cloudflare's response is to make the citation itself payable. Ceramic.ai pays publishers per query their content answers, You.com lets agents buy individual premium pages, and participating sites get reporting on which AI-search queries surfaced their content, down to the page and the snippet.
+
+The reading this is meant to price is already routine. Over the past seven days this site answered 604 requests from identified AI and search crawlers, and AI answers and search referred 88 human visits, most from Google, the rest led by Meta, DuckDuckGo and Bing. Whether that reading starts to pay is what the new programs will test.
+
+## Payment rails are becoming configuration
+
+The Monetization Gateway waitlist points the same direction: charge for any page, dataset, API or MCP tool behind Cloudflare, settled over the x402 protocol, with no payment stack of your own. Charging an agent moves from an engineering project to a setting. The honesty bar moves with it. An x402 surface that quotes terms no agent can complete gets found out by the first agent that tries, which is why the x402 endpoint on this site answers HTTP 402 with its real terms instead of a pretend checkout.
+
+## What to check this week
+
+- Open your CDN's AI crawler list and compare it against your intent. A block you did not choose is configuration drift, and it overrides everything your pages declare.
+- Re-scan after any edge change. The public agent-readiness scanners read a site from outside, so a network-level block shows up as a dropped score before a buyer sees the gap.
+- If your content earns citations, look at the Pay Per Use programs. The reporting alone, which queries put your pages into AI answers, is visibility data you cannot get anywhere else today.
+
+For an agent-readiness audit that reads the edge configuration next to the content, contact info@turva.dev.
+
+## Related
+
+- [What an agent pays to read your site](/blog/cheaper-pages-for-agents)
+- [x402 and agent payments](/guides/x402-agent-payments)
+- [Sitemaps, robots.txt and agent access](/guides/sitemaps-and-robots-for-agents)
 `,
   "/blog/two-scanner-audit-method": `# What one agent-readiness scanner cannot tell you
 
@@ -2683,6 +2720,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/agent-access-is-now-a-setting", "monthly", "0.6"],
   ["/blog/two-scanner-audit-method", "monthly", "0.6"],
   ["/blog/open-knowledge-format", "monthly", "0.6"],
   ["/blog/publishing-an-ai-catalog", "monthly", "0.6"],
@@ -2757,7 +2795,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -2822,6 +2860,12 @@ var META_BY_PATH = {
     title: "Open Knowledge Format (OKF) explained | turva.dev",
     description: "What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context. The bundle structure, structural versus semantic, and where it fits agent-readiness.",
     imageAlt: "Open Knowledge Format (OKF) explained"
+  },
+  "/blog/agent-access-is-now-a-setting": {
+    title: "Agent access is now a setting | turva.dev",
+    description: "Cloudflare's second Content Independence Day moves crawler access, citation payment and x402 rails into CDN configuration. What that changes for agent readiness, with this site's own crawler numbers.",
+    date: "2026-07-02",
+    imageAlt: "Agent access is now a setting"
   },
   "/blog/two-scanner-audit-method": {
     title: "What one agent-readiness scanner cannot tell you | turva.dev",
@@ -4506,6 +4550,7 @@ ${cardPageNav("/blog")}
   <h1>Blog</h1>
   <p class="intro">Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.</p>
   <p class="feed"><a href="/blog/feed.xml">RSS feed</a></p>
+  <a class="post" href="/blog/agent-access-is-now-a-setting"><span class="pt">Agent access is now a setting</span><span class="pd">2026-07-02</span></a>
   <a class="post" href="/blog/two-scanner-audit-method"><span class="pt">What one agent-readiness scanner cannot tell you</span><span class="pd">2026-07-01</span></a>
   <a class="post" href="/blog/publishing-an-ai-catalog"><span class="pt">Publishing an ai-catalog.json for agentic discovery</span><span class="pd">2026-06-29</span></a>
   <a class="post" href="/blog/open-knowledge-format"><span class="pt">What the Open Knowledge Format is, and what it is not</span><span class="pd">2026-06-27</span></a>
