@@ -3822,6 +3822,7 @@ var FOOTER_CSS = `pre{background:#07110D;border:1px solid #1E3328;border-radius:
 .tv-foot a.ft-row:hover{color:#5DF18F;}
 .tv-foot .ft-row svg{flex:0 0 auto;width:17px;height:17px;}
 .tv-foot .foot-meta{font-size:0.8rem;color:#6F7A77;border-top:0.5px solid rgba(255,255,255,0.08);padding-top:0.9rem;}
+.turva-nav,.tv-foot{padding-left:max(clamp(20px,5vw,72px),calc(50% - var(--col-half,23rem)));padding-right:max(clamp(20px,5vw,72px),calc(50% - var(--col-half,23rem)));}
 a:focus-visible,button:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;border-radius:2px;}
 @media (prefers-reduced-motion:reduce){.cursor{animation:none;opacity:1;}}
 ::selection{background:#5DF18F;color:#06100F;}
@@ -3874,6 +3875,7 @@ ${WEBMCP_SCRIPT}
 <link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
 <style>
 html,body{background-color:#0A1316;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
+body{--col-half:22rem;}
 main{max-width:44rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
 article h1{color:#5DF18F;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 1rem;font-weight:700;}
 article h1 + p{font-size:1.12rem;color:#F2F4F3;}
