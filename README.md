@@ -10,7 +10,7 @@ What you buy is expertise and implementation, not access to a tool. The scoring 
 
 ## What it does
 
-* Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `&lt;head&gt;` (meta, OpenGraph, JSON-LD, canonical).
+* Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `<head>` (meta, OpenGraph, JSON-LD, canonical).
 * Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, and OAuth discovery (`oauth-authorization-server`).
 * Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
 
@@ -112,7 +112,7 @@ Notes on AI agents and the work of letting them read a site and act on a system 
 
 ## How it works
 
-The Worker renders the whole site at the edge. Every page is built from a single source-of-truth object in the Worker: page content as markdown, plus a shared canonical `&lt;head&gt;` and JSON-LD. There is no separate CMS or origin to proxy. Agent routes (`/.well-known/*`, `robots.txt`, `sitemap.xml`, `/x402`) are served from the same Worker, and static assets such as images come from Workers Assets.
+The Worker renders the whole site at the edge. Every page is built from a single source-of-truth object in the Worker: page content as markdown, plus a shared canonical `<head>` and JSON-LD. There is no separate CMS or origin to proxy. Agent routes (`/.well-known/*`, `robots.txt`, `sitemap.xml`, `/x402`) are served from the same Worker, and static assets such as images come from Workers Assets.
 
 Because the site has no CMS or plugins, nothing can drift between what humans see and what agents and scanners see.
 
@@ -123,18 +123,24 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 | `/` and all HTML routes | Rendered by the Worker from markdown |
 | `/.well-known/ai.txt` | AI agent disclosure |
 | `/llms.txt` | LLM consumption guide |
+| `/llms-full.txt` | The whole site as one text file |
 | `/.well-known/agent.json` | ai-plugin / agent manifest |
 | `/.well-known/mcp/server-card.json` | MCP server card |
 | `/.well-known/agent-card.json` | A2A agent card |
 | `/.well-known/ai-catalog.json` | Agentic Resource Discovery catalog |
 | `/.well-known/agent-skills/index.json` | Agent skills index |
 | `/openapi.json` | OpenAPI description |
+| `/.well-known/api-catalog` | API catalog linkset (RFC 9727) |
 | `/.well-known/ap2` | Agent Payments Protocol pointer |
 | `/.well-known/acp` | Agent Commerce Protocol manifest |
 | `/.well-known/x402` | x402 payment manifest |
 | `/.well-known/x402-mesh.json` | x402 mesh manifest |
 | `/.well-known/ucp` | Universal Commerce Profile |
+| `/.well-known/mpp` | MPP discovery manifest |
 | `/.well-known/oauth-authorization-server` | OAuth / auth discovery |
+| `/.well-known/signatures.json` | Ed25519 signatures for the signed manifests |
+| `/.well-known/jwks.json` | Public keys for verifying the signatures |
+| `/.well-known/security.txt` | Security contact (RFC 9116) |
 | `/x402` | HTTP 402 payment-required endpoint |
 | `/robots.txt` | Crawler directives |
 | `/sitemap.xml` | URL index |
@@ -151,7 +157,7 @@ npm install
 npx wrangler deploy
 ```
 
-Route the Worker to your domain under **Workers &amp; Pages, your-worker, Settings, Domains &amp; Routes**.
+Route the Worker to your domain under **Workers & Pages, your-worker, Settings, Domains & Routes**.
 
 ## Use it for your own site
 
@@ -162,7 +168,6 @@ If you want an audit of your domain against the same scanner set and a tailored 
 ## Security
 
 Responsible disclosure: see [SECURITY.md](SECURITY.md). Contact: [info@turva.dev](mailto:info@turva.dev)
-
 
 ## License
 
