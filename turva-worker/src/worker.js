@@ -3319,7 +3319,7 @@ main{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 4rem;}
 h1{color:#5DF18F;font-size:2rem;line-height:1.2;margin:0 0 1rem;}
 p{margin:0 0 1.1rem;}
 a{color:#5DF18F;}
-.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:16px clamp(20px,5vw,72px);}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding:16px clamp(20px,5vw,72px);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
@@ -3328,8 +3328,6 @@ a{color:#5DF18F;}
 .turva-nav .nv-menu{display:flex;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
-.turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
-.turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
 @media (max-width:560px){.turva-nav .nv-menu{gap:16px;}.turva-nav .nv-menu a{font-size:14px;}}
 ${FOOTER_CSS}
 </style>
@@ -3353,7 +3351,6 @@ ${FOOTER_CSS}
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
   </ul>
-  <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>
 <main id="main">
 <h1>Page not found</h1>
@@ -3901,8 +3898,6 @@ article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
-.turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
-.turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
 @media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
 ${FOOTER_CSS}
 </style>
@@ -3926,7 +3921,6 @@ ${FOOTER_CSS}
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
   </ul>
-  <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>
 <main id="main">
 ${crumb}<article>
@@ -3986,8 +3980,6 @@ strong{color:#F2F4F3;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
-.turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
-.turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
 .hero{padding:2.8rem 0 2rem;}
 .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1.1rem;}
 .lede{font-size:1.16rem;line-height:1.55;color:#C9D1CE;margin:0;max-width:40rem;}
@@ -4084,7 +4076,6 @@ ${FOOTER_CSS}
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
   </ul>
-  <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>
 <main id="main">
   <section class="hero">
@@ -4287,8 +4278,6 @@ a:hover{text-decoration:underline;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
-.turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
-.turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
 @media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
 .pcard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.5rem 1.5rem 1.3rem;margin:0 0 1.1rem;transition:border-color .15s ease;}
 .pcard:hover{border-color:rgba(93,241,143,0.35);}
@@ -4333,7 +4322,6 @@ ${FOOTER_CSS}
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
   </ul>
-  <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>
 <main id="main">
   <h1>Services</h1>
@@ -4457,8 +4445,6 @@ a:hover{text-decoration:underline;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
-.turva-nav .nv-status{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:700;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.28);border-radius:999px;padding:4px 11px;}
-.turva-nav .nv-status .nv-dot{width:7px;height:7px;border-radius:50%;background:#5DF18F;}
 @media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
 .scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.4rem 1.5rem 1.2rem;margin:0 0 1rem;transition:border-color .15s ease;}
 .scard:hover{border-color:rgba(93,241,143,0.35);}
@@ -4532,7 +4518,6 @@ function cardPageNav(current) {
   <ul class="nv-menu">
 ${lis}
   </ul>
-  <span class="nv-status"><span class="nv-dot"></span>100/100</span>
 </nav>`;
 }
 
