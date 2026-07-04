@@ -250,16 +250,19 @@ Final price is confirmed in writing after scope is agreed.
 var AUTH_MD = `# Auth.md
 
 > Agent registration metadata for turva.dev.
-> Public read-only. No accounts. No issued credentials.
+> Public read-only. No accounts. Credentials are optional and
+> only attribute correspondence.
 > Operator contact: <mailto:info@turva.dev>.
 
 ## Agent registration
 
 turva.dev publishes public read-only metadata for AI agents.
-There are no protected resources, no user accounts, and no
-programmatic credentials issued by this domain. This document
-describes how an operator can register an agent identity, request
-metadata corrections, and revoke prior correspondence.
+There are no protected resources and no user accounts. The only
+credential this domain issues is an optional api_key, provided
+out-of-band on request; it attributes correspondence and grants
+no additional access. This document describes how an operator can
+register an agent identity, request metadata corrections, and
+revoke prior correspondence.
 
 ## Identity
 
@@ -273,12 +276,14 @@ metadata corrections, and revoke prior correspondence.
 
 ## Supported identity types
 
-- anonymous: no registration, every resource is public read-only
+- anonymous: no registration, every resource is public read-only;
+  an api_key can be issued out-of-band on request
 - identity_assertion: a registered operator identity, backed by a
-  verified email or a signed assertion
+  verified email or a signed assertion; the same api_key applies
 
-Registration records contact metadata only. No API keys, tokens or
-other credentials are issued, and no resource requires one.
+A credential only attributes correspondence. Every resource is
+public, none requires a credential, and no credential grants
+additional access.
 
 ## Registration
 
@@ -1967,14 +1972,18 @@ var AGENT_AUTH_BLOCK = {
   revocation_uri: "https://turva.dev/agent/auth/revoke",
   contact: "info@turva.dev",
   identity_types_supported: ["anonymous", "identity_assertion"],
+  anonymous: {
+    credential_types_supported: ["api_key"]
+  },
   identity_assertion: {
     assertion_types_supported: [
       "urn:ietf:params:oauth:token-type:id-jag",
       "verified_email"
-    ]
+    ],
+    credential_types_supported: ["api_key"]
   },
   supported_identity_types: ["anonymous", "identity_assertion", "email", "github", "linkedin"],
-  credentials_issued: "none"
+  credentials_note: "Credentials only attribute correspondence. Every resource is public and none requires a credential."
 };
 
 var API_CATALOG = JSON.stringify({
