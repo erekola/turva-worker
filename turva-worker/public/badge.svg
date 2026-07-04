@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="216" height="36" viewBox="0 0 216 36" role="img" aria-label="agent-ready. Criteria at turva.dev/badge">
+  <title>agent-ready. Criteria at turva.dev/badge</title>
+  <rect x="0.5" y="0.5" width="215" height="35" rx="7" fill="#0A1316" stroke="#24402F"/>
+  <path d="M12 18.5l4.2 4.2L23.5 14" fill="none" stroke="#5DF18F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="32" y="23" font-family="ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace" font-size="13" fill="#F2F5F3">agent-ready</text>
+  <line x1="126" y1="8" x2="126" y2="28" stroke="#24402F"/>
+  <text x="134" y="23" font-family="ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace" font-size="13" fill="#5DF18F">turva&#183;dev</text>
+</svg>

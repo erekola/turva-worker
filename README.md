@@ -11,7 +11,7 @@ What you buy is expertise and implementation, not access to a tool. The scoring 
 ## What it does
 
 * Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `<head>` (meta, OpenGraph, JSON-LD, canonical).
-* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, and OAuth discovery (`oauth-authorization-server`).
+* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, and OAuth discovery (`oauth-authorization-server`), among others; the full inventory is in the Endpoints table below.
 * Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
 
 ## Scanner results
@@ -138,6 +138,14 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 | `/.well-known/ucp` | Universal Commerce Profile |
 | `/.well-known/mpp` | MPP discovery manifest |
 | `/.well-known/oauth-authorization-server` | OAuth / auth discovery |
+| `/.well-known/oauth-protected-resource` | OAuth protected resource metadata |
+| `/auth.md` | Agent registration metadata (public key at `/.well-known/mcp-registry-auth`) |
+| `/agent/auth/register`, `/agent/auth/claim`, `/agent/auth/revoke` | Agent identity registration, out-of-band flow |
+| `/oauth/authorize`, `/oauth/token` | OAuth endpoints (spec-valid closed errors, see `/auth.md`) |
+| `/api` and `/api/v1` | API index JSON |
+| `/api/agent/audit`, `/api/agent/advisory`, `/api/agent/implementation` | x402 payable service routes (HTTP 402, quote-on-request) |
+| `/api/acp/checkout_sessions` | ACP checkout sessions (stateless, buyer review before payment) |
+| `/.well-known/agent-skills/<name>/skill.md` | Individual agent skill files |
 | `/.well-known/signatures.json` | Ed25519 signatures for the signed manifests |
 | `/.well-known/jwks.json` | Public keys for verifying the signatures |
 | `/.well-known/security.txt` | Security contact (RFC 9116) |
@@ -145,6 +153,8 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 | `/robots.txt` | Crawler directives |
 | `/sitemap.xml` | URL index |
 | `/blog/feed.xml` | Blog RSS feed |
+| `/<indexnow-key>.txt` | IndexNow key file; a weekly cron resubmits the canonical URLs |
+| Aliases | `/ai.txt`, `/security.txt`, `/.well-known/mcp.json`, `/.well-known/openid-configuration`, `/.well-known/openapi.json`, favicons, and fediverse redirects (`host-meta`, `webfinger`, `nodeinfo`) |
 | `/llms-txt-validator` | llms.txt structure checker (HTML form, JSON for agents) |
 | `/badge` and `/badge.svg` | Agent-ready badge criteria and embeddable SVG |
 
