@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.15.0 - blog: moving the source to codeberg, Fable naming in the audit post
+// turva.dev worker v3.15.1 - spec currency pass: SEP-2127, RateLimit draft, OKF and A2A wording, spec-valid UCP profile, MPP version field
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -764,7 +764,7 @@ An ai-catalog.json is easy to misread as another search file. It is not. It inde
 
 ## Honest about adoption
 
-In a public census in June 2026, none of the named working group members yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at codeberg.org/erekola/turva-worker.
+In a public census in June 2026, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at codeberg.org/erekola/turva-worker.
 
 For an audit of a site's discovery surface, contact info@turva.dev.
 
@@ -850,7 +850,7 @@ Before an AI agent can transact with a site, it has to discover what the site su
 
 ## The A2A Agent Card
 
-An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that describes an agent interface. It states the agent's name, version, and description, the interface it exposes with a service URL and a transport, the capabilities it declares, and the skills it offers, each skill carrying an id, a name, and a description. The Agent2Agent protocol uses the card so one agent can discover another and know how to reach it.
+An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that describes an agent interface. It states the agent's name, version, and description, the interfaces it exposes, each with a service URL and a protocol binding, the capabilities it declares, and the skills it offers, each skill carrying an id, a name, and a description. The Agent2Agent protocol uses the card so one agent can discover another and know how to reach it.
 
 The card is most useful when its skills mirror surfaces an agent can already reach, such as a service catalog or contact information. A skill that points nowhere is worse than no skill at all.
 
@@ -1338,7 +1338,7 @@ Last updated: 2026-07-04.
 
   "/guides/open-knowledge-format": `# Open Knowledge Format (OKF) explained
 
-The Open Knowledge Format is an open specification from Google Cloud that represents a body of knowledge as a directory of plain markdown files. Each file carries a small block of YAML frontmatter and a free-form body. The goal is a portable way to hand an AI agent the context it needs, readable by a person and parseable by a machine, with no SDK and no catalog to lock into. Google Cloud published it in June 2026 as version 0.1.
+The Open Knowledge Format is an open specification from Google Cloud that represents a body of knowledge as a directory of plain markdown files. Each concept file carries a small block of YAML frontmatter and a free-form body. The goal is a portable way to hand an AI agent the context it needs, readable by a person and parseable by a machine, with no SDK and no catalog to lock into. Google Cloud published it in June 2026 as version 0.1.
 
 ## What an OKF bundle contains
 
@@ -1348,7 +1348,7 @@ The format asks for exactly one field, type. Everything else is optional, includ
 
 ## Structural interoperability, not yet semantic
 
-Version 0.1 fixes a small set of things and leaves the rest open. It fixes the folder layout, the use of markdown, the YAML frontmatter, two reserved filenames and the single required field. That is structural interoperability: any tool can open a bundle and know where the pieces are.
+Version 0.1 fixes a small set of things and leaves the rest open. It fixes the shape of a bundle as a folder of markdown files, the YAML frontmatter, two reserved filenames and the single required field. That is structural interoperability: any tool can open a bundle and know where the pieces are.
 
 What it does not fix is meaning. The format does not say what a metric concept must contain, or how two producers should agree on the same field names. That is semantic interoperability, and version 0.1 leaves it to producers and to conventions that have not been written yet. This is the line to keep in mind when reading the announcements around OKF. It standardizes the shape of the files, not yet what the files mean.
 
@@ -1491,7 +1491,7 @@ turva.dev publishes llms.txt and llms-full.txt and serves markdown on request. F
 
   "/guides/mcp-server-card": `# MCP server cards explained
 
-An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. It usually lives at /.well-known/mcp/server-card.json, though the path is not yet standardized. The active standards draft, SEP-2127, proposes /.well-known/mcp-server-card instead, so the convention may still move. An agent reads the card, finds the endpoint, and can then connect without a human wiring up the connection first.
+An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. It usually lives at /.well-known/mcp/server-card.json, though the path is not yet standardized. SEP-2127, the open proposal behind the card, now develops it as an experimental MCP extension. As of July 2026 its draft recommends serving the card at the MCP endpoint URL followed by /server-card, with a site-level catalog at /.well-known/mcp/catalog.json, so the convention may still move. An agent reads the card, finds the endpoint, and can then connect without a human wiring up the connection first.
 
 The Model Context Protocol is a standard way for agents to use external tools and data. A server implements the protocol and exposes a set of tools, and the card is how that server announces itself. Without a card, an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live.
 
@@ -1516,7 +1516,7 @@ The file lists the operations a site exposes to agents, often pointing at an Ope
 
 The reason it matters is that most sites expose actions only through a human interface, a form or a checkout flow that a person clicks through. An agent cannot reliably reverse-engineer that. A declared action surface removes the guesswork and turns a site from something an agent can read into something an agent can operate.
 
-agents.json sits beside the other declarations an agent looks for. An MCP server card lists tools, an API catalog lists endpoints, and OAuth discovery describes how to authenticate. Each one removes a guess, and together they let an agent act on a user's behalf safely.
+agents.json sits beside the other declarations an agent looks for. An MCP server card describes a site's MCP server, an API catalog lists endpoints, and OAuth discovery describes how to authenticate. Each one removes a guess, and together they let an agent act on a user's behalf safely.
 
 A site does not need agents.json to be readable, but it needs something like it to be operable. The specification itself has stayed at version 0.1.0 since early 2025 and the ecosystem's momentum has moved to MCP and newer discovery surfaces, so treat agents.json as one declaration pattern rather than a settled standard. If the goal is for agents to complete tasks rather than just summarize the page, declaring the action surface is the step that makes that possible.
 
@@ -1551,11 +1551,11 @@ turva.dev publishes an x402 endpoint and manifest and participates in the x402-m
 
 Response headers are the metadata a server sends with every page, and the right ones let an AI agent work without parsing the full HTML. They are the cheapest place to make a site more legible to automated clients, because an agent reads them before it reads the body.
 
-A Link header can point an agent straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the agent finds them without crawling. A Vary header that includes Accept tells caches and agents that the site can return different formats for the same URL, which is what makes markdown content negotiation reliable. RateLimit headers let a well-behaved agent throttle itself instead of guessing. Content-Language and a clean content type remove ambiguity about what the agent is reading.
+A Link header can point an agent straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the agent finds them without crawling. A Vary header that includes Accept tells caches and agents that the site can return different formats for the same URL, which is what makes markdown content negotiation reliable. RateLimit and RateLimit-Policy headers let a well-behaved agent throttle itself instead of guessing, though as of July 2026 their IETF draft has expired without becoming a standard. Content-Language and a clean content type remove ambiguity about what the agent is reading.
 
 The reason headers matter is order. An agent fetches the response, reads the status and headers first, and decides what to do next from them. If the headers already say where the structured data is and what formats are available, the agent can skip the expensive step of parsing a page built for human display.
 
-Headers are easy to get wrong in ways that hurt agents. A missing Vary header breaks content negotiation. An immutable header set on the wrong response can stop an agent from seeing an update. The fix is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response.
+Headers are easy to get wrong in ways that hurt agents. A missing Vary header breaks content negotiation. A Cache-Control immutable directive set on the wrong response can stop an agent from seeing an update. The fix is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response.
 
 For an audit of a site's response and discovery surface, contact info@turva.dev.
 
@@ -1641,7 +1641,7 @@ An ai-catalog.json is not a ranking trick and it is not a content map. llms.txt 
 
 ## Why it matters
 
-Adoption is early. In a public census in June 2026, none of the named working group members yet served a discoverable ai-catalog.json, so publishing one now is a forward move rather than table stakes. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
+Adoption is early. In a public census in June 2026, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json, so publishing one now is a forward move rather than table stakes. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
 
 turva.dev serves an ai-catalog.json at /.well-known/ai-catalog.json that indexes its MCP server, its A2A agent, its API, and its agent skills, each of which already resolves on its own. For an audit of a site's discovery surface, contact info@turva.dev.
 
@@ -2100,7 +2100,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.15.0",
+    "version": "3.15.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2214,14 +2214,14 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"gIGOZ_wo4nqs0MNAoqK47JPd3WNkwVnn4MLvlR_xDw_z7GAqcts8prLvezVzZsevUel_6qmvBunuWMnX3P79Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"TGOqe0IDI3pYEnIUmEC9uIeh2rUZturqXbyvPQNgYTUzqFqKU6oZAcgIbCtwSA50wnjoFRk2CvGj3Zx2Qzn_DA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yR7wOHiGGT_f-AIcAL56mEjiSaQ8nSQ-UJyFLrGZ8L_UUbLMORPN8Z0RyOOfqNgfDilRpDzwEsBbtcMu0kuVBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"TGOqe0IDI3pYEnIUmEC9uIeh2rUZturqXbyvPQNgYTUzqFqKU6oZAcgIbCtwSA50wnjoFRk2CvGj3Zx2Qzn_DA\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -2351,7 +2351,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.15.0",
+  "version": "3.15.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -2638,7 +2638,6 @@ var MPP_MANIFEST = JSON.stringify({
   "protocol": {
     "name": "Machine Payments Protocol",
     "id": "mpp",
-    "version": "1.0",
     "spec_url": "https://mpp.dev/"
   },
   "openapi": "https://turva.dev/openapi.json",
@@ -2685,38 +2684,24 @@ var UCP_PROFILE = JSON.stringify({
       "contact": "mailto:info@turva.dev"
     },
     "services": {
-      "dev.ucp.discovery": [
+      "dev.turva.agent-readiness": [
         {
-          "version": "2026-04-08",
-          "spec": "https://ucp.dev/2026-04-08/specification/overview",
-          "transport": "mcp",
-          "endpoint": "https://mcp.turva.dev/mcp"
-        },
-        {
-          "version": "2026-04-08",
-          "spec": "https://ucp.dev/2026-04-08/specification/overview",
+          "version": "2026-07-04",
+          "spec": "https://turva.dev/services",
           "transport": "rest",
-          "endpoint": "https://turva.dev/openapi.json",
+          "endpoint": "https://turva.dev",
           "schema": "https://turva.dev/openapi.json"
-        }
-      ],
-      "dev.ucp.payment": [
-        {
-          "version": "2026-04-08",
-          "transport": "x402",
-          "endpoint": "https://turva.dev/x402"
         },
         {
-          "version": "2026-04-08",
-          "transport": "acp",
-          "endpoint": "https://turva.dev/.well-known/acp"
+          "version": "2026-07-04",
+          "spec": "https://turva.dev/services",
+          "transport": "a2a",
+          "endpoint": "https://turva.dev/.well-known/agent-card.json"
         }
       ]
     },
-    "capabilities": { "checkout": true, "machine_payable": false },
-    "payment_handlers": {
-      "x402": { "network": "base", "asset": "USDC" }
-    },
+    "capabilities": {},
+    "payment_handlers": {},
     "pricing": {
       "currency": "EUR",
       "vat_included": false,
