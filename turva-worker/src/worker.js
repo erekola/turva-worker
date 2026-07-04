@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.14.0 - blog: auditing the auditor, auth.md absolute discovery links
+// turva.dev worker v3.15.0 - blog: moving the source to codeberg, Fable naming in the audit post
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -188,6 +188,7 @@ var LLMS_TXT = `# turva.dev
 ## Blog
 - [Blog](https://turva.dev/blog)
 - [Auditing the auditor with four AI agents](https://turva.dev/blog/auditing-the-auditor)
+- [Moving the source from GitHub to Codeberg](https://turva.dev/blog/moving-source-to-codeberg)
 - [A free llms.txt validator](https://turva.dev/blog/free-llms-txt-validator)
 - [Agent access is now a setting](https://turva.dev/blog/agent-access-is-now-a-setting)
 - [What one agent-readiness scanner cannot tell you](https://turva.dev/blog/two-scanner-audit-method)
@@ -335,7 +336,7 @@ var PAGE_MARKDOWN = {
 
 2026-07-04
 
-The company page of this site tells a buyer they can read every line before hiring me. An audit business should survive its own promise, so I pointed it at my own site. Four AI agents read the public surface line by line: the Worker source that renders turva.dev, about 5,400 lines of it, the MCP server behind mcp.turva.dev, and the READMEs of the public repos. They came back with 91 findings.
+The company page of this site tells a buyer they can read every line before hiring me. An audit business should survive its own promise, so I pointed it at my own site. Four AI agents, all running Claude Fable 5, read the public surface line by line: the Worker source that renders turva.dev, about 5,400 lines of it, the MCP server behind mcp.turva.dev, and the READMEs of the public repos. They came back with 91 findings.
 
 ## What 91 findings look like
 
@@ -368,6 +369,43 @@ For an agent-readiness audit where the findings are verified before you read the
 - [What one agent-readiness scanner cannot tell you](/blog/two-scanner-audit-method)
 - [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 - [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+`,
+
+  "/blog/moving-source-to-codeberg": `# Moving the source from GitHub to Codeberg
+
+2026-07-04
+
+The company page of this site tells a buyer they can read every line before hiring me. That promise depends on the source being reachable, and for two weeks it was not, in a way I could not see. This is the log of what broke and why the source now lives at codeberg.org/erekola.
+
+## Two weeks of 404s I could not see
+
+On June 18 GitHub's spam detection flagged my account. There was no notification. Logged in, everything looked normal and every repo was in place. Logged out, the profile and every repo returned 404, and the search API answered "flagged as spammy". Every public pointer at the source was dead for everyone except me: the homepage hero, the guides, the READMEs, the profile links.
+
+## How it surfaced
+
+No scanner caught it. The agent-readiness scanners this site is measured with read the site, not the code hosting, so every score stayed green while the trust chain behind them was broken. It surfaced on July 2 during a fact-check pass, when an AI agent followed the site's own "read the source" link without a logged-in session and got a 404. That is the trap in this failure mode: the owner is the one person who cannot see it.
+
+## What GitHub said
+
+The support ticket had been open since June 18 with one virtual-assistant reply. On July 3 a human answered: the account had been "flagged by mistake" by their spam-detection scripts, and the flag was removed. The reply did not say what had triggered it. The response was polite and the fix was real. It also arrived after the source had already moved.
+
+## What it cost
+
+The measurable part is two weeks of broken pointers. The probable part is worse. An inbound lead wrote in on the same day the flag landed, and my reply pointed them at the open-source Worker as proof of how I work. From that moment every source link I had sent them returned 404, and after one more exchange they went quiet. A silent failure hides its own cost on top of causing it: I cannot prove the 404s ended that conversation, and I cannot rule it out.
+
+## Why the move, and why it stuck
+
+I moved the repos to Codeberg on July 2 with full history, updated every public link the same day, and deleted the GitHub account once the flag was lifted. Codeberg is run by a non-profit on open-source infrastructure, which I like, but that is not the reason. No host is immune to mistakes. The reason is what the incident showed about the failure mode: a silent flag, no notification, an appeal channel that took two weeks to reach a human, and a breakage only visible from outside my own session. A dependency that can fail that way gets treated accordingly. Source hosting now sits in the site's threat model like any other third-party dependency, and the monthly self-audit checks logged-out visibility of every external pointer, because no scanner runs that check for you.
+
+External pointers rot in ways your own monitoring does not see, so they get checked the way a stranger's agent reaches them: from outside, logged out, against the primary source. The audit post published the same day as this one applies that discipline to the code itself.
+
+For an audit that checks a site the way a stranger's agent reaches it, contact info@turva.dev.
+
+## Related
+
+- [Auditing the auditor with four AI agents](/blog/auditing-the-auditor)
+- [Moving turva.dev off prerender.io](/blog/moving-off-prerender)
+- [Owning your fediverse identity](/blog/owning-your-fediverse-identity)
 `,
 
   "/blog/free-llms-txt-validator": `# A free llms.txt validator
@@ -487,6 +525,7 @@ Services and prices are at https://turva.dev/services. Email
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
 - [Auditing the auditor with four AI agents](/blog/auditing-the-auditor). 2026-07-04.
+- [Moving the source from GitHub to Codeberg](/blog/moving-source-to-codeberg). 2026-07-04.
 - [A free llms.txt validator](/blog/free-llms-txt-validator). 2026-07-02.
 - [Agent access is now a setting](/blog/agent-access-is-now-a-setting). 2026-07-02.
 - [What one agent-readiness scanner cannot tell you](/blog/two-scanner-audit-method). 2026-07-01.
@@ -2061,7 +2100,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.14.0",
+    "version": "3.15.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2175,7 +2214,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"gIGOZ_wo4nqs0MNAoqK47JPd3WNkwVnn4MLvlR_xDw_z7GAqcts8prLvezVzZsevUel_6qmvBunuWMnX3P79Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"wE1i2_CXk9ZuGLHfZtFKOakyskNrxyTrr0WoALTfxnxlgXZbWv2XJeYxsyNE8Ol7FRMESCo8RsnTozOl1N6eCg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"gIGOZ_wo4nqs0MNAoqK47JPd3WNkwVnn4MLvlR_xDw_z7GAqcts8prLvezVzZsevUel_6qmvBunuWMnX3P79Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"TGOqe0IDI3pYEnIUmEC9uIeh2rUZturqXbyvPQNgYTUzqFqKU6oZAcgIbCtwSA50wnjoFRk2CvGj3Zx2Qzn_DA\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -2312,7 +2351,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.14.0",
+  "version": "3.15.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -2888,6 +2927,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
   ["/blog/auditing-the-auditor", "monthly", "0.6"],
+  ["/blog/moving-source-to-codeberg", "monthly", "0.6"],
   ["/blog/free-llms-txt-validator", "monthly", "0.6"],
   ["/blog/agent-access-is-now-a-setting", "monthly", "0.6"],
   ["/blog/two-scanner-audit-method", "monthly", "0.6"],
@@ -2966,7 +3006,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -2982,6 +3022,13 @@ var META_BY_PATH = {
     date: "2026-07-04",
     image: "/og-auditing-the-auditor.jpg",
     imageAlt: "Auditing the auditor with four AI agents"
+  },
+  "/blog/moving-source-to-codeberg": {
+    title: "Moving the source from GitHub to Codeberg | turva.dev",
+    description: "GitHub's spam filter silently hid this site's source from everyone but its owner for two weeks. The log of the 404s, the fix, and the move to Codeberg.",
+    date: "2026-07-04",
+    image: "/og-moving-source-to-codeberg.jpg",
+    imageAlt: "Moving the source from GitHub to Codeberg"
   },
   "/blog/free-llms-txt-validator": {
     title: "A free llms.txt validator | turva.dev",
