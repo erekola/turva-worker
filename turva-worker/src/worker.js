@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.15.1 - spec currency pass: SEP-2127, RateLimit draft, OKF and A2A wording, spec-valid UCP profile, MPP version field
+// turva.dev worker v3.16.0 - blog: cheaper-pages-revisited, token saving follow-up, reciprocal related link, llms.txt re-sign
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -187,6 +187,7 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog)
+- [The page grew, the agent bill did not](https://turva.dev/blog/cheaper-pages-revisited)
 - [Auditing the auditor with four AI agents](https://turva.dev/blog/auditing-the-auditor)
 - [Moving the source from GitHub to Codeberg](https://turva.dev/blog/moving-source-to-codeberg)
 - [A free llms.txt validator](https://turva.dev/blog/free-llms-txt-validator)
@@ -332,6 +333,33 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/cheaper-pages-revisited": `# The page grew, the agent bill did not
+
+2026-07-04
+
+In late June this site published [a post on what an agent pays to read a page](/blog/cheaper-pages-for-agents), and the measurement in it said the homepage as markdown cost roughly a third of the HTML form. The most recent startuphub.ai scan reports the same homepage at 10,320 tokens as HTML and 1,723 as markdown. That is a sixth of the cost, an 83% saving, and nothing in the meantime was done to improve the number.
+
+## Where the weight came from
+
+Since that post went out the site has gained seven blog posts before this one, two tool pages, a feed, a share image for every page and related links at the end of every post. None of that was content negotiation work. It was ordinary growth, and it landed where growth always lands, on the human-facing page. Between the 1 July and 4 July scans alone the HTML form of the homepage went from 9,560 tokens to 10,320, about 8% heavier in three days. The markdown form went from 1,750 to 1,723. It got slightly smaller.
+
+## Two surfaces, two growth rates
+
+The HTML form of a page carries everything a site accumulates: navigation, styling, social metadata, structured data and links to whatever shipped last week. Each of those earns its place for a human reader or a search engine. The markdown form carries the words and the links and nothing else, so it grows only when the actual content grows. Serve one surface to everyone and every agent pays for the whole accumulation on every visit. Serve both forms from the same URL and the costs come apart on their own, the human page free to get richer while the agent page stays at the price of the text.
+
+## Read the number yourself
+
+The token split is not self-reported. The startuphub.ai scanner prints the token count of both forms of a page with every scan it runs, on any site it is pointed at, and this site logs the pair after every deploy. The June post carried the measurement of its day and this one carries the measurement of 4 July. If the pattern holds, a later post will quote a wider gap still, because the human surface keeps accumulating and the text does not.
+
+For an audit that measures what agents pay to read your site, contact info@turva.dev.
+
+## Related
+
+- [What an agent pays to read your site](/blog/cheaper-pages-for-agents)
+- [Serving markdown to agents](/guides/markdown-for-agents)
+- [What one agent-readiness scanner cannot tell you](/blog/two-scanner-audit-method)
+`,
+
   "/blog/auditing-the-auditor": `# Auditing the auditor with four AI agents
 
 2026-07-04
@@ -524,6 +552,7 @@ Services and prices are at https://turva.dev/services. Email
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [The page grew, the agent bill did not](/blog/cheaper-pages-revisited). 2026-07-04.
 - [Auditing the auditor with four AI agents](/blog/auditing-the-auditor). 2026-07-04.
 - [Moving the source from GitHub to Codeberg](/blog/moving-source-to-codeberg). 2026-07-04.
 - [A free llms.txt validator](/blog/free-llms-txt-validator). 2026-07-02.
@@ -606,7 +635,7 @@ For an audit of how cheaply agents can read your site, contact info@turva.dev.
 
 - [Serving markdown to agents](/guides/markdown-for-agents)
 - [Response headers that help agents](/guides/response-headers-for-agents)
-- [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
+- [The page grew, the agent bill did not](/blog/cheaper-pages-revisited)
 `,
   "/blog/verifiable-agent-identity": `# When an agent can prove it is Claude
 
@@ -2100,7 +2129,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.15.1",
+    "version": "3.16.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2214,7 +2243,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yR7wOHiGGT_f-AIcAL56mEjiSaQ8nSQ-UJyFLrGZ8L_UUbLMORPN8Z0RyOOfqNgfDilRpDzwEsBbtcMu0kuVBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"TGOqe0IDI3pYEnIUmEC9uIeh2rUZturqXbyvPQNgYTUzqFqKU6oZAcgIbCtwSA50wnjoFRk2CvGj3Zx2Qzn_DA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yR7wOHiGGT_f-AIcAL56mEjiSaQ8nSQ-UJyFLrGZ8L_UUbLMORPN8Z0RyOOfqNgfDilRpDzwEsBbtcMu0kuVBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"_na9zwyHGjinVgOusQoXQACp1kJf7kB51-za6iouqh6737Ktuf2va38r77mmzGarhjSrCYClCcC2tJ62JSsNCQ\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -2351,7 +2380,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.15.1",
+  "version": "3.16.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -2911,6 +2940,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/cheaper-pages-revisited", "monthly", "0.6"],
   ["/blog/auditing-the-auditor", "monthly", "0.6"],
   ["/blog/moving-source-to-codeberg", "monthly", "0.6"],
   ["/blog/free-llms-txt-validator", "monthly", "0.6"],
@@ -2991,7 +3021,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -3001,6 +3031,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/cheaper-pages-revisited": {
+    title: "The page grew, the agent bill did not | turva.dev",
+    description: "The site kept growing after June's token-cost post. The 4 July startuphub.ai scan reports an 83% token saving between the HTML and markdown forms.",
+    date: "2026-07-04",
+    image: "/og-cheaper-pages-revisited.jpg",
+    imageAlt: "The page grew, the agent bill did not"
+  },
+
   "/blog/auditing-the-auditor": {
     title: "Auditing the auditor with four AI agents | turva.dev",
     description: "Four AI agents read every line of turva.dev. Of 91 findings, four HIGH alerts failed verification and one held. False-positive discipline is the hard part.",
