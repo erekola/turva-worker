@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.13.0 - llms.txt validator (/llms-txt-validator), agent-ready badge (/badge), per-page OG cards, homepage agent-view demo
+// turva.dev worker v3.14.0 - blog: auditing the auditor, auth.md absolute discovery links
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -187,6 +187,7 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog)
+- [Auditing the auditor with four AI agents](https://turva.dev/blog/auditing-the-auditor)
 - [A free llms.txt validator](https://turva.dev/blog/free-llms-txt-validator)
 - [Agent access is now a setting](https://turva.dev/blog/agent-access-is-now-a-setting)
 - [What one agent-readiness scanner cannot tell you](https://turva.dev/blog/two-scanner-audit-method)
@@ -322,14 +323,53 @@ cannot be deleted until the statutory retention period ends.
 
 ## Related discovery
 
-- OAuth Authorization Server: /.well-known/oauth-authorization-server
-- OAuth Protected Resource: /.well-known/oauth-protected-resource
-- API catalog: /.well-known/api-catalog
-- Security contact: /.well-known/security.txt
-- Legal: /legal
+- OAuth Authorization Server: https://turva.dev/.well-known/oauth-authorization-server
+- OAuth Protected Resource: https://turva.dev/.well-known/oauth-protected-resource
+- API catalog: https://turva.dev/.well-known/api-catalog
+- Security contact: https://turva.dev/.well-known/security.txt
+- Legal: https://turva.dev/legal
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/auditing-the-auditor": `# Auditing the auditor with four AI agents
+
+2026-07-04
+
+The company page of this site tells a buyer they can read every line before hiring me. An audit business should survive its own promise, so I pointed it at my own site. Four AI agents read the public surface line by line: the Worker source that renders turva.dev, about 5,400 lines of it, the MCP server behind mcp.turva.dev, and the READMEs of the public repos. They came back with 91 findings.
+
+## What 91 findings look like
+
+Most were the drift every living codebase accumulates. One surface advertised RS256 and ES256 for verification while the site's actual key is Ed25519. A response header named x-markdown-tokens carried a word count. A guide expanded MPP to the wrong protocol name. A table in one guide had never rendered as a table, because the renderer did not support tables. The legal page called this a registered company when it is a registered business. None of these move a scanner.
+
+About 60 fixes shipped, and both scanners were re-run after the deploys: startuphub.ai reads 100/100, grade A+, with all six categories at 100, and isitagentready.com reads Level 5. The scores were the same before most of these fixes, and that is the point. A scanner cannot see whether the key algorithm you advertise is the one you use. Line-by-line reading is the layer under the score.
+
+## Four HIGH alerts, and how they died
+
+The agents marked four findings HIGH. All four fell when verified, and they traced to two root causes.
+
+The first: the site claims 100/100 verified by two independent scanners, and the agents knew that one of those scanners, isitagentready.com, grades sites on levels, 0 to 5. A percentage from a level-based scanner reads like an invented number, so the claim was flagged as false advertising on the audit's own subject matter. The scanner's own scorecard settles it. Run the scan and the report shows 100/100 for this site next to Level 5. The claim stands as written.
+
+The second: an agent fetched the live MCP server card and read version 1.1.0 where the source says 1.2.0. Deployed code that trails its repo is a real problem anywhere, so HIGH was the right severity for the claim. It was still wrong. The fetch had come through a cache, and pulling the deployed Worker straight from the Cloudflare API showed 1.2.0, identical to the source. The finding described the measuring instrument, and the deployment was never out of sync.
+
+## The finding that held
+
+One HIGH survived. The MCP server's README promised that the service does no logging, and the Worker configuration had platform observability switched on, which stored a log line for every call. Promise and code disagreed, and this is the exact class of gap the audit exists to catch. The repair went the honest way around. Reality changed to match the words: observability is off, and the README now also says out loud that platform logs are disabled. Rewriting the README to say minimal logging would have been faster to ship, and worth less to anyone who reads it.
+
+## The hard part is the false positives
+
+A finding is a claim, and a claim gets the same treatment as marketing copy. Verify it against the primary source or drop it. Acting on the dead alerts here would have made the site worse, because fixing a correct claim plants a real error where a false alarm used to be. Read the scanner's own scorecard instead of assuming its scale, and pull the deployed artifact from the platform instead of trusting a cached fetch. Minutes of checking killed four HIGHs.
+
+The same discipline applies when you buy an audit. The report that reaches you should be the survivors, and a useful question for any auditor is how many findings were dropped between the raw scan and the written report. A report where the answer is zero usually means nobody checked.
+
+For an agent-readiness audit where the findings are verified before you read them, contact info@turva.dev.
+
+## Related
+
+- [What one agent-readiness scanner cannot tell you](/blog/two-scanner-audit-method)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+`,
+
   "/blog/free-llms-txt-validator": `# A free llms.txt validator
 
 2026-07-02
@@ -446,6 +486,7 @@ Services and prices are at https://turva.dev/services. Email
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [Auditing the auditor with four AI agents](/blog/auditing-the-auditor). 2026-07-04.
 - [A free llms.txt validator](/blog/free-llms-txt-validator). 2026-07-02.
 - [Agent access is now a setting](/blog/agent-access-is-now-a-setting). 2026-07-02.
 - [What one agent-readiness scanner cannot tell you](/blog/two-scanner-audit-method). 2026-07-01.
@@ -2020,7 +2061,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.13.0",
+    "version": "3.14.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2134,7 +2175,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"gIGOZ_wo4nqs0MNAoqK47JPd3WNkwVnn4MLvlR_xDw_z7GAqcts8prLvezVzZsevUel_6qmvBunuWMnX3P79Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"jRXjGIgLL97tS4mNHqZCLhkTCGoQgt7sgbZZ4PEck4Fc87uQ-At9fJqONCB94MclvbqP11ny8qp92dGiWyjYBg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"gIGOZ_wo4nqs0MNAoqK47JPd3WNkwVnn4MLvlR_xDw_z7GAqcts8prLvezVzZsevUel_6qmvBunuWMnX3P79Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"wE1i2_CXk9ZuGLHfZtFKOakyskNrxyTrr0WoALTfxnxlgXZbWv2XJeYxsyNE8Ol7FRMESCo8RsnTozOl1N6eCg\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -2271,7 +2312,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.13.0",
+  "version": "3.14.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -2846,6 +2887,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/auditing-the-auditor", "monthly", "0.6"],
   ["/blog/free-llms-txt-validator", "monthly", "0.6"],
   ["/blog/agent-access-is-now-a-setting", "monthly", "0.6"],
   ["/blog/two-scanner-audit-method", "monthly", "0.6"],
@@ -2924,7 +2966,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -2934,6 +2976,13 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/auditing-the-auditor": {
+    title: "Auditing the auditor with four AI agents | turva.dev",
+    description: "Four AI agents read every line of turva.dev. Of 91 findings, four HIGH alerts failed verification and one held. False-positive discipline is the hard part.",
+    date: "2026-07-04",
+    image: "/og-auditing-the-auditor.jpg",
+    imageAlt: "Auditing the auditor with four AI agents"
+  },
   "/blog/free-llms-txt-validator": {
     title: "A free llms.txt validator | turva.dev",
     description: "turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored.",
