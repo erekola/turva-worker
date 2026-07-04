@@ -109,6 +109,10 @@ Notes on AI agents and the work of letting them read a site and act on a system 
 * [What one agent-readiness scanner cannot tell you](https://turva.dev/blog/two-scanner-audit-method)
 * [Agent access is now a setting](https://turva.dev/blog/agent-access-is-now-a-setting)
 * [A free llms.txt validator](https://turva.dev/blog/free-llms-txt-validator)
+* [Auditing the auditor with four AI agents](https://turva.dev/blog/auditing-the-auditor)
+* [Moving the source from GitHub to Codeberg](https://turva.dev/blog/moving-source-to-codeberg)
+* [The page grew, the agent bill did not](https://turva.dev/blog/cheaper-pages-revisited)
+* [Four AI agents re-checked the guides](https://turva.dev/blog/re-checking-the-guides)
 
 ## How it works
 
