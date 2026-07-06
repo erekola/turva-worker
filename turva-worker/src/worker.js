@@ -3989,7 +3989,7 @@ var FOOTER_CSS = `main table{border-collapse:collapse;margin:1.1rem 0;width:100%
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:1.9rem clamp(20px,5vw,72px);display:flex;flex-direction:column;gap:1rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:9px;}
 .tv-foot .foot-brand svg{display:block;width:22px;height:22px;}
-.tv-foot .foot-links{display:flex;flex-wrap:wrap;gap:0.6rem 1.4rem;}
+.tv-foot .foot-links{display:flex;flex-wrap:wrap;gap:0.6rem 1rem;}
 .tv-foot .ft-row{display:flex;align-items:center;gap:9px;color:#C9D1CE;font-size:0.9rem;text-decoration:none;}
 .tv-foot a.ft-row:hover{color:#5DF18F;}
 .tv-foot .ft-row svg{flex:0 0 auto;width:17px;height:17px;}
