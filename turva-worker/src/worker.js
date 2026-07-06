@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.17.0 - blog: re-checking-the-guides, guide spec pass write-up, blog index reorder, llms.txt re-sign
+// turva.dev worker v3.18.0 - blog: honesty-and-the-checker (auth.md honest form vs the checker)
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -334,6 +334,43 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/honesty-and-the-checker": `# When honesty and the checker disagree
+
+2026-07-06
+
+During the line-by-line pass that [read every line of this site](/blog/auditing-the-auditor), one of the smallest surfaces turned into the sharpest question in the audit. This site serves an auth.md file, a plain description of how an agent authenticates here. It said two things that did not sit together. One line read no issued credentials. Another said an API key is issued out of band on request. Both were trying to be honest, and side by side they were a contradiction.
+
+## Cleaning up a signal made the scanner fail
+
+The obvious repair was to drop the credential machinery and let the file say the simple true thing, that nothing here needs a credential. So the agent_auth block lost its credential types, the fields that name what kind of key or token a service hands out. To a reader they looked like box-ticking, the sort of hollow detail an audit is meant to strip.
+
+Then the scanner failed. isitagentready.com runs a check on auth.md, and that check reports agent_auth metadata was not found the moment the block has no complete registration method. Its own published recipe requires at least one method, and every method has to declare the credential types it supports. Fields removed to look more honest read to the checker as no auth surface at all. The pass count for the whole site leans on that check, and gutting the block would have dropped the 100/100 the front page shows.
+
+## Two honest stories, and the fork between them
+
+So there were two true things to write. This site really does issue no credential that any resource requires, and I could say exactly that and let the check fail. Or this site really does hand out an API key out of band when someone asks, and I could declare that key properly and keep the check green. Both are honest. The checker accepts only one of them.
+
+The tempting read is that the checker is the villain here, rewarding the file that ticks more boxes. That story is wrong. The credential the check wanted was not a fiction, because a key really does get issued on request. The first draft was dishonest for a different reason. A true detail sat next to a line that flatly denied it.
+
+## The honest form is the precise one
+
+The fix was to make the whole block exactly true, rather than gut it or inflate it. The API key is declared and issued out of band on request. The file describes it for exactly what it is. It attributes correspondence and nothing more. No resource on this site requires it, and holding it unlocks no extra access. Two other fields went the other way and were deleted, because they were the real hollow signals. One named an access token the service never issues. The other named an events channel that does not exist. Those were claims with nothing behind them. The API key is a claim with a key behind it.
+
+That is the line between a hollow signal and a modest true one, and a scanner cannot draw it for you. It can tell that a field is present and parses. It cannot tell whether the thing the field describes is real. The judgment that took the longest landed on the surface that moved no score at all.
+
+## What this leaves on the page
+
+auth.md now says one thing instead of two. The key it names is the key you get if you email and ask, and it labels the message and grants nothing. The fields that described things the service does not do are gone. The check reads green because the declaration is finally true. Nothing was padded to please it.
+
+For an agent-readiness audit that reads your agent-facing claims the way a skeptic would, contact info@turva.dev.
+
+## Related
+
+- [Auditing the auditor with four AI agents](/blog/auditing-the-auditor)
+- [How agents authenticate](/guides/agent-authentication)
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+`,
+
   "/blog/auditing-the-auditor": `# Auditing the auditor with four AI agents
 
 2026-07-04
@@ -586,6 +623,7 @@ Services and prices are at https://turva.dev/services. Email
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [When honesty and the checker disagree](/blog/honesty-and-the-checker). 2026-07-06.
 - [Auditing the auditor with four AI agents](/blog/auditing-the-auditor). 2026-07-04.
 - [Four AI agents re-checked the guides](/blog/re-checking-the-guides). 2026-07-04.
 - [The page grew, the agent bill did not](/blog/cheaper-pages-revisited). 2026-07-04.
@@ -2164,7 +2202,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.17.0",
+    "version": "3.18.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2415,7 +2453,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.17.0",
+  "version": "3.18.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -2975,6 +3013,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/honesty-and-the-checker", "monthly", "0.6"],
   ["/blog/auditing-the-auditor", "monthly", "0.6"],
   ["/blog/re-checking-the-guides", "monthly", "0.6"],
   ["/blog/cheaper-pages-revisited", "monthly", "0.6"],
@@ -3057,7 +3096,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -3067,6 +3106,13 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/honesty-and-the-checker": {
+    title: "When honesty and the checker disagree | turva.dev",
+    description: "Making this site's auth.md cleaner made the scanner fail. The honest form was the precise one, neither gutted nor padded to please the check.",
+    date: "2026-07-06",
+    image: "/og-honesty-and-the-checker.jpg",
+    imageAlt: "When honesty and the checker disagree"
+  },
   "/blog/auditing-the-auditor": {
     title: "Auditing the auditor with four AI agents | turva.dev",
     description: "Four AI agents read every line of turva.dev. Of 91 findings, four HIGH alerts failed verification and one held. False-positive discipline is the hard part.",
