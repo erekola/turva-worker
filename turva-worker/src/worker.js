@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.18.0 - blog: honesty-and-the-checker (auth.md honest form vs the checker)
+// turva.dev worker v3.19.0 - blog: agent-readiness-finnish-b2b (scanned sixteen Finnish B2B sites)
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -334,6 +334,40 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/agent-readiness-finnish-b2b": `# How agent-ready are Finnish B2B sites? I scanned sixteen
+
+2026-07-07
+
+Over the past weeks I ran two independent agent-readiness scanners over sixteen Finnish company websites, mostly industrial and B2B, a few in healthcare. The scanners were isitagentready.com, which grades on a Level 0 to 5 scale, and the startuphub.ai agent-readiness score out of 100. This is a small, non-random sample. The sites came from my own prospecting, not a statistical draw, so read it as a snapshot, not a census. The pattern was consistent enough to be worth writing down.
+
+## The numbers
+
+Every one of the sixteen scored under 50 out of 100. The range was 27 to 50, the average around 39, the median around 40. On the isitagentready Level scale almost all landed at Level 1 of 5, the floor an ordinary CMS site reaches, a couple sat at Level 0, and only one reached Level 2. None reached Level 3 or above.
+
+To be clear about what that means, these are not broken websites. They load, they rank, a person can use them without trouble. The scanners measure something else, whether an AI agent can read the site and act on it.
+
+## The three gaps that showed up almost everywhere
+
+Discoverability was usually fine, legibility was not. Most sites had robots.txt, a sitemap, sometimes explicit AI-bot rules, so an agent can find them. But the same sites served HTML only, often with heavy token overhead. One consumer-facing corporate site returned about 16500 tokens of HTML where 1400 tokens of markdown would carry the same content, a 91 percent overhead. An agent can fetch the page, but reading it is slow and lossy.
+
+The second gap was structured data, or the lack of it. Missing JSON-LD and product data was common, so an agent reaches the site, sees a wall of markup, and cannot answer a plain question like what this company makes or sells.
+
+The third and most consistent gap was the action and capability layer. No markdown negotiation, no MCP server, no API discovery, no agent-auth metadata. One site that belongs to an AI company itself passed zero of eight checks in that discovery group. This is the layer that lets an agent move from finding a site to operating it, and it was absent almost everywhere.
+
+## Why this matters now
+
+AI agents are becoming a discovery and transaction channel. When an agent reads a site and cannot parse or act on it, the business does not just rank lower, it becomes invisible inside the answer. The sites in this sample are not behind on SEO, most rank fine. They are behind on the next thing, being legible and actionable to the agents that increasingly read on a person's behalf.
+
+The encouraging part is that the fixes are mostly known and mechanical. Serve markdown alongside HTML, add structured data, publish an llms.txt, expose the discovery manifests. Two of the sixteen had already started, they published a real llms.txt, and that is exactly why they sat at the top of the range.
+
+To check where a site stands, the free llms.txt validator is at turva.dev/llms-txt-validator, and the agent-readiness audit and advisory work is at turva.dev.
+
+## Related
+
+- [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+- [What an agent pays to read your site](/blog/cheaper-pages-for-agents)
+`,
   "/blog/honesty-and-the-checker": `# When honesty and the checker disagree
 
 2026-07-06
@@ -623,6 +657,7 @@ Services and prices are at https://turva.dev/services. Email
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b). 2026-07-07.
 - [When honesty and the checker disagree](/blog/honesty-and-the-checker). 2026-07-06.
 - [Auditing the auditor with four AI agents](/blog/auditing-the-auditor). 2026-07-04.
 - [Four AI agents re-checked the guides](/blog/re-checking-the-guides). 2026-07-04.
@@ -2202,7 +2237,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.18.0",
+    "version": "3.19.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2453,7 +2488,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.18.0",
+  "version": "3.19.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3013,6 +3048,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/agent-readiness-finnish-b2b", "monthly", "0.6"],
   ["/blog/honesty-and-the-checker", "monthly", "0.6"],
   ["/blog/auditing-the-auditor", "monthly", "0.6"],
   ["/blog/re-checking-the-guides", "monthly", "0.6"],
@@ -3096,7 +3132,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -3106,6 +3142,13 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/agent-readiness-finnish-b2b": {
+    title: "Agent-readiness of Finnish B2B sites | turva.dev",
+    description: "I ran two independent scanners over sixteen Finnish B2B sites. Every one scored under 50 out of 100, and the same three gaps showed up almost everywhere.",
+    date: "2026-07-07",
+    image: "/og-agent-readiness-finnish-b2b.jpg",
+    imageAlt: "Agent-readiness of Finnish B2B sites"
+  },
   "/blog/honesty-and-the-checker": {
     title: "When honesty and the checker disagree | turva.dev",
     description: "Making this site's auth.md cleaner made the scanner fail. The honest form was the precise one, neither gutted nor padded to please the check.",

@@ -98,6 +98,7 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 Notes on AI agents and the work of letting them read a site and act on a system safely. Published on turva.dev.
 
 * [Blog (index)](https://turva.dev/blog)
+* [How agent-ready are Finnish B2B sites? I scanned sixteen](https://turva.dev/blog/agent-readiness-finnish-b2b)
 * [When honesty and the checker disagree](https://turva.dev/blog/honesty-and-the-checker)
 * [What an agent pays to read your site](https://turva.dev/blog/cheaper-pages-for-agents)
 * [When an agent can prove it is Claude](https://turva.dev/blog/verifiable-agent-identity)
