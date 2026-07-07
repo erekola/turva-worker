@@ -187,6 +187,8 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog)
+- [How agent-ready are Finnish B2B sites? I scanned sixteen](https://turva.dev/blog/agent-readiness-finnish-b2b)
+- [When honesty and the checker disagree](https://turva.dev/blog/honesty-and-the-checker)
 - [Auditing the auditor with four AI agents](https://turva.dev/blog/auditing-the-auditor)
 - [Four AI agents re-checked the guides](https://turva.dev/blog/re-checking-the-guides)
 - [The page grew, the agent bill did not](https://turva.dev/blog/cheaper-pages-revisited)
@@ -2351,7 +2353,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yR7wOHiGGT_f-AIcAL56mEjiSaQ8nSQ-UJyFLrGZ8L_UUbLMORPN8Z0RyOOfqNgfDilRpDzwEsBbtcMu0kuVBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YYiQr007iZH0Yz9j3rqfDS9jEkEA05h2oLeNhI1Gb1c2ePJPi_sGAK1WyScqSGpM1Uhc7Xz5S3OaHoUZaOY8BQ\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yR7wOHiGGT_f-AIcAL56mEjiSaQ8nSQ-UJyFLrGZ8L_UUbLMORPN8Z0RyOOfqNgfDilRpDzwEsBbtcMu0kuVBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pL8MSqox9LHxGkabO4E_jTT1SAoDpoQiHFub73oApc124HtqU8mJ4HFoItbb1GM-TMJgyUK4tmwzSE5Jey7bDw\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
