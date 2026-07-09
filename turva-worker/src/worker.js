@@ -3477,13 +3477,16 @@ function buildMetaBlock(pathname, canonicalUrl) {
     }
   }
   const st = escapeHtml(m.title);
+  // Social cards and Medium's importer read og:title, and the " | turva.dev" suffix
+  // that belongs in <title> only repeats the domain there. Strip it for og/twitter.
+  const sot = escapeHtml(m.title.replace(/\s*[|\u00b7]\s*turva\.dev$/, ""));
   const sd = escapeHtml(m.description);
   const sa = escapeHtml(m.imageAlt);
   return `<title>${st}</title>
 <meta name="description" content="${sd}" />
 <meta property="og:type" content="${ogType}" />
 <meta property="og:site_name" content="turva.dev" />
-<meta property="og:title" content="${st}" />
+<meta property="og:title" content="${sot}" />
 <meta property="og:description" content="${sd}" />
 <meta property="og:url" content="${url}" />
 <meta property="og:locale" content="en_US" />
@@ -3492,7 +3495,7 @@ function buildMetaBlock(pathname, canonicalUrl) {
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content="${sa}" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="${st}" />
+<meta name="twitter:title" content="${sot}" />
 <meta name="twitter:description" content="${sd}" />
 <meta name="twitter:image" content="${ogImage}" />
 <meta name="twitter:image:alt" content="${sa}" />${articleMeta}`;
