@@ -5591,6 +5591,18 @@ async function handleRequest(request, env) {
     return Response.redirect("https://turva.dev" + LEGACY_REDIRECTS[pathname] + url.search, 301);
   }
 
+  // Hashnode's headless publication sends every post to its Base URL, which is
+  // /blog. A guide cross-posted there lands on /blog/<slug>, a path this site does
+  // not serve, so send it on to the guide with the same slug. A real blog post has
+  // a PAGE_MARKDOWN entry and never enters this branch, so /blog/open-knowledge-format
+  // keeps serving the blog post and does not redirect to the guide of the same slug.
+  if (pathname.startsWith("/blog/") && !PAGE_MARKDOWN[pathname]) {
+    const guidePath = "/guides/" + pathname.slice(6);
+    if (PAGE_MARKDOWN[guidePath]) {
+      return Response.redirect("https://turva.dev" + guidePath + url.search, 301);
+    }
+  }
+
   if (wantsJson(request) && pathname === "/") {
     const resp = serveStatic(HOME_JSON, "application/json; charset=utf-8", "agent-api");
     resp.headers.append("vary", "Accept");
