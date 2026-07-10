@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.19.0 - blog: agent-readiness-finnish-b2b (scanned sixteen Finnish B2B sites)
+// turva.dev worker v3.20.0 - services FAQ JSON-LD, key figures block in the data post
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -341,6 +341,15 @@ var PAGE_MARKDOWN = {
 2026-07-07
 
 Over the past weeks I ran two independent agent-readiness scanners over sixteen Finnish company websites, mostly industrial and B2B, a few in healthcare. The scanners were isitagentready.com, which grades on a Level 0 to 5 scale, and the startuphub.ai agent-readiness score out of 100. This is a small, non-random sample. The sites came from my own prospecting, not a statistical draw, so read it as a snapshot, not a census. The pattern was consistent enough to be worth writing down.
+
+## Key figures
+
+- Sixteen Finnish B2B sites scanned with two independent scanners, isitagentready.com and the startuphub.ai agent-readiness score.
+- Every site scored under 50 out of 100. The range was 27 to 50, the average about 39, the median about 40.
+- Almost all sites landed at isitagentready Level 1 of 5, a couple at Level 0, one at Level 2, none higher.
+- The three most common gaps: HTML-only pages with heavy token overhead, missing structured data, and no action or capability layer.
+- Worst measured token overhead: about 16500 tokens of HTML where 1400 tokens of markdown carry the same content, a 91 percent overhead.
+- The two sites that published a real llms.txt sat at the top of the range.
 
 ## The numbers
 
@@ -2239,7 +2248,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.19.0",
+    "version": "3.20.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2490,7 +2499,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.19.0",
+  "version": "3.20.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3878,6 +3887,24 @@ function buildBuyerFaqJsonLd() {
 }
 
 var GUIDE_PAGE_FAQ = {
+  "/services": [
+    {
+      "q": "What is an agent readiness audit?",
+      "a": "An agent readiness audit measures how well AI agents can discover, read, and act on your website or API. turva.dev runs two independent scanners, isitagentready.com and the startuphub.ai agent-readiness score, reviews the agent-facing surfaces manually, and delivers a written report with fixes ranked by score impact and implementation cost."
+    },
+    {
+      "q": "What does an agent readiness audit cost?",
+      "a": "The audit is \u20ac6,500, fixed scope, delivered in two to three weeks. Ongoing advisory is \u20ac3,000 per month with a three month minimum, and implementation is \u20ac1,500 per day, scoped per task. All prices exclude VAT. Agent operations engagements are priced on request."
+    },
+    {
+      "q": "How is the audit delivered?",
+      "a": "Everything is async. There are no calls or meetings, findings and answers move in writing, and questions get a response within one business day. The audit ends in a written report your team can act on directly, with one round of written follow-up questions included."
+    },
+    {
+      "q": "How is agent readiness measured?",
+      "a": "With two independent public scanners rather than self-assessment. isitagentready.com grades sites on a Level 0 to 5 scale, and startuphub.ai scores agent readiness out of 100. The audit runs both against your site, so the result is reproducible and the same scan can verify every fix afterwards."
+    }
+  ],
   "/guides/agentic-resource-discovery": [
     {
       "q": "What is an ai-catalog.json?",
@@ -4516,7 +4543,8 @@ ${FOOTER_HTML}
 
 function serveServicesHtml(canonicalUrl) {
   const metaBlock = buildMetaBlock("/services", canonicalUrl);
-  const jsonLd = buildGuideJsonLd("/services", canonicalUrl);
+  const jsonLd = buildGuideJsonLd("/services", canonicalUrl) +
+    (GUIDE_PAGE_FAQ["/services"] ? "\n" + buildGuidePageFaqJsonLd("/services", canonicalUrl) : "");
   const body = `<!doctype html>
 <html lang="en">
 <head>
