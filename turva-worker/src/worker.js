@@ -1096,6 +1096,8 @@ turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites o
 - startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
 - isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/turva.dev
 
+Both agent-readiness scanners are public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the numbers independently, run isitagentready.com and startuphub.ai against turva.dev and compare.
+
 turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-07-01.
 
 - Hardenize: all 13 categories passed. https://www.hardenize.com/report/turva.dev
@@ -4475,6 +4477,7 @@ ${FOOTER_CSS}
       <li>startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
       <li>isitagentready.com: 100/100, Level 5 (Agent-Native). <a href="https://isitagentready.com/turva.dev">isitagentready.com/turva.dev</a></li>
     </ul>
+    <p>Both agent-readiness scanners are public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the numbers independently, run isitagentready.com and startuphub.ai against turva.dev and compare.</p>
     <p>turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-07-01.</p>
     <ul class="evlist">
       <li>Hardenize: all 13 categories passed. <a href="https://www.hardenize.com/report/turva.dev">hardenize.com/report/turva.dev</a></li>
