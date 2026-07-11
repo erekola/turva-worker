@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.20.0 - services FAQ JSON-LD, key figures block in the data post
+// turva.dev worker v3.21.0 - audit adds live agent-view check, capacity and one-day-fix note, services skill + FAQ
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1199,6 +1199,8 @@ What you get:
   and HTTP headers
 - Review of robots.txt, sitemap.xml, ai.txt and llms.txt against
   current agent norms
+- A live check of how AI assistants and agents retrieve and answer
+  questions about the site or API today, across several AI platforms
 - Written report with findings ranked by score impact and
   implementation cost
 - One round of written follow-up questions
@@ -1207,6 +1209,12 @@ What you do not get:
 - Calls or meetings
 - Implementation of the fixes (separate engagement)
 - Ongoing monitoring (separate engagement)
+
+Large sites are covered in full. If a site is big enough that the
+live checks reach a tool quota, the quota is raised rather than the
+coverage reduced. Once the audit is complete, the fixes it lists are
+typically about a day of implementation work, whether your team does
+them or I do.
 
 Suited for teams that want a clear picture of where they stand
 before deciding what to do about it.
@@ -2248,7 +2256,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.20.0",
+    "version": "3.21.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2499,7 +2507,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.20.0",
+  "version": "3.21.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -2923,7 +2931,7 @@ description: List the service offerings of turva.dev with prices (EUR).
 Use this skill to learn which services turva.dev offers and prices.
 
 ## Services (prices in EUR, VAT not included)
-- **Audit.** €6,500. Fixed scope, 2-3 weeks. Scanner sweep, manual review, written report with prioritized fix list.
+- **Audit.** €6,500. Fixed scope, 2-3 weeks. Two scanners and a live check of how AI assistants retrieve the site, manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, minimum 3 months. Async-only. Ongoing review and score tracking.
 - **Implementation.** €1,500 / day. Scoped per task. Cloudflare Workers, MCP servers, well-known manifests, JSON-LD.
 
@@ -3890,7 +3898,7 @@ var GUIDE_PAGE_FAQ = {
   "/services": [
     {
       "q": "What is an agent readiness audit?",
-      "a": "An agent readiness audit measures how well AI agents can discover, read, and act on your website or API. turva.dev runs two independent scanners, isitagentready.com and the startuphub.ai agent-readiness score, reviews the agent-facing surfaces manually, and delivers a written report with fixes ranked by score impact and implementation cost."
+      "a": "An agent readiness audit measures how well AI agents can discover, read, and act on your website or API. turva.dev runs two independent scanners, isitagentready.com and the startuphub.ai agent-readiness score, reviews the agent-facing surfaces manually, checks how AI assistants currently retrieve and answer about the site, and delivers a written report with fixes ranked by score impact and implementation cost."
     },
     {
       "q": "What does an agent readiness audit cost?",
@@ -3903,6 +3911,10 @@ var GUIDE_PAGE_FAQ = {
     {
       "q": "How is agent readiness measured?",
       "a": "With two independent public scanners rather than self-assessment. isitagentready.com grades sites on a Level 0 to 5 scale, and startuphub.ai scores agent readiness out of 100. The audit runs both against your site, so the result is reproducible and the same scan can verify every fix afterwards."
+    },
+    {
+      "q": "How much work are the fixes after the audit?",
+      "a": "In most cases, once the audit is complete, the fixes it lists are about a day of implementation work. Your team can do them with the report as the spec, or turva.dev implements them as a scoped engagement."
     }
   ],
   "/guides/agentic-resource-discovery": [
@@ -4637,6 +4649,7 @@ ${FOOTER_CSS}
       <li>Two independent scanners run against the site or API</li>
       <li>Manual review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers</li>
       <li>Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms</li>
+      <li>A live check of how AI assistants and agents retrieve and answer questions about the site or API today, across several AI platforms</li>
       <li>Written report with findings ranked by score impact and implementation cost</li>
       <li>One round of written follow-up questions</li>
     </ul>
@@ -4646,6 +4659,7 @@ ${FOOTER_CSS}
       <li>Implementation of the fixes (separate engagement)</li>
       <li>Ongoing monitoring (separate engagement)</li>
     </ul>
+    <p>Large sites are covered in full. If a site is big enough that the live checks reach a tool quota, the quota is raised rather than the coverage reduced. Once the audit is complete, the fixes it lists are typically about a day of implementation work, whether your team does them or I do.</p>
     <p class="suited">Suited for teams that want a clear picture of where they stand before deciding what to do about it.</p>
   </div>
 
