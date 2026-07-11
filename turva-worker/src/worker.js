@@ -4975,7 +4975,7 @@ ${cardPageNav("/legal")}
   </div>
   <div class="scard"><h2>Updates</h2>
     <p>This page is updated when the terms change. The current version applies to engagements started after the date below.</p>
-    <p>Last updated: <span class="gv">2026-06-20</span>.</p>
+    <p>Last updated: <span class="gv">2026-07-04</span>.</p>
   </div>
 </main>
 ${FOOTER_HTML}
