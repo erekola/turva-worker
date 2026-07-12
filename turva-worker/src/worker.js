@@ -187,6 +187,7 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog)
+- [How to let an AI agent work in your repo without leaking your secrets](https://turva.dev/blog/agent-secret-hygiene)
 - [How agent-ready are Finnish B2B sites? I scanned sixteen](https://turva.dev/blog/agent-readiness-finnish-b2b)
 - [When honesty and the checker disagree](https://turva.dev/blog/honesty-and-the-checker)
 - [Auditing the auditor with four AI agents](https://turva.dev/blog/auditing-the-auditor)
@@ -336,6 +337,47 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/agent-secret-hygiene": `# How to let an AI agent work in your repo without leaking your secrets
+
+2026-07-12
+
+Coding agents now run with your shell. They read your files and run your build. They push commits under your name. That is the point of them. It also means every plaintext secret on your disk is readable by the agent, and by every backup or synced folder that copies your working directory. A token in a text file was a small risk when only you could read it. It is a larger one the moment something else is holding the keyboard.
+
+This is the question an agent-readiness audit asks about your product, turned inward. If you care how a third party exposes data to an agent, your own machine is the first place to get it right.
+
+Here is the posture I would defend, the reasoning behind it, and one Windows trap that cost me an afternoon.
+
+## Keep secrets out of plaintext files
+
+The old habit is a token in a dotfile, a key in .npmrc, an unencrypted service account JSON sitting next to the code. It works because the file is only yours. An agent breaks that assumption. So does a leaked backup, a synced folder, or someone watching a screen-share.
+
+Move every secret into storage the operating system encrypts and scopes to your account. On Windows that is the Data Protection API. On macOS the Keychain. On Linux libsecret through the Secret Service. The value is encrypted at rest, only your logged-in account can decrypt it, and a copied file is useless to anyone else. Your scripts ask for the secret when they run instead of reading it off disk.
+
+## Git credentials through a credential manager
+
+Most people still authenticate git with a personal access token pasted into a credentials file. Drop that. Use a credential manager that speaks OAuth, so the token lives in the OS store, refreshes on its own, and never lands in a file you can commit or copy by accident.
+
+One trap to know if you are on Windows and your forge is not GitHub. The common advice is git-credential-oauth with the wincred store. That store writes to Windows Credential Manager, which caps a single entry at 2560 bytes. Some forges issue OAuth tokens well past that, and the write fails with a bare "CredWrite failed" while fetch still works, so nothing looks wrong until you notice every command re-authenticating. Git Credential Manager handles the large token by splitting it across entries and refreshes it silently. If a self-hosted GitLab, Gitea, or Forgejo keeps opening a browser prompt on push, this is usually why.
+
+## A small vault for everything else
+
+Credential managers are built to store one username and password per host. They are the wrong shape for an API key you set as an environment variable, or a private key you would rather not keep as a loose file. Some values also run past the size limit above.
+
+For those, a small file based vault does the job. Encrypt each value with the same OS primitive, keep them in one file, and give it a get command. A deploy script then reads the token when it runs, setting the environment variable from that call instead of from a file on disk. The file is encrypted and tied to your account, so a backup or a stray copy exposes nothing.
+
+Two caveats. A vault tied to your OS user cannot be decrypted after a reinstall, so keep an offline backup of anything you cannot regenerate, like a private signing key. And do not write your own crypto here. Call the OS primitive. It is audited, and it is the same mechanism your credential manager already trusts.
+
+## Why this matters for buyers
+
+I build this into my own setup because I sell the audit that checks for it. A prospect who asks for an NDA is asking a real question about whether you treat access seriously or leave keys lying around while an agent works next to them. The honest answer shows in how you work, before it shows in any report.
+
+None of this is exotic. It is one habit applied everywhere. The operating system holds the secret, encrypted and scoped to you, and the code asks for it when it needs it. An agent can then do its work in your repo without ever seeing a key in the clear.
+
+## Related
+
+- [Letting agents act on your data](/guides/letting-agents-act-on-data)
+- [AI agent use cases](/guides/ai-agent-use-cases)
+`,
   "/blog/agent-readiness-finnish-b2b": `# How agent-ready are Finnish B2B sites? I scanned sixteen
 
 2026-07-07
@@ -668,6 +710,7 @@ Services and prices are at https://turva.dev/services. Email
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [How to let an AI agent work in your repo without leaking your secrets](/blog/agent-secret-hygiene). 2026-07-12.
 - [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b). 2026-07-07.
 - [When honesty and the checker disagree](/blog/honesty-and-the-checker). 2026-07-06.
 - [Auditing the auditor with four AI agents](/blog/auditing-the-auditor). 2026-07-04.
@@ -2372,7 +2415,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yR7wOHiGGT_f-AIcAL56mEjiSaQ8nSQ-UJyFLrGZ8L_UUbLMORPN8Z0RyOOfqNgfDilRpDzwEsBbtcMu0kuVBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pL8MSqox9LHxGkabO4E_jTT1SAoDpoQiHFub73oApc124HtqU8mJ4HFoItbb1GM-TMJgyUK4tmwzSE5Jey7bDw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yR7wOHiGGT_f-AIcAL56mEjiSaQ8nSQ-UJyFLrGZ8L_UUbLMORPN8Z0RyOOfqNgfDilRpDzwEsBbtcMu0kuVBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"aQrsLkHL-tqLGz6nzCEirDZjVZmlg6hNWfbULTGDXSybrrYrAUXJ4zrjzMEwg3k4S04w757Q1xSy24022udQDg\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -3069,6 +3112,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/agent-secret-hygiene", "monthly", "0.6"],
   ["/blog/agent-readiness-finnish-b2b", "monthly", "0.6"],
   ["/blog/honesty-and-the-checker", "monthly", "0.6"],
   ["/blog/auditing-the-auditor", "monthly", "0.6"],
@@ -3153,7 +3197,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -3163,6 +3207,11 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/agent-secret-hygiene": {
+    title: "Secret hygiene when an agent works in your repo | turva.dev",
+    description: "Coding agents run with your shell, so plaintext secrets on disk are exposed to them. Move git auth to a credential manager and the rest into an OS-encrypted vault.",
+    date: "2026-07-12"
+  },
   "/blog/agent-readiness-finnish-b2b": {
     title: "Agent-readiness of Finnish B2B sites | turva.dev",
     description: "I ran two independent scanners over sixteen Finnish B2B sites. Every one scored under 50 out of 100, and the same three gaps showed up almost everywhere.",
