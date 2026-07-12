@@ -3210,7 +3210,9 @@ var META_BY_PATH = {
   "/blog/agent-secret-hygiene": {
     title: "Secret hygiene when an agent works in your repo | turva.dev",
     description: "Coding agents run with your shell, so plaintext secrets on disk are exposed to them. Move git auth to a credential manager and the rest into an OS-encrypted vault.",
-    date: "2026-07-12"
+    date: "2026-07-12",
+    image: "/og.jpg",
+    imageAlt: "Secret hygiene when an agent works in your repo"
   },
   "/blog/agent-readiness-finnish-b2b": {
     title: "Agent-readiness of Finnish B2B sites | turva.dev",
