@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.21.0 - audit adds live agent-view check, capacity and one-day-fix note, services skill + FAQ
+// turva.dev worker v3.22.0 - AEO named in the audit scope, monthly AI-visibility delta in advisory
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1246,6 +1246,7 @@ What you get:
   current agent norms
 - A live check of how AI assistants and agents retrieve and answer
   questions about the site or API today, across several AI platforms
+  (answer engine optimization, AEO)
 - Written report with findings ranked by score impact and
   implementation cost
 - One round of written follow-up questions
@@ -1273,6 +1274,8 @@ with tracking of how the scores change over time.
 
 What you get:
 - Monthly re-scan and score delta report
+- Monthly AI-visibility delta from the same question set re-run
+  across several AI platforms (answer engine optimization, AEO)
 - Written review of any agent-readiness related work your team
   ships, within one business day
 - Roadmap input on what to ship next and why
@@ -2301,7 +2304,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.21.0",
+    "version": "3.22.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2552,7 +2555,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.21.0",
+  "version": "3.22.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -2976,8 +2979,8 @@ description: List the service offerings of turva.dev with prices (EUR).
 Use this skill to learn which services turva.dev offers and prices.
 
 ## Services (prices in EUR, VAT not included)
-- **Audit.** €6,500. Fixed scope, 2-3 weeks. Two scanners and a live check of how AI assistants retrieve the site, manual review, written report with prioritized fix list.
-- **Advisory.** €3,000 / month. Monthly retainer, minimum 3 months. Async-only. Ongoing review and score tracking.
+- **Audit.** €6,500. Fixed scope, 2-3 weeks. Two scanners and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
+- **Advisory.** €3,000 / month. Monthly retainer, minimum 3 months. Async-only. Ongoing review, score tracking and a monthly AI-visibility delta across several AI platforms.
 - **Implementation.** €1,500 / day. Scoped per task. Cloudflare Workers, MCP servers, well-known manifests, JSON-LD.
 
 Final price is confirmed in writing after scope is agreed.
@@ -3377,7 +3380,7 @@ var META_BY_PATH = {
   },
   "/services": {
     title: "Services: audit, advisory and implementation · turva.dev",
-    description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day, plus agent operations and MCP server design on request. Async-only.",
+    description: "Audit €6,500, advisory €3,000/month, implementation €1,500/day. The audit measures agent-readiness and answer engine optimization (AEO). Async-only.",
     image: "/og-services.jpg",
     imageAlt: "turva.dev services and pricing"
   },
@@ -3580,7 +3583,7 @@ var SCHEMA_HOME = `<script type="application/ld+json">
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 {"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"1500","highPrice":"6500","offerCount":"3","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services","itemListElement":[
 {"@type":"Offer","name":"Audit","description":"Fixed scope, 2-3 weeks. Two independent scanners run against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"6500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"6500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€6,500 fixed price, two to three weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
-{"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
+{"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Cloudflare Workers, MCP servers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}},
 {"@type":"FAQPage","@id":"https://turva.dev/#faq","inLanguage":"en","mainEntity":[
@@ -4703,7 +4706,7 @@ ${FOOTER_CSS}
       <li>Two independent scanners run against the site or API</li>
       <li>Manual review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers</li>
       <li>Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms</li>
-      <li>A live check of how AI assistants and agents retrieve and answer questions about the site or API today, across several AI platforms</li>
+      <li>A live check of how AI assistants and agents retrieve and answer questions about the site or API today, across several AI platforms (answer engine optimization, AEO)</li>
       <li>Written report with findings ranked by score impact and implementation cost</li>
       <li>One round of written follow-up questions</li>
     </ul>
@@ -4723,6 +4726,7 @@ ${FOOTER_CSS}
     <p class="lbl">What you get</p>
     <ul class="get">
       <li>Monthly re-scan and score delta report</li>
+      <li>Monthly AI-visibility delta from the same question set re-run across several AI platforms (answer engine optimization, AEO)</li>
       <li>Written review of any agent-readiness related work your team ships, within one business day</li>
       <li>Roadmap input on what to ship next and why</li>
       <li>Async channel for questions (email or shared doc)</li>
