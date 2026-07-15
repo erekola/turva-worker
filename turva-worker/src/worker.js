@@ -187,6 +187,7 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog)
+- [Microsoft said the patches would get bigger. I measured how much bigger.](https://turva.dev/blog/measuring-the-ai-patch-surge)
 - [How to let an AI agent work in your repo without leaking your secrets](https://turva.dev/blog/agent-secret-hygiene)
 - [How agent-ready are Finnish B2B sites? I scanned sixteen](https://turva.dev/blog/agent-readiness-finnish-b2b)
 - [When honesty and the checker disagree](https://turva.dev/blog/honesty-and-the-checker)
@@ -337,6 +338,113 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/measuring-the-ai-patch-surge": `# Microsoft said the patches would get bigger. I measured how much bigger.
+
+2026-07-15
+
+On 9 July 2026 the head of Windows published a post about AI-powered vulnerability discovery. One line in it was a warning to customers: "As AI helps defenders discover more issues, customers will see a higher volume of security updates included in each security release."
+
+It does not say how much higher. The post runs about 1400 words and contains no numbers at all.
+
+Five days later Microsoft shipped the July package: 1150 CVEs.
+
+The number Microsoft would not put in the blog post is sitting in Microsoft's own API. The Security Update Guide publishes every monthly package as machine-readable CVRF, acknowledgments included, no key required. So I pulled twelve months of it and did the arithmetic.
+
+## What the data says
+
+I sampled eight months before the ramp and four after it.
+
+| Month | CVEs | Month | CVEs |
+| --- | --- | --- | --- |
+| 2024-07 | 454 | 2026-04 | 737 |
+| 2025-01 | 343 | 2026-05 | 991 |
+| 2025-04 | 374 | 2026-06 | 1281 |
+| 2025-07 | 527 | 2026-07 | 1150 |
+| 2025-10 | 427 | | |
+| 2026-01 | 310 | | |
+| 2026-02 | 169 | | |
+| 2026-03 | 460 | | |
+
+The eight pre-ramp months average 383 CVEs. July 2026 is 1150, so the package is 3,0 times the old normal. The baseline broke in April and peaked in June at 1281.
+
+April to July inclusive is 4159 CVEs. At the old rate that is 10,9 months of output, delivered in four.
+
+## The number I am not going to use
+
+February 2026 had 169 CVEs. It is the lowest month in two years, less than half the baseline. Divide July by February and you get 6,8 times, which is a much better number for a headline.
+
+I am not using it, because choosing your denominator is how honest people produce dishonest numbers. February is an outlier, and the only reason to anchor to it is that it flatters the story. The real multiplier is 3,0. It does not need help.
+
+## It is not noise
+
+The obvious objection is that volume without quality is just a bigger pile. If AI were generating low-value findings that got patched anyway, the severity distribution would sag. It did the opposite.
+
+| Measure | 2025-07 | 2026-07 |
+| --- | --- | --- |
+| CVEs | 527 | 1150 |
+| CVSS median | 6,5 | 7,5 |
+| CVSS mean | 6,47 | 7,26 |
+| CVSS 7,0 and above | 48,0 % | 71,9 % |
+| CVSS below 4,0 | 4,2 % | 0,8 % |
+| Rated Moderate | 33,4 % | 4,8 % |
+| Rated Critical | 26 | 66 |
+| Remote code execution | 42 | 165 |
+| Elevation of privilege | 58 | 256 |
+
+Three times the volume, and the median CVE is a full point more severe. The Moderate band collapsed from a third of the package to under five per cent. Remote code execution roughly quadrupled.
+
+One caveat, stated plainly. The share of CVEs Microsoft did not assign a CVSS score to rose from 5 % to 38 %. Those are likely Chromium-inherited Edge issues, which Microsoft does not usually score itself. The severity claim above holds for what Microsoft scored. I cannot speak for the rest, and neither can anyone who has not opened the file.
+
+## Why the well did not run dry
+
+Windows has been patched for thirty years. Intuition says the supply of findable bugs should be thinning. Instead it tripled.
+
+The explanation is in Microsoft's own May post about MDASH, their multi-model agentic scanning harness. Run against five years of confirmed vulnerabilities in clfs.sys, it re-found 96 % of them. In tcpip.sys, 100 %.
+
+Read that again. A harness re-found almost everything human researchers took five years to find. The bugs were discoverable the entire time. There were never fewer of them. Nobody was looking hard enough, because looking was rate-limited by human attention rather than by how many bugs were actually there.
+
+The well was not draining. It was being sipped. What we are watching is not a bug explosion. It is a backlog, and the backlog is as old as the code.
+
+## The capability is in the harness
+
+MDASH is over a hundred agents, multi-model debate across model families, and a separate pipeline that proves candidates before a human ever sees them. Microsoft reports it at 88,45 % on CyberGym, a benchmark for real-world vulnerability discovery. Anthropic's gated frontier model, Claude Mythos, is reported at 83,1 % on the same benchmark.
+
+I am not going to tell you the harness beats the model. Those two figures come from two different parties under conditions neither published, and five points is well inside what a difference in evaluation setup can produce. What the pair does establish is an order of magnitude: an orchestration layer running an ensemble, distilled models included, lands in the same range as the most capable model anyone has built.
+
+That has a consequence worth sitting with. Access to Mythos is controlled by Anthropic under Project Glasswing. Orchestration is controlled by nobody, and it is described in a public blog post. If the scaffolding carries that much of the capability, the interesting question is not how far open weights trail the frontier model. It is how far an open harness trails MDASH. Scaffolding is cheaper to copy than a frontier model.
+
+## The same technology closed a bug bounty
+
+In January 2026 the curl project shut down its bug bounty. Twenty reports arrived in the first twenty-one days of the year. Not one was valid. Daniel Stenberg described it as being DDoSed. HackerOne submissions rose 76 % year over year through March, and roughly three quarters of them were noise. Google stopped taking AI-generated submissions to its open-source reward programme. GitHub tightened its requirements.
+
+So in the same six months, one organisation used AI to ship 1150 real CVEs and another was driven out of the bounty business by AI reports that were worth nothing.
+
+Same technology. The difference is the prove pipeline. Microsoft built one, with dedicated cloud infrastructure behind it. curl is volunteers, and volunteers cannot fund a filter, so the only move left was to close the door.
+
+## Check it yourself
+
+Every number above comes from one endpoint. No key, no account.
+
+    https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Jul
+
+Send an Accept: application/json header, count the Vulnerability array, read Threats for severity and CVSSScoreSets for the scores. Change the month and run it again. If my baseline of 383 is wrong, the file will say so, and I would rather you tell me than take my word for it.
+
+## Why this matters if you are buying anything
+
+This is the method I sell, pointed at someone else.
+
+A vendor made a qualitative claim: volume will go up. The receipt was public, machine-readable and free the whole time. The gap between the press release and the API was the entire story, and closing it took an afternoon and no privileged access.
+
+That is what measurement is for. Not to catch anyone out. Microsoft's post is accurate, and the data supports the direction it describes more strongly than the post itself does. The point is that "higher volume" and "3,0 times, and the median CVE gained a full point of severity" are different sentences, and only one of them can be checked.
+
+Agent-readiness works the same way. A site can assert it is ready for AI agents. A scanner reads the site and returns a number. One of those is an opinion.
+
+## Related
+
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+- [How to let an AI agent work in your repo without leaking your secrets](/blog/agent-secret-hygiene)
+- [When honesty and the checker disagree](/blog/honesty-and-the-checker)
+`,
   "/blog/agent-secret-hygiene": `# How to let an AI agent work in your repo without leaking your secrets
 
 2026-07-12
@@ -710,6 +818,7 @@ Services and prices are at https://turva.dev/services. Email
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [Microsoft said the patches would get bigger. I measured how much bigger.](/blog/measuring-the-ai-patch-surge). 2026-07-15.
 - [How to let an AI agent work in your repo without leaking your secrets](/blog/agent-secret-hygiene). 2026-07-12.
 - [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b). 2026-07-07.
 - [When honesty and the checker disagree](/blog/honesty-and-the-checker). 2026-07-06.
@@ -1360,9 +1469,9 @@ turva.dev is operated by Erik Rekola.
 
 ## About the operator
 
-Erik has eleven years of experience as an engineer in industrial
-settings, including roles at UPM, Franke, Thermo Fisher Scientific
-and ASM International.
+Erik has six years of experience in industrial engineering and
+service roles at UPM, Franke, Thermo Fisher Scientific and ASM
+International, 2015 to 2021.
 
 The work covered measurement, process engineering and the
 documentation of complex systems. The same approach now applies to
@@ -2416,7 +2525,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yR7wOHiGGT_f-AIcAL56mEjiSaQ8nSQ-UJyFLrGZ8L_UUbLMORPN8Z0RyOOfqNgfDilRpDzwEsBbtcMu0kuVBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"aQrsLkHL-tqLGz6nzCEirDZjVZmlg6hNWfbULTGDXSybrrYrAUXJ4zrjzMEwg3k4S04w757Q1xSy24022udQDg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yR7wOHiGGT_f-AIcAL56mEjiSaQ8nSQ-UJyFLrGZ8L_UUbLMORPN8Z0RyOOfqNgfDilRpDzwEsBbtcMu0kuVBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pRwElkSutAsL423btwHcZTw5kiZ6MtOxFOd2i1E0AiBueYuZ0zhLVf-OnZ0tFq5hcEi968OtbMpkU9fIWWHYBA\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -3113,6 +3222,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/measuring-the-ai-patch-surge", "monthly", "0.6"],
   ["/blog/agent-secret-hygiene", "monthly", "0.6"],
   ["/blog/agent-readiness-finnish-b2b", "monthly", "0.6"],
   ["/blog/honesty-and-the-checker", "monthly", "0.6"],
@@ -3198,7 +3308,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -3208,6 +3318,13 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/measuring-the-ai-patch-surge": {
+    title: "Measuring the AI patch surge: Microsoft's July package | turva.dev",
+    description: "Microsoft said customers would see a higher volume of security updates and gave no number. Twelve months of MSRC CVRF data: the July package is 3,0 times the baseline, and the median CVE got more severe.",
+    date: "2026-07-15",
+    image: "/og-measuring-the-ai-patch-surge.jpg",
+    imageAlt: "Measuring the AI patch surge from MSRC data"
+  },
   "/blog/agent-secret-hygiene": {
     title: "Secret hygiene when an agent works in your repo | turva.dev",
     description: "Coding agents run with your shell, so plaintext secrets on disk are exposed to them. Move git auth to a credential manager and the rest into an OS-encrypted vault.",
@@ -3384,7 +3501,7 @@ var META_BY_PATH = {
   },
   "/company": {
     title: "Company: Erik Rekola, Tampere, Finland · turva.dev",
-    description: "turva.dev is operated by Erik Rekola as a Finnish sole proprietorship. Business ID 3600281-7, based in Tampere. Eleven years of engineering experience.",
+    description: "turva.dev is operated by Erik Rekola as a Finnish sole proprietorship. Business ID 3600281-7, based in Tampere. Six years in engineering, 2015 to 2021.",
     image: "/og-company.jpg",
     imageAlt: "turva.dev company information"
   },
@@ -4919,7 +5036,7 @@ ${cardPageNav("/company")}
     <div class="kv"><span class="k">Form</span><span class="v">Sole proprietorship</span></div>
   </div></div>
   <div class="scard"><h2>About the operator</h2>
-    <p>Erik has eleven years of experience as an engineer in industrial settings, including roles at UPM, Franke, Thermo Fisher Scientific and ASM International.</p>
+    <p>Erik has six years of experience in industrial engineering and service roles at UPM, Franke, Thermo Fisher Scientific and ASM International, 2015 to 2021.</p>
     <p>The work covered measurement, process engineering and the documentation of complex systems. The same approach now applies to a different subject: how websites and APIs are read by AI agents.</p>
   </div>
   <div class="scard"><h2>Location</h2><p>Tampere, Pirkanmaa, Finland. All work is delivered remotely. No on-site engagements.</p></div>
