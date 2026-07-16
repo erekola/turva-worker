@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.22.0 - AEO named in the audit scope, monthly AI-visibility delta in advisory
+// turva.dev worker v3.23.0 - AEO named in the audit scope, monthly AI-visibility delta in advisory
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -401,7 +401,7 @@ Windows has been patched for thirty years. Intuition says the supply of findable
 
 The explanation is in Microsoft's own May post about MDASH, their multi-model agentic scanning harness. Run against five years of confirmed vulnerabilities in clfs.sys, it re-found 96 % of them. In tcpip.sys, 100 %.
 
-Read that again. A harness re-found almost everything human researchers took five years to find. The bugs were discoverable the entire time. There were never fewer of them. Nobody was looking hard enough, because looking was rate-limited by human attention rather than by how many bugs were actually there.
+A harness re-found almost everything human researchers took five years to find. The bugs were discoverable the entire time. There were never fewer of them. Nobody was looking hard enough, because looking was rate-limited by human attention rather than by how many bugs were actually there.
 
 The well was not draining. It was being sipped. What we are watching is not a bug explosion. It is a backlog, and the backlog is as old as the code.
 
@@ -428,6 +428,8 @@ Every number above comes from one endpoint. No key, no account.
     https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Jul
 
 Send an Accept: application/json header, count the Vulnerability array, read Threats for severity and CVSSScoreSets for the scores. Change the month and run it again. If my baseline of 383 is wrong, the file will say so, and I would rather you tell me than take my word for it.
+
+Note added July 16: one fair objection surfaced when this post was re-read with hostile eyes. The eight-month baseline includes the February spike, the same kind of outlier the denominator section warns about. Excluding February, the baseline is 414 and the multiple is 2,8 rather than 3,0. The direction survives either denominator, and now both numbers are on the record.
 
 ## Why this matters if you are buying anything
 
@@ -691,6 +693,8 @@ The measurable part is two weeks of broken pointers. The probable part is worse.
 
 I moved the repos to Codeberg on July 2 with full history, updated every public link the same day, and deleted the GitHub account once the flag was lifted. Codeberg is run by a non-profit on open-source infrastructure, which I like, but that is not the reason. No host is immune to mistakes. The reason is what the incident showed about the failure mode: a silent flag, no notification, an appeal channel that took two weeks to reach a human, and a breakage only visible from outside my own session. A dependency that can fail that way gets treated accordingly. Source hosting now sits in the site's threat model like any other third-party dependency, and the monthly self-audit checks logged-out visibility of every external pointer, because no scanner runs that check for you.
 
+Update, July 7: GitHub is back, in a different role and on my own initiative. The account erekola now exists as a push mirror: every push lands on both hosts, and Codeberg stays canonical for fetch and for every source link on this site. The failure-mode reasoning above is unchanged, and losing the mirror would break nothing.
+
 External pointers rot in ways your own monitoring does not see, so they get checked the way a stranger's agent reaches them: from outside, logged out, against the primary source. The audit post published the same day as this one applies that discipline to the code itself.
 
 For an audit that checks a site the way a stranger's agent reaches it, contact info@turva.dev.
@@ -948,7 +952,7 @@ For an agent-readiness audit that covers how your site recognizes and admits AI 
 
 2026-06-22
 
-In the audits I have run, including this site's own, one thing keeps surfacing. An agent that is instructed well, and given the right settings, can take in data and make the correct decision, every time the rules call for it. The capability is real, and it is wider than most of the conversation around it. The limits are rarely the model. They sit in two places that are easy to overlook.
+In the audits I have run, including this site's own, one thing keeps surfacing. An agent that is instructed well, and given the right settings and checks, can take in data and make the decision the rules call for, consistently. The capability is real, and it is wider than most of the conversation around it. The limits are rarely the model. They sit in two places that are easy to overlook.
 
 ## A decision is only as good as its inputs
 
@@ -998,7 +1002,7 @@ An agent-readiness review therefore has to read the edge configuration next to t
 
 Cloudflare's stated reason for the package is a 2025 Pew Research Center finding: when Google shows an AI summary, users click a traditional result 8% of the time and a link inside the summary about 1% of the time. The visit is no longer where the value moves. Cloudflare's response is to make the citation itself payable. Ceramic.ai pays publishers per query their content answers, You.com lets agents buy individual premium pages, and participating sites get reporting on which AI-search queries surfaced their content, down to the page and the snippet.
 
-The reading this is meant to price is already routine. Over the past seven days this site answered 604 requests from identified AI and search crawlers, and AI answers and search referred 88 human visits, most from Google, the rest led by Meta, DuckDuckGo and Bing. Whether that reading starts to pay is what the new programs will test.
+The reading this is meant to price is already routine. Over the past seven days this site answered 604 requests from identified AI and search crawlers, and AI answers and search referred 88 human visits (Cloudflare edge data), most from Google, the rest led by Meta, DuckDuckGo and Bing. Whether that reading starts to pay is what the new programs will test.
 
 ## Payment rails are becoming configuration
 
@@ -1060,11 +1064,11 @@ The catalog is a new file and a new route. It does not change a single existing 
 
 ## Discovery, not ranking
 
-An ai-catalog.json is easy to misread as another search file. It is not. It indexes the agentic resources a site exposes so an agent can find them and call each one through its own protocol. Google confirmed in 2026 that llms.txt does not affect its search results, and the same holds here. Agent-readiness and search ranking remain different things, and neither should be sold as the other.
+An ai-catalog.json is easy to misread as another search file. It is not. It indexes the agentic resources a site exposes so an agent can find them and call each one through its own protocol. Google has said publicly that llms.txt does not affect its search results, and the same holds here. Agent-readiness and search ranking remain different things, and neither should be sold as the other.
 
 ## Honest about adoption
 
-In a public census in June 2026, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at codeberg.org/erekola/turva-worker.
+In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at codeberg.org/erekola/turva-worker.
 
 For an audit of a site's discovery surface, contact info@turva.dev.
 
@@ -1239,14 +1243,14 @@ The pattern is narrow, but where it fits is not. Anywhere data moves and a decis
 - An agent reconciling records across systems and flagging only what does not match.
 - An agent making a time-critical call locally, where the round trip to a human is too slow to matter.
 
-These are examples, not the list. The list does not really end. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.
+These are examples. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.
 
 ## Evidence
 
 turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-07-16.
 
 - startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
-- isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/turva.dev
+- isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/
 
 Both agent-readiness scanners are public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the numbers independently, run isitagentready.com and startuphub.ai against turva.dev and compare.
 
@@ -1285,7 +1289,7 @@ The result is checkable, not asserted. For agent-readiness that is the scanner n
 
 The work is done by one person under a registered business. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, and I keep only the tools and methods that hold up when the output is checked line by line.
 
-The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on either arrives intact or it does not, and the boundary you set either holds or it does not. Measurable either way, which is the only kind of claim I make.
+The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on either arrives intact or it does not, and the boundary you set either holds or it does not. Measurable either way.
 
 ## Contact
 
@@ -1368,8 +1372,7 @@ What you do not get:
 Large sites are covered in full. If a site is big enough that the
 live checks reach a tool quota, the quota is raised rather than the
 coverage reduced. Once the audit is complete, the fixes it lists are
-typically about a day of implementation work, whether your team does
-them or I do.
+typically about a day of implementation work, whether your team does them or I do. The audit is what identifies that day of work and orders it by impact.
 
 Suited for teams that want a clear picture of where they stand
 before deciding what to do about it.
@@ -1469,9 +1472,7 @@ turva.dev is operated by Erik Rekola.
 
 ## About the operator
 
-Erik has six years of experience in industrial engineering and
-service roles at UPM, Franke, Thermo Fisher Scientific and ASM
-International, 2015 to 2021.
+Erik spent six years, 2015 to 2021, in hands-on machine roles: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyzer at Thermo Fisher Scientific, and semiconductor production equipment at ASM International. The common thread was machine data that had to be trusted and interventions that had to stay inside strict limits. After a career break from 2021 to early 2026, he built turva.dev when AI agents turned that same discipline into a web problem. The proof of current skill is public: the site and its MCP server are open source, and the scan results it publishes come from third-party scanners.
 
 The work covered measurement, process engineering and the
 documentation of complex systems. The same approach now applies to
@@ -1804,7 +1805,7 @@ turva.dev publishes llms.txt and llms-full.txt and serves markdown on request. F
 
 An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. It usually lives at /.well-known/mcp/server-card.json, though the path is not yet standardized. SEP-2127, the open proposal behind the card, now develops it as an experimental MCP extension. As of July 2026 its draft recommends serving the card at the MCP endpoint URL followed by /server-card, with a site-level catalog at /.well-known/mcp/catalog.json, so the convention may still move. An agent reads the card, finds the endpoint, and can then connect without a human wiring up the connection first.
 
-The Model Context Protocol is a standard way for agents to use external tools and data. A server implements the protocol and exposes a set of tools, and the card is how that server announces itself. Without a card, an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live.
+The Model Context Protocol is a standard way for agents to use external tools and data. A server implements the protocol and exposes a set of tools, and the card is how that server announces itself. Without a card or a registry listing, an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live.
 
 A useful card states the server name, the endpoint, and the transport, in a shape an agent can parse deterministically. Many published cards, including turva.dev's, also list the tools. The newer draft leaves tool listing to the MCP connection itself, since a live tools/list answer cannot go stale the way a static list can. turva.dev publishes a server card that points to a read-only MCP server, which exposes the same agent-readiness data that the site shows to people. That means an agent can query the data directly rather than scraping a page.
 
@@ -1844,7 +1845,7 @@ For an audit of a site's capability and action surface, contact info@turva.dev.
 
 x402 is a way for a site to ask an agent to pay before it returns a resource, using the long-reserved HTTP 402 Payment Required status. It lets an automated client discover a price, pay, and continue, without a human stepping in to enter card details.
 
-When an agent requests a paid resource, the server responds with 402 and a manifest that states what is being sold and how to pay. The agent reads the terms, completes the payment through a supported method, and retries the request. The transaction happens in the protocol, not in a checkout page built for human eyes.
+When an agent requests a paid resource, the server responds with 402 and a manifest that states what is being sold and how to pay. The agent reads the terms, signs a payment payload for a supported method, and retries the request with the payload attached; the server or its facilitator settles the payment. The transaction happens in the protocol, not in a checkout page built for human eyes.
 
 This matters because agent commerce is held back by payment, not by capability. An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A declared payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search.
 
@@ -1885,7 +1886,7 @@ SEO is built around keywords, backlinks, and a results page where a human choose
 
 The gap is widening as people ask assistants instead of typing queries. When an answer comes from a model rather than a list of links, the question is not where a site ranks but whether the model can read the site cleanly and is willing to cite it. That depends on the discovery and content surface, not on the usual ranking signals.
 
-This is why ranking on a search engine does not predict presence in an AI answer. They are scored on different things. A site that wants both has to do both, and the agent-readiness side is the one most teams have not started.
+This is why ranking on a search engine does not guarantee presence in an AI answer. They are scored on different things. A site that wants both has to do both, and the agent-readiness side is the one most teams have not started.
 
 turva.dev measures the agent-readiness side and reports exactly which checks pass or fail. For an audit, contact info@turva.dev.
 
@@ -1948,11 +1949,11 @@ ARD is a discovery layer, not a transport. It helps an agent find the right reso
 
 ## How it relates to llms.txt
 
-An ai-catalog.json is not a ranking trick and it is not a content map. llms.txt tells an agent where a site's content lives. An ai-catalog tells an agent which agentic resources the site exposes and how to reach them. The two are complementary, and neither is about search ranking. Google confirmed in 2026 that llms.txt does not affect its search results, which is the same point agent-readiness has always made. These files are for agents that read and act.
+An ai-catalog.json is not a ranking trick and it is not a content map. llms.txt tells an agent where a site's content lives. An ai-catalog tells an agent which agentic resources the site exposes and how to reach them. The two are complementary, and neither is about search ranking. Google has said publicly that llms.txt does not affect its search results, which is the same point agent-readiness has always made. These files are for agents that read and act.
 
 ## Why it matters
 
-Adoption is early. In a public census in June 2026, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json, so publishing one now is a forward move rather than table stakes. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
+Adoption is early. In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json, so publishing one now is a forward move rather than table stakes. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
 
 turva.dev serves an ai-catalog.json at /.well-known/ai-catalog.json that indexes its MCP server, its A2A agent, its API, and its agent skills, each of which already resolves on its own. For an audit of a site's discovery surface, contact info@turva.dev.
 
@@ -2007,7 +2008,7 @@ For an audit that reports measured results rather than a checklist, contact info
 
 Many sites render their content with JavaScript in the browser, which means the first response an agent receives is an almost empty shell. A person waits a moment and the page fills in. An agent that reads the raw response sees a loading state and little else, and it judges the site on that.
 
-This is the single most common reason a capable site is invisible to agents. The content exists, but it arrives after the agent has already read and moved on. Search crawlers have partly adapted to this over years. Many AI agents and fetchers have not, and they take the first response at face value.
+In the audits I have run, this is the most common reason a capable site is invisible to agents. The content exists, but it arrives after the agent has already read and moved on. Search crawlers have partly adapted to this over years. Many AI agents and fetchers have not, and they take the first response at face value.
 
 The fix is to serve the real content in the first response for clients that need it. Prerendering renders the page on the server or at the edge and returns finished HTML, so an agent reads the content immediately. A cleaner option for agents is to serve a markdown version of the page on request, which skips the rendering question entirely and costs a fraction of the tokens.
 
@@ -2064,7 +2065,7 @@ turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. F
 
 Most marketing sites are strong for people and weak for agents, and the gaps are predictable. A readiness review tends to find the same handful of misses, each of which quietly removes the site from an agent's view.
 
-The first is rendering. A site that builds its content with JavaScript returns an empty shell to an agent, so the content never arrives in the first response. The second is discovery. No llms.txt and a thin or missing sitemap, so an agent has nothing to read but rendered pages. The third is cost. Only HTML is offered, with no markdown form, so an agent spends its budget on markup and truncates the page.
+The first is rendering. A site that builds its content with JavaScript returns an empty shell to any agent that does not run a browser, so for those clients the content never arrives in the first response. The second is discovery. No llms.txt and a thin or missing sitemap, so an agent has nothing to read but rendered pages. The third is cost. Only HTML is offered, with no markdown form, so an agent spends its budget on markup and truncates the page.
 
 Beyond those, capability is usually undeclared. The site may have an API or a useful action, but with no server card or OAuth discovery, an agent cannot find or use it. Structured data is often missing too, so prices and facts are left for the agent to infer from layout.
 
@@ -2186,7 +2187,7 @@ Reading a site is the first step. The harder one is letting an agent act on a sy
 
 ## A decision is only as good as its inputs
 
-An agent's decision is bounded by the data that reaches it. In a clean environment that is invisible. Where the work happens it is the whole problem, because a dropped link, a delayed hop, or a single lost packet leaves the agent acting on stale input. The model did not get worse, its inputs did. Reliability lives in the layer below the model, where data either arrives in order and on time or it does not.
+An agent's decision is bounded by the data that reaches it. In a clean environment that is invisible. Where the work happens it is the whole problem, because a dropped link, a delayed hop, or a lost packet can leave the agent working from stale input. The model did not get worse, its inputs did. Reliability lives in the layer below the model, where data either arrives in order and on time or it does not.
 
 ## The envelope is the real control
 
@@ -2198,7 +2199,7 @@ Letting agents act is not removing people. The stronger pattern carries a human 
 
 ## Make it checkable
 
-An agent that acts has to be auditable. Log what it decided and why, keep the envelope explicit rather than implied, and verify after the fact that it stayed inside the boundary. Guardrails that cannot be checked are not guardrails. This is the difference between an agent that is impressive in a demo and one you would let touch a real operation.
+An agent that acts has to be auditable. Log what it decided and why, keep the envelope explicit rather than implied, and verify after the fact that it stayed inside the boundary. Guardrails have to be checkable to count. That separates an agent that is impressive in a demo from one you would let touch a real operation.
 
 This is the work behind the Agent operations engagement. For a review of the data path, the decision envelope, and where a human stays in the loop, contact info@turva.dev.
 
@@ -2238,7 +2239,7 @@ An agent makes a time-critical call locally, where the round trip to a human is 
 
 ## The common thread
 
-These are examples, not a closed list. The same discipline carries from one case to the next. The question is rarely whether an agent could do the work. It is whether the data reaching it is clean and the envelope around it is set, because those two decide whether the agent makes the right call or a fast wrong one.
+These are examples. The same discipline carries from one case to the next, and the question is rarely whether an agent could do the work. What decides the outcome is whether the data reaching it is clean and the envelope around it is set.
 
 If you want an agent to do one of these reliably, or to measure how ready your site or API is for agents in the first place, contact info@turva.dev.
 
@@ -2411,7 +2412,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.22.0",
+    "version": "3.23.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2662,7 +2663,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.22.0",
+  "version": "3.23.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3561,7 +3562,7 @@ var META_BY_PATH = {
   },
   "/guides/seo-vs-agent-readiness": {
     title: "SEO and agent-readiness are not the same | turva.dev",
-    description: "SEO makes a site rank for people to click. Agent-readiness makes a site legible and usable by AI agents. Ranking does not predict presence in AI answers.",
+    description: "SEO makes a site rank for people to click. Agent-readiness makes a site legible and usable by AI agents. Ranking alone does not guarantee presence in AI answers.",
     image: "/og-guide-seo-vs-agent-readiness.jpg",
     imageAlt: "SEO and agent-readiness are not the same"
   },
@@ -4095,7 +4096,7 @@ var GUIDE_PAGE_FAQ = {
     },
     {
       "q": "Does Agentic Resource Discovery affect search ranking?",
-      "a": "No. ARD is a discovery layer for AI agents, not a search file. It indexes the resources an agent can call through their own protocols. Google confirmed in 2026 that llms.txt does not affect its search results, and the same applies to an ai-catalog."
+      "a": "No. ARD is a discovery layer for AI agents, not a search file. It indexes the resources an agent can call through their own protocols. Google has said publicly that llms.txt does not affect its search results, and the same applies to an ai-catalog."
     }
   ],
   "/guides/agent-commerce-discovery": [
@@ -4135,7 +4136,7 @@ var GUIDE_PAGE_FAQ = {
     },
     {
       "q": "Why publish an MCP server card?",
-      "a": "Without a card an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live. The card turns an invisible server into a discoverable one."
+      "a": "Without a card or a registry listing an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live. The card turns an invisible server into a discoverable one."
     }
   ],
   "/guides/agents-json": [
@@ -4174,7 +4175,7 @@ var GUIDE_PAGE_FAQ = {
       "a": "No. SEO makes a site rank in a list of links for a person to click. Agent-readiness makes a site legible and usable by an AI agent that reads, decides, and sometimes acts. A site can rank well and still be opaque to agents."
     },
     {
-      "q": "Why does search ranking not predict presence in AI answers?",
+      "q": "Why does search ranking not guarantee presence in AI answers?",
       "a": "They are scored on different things. A search engine ranks pages by keywords and backlinks. An assistant cites a site when it can read the content cleanly and corroborate it, which depends on the discovery and content surface rather than ranking signals."
     }
   ],
@@ -4251,7 +4252,7 @@ var GUIDE_PAGE_FAQ = {
   "/guides/agent-readiness-gaps": [
     {
       "q": "What are the most common agent-readiness gaps on marketing sites?",
-      "a": "Client-side rendering that returns an empty shell, no llms.txt and a thin or missing sitemap, and HTML-only delivery with no markdown form. Capability is usually undeclared and structured data is often missing, so prices and facts are left for the agent to infer."
+      "a": "Client-side rendering that returns an empty shell to non-browser agents, no llms.txt and a thin or missing sitemap, and HTML-only delivery with no markdown form. Capability is usually undeclared and structured data is often missing, so prices and facts are left for the agent to infer."
     },
     {
       "q": "Are agent-readiness gaps hard to fix?",
@@ -4631,7 +4632,7 @@ ${FOOTER_CSS}
       <div class="ex">An agent reconciling records across systems and flagging only what does not match.</div>
       <div class="ex">An agent making a time-critical call locally, where the round trip to a human is too slow to matter.</div>
     </div>
-    <p>These are examples, not the list. The list does not really end. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.</p>
+    <p>These are examples. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.</p>
   </section>
 
   <section class="sec">
@@ -4644,7 +4645,7 @@ ${FOOTER_CSS}
     </div>
     <ul class="evlist">
       <li>startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
-      <li>isitagentready.com: 100/100, Level 5 (Agent-Native). <a href="https://isitagentready.com/turva.dev">isitagentready.com/turva.dev</a></li>
+      <li>isitagentready.com: 100/100, Level 5 (Agent-Native). <a href="https://isitagentready.com/">isitagentready.com</a></li>
     </ul>
     <p>Both agent-readiness scanners are public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the numbers independently, run isitagentready.com and startuphub.ai against turva.dev and compare.</p>
     <p>turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-07-16.</p>
@@ -4696,7 +4697,7 @@ ${FOOTER_CSS}
   <section class="sec">
     <h2>Who I am</h2>
     <p>The work is done by one person under a registered business. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, and I keep only the tools and methods that hold up when the output is checked line by line.</p>
-    <p>The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on either arrives intact or it does not, and the boundary you set either holds or it does not. Measurable either way, which is the only kind of claim I make.</p>
+    <p>The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on either arrives intact or it does not, and the boundary you set either holds or it does not. Measurable either way.</p>
   </section>
 
   <section class="sec contact">
@@ -4831,7 +4832,7 @@ ${FOOTER_CSS}
       <li>Implementation of the fixes (separate engagement)</li>
       <li>Ongoing monitoring (separate engagement)</li>
     </ul>
-    <p>Large sites are covered in full. If a site is big enough that the live checks reach a tool quota, the quota is raised rather than the coverage reduced. Once the audit is complete, the fixes it lists are typically about a day of implementation work, whether your team does them or I do.</p>
+    <p>Large sites are covered in full. If a site is big enough that the live checks reach a tool quota, the quota is raised rather than the coverage reduced. Once the audit is complete, the fixes it lists are typically about a day of implementation work, whether your team does them or I do. The audit is what identifies that day of work and orders it by impact.</p>
     <p class="suited">Suited for teams that want a clear picture of where they stand before deciding what to do about it.</p>
   </div>
 
@@ -5036,7 +5037,7 @@ ${cardPageNav("/company")}
     <div class="kv"><span class="k">Form</span><span class="v">Sole proprietorship</span></div>
   </div></div>
   <div class="scard"><h2>About the operator</h2>
-    <p>Erik has six years of experience in industrial engineering and service roles at UPM, Franke, Thermo Fisher Scientific and ASM International, 2015 to 2021.</p>
+    <p>Erik spent six years, 2015 to 2021, in hands-on machine roles: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyzer at Thermo Fisher Scientific, and semiconductor production equipment at ASM International. The common thread was machine data that had to be trusted and interventions that had to stay inside strict limits. After a career break from 2021 to early 2026, he built turva.dev when AI agents turned that same discipline into a web problem. The proof of current skill is public: the site and its MCP server are open source, and the scan results it publishes come from third-party scanners.</p>
     <p>The work covered measurement, process engineering and the documentation of complex systems. The same approach now applies to a different subject: how websites and APIs are read by AI agents.</p>
   </div>
   <div class="scard"><h2>Location</h2><p>Tampere, Pirkanmaa, Finland. All work is delivered remotely. No on-site engagements.</p></div>
