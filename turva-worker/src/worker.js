@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.23.0 - AEO named in the audit scope, monthly AI-visibility delta in advisory
+// turva.dev worker v3.24.0 - spec freshness pass: RateLimit and ACP guide fixes, server-card evidence wording
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -619,6 +619,8 @@ The pass came back with one finding rated high, one medium and six small. The hi
 
 The medium finding was quieter. The response-header guide leaned on the IETF draft for standard RateLimit headers, and that draft expired in March 2026 without a successor. The six small ones were wording: vocabulary that predated A2A 1.0, stale lines about the Open Knowledge Format, a Cache-Control nuance, and one phrase about ai-catalog.json contributors that had aged in two places at once, because a blog post here had quoted the guide.
 
+Update, July 16: the RateLimit sentence above was wrong when it was published. The draft had not expired, revision 10 was active in January 2026, and revision 11 from May 2026 remains active in the httpapi working group today. The response-header guide now cites the active draft.
+
 ## The sharpest findings were not in the guides
 
 Two of the machine-readable profiles this site serves had drifted from their own specifications, and that is a harder failure than stale prose, because these files exist for software and both had passed every scan since they shipped. The UCP profile used service keys in a namespace the specification reserves for its own governing body, and listed transports its enum does not contain. The MPP manifest declared a version field the protocol does not define. A scanner checks that a profile exists and parses. It does not check that the vocabulary inside it exists in the specification, so an invented key passes as easily as a real one. Both profiles are now in the specification's own shape, verified against the primary text and validated programmatically, and both scanners stayed green through the change. The honest form cost nothing.
@@ -1168,7 +1170,7 @@ Note that the current AP2 specification, v0.2 from April 2026, restructures the 
 
 ## ACP discovery and checkout
 
-ACP is the Agentic Commerce Protocol, and it has two parts that are easy to confuse. The first is a discovery document at /.well-known/acp.json, which is still a proposal-stage RFC in the ACP repository rather than part of the released spec snapshots. The second is the checkout API the document points to.
+ACP is the Agentic Commerce Protocol, and it has two parts that are easy to confuse. The first is a discovery document at /.well-known/acp.json, which started as a proposal-stage RFC and entered the released specification with the 2026-04-17 snapshot. The second is the checkout API the document points to.
 
 The discovery document is small and strict. It states the protocol name acp and a version, the api_base_url, a transports array, and a capabilities.services array. The services value is a closed set of strings such as checkout, not a list of product objects. Sending the wrong type is the most common reason an otherwise complete document fails validation.
 
@@ -1863,7 +1865,7 @@ turva.dev publishes an x402 endpoint and manifest and participates in the x402-m
 
 Response headers are the metadata a server sends with every page, and the right ones let an AI agent work without parsing the full HTML. They are the cheapest place to make a site more legible to automated clients, because an agent reads them before it reads the body.
 
-A Link header can point an agent straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the agent finds them without crawling. A Vary header that includes Accept tells caches and agents that the site can return different formats for the same URL, which is what makes markdown content negotiation reliable. RateLimit and RateLimit-Policy headers let a well-behaved agent throttle itself instead of guessing, though as of July 2026 their IETF draft has expired without becoming a standard. Content-Language and a clean content type remove ambiguity about what the agent is reading.
+A Link header can point an agent straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the agent finds them without crawling. A Vary header that includes Accept tells caches and agents that the site can return different formats for the same URL, which is what makes markdown content negotiation reliable. RateLimit and RateLimit-Policy headers let a well-behaved agent throttle itself instead of guessing, though as of July 2026 their IETF draft, revision 11 from May 2026, remains active without yet becoming a standard. Content-Language and a clean content type remove ambiguity about what the agent is reading.
 
 The reason headers matter is order. An agent fetches the response, reads the status and headers first, and decides what to do next from them. If the headers already say where the structured data is and what formats are available, the agent can skip the expensive step of parsing a page built for human display.
 
@@ -2412,7 +2414,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.23.0",
+    "version": "3.24.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2526,7 +2528,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yR7wOHiGGT_f-AIcAL56mEjiSaQ8nSQ-UJyFLrGZ8L_UUbLMORPN8Z0RyOOfqNgfDilRpDzwEsBbtcMu0kuVBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pRwElkSutAsL423btwHcZTw5kiZ6MtOxFOd2i1E0AiBueYuZ0zhLVf-OnZ0tFq5hcEi968OtbMpkU9fIWWHYBA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MV_Vf3fXQ7D3T2gLy5AugoH5pYHm7-HKrVqUqaV-q-ELaTYNr_neGIttOObsGEWNGB0vXMTpTQVPz-ZQPbTmAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pRwElkSutAsL423btwHcZTw5kiZ6MtOxFOd2i1E0AiBueYuZ0zhLVf-OnZ0tFq5hcEi968OtbMpkU9fIWWHYBA\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -2534,7 +2536,7 @@ var MCP_SERVER_CARD = JSON.stringify({
     "name": "turva-mcp",
     "title": "turva.dev",
     "version": "1.2.1",
-    "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
+    "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
     "type": "streamable-http",
@@ -2547,7 +2549,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   },
   "tools": [
     { "name": "get_services", "description": "Service catalog (audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
-    { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness scores from independent public scanners (startuphub.ai, isitagentready.com), with per-scanner sub-scores, leaderboard rank, measurement date, and verification links." },
+    { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness scores from independent public scanners (startuphub.ai, isitagentready.com), with per-scanner sub-scores, leaderboard rank, notable wins, measurement date, and verification links." },
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl), with the scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." }
   ],
@@ -2663,7 +2665,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.23.0",
+  "version": "3.24.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
