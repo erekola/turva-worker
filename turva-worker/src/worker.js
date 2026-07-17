@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.29.0 - the declared RateLimit policy is now enforced: 100 requests per 60 s per client IP per Cloudflare location via the Workers rate limiting binding, 429 with Retry-After beyond it, fail open
+// turva.dev worker v3.30.0 - the declared RateLimit policy is now enforced: 100 requests per 60 s per client IP per Cloudflare location via the Workers rate limiting binding, 429 with Retry-After beyond it, fail open. Only RateLimit-Policy is sent: it is the field draft-ietf-httpapi-ratelimit-headers-11 defines for a static policy. RateLimit-Limit was dropped 2026-07-17, it exists in no active revision. The draft RateLimit field is not sent because its r parameter is REQUIRED and the binding returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -79,7 +79,6 @@ function applySecurityHeaders(headers, kind) {
   headers.set("X-XSS-Protection", "0");
   headers.set("Permissions-Policy", PERMISSIONS_POLICY);
   headers.set("Cross-Origin-Opener-Policy", "same-origin");
-  headers.set("RateLimit-Limit", "100");
   headers.set("RateLimit-Policy", '"default";q=100;w=60');
   if (kind === "html") {
     headers.set("Content-Security-Policy", CSP_HTML);
@@ -2441,7 +2440,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.29.0",
+    "version": "3.30.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2692,7 +2691,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.29.0",
+  "version": "3.30.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
