@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.25.0 - fresh-eyes pass: MSRC revision note, B2B range wording, services FAQ on-request pair, homepage markdown parity
+// turva.dev worker v3.26.0 - validator page parity: render How to use it + What it checks in HTML, H1 matches title
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -755,7 +755,7 @@ For an audit of the whole surface an agent sees, not just this one file, contact
 - [What an agent pays to read your site](/blog/cheaper-pages-for-agents)
 `,
 
-  "/llms-txt-validator": `# llms.txt validator
+  "/llms-txt-validator": `# Free llms.txt validator
 
 Enter a domain and this page fetches its /llms.txt and checks the
 structure against the format: one H1 title, an optional blockquote
@@ -765,6 +765,8 @@ summary, H2 sections with link lists. Free, no signup, nothing stored.
 
 - In a browser: open https://turva.dev/llms-txt-validator and enter a domain
 - As an agent: GET https://turva.dev/llms-txt-validator?url=example.com with Accept: application/json
+
+Both views list the same checks below. The browser page and this markdown twin are kept in sync deliberately.
 
 ## What it checks
 
@@ -2422,7 +2424,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.25.0",
+    "version": "3.26.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2673,7 +2675,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.25.0",
+  "version": "3.26.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -5404,7 +5406,7 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
   const body = `${head}
 ${cardPageNav("/llms-txt-validator")}
 <main id="main">
-  <h1>llms.txt validator</h1>
+  <h1>Free llms.txt validator</h1>
   <p class="intro">Enter a domain and this page fetches its /llms.txt and checks the structure against the format: one H1 title, an optional blockquote summary, H2 sections with link lists. Free, no signup, nothing stored.</p>
   <div class="scard">
     <form class="vform" method="get" action="/llms-txt-validator">
@@ -5414,6 +5416,19 @@ ${cardPageNav("/llms-txt-validator")}
     <p class="note">Only https://&lt;domain&gt;/llms.txt is fetched. Agents can call this with Accept: application/json.</p>
   </div>
   ${resultHtml}
+  <div class="scard"><h2>How to use it</h2><ul>
+    <li>In a browser: enter a domain in the field above.</li>
+    <li>As an agent: <code>GET https://turva.dev/llms-txt-validator?url=example.com</code> with <code>Accept: application/json</code>.</li>
+  </ul></div>
+  <div class="scard"><h2>What it checks</h2><ul>
+    <li>The file exists at /llms.txt and returns HTTP 200.</li>
+    <li>The response is plain text, not an HTML error page.</li>
+    <li>The file starts with a single H1 title.</li>
+    <li>A blockquote summary follows the title, which the format recommends.</li>
+    <li>H2 sections group the content.</li>
+    <li>Markdown links parse and use absolute URLs.</li>
+    <li>The file stays small enough to be cheap for an agent to read.</li>
+  </ul></div>
   <div class="scard"><h2>What it does not do</h2>
     <p>This is a structure check against the llms.txt format, not an agent-readiness score. A full audit measures discovery, content, access control and more: see <a href="/services">services</a>, or start with <a href="/guides/llms-txt">llms.txt explained</a>.</p>
   </div>
