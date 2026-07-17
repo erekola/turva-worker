@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.28.0 - HN prep: HSTS aligned with live, scanner relationship and deliberate commerce FAILs disclosed in Evidence, guide claims dated, twin drift fixes, stale comments cleaned
+// turva.dev worker v3.29.0 - the declared RateLimit policy is now enforced: 100 requests per 60 s per client IP per Cloudflare location via the Workers rate limiting binding, 429 with Retry-After beyond it, fail open
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -2441,7 +2441,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.28.0",
+    "version": "3.29.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2692,7 +2692,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.28.0",
+  "version": "3.29.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -5751,6 +5751,27 @@ var worker_default = {
       });
     }
     try {
+      // Enforce the declared RateLimit policy: 100 requests per 60 seconds per
+      // client IP, per Cloudflare location. applySecurityHeaders promises this
+      // limit on every response, and an advertised limit that no code enforces
+      // would be exactly the kind of declared-but-unresolved surface this site
+      // audits for. Fail open: if the binding is missing or errors, the request
+      // is served normally.
+      if (env && env.RATE_LIMITER) {
+        try {
+          const rlKey = request.headers.get("CF-Connecting-IP") || "no-ip";
+          const { success } = await env.RATE_LIMITER.limit({ key: rlKey });
+          if (!success) {
+            const rlHeaders = new Headers({ "content-type": "text/plain; charset=utf-8" });
+            applySecurityHeaders(rlHeaders, "default");
+            rlHeaders.set("Retry-After", "60");
+            const rlResponse = new Response("429 Too Many Requests. This site enforces its declared rate limit of 100 requests per 60 seconds per client IP. Retry after 60 seconds.\n", { status: 429, headers: rlHeaders });
+            return isHead ? stripBody(rlResponse) : rlResponse;
+          }
+        } catch (rlErr) {
+          console.error("Rate limiter error (failing open):", rlErr && rlErr.stack ? rlErr.stack : String(rlErr));
+        }
+      }
       const response = await handleRequest(workingRequest, env);
       return isHead ? stripBody(response) : response;
     } catch (err) {
