@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.26.0 - validator page parity: render How to use it + What it checks in HTML, H1 matches title
+// turva.dev worker v3.28.0 - HN prep: HSTS aligned with live, scanner relationship and deliberate commerce FAILs disclosed in Evidence, guide claims dated, twin drift fixes, stale comments cleaned
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -72,7 +72,7 @@ function applySecurityHeaders(headers, kind) {
   headers.delete("nel");
   headers.delete("report-to");
   headers.delete("reporting-endpoints");
-  headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
+  headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Referrer-Policy", "no-referrer");
   headers.set("X-Frame-Options", "DENY");
@@ -525,6 +525,11 @@ AI agents are becoming a discovery and transaction channel. When an agent reads 
 
 The encouraging part is that the fixes are mostly known and mechanical. Serve markdown alongside HTML, add structured data, publish an llms.txt, expose the discovery manifests. Two of the sixteen had already started, they published a real llms.txt, and that is exactly why they sat at the top of the range.
 
+Note added July 17: one reading of the llms.txt point is circular, since
+both scanners score llms.txt directly, so publishing one raises the score
+by construction. The observation stands as a description of the measured
+range, not as a causal claim about readiness.
+
 To check where a site stands, the free llms.txt validator is at turva.dev/llms-txt-validator, and the agent-readiness audit and advisory work is at turva.dev.
 
 ## Related
@@ -782,7 +787,11 @@ Both views list the same checks below. The browser page and this markdown twin a
 
 This is a structure check against the llms.txt format, not an
 agent-readiness score. A full audit measures discovery, content,
-access control and more: https://turva.dev/services
+access control and more: see [services](/services),
+or start with [llms.txt explained](/guides/llms-txt).
+
+Only https://<domain>/llms.txt is fetched. Agents can call this with
+Accept: application/json.
 
 ## Related
 
@@ -820,7 +829,7 @@ The image is 216 by 36 pixels, dark background, under one kilobyte.
 ## If your site is not there yet
 
 An audit measures where you stand and lists what to fix first.
-Services and prices are at https://turva.dev/services. Email
+Services and prices are on the [services page](/services). Email
 <mailto:info@turva.dev> and you get a reply within one business day.
 `,
 
@@ -1264,6 +1273,14 @@ turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites o
 - startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
 - isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/
 
+isitagentready.com and Cloudflare Agent-Ready are the same scanner on two
+domains, and this site runs on Cloudflare Workers. Independent means
+independent of turva.dev: neither scanner is run or influenced by this
+business. Two isitagentready commerce checks, x402 and mpp, read FAIL on
+purpose. Commerce here is quote-on-request, there is no machine payment
+rail, and declaring one would be a fake checkmark. The reasoning is
+written out in [the commerce checks post](/blog/honest-agent-commerce-checks).
+
 Both agent-readiness scanners are public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the numbers independently, run isitagentready.com and startuphub.ai against turva.dev and compare.
 
 turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-07-16.
@@ -1484,11 +1501,11 @@ turva.dev is operated by Erik Rekola.
 
 ## About the operator
 
-Erik spent six years, 2015 to 2021, in hands-on machine roles: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyzer at Thermo Fisher Scientific, and semiconductor production equipment at ASM International. The common thread was machine data that had to be trusted and interventions that had to stay inside strict limits. After a career break from 2021 to early 2026, he built turva.dev when AI agents turned that same discipline into a web problem. The proof of current skill is public: the site and its MCP server are open source, and the scan results it publishes come from third-party scanners.
+Erik spent six years, 2015 to 2021, in hands-on machine roles: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyzer at Thermo Fisher Scientific, and semiconductor production equipment at ASM International. The common thread was machine data that had to be trusted and interventions that had to stay inside strict limits.
 
-The work covered measurement, process engineering and the
-documentation of complex systems. The same approach now applies to
-a different subject: how websites and APIs are read by AI agents.
+There was then a career break, from 2021 to early 2026. turva.dev was built when AI agents turned that same discipline into a web problem: data that has to arrive intact, and decisions that have to stay inside a boundary someone set on purpose.
+
+The proof of current skill is public rather than asserted. The site and its MCP server are open source, and every score published here comes from third-party scanners anyone can re-run.
 
 ## Location
 
@@ -1778,7 +1795,7 @@ The audit checks the parts an agent reaches first. Discovery covers robots.txt, 
 
 The result is a list. Each check passes or fails, and each failure comes with a concrete fix. The point is that the outcome is verifiable. An independent scanner reads the site before and after, and the categories that were fixed read higher on the next scan. The claim is the number, not an assertion.
 
-turva.dev applies the same standard to its own site. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. The audit a client receives runs the same checks against their site.
+turva.dev applies the same standard to its own site. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. Measured 2026-07-16. The audit a client receives runs the same checks against their site.
 
 For an audit, contact info@turva.dev. Engagement is async and evidence-based, and production credentials are not requested.
 
@@ -2004,7 +2021,7 @@ The difference shows up the moment something changes. A header gets dropped in a
 
 Measurement also makes a result legible to a buyer. A claim that a site is agent-ready is an assertion. A score from an independent scanner, with a category breakdown and a date, is evidence that can be checked. The honest version of the claim is the number, and the number can be re-run by anyone.
 
-This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com.
+This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. Measured 2026-07-16.
 
 For an audit that reports measured results rather than a checklist, contact info@turva.dev.
 
@@ -2424,7 +2441,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.26.0",
+    "version": "3.28.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2675,7 +2692,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.26.0",
+  "version": "3.28.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3949,8 +3966,7 @@ function markdownToHtml(md) {
   return html.join("\n");
 }
 
-// Guide pages are worker-owned content that does not exist on the Sitejet
-// origin, so they are rendered to HTML here rather than proxied. Agents that
+// Guide pages are rendered to HTML right here by the worker. Agents that
 // send Accept: text/markdown are served PAGE_MARKDOWN earlier; this is the
 // human/HTML representation.
 function buildGuideJsonLd(pathname, canonicalUrl) {
@@ -4659,6 +4675,7 @@ ${FOOTER_CSS}
       <li>startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
       <li>isitagentready.com: 100/100, Level 5 (Agent-Native). <a href="https://isitagentready.com/">isitagentready.com</a></li>
     </ul>
+    <p>isitagentready.com and Cloudflare Agent-Ready are the same scanner on two domains, and this site runs on Cloudflare Workers. Independent means independent of turva.dev: neither scanner is run or influenced by this business. Two isitagentready commerce checks, x402 and mpp, read FAIL on purpose. Commerce here is quote-on-request, there is no machine payment rail, and declaring one would be a fake checkmark. The reasoning is written out in <a href="/blog/honest-agent-commerce-checks">the commerce checks post</a>.</p>
     <p>Both agent-readiness scanners are public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the numbers independently, run isitagentready.com and startuphub.ai against turva.dev and compare.</p>
     <p>turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-07-16.</p>
     <ul class="evlist">
@@ -5049,8 +5066,9 @@ ${cardPageNav("/company")}
     <div class="kv"><span class="k">Form</span><span class="v">Sole proprietorship</span></div>
   </div></div>
   <div class="scard"><h2>About the operator</h2>
-    <p>Erik spent six years, 2015 to 2021, in hands-on machine roles: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyzer at Thermo Fisher Scientific, and semiconductor production equipment at ASM International. The common thread was machine data that had to be trusted and interventions that had to stay inside strict limits. After a career break from 2021 to early 2026, he built turva.dev when AI agents turned that same discipline into a web problem. The proof of current skill is public: the site and its MCP server are open source, and the scan results it publishes come from third-party scanners.</p>
-    <p>The work covered measurement, process engineering and the documentation of complex systems. The same approach now applies to a different subject: how websites and APIs are read by AI agents.</p>
+    <p>Erik spent six years, 2015 to 2021, in hands-on machine roles: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyzer at Thermo Fisher Scientific, and semiconductor production equipment at ASM International. The common thread was machine data that had to be trusted and interventions that had to stay inside strict limits.</p>
+    <p>There was then a career break, from 2021 to early 2026. turva.dev was built when AI agents turned that same discipline into a web problem: data that has to arrive intact, and decisions that have to stay inside a boundary someone set on purpose.</p>
+    <p>The proof of current skill is public rather than asserted. The site and its MCP server are open source, and every score published here comes from third-party scanners anyone can re-run.</p>
   </div>
   <div class="scard"><h2>Location</h2><p>Tampere, Pirkanmaa, Finland. All work is delivered remotely. No on-site engagements.</p></div>
   <div class="scard"><h2>Why this service exists</h2>
@@ -5861,9 +5879,9 @@ async function handleRequest(request, env) {
     return serveMarkdown(PAGE_MARKDOWN[pathname], canonicalUrl);
   }
 
-  // Worker-rendered HTML pages. The homepage, guides, and the four text pages
-  // (services, company, legal, contact) are rendered directly by the worker
-  // rather than proxied from Sitejet.
+  // Worker-rendered HTML pages. Every page is rendered directly by the worker:
+  // home, services, company, contact, legal, badge, the llms.txt validator,
+  // the guides and blog indexes, and the guide and blog pages themselves.
   if (pathname === "/") {
     return serveHomeHtml("https://turva.dev/");
   }
@@ -5986,7 +6004,7 @@ async function handleRequest(request, env) {
 
   // Every page is rendered by the worker and static assets (og.jpg) come from
   // Workers Assets. Nothing is proxied to an origin any more, so an unmatched
-  // path is a genuine 404 rendered by the worker. The Sitejet origin no longer exists.
+  // path is a genuine 404 rendered by the worker. No origin sits behind it.
   return serve404(pathname);
 }
 
