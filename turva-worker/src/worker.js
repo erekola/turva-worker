@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.24.0 - spec freshness pass: RateLimit and ACP guide fixes, server-card evidence wording
+// turva.dev worker v3.25.0 - fresh-eyes pass: MSRC revision note, B2B range wording, services FAQ on-request pair, homepage markdown parity
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -429,7 +429,9 @@ Every number above comes from one endpoint. No key, no account.
 
 Send an Accept: application/json header, count the Vulnerability array, read Threats for severity and CVSSScoreSets for the scores. Change the month and run it again. If my baseline of 383 is wrong, the file will say so, and I would rather you tell me than take my word for it.
 
-Note added July 16: one fair objection surfaced when this post was re-read with hostile eyes. The eight-month baseline includes the February spike, the same kind of outlier the denominator section warns about. Excluding February, the baseline is 414 and the multiple is 2,8 rather than 3,0. The direction survives either denominator, and now both numbers are on the record.
+Note added July 16: one fair objection surfaced when this post was re-read with hostile eyes. The eight-month baseline includes the February outlier, the same kind of number the denominator section warns about. Excluding February, the baseline is 414 and the multiple is 2,8 rather than 3,0. The direction survives either denominator, and now both numbers are on the record.
+
+Note added July 17: this post tells you to run the query yourself, so it owes you the reason your numbers will not match mine. Microsoft keeps revising these documents after release. Re-pulled on 17 July 2026, May 2026 returns 1123 rather than 991, June returns 1205 rather than 1281, and July returns 1169 rather than 1150. The May document is on revision 2275 and June on revision 1141, both last revised on 15 July 2026. The eight baseline months have not moved, so the baseline of 383 stands. On the figures the endpoint returns today, July is 3,1 times the baseline rather than 3,0, April to July is 4234 CVEs or 11,1 months of output at the old rate, and June is still the peak. The table above is what the endpoint returned when I ran it, and the pull date is now part of the number.
 
 ## Why this matters if you are buying anything
 
@@ -497,7 +499,7 @@ Over the past weeks I ran two independent agent-readiness scanners over sixteen 
 ## Key figures
 
 - Sixteen Finnish B2B sites scanned with two independent scanners, isitagentready.com and the startuphub.ai agent-readiness score.
-- Every site scored under 50 out of 100. The range was 27 to 50, the average about 39, the median about 40.
+- Every site scored 50 or below out of 100. The range was 27 to 50, the average about 39, the median about 40.
 - Almost all sites landed at isitagentready Level 1 of 5, a couple at Level 0, one at Level 2, none higher.
 - The three most common gaps: HTML-only pages with heavy token overhead, missing structured data, and no action or capability layer.
 - Worst measured token overhead: about 16500 tokens of HTML where 1400 tokens of markdown carry the same content, a 91 percent overhead.
@@ -505,7 +507,7 @@ Over the past weeks I ran two independent agent-readiness scanners over sixteen 
 
 ## The numbers
 
-Every one of the sixteen scored under 50 out of 100. The range was 27 to 50, the average around 39, the median around 40. On the isitagentready Level scale almost all landed at Level 1 of 5, the floor an ordinary CMS site reaches, a couple sat at Level 0, and only one reached Level 2. None reached Level 3 or above.
+Every one of the sixteen scored 50 or below out of 100. The range was 27 to 50, the average around 39, the median around 40. On the isitagentready Level scale almost all landed at Level 1 of 5, the floor an ordinary CMS site reaches, a couple sat at Level 0, and only one reached Level 2. None reached Level 3 or above.
 
 To be clear about what that means, these are not broken websites. They load, they rank, a person can use them without trouble. The scanners measure something else, whether an AI agent can read the site and act on it.
 
@@ -519,7 +521,7 @@ The third and most consistent gap was the action and capability layer. No markdo
 
 ## Why this matters now
 
-AI agents are becoming a discovery and transaction channel. When an agent reads a site and cannot parse or act on it, the business does not just rank lower, it becomes invisible inside the answer. The sites in this sample are not behind on SEO, most rank fine. They are behind on the next thing, being legible and actionable to the agents that increasingly read on a person's behalf.
+AI agents are becoming a discovery and transaction channel. When an agent reads a site and cannot parse or act on it, the business does not rank lower, it becomes invisible inside the answer. The sites in this sample are not behind on SEO, most rank fine. They are behind on the next thing, being legible and actionable to the agents that increasingly read on a person's behalf.
 
 The encouraging part is that the fixes are mostly known and mechanical. Serve markdown alongside HTML, add structured data, publish an llms.txt, expose the discovery manifests. Two of the sixteen had already started, they published a real llms.txt, and that is exactly why they sat at the top of the range.
 
@@ -1228,6 +1230,12 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.
 
 #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 100/100 verified by two independent scanners. Business ID 3600281-7.
+
+## Audits, advisory, and implementation for product teams
+
+An AI agent does not browse a site the way a person does. It reads machine-readable surfaces and acts on the parts it can reach, once it trusts what it found. I measure how a site, an API or a product holds up to that, fix what the measurement names, and stay on as the product changes.
+
+The measurable core is agent-readiness, scored by independent scanners and provable on the next scan. The wider work begins where readability ends. The data an agent acts on has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set. The first makes an agent able to read you. The second makes it safe to let one act.
 
 ## Independent agent-readiness scan of turva.dev
 
@@ -2414,7 +2422,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.24.0",
+    "version": "3.25.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2665,7 +2673,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.24.0",
+  "version": "3.25.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4076,7 +4084,7 @@ var GUIDE_PAGE_FAQ = {
     },
     {
       "q": "What does an agent readiness audit cost?",
-      "a": "The audit is \u20ac6,500, fixed scope, delivered in two to three weeks. Ongoing advisory is \u20ac3,000 per month with a three month minimum, and implementation is \u20ac1,500 per day, scoped per task. All prices exclude VAT. Agent operations engagements are priced on request."
+      "a": "The audit is \u20ac6,500, fixed scope, delivered in two to three weeks. Ongoing advisory is \u20ac3,000 per month with a three month minimum, and implementation is \u20ac1,500 per day, scoped per task. All prices exclude VAT. Agent operations and MCP server design engagements are priced on request."
     },
     {
       "q": "How is the audit delivered?",

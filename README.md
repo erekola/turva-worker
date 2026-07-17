@@ -54,7 +54,7 @@ On Internet.nl, IPv6, DNSSEC and RPKI pass in full. The single deduction is one 
 Every claim above is publicly auditable. Run the scanners yourself or open the company record.
 
 * StartupHub leaderboard: https://www.startuphub.ai/agent-readiness
-* isitagentready scan: https://isitagentready.com/turva.dev
+* isitagentready scanner: https://isitagentready.com/
 * Hardenize report: https://www.hardenize.com/report/turva.dev
 * Internet.nl report: https://internet.nl/site/turva.dev/
 * Company (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7

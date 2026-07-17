@@ -70,7 +70,7 @@ The site also signs several of its machine-readable manifests. An Ed25519 public
 ## Verify
 
 - StartupHub leaderboard: https://www.startuphub.ai/agent-readiness
-- isitagentready scan: https://isitagentready.com/turva.dev
+- isitagentready scanner: https://isitagentready.com/
 - Guides index: https://turva.dev/guides
 - Company record (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7
 
