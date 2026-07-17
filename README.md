@@ -16,12 +16,12 @@ What you buy is expertise and implementation, not access to a tool. The scoring 
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-07-16. Two independent public scanners, listed once each.
+Measured on `https://turva.dev` on 2026-07-17. Two independent public scanners, listed once each.
 
 | Scanner | Result |
 |---|---|
 | Cloudflare Agent-Ready (isitagentready.com) | 100/100, Level 5 Agent-Native |
-| startuphub.ai Agent Readiness | 100/100 (A+), first of publicly-scanned sites on the leaderboard |
+| startuphub.ai Agent Readiness | 99/100 (A+), first of publicly-scanned sites on the leaderboard |
 
 Cloudflare Agent-Ready and isitagentready.com are the same scanner on two domains, so they count as one result.
 
@@ -36,7 +36,7 @@ These six category scores come from the startuphub.ai scan. The Cloudflare Agent
 | Access Control | 100/100 |
 | Capabilities | 100/100 |
 | Commerce | 100/100 |
-| Quality | 100/100 |
+| Quality | 96/100 |
 
 ## Web security
 

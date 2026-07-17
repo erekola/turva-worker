@@ -1126,7 +1126,7 @@ Written contact only. Email info@turva.dev, Signal @turva.19. First reply within
 
 2026-06-21
 
-turva.dev measures its own agent-readiness with two independent scanners. On startuphub.ai it ranks first among the publicly-scanned sites on the agent-readiness leaderboard at 100/100. On isitagentready.com, which checks 21 separate standards, it reaches Level 5. This is the log of taking the isitagentready commerce checks from mostly red to mostly green, without claiming a single capability the site does not actually have.
+turva.dev measures its own agent-readiness with two independent scanners. On startuphub.ai it ranks first among the publicly-scanned sites on the agent-readiness leaderboard at 99/100. On isitagentready.com, which checks 21 separate standards, it reaches Level 5. This is the log of taking the isitagentready commerce checks from mostly red to mostly green, without claiming a single capability the site does not actually have.
 
 ## What was failing
 
@@ -1239,7 +1239,7 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 
 Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.
 
-#1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 100/100 verified by two independent scanners. Business ID 3600281-7.
+#1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 99/100 there, and Level 5 on isitagentready.com. Business ID 3600281-7.
 
 ## Audits, advisory, and implementation for product teams
 
@@ -1249,7 +1249,7 @@ The measurable core is agent-readiness, scored by independent scanners and prova
 
 ## Independent agent-readiness scan of turva.dev
 
-Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. Verified 100/100, A+, ranked #1 of publicly-scanned sites on the startuphub.ai leaderboard.
+Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities and Commerce: 100/100 each. Quality: 96/100, because the rate_limit_headers check reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. Verified 99/100, A+, ranked #1 of publicly-scanned sites on the startuphub.ai leaderboard.
 
 ## Where this applies
 
@@ -1267,9 +1267,9 @@ These are examples. The same discipline carries from one case to the next, so th
 
 ## Evidence
 
-turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-07-16.
+turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 99/100 there and Level 5 on isitagentready.com. Measured 2026-07-17.
 
-- startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. https://www.startuphub.ai/agent-readiness
+- startuphub.ai leaderboard: #1 of publicly-scanned sites, 99/100 (A+). Discoverability, Content, Access Control, Capabilities and Commerce: 100/100 each. Quality: 96/100, because the rate_limit_headers check reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. https://www.startuphub.ai/agent-readiness
 - isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/
 
 isitagentready.com and Cloudflare Agent-Ready are the same scanner on two
@@ -3871,7 +3871,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://codeberg.org/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 6500, "currency": "EUR", "unit": "fixed", "duration": "2-3 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-07-16" }, null, 2);
+var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://codeberg.org/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 6500, "currency": "EUR", "unit": "fixed", "duration": "2-3 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-07-17" }, null, 2);
 var API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 function wantsMarkdown(request) {
@@ -4595,7 +4595,7 @@ ${FOOTER_CSS}
       <div class="hero-left">
         <ul class="badges">
           <li><b>#1</b> on the startuphub.ai leaderboard</li>
-          <li><b>&#10003;</b> 100/100 verified</li>
+          <li><b>&#10003;</b> 99/100 verified</li>
           <li>Business ID 3600281-7</li>
         </ul>
         <div class="cta">
@@ -4608,7 +4608,7 @@ ${FOOTER_CSS}
           <div class="tm-bar"><span class="tm-dot r"></span><span class="tm-dot y"></span><span class="tm-dot g"></span><span class="tm-title">turva@audit · verify</span></div>
           <div class="tm-body">
             <div class="tm-cmd"><span class="pr">&#8250;</span>turva verify --source startuphub.ai</div>
-            <div class="tm-out">&#10003; startuphub.ai &middot; <b>100/100</b> &middot; A+ &middot; #1 ranked</div>
+            <div class="tm-out">&#10003; startuphub.ai &middot; <b>99/100</b> &middot; A+ &middot; #1 ranked</div>
             <div class="tm-out">&#10003; isitagentready.com &middot; <b>level 5</b> &middot; agent-native<span class="cursor"></span></div>
           </div>
         </div>
@@ -4627,9 +4627,9 @@ ${FOOTER_CSS}
       <div class="cell"><span class="cat">access-control</span><span class="val">100/100</span></div>
       <div class="cell"><span class="cat">capabilities</span><span class="val">100/100</span></div>
       <div class="cell"><span class="cat">commerce</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">quality</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">quality</span><span class="val">96/100</span></div>
     </div>
-    <div class="board-sum"><span>verified</span> <b>100/100</b> <span class="pill">#1 ranked</span> <span class="pill">A+</span></div>
+    <div class="board-sum"><span>verified</span> <b>99/100</b> <span class="pill">#1 ranked</span> <span class="pill">A+</span></div>
   </section>
   <section class="sec">
     <h2>What an agent sees on this page</h2>
@@ -4664,14 +4664,14 @@ ${FOOTER_CSS}
 
   <section class="sec">
     <h2>Evidence</h2>
-    <p>turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 100/100 verified by two independent scanners. Measured 2026-07-16.</p>
+    <p>turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 99/100 there and Level 5 on isitagentready.com. Measured 2026-07-17.</p>
     <div class="stats">
       <div class="stat"><span class="stat-v">#1</span><span class="stat-l">of publicly-scanned sites on startuphub.ai</span></div>
-      <div class="stat"><span class="stat-v">100/100</span><span class="stat-l">verified by two independent scanners</span></div>
+      <div class="stat"><span class="stat-v">99/100</span><span class="stat-l">verified by two independent scanners</span></div>
       <div class="stat"><span class="stat-v">Level 5</span><span class="stat-l">agent-native, isitagentready.com</span></div>
     </div>
     <ul class="evlist">
-      <li>startuphub.ai leaderboard: #1 of publicly-scanned sites, 100/100 (A+). Discoverability, Content, Access Control, Capabilities, Commerce, Quality: 100/100 each. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
+      <li>startuphub.ai leaderboard: #1 of publicly-scanned sites, 99/100 (A+). Discoverability, Content, Access Control, Capabilities and Commerce: 100/100 each. Quality: 96/100, because the rate_limit_headers check reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
       <li>isitagentready.com: 100/100, Level 5 (Agent-Native). <a href="https://isitagentready.com/">isitagentready.com</a></li>
     </ul>
     <p>isitagentready.com and Cloudflare Agent-Ready are the same scanner on two domains, and this site runs on Cloudflare Workers. Independent means independent of turva.dev: neither scanner is run or influenced by this business. Two isitagentready commerce checks, x402 and mpp, read FAIL on purpose. Commerce here is quote-on-request, there is no machine payment rail, and declaring one would be a fake checkmark. The reasoning is written out in <a href="/blog/honest-agent-commerce-checks">the commerce checks post</a>.</p>
