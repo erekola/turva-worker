@@ -4594,8 +4594,8 @@ ${FOOTER_CSS}
     <div class="hero-row">
       <div class="hero-left">
         <ul class="badges">
-          <li><b>#1</b> on the startuphub.ai leaderboard</li>
-          <li><b>&#10003;</b> 99/100 verified</li>
+          <li><b>99/100</b> and #1 on startuphub.ai</li>
+          <li><b>&#10003;</b> 100/100 on isitagentready.com</li>
           <li>Business ID 3600281-7</li>
         </ul>
         <div class="cta">
@@ -4666,8 +4666,8 @@ ${FOOTER_CSS}
     <h2>Evidence</h2>
     <p>turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 99/100 there and Level 5 on isitagentready.com. Measured 2026-07-17.</p>
     <div class="stats">
-      <div class="stat"><span class="stat-v">#1</span><span class="stat-l">of publicly-scanned sites on startuphub.ai</span></div>
-      <div class="stat"><span class="stat-v">99/100</span><span class="stat-l">verified by two independent scanners</span></div>
+      <div class="stat"><span class="stat-v">99/100 &middot; A+</span><span class="stat-l">#1 of publicly-scanned sites on startuphub.ai</span></div>
+      <div class="stat"><span class="stat-v">100/100</span><span class="stat-l">on isitagentready.com</span></div>
       <div class="stat"><span class="stat-v">Level 5</span><span class="stat-l">agent-native, isitagentready.com</span></div>
     </div>
     <ul class="evlist">
