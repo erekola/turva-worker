@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.41.0 - StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.42.0 - T3 (Tek-56) batches 1-3: nine of the ten card pages (all but the homepage) now render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so each sentence lives once; structure (kvs grids, the validator form, FAQ shells, price cards, CTA chrome) stays hand-built, and the tools/verify.mjs twConverted gate bans literal prose paragraphs in converted functions. erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1611,7 +1611,8 @@ Suited for teams that want agents to read product data through a supported inter
 ## The agent-ready badge
 
 Sites that complete an audit, or score 100/100 on a public
-agent-readiness scanner, may display the agent-ready badge.
+agent-readiness scanner, may display the [agent-ready badge](/badge).
+
 Criteria and embed code: https://turva.dev/badge
 
 ## How to start
@@ -2579,7 +2580,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.41.0",
+    "version": "3.42.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2830,7 +2831,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.41.0",
+  "version": "3.42.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3877,7 +3878,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 var SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://codeberg.org/erekola","https://www.wikidata.org/wiki/Q140276251"]},
-{"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://codeberg.org/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://erikrekola.link","https://gravatar.com/erekola"]},
+{"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://codeberg.org/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 {"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"1500","highPrice":"6500","offerCount":"3","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services","itemListElement":[
 {"@type":"Offer","name":"Audit","description":"Fixed scope, 2-3 weeks. Two independent scanners run against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"6500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"6500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€6,500 fixed price, two to three weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
@@ -4244,6 +4245,50 @@ function mdTermsCard(path, heading) {
     ${mdTermsHtml(path, heading)}
   </div>`;
 }
+function mdParas(path, heading, count) {
+  const paras = mdSection(path, heading).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean).map((b) => renderInline(b.replace(/\s*\n\s*/g, " ")));
+  if (count && paras.length !== count) throw new Error("mdParas: " + path + " " + heading + " has " + paras.length + " blocks, expected " + count);
+  return paras;
+}
+function mdPcard(path, heading) {
+  // Price cards on /services. The twin section shape is fixed: a **price.
+  // meta. meta.** lead, a description, labelled checklists ("What you
+  // get:" / "What you do not get:" / "Typical work:" followed by - items,
+  // continuation lines indented), optional plain paragraphs, and the LAST
+  // block renders as the muted .suited line.
+  const blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.replace(/\s+$/, "")).filter(Boolean);
+  const head = blocks[0].trim().match(/^\*\*(.+)\*\*$/);
+  if (!head) throw new Error("mdPcard: " + heading + " does not open with a **price** block");
+  const segs = head[1].replace(/\.$/, "").split(". ");
+  let price = segs[0];
+  let meta = segs.slice(1);
+  const pm = price.match(/^(€[\d,]+)\s+(.+)$/);
+  if (pm) { price = pm[1]; meta = [pm[2], ...meta]; }
+  const parts = [`<div class="pcard-head"><span class="pcard-t">${renderInline(heading)}</span><span class="pcard-price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span><span class="pcard-meta">${meta.map((m) => escapeHtml(m)).join(" &middot; ")}</span></div>`];
+  const bodyBlocks = blocks.slice(1);
+  bodyBlocks.forEach((b, i) => {
+    const lines = b.split("\n");
+    if (/:$/.test(lines[0].trim()) && lines.slice(1).some((l) => l.startsWith("- "))) {
+      const label = lines[0].trim().replace(/:$/, "");
+      const items = [];
+      for (const l of lines.slice(1)) {
+        if (l.startsWith("- ")) items.push(l.slice(2).trim());
+        else if (items.length) items[items.length - 1] += " " + l.trim();
+      }
+      const cls = /\bnot\b/.test(label) ? "nope" : "get";
+      parts.push(`<p class="lbl">${renderInline(label)}</p>`);
+      parts.push(`<ul class="${cls}">
+      ${items.map((it) => `<li>${renderInline(it)}</li>`).join("\n      ")}
+    </ul>`);
+    } else {
+      const flat = renderInline(b.replace(/\s*\n\s*/g, " "));
+      parts.push(i === bodyBlocks.length - 1 ? `<p class="suited">${flat}</p>` : `<p>${flat}</p>`);
+    }
+  });
+  return `<div class="pcard">
+    ${parts.join("\n    ")}
+  </div>`;
+}
 
 // Guide pages are rendered to HTML right here by the worker. Agents that
 // send Accept: text/markdown are served PAGE_MARKDOWN earlier; this is the
@@ -4263,7 +4308,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
     "url": url,
     "image": { "@type": "ImageObject", "url": "https://turva.dev" + (m.image || "/og.jpg"), "width": 1200, "height": 630 },
     "inLanguage": "en",
-    "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://codeberg.org/erekola", "https://erikrekola.link", "https://gravatar.com/erekola"] },
+    "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://codeberg.org/erekola", "https://gravatar.com/erekola"] },
     "publisher": { "@type": "Organization", "@id": "https://turva.dev/#business", "name": "turva.dev", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276251"] },
     "isPartOf": { "@type": "WebSite", "name": "turva.dev", "url": "https://turva.dev/" },
     "about": "agent-readiness"
@@ -5032,6 +5077,7 @@ function serveServicesHtml(canonicalUrl) {
   const metaBlock = buildMetaBlock("/services", canonicalUrl);
   const jsonLd = buildGuideJsonLd("/services", canonicalUrl) +
     (GUIDE_PAGE_FAQ["/services"] ? "\n" + buildGuidePageFaqJsonLd("/services", canonicalUrl) : "");
+  const start = mdParas("/services", "How to start", 3);
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -5089,6 +5135,7 @@ a:hover{text-decoration:underline;}
 .scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.4rem 1.5rem 1.2rem;margin:1.6rem 0 0;}
 .scard h2{color:#5DF18F;font-size:1.2rem;font-weight:700;letter-spacing:-0.01em;margin:0 0 .85rem;}
 .scard p{color:#C9D1CE;margin:0;font-size:.97rem;}
+.scard p+p{margin-top:.6rem;}
 ${FOOTER_CSS}
 </style>
 </head>
@@ -5114,96 +5161,19 @@ ${FOOTER_CSS}
   </ul>
 </nav>
 <main id="main">
-  <h1>Services</h1>
-  <p class="intro">Five offerings. Async-only. One business day response.</p>
-
-  <div class="pcard">
-    <div class="pcard-head"><span class="pcard-t">Audit</span><span class="pcard-price">&#8364;6,500</span><span class="pcard-meta">Two to three weeks &middot; Fixed scope</span></div>
-    <p>A measurement of how agent-ready your site and APIs are today, with a prioritized list of what to fix first.</p>
-    <p class="lbl">What you get</p>
-    <ul class="get">
-      <li>Two independent scanners run against the site or API</li>
-      <li>Manual review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers</li>
-      <li>Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms</li>
-      <li>A live check of how AI assistants and agents retrieve and answer questions about the site or API today, across several AI platforms (answer engine optimization, AEO)</li>
-      <li>Written report with findings ranked by score impact and implementation cost</li>
-      <li>One round of written follow-up questions</li>
-    </ul>
-    <p class="lbl">What you do not get</p>
-    <ul class="nope">
-      <li>Calls or meetings</li>
-      <li>Implementation of the fixes (separate engagement)</li>
-      <li>Ongoing monitoring (separate engagement)</li>
-    </ul>
-    <p>Large sites are covered in full. If a site is big enough that the live checks reach a tool quota, the quota is raised rather than the coverage reduced. Once the audit is complete, the fixes it lists are typically about a day of implementation work, whether your team does them or I do. The audit is what identifies that day of work and orders it by impact.</p>
-    <p class="suited">Suited for teams that want a clear picture of where they stand before deciding what to do about it.</p>
-  </div>
-
-  <div class="pcard">
-    <div class="pcard-head"><span class="pcard-t">Advisory</span><span class="pcard-price">&#8364;3,000</span><span class="pcard-meta">per month &middot; Monthly retainer &middot; Minimum three months</span></div>
-    <p>Ongoing input on agent-readiness as part of your product roadmap, with tracking of how the scores change over time.</p>
-    <p class="lbl">What you get</p>
-    <ul class="get">
-      <li>Monthly re-scan and score delta report</li>
-      <li>Monthly AI-visibility delta from the same question set re-run across several AI platforms (answer engine optimization, AEO)</li>
-      <li>Written review of any agent-readiness related work your team ships, within one business day</li>
-      <li>Roadmap input on what to ship next and why</li>
-      <li>Async channel for questions (email or shared doc)</li>
-      <li>Quarterly summary of measurable progress</li>
-    </ul>
-    <p class="suited">Suited for teams treating agent-readiness as an ongoing product responsibility rather than a one-off cleanup.</p>
-  </div>
-
-  <div class="pcard">
-    <div class="pcard-head"><span class="pcard-t">Implementation</span><span class="pcard-price">&#8364;1,500</span><span class="pcard-meta">per day &middot; Scoped per task</span></div>
-    <p>Hands-on work on the fixes the audit identified, or new agent-ready infrastructure built from scratch.</p>
-    <p class="lbl">Typical work</p>
-    <ul class="get">
-      <li>Cloudflare Workers for head metadata and /.well-known/ files served at the edge</li>
-      <li>MCP servers exposing read-only product data to agents</li>
-      <li>JSON-LD generators for product, organization and article schemas</li>
-      <li>ai.txt and llms.txt authoring</li>
-      <li>Signed content and agent authentication patterns</li>
-    </ul>
-    <p class="suited">Scoped repository write access per task. No retainer.</p>
-  </div>
-
-  <div class="pcard">
-    <div class="pcard-head"><span class="pcard-t">Agent operations</span><span class="pcard-price">Price on request</span><span class="pcard-meta">Scoped per engagement</span></div>
-    <p>The work beyond readiness, for teams moving from "an agent can read us" to "an agent can act on a system that matters." Two things decide whether an agent acts correctly. The data it works from has to arrive intact, even over links that drop or lag. And the decisions it is allowed to make have to sit inside an envelope of permissions and thresholds you set deliberately.</p>
-    <p class="lbl">Typical work</p>
-    <ul class="get">
-      <li>Review of the data path an agent depends on, and where it breaks under real network conditions</li>
-      <li>The permission and threshold envelope that bounds what an agent may decide and act on</li>
-      <li>Where a human stays in the loop, and how control passes between person and agent</li>
-      <li>Guardrails and verification so an agent's decisions can be checked after the fact</li>
-    </ul>
-    <p class="suited">Suited for teams letting agents act on data and decisions that matter, not only read a marketing site.</p>
-  </div>
-
-  <div class="pcard">
-    <div class="pcard-head"><span class="pcard-t">MCP server design</span><span class="pcard-price">Price on request</span><span class="pcard-meta">Scoped per engagement</span></div>
-    <p>An MCP server built for your product, exposing read-only data to agents over streamable HTTP transport. No auth surface and no logging by default.</p>
-    <p class="lbl">Typical work</p>
-    <ul class="get">
-      <li>Read-only discovery tools over your product data</li>
-      <li>Streamable HTTP transport with no auth surface and no logging by default</li>
-      <li>An MCP server card at /.well-known/mcp/server-card.json so agents can discover the server</li>
-      <li>Registry publication so the server is findable in MCP directories</li>
-    </ul>
-    <p class="suited">Suited for teams that want agents to read product data through a supported interface rather than scraping HTML.</p>
-  </div>
-
-  <div class="scard"><h2>The agent-ready badge</h2>
-    <p>Sites that complete an audit, or score 100/100 on a public agent-readiness scanner, may display the <a href="/badge">agent-ready badge</a>.</p>
-  </div>
-
+  ${mdPageStart("/services")}
+  ${mdPcard("/services", "Audit")}
+  ${mdPcard("/services", "Advisory")}
+  ${mdPcard("/services", "Implementation")}
+  ${mdPcard("/services", "Agent operations")}
+  ${mdPcard("/services", "MCP server design")}
+  ${mdCard("/services", "The agent-ready badge")}
   <div class="start">
     <h2>How to start</h2>
-    <p>Email <a href="mailto:info@turva.dev">info@turva.dev</a> with the site or API you want audited. I respond within one business day with a fixed quote and a start date.</p>
-    <p>No calls or calendar links, and no discovery sessions.</p>
+    <p>${start[0]}</p>
+    <p>${start[1]}</p>
     <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a></div>
-    <p class="fine">All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.</p>
+    <p class="fine">${start[2]}</p>
   </div>
 </main>
 ${FOOTER_HTML}
