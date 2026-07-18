@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.31.0 - rate limit post published (/blog/enforcing-the-rate-limit-i-advertised), validator page gains a visible FAQ + FAQPage and WebApplication JSON-LD, agent-readiness Measured dates unified to facts.json (2026-07-17). Standing rate limit state since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.32.0 - homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1331,7 +1331,7 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 
 Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.
 
-#1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard. 99/100 there, and Level 5 on isitagentready.com. Business ID 3600281-7.
+#1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, 99/100 and A+. 100/100 and Level 5 on isitagentready.com. Business ID 3600281-7, registered in Finland.
 
 ## Audits, advisory, and implementation for product teams
 
@@ -1341,7 +1341,9 @@ The measurable core is agent-readiness, scored by independent scanners and prova
 
 ## Independent agent-readiness scan of turva.dev
 
-Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities and Commerce: 100/100 each. Quality: 96/100, because the rate_limit_headers check reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. Verified 99/100, A+, ranked #1 of publicly-scanned sites on the startuphub.ai leaderboard.
+Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities and Commerce: 100/100 each. Quality: 96/100. Verified 99/100, A+, ranked #1 of publicly-scanned sites on the startuphub.ai leaderboard.
+
+Why 99 and not 100? The one deduction is the rate_limit_headers check: it reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. The full story, with the measurements, is in [the rate limit post](/blog/enforcing-the-rate-limit-i-advertised).
 
 ## Where this applies
 
@@ -1352,8 +1354,6 @@ The pattern is narrow, but where it fits is not. Anywhere data moves and a decis
 - An agent guiding a technician in the field, working from the same data the expert would.
 - An agent triaging incoming requests and resolving the routine ones on its own.
 - An agent operating a remote system over a link that drops, holding its last safe state until the data returns.
-- An agent reconciling records across systems and flagging only what does not match.
-- An agent making a time-critical call locally, where the round trip to a human is too slow to matter.
 
 These are examples. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.
 
@@ -1399,7 +1399,7 @@ The result is checkable, not asserted. For agent-readiness that is the scanner n
 
 ## Services
 
-- Audit. Fixed scope, two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
+- Audit. Fixed scope. Two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
 - Advisory. Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.
 - Implementation. On request. Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.
 - Agent operations. On request. The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
@@ -2532,7 +2532,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.31.0",
+    "version": "3.32.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2783,7 +2783,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.31.0",
+  "version": "3.32.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3620,7 +3620,7 @@ var META_BY_PATH = {
   "/": {
     title: "Agent-readiness audits and advisory · turva.dev",
     description: "Agent-readiness audits and advisory for product teams, and the wider work wherever AI agents read data and make decisions. Independent, measured, async-only.",
-    imageAlt: "Agent-readiness audits and advisory"
+    imageAlt: "turva.dev: 100/100 and Level 5 on isitagentready.com, #1 ranked A+ on startuphub.ai"
   },
   "/services": {
     title: "Services: audit, advisory and implementation · turva.dev",
@@ -4665,7 +4665,7 @@ strong{color:#F2F4F3;}
 .cell:hover{border-color:rgba(93,241,143,0.45);transform:translateY(-1px);}
 .cell .cat{display:block;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .25rem;}
 .cell .val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.02rem;color:#5DF18F;font-weight:700;}
-.board-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}
+.board-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}.whynot{margin:.85rem 0 0;font-size:.85rem;line-height:1.55;color:#96A79C;border-left:2px solid #5DF18F;padding:.1rem 0 .1rem .8rem;}.whynot b{color:#F2F5F3;}.bizline{margin:.7rem 0 0;font-size:.78rem;color:#6F7A77;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
 .board-sum b{color:#5DF18F;}
 .pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
 .sec{padding:1.9rem 0;border-top:0.5px solid rgba(255,255,255,0.07);}
@@ -4736,14 +4736,14 @@ ${FOOTER_CSS}
     <div class="hero-row">
       <div class="hero-left">
         <ul class="badges">
-          <li><b>99/100</b> and #1 on startuphub.ai</li>
-          <li><b>&#10003;</b> 100/100 on isitagentready.com</li>
-          <li>Business ID 3600281-7</li>
+          <li><b>99/100</b> &middot; A+ &middot; #1 on startuphub.ai</li>
+          <li><b>100/100</b> &middot; Level 5 on isitagentready.com</li>
         </ul>
         <div class="cta">
           <a class="btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a>
           <a class="btn-ghost" href="https://codeberg.org/erekola/turva-worker">Read the source</a>
         </div>
+        <p class="bizline">Business ID 3600281-7 &middot; registered in Finland</p>
       </div>
       <div class="hero-right">
         <div class="terminal" aria-label="verification terminal">
@@ -4751,7 +4751,7 @@ ${FOOTER_CSS}
           <div class="tm-body">
             <div class="tm-cmd"><span class="pr">&#8250;</span>turva verify --source startuphub.ai</div>
             <div class="tm-out">&#10003; startuphub.ai &middot; <b>99/100</b> &middot; A+ &middot; #1 ranked</div>
-            <div class="tm-out">&#10003; isitagentready.com &middot; <b>level 5</b> &middot; agent-native<span class="cursor"></span></div>
+            <div class="tm-out">&#10003; isitagentready.com &middot; <b>100/100</b> &middot; level 5 &middot; agent-native<span class="cursor"></span></div>
           </div>
         </div>
       </div>
@@ -4772,6 +4772,7 @@ ${FOOTER_CSS}
       <div class="cell"><span class="cat">quality</span><span class="val">96/100</span></div>
     </div>
     <div class="board-sum"><span>verified</span> <b>99/100</b> <span class="pill">#1 ranked</span> <span class="pill">A+</span></div>
+    <p class="whynot"><b>Why 99 and not 100?</b> The one deduction is the rate_limit_headers check: it reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. The full story, with the measurements, is in <a href="/blog/enforcing-the-rate-limit-i-advertised">the rate limit post</a>.</p>
   </section>
   <section class="sec">
     <h2>What an agent sees on this page</h2>
@@ -4798,8 +4799,6 @@ ${FOOTER_CSS}
       <div class="ex">An agent guiding a technician in the field, working from the same data the expert would.</div>
       <div class="ex">An agent triaging incoming requests and resolving the routine ones on its own.</div>
       <div class="ex">An agent operating a remote system over a link that drops, holding its last safe state until the data returns.</div>
-      <div class="ex">An agent reconciling records across systems and flagging only what does not match.</div>
-      <div class="ex">An agent making a time-critical call locally, where the round trip to a human is too slow to matter.</div>
     </div>
     <p>These are examples. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.</p>
   </section>
@@ -4808,9 +4807,8 @@ ${FOOTER_CSS}
     <h2>Evidence</h2>
     <p>turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 99/100 there and Level 5 on isitagentready.com. Measured 2026-07-17.</p>
     <div class="stats">
-      <div class="stat"><span class="stat-v">99/100 &middot; A+</span><span class="stat-l">#1 of publicly-scanned sites on startuphub.ai</span></div>
-      <div class="stat"><span class="stat-v">100/100</span><span class="stat-l">on isitagentready.com</span></div>
-      <div class="stat"><span class="stat-v">Level 5</span><span class="stat-l">agent-native, isitagentready.com</span></div>
+      <div class="stat"><span class="stat-v">99/100 &middot; A+ &middot; #1</span><span class="stat-l">of publicly-scanned sites on startuphub.ai</span></div>
+      <div class="stat"><span class="stat-v">100/100 &middot; Level 5</span><span class="stat-l">agent-native on isitagentready.com</span></div>
     </div>
     <ul class="evlist">
       <li>startuphub.ai leaderboard: #1 of publicly-scanned sites, 99/100 (A+). Discoverability, Content, Access Control, Capabilities and Commerce: 100/100 each. Quality: 96/100, because the rate_limit_headers check reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
@@ -4856,7 +4854,7 @@ ${FOOTER_CSS}
   <section class="sec">
     <h2>Services</h2>
     <div class="svcgrid">
-      <div class="svc"><span class="svc-tag">2 to 3 weeks</span><span class="svc-t">Audit</span><p>Fixed scope, two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.</p></div>
+      <div class="svc"><span class="svc-tag">fixed scope</span><span class="svc-t">Audit</span><p>Fixed scope. Two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.</p></div>
       <div class="svc"><span class="svc-tag">monthly</span><span class="svc-t">Advisory</span><p>Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.</p></div>
       <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">Implementation</span><p>Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.</p></div>
       <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">Agent operations</span><p>The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.</p></div>
