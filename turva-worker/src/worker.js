@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.32.0 - homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.33.0 - signed llms.txt folds in the rate limit post (re-signed with the local deterministic method). Carries the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -186,6 +186,7 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog)
+- [Every response promised a rate limit. Nothing enforced it.](https://turva.dev/blog/enforcing-the-rate-limit-i-advertised)
 - [Microsoft said the patches would get bigger. I measured how much bigger.](https://turva.dev/blog/measuring-the-ai-patch-surge)
 - [How to let an AI agent work in your repo without leaking your secrets](https://turva.dev/blog/agent-secret-hygiene)
 - [How agent-ready are Finnish B2B sites? I scanned sixteen](https://turva.dev/blog/agent-readiness-finnish-b2b)
@@ -337,73 +338,73 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
-  "/blog/enforcing-the-rate-limit-i-advertised": `# Every response promised a rate limit. Nothing enforced it.
-
-2026-07-18
-
-One function in this site's Worker attaches security headers to every response it renders. Until yesterday two of them were RateLimit-Limit: 100 and RateLimit-Policy: "default";q=100;w=60. They went out with the homepage, with all 24 guides, with every markdown twin and with every 404. This site also publishes a guide on response headers for agents, and that guide teaches the RateLimit family on the reasoning that a well-behaved agent reads the declared budget and throttles itself before anyone has to throttle it.
-
-No code enforced either number. The Worker had no rate limiting logic and no path that returned a 429, and the config declared no limiter. The 100 had never been connected to a counter, so every response was advertising a budget the server had no way to spend. It surfaced while I was preparing answers to the hardest questions this site could be asked, which is the only reason it surfaced at all.
-
-That is the exact defect this business sells finding. A declared surface that no code resolves is the first thing an agent-readiness audit looks for, and an agent polite enough to trust the header would have been rationing itself against a limit that lived only in text.
-
-## What enforcement looks like
-
-Cloudflare's Workers rate limiting binding does the work now. The configuration is a block in wrangler.jsonc naming a limiter with a simple limit of 100 requests per 60 seconds, so the config carries the same numbers the header had been promising on its own. At the top of the fetch handler the Worker calls limit() keyed on the client IP, and past the limit it returns 429 with Retry-After: 60, built by the same security header function as every other response, so the rate limit header rides on the 429 itself.
-
-It fails open, deliberately. If the binding is missing or limit() throws, the request is served normally, because a limiter that takes the site down when its own plumbing breaks is a worse trade than a burst that gets through. That choice has a cost this post comes back to: from the outside, a guard that has failed open is indistinguishable from a guard doing its job, and only the logs can tell them apart.
-
-The key is the client IP, and Cloudflare advises against that. Their best practices say it plainly: "It is not recommended to use IP addresses or locations (regions or countries), since these can be shared by many users in many valid cases." They are right. The identifiers they recommend are stable properties of a caller, an API key in an Authorization header or a user or tenant ID, and none of those exist here. This site is public documentation with no accounts and no login, so the IP is what is left, and the cost is real. Several agents behind one corporate proxy or one mobile NAT share a single budget of 100, and the one that gets refused may be the one that asked politely.
-
-## The test that found nothing
-
-Reading the code is what caught this. That finding needed no instrument: no limiter logic anywhere, nothing that could say 429. On the same morning a probe seemed to corroborate it, 130 requests in about six seconds, zero 429s back. I would have quoted the probe over the code reading in a heartbeat, because it has a number in it and numbers travel.
-
-The probe proves nothing, and that is now measured rather than suspected. I ran the same burst against the fixed site, enforcement live, from a network that had never touched it. 130 requests, ten in parallel, and all 130 came back 200 with not one 429. The identical result the broken site gave. In the larger burst below, not one of the first 130 requests was refused either. A hundred and thirty requests never reach the point where this platform starts refusing, so the working site and the absent limiter answer that probe in exactly the same voice.
-
-A test that returns the same answer whether or not the thing is broken is not weak evidence. It is not evidence. It is worse than no number at all, because a number gets quoted, and this one would have been quoted by me. The code reading found the defect. The curl agreed with it by coincidence.
-
-## Cloudflare documents the looseness
-
-The binding's documentation says, in a section titled Accuracy, that the API "is permissive, eventually consistent, and intentionally designed to not be used as an accurate accounting system." The Performance section above it explains why: the counters are cached on the machine the Worker runs on and updated asynchronously against a backing store in the same Cloudflare location, which is how limit() costs no meaningful latency. And the counters are local. For each key there is a separate limit per Cloudflare location, so 100 per 60 seconds is a budget per IP per location, never a global one.
-
-Measured from here, permissive looks like this. A parallel burst of 300 requests, ten at a time, returned 279 responses of 200 and 21 of 429. That run tagged each request with its index, so it could see where the refusals sat: all of them pooled at the end, indexes 240 through 299. A second run from another network split 281 and 19. A single request sent straight after the burst was refused on one network and served on the other, which is eventual consistency behaving exactly as advertised, and why the Retry-After: 60 on the 429 is a declared ceiling rather than a measured wait.
-
-The contrast that stings is local. A wrangler dev run enforces the limit exactly, 100 requests pass and the rest are refused, so the environment where you would naturally verify your own code is the one environment that behaves nothing like production.
-
-There is also a slower path to the limit, and our first test walked toward it without knowing. The budget refills at 100 per 60 seconds, a little under two requests a second. A sequential loop at three per second drains faster than the refill, so on a bucket model it would meet its first refusal somewhere past request 220. Ours stopped at 115 requests and 38 seconds, saw nothing but 200s, and I misread that as a broken deploy and asked for a second one. The deploy had been fine. The measurement was too small to say anything in either direction, and the possibly wasted deploy is part of this story's bill.
-
-## If you want to test it
-
-A slow loop tells you nothing here, and a hundred requests tell you nothing. Both come back all 200s whether the limit is enforced or absent. What reaches the limit is a parallel burst big enough to outrun the counters:
-
-    seq 300 | xargs -P 10 -I{} curl -s -o /dev/null -w "%{http_code}\\n" https://turva.dev/ | sort | uniq -c
-
-Expect most of the burst to pass and a tail of it to be refused. My two runs split 279 to 21 and 281 to 19. Yours will be a third pair of numbers, because you will be filling a counter in your own Cloudflare location rather than in mine. The shape repeats, the arithmetic does not. And if a burst of 300 gets you no 429 at all, I want to hear about it, because that is either the fail-open path hiding a broken binding or a behavior I cannot presently explain. The address is info@turva.dev.
-
-## One header was from a retired revision
-
-The guide on this site names the current pair of fields, RateLimit and RateLimit-Policy. The code was sending RateLimit-Limit and RateLimit-Policy. Before touching anything I went to the IETF archive to check which surface was right, and the answer was unambiguous. Revision 11 of draft-ietf-httpapi-ratelimit-headers, the active revision from May 2026, defines exactly two fields, RateLimit-Policy and RateLimit. RateLimit-Limit belongs to the early revisions, and where revision 11 mentions it at all is inside a section whose own heading says it is to be removed before publication as an RFC, in a survey of the legacy header names the draft is trying to replace. The site was sending one field from the current draft and one from a retired lineage in the same response. The guide had been right all along. Only the code was wrong.
-
-The fix shipped yesterday: RateLimit-Limit is gone and RateLimit-Policy stays. The field the current draft does define, RateLimit, was deliberately not added. Revision 11 makes its r parameter, the remaining quota, required, and Cloudflare's limit() returns a success boolean and nothing else, no remaining and no reset, so sending RateLimit would mean inventing the very number the field exists to carry. The draft also says the policy field alone lets a client control its own flow of requests, and positions the RateLimit field for limits that are highly dynamic. This limit is a static 100 per 60 seconds. For a static limit, RateLimit-Policy alone is the correct form.
-
-## What it cost on the scoreboard
-
-Dropping a header with RateLimit in its name has a scanner consequence, and it was measured before and after. The startuphub.ai scan of this site moved from 100 to 99, its quality category from 100 to 96, because its rate limit check no longer passes. The check now reports "No RateLimit-* headers" even though every response carries RateLimit-Policy. Its suggested fix asks for RateLimit: limit=100, remaining=47, reset=42, which is the syntax of revision 07 from June 2023, since replaced. And the check's title cites RFC 9331, which is not the rate limit draft at all. RFC 9331 is the Explicit Congestion Notification protocol for L4S networks. The rate limit fields have no RFC number yet, which is presumably how a wrong one got attached.
-
-I kept the current field and took the point. The evidence section on the homepage explains the missing point next to the site's two deliberately red commerce checks, a note went to the scanner's support, and the other scanner, isitagentready.com, does not look at these headers and still reads Level 5. If the check catches up with the draft, the point comes back on its own. If it does not, 99 with the current field beats 100 with a retired one, on a site whose whole argument is that the claims and the code have to match.
-
-## What to take from it
-
-A declared limit is a claim about behavior, and claims about behavior rot silently, because nothing breaks when they do. The check that catches this class of defect is reading the code. Probing the endpoint cannot do it, because on an eventually consistent platform the probe returns the same comfortable 200s for a working guard, for a missing one and for one that has failed open. If a header on your site promises something, the interesting question is not whether the value looks sensible. It is which line of code makes it true.
-
-If you want your own agent-facing claims read the way a skeptic would read them, an audit is what I do. Email info@turva.dev.
-
-## Related
-
-- [Response headers that help agents](/guides/response-headers-for-agents)
-- [When honesty and the checker disagree](/blog/honesty-and-the-checker)
-- [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks)
+  "/blog/enforcing-the-rate-limit-i-advertised": `# Every response promised a rate limit. Nothing enforced it.
+
+2026-07-18
+
+One function in this site's Worker attaches security headers to every response it renders. Until yesterday two of them were RateLimit-Limit: 100 and RateLimit-Policy: "default";q=100;w=60. They went out with the homepage, with all 24 guides, with every markdown twin and with every 404. This site also publishes a guide on response headers for agents, and that guide teaches the RateLimit family on the reasoning that a well-behaved agent reads the declared budget and throttles itself before anyone has to throttle it.
+
+No code enforced either number. The Worker had no rate limiting logic and no path that returned a 429, and the config declared no limiter. The 100 had never been connected to a counter, so every response was advertising a budget the server had no way to spend. It surfaced while I was preparing answers to the hardest questions this site could be asked, which is the only reason it surfaced at all.
+
+That is the exact defect this business sells finding. A declared surface that no code resolves is the first thing an agent-readiness audit looks for, and an agent polite enough to trust the header would have been rationing itself against a limit that lived only in text.
+
+## What enforcement looks like
+
+Cloudflare's Workers rate limiting binding does the work now. The configuration is a block in wrangler.jsonc naming a limiter with a simple limit of 100 requests per 60 seconds, so the config carries the same numbers the header had been promising on its own. At the top of the fetch handler the Worker calls limit() keyed on the client IP, and past the limit it returns 429 with Retry-After: 60, built by the same security header function as every other response, so the rate limit header rides on the 429 itself.
+
+It fails open, deliberately. If the binding is missing or limit() throws, the request is served normally, because a limiter that takes the site down when its own plumbing breaks is a worse trade than a burst that gets through. That choice has a cost this post comes back to: from the outside, a guard that has failed open is indistinguishable from a guard doing its job, and only the logs can tell them apart.
+
+The key is the client IP, and Cloudflare advises against that. Their best practices say it plainly: "It is not recommended to use IP addresses or locations (regions or countries), since these can be shared by many users in many valid cases." They are right. The identifiers they recommend are stable properties of a caller, an API key in an Authorization header or a user or tenant ID, and none of those exist here. This site is public documentation with no accounts and no login, so the IP is what is left, and the cost is real. Several agents behind one corporate proxy or one mobile NAT share a single budget of 100, and the one that gets refused may be the one that asked politely.
+
+## The test that found nothing
+
+Reading the code is what caught this. That finding needed no instrument: no limiter logic anywhere, nothing that could say 429. On the same morning a probe seemed to corroborate it, 130 requests in about six seconds, zero 429s back. I would have quoted the probe over the code reading in a heartbeat, because it has a number in it and numbers travel.
+
+The probe proves nothing, and that is now measured rather than suspected. I ran the same burst against the fixed site, enforcement live, from a network that had never touched it. 130 requests, ten in parallel, and all 130 came back 200 with not one 429. The identical result the broken site gave. In the larger burst below, not one of the first 130 requests was refused either. A hundred and thirty requests never reach the point where this platform starts refusing, so the working site and the absent limiter answer that probe in exactly the same voice.
+
+A test that returns the same answer whether or not the thing is broken is not weak evidence. It is not evidence. It is worse than no number at all, because a number gets quoted, and this one would have been quoted by me. The code reading found the defect. The curl agreed with it by coincidence.
+
+## Cloudflare documents the looseness
+
+The binding's documentation says, in a section titled Accuracy, that the API "is permissive, eventually consistent, and intentionally designed to not be used as an accurate accounting system." The Performance section above it explains why: the counters are cached on the machine the Worker runs on and updated asynchronously against a backing store in the same Cloudflare location, which is how limit() costs no meaningful latency. And the counters are local. For each key there is a separate limit per Cloudflare location, so 100 per 60 seconds is a budget per IP per location, never a global one.
+
+Measured from here, permissive looks like this. A parallel burst of 300 requests, ten at a time, returned 279 responses of 200 and 21 of 429. That run tagged each request with its index, so it could see where the refusals sat: all of them pooled at the end, indexes 240 through 299. A second run from another network split 281 and 19. A single request sent straight after the burst was refused on one network and served on the other, which is eventual consistency behaving exactly as advertised, and why the Retry-After: 60 on the 429 is a declared ceiling rather than a measured wait.
+
+The contrast that stings is local. A wrangler dev run enforces the limit exactly, 100 requests pass and the rest are refused, so the environment where you would naturally verify your own code is the one environment that behaves nothing like production.
+
+There is also a slower path to the limit, and our first test walked toward it without knowing. The budget refills at 100 per 60 seconds, a little under two requests a second. A sequential loop at three per second drains faster than the refill, so on a bucket model it would meet its first refusal somewhere past request 220. Ours stopped at 115 requests and 38 seconds, saw nothing but 200s, and I misread that as a broken deploy and asked for a second one. The deploy had been fine. The measurement was too small to say anything in either direction, and the possibly wasted deploy is part of this story's bill.
+
+## If you want to test it
+
+A slow loop tells you nothing here, and a hundred requests tell you nothing. Both come back all 200s whether the limit is enforced or absent. What reaches the limit is a parallel burst big enough to outrun the counters:
+
+    seq 300 | xargs -P 10 -I{} curl -s -o /dev/null -w "%{http_code}\\n" https://turva.dev/ | sort | uniq -c
+
+Expect most of the burst to pass and a tail of it to be refused. My two runs split 279 to 21 and 281 to 19. Yours will be a third pair of numbers, because you will be filling a counter in your own Cloudflare location rather than in mine. The shape repeats, the arithmetic does not. And if a burst of 300 gets you no 429 at all, I want to hear about it, because that is either the fail-open path hiding a broken binding or a behavior I cannot presently explain. The address is info@turva.dev.
+
+## One header was from a retired revision
+
+The guide on this site names the current pair of fields, RateLimit and RateLimit-Policy. The code was sending RateLimit-Limit and RateLimit-Policy. Before touching anything I went to the IETF archive to check which surface was right, and the answer was unambiguous. Revision 11 of draft-ietf-httpapi-ratelimit-headers, the active revision from May 2026, defines exactly two fields, RateLimit-Policy and RateLimit. RateLimit-Limit belongs to the early revisions, and where revision 11 mentions it at all is inside a section whose own heading says it is to be removed before publication as an RFC, in a survey of the legacy header names the draft is trying to replace. The site was sending one field from the current draft and one from a retired lineage in the same response. The guide had been right all along. Only the code was wrong.
+
+The fix shipped yesterday: RateLimit-Limit is gone and RateLimit-Policy stays. The field the current draft does define, RateLimit, was deliberately not added. Revision 11 makes its r parameter, the remaining quota, required, and Cloudflare's limit() returns a success boolean and nothing else, no remaining and no reset, so sending RateLimit would mean inventing the very number the field exists to carry. The draft also says the policy field alone lets a client control its own flow of requests, and positions the RateLimit field for limits that are highly dynamic. This limit is a static 100 per 60 seconds. For a static limit, RateLimit-Policy alone is the correct form.
+
+## What it cost on the scoreboard
+
+Dropping a header with RateLimit in its name has a scanner consequence, and it was measured before and after. The startuphub.ai scan of this site moved from 100 to 99, its quality category from 100 to 96, because its rate limit check no longer passes. The check now reports "No RateLimit-* headers" even though every response carries RateLimit-Policy. Its suggested fix asks for RateLimit: limit=100, remaining=47, reset=42, which is the syntax of revision 07 from June 2023, since replaced. And the check's title cites RFC 9331, which is not the rate limit draft at all. RFC 9331 is the Explicit Congestion Notification protocol for L4S networks. The rate limit fields have no RFC number yet, which is presumably how a wrong one got attached.
+
+I kept the current field and took the point. The evidence section on the homepage explains the missing point next to the site's two deliberately red commerce checks, a note went to the scanner's support, and the other scanner, isitagentready.com, does not look at these headers and still reads Level 5. If the check catches up with the draft, the point comes back on its own. If it does not, 99 with the current field beats 100 with a retired one, on a site whose whole argument is that the claims and the code have to match.
+
+## What to take from it
+
+A declared limit is a claim about behavior, and claims about behavior rot silently, because nothing breaks when they do. The check that catches this class of defect is reading the code. Probing the endpoint cannot do it, because on an eventually consistent platform the probe returns the same comfortable 200s for a working guard, for a missing one and for one that has failed open. If a header on your site promises something, the interesting question is not whether the value looks sensible. It is which line of code makes it true.
+
+If you want your own agent-facing claims read the way a skeptic would read them, an audit is what I do. Email info@turva.dev.
+
+## Related
+
+- [Response headers that help agents](/guides/response-headers-for-agents)
+- [When honesty and the checker disagree](/blog/honesty-and-the-checker)
+- [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks)
 `,
 
   "/blog/measuring-the-ai-patch-surge": `# Microsoft said the patches would get bigger. I measured how much bigger.
@@ -2532,7 +2533,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.32.0",
+    "version": "3.33.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2646,7 +2647,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MV_Vf3fXQ7D3T2gLy5AugoH5pYHm7-HKrVqUqaV-q-ELaTYNr_neGIttOObsGEWNGB0vXMTpTQVPz-ZQPbTmAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pRwElkSutAsL423btwHcZTw5kiZ6MtOxFOd2i1E0AiBueYuZ0zhLVf-OnZ0tFq5hcEi968OtbMpkU9fIWWHYBA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MV_Vf3fXQ7D3T2gLy5AugoH5pYHm7-HKrVqUqaV-q-ELaTYNr_neGIttOObsGEWNGB0vXMTpTQVPz-ZQPbTmAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"sJ2fRdsLAUnRxxcL7vsM5yprq1KeZBgdeeGhRp7FwtNFicTyKa3ZhiYb2smrc7u1yeNDr7t_gxd5f5nehDIQCA\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -2783,7 +2784,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.32.0",
+  "version": "3.33.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
