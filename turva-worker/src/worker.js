@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.33.0 - signed llms.txt folds in the rate limit post (re-signed with the local deterministic method). Carries the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.34.0 - new /tools page collects the validator, the badge and the public MCP server on one card page with a markdown twin (Q13 action A5); llms.txt Tools section links it (re-signed). Carries v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -208,6 +208,7 @@ var LLMS_TXT = `# turva.dev
 - [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender)
 
 ## Tools
+- [Free tools for agent-readiness](https://turva.dev/tools)
 - [llms.txt validator](https://turva.dev/llms-txt-validator)
 - [The agent-ready badge](https://turva.dev/badge)
 
@@ -890,6 +891,37 @@ No. The fetched file is checked and discarded, the result goes back with a no-st
 - [Serving markdown to agents](/guides/markdown-for-agents)
 `,
 
+  "/tools": `# Free tools for agent-readiness
+
+Three tools this site publishes for anyone to use: an llms.txt validator, an embeddable agent-ready badge and a public read-only MCP server. All free, no signup, and each one works for an agent as well as for a person.
+
+## llms.txt validator
+
+Checks a site's /llms.txt structure against the format and reports each check as pass, warn or fail. Nothing is stored. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header.
+
+Open it at [turva.dev/llms-txt-validator](/llms-txt-validator).
+
+## The agent-ready badge
+
+A small SVG badge a site can embed to show it meets public agent-readiness criteria, linking back to the criteria page. It is a self-declared claim and checkable by design: anyone can run the same public scanners against the displaying site at any time.
+
+Criteria and embed instructions at [turva.dev/badge](/badge).
+
+## Public MCP server
+
+A read-only Model Context Protocol server at mcp.turva.dev/mcp over streamable HTTP. It exposes the service catalog, contact channels, company details and the current agent-readiness evidence. No authentication, and its server card is published at /.well-known/mcp/server-card.json.
+
+## Where to go next
+
+These tools cover the same surfaces an agent-readiness audit measures. The audit itself, with fixed prices, is on the services page. See [services](/services).
+
+## Related
+
+- [llms.txt validator](/llms-txt-validator)
+- [The agent-ready badge](/badge)
+- [MCP server cards explained](/guides/mcp-server-card)
+`,
+
   "/badge": `# The agent-ready badge
 
 A small SVG badge a site can embed to show it meets public
@@ -1428,6 +1460,7 @@ at the same URL, at a fraction of the token cost of the HTML.
 
 ## More
 - [Services](https://turva.dev/services)
+- [Free tools](https://turva.dev/tools)
 - [Company](https://turva.dev/company)
 - [Contact](https://turva.dev/contact)
 - [Legal](https://turva.dev/legal)
@@ -2533,7 +2566,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.33.0",
+    "version": "3.34.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2647,7 +2680,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MV_Vf3fXQ7D3T2gLy5AugoH5pYHm7-HKrVqUqaV-q-ELaTYNr_neGIttOObsGEWNGB0vXMTpTQVPz-ZQPbTmAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"sJ2fRdsLAUnRxxcL7vsM5yprq1KeZBgdeeGhRp7FwtNFicTyKa3ZhiYb2smrc7u1yeNDr7t_gxd5f5nehDIQCA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MV_Vf3fXQ7D3T2gLy5AugoH5pYHm7-HKrVqUqaV-q-ELaTYNr_neGIttOObsGEWNGB0vXMTpTQVPz-ZQPbTmAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"t9fz2LKFgGPMOrC_zrdwMoQYBOq3W5fE9oiLd5DHyT3uIRkWmopExiQ15C7DIl0_bfH4JHL41lgjrYYWH5C7DA\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -2784,7 +2817,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.33.0",
+  "version": "3.34.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3366,6 +3399,7 @@ var SITEMAP_ENTRIES = [
   ["/blog/verifiable-agent-identity", "monthly", "0.6"],
   ["/badge", "monthly", "0.5"],
   ["/llms-txt-validator", "monthly", "0.6"],
+  ["/tools", "monthly", "0.6"],
 ];
 function buildSitemapXml() {
   const rows = SITEMAP_ENTRIES.map(function(e) {
@@ -3431,7 +3465,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/tools"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -3511,6 +3545,12 @@ var META_BY_PATH = {
     date: "2026-07-02",
     image: "/og-free-llms-txt-validator.jpg",
     imageAlt: "A free llms.txt validator"
+  },
+  "/tools": {
+    title: "Free agent-readiness tools | turva.dev",
+    description: "Three free tools: an llms.txt validator with JSON output, an embeddable agent-ready badge, and a public read-only MCP server. No signup, agent-friendly.",
+    image: "/og-tools.jpg",
+    imageAlt: "Free agent-readiness tools on turva.dev"
   },
   "/llms-txt-validator": {
     title: "Free llms.txt validator with JSON output | turva.dev",
@@ -5359,6 +5399,34 @@ ${FOOTER_HTML}
   return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
 }
 
+function serveToolsHtml(canonicalUrl) {
+  const head = cardPageHead(buildMetaBlock("/tools", canonicalUrl), buildGuideJsonLd("/tools", canonicalUrl), canonicalUrl);
+  const body = `${head}
+${cardPageNav("/tools")}
+<main id="main">
+  <h1>Free tools for agent-readiness</h1>
+  <p class="intro">Three tools this site publishes for anyone to use: an llms.txt validator, an embeddable agent-ready badge and a public read-only MCP server. All free, no signup, and each one works for an agent as well as for a person.</p>
+  <div class="scard"><h2>llms.txt validator</h2>
+    <p>Checks a site's /llms.txt structure against the format and reports each check as pass, warn or fail. Nothing is stored. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header.</p>
+    <p>Open it at <a href="/llms-txt-validator">turva.dev/llms-txt-validator</a>.</p>
+  </div>
+  <div class="scard"><h2>The agent-ready badge</h2>
+    <p>A small SVG badge a site can embed to show it meets public agent-readiness criteria, linking back to the criteria page. It is a self-declared claim and checkable by design: anyone can run the same public scanners against the displaying site at any time.</p>
+    <p>Criteria and embed instructions at <a href="/badge">turva.dev/badge</a>.</p>
+  </div>
+  <div class="scard"><h2>Public MCP server</h2>
+    <p>A read-only Model Context Protocol server at mcp.turva.dev/mcp over streamable HTTP. It exposes the service catalog, contact channels, company details and the current agent-readiness evidence. No authentication, and its server card is published at /.well-known/mcp/server-card.json.</p>
+  </div>
+  <div class="scard"><h2>Where to go next</h2>
+    <p>These tools cover the same surfaces an agent-readiness audit measures. The audit itself, with fixed prices, is on the services page. See <a href="/services">services</a>.</p>
+  </div>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+  return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
+}
+
 // llms.txt validator: fetches a target site's /llms.txt server-side and
 // checks its structure against the llms.txt format. Only https://<host>/llms.txt
 // is ever requested, redirects are not followed (a redirect fails the first
@@ -6081,6 +6149,9 @@ async function handleRequest(request, env) {
   }
   if (pathname === "/llms-txt-validator") {
     return serveLlmsValidatorHtml(request, "https://turva.dev/llms-txt-validator");
+  }
+  if (pathname === "/tools") {
+    return serveToolsHtml("https://turva.dev/tools");
   }
   if ((pathname.startsWith("/guides/") || pathname.startsWith("/blog/")) && PAGE_MARKDOWN[pathname]) {
     return serveGuideHtml(pathname, "https://turva.dev" + pathname);
