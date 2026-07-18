@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.35.0 - the npm package joins the surfaces: the /tools validator card and a new validator-page FAQ entry name turva-llms-txt-validator as the CI form with the same JSON shape, and erikrekola.link joins the #person and blog-author sameAs sets. Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.36.0 - Fable full-read fixes: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -28,6 +28,7 @@ var LEGACY_REDIRECTS = {
   "/tietosuoja": "/legal", "/tietosuoja/": "/legal",
   "/packages": "/services", "/packages/": "/services",
   "/pricing": "/services", "/pricing/": "/services",
+  "/checkout": "/services", "/checkout/": "/services",
   "/audit": "/services", "/audit/": "/services",
   "/advisory": "/services", "/advisory/": "/services",
   "/privacy": "/legal", "/privacy/": "/legal",
@@ -2577,7 +2578,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.35.0",
+    "version": "3.36.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2691,14 +2692,14 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MV_Vf3fXQ7D3T2gLy5AugoH5pYHm7-HKrVqUqaV-q-ELaTYNr_neGIttOObsGEWNGB0vXMTpTQVPz-ZQPbTmAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"t9fz2LKFgGPMOrC_zrdwMoQYBOq3W5fE9oiLd5DHyT3uIRkWmopExiQ15C7DIl0_bfH4JHL41lgjrYYWH5C7DA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"W0OsW2PSNro2bpVRGZfiQU9VhMU8vck4SvDgdOmSn6PTg9DcBPhFeh_1g0sTZuDHg5tdhXhynxvCcNnssY3iBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"t9fz2LKFgGPMOrC_zrdwMoQYBOq3W5fE9oiLd5DHyT3uIRkWmopExiQ15C7DIl0_bfH4JHL41lgjrYYWH5C7DA\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -2828,7 +2829,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.35.0",
+  "version": "3.36.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3354,7 +3355,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-07-02";
+var SITEMAP_LASTMOD = "2026-07-18";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -3504,7 +3505,7 @@ var META_BY_PATH = {
     title: "Secret hygiene when an agent works in your repo | turva.dev",
     description: "Coding agents run with your shell, so plaintext secrets on disk are exposed to them. Move git auth to a credential manager and the rest into an OS-encrypted vault.",
     date: "2026-07-12",
-    image: "/og.jpg",
+    image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "Secret hygiene when an agent works in your repo"
   },
   "/blog/agent-readiness-finnish-b2b": {
