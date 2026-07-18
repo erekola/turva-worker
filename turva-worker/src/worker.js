@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.36.0 - Fable full-read fixes: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.37.0 - tools joins every nav menu: the four inline nav blocks and cardPageNav now link /tools between blog and company. The page shipped in v3.34.0 but no menu linked it; it was reachable only from llms.txt, the sitemap and the validator and badge page bodies. Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -2578,7 +2578,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.36.0",
+    "version": "3.37.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2829,7 +2829,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.36.0",
+  "version": "3.37.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3977,6 +3977,7 @@ ${FOOTER_CSS}
     <li><a href="/services">services</a></li>
     <li><a href="/guides">guides</a></li>
     <li><a href="/blog">blog</a></li>
+    <li><a href="/tools">tools</a></li>
     <li><a href="/company">company</a></li>
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
@@ -4622,6 +4623,7 @@ ${FOOTER_CSS}
     <li><a href="/services">services</a></li>
     <li><a href="/guides"${navSection === "/guides" ? ' aria-current="true"' : ""}>guides</a></li>
     <li><a href="/blog"${navSection === "/blog" ? ' aria-current="true"' : ""}>blog</a></li>
+    <li><a href="/tools">tools</a></li>
     <li><a href="/company">company</a></li>
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
@@ -4780,6 +4782,7 @@ ${FOOTER_CSS}
     <li><a href="/services">services</a></li>
     <li><a href="/guides">guides</a></li>
     <li><a href="/blog">blog</a></li>
+    <li><a href="/tools">tools</a></li>
     <li><a href="/company">company</a></li>
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
@@ -5030,6 +5033,7 @@ ${FOOTER_CSS}
     <li><a href="/services" aria-current="page">services</a></li>
     <li><a href="/guides">guides</a></li>
     <li><a href="/blog">blog</a></li>
+    <li><a href="/tools">tools</a></li>
     <li><a href="/company">company</a></li>
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>
@@ -5219,7 +5223,7 @@ ${FOOTER_CSS}
 }
 
 function cardPageNav(current) {
-  const items = [["/","home"],["/services","services"],["/guides","guides"],["/blog","blog"],["/company","company"],["/legal","legal"],["/contact","contact"]];
+  const items = [["/","home"],["/services","services"],["/guides","guides"],["/blog","blog"],["/tools","tools"],["/company","company"],["/legal","legal"],["/contact","contact"]];
   const lis = items.map(([href,label]) => `    <li><a href="${href}"${href === current ? ' aria-current="page"' : ''}>${label}</a></li>`).join("\n");
   return `<nav class="turva-nav">
   <a class="nv-brand" href="/">
