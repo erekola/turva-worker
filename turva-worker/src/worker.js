@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.42.0 - T3 (Tek-56) batches 1-3: nine of the ten card pages (all but the homepage) now render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so each sentence lives once; structure (kvs grids, the validator form, FAQ shells, price cards, CTA chrome) stays hand-built, and the tools/verify.mjs twConverted gate bans literal prose paragraphs in converted functions. erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.43.0 - T3 (Tek-56) complete: all ten card pages render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so every sentence lives once and a page cannot drift from its markdown twin. Structure stays hand-built (kvs grids, the validator form, FAQ shells, price cards, hero/terminal/board/stats/steps chrome and the contact block on the homepage), and tools/verify.mjs guards the end state: no literal prose paragraphs in card functions outside two named homepage exceptions, every twin section rendered or declared markdown-only. Carries v3.42.0: erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1388,7 +1388,7 @@ The measurable core is agent-readiness, scored by independent scanners and prova
 
 Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities and Commerce: 100/100 each. Quality: 96/100. Verified 99/100, A+, ranked #1 of publicly-scanned sites on the startuphub.ai leaderboard.
 
-Why 99 and not 100? The one deduction is the rate_limit_headers check: it reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. The full story, with the measurements, is in [the rate limit post](/blog/enforcing-the-rate-limit-i-advertised).
+**Why 99 and not 100?** The one deduction is the rate_limit_headers check: it reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. The full story, with the measurements, is in [the rate limit post](/blog/enforcing-the-rate-limit-i-advertised).
 
 ## Where this applies
 
@@ -2580,7 +2580,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.42.0",
+    "version": "3.43.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2831,7 +2831,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.42.0",
+  "version": "3.43.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4246,7 +4246,7 @@ function mdTermsCard(path, heading) {
   </div>`;
 }
 function mdParas(path, heading, count) {
-  const paras = mdSection(path, heading).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean).map((b) => renderInline(b.replace(/\s*\n\s*/g, " ")));
+  const paras = mdSection(path, heading).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean).filter((b) => !/^[-|>]|^ {4}/.test(b)).map((b) => renderInline(b.replace(/\s*\n\s*/g, " ")));
   if (count && paras.length !== count) throw new Error("mdParas: " + path + " " + heading + " has " + paras.length + " blocks, expected " + count);
   return paras;
 }
@@ -4288,6 +4288,27 @@ function mdPcard(path, heading) {
   return `<div class="pcard">
     ${parts.join("\n    ")}
   </div>`;
+}
+function mdLists(path, heading) {
+  // Every "- item" list block in the section, in order; continuation lines
+  // (indented) join their item. Returns an array of item arrays.
+  const lists = [];
+  for (const block of mdSection(path, heading).split(/\n{2,}/)) {
+    const lines = block.split("\n");
+    if (!lines.some((l) => l.startsWith("- "))) continue;
+    const items = [];
+    for (const l of lines) {
+      if (l.startsWith("- ")) items.push(l.slice(2).trim());
+      else if (items.length && /^\s+\S/.test(l)) items[items.length - 1] += " " + l.trim();
+    }
+    lists.push(items.map((it) => renderInline(it)));
+  }
+  return lists;
+}
+function mdTidyUrlText(html) {
+  // Autolinked bare URLs keep the full URL as their visible text; strip the
+  // scheme, www. and a trailing slash from the TEXT only (hrefs untouched).
+  return html.replace(/>https?:\/\/(?:www\.)?([^<]*?)\/?</g, ">$1<");
 }
 
 // Guide pages are rendered to HTML right here by the worker. Agents that
@@ -4775,6 +4796,19 @@ var HOME_MARKDOWN = (function () {
 
 function serveHomeHtml(canonicalUrl) {
   const metaBlock = buildMetaBlock("/", canonicalUrl);
+  const lead = mdLead("/");
+  const scan = mdParas("/", "Independent agent-readiness scan of turva.dev", 2);
+  const apply = mdParas("/", "Where this applies", 2);
+  const exCells = mdLists("/", "Where this applies")[0].map((x) => `<div class="ex">${x}</div>`).join("\n      ");
+  const ev = mdParas("/", "Evidence", 6).map(mdTidyUrlText);
+  const evLists = mdLists("/", "Evidence").map((l) => l.map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      "));
+  const proc = mdParas("/", "The process has three stages and no surprises", 6);
+  const stepBody = (t) => t.slice(t.indexOf(". ") + 2);
+  const svcCards = mdLists("/", "Services")[0].map((it) => {
+    const svcName = it.split(". ")[0];
+    const tag = it.includes("Fixed scope") ? "fixed scope" : it.includes("Monthly retainer") ? "monthly" : "on request";
+    return `<div class="svc"><span class="svc-tag">${tag}</span><span class="svc-t">${svcName}</span><p>${it.slice(svcName.length + 2)}</p></div>`;
+  }).join("\n      ");
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -4843,7 +4877,7 @@ strong{color:#F2F4F3;}
 .cell:hover{border-color:rgba(93,241,143,0.45);transform:translateY(-1px);}
 .cell .cat{display:block;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .25rem;}
 .cell .val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.02rem;color:#5DF18F;font-weight:700;}
-.board-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}.whynot{margin:.85rem 0 0;font-size:.85rem;line-height:1.55;color:#96A79C;border-left:2px solid #5DF18F;padding:.1rem 0 .1rem .8rem;}.whynot b{color:#F2F5F3;}.bizline{margin:.7rem 0 0;font-size:.78rem;color:#6F7A77;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+.board-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}.whynot{margin:.85rem 0 0;font-size:.85rem;line-height:1.55;color:#96A79C;border-left:2px solid #5DF18F;padding:.1rem 0 .1rem .8rem;}.whynot b,.whynot strong{color:#F2F5F3;}.bizline{margin:.7rem 0 0;font-size:.78rem;color:#6F7A77;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
 .board-sum b{color:#5DF18F;}
 .pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
 .sec{padding:1.9rem 0;border-top:0.5px solid rgba(255,255,255,0.07);}
@@ -4910,8 +4944,8 @@ ${FOOTER_CSS}
 <main id="main">
   <section class="hero">
     <p class="eyebrow">where data moves and decisions matter · independently verified</p>
-    <h1>Audits and advisory for products that AI agents read and act on</h1>
-    <p class="lede">Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.</p>
+    <h1>${renderInline(lead.title)}</h1>
+    <p class="lede">${renderInline(lead.paras[0])}</p>
     <div class="hero-row">
       <div class="hero-left">
         <ul class="badges">
@@ -4951,7 +4985,7 @@ ${FOOTER_CSS}
       <div class="cell"><span class="cat">quality</span><span class="val">96/100</span></div>
     </div>
     <div class="board-sum"><span>verified</span> <b>99/100</b> <span class="pill">#1 ranked</span> <span class="pill">A+</span></div>
-    <p class="whynot"><b>Why 99 and not 100?</b> The one deduction is the rate_limit_headers check: it reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. The full story, with the measurements, is in <a href="/blog/enforcing-the-rate-limit-i-advertised">the rate limit post</a>.</p>
+    <p class="whynot">${scan[1]}</p>
   </section>
   <section class="sec">
     <h2>What an agent sees on this page</h2>
@@ -4965,43 +4999,36 @@ ${FOOTER_CSS}
 
   <section class="sec">
     <h2>Audits, advisory, and implementation for product teams</h2>
-    <p>An AI agent does not browse a site the way a person does. It reads machine-readable surfaces and acts on the parts it can reach, once it trusts what it found. I measure how a site, an API or a product holds up to that, fix what the measurement names, and stay on as the product changes.</p>
-    <p>The measurable core is agent-readiness, scored by independent scanners and provable on the next scan. The wider work begins where readability ends. The data an agent acts on has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set. The first makes an agent able to read you. The second makes it safe to let one act.</p>
+    ${mdBodyHtml("/", "Audits, advisory, and implementation for product teams")}
   </section>
 
   <section class="sec">
     <h2>Where this applies</h2>
-    <p>The pattern is narrow, but where it fits is not. Anywhere data moves and a decision follows, an agent can be the thing that reads the data and makes the call, as long as the inputs are clean and the envelope is set. A few examples:</p>
+    <p>${apply[0]}</p>
     <div class="exgrid">
-      <div class="ex">An agent reading a product catalog and completing a checkout for a buyer.</div>
-      <div class="ex">An agent watching an API and acting the moment a threshold is crossed, without waiting for a person.</div>
-      <div class="ex">An agent guiding a technician in the field, working from the same data the expert would.</div>
-      <div class="ex">An agent triaging incoming requests and resolving the routine ones on its own.</div>
-      <div class="ex">An agent operating a remote system over a link that drops, holding its last safe state until the data returns.</div>
+      ${exCells}
     </div>
-    <p>These are examples. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.</p>
+    <p>${apply[1]}</p>
   </section>
 
   <section class="sec">
     <h2>Evidence</h2>
-    <p>turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 99/100 there and Level 5 on isitagentready.com. Measured 2026-07-17.</p>
+    <p>${ev[0]}</p>
     <div class="stats">
       <div class="stat"><span class="stat-v">99/100 &middot; A+ &middot; #1</span><span class="stat-l">of publicly-scanned sites on startuphub.ai</span></div>
       <div class="stat"><span class="stat-v">100/100 &middot; Level 5</span><span class="stat-l">agent-native on isitagentready.com</span></div>
     </div>
     <ul class="evlist">
-      <li>startuphub.ai leaderboard: #1 of publicly-scanned sites, 99/100 (A+). Discoverability, Content, Access Control, Capabilities and Commerce: 100/100 each. Quality: 96/100, because the rate_limit_headers check reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. <a href="https://www.startuphub.ai/agent-readiness">startuphub.ai/agent-readiness</a></li>
-      <li>isitagentready.com: 100/100, Level 5 (Agent-Native). <a href="https://isitagentready.com/">isitagentready.com</a></li>
+      ${evLists[0]}
     </ul>
-    <p>isitagentready.com and Cloudflare Agent-Ready are the same scanner on two domains, and this site runs on Cloudflare Workers. Independent means independent of turva.dev: neither scanner is run or influenced by this business. Two isitagentready commerce checks, x402 and mpp, read FAIL on purpose. Commerce here is quote-on-request, there is no machine payment rail, and declaring one would be a fake checkmark. The reasoning is written out in <a href="/blog/honest-agent-commerce-checks">the commerce checks post</a>.</p>
-    <p>Both agent-readiness scanners are public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the numbers independently, run isitagentready.com and startuphub.ai against turva.dev and compare.</p>
-    <p>turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-07-16.</p>
+    <p>${ev[1]}</p>
+    <p>${ev[2]}</p>
+    <p>${ev[3]}</p>
     <ul class="evlist">
-      <li>Hardenize: all 13 categories passed. <a href="https://www.hardenize.com/report/turva.dev">hardenize.com/report/turva.dev</a></li>
-      <li>Internet.nl: 98/100. IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. <a href="https://internet.nl/site/turva.dev/">internet.nl/site/turva.dev</a></li>
+      ${evLists[1]}
     </ul>
-    <p>The Cloudflare Worker that produces these results is open source: <a href="https://codeberg.org/erekola/turva-worker">codeberg.org/erekola/turva-worker</a>. You can read every line before you hire me.</p>
-    <p>Backed by a registered business, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">tietopalvelu.ytj.fi/yritys/3600281-7</a></p>
+    <p>${ev[4]}</p>
+    <p>${ev[5]}</p>
   </section>
 
   <section class="sec">
@@ -5010,41 +5037,36 @@ ${FOOTER_CSS}
       <div class="step">
         <span class="step-n">01</span>
         <span class="step-t">Measurement</span>
-        <p>For agent-readiness, two independent scanners read the current state of the site or API and produce a numeric baseline with a categorized list of what is missing. For the wider work, the data path and the decision envelope are tested the way an agent would hit them, so the starting point is a fact rather than an opinion.</p>
+        <p>${stepBody(proc[0])}</p>
       </div>
       <div class="step">
         <span class="step-n">02</span>
         <span class="step-t">A written report</span>
-        <p>Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need a background in any of this to follow it.</p>
+        <p>${stepBody(proc[1])}</p>
       </div>
       <div class="step">
         <span class="step-n">03</span>
         <span class="step-t">The fixes</span>
-        <p>I implement them, or your engineering team does the work with the report as the spec. Both routes are supported and the choice is yours.</p>
+        <p>${stepBody(proc[2])}</p>
       </div>
     </div>
     <ul class="notes">
-      <li>All communication runs async. No calls and no calendar links. Live meetings are not part of how this work is done. Short questions go through Signal, longer documents through email and CryptPad. Everything stays in writing, which means the work and the trail are auditable end-to-end.</li>
-      <li>Production credentials are not requested. Write access to repositories is not taken by default. Read access is enough for the audit, and write access is scoped per task if implementation is purchased separately.</li>
-      <li>The result is checkable, not asserted. For agent-readiness that is the scanner number, higher on the next scan in the categories and by the dates the report named. For the wider work it is the same test, the data path holding under load and the envelope doing exactly what it claims. Either the next measurement confirms it or it does not.</li>
+      <li>${proc[3]}</li>
+      <li>${proc[4]}</li>
+      <li>${proc[5]}</li>
     </ul>
   </section>
 
   <section class="sec">
     <h2>Services</h2>
     <div class="svcgrid">
-      <div class="svc"><span class="svc-tag">fixed scope</span><span class="svc-t">Audit</span><p>Fixed scope. Two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.</p></div>
-      <div class="svc"><span class="svc-tag">monthly</span><span class="svc-t">Advisory</span><p>Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.</p></div>
-      <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">Implementation</span><p>Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.</p></div>
-      <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">Agent operations</span><p>The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.</p></div>
-      <div class="svc"><span class="svc-tag">on request</span><span class="svc-t">MCP server design</span><p>Read-only discovery tools and streamable HTTP transport. No auth surface and no logging by default. The endpoint stays readable for agents and does not turn into an abuse vector.</p></div>
+      ${svcCards}
     </div>
   </section>
 
   <section class="sec">
     <h2>Who I am</h2>
-    <p>The work is done by one person under a registered business. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, and I keep only the tools and methods that hold up when the output is checked line by line.</p>
-    <p>The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on either arrives intact or it does not, and the boundary you set either holds or it does not. Measurable either way.</p>
+    ${mdBodyHtml("/", "Who I am")}
   </section>
 
   <section class="sec contact">
