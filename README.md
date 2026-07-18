@@ -61,6 +61,13 @@ Every claim above is publicly auditable. Run the scanners yourself or open the c
 * Internet.nl report: https://internet.nl/site/turva.dev/
 * Company (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7
 
+The repo also carries the deploy gate the site runs on itself: [tools/verify.mjs](tools/verify.mjs) checks the source against [tools/facts.json](tools/facts.json), the single home for the volatile facts: versions, prices, scanner results and measured dates. The static run checks file integrity, pricing, versions, measured-date anchors and the twin gate that fails the run if hand-written prose appears outside the markdown twins. The live run also fetches every declared surface and verifies the Ed25519 signatures of the four signed manifests against the published JWKS.
+
+```
+node tools/verify.mjs
+node tools/verify.mjs --live
+```
+
 ## Agent-readiness reference
 
 A consolidated, self-contained reference to the surfaces agents read, with a short definition of each and a link to its full guide, is in [docs/agent-readiness.md](docs/agent-readiness.md).
