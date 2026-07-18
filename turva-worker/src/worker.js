@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.39.0 - StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.40.0 - StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1707,6 +1707,7 @@ No calls and no calendar links at any stage of the engagement.
 ## What to include in a first message
 
 A useful first message includes:
+
 - The site or API to be audited (URL)
 - Any current scanner results, if you have run them
 - The scope you have in mind (audit, advisory, implementation, agent operations, MCP server design)
@@ -2578,7 +2579,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.39.0",
+    "version": "3.40.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2829,7 +2830,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.39.0",
+  "version": "3.40.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4119,6 +4120,131 @@ function markdownToHtml(md) {
   return html.join("\n");
 }
 
+// ---- Prose from PAGE_MARKDOWN (T3, mds/decisions.md Tek-56) ----
+// Card pages render hand-built structure (nav, cards, key-value grids,
+// forms) around prose read from PAGE_MARKDOWN at request time, so every
+// sentence lives once and a page cannot drift from its markdown twin.
+// tools/verify.mjs guards converted pages: no literal prose paragraphs in
+// the function body, and every referenced section heading must exist in
+// the twin. A missing heading throws here, which the render harness and
+// the static gate catch before any deploy.
+function mdTwin(path) {
+  return PAGE_MARKDOWN[path].replace(/\r\n/g, "\n");
+}
+function mdLead(path) {
+  const md = mdTwin(path);
+  const cut = md.indexOf("\n## ");
+  const blocks = (cut === -1 ? md : md.slice(0, cut)).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+  const title = blocks.length && blocks[0].startsWith("# ") ? blocks[0].slice(2).trim() : "";
+  const paras = blocks.slice(1).filter((b) => !/^[-|>#]|^ {4}/.test(b));
+  return { title, paras };
+}
+function mdSection(path, heading) {
+  const md = mdTwin(path);
+  const key = "\n## " + heading + "\n";
+  const at = md.indexOf(key);
+  if (at === -1) throw new Error("mdSection: no \"" + heading + "\" in PAGE_MARKDOWN[\"" + path + "\"]");
+  const from = at + key.length;
+  const next = md.indexOf("\n## ", from);
+  return (next === -1 ? md.slice(from) : md.slice(from, next)).trim();
+}
+function mdBodyHtml(path, heading) {
+  return markdownToHtml(mdSection(path, heading)).replace(/href="https:\/\/turva\.dev\//g, 'href="/');
+}
+function mdPageStart(path) {
+  const lead = mdLead(path);
+  const intro = lead.paras.map((p, i) => `<p${i === 0 ? ' class="intro"' : ""}>${renderInline(p)}</p>`).join("\n  ");
+  return `<h1>${renderInline(lead.title)}</h1>
+  ${intro}`;
+}
+function mdCard(path, heading) {
+  return `<div class="scard"><h2>${renderInline(heading)}</h2>
+    ${mdBodyHtml(path, heading)}
+  </div>`;
+}
+function mdKvsCard(path, heading) {
+  const rows = mdSection(path, heading).split("\n").filter((l) => l.startsWith("- ")).map((l) => {
+    const m = l.slice(2).match(/^(?:\*\*(.+?):\*\*|([^:]+):)\s*(.+)$/);
+    return m ? { k: (m[1] || m[2]).trim(), v: m[3].trim() } : null;
+  }).filter(Boolean);
+  const cell = (v) => {
+    const mm = v.match(/^<mailto:(.+)>$/);
+    if (mm) return `<a class="v" href="mailto:${escapeHtml(mm[1])}">${escapeHtml(mm[1])}</a>`;
+    if (/^https?:\/\//.test(v)) {
+      const disp = v.replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/$/, "");
+      return `<a class="v" href="${escapeHtml(v)}">${escapeHtml(disp)}</a>`;
+    }
+    return `<span class="v">${escapeHtml(v)}</span>`;
+  };
+  const kv = rows.map((r) => `    <div class="kv"><span class="k">${escapeHtml(r.k)}</span>${cell(r.v)}</div>`).join("\n");
+  return `<div class="scard"><h2>${renderInline(heading)}</h2><div class="kvs">
+${kv}
+  </div></div>`;
+}
+function mdFaqBlocks(path, heading) {
+  // One markdown block per answer. A non-question block that does not
+  // directly follow a question is section tail prose (rendered by
+  // mdFaqTailHtml at main level), not part of the last answer.
+  const pairs = [];
+  const tail = [];
+  let expectAnswer = false;
+  for (const block of mdSection(path, heading).split(/\n{2,}/)) {
+    const t = block.trim();
+    if (!t) continue;
+    const q = t.match(/^\*\*(.+?)\*\*$/);
+    if (q) { pairs.push({ q: q[1].trim(), a: "" }); expectAnswer = true; continue; }
+    const flat = t.replace(/\s*\n\s*/g, " ");
+    if (expectAnswer) { pairs[pairs.length - 1].a = flat; expectAnswer = false; }
+    else tail.push(flat);
+  }
+  return { pairs, tail };
+}
+function mdFaqCard(path, heading) {
+  const inner = mdFaqBlocks(path, heading).pairs.map((p) => `    <p class="q">${renderInline(p.q)}</p>
+    <p>${renderInline(p.a)}</p>`).join("\n");
+  return `<div class="scard"><h2>${renderInline(heading)}</h2><div class="faq">
+${inner}
+  </div></div>`;
+}
+function mdFaqTailHtml(path, heading) {
+  return mdFaqBlocks(path, heading).tail.map((t) => `<p>${renderInline(t)}</p>`).join("\n  ");
+}
+function mdLinksCard(path, heading) {
+  const html = mdBodyHtml(path, heading).replace(/<p>/g, '<p class="sub">');
+  return `<div class="scard"><h2>${renderInline(heading)}</h2>${html}
+  </div>`;
+}
+function mdTermsHtml(path, heading) {
+  const out = [];
+  let dl = [];
+  const flush = () => {
+    if (dl.length) {
+      out.push(`<div class="dl">
+      ${dl.join("\n      ")}
+    </div>`);
+      dl = [];
+    }
+  };
+  for (const block of mdSection(path, heading).split(/\n{2,}/)) {
+    const t = block.trim();
+    if (!t) continue;
+    const m = t.match(/^\*\*([^*]+)\*\*\s+([\s\S]+)$/);
+    if (m) {
+      dl.push(`<p><span class="term">${renderInline(m[1])}</span> ${renderInline(m[2])}</p>`);
+      continue;
+    }
+    flush();
+    out.push(markdownToHtml(t));
+  }
+  flush();
+  return out.join("\n    ");
+}
+function mdTermsCard(path, heading) {
+  return `<div class="scard"><h2>${renderInline(heading)}</h2>
+    ${mdTermsHtml(path, heading)}
+  </div>`;
+}
+
 // Guide pages are rendered to HTML right here by the worker. Agents that
 // send Accept: text/markdown are served PAGE_MARKDOWN earlier; this is the
 // human/HTML representation.
@@ -4178,39 +4304,12 @@ ${json}
 <\/script>` + breadcrumb;
 }
 
-var GUIDES_FAQ = [
-  {
-    q: "What is an agent-readiness audit?",
-    a: "An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API, scored against current standards by an independent scanner rather than a self-assessment."
-  },
-  {
-    q: "Do I need llms.txt on my site?",
-    a: "If you want models and agents to read your real content rather than guess from a cached snippet, llms.txt gives them a curated map of what matters. It does not replace robots.txt or a sitemap, it complements them."
-  },
-  {
-    q: "How do I get my site cited by AI assistants?",
-    a: "A model cites content it can read cleanly and corroborate. That means machine-readable surfaces such as llms.txt and structured data, a markdown form that does not exhaust the token budget, and being indexed where the assistant searches."
-  },
-  {
-    q: "What is an MCP server card?",
-    a: "An MCP server card is a JSON file, usually at /.well-known/mcp/server-card.json, that lets an agent discover a site's Model Context Protocol server and the tools it exposes, so the agent can call them without a human wiring up the connection."
-  },
-  {
-    q: "Is agent-readiness the same as SEO?",
-    a: "No. SEO makes a site rank for a person to click. Agent-readiness makes a site legible and usable by an agent that reads and acts. A site can rank well and still be opaque to agents."
-  },
-  {
-    q: "How is agent-readiness measured?",
-    a: "By an independent scanner that reads the live site and reports a score with a category breakdown. The categories that get fixed read higher on the next scan, so the claim is the number rather than an assertion."
-  }
-];
-
 function buildGuidesFaqJsonLd() {
   const faq = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "inLanguage": "en",
-    "mainEntity": GUIDES_FAQ.map((item) => ({
+    "mainEntity": mdFaqBlocks("/guides", "Frequently asked").pairs.map((item) => ({
       "@type": "Question",
       "name": item.q,
       "acceptedAnswer": { "@type": "Answer", "text": item.a }
@@ -5176,6 +5275,7 @@ a:hover{text-decoration:underline;}
 .scard li a:hover,.scard li a:focus-visible{color:#F2F4F3;text-decoration:underline;}
 .scard li:last-child{margin-bottom:0;}
 .scard .note{margin-top:.85rem;}
+.scard pre+p,.scard ul+p,.scard .dl+p{margin-top:.85rem;}
 .kvs{display:grid;grid-template-columns:max-content 1fr;gap:.55rem .7rem;align-items:baseline;}
 .kv{display:contents;}
 .kv .k{color:#9AA3A0;font-size:.88rem;}
@@ -5257,41 +5357,14 @@ function serveCompanyHtml(canonicalUrl) {
   const body = `${head}
 ${cardPageNav("/company")}
 <main id="main">
-  <h1>Company</h1>
-  <p class="intro">turva.dev is operated by Erik Rekola.</p>
-  <div class="scard"><h2>Business details</h2><div class="kvs">
-    <div class="kv"><span class="k">Trade name</span><span class="v">turva.dev</span></div>
-    <div class="kv"><span class="k">Business ID</span><span class="v">3600281-7</span></div>
-    <div class="kv"><span class="k">Country of registration</span><span class="v">Finland</span></div>
-    <div class="kv"><span class="k">Form</span><span class="v">Sole proprietorship</span></div>
-  </div></div>
-  <div class="scard"><h2>About the operator</h2>
-    <p>Erik spent six years, 2015 to 2021, in hands-on machine roles: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyzer at Thermo Fisher Scientific, and semiconductor production equipment at ASM International. The common thread was machine data that had to be trusted and interventions that had to stay inside strict limits.</p>
-    <p>There was then a career break, from 2021 to early 2026. turva.dev was built when AI agents turned that same discipline into a web problem: data that has to arrive intact, and decisions that have to stay inside a boundary someone set on purpose.</p>
-    <p>The proof of current skill is public rather than asserted. The site and its MCP server are open source, and every score published here comes from third-party scanners anyone can re-run.</p>
-  </div>
-  <div class="scard"><h2>Location</h2><p>Tampere, Pirkanmaa, Finland. All work is delivered remotely. No on-site engagements.</p></div>
-  <div class="scard"><h2>Why this service exists</h2>
-    <p>Agent-readiness is a measurable property of a site, an API, or a product surface. This service answers one question: whether the scanners read it higher next week than this week.</p>
-    <p>Most websites and APIs were built before AI agents were a meaningful class of clients. The protocols (MCP, well-known manifests, structured discovery, JSON-LD) exist, but few sites implement them correctly. The result is a measurable gap between what an agent can read and what a human can read.</p>
-    <p>This service closes that gap on a per-project basis, with independent scanners as the referee.</p>
-  </div>
-  <div class="scard"><h2>Operating principles</h2><ul>
-    <li>Async-only engagement. No calls, no calendar links.</li>
-    <li>All work delivered remotely.</li>
-    <li>Production credentials are not requested.</li>
-    <li>Write access scoped per task and only if implementation is purchased.</li>
-    <li>Every claim is verifiable against public scanner output.</li>
-  </ul></div>
-  <div class="scard"><h2>Contact</h2><div class="kvs">
-    <div class="kv"><span class="k">Email</span><a class="v" href="mailto:info@turva.dev">info@turva.dev</a></div>
-    <div class="kv"><span class="k">Signal</span><span class="v">@turva.19</span></div>
-    <div class="kv"><span class="k">LinkedIn</span><a class="v" href="https://www.linkedin.com/in/erikrekola/">linkedin.com/in/erikrekola</a></div>
-  </div></div>
-  <div class="scard"><h2>Invoicing</h2>
-    <p>Payment terms are fourteen days net unless agreed otherwise in writing.</p>
-    <p>VAT is added to invoices according to Finnish law. Reverse charge applies to EU B2B customers with a valid VAT ID. Non-EU customers are invoiced without VAT.</p>
-  </div>
+  ${mdPageStart("/company")}
+  ${mdKvsCard("/company", "Business details")}
+  ${mdCard("/company", "About the operator")}
+  ${mdCard("/company", "Location")}
+  ${mdCard("/company", "Why this service exists")}
+  ${mdCard("/company", "Operating principles")}
+  ${mdKvsCard("/company", "Contact")}
+  ${mdCard("/company", "Invoicing")}
 </main>
 ${FOOTER_HTML}
 </body>
@@ -5304,32 +5377,12 @@ function serveContactHtml(canonicalUrl) {
   const body = `${head}
 ${cardPageNav("/contact")}
 <main id="main">
-  <h1>Contact</h1>
-  <p class="intro">Written contact only. Email for longer messages, Signal for short questions. The first reply is in writing within one business day. No calls and no calendar links at any stage of the engagement.</p>
-  <div class="scard"><h2>Channels</h2><div class="kvs">
-    <div class="kv"><span class="k">Email</span><a class="v" href="mailto:info@turva.dev">info@turva.dev</a></div>
-    <div class="kv"><span class="k">Signal</span><span class="v">@turva.19</span></div>
-    <div class="kv"><span class="k">LinkedIn</span><a class="v" href="https://www.linkedin.com/in/erikrekola/">linkedin.com/in/erikrekola</a></div>
-  </div></div>
-  <div class="scard"><h2>Response times</h2><ul>
-    <li>Email and Signal: within one business day</li>
-    <li>Weekends: no guaranteed response time</li>
-  </ul></div>
-  <div class="scard"><h2>What to include in a first message</h2>
-    <p>A useful first message includes:</p>
-    <ul>
-      <li>The site or API to be audited (URL)</li>
-      <li>Any current scanner results, if you have run them</li>
-      <li>The scope you have in mind (audit, advisory, implementation, agent operations, MCP server design)</li>
-    </ul>
-    <p class="note">If you do not have scanner results yet, that is fine. The audit starts with running them.</p>
-  </div>
-  <div class="scard"><h2>Geographic service area</h2><p>Based in Tampere, Finland. Service delivered remotely worldwide. All work is asynchronous and written.</p></div>
-  <div class="scard"><h2>Business details</h2><div class="kvs">
-    <div class="kv"><span class="k">Business ID</span><span class="v">3600281-7</span></div>
-    <div class="kv"><span class="k">Register</span><a class="v" href="https://tietopalvelu.ytj.fi/yritys/3600281-7">tietopalvelu.ytj.fi/yritys/3600281-7</a></div>
-    <div class="kv"><span class="k">Agent registration</span><a class="v" href="https://turva.dev/auth.md">turva.dev/auth.md</a></div>
-  </div></div>
+  ${mdPageStart("/contact")}
+  ${mdKvsCard("/contact", "Channels")}
+  ${mdCard("/contact", "Response times")}
+  ${mdCard("/contact", "What to include in a first message")}
+  ${mdCard("/contact", "Geographic service area")}
+  ${mdKvsCard("/contact", "Business details")}
 </main>
 ${FOOTER_HTML}
 </body>
@@ -5342,44 +5395,13 @@ function serveLegalHtml(canonicalUrl) {
   const body = `${head}
 ${cardPageNav("/legal")}
 <main id="main">
-  <h1>Legal</h1>
-  <p class="intro">This page covers the terms under which turva.dev operates, the privacy practices of the site, and the default terms for engagements.</p>
-  <div class="scard"><h2>Operator</h2>
-    <p>turva.dev is operated by Erik Rekola, Business ID <span class="gv">3600281-7</span>, registered in Finland as a sole proprietorship. VAT-registered.</p>
-    <p>Contact: <a href="mailto:info@turva.dev">info@turva.dev</a></p>
-  </div>
-  <div class="scard"><h2>Terms of engagement</h2>
-    <p>The following terms apply to all engagements (audit, advisory, implementation, agent operations and MCP server design) unless replaced by a written agreement.</p>
-    <div class="dl">
-      <p><span class="term">Scope.</span> Each engagement has a defined scope agreed in writing before work starts. Scope changes require a new written agreement and may affect price and timeline.</p>
-      <p><span class="term">Deliverables.</span> Audit deliverables are a written report. Advisory deliverables are written reviews and a monthly summary. Implementation deliverables are source code committed to the agreed repository.</p>
-      <p><span class="term">Payment.</span> Payment terms are fourteen days net. Late payment interest follows Finnish law.</p>
-      <p><span class="term">Confidentiality.</span> Information shared during an engagement is treated as confidential. A separate non-disclosure agreement can be signed on request.</p>
-      <p><span class="term">Liability.</span> Liability is limited to the value of the engagement. turva.dev is not liable for indirect or consequential damages.</p>
-      <p><span class="term">Intellectual property.</span> The client owns the deliverables produced for them. Generic methods, templates and reusable code remain with turva.dev.</p>
-      <p><span class="term">Governing law.</span> Finnish law applies. Disputes are resolved in the District Court of Pirkanmaa, Finland.</p>
-    </div>
-  </div>
-  <div class="scard"><h2>Privacy</h2>
-    <p>This site does not use analytics cookies, tracking pixels or third-party scripts.</p>
-    <div class="dl">
-      <p><span class="term">Server logs.</span> The hosting provider (Cloudflare) records standard request logs including IP address, user agent and requested path. Logs are retained according to Cloudflare's standard retention policy.</p>
-      <p><span class="term">Email.</span> Email communication is stored in standard email infrastructure for as long as needed to deliver the work and meet accounting obligations under Finnish law (six years for invoice records).</p>
-      <p><span class="term">Client data.</span> Data shared by a client during an engagement is stored only on systems necessary to deliver the work, and deleted within thirty days of engagement closure unless retention is required by law.</p>
-    </div>
-    <p class="note">No data is sold or shared with third parties.</p>
-  </div>
-  <div class="scard"><h2>Rights under GDPR</h2>
-    <p>You have the right to access, correct or request deletion of personal data held about you. Send the request to <a href="mailto:info@turva.dev">info@turva.dev</a>.</p>
-    <p>The supervisory authority in Finland is the Data Protection Ombudsman (tietosuojavaltuutettu.fi).</p>
-  </div>
-  <div class="scard"><h2>Cookies</h2>
-    <p>This site sets no cookies of its own. Cloudflare may set cookies required for bot management and security. These are technical cookies and do not require consent under EU law.</p>
-  </div>
-  <div class="scard"><h2>Updates</h2>
-    <p>This page is updated when the terms change. The current version applies to engagements started after the date below.</p>
-    <p>Last updated: <span class="gv">2026-07-04</span>.</p>
-  </div>
+  ${mdPageStart("/legal")}
+  ${mdCard("/legal", "Operator")}
+  ${mdTermsCard("/legal", "Terms of engagement")}
+  ${mdTermsCard("/legal", "Privacy")}
+  ${mdCard("/legal", "Rights under GDPR")}
+  ${mdCard("/legal", "Cookies")}
+  ${mdCard("/legal", "Updates")}
 </main>
 ${FOOTER_HTML}
 </body>
@@ -5389,30 +5411,18 @@ ${FOOTER_HTML}
 
 function serveBadgeHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/badge", canonicalUrl), buildGuideJsonLd("/badge", canonicalUrl), canonicalUrl);
-  const snippet = '<a href="https://turva.dev/badge"><img src="https://turva.dev/badge.svg" alt="agent-ready, criteria at turva.dev/badge" width="216" height="36" loading="lazy"></a>';
   const body = `${head}
 ${cardPageNav("/badge")}
 <main id="main">
-  <h1>The agent-ready badge</h1>
-  <p class="intro">A small SVG badge a site can embed to show it meets public agent-readiness criteria, linking back to this page. The badge is served from turva.dev, the criteria are listed below, and anyone can re-check the claim by running the same public scanners.</p>
-  <div class="scard"><h2>Who may display it</h2><ul>
-    <li>Sites that have completed a turva.dev agent-readiness audit</li>
-    <li>Sites that score 100/100 on a public agent-readiness scanner (startuphub.ai or isitagentready.com)</li>
-  </ul></div>
-  <div class="scard"><h2>What it is, and what it is not</h2>
-    <p>The badge is a self-declared claim against public criteria, not a certification. turva.dev does not police its use. The value of the badge is that the claim is checkable: either scanner can be run against the displaying site by anyone, at any time.</p>
-  </div>
+  ${mdPageStart("/badge")}
+  ${mdCard("/badge", "Who may display it")}
+  ${mdCard("/badge", "What it is, and what it is not")}
   <div class="scard"><h2>How to embed it</h2>
     <p>The badge looks like this:</p>
     <p><img src="/badge.svg" alt="agent-ready, criteria at turva.dev/badge" width="216" height="36"></p>
-    <p>Copy this HTML where you want it to appear:</p>
-    <pre><code>${escapeHtml(snippet)}</code></pre>
-    <p class="note">The image is 216 by 36 pixels, dark background, under one kilobyte.</p>
+    ${mdBodyHtml("/badge", "How to embed it")}
   </div>
-  <div class="scard"><h2>If your site is not there yet</h2>
-    <p>An audit measures where you stand and lists what to fix first. Services and prices are on the <a href="/services">services page</a>. Email <a href="mailto:info@turva.dev">info@turva.dev</a> and you get a reply within one business day.</p>
-    <p>All free tools on this site are collected on <a href="/tools">the tools page</a>.</p>
-  </div>
+  ${mdCard("/badge", "If your site is not there yet")}
 </main>
 ${FOOTER_HTML}
 </body>
@@ -5425,23 +5435,11 @@ function serveToolsHtml(canonicalUrl) {
   const body = `${head}
 ${cardPageNav("/tools")}
 <main id="main">
-  <h1>Free tools for agent-readiness</h1>
-  <p class="intro">Three tools this site publishes for anyone to use: an llms.txt validator, an embeddable agent-ready badge and a public read-only MCP server. All free, no signup, and each one works for an agent as well as for a person.</p>
-  <div class="scard"><h2>llms.txt validator</h2>
-    <p>Checks a site's /llms.txt structure against the format and reports each check as pass, warn or fail. Nothing is stored. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header.</p>
-    <p>Open it at <a href="/llms-txt-validator">turva.dev/llms-txt-validator</a>.</p>
-    <p>The same checks run in CI as an open npm package, <a href="https://www.npmjs.com/package/turva-llms-txt-validator">turva-llms-txt-validator</a>, with a CLI and the same JSON shape. Source on <a href="https://codeberg.org/erekola/llms-txt-validator">Codeberg</a>, mirrored on <a href="https://github.com/erekola/llms-txt-validator">GitHub</a>.</p>
-  </div>
-  <div class="scard"><h2>The agent-ready badge</h2>
-    <p>A small SVG badge a site can embed to show it meets public agent-readiness criteria, linking back to the criteria page. It is a self-declared claim and checkable by design: anyone can run the same public scanners against the displaying site at any time.</p>
-    <p>Criteria and embed instructions at <a href="/badge">turva.dev/badge</a>.</p>
-  </div>
-  <div class="scard"><h2>Public MCP server</h2>
-    <p>A read-only Model Context Protocol server at mcp.turva.dev/mcp over streamable HTTP. It exposes the service catalog, contact channels, company details and the current agent-readiness evidence. No authentication, and its server card is published at /.well-known/mcp/server-card.json.</p>
-  </div>
-  <div class="scard"><h2>Where to go next</h2>
-    <p>These tools cover the same surfaces an agent-readiness audit measures. The audit itself, with fixed prices, is on the services page. See <a href="/services">services</a>.</p>
-  </div>
+  ${mdPageStart("/tools")}
+  ${mdCard("/tools", "llms.txt validator")}
+  ${mdCard("/tools", "The agent-ready badge")}
+  ${mdCard("/tools", "Public MCP server")}
+  ${mdCard("/tools", "Where to go next")}
 </main>
 ${FOOTER_HTML}
 </body>
@@ -5709,54 +5707,12 @@ function serveGuidesHtml(canonicalUrl) {
   const body = `${head}
 ${cardPageNav("/guides")}
 <main id="main">
-  <h1>Agent-readiness guides</h1>
-  <p class="intro">These short guides explain, in plain language, what makes a website or an API easy for AI agents to read and use. Each one covers a single topic and takes a few minutes to read. They are free, and they cover the same surfaces an <a href="/services">agent-readiness audit</a> measures.</p>
-  <p>Not sure where to start? The first guide explains what an agent-readiness audit is.</p>
-  <div class="scard"><h2>Discovery and content</h2><p class="sub">How an agent finds your site and reads it without getting lost.</p><ul>
-    <li><a href="/guides/agent-readiness-audit">What an agent-readiness audit is</a></li>
-    <li><a href="/guides/get-cited-by-ai-assistants">How to get your site cited by AI assistants</a></li>
-    <li><a href="/guides/llms-txt">llms.txt explained</a></li>
-    <li><a href="/guides/markdown-for-agents">Serving markdown to agents</a></li>
-    <li><a href="/guides/open-knowledge-format">Open Knowledge Format (OKF) explained</a></li>
-    <li><a href="/guides/sitemaps-and-robots-for-agents">Sitemaps, robots.txt and agent access</a></li>
-    <li><a href="/guides/response-headers-for-agents">Response headers that help agents</a></li>
-    <li><a href="/guides/prerendering-for-agents">Prerendering and why agents see empty pages</a></li>
-  </ul></div>
-  <div class="scard"><h2>Capability and trust</h2><p class="sub">How a site tells an agent what it is allowed to do, and shows it is safe to use.</p><ul>
-    <li><a href="/guides/mcp-server-card">MCP server cards explained</a></li>
-    <li><a href="/guides/agents-json">What agents.json is</a></li>
-    <li><a href="/guides/well-known-for-agents">The /.well-known directory for agents</a></li>
-    <li><a href="/guides/agentic-resource-discovery">Agentic Resource Discovery and ai-catalog.json</a></li>
-    <li><a href="/guides/agent-authentication">How agents authenticate</a></li>
-    <li><a href="/guides/json-ld-structured-data">JSON-LD and structured data for agents</a></li>
-  </ul></div>
-  <div class="scard"><h2>Commerce and strategy</h2><p class="sub">Paying agents, how this differs from SEO, and how to choose and measure an audit.</p><ul>
-    <li><a href="/guides/x402-agent-payments">x402 and agent payments</a></li>
-    <li><a href="/guides/agent-commerce-discovery">Agent commerce discovery: A2A, AP2, and ACP</a></li>
-    <li><a href="/guides/agentic-commerce-readiness">Agentic commerce readiness: selling to AI shopping agents</a></li>
-    <li><a href="/guides/seo-vs-agent-readiness">SEO and agent-readiness are not the same</a></li>
-    <li><a href="/guides/agent-readiness-aeo-geo">Agent-readiness, AEO and GEO: how they relate</a></li>
-    <li><a href="/guides/letting-agents-act-on-data">Letting agents act on data: the decision envelope</a></li>
-    <li><a href="/guides/ai-agent-use-cases">AI agent use cases: where agents read data and make decisions</a></li>
-    <li><a href="/guides/measurement-led-agent-readiness">Why agent-readiness should be measured, not asserted</a></li>
-    <li><a href="/guides/agent-readiness-gaps">Common agent-readiness gaps on marketing sites</a></li>
-    <li><a href="/guides/choosing-an-agent-readiness-audit">Choosing an agent-readiness audit</a></li>
-  </ul></div>
-  <div class="scard"><h2>Frequently asked</h2><div class="faq">
-    <p class="q">What is an agent-readiness audit?</p>
-    <p>An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API, scored against current standards by an independent scanner rather than a self-assessment.</p>
-    <p class="q">Do I need llms.txt on my site?</p>
-    <p>If you want models and agents to read your real content rather than guess from a cached snippet, llms.txt gives them a curated map of what matters. It does not replace robots.txt or a sitemap, it complements them.</p>
-    <p class="q">How do I get my site cited by AI assistants?</p>
-    <p>A model cites content it can read cleanly and corroborate. That means machine-readable surfaces such as llms.txt and structured data, a markdown form that does not exhaust the token budget, and being indexed where the assistant searches.</p>
-    <p class="q">What is an MCP server card?</p>
-    <p>An MCP server card is a JSON file, usually at /.well-known/mcp/server-card.json, that lets an agent discover a site's Model Context Protocol server and the tools it exposes, so the agent can call them without a human wiring up the connection.</p>
-    <p class="q">Is agent-readiness the same as SEO?</p>
-    <p>No. SEO makes a site rank for a person to click. Agent-readiness makes a site legible and usable by an agent that reads and acts. A site can rank well and still be opaque to agents.</p>
-    <p class="q">How is agent-readiness measured?</p>
-    <p>By an independent scanner that reads the live site and reports a score with a category breakdown. The categories that get fixed read higher on the next scan, so the claim is the number rather than an assertion.</p>
-  </div></div>
-  <p>For an audit, contact <a href="mailto:info@turva.dev">info@turva.dev</a>.</p>
+  ${mdPageStart("/guides")}
+  ${mdLinksCard("/guides", "Discovery and content")}
+  ${mdLinksCard("/guides", "Capability and trust")}
+  ${mdLinksCard("/guides", "Commerce and strategy")}
+  ${mdFaqCard("/guides", "Frequently asked")}
+  ${mdFaqTailHtml("/guides", "Frequently asked")}
 </main>
 ${FOOTER_HTML}
 </body>
@@ -5780,8 +5736,7 @@ function serveBlogHtml(canonicalUrl) {
   const body = `${head}
 ${cardPageNav("/blog")}
 <main id="main">
-  <h1>Blog</h1>
-  <p class="intro">Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.</p>
+  ${mdPageStart("/blog")}
   <p class="feed"><a href="/blog/feed.xml">RSS feed</a></p>
 ${blogPostLinks()}
 </main>
