@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.34.0 - new /tools page collects the validator, the badge and the public MCP server on one card page with a markdown twin (Q13 action A5); llms.txt Tools section links it (re-signed). Carries v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.35.0 - the npm package joins the surfaces: the /tools validator card and a new validator-page FAQ entry name turva-llms-txt-validator as the CI form with the same JSON shape, and erikrekola.link joins the #person and blog-author sameAs sets. Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -863,6 +863,8 @@ or start with [llms.txt explained](/guides/llms-txt).
 Only https://<domain>/llms.txt is fetched. Agents can call this with
 Accept: application/json.
 
+All free tools on this site are collected on [the tools page](/tools).
+
 ## Frequently asked
 
 **What is llms.txt?**
@@ -885,10 +887,15 @@ GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: applica
 
 No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file and never crawls the rest of the site.
 
+**Can I run the checks in CI?**
+
+Yes. The same seven checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks.
+
 ## Related
 
 - [llms.txt explained](/guides/llms-txt)
 - [Serving markdown to agents](/guides/markdown-for-agents)
+- [Free tools for agent-readiness](/tools)
 `,
 
   "/tools": `# Free tools for agent-readiness
@@ -900,6 +907,8 @@ Three tools this site publishes for anyone to use: an llms.txt validator, an emb
 Checks a site's /llms.txt structure against the format and reports each check as pass, warn or fail. Nothing is stored. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header.
 
 Open it at [turva.dev/llms-txt-validator](/llms-txt-validator).
+
+The same checks run in CI as an open npm package, [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI and the same JSON shape. Source on [Codeberg](https://codeberg.org/erekola/llms-txt-validator), mirrored on [GitHub](https://github.com/erekola/llms-txt-validator).
 
 ## The agent-ready badge
 
@@ -954,6 +963,8 @@ The image is 216 by 36 pixels, dark background, under one kilobyte.
 An audit measures where you stand and lists what to fix first.
 Services and prices are on the [services page](/services). Email
 <mailto:info@turva.dev> and you get a reply within one business day.
+
+All free tools on this site are collected on [the tools page](/tools).
 `,
 
   "/blog": `# Blog
@@ -2566,7 +2577,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.34.0",
+    "version": "3.35.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2817,7 +2828,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.34.0",
+  "version": "3.35.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3864,7 +3875,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 var SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://codeberg.org/erekola","https://www.wikidata.org/wiki/Q140276251"]},
-{"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://codeberg.org/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik"]},
+{"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://codeberg.org/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://erikrekola.link"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 {"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"1500","highPrice":"6500","offerCount":"3","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services","itemListElement":[
 {"@type":"Offer","name":"Audit","description":"Fixed scope, 2-3 weeks. Two independent scanners run against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"6500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"6500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€6,500 fixed price, two to three weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
@@ -4124,7 +4135,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
     "url": url,
     "image": { "@type": "ImageObject", "url": "https://turva.dev" + (m.image || "/og.jpg"), "width": 1200, "height": 630 },
     "inLanguage": "en",
-    "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://codeberg.org/erekola"] },
+    "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://codeberg.org/erekola", "https://erikrekola.link"] },
     "publisher": { "@type": "Organization", "@id": "https://turva.dev/#business", "name": "turva.dev", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276251"] },
     "isPartOf": { "@type": "WebSite", "name": "turva.dev", "url": "https://turva.dev/" },
     "about": "agent-readiness"
@@ -4277,6 +4288,10 @@ var GUIDE_PAGE_FAQ = {
     {
       "q": "Does the validator store anything?",
       "a": "No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file and never crawls the rest of the site."
+    },
+    {
+      "q": "Can I run the checks in CI?",
+      "a": "Yes. The same seven checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks."
     }
   ],
   "/guides/agentic-resource-discovery": [
@@ -5391,6 +5406,7 @@ ${cardPageNav("/badge")}
   </div>
   <div class="scard"><h2>If your site is not there yet</h2>
     <p>An audit measures where you stand and lists what to fix first. Services and prices are on the <a href="/services">services page</a>. Email <a href="mailto:info@turva.dev">info@turva.dev</a> and you get a reply within one business day.</p>
+    <p>All free tools on this site are collected on <a href="/tools">the tools page</a>.</p>
   </div>
 </main>
 ${FOOTER_HTML}
@@ -5409,6 +5425,7 @@ ${cardPageNav("/tools")}
   <div class="scard"><h2>llms.txt validator</h2>
     <p>Checks a site's /llms.txt structure against the format and reports each check as pass, warn or fail. Nothing is stored. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header.</p>
     <p>Open it at <a href="/llms-txt-validator">turva.dev/llms-txt-validator</a>.</p>
+    <p>The same checks run in CI as an open npm package, <a href="https://www.npmjs.com/package/turva-llms-txt-validator">turva-llms-txt-validator</a>, with a CLI and the same JSON shape. Source on <a href="https://codeberg.org/erekola/llms-txt-validator">Codeberg</a>, mirrored on <a href="https://github.com/erekola/llms-txt-validator">GitHub</a>.</p>
   </div>
   <div class="scard"><h2>The agent-ready badge</h2>
     <p>A small SVG badge a site can embed to show it meets public agent-readiness criteria, linking back to the criteria page. It is a self-declared claim and checkable by design: anyone can run the same public scanners against the displaying site at any time.</p>
@@ -5657,6 +5674,7 @@ ${cardPageNav("/llms-txt-validator")}
   </ul></div>
   <div class="scard"><h2>What it does not do</h2>
     <p>This is a structure check against the llms.txt format, not an agent-readiness score. A full audit measures discovery, content, access control and more: see <a href="/services">services</a>, or start with <a href="/guides/llms-txt">llms.txt explained</a>.</p>
+    <p>All free tools on this site are collected on <a href="/tools">the tools page</a>.</p>
   </div>
   <div class="scard"><h2>Frequently asked</h2><div class="faq">
     <p class="q">What is llms.txt?</p>
@@ -5669,6 +5687,8 @@ ${cardPageNav("/llms-txt-validator")}
     <p>GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Only the target site's /llms.txt file is fetched, and the response carries a no-store header.</p>
     <p class="q">Does the validator store anything?</p>
     <p>No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file and never crawls the rest of the site.</p>
+    <p class="q">Can I run the checks in CI?</p>
+    <p>Yes. The same seven checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks.</p>
   </div></div>
 </main>
 ${FOOTER_HTML}
