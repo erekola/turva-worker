@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.40.0 - StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.41.0 - StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -861,8 +861,8 @@ agent-readiness score. A full audit measures discovery, content,
 access control and more: see [services](/services),
 or start with [llms.txt explained](/guides/llms-txt).
 
-Only https://<domain>/llms.txt is fetched. Agents can call this with
-Accept: application/json.
+Only the target domain's /llms.txt file is ever fetched. Agents can
+call this with Accept: application/json.
 
 All free tools on this site are collected on [the tools page](/tools).
 
@@ -2579,7 +2579,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.40.0",
+    "version": "3.41.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2830,7 +2830,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.40.0",
+  "version": "3.41.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4369,32 +4369,7 @@ var GUIDE_PAGE_FAQ = {
       "a": "In most cases, once the audit is complete, the fixes it lists are about a day of implementation work. Your team can do them with the report as the spec, or turva.dev implements them as a scoped engagement."
     }
   ],
-  "/llms-txt-validator": [
-    {
-      "q": "What is llms.txt?",
-      "a": "llms.txt is a plain text file at the root of a site that tells AI agents what the site contains and where the important content lives. It opens with the site name and a short summary, then lists the key pages as markdown links grouped under headings. This validator checks that structure."
-    },
-    {
-      "q": "What does the validator check?",
-      "a": "Seven structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with a single H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, and the file stays small enough to be cheap for an agent to read."
-    },
-    {
-      "q": "Why is there no score?",
-      "a": "Deliberately. Seven structural checks can honestly report pass, warn or fail, and a number stacked on top of them would look like an agent-readiness score without measuring one. Agent readiness is measured with independent public scanners and a manual review, which is the paid audit rather than this free check."
-    },
-    {
-      "q": "How does an agent call the validator?",
-      "a": "GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Only the target site's /llms.txt file is fetched, and the response carries a no-store header."
-    },
-    {
-      "q": "Does the validator store anything?",
-      "a": "No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file and never crawls the rest of the site."
-    },
-    {
-      "q": "Can I run the checks in CI?",
-      "a": "Yes. The same seven checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks."
-    }
-  ],
+  "/llms-txt-validator": mdFaqBlocks("/llms-txt-validator", "Frequently asked").pairs,
   "/guides/agentic-resource-discovery": [
     {
       "q": "What is an ai-catalog.json?",
@@ -5652,47 +5627,21 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
   const body = `${head}
 ${cardPageNav("/llms-txt-validator")}
 <main id="main">
-  <h1>Free llms.txt validator</h1>
-  <p class="intro">Enter a domain and this page fetches its /llms.txt and checks the structure against the format: one H1 title, an optional blockquote summary, H2 sections with link lists. Free, no signup, nothing stored.</p>
+  ${mdPageStart("/llms-txt-validator")}
   <div class="scard">
     <form class="vform" method="get" action="/llms-txt-validator">
       <input type="text" name="url" placeholder="example.com" value="${escapeHtml(raw)}" aria-label="Domain to check" required>
       <button type="submit">Check</button>
     </form>
-    <p class="note">Only https://&lt;domain&gt;/llms.txt is fetched. Agents can call this with Accept: application/json.</p>
   </div>
   ${resultHtml}
   <div class="scard"><h2>How to use it</h2><ul>
     <li>In a browser: enter a domain in the field above.</li>
     <li>As an agent: <code>GET https://turva.dev/llms-txt-validator?url=example.com</code> with <code>Accept: application/json</code>.</li>
   </ul></div>
-  <div class="scard"><h2>What it checks</h2><ul>
-    <li>The file exists at /llms.txt and returns HTTP 200.</li>
-    <li>The response is plain text, not an HTML error page.</li>
-    <li>The file starts with a single H1 title.</li>
-    <li>A blockquote summary follows the title, which the format recommends.</li>
-    <li>H2 sections group the content.</li>
-    <li>Markdown links parse and use absolute URLs.</li>
-    <li>The file stays small enough to be cheap for an agent to read.</li>
-  </ul></div>
-  <div class="scard"><h2>What it does not do</h2>
-    <p>This is a structure check against the llms.txt format, not an agent-readiness score. A full audit measures discovery, content, access control and more: see <a href="/services">services</a>, or start with <a href="/guides/llms-txt">llms.txt explained</a>.</p>
-    <p>All free tools on this site are collected on <a href="/tools">the tools page</a>.</p>
-  </div>
-  <div class="scard"><h2>Frequently asked</h2><div class="faq">
-    <p class="q">What is llms.txt?</p>
-    <p>llms.txt is a plain text file at the root of a site that tells AI agents what the site contains and where the important content lives. It opens with the site name and a short summary, then lists the key pages as markdown links grouped under headings. This validator checks that structure.</p>
-    <p class="q">What does the validator check?</p>
-    <p>Seven structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with a single H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, and the file stays small enough to be cheap for an agent to read.</p>
-    <p class="q">Why is there no score?</p>
-    <p>Deliberately. Seven structural checks can honestly report pass, warn or fail, and a number stacked on top of them would look like an agent-readiness score without measuring one. Agent readiness is measured with independent public scanners and a manual review, which is the paid audit rather than this free check.</p>
-    <p class="q">How does an agent call the validator?</p>
-    <p>GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Only the target site's /llms.txt file is fetched, and the response carries a no-store header.</p>
-    <p class="q">Does the validator store anything?</p>
-    <p>No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file and never crawls the rest of the site.</p>
-    <p class="q">Can I run the checks in CI?</p>
-    <p>Yes. The same seven checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks.</p>
-  </div></div>
+  ${mdCard("/llms-txt-validator", "What it checks")}
+  ${mdCard("/llms-txt-validator", "What it does not do")}
+  ${mdFaqCard("/llms-txt-validator", "Frequently asked")}
 </main>
 ${FOOTER_HTML}
 </body>
