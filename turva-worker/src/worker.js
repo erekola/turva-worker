@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.30.0 - the declared RateLimit policy is now enforced: 100 requests per 60 s per client IP per Cloudflare location via the Workers rate limiting binding, 429 with Retry-After beyond it, fail open. Only RateLimit-Policy is sent: it is the field draft-ietf-httpapi-ratelimit-headers-11 defines for a static policy. RateLimit-Limit was dropped 2026-07-17, it exists in no active revision. The draft RateLimit field is not sent because its r parameter is REQUIRED and the binding returns only { success }.
+// turva.dev worker v3.31.0 - rate limit post published (/blog/enforcing-the-rate-limit-i-advertised), validator page gains a visible FAQ + FAQPage and WebApplication JSON-LD, agent-readiness Measured dates unified to facts.json (2026-07-17). Standing rate limit state since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -337,6 +337,75 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/enforcing-the-rate-limit-i-advertised": `# Every response promised a rate limit. Nothing enforced it.
+
+2026-07-18
+
+One function in this site's Worker attaches security headers to every response it renders. Until yesterday two of them were RateLimit-Limit: 100 and RateLimit-Policy: "default";q=100;w=60. They went out with the homepage, with all 24 guides, with every markdown twin and with every 404. This site also publishes a guide on response headers for agents, and that guide teaches the RateLimit family on the reasoning that a well-behaved agent reads the declared budget and throttles itself before anyone has to throttle it.
+
+No code enforced either number. The Worker had no rate limiting logic and no path that returned a 429, and the config declared no limiter. The 100 had never been connected to a counter, so every response was advertising a budget the server had no way to spend. It surfaced while I was preparing answers to the hardest questions this site could be asked, which is the only reason it surfaced at all.
+
+That is the exact defect this business sells finding. A declared surface that no code resolves is the first thing an agent-readiness audit looks for, and an agent polite enough to trust the header would have been rationing itself against a limit that lived only in text.
+
+## What enforcement looks like
+
+Cloudflare's Workers rate limiting binding does the work now. The configuration is a block in wrangler.jsonc naming a limiter with a simple limit of 100 requests per 60 seconds, so the config carries the same numbers the header had been promising on its own. At the top of the fetch handler the Worker calls limit() keyed on the client IP, and past the limit it returns 429 with Retry-After: 60, built by the same security header function as every other response, so the rate limit header rides on the 429 itself.
+
+It fails open, deliberately. If the binding is missing or limit() throws, the request is served normally, because a limiter that takes the site down when its own plumbing breaks is a worse trade than a burst that gets through. That choice has a cost this post comes back to: from the outside, a guard that has failed open is indistinguishable from a guard doing its job, and only the logs can tell them apart.
+
+The key is the client IP, and Cloudflare advises against that. Their best practices say it plainly: "It is not recommended to use IP addresses or locations (regions or countries), since these can be shared by many users in many valid cases." They are right. The identifiers they recommend are stable properties of a caller, an API key in an Authorization header or a user or tenant ID, and none of those exist here. This site is public documentation with no accounts and no login, so the IP is what is left, and the cost is real. Several agents behind one corporate proxy or one mobile NAT share a single budget of 100, and the one that gets refused may be the one that asked politely.
+
+## The test that found nothing
+
+Reading the code is what caught this. That finding needed no instrument: no limiter logic anywhere, nothing that could say 429. On the same morning a probe seemed to corroborate it, 130 requests in about six seconds, zero 429s back. I would have quoted the probe over the code reading in a heartbeat, because it has a number in it and numbers travel.
+
+The probe proves nothing, and that is now measured rather than suspected. I ran the same burst against the fixed site, enforcement live, from a network that had never touched it. 130 requests, ten in parallel, and all 130 came back 200 with not one 429. The identical result the broken site gave. In the larger burst below, not one of the first 130 requests was refused either. A hundred and thirty requests never reach the point where this platform starts refusing, so the working site and the absent limiter answer that probe in exactly the same voice.
+
+A test that returns the same answer whether or not the thing is broken is not weak evidence. It is not evidence. It is worse than no number at all, because a number gets quoted, and this one would have been quoted by me. The code reading found the defect. The curl agreed with it by coincidence.
+
+## Cloudflare documents the looseness
+
+The binding's documentation says, in a section titled Accuracy, that the API "is permissive, eventually consistent, and intentionally designed to not be used as an accurate accounting system." The Performance section above it explains why: the counters are cached on the machine the Worker runs on and updated asynchronously against a backing store in the same Cloudflare location, which is how limit() costs no meaningful latency. And the counters are local. For each key there is a separate limit per Cloudflare location, so 100 per 60 seconds is a budget per IP per location, never a global one.
+
+Measured from here, permissive looks like this. A parallel burst of 300 requests, ten at a time, returned 279 responses of 200 and 21 of 429. That run tagged each request with its index, so it could see where the refusals sat: all of them pooled at the end, indexes 240 through 299. A second run from another network split 281 and 19. A single request sent straight after the burst was refused on one network and served on the other, which is eventual consistency behaving exactly as advertised, and why the Retry-After: 60 on the 429 is a declared ceiling rather than a measured wait.
+
+The contrast that stings is local. A wrangler dev run enforces the limit exactly, 100 requests pass and the rest are refused, so the environment where you would naturally verify your own code is the one environment that behaves nothing like production.
+
+There is also a slower path to the limit, and our first test walked toward it without knowing. The budget refills at 100 per 60 seconds, a little under two requests a second. A sequential loop at three per second drains faster than the refill, so on a bucket model it would meet its first refusal somewhere past request 220. Ours stopped at 115 requests and 38 seconds, saw nothing but 200s, and I misread that as a broken deploy and asked for a second one. The deploy had been fine. The measurement was too small to say anything in either direction, and the possibly wasted deploy is part of this story's bill.
+
+## If you want to test it
+
+A slow loop tells you nothing here, and a hundred requests tell you nothing. Both come back all 200s whether the limit is enforced or absent. What reaches the limit is a parallel burst big enough to outrun the counters:
+
+    seq 300 | xargs -P 10 -I{} curl -s -o /dev/null -w "%{http_code}\\n" https://turva.dev/ | sort | uniq -c
+
+Expect most of the burst to pass and a tail of it to be refused. My two runs split 279 to 21 and 281 to 19. Yours will be a third pair of numbers, because you will be filling a counter in your own Cloudflare location rather than in mine. The shape repeats, the arithmetic does not. And if a burst of 300 gets you no 429 at all, I want to hear about it, because that is either the fail-open path hiding a broken binding or a behavior I cannot presently explain. The address is info@turva.dev.
+
+## One header was from a retired revision
+
+The guide on this site names the current pair of fields, RateLimit and RateLimit-Policy. The code was sending RateLimit-Limit and RateLimit-Policy. Before touching anything I went to the IETF archive to check which surface was right, and the answer was unambiguous. Revision 11 of draft-ietf-httpapi-ratelimit-headers, the active revision from May 2026, defines exactly two fields, RateLimit-Policy and RateLimit. RateLimit-Limit belongs to the early revisions, and where revision 11 mentions it at all is inside a section whose own heading says it is to be removed before publication as an RFC, in a survey of the legacy header names the draft is trying to replace. The site was sending one field from the current draft and one from a retired lineage in the same response. The guide had been right all along. Only the code was wrong.
+
+The fix shipped yesterday: RateLimit-Limit is gone and RateLimit-Policy stays. The field the current draft does define, RateLimit, was deliberately not added. Revision 11 makes its r parameter, the remaining quota, required, and Cloudflare's limit() returns a success boolean and nothing else, no remaining and no reset, so sending RateLimit would mean inventing the very number the field exists to carry. The draft also says the policy field alone lets a client control its own flow of requests, and positions the RateLimit field for limits that are highly dynamic. This limit is a static 100 per 60 seconds. For a static limit, RateLimit-Policy alone is the correct form.
+
+## What it cost on the scoreboard
+
+Dropping a header with RateLimit in its name has a scanner consequence, and it was measured before and after. The startuphub.ai scan of this site moved from 100 to 99, its quality category from 100 to 96, because its rate limit check no longer passes. The check now reports "No RateLimit-* headers" even though every response carries RateLimit-Policy. Its suggested fix asks for RateLimit: limit=100, remaining=47, reset=42, which is the syntax of revision 07 from June 2023, since replaced. And the check's title cites RFC 9331, which is not the rate limit draft at all. RFC 9331 is the Explicit Congestion Notification protocol for L4S networks. The rate limit fields have no RFC number yet, which is presumably how a wrong one got attached.
+
+I kept the current field and took the point. The evidence section on the homepage explains the missing point next to the site's two deliberately red commerce checks, a note went to the scanner's support, and the other scanner, isitagentready.com, does not look at these headers and still reads Level 5. If the check catches up with the draft, the point comes back on its own. If it does not, 99 with the current field beats 100 with a retired one, on a site whose whole argument is that the claims and the code have to match.
+
+## What to take from it
+
+A declared limit is a claim about behavior, and claims about behavior rot silently, because nothing breaks when they do. The check that catches this class of defect is reading the code. Probing the endpoint cannot do it, because on an eventually consistent platform the probe returns the same comfortable 200s for a working guard, for a missing one and for one that has failed open. If a header on your site promises something, the interesting question is not whether the value looks sensible. It is which line of code makes it true.
+
+If you want your own agent-facing claims read the way a skeptic would read them, an audit is what I do. Email info@turva.dev.
+
+## Related
+
+- [Response headers that help agents](/guides/response-headers-for-agents)
+- [When honesty and the checker disagree](/blog/honesty-and-the-checker)
+- [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks)
+`,
+
   "/blog/measuring-the-ai-patch-surge": `# Microsoft said the patches would get bigger. I measured how much bigger.
 
 2026-07-15
@@ -792,6 +861,28 @@ or start with [llms.txt explained](/guides/llms-txt).
 Only https://<domain>/llms.txt is fetched. Agents can call this with
 Accept: application/json.
 
+## Frequently asked
+
+**What is llms.txt?**
+
+llms.txt is a plain text file at the root of a site that tells AI agents what the site contains and where the important content lives. It opens with the site name and a short summary, then lists the key pages as markdown links grouped under headings. This validator checks that structure.
+
+**What does the validator check?**
+
+Seven structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with a single H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, and the file stays small enough to be cheap for an agent to read.
+
+**Why is there no score?**
+
+Deliberately. Seven structural checks can honestly report pass, warn or fail, and a number stacked on top of them would look like an agent-readiness score without measuring one. Agent readiness is measured with independent public scanners and a manual review, which is the paid audit rather than this free check.
+
+**How does an agent call the validator?**
+
+GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Only the target site's /llms.txt file is fetched, and the response carries a no-store header.
+
+**Does the validator store anything?**
+
+No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file and never crawls the rest of the site.
+
 ## Related
 
 - [llms.txt explained](/guides/llms-txt)
@@ -836,6 +927,7 @@ Services and prices are on the [services page](/services). Email
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [Every response promised a rate limit. Nothing enforced it.](/blog/enforcing-the-rate-limit-i-advertised). 2026-07-18.
 - [Microsoft said the patches would get bigger. I measured how much bigger.](/blog/measuring-the-ai-patch-surge). 2026-07-15.
 - [How to let an AI agent work in your repo without leaking your secrets](/blog/agent-secret-hygiene). 2026-07-12.
 - [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b). 2026-07-07.
@@ -1794,7 +1886,7 @@ The audit checks the parts an agent reaches first. Discovery covers robots.txt, 
 
 The result is a list. Each check passes or fails, and each failure comes with a concrete fix. The point is that the outcome is verifiable. An independent scanner reads the site before and after, and the categories that were fixed read higher on the next scan. The claim is the number, not an assertion.
 
-turva.dev applies the same standard to its own site. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. Measured 2026-07-16. The audit a client receives runs the same checks against their site.
+turva.dev applies the same standard to its own site. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. Measured 2026-07-17. The audit a client receives runs the same checks against their site.
 
 For an audit, contact info@turva.dev. Engagement is async and evidence-based, and production credentials are not requested.
 
@@ -2020,7 +2112,7 @@ The difference shows up the moment something changes. A header gets dropped in a
 
 Measurement also makes a result legible to a buyer. A claim that a site is agent-ready is an assertion. A score from an independent scanner, with a category breakdown and a date, is evidence that can be checked. The honest version of the claim is the number, and the number can be re-run by anyone.
 
-This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. Measured 2026-07-16.
+This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. Measured 2026-07-17.
 
 For an audit that reports measured results rather than a checklist, contact info@turva.dev.
 
@@ -2440,7 +2532,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.30.0",
+    "version": "3.31.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2691,7 +2783,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.30.0",
+  "version": "3.31.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3255,6 +3347,7 @@ var SITEMAP_ENTRIES = [
   ["/blog/agent-secret-hygiene", "monthly", "0.6"],
   ["/blog/agent-readiness-finnish-b2b", "monthly", "0.6"],
   ["/blog/honesty-and-the-checker", "monthly", "0.6"],
+  ["/blog/enforcing-the-rate-limit-i-advertised", "monthly", "0.6"],
   ["/blog/auditing-the-auditor", "monthly", "0.6"],
   ["/blog/re-checking-the-guides", "monthly", "0.6"],
   ["/blog/cheaper-pages-revisited", "monthly", "0.6"],
@@ -3337,7 +3430,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -3347,6 +3440,13 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/enforcing-the-rate-limit-i-advertised": {
+    title: "Every response promised a rate limit | turva.dev",
+    description: "A site sent rate limit headers no code enforced. The fix, the measurement that proved nothing, the draft archaeology and the point it cost on a scanner.",
+    date: "2026-07-18",
+    image: "/og-enforcing-the-rate-limit-i-advertised.jpg",
+    imageAlt: "Every response promised a rate limit. Nothing enforced it."
+  },
   "/blog/measuring-the-ai-patch-surge": {
     title: "Measuring the AI patch surge: Microsoft's July package | turva.dev",
     description: "Microsoft said customers would see a higher volume of security updates and gave no number. Twelve months of MSRC CVRF data: the July package is 3,0 times the baseline, and the median CVE got more severe.",
@@ -4116,6 +4216,28 @@ var GUIDE_PAGE_FAQ = {
       "a": "In most cases, once the audit is complete, the fixes it lists are about a day of implementation work. Your team can do them with the report as the spec, or turva.dev implements them as a scoped engagement."
     }
   ],
+  "/llms-txt-validator": [
+    {
+      "q": "What is llms.txt?",
+      "a": "llms.txt is a plain text file at the root of a site that tells AI agents what the site contains and where the important content lives. It opens with the site name and a short summary, then lists the key pages as markdown links grouped under headings. This validator checks that structure."
+    },
+    {
+      "q": "What does the validator check?",
+      "a": "Seven structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with a single H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, and the file stays small enough to be cheap for an agent to read."
+    },
+    {
+      "q": "Why is there no score?",
+      "a": "Deliberately. Seven structural checks can honestly report pass, warn or fail, and a number stacked on top of them would look like an agent-readiness score without measuring one. Agent readiness is measured with independent public scanners and a manual review, which is the paid audit rather than this free check."
+    },
+    {
+      "q": "How does an agent call the validator?",
+      "a": "GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Only the target site's /llms.txt file is fetched, and the response carries a no-store header."
+    },
+    {
+      "q": "Does the validator store anything?",
+      "a": "No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file and never crawls the rest of the site."
+    }
+  ],
   "/guides/agentic-resource-discovery": [
     {
       "q": "What is an ai-catalog.json?",
@@ -4315,6 +4437,26 @@ function buildGuidePageFaqJsonLd(pathname, canonicalUrl) {
   };
   const json = JSON.stringify(faq).replace(/<\/script/gi, "<\\/script");
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
+}
+
+function buildValidatorAppJsonLd(canonicalUrl) {
+  const url = canonicalUrl || "https://turva.dev/llms-txt-validator";
+  const app = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "@id": url + "#app",
+    "name": "Free llms.txt validator",
+    "url": url,
+    "description": "Free llms.txt validator. Fetches a site's /llms.txt and checks the structure: H1 title, blockquote summary, H2 link sections. JSON output for agents.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en",
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+    "publisher": { "@id": "https://turva.dev/#business" }
+  };
+  const json2 = JSON.stringify(app).replace(/<\/script/gi, "<\\/script");
+  return `<script type="application/ld+json">\n${json2}\n<\/script>`;
 }
 
 var FOOTER_CSS = `main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#5DF18F;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-x:auto;white-space:nowrap}.vform{display:flex;gap:10px;margin:6px 0}.vform input{flex:1;min-width:0;background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:10px 12px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:14px}.vform button{background:#5DF18F;color:#06100F;border:0;border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer;font-size:14px}.chk{display:flex;gap:10px;margin:8px 0;align-items:baseline;flex-wrap:wrap}.chk .s{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700}.chk.pass .s{color:#5DF18F}.chk.warn .s{color:#E8C15A}.chk.fail .s{color:#F17F5D}.chk .d{color:#96A79C;font-size:14px}.verr{color:#F17F5D}
@@ -5405,7 +5547,7 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
     applySecurityHeaders(headers, "agent-api");
     return new Response(JSON.stringify(payload, null, 2), { status: payload.error ? 400 : 200, headers });
   }
-  const head = cardPageHead(buildMetaBlock("/llms-txt-validator", canonicalUrl), buildGuideJsonLd("/llms-txt-validator", canonicalUrl), canonicalUrl);
+  const head = cardPageHead(buildMetaBlock("/llms-txt-validator", canonicalUrl), buildGuideJsonLd("/llms-txt-validator", canonicalUrl) + "\n" + buildGuidePageFaqJsonLd("/llms-txt-validator", canonicalUrl) + "\n" + buildValidatorAppJsonLd(canonicalUrl), canonicalUrl);
   const mark = { pass: "\u2713", warn: "!", fail: "\u2717" };
   let resultHtml = "";
   if (error) {
@@ -5449,6 +5591,18 @@ ${cardPageNav("/llms-txt-validator")}
   <div class="scard"><h2>What it does not do</h2>
     <p>This is a structure check against the llms.txt format, not an agent-readiness score. A full audit measures discovery, content, access control and more: see <a href="/services">services</a>, or start with <a href="/guides/llms-txt">llms.txt explained</a>.</p>
   </div>
+  <div class="scard"><h2>Frequently asked</h2><div class="faq">
+    <p class="q">What is llms.txt?</p>
+    <p>llms.txt is a plain text file at the root of a site that tells AI agents what the site contains and where the important content lives. It opens with the site name and a short summary, then lists the key pages as markdown links grouped under headings. This validator checks that structure.</p>
+    <p class="q">What does the validator check?</p>
+    <p>Seven structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with a single H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, and the file stays small enough to be cheap for an agent to read.</p>
+    <p class="q">Why is there no score?</p>
+    <p>Deliberately. Seven structural checks can honestly report pass, warn or fail, and a number stacked on top of them would look like an agent-readiness score without measuring one. Agent readiness is measured with independent public scanners and a manual review, which is the paid audit rather than this free check.</p>
+    <p class="q">How does an agent call the validator?</p>
+    <p>GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Only the target site's /llms.txt file is fetched, and the response carries a no-store header.</p>
+    <p class="q">Does the validator store anything?</p>
+    <p>No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file and never crawls the rest of the site.</p>
+  </div></div>
 </main>
 ${FOOTER_HTML}
 </body>
