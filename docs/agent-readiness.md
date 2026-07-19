@@ -54,10 +54,9 @@ Most marketing sites are strong for human readers and weak for agents. The recur
 
 turva.dev is the reference build maintained alongside this repository. Measured on `https://turva.dev` on 2026-07-17:
 
-- Cloudflare Agent-Ready (isitagentready.com): 100 / 100, Level 5 Agent-Native.
-- startuphub.ai agent-readiness leaderboard: 99 / 100 (A+), first of the publicly-scanned sites on the leaderboard.
+- isitagentready.com (Cloudflare’s agent-readiness scanner): 100 / 100, Level 5 Agent-Native.
 
-The startuphub.ai scan reports six category scores: Discoverability, Content, Access Control, Capabilities, and Commerce at 100 / 100 each, and Quality at 96 / 100. Quality is 96 because the rate_limit_headers check asks for RateLimit headers in a syntax that appears in no revision of the active IETF draft, while the site sends RateLimit-Policy as that draft defines it. Those six categories belong to StartupHub's model and are reported here as StartupHub's result, not the Cloudflare scan's. The Cloudflare Agent-Ready model uses different categories.
+isitagentready.com groups its checks into five categories: Discoverability, Content Accessibility, Bot Access Control, API/Auth/MCP & A2A Discovery, and Commerce. turva.dev passes every check in the first four. Commerce is optional in this model, and turva.dev's commerce surface is quote-on-request, so the payment checks it does not implement are left honestly red rather than faked.
 
 These figures describe one site. They are a worked example rather than a target every site needs to match.
 
@@ -69,7 +68,6 @@ The site also signs several of its machine-readable manifests. An Ed25519 public
 
 ## Verify
 
-- StartupHub leaderboard: https://www.startuphub.ai/agent-readiness
 - isitagentready scanner: https://isitagentready.com/
 - Guides index: https://turva.dev/guides
 - Company record (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7

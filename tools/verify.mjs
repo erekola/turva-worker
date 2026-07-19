@@ -73,9 +73,9 @@ check(!!lvm && lvm[1]===ar, `worker.js HOME_JSON lastVerified == ${ar}`);
 check(src.readme.text.includes(ar), `README.md carries ${ar}`);
 
 console.log('\nScanner results');
-const sh = facts.agentReadiness.startuphub, lvl = facts.agentReadiness.isitagentready.level;
+const iar = facts.agentReadiness.isitagentready, lvl = iar.level;
 for (const k of Object.keys(src)) {
-  check(containsAny(src[k].text, slashVariants(sh.score)), `${src[k].rel} shows ${sh.score}`);
+  check(containsAny(src[k].text, slashVariants(iar.score)), `${src[k].rel} shows ${iar.score}`);
   check(src[k].text.includes(lvl), `${src[k].rel} shows "${lvl}"`);
 }
 
@@ -200,7 +200,7 @@ if (LIVE) {
     '/.well-known/api-catalog','/.well-known/ai-catalog.json','/.well-known/mcp/server-card.json',
     '/.well-known/agent-card.json','/.well-known/agent-skills/index.json',
     '/.well-known/oauth-authorization-server','/.well-known/oauth-protected-resource',
-    '/.well-known/ap2','/.well-known/acp','/.well-known/x402-mesh.json','/.well-known/security.txt','/auth.md'];
+    '/.well-known/ap2','/.well-known/acp','/.well-known/security.txt','/auth.md'];
   for (const p of paths) {
     try { const r = await fetch(base+p, {redirect:'follow'}); check(r.ok, `GET ${p} -> ${r.status}`); }
     catch (e) { bad(`GET ${p} -> ${e.code||e.message}`); }

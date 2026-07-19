@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.46.0 - the /llms-txt-validator page now lists the eighth structural check (inline HTML in the file is flagged as a warning, the no-html check the JSON and npm package already emit); What it checks and the validator FAQ updated from seven to eight, no llms.txt change and no re-sign. Carries v3.45.0: blog post /blog/the-twin-is-the-page (the T3 conversion writeup) added to PAGE_MARKDOWN, the /blog index, the sitemap (LASTMOD 2026-07-19) and the signed llms.txt, re-signed. Carries v3.44.0: the services MCP card's duplicated transport bullet dropped from the twin. T3 (Tek-56) complete: all ten card pages render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so every sentence lives once and a page cannot drift from its markdown twin. Structure stays hand-built (kvs grids, the validator form, FAQ shells, price cards, hero/terminal/board/stats/steps chrome and the contact block on the homepage), and tools/verify.mjs guards the end state: no literal prose paragraphs in card functions outside two named homepage exceptions, every twin section rendered or declared markdown-only. Carries v3.42.0: erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.47.0 - StartupHub removed site-wide: isitagentready.com (Cloudflare's scanner) is the sole named scanner, the homepage hero, terminal, board, stats and evidence rebuilt to its 100/100 Level 5 result plus the Internet.nl security stat, and #1, A+ and the Why-99 callout dropped; every startuphub.ai reference and link is gone from the front door, README, docs/agent-readiness.md, facts.json and verify.mjs (dated blog posts kept as history). x402-mesh removed from all surfaces (var, route, Link header, api-catalog, OpenAPI, llms.txt, ai.txt) and llms.txt re-signed. OpenAPI x-payment-info reshaped to the MPP standard (offers with intent charge, method x402, amount in USDC base units, currency the USDC contract on Base) plus a top-level x-service-info, so mpp and x402 are declared in the standard discovery form; settlement stays quote-on-request and the 402 challenge is authoritative. Carries v3.46.0: the /llms-txt-validator page now lists the eighth structural check (inline HTML in the file is flagged as a warning, the no-html check the JSON and npm package already emit); What it checks and the validator FAQ updated from seven to eight, no llms.txt change and no re-sign. Carries v3.45.0: blog post /blog/the-twin-is-the-page (the T3 conversion writeup) added to PAGE_MARKDOWN, the /blog index, the sitemap (LASTMOD 2026-07-19) and the signed llms.txt, re-signed. Carries v3.44.0: the services MCP card's duplicated transport bullet dropped from the twin. T3 (Tek-56) complete: all ten card pages render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so every sentence lives once and a page cannot drift from its markdown twin. Structure stays hand-built (kvs grids, the validator form, FAQ shells, price cards, hero/terminal/board/stats/steps chrome and the contact block on the homepage), and tools/verify.mjs guards the end state: no literal prose paragraphs in card functions outside two named homepage exceptions, every twin section rendered or declared markdown-only. Carries v3.42.0: erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -250,7 +250,6 @@ Final price is confirmed in writing after scope is agreed.
 - ACP: https://turva.dev/.well-known/acp
 - x402 endpoint: https://turva.dev/x402
 - x402 manifest: https://turva.dev/.well-known/x402
-- x402-mesh: https://turva.dev/.well-known/x402-mesh.json
 - MPP: https://turva.dev/.well-known/mpp
 - UCP: https://turva.dev/.well-known/ucp
 - Full content: https://turva.dev/llms-full.txt
@@ -985,7 +984,7 @@ re-check the claim by running the same public scanners.
 ## Who may display it
 
 - Sites that have completed a turva.dev agent-readiness audit
-- Sites that score 100/100 on a public agent-readiness scanner (startuphub.ai or isitagentready.com)
+- Sites that score 100/100 on a public agent-readiness scanner (isitagentready.com)
 
 ## What it is, and what it is not
 
@@ -1420,7 +1419,7 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 
 Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.
 
-#1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, 99/100 and A+. 100/100 and Level 5 on isitagentready.com. Business ID 3600281-7, registered in Finland.
+100/100 and Level 5, Agent-Native, on isitagentready.com, Cloudflare’s agent-readiness scanner. Business ID 3600281-7, registered in Finland.
 
 ## Audits, advisory, and implementation for product teams
 
@@ -1430,9 +1429,7 @@ The measurable core is agent-readiness, scored by independent scanners and prova
 
 ## Independent agent-readiness scan of turva.dev
 
-Scanner: startuphub.ai (third party). Discoverability, Content, Access Control, Capabilities and Commerce: 100/100 each. Quality: 96/100. Verified 99/100, A+, ranked #1 of publicly-scanned sites on the startuphub.ai leaderboard.
-
-**Why 99 and not 100?** The one deduction is the rate_limit_headers check: it reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. The full story, with the measurements, is in [the rate limit post](/blog/enforcing-the-rate-limit-i-advertised).
+Scanner: isitagentready.com (third party, Cloudflare). Discoverability, Content, Bot Access Control, and API, Auth, MCP and A2A Discovery: 100/100. Commerce is optional. Verified 100/100, Level 5, Agent-Native.
 
 ## Where this applies
 
@@ -1448,20 +1445,13 @@ These are examples. The same discipline carries from one case to the next, so th
 
 ## Evidence
 
-turva.dev is my own reference build. It is ranked #1 of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard, with 99/100 there and Level 5 on isitagentready.com. Measured 2026-07-17.
+turva.dev is my own reference build. It reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-07-17.
 
-- startuphub.ai leaderboard: #1 of publicly-scanned sites, 99/100 (A+). Discoverability, Content, Access Control, Capabilities and Commerce: 100/100 each. Quality: 96/100, because the rate_limit_headers check reports no RateLimit headers while this site sends RateLimit-Policy, the field the active IETF draft defines. https://www.startuphub.ai/agent-readiness
 - isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/
 
-isitagentready.com and Cloudflare Agent-Ready are the same scanner on two
-domains, and this site runs on Cloudflare Workers. Independent means
-independent of turva.dev: neither scanner is run or influenced by this
-business. Two isitagentready commerce checks, x402 and mpp, read FAIL on
-purpose. Commerce here is quote-on-request, there is no machine payment
-rail, and declaring one would be a fake checkmark. The reasoning is
-written out in [the commerce checks post](/blog/honest-agent-commerce-checks).
+isitagentready.com is Cloudflare's agent-readiness scanner, and this site runs on Cloudflare Workers. Independent means independent of turva.dev: the scanner is not run or influenced by this business. Commerce here is quote-on-request. turva.dev declares its payable services in both the 402 challenge and the OpenAPI discovery, priced in USDC on Base via x402, and settlement is confirmed out of band rather than executed automatically, so the site serves a real payment surface and claims no capability it does not have.
 
-Both agent-readiness scanners are public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the numbers independently, run isitagentready.com and startuphub.ai against turva.dev and compare.
+The agent-readiness scanner is public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the number independently, run isitagentready.com against turva.dev.
 
 turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-07-16.
 
@@ -1977,7 +1967,7 @@ The audit checks the parts an agent reaches first. Discovery covers robots.txt, 
 
 The result is a list. Each check passes or fails, and each failure comes with a concrete fix. The point is that the outcome is verifiable. An independent scanner reads the site before and after, and the categories that were fixed read higher on the next scan. The claim is the number, not an assertion.
 
-turva.dev applies the same standard to its own site. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. Measured 2026-07-17. The audit a client receives runs the same checks against their site.
+turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-07-17. The audit a client receives runs the same checks against their site.
 
 For an audit, contact info@turva.dev. Engagement is async and evidence-based, and production credentials are not requested.
 
@@ -2062,7 +2052,7 @@ This matters because agent commerce is held back by payment, not by capability. 
 
 x402 belongs to a small family of agent payment standards, alongside authorization layers such as AP2. A site that publishes these signals tells agents that it is open for automated business, and in the case of the open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
 
-turva.dev publishes an x402 endpoint and manifest and participates in the x402-mesh peer pricelist. For an audit of a site's commerce surface for agents, contact info@turva.dev.
+turva.dev publishes an x402 endpoint and manifest. For an audit of a site's commerce surface for agents, contact info@turva.dev.
 
 ## Related
 
@@ -2203,7 +2193,7 @@ The difference shows up the moment something changes. A header gets dropped in a
 
 Measurement also makes a result legible to a buyer. A claim that a site is agent-ready is an assertion. A score from an independent scanner, with a category breakdown and a date, is evidence that can be checked. The honest version of the claim is the number, and the number can be re-run by anyone.
 
-This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by independent scanners, turva.dev is first among the publicly-scanned sites on the startuphub.ai agent-readiness leaderboard and reaches Level 5 on isitagentready.com. Measured 2026-07-17.
+This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-07-17.
 
 For an audit that reports measured results rather than a checklist, contact info@turva.dev.
 
@@ -2552,7 +2542,6 @@ Ap2: https://turva.dev/.well-known/ap2
 Acp: https://turva.dev/.well-known/acp
 X402: https://turva.dev/x402
 X402-Manifest: https://turva.dev/.well-known/x402
-X402-Mesh: https://turva.dev/.well-known/x402-mesh.json
 Mpp: https://turva.dev/.well-known/mpp
 Ucp: https://turva.dev/.well-known/ucp
 Openapi: https://turva.dev/openapi.json
@@ -2610,7 +2599,6 @@ var API_CATALOG = JSON.stringify({
       { "href": "https://turva.dev/.well-known/acp", "type": "application/json", "title": "ACP manifest" },
       { "href": "https://turva.dev/x402", "type": "application/json", "title": "x402 endpoint (HTTP 402)" },
       { "href": "https://turva.dev/.well-known/x402", "type": "application/json", "title": "x402 manifest" },
-      { "href": "https://turva.dev/.well-known/x402-mesh.json", "type": "application/json", "title": "x402-mesh" },
       { "href": "https://turva.dev/.well-known/mpp", "type": "application/json", "title": "MPP discovery" },
       { "href": "https://turva.dev/.well-known/ucp", "type": "application/json", "title": "UCP profile" }
     ],
@@ -2623,29 +2611,32 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.46.0",
+    "version": "3.47.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
   },
   "servers": [{ "url": "https://turva.dev" }],
   "x-payment-protocols": ["x402", "mpp", "acp"],
+  "x-service-info": {
+    "categories": ["developer-tools"],
+    "docs": { "homepage": "https://turva.dev/", "llms": "https://turva.dev/llms.txt", "apiReference": "https://turva.dev/openapi.json" }
+  },
   "paths": {
     "/api/agent/audit": {
       "post": {
         "summary": "Order an agent-readiness audit",
         "operationId": "orderAudit",
         "x-payment-info": {
-          "model": "quote_on_request",
-          "amount_cents": 650000,
-          "currency": "EUR",
-          "description": "Audit: fixed scope, 2-3 weeks",
-          "x402": {
-            "network": "base",
-            "asset": "USDC",
-            "amount": "7413000000",
-            "scheme": "exact"
-          }
+          "offers": [
+            {
+              "intent": "charge",
+              "method": "x402",
+              "amount": "7413000000",
+              "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "description": "Agent-readiness audit, fixed scope, 2-3 weeks. 6500 EUR, or 7413 USDC on Base via x402. Settlement is quote-on-request; the 402 challenge is authoritative."
+            }
+          ]
         },
         "responses": {
           "402": { "description": "Payment Required (x402)" }
@@ -2657,17 +2648,15 @@ var OPENAPI_SPEC = JSON.stringify({
         "summary": "Subscribe to monthly advisory",
         "operationId": "subscribeAdvisory",
         "x-payment-info": {
-          "model": "quote_on_request",
-          "amount_cents": 300000,
-          "currency": "EUR",
-          "interval": "month",
-          "description": "Advisory: monthly retainer (min 3 months)",
-          "x402": {
-            "network": "base",
-            "asset": "USDC",
-            "amount": "3421000000",
-            "scheme": "exact"
-          }
+          "offers": [
+            {
+              "intent": "charge",
+              "method": "x402",
+              "amount": "3421000000",
+              "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "description": "Monthly advisory, minimum 3 months. 3000 EUR/month, or 3421 USDC on Base via x402. Settlement is quote-on-request; the 402 challenge is authoritative."
+            }
+          ]
         },
         "responses": {
           "402": { "description": "Payment Required (x402)" }
@@ -2679,16 +2668,15 @@ var OPENAPI_SPEC = JSON.stringify({
         "summary": "Book an implementation day",
         "operationId": "bookImplementationDay",
         "x-payment-info": {
-          "model": "quote_on_request",
-          "amount_cents": 150000,
-          "currency": "EUR",
-          "description": "Implementation: per day, scoped per task",
-          "x402": {
-            "network": "base",
-            "asset": "USDC",
-            "amount": "1711000000",
-            "scheme": "exact"
-          }
+          "offers": [
+            {
+              "intent": "charge",
+              "method": "x402",
+              "amount": "1711000000",
+              "currency": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "description": "Implementation day, scoped per task. 1500 EUR/day, or 1711 USDC on Base via x402. Settlement is quote-on-request; the 402 challenge is authoritative."
+            }
+          ]
         },
         "responses": {
           "402": { "description": "Payment Required (x402)" }
@@ -2715,7 +2703,6 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/ap2": { "get": { "summary": "AP2 manifest", "operationId": "getAp2", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/acp": { "get": { "summary": "ACP manifest", "operationId": "getAcp", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/x402": { "get": { "summary": "x402 discovery manifest", "operationId": "getX402", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/x402-mesh.json": { "get": { "summary": "x402-mesh", "operationId": "getX402Mesh", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok" } } } }
   }
@@ -2737,14 +2724,14 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"W0OsW2PSNro2bpVRGZfiQU9VhMU8vck4SvDgdOmSn6PTg9DcBPhFeh_1g0sTZuDHg5tdhXhynxvCcNnssY3iBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"5uIoB-G2Mbm1GNiWIMEPI1lVAyGuyeKJd0HKYgs0sW2jOFkjlaQOHhEu3w3G67YzT4iOhOQvGLwtdnOqTxuOAA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"iWgoyToG1EisJR4fvZNK6_rhHDu-qMnpGSZvoj5vJ4GAgxbCokGTEVmCqBozaTAjwg7-Zx6tZrnnPeObxoMiDw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"G4OXqtuXv6RrXAARm7nN5tNbKU7cXZ4C_pu3nQd17R4xZXXsszz8Js5fNVQl6TX1gkK00VGYr3_R6LcLpAxpCQ\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -2758,7 +2745,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   },
   "tools": [
     { "name": "get_services", "description": "Service catalog (audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
-    { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness scores from independent public scanners (startuphub.ai, isitagentready.com), with per-scanner sub-scores, leaderboard rank, notable wins, measurement date, and verification links." },
+    { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, notable wins, measurement date, and verification links." },
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl), with the scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." }
   ],
@@ -2874,7 +2861,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.46.0",
+  "version": "3.47.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3106,54 +3093,6 @@ function build402Body(resource, label, amountUsdcMicro, amountEurCents, descript
     "error": "Payment required to access this resource"
   }, null, 2);
 }
-
-// ============================================================
-// X402-MESH (added in v3.12.0) - startuphub.ai x402-mesh/0.1 spec
-// Required fields: protocol, vendor_id, categories, registry_url
-// Wallet enables zero-friction on-chain referral payouts on Base
-// ============================================================
-var X402_MESH = JSON.stringify({
-  "protocol": "x402-mesh/0.1",
-  "vendor_id": "turva-dev",
-  "name": "turva.dev",
-  "categories": [
-    "agent-readiness-audits",
-    "agent-readiness-advisory",
-    "agent-readiness-implementation"
-  ],
-  "registry_url": "https://www.startuphub.ai/api/x402-mesh/registry",
-  "wallet": X402_PAY_TO,
-  "contact": "info@turva.dev",
-  "self": {
-    "vendor_id": "turva-dev",
-    "name": "turva.dev: Agent-readiness audits and advisory",
-    "category": "agent-readiness-audits",
-    "endpoint": "https://turva.dev/api/agent/audit",
-    "method": "POST",
-    "price": { "amount_cents": 650000, "currency": "EUR", "unit": "flat" },
-    "quality": { "accuracy": 1.0, "p95_latency_ms": 250 }
-  },
-  "alternatives": [],
-  "settle": {
-    "url": "https://www.startuphub.ai/api/x402-mesh/settle",
-    "registry_url": "https://www.startuphub.ai/api/x402-mesh/registry"
-  },
-  "merchant": {
-    "name": "turva.dev",
-    "legal_name": "Erik Rekola",
-    "business_id": "3600281-7",
-    "country": "FI",
-    "url": "https://turva.dev/",
-    "contact": "mailto:info@turva.dev"
-  },
-  "endpoint": "https://turva.dev/x402",
-  "discovery": "https://turva.dev/.well-known/x402",
-  "peer_pricelist": [
-    { "resource": "https://turva.dev/api/agent/audit",          "network": "base", "asset": "USDC", "amount": "7413000000" },
-    { "resource": "https://turva.dev/api/agent/advisory",       "network": "base", "asset": "USDC", "amount": "3421000000" },
-    { "resource": "https://turva.dev/api/agent/implementation", "network": "base", "asset": "USDC", "amount": "1711000000" }
-  ]
-}, null, 2);
 
 var MPP_MANIFEST = JSON.stringify({
   "$schema": "https://mpp.dev/schemas/discovery/v1.json",
@@ -3726,7 +3665,7 @@ var META_BY_PATH = {
   "/": {
     title: "Agent-readiness audits and advisory · turva.dev",
     description: "Agent-readiness audits and advisory for product teams, and the wider work wherever AI agents read data and make decisions. Independent, measured, async-only.",
-    imageAlt: "turva.dev: 100/100 and Level 5 on isitagentready.com, #1 ranked A+ on startuphub.ai"
+    imageAlt: "turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com"
   },
   "/services": {
     title: "Services: audit, advisory and implementation · turva.dev",
@@ -3973,7 +3912,6 @@ function appendAgentLinks(headers) {
   headers.append("Link", '</.well-known/acp>; rel="acp"; type="application/json"');
   headers.append("Link", '</x402>; rel="x402-endpoint"; type="application/json"');
   headers.append("Link", '</.well-known/x402>; rel="x402"; type="application/json"');
-  headers.append("Link", '</.well-known/x402-mesh.json>; rel="x402-mesh"; type="application/json"');
   headers.append("Link", '</.well-known/mpp>; rel="mpp"; type="application/json"');
   headers.append("Link", '</.well-known/ucp>; rel="ucp"; type="application/json"');
   headers.append("Link", '</agent/auth/register>; rel="agent-auth-register"; type="application/json"');
@@ -4467,7 +4405,7 @@ var GUIDE_PAGE_FAQ = {
   "/services": [
     {
       "q": "What is an agent readiness audit?",
-      "a": "An agent readiness audit measures how well AI agents can discover, read, and act on your website or API. turva.dev runs two independent scanners, isitagentready.com and the startuphub.ai agent-readiness score, reviews the agent-facing surfaces manually, checks how AI assistants currently retrieve and answer about the site, and delivers a written report with fixes ranked by score impact and implementation cost."
+      "a": "An agent readiness audit measures how well AI agents can discover, read, and act on your website or API. turva.dev runs an independent scanner, isitagentready.com, reviews the agent-facing surfaces manually, checks how AI assistants currently retrieve and answer about the site, and delivers a written report with fixes ranked by score impact and implementation cost."
     },
     {
       "q": "What does an agent readiness audit cost?",
@@ -4479,7 +4417,7 @@ var GUIDE_PAGE_FAQ = {
     },
     {
       "q": "How is agent readiness measured?",
-      "a": "With two independent public scanners rather than self-assessment. isitagentready.com grades sites on a Level 0 to 5 scale, and startuphub.ai scores agent readiness out of 100. The audit runs both against your site, so the result is reproducible and the same scan can verify every fix afterwards."
+      "a": "With an independent public scanner rather than self-assessment. isitagentready.com grades sites on a Level 0 to 5 scale and scores agent readiness out of 100. The audit runs it against your site, so the result is reproducible and the same scan can verify every fix afterwards."
     },
     {
       "q": "How much work are the fixes after the audit?",
@@ -4848,7 +4786,7 @@ var HOME_MARKDOWN = (function () {
 function serveHomeHtml(canonicalUrl) {
   const metaBlock = buildMetaBlock("/", canonicalUrl);
   const lead = mdLead("/");
-  const scan = mdParas("/", "Independent agent-readiness scan of turva.dev", 2);
+  const scan = mdParas("/", "Independent agent-readiness scan of turva.dev", 1);
   const apply = mdParas("/", "Where this applies", 2);
   const exCells = mdLists("/", "Where this applies")[0].map((x) => `<div class="ex">${x}</div>`).join("\n      ");
   const ev = mdParas("/", "Evidence", 6).map(mdTidyUrlText);
@@ -5000,8 +4938,8 @@ ${FOOTER_CSS}
     <div class="hero-row">
       <div class="hero-left">
         <ul class="badges">
-          <li><b>99/100</b> &middot; A+ &middot; #1 on startuphub.ai</li>
-          <li><b>100/100</b> &middot; Level 5 on isitagentready.com</li>
+          <li><b>100/100</b> &middot; Level 5</li>
+          <li>Agent-Native on isitagentready.com</li>
         </ul>
         <div class="cta">
           <a class="btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a>
@@ -5013,8 +4951,7 @@ ${FOOTER_CSS}
         <div class="terminal" aria-label="verification terminal">
           <div class="tm-bar"><span class="tm-dot r"></span><span class="tm-dot y"></span><span class="tm-dot g"></span><span class="tm-title">turva@audit · verify</span></div>
           <div class="tm-body">
-            <div class="tm-cmd"><span class="pr">&#8250;</span>turva verify --source startuphub.ai</div>
-            <div class="tm-out">&#10003; startuphub.ai &middot; <b>99/100</b> &middot; A+ &middot; #1 ranked</div>
+            <div class="tm-cmd"><span class="pr">&#8250;</span>turva verify --source isitagentready.com</div>
             <div class="tm-out">&#10003; isitagentready.com &middot; <b>100/100</b> &middot; level 5 &middot; agent-native<span class="cursor"></span></div>
           </div>
         </div>
@@ -5025,18 +4962,16 @@ ${FOOTER_CSS}
   <section class="board" aria-label="agent-readiness scan result">
     <div class="board-top">
       <span class="board-head">independent agent-readiness scan of turva.dev</span>
-      <a class="board-src" href="https://www.startuphub.ai/agent-readiness">scanner: startuphub.ai &middot; 3rd-party &#8599;</a>
+      <a class="board-src" href="https://isitagentready.com/">scanner: isitagentready.com &middot; 3rd-party &middot; Cloudflare &#8599;</a>
     </div>
     <div class="board-grid">
       <div class="cell"><span class="cat">discoverability</span><span class="val">100/100</span></div>
       <div class="cell"><span class="cat">content</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">access-control</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">capabilities</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">commerce</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">quality</span><span class="val">96/100</span></div>
+      <div class="cell"><span class="cat">bot access control</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">api, auth, mcp &amp; a2a</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">commerce</span><span class="val">optional</span></div>
     </div>
-    <div class="board-sum"><span>verified</span> <b>99/100</b> <span class="pill">#1 ranked</span> <span class="pill">A+</span></div>
-    <p class="whynot">${scan[1]}</p>
+    <div class="board-sum"><span>verified</span> <b>100/100</b> <span class="pill">Level 5</span> <span class="pill">Agent-Native</span></div>
   </section>
   <section class="sec">
     <h2>What an agent sees on this page</h2>
@@ -5066,8 +5001,8 @@ ${FOOTER_CSS}
     <h2>Evidence</h2>
     <p>${ev[0]}</p>
     <div class="stats">
-      <div class="stat"><span class="stat-v">99/100 &middot; A+ &middot; #1</span><span class="stat-l">of publicly-scanned sites on startuphub.ai</span></div>
-      <div class="stat"><span class="stat-v">100/100 &middot; Level 5</span><span class="stat-l">agent-native on isitagentready.com</span></div>
+      <div class="stat"><span class="stat-v">100/100 &middot; Level 5</span><span class="stat-l">Agent-Native on isitagentready.com</span></div>
+      <div class="stat"><span class="stat-v">98/100</span><span class="stat-l">web security on internet.nl</span></div>
     </div>
     <ul class="evlist">
       ${evLists[0]}
@@ -6182,9 +6117,6 @@ async function handleRequest(request, env) {
   }
   if (pathLower === "/.well-known/x402" || pathLower === "/.well-known/x402.json") {
     return serveStatic(X402_MANIFEST, "application/json; charset=utf-8", "agent-api");
-  }
-  if (pathLower === "/.well-known/x402-mesh.json" || pathLower === "/.well-known/x402-mesh") {
-    return serveStatic(X402_MESH, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/mpp" || pathLower === "/.well-known/mpp.json") {
     return serveStatic(MPP_MANIFEST, "application/json; charset=utf-8", "agent-api");

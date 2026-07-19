@@ -2,43 +2,41 @@
 
 Cloudflare Worker that renders every page of [turva.dev](https://turva.dev) at the edge, with a deterministic head and matching `/.well-known/` manifests. AI agents and scanners read the same payload as humans, straight from the Worker.
 
-This repository is the open-source reference implementation behind turva.dev, which ranks first of publicly-scanned sites on the startuphub.ai agent-readiness leaderboard at 99/100, and scores 100/100 at Level 5 Agent-Native on Cloudflare Agent-Ready. The Worker is public on purpose: a buyer can read every line before deciding anything.
+This repository is the open-source reference implementation behind turva.dev, which scores 100/100 at Level 5 Agent-Native on isitagentready.com, Cloudflare’s agent-readiness scanner. The Worker is public on purpose: a buyer can read every line before deciding anything.
 
 turva.dev offers agent-readiness audits and advisory, and the wider work of making the data agents act on and the decisions they make reliable, across use cases from commerce and monitoring to operations under bad connectivity.
 
-What you buy is expertise and implementation, not access to a tool. The scoring is done by independent third-party scanners, isitagentready.com and startuphub.ai, so the numbers above are verifiable rather than asserted. This repository is the reference implementation and the manifests behind that work.
+What you buy is expertise and implementation, not access to a tool. The scoring is done by an independent third-party scanner, isitagentready.com, so the numbers above are verifiable rather than asserted. This repository is the reference implementation and the manifests behind that work.
 
 ## What it does
 
 * Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `<head>` (meta, OpenGraph, JSON-LD, canonical).
-* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `x402-mesh.json`, `ucp`, and OAuth discovery (`oauth-authorization-server`), among others; the full inventory is in the Endpoints table below.
+* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `ucp`, and OAuth discovery (`oauth-authorization-server`), among others; the full inventory is in the Endpoints table below.
 * Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-07-17. Two independent public scanners, listed once each.
+Measured on `https://turva.dev` on 2026-07-17.
 
 | Scanner | Result |
 |---|---|
 | Cloudflare Agent-Ready (isitagentready.com) | 100/100, Level 5 Agent-Native |
-| startuphub.ai Agent Readiness | 99/100 (A+), first of publicly-scanned sites on the leaderboard |
 
 Cloudflare Agent-Ready and isitagentready.com are the same scanner on two domains, so they count as one result.
 
-### startuphub.ai category breakdown
+### isitagentready.com category breakdown
 
-These six category scores come from the startuphub.ai scan. The Cloudflare Agent-Ready scan uses a different model (no Quality category, Commerce optional), so this breakdown is StartupHub's.
+isitagentready.com groups its checks into five categories. turva.dev passes every check in four of them.
 
-| Category | Score |
+| Category | Result |
 |---|---|
 | Discoverability | 100/100 |
 | Content | 100/100 |
-| Access Control | 100/100 |
-| Capabilities | 100/100 |
-| Commerce | 100/100 |
-| Quality | 96/100 |
+| Bot Access Control | 100/100 |
+| API, Auth, MCP & A2A Discovery | 100/100 |
+| Commerce | Optional |
 
-Quality is 96/100 because the rate_limit_headers check reports no RateLimit headers while the site sends RateLimit-Policy, the field the active IETF draft defines. The check asks instead for a syntax that appears in no revision of that draft, and cites RFC 9331, which specifies Explicit Congestion Notification for L4S and has nothing to do with rate limiting. The header stays as the draft defines it.
+Commerce is optional in the isitagentready model. turva.dev's commerce surface is quote-on-request: it publishes a working x402 payment endpoint but does not wire machine settlement, and it does not declare a payment rail it does not have, so the checks it does not implement are left honestly red rather than faked.
 
 ## Web security
 
@@ -55,7 +53,6 @@ On Internet.nl, IPv6, DNSSEC and RPKI pass in full. The single deduction is one 
 
 Every claim above is publicly auditable. Run the scanners yourself or open the company record.
 
-* StartupHub leaderboard: https://www.startuphub.ai/agent-readiness
 * isitagentready scanner: https://isitagentready.com/
 * Hardenize report: https://www.hardenize.com/report/turva.dev
 * Internet.nl report: https://internet.nl/site/turva.dev/
@@ -153,7 +150,6 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 | `/.well-known/ap2` | Agent Payments Protocol pointer |
 | `/.well-known/acp` | Agent Commerce Protocol manifest |
 | `/.well-known/x402` | x402 payment manifest |
-| `/.well-known/x402-mesh.json` | x402 mesh manifest |
 | `/.well-known/ucp` | Universal Commerce Profile |
 | `/.well-known/mpp` | MPP discovery manifest |
 | `/.well-known/oauth-authorization-server` | OAuth / auth discovery |
