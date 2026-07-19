@@ -107,6 +107,7 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 Notes on AI agents and the work of letting them read a site and act on a system safely. Published on turva.dev.
 
 * [Blog (index)](https://turva.dev/blog)
+* [The twin is the page](https://turva.dev/blog/the-twin-is-the-page)
 * [Every response promised a rate limit. Nothing enforced it.](https://turva.dev/blog/enforcing-the-rate-limit-i-advertised)
 * [Microsoft said the patches would get bigger. I measured how much bigger.](https://turva.dev/blog/measuring-the-ai-patch-surge)
 * [How to let an AI agent work in your repo without leaking your secrets](https://turva.dev/blog/agent-secret-hygiene)
