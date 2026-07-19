@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.45.0 - blog post /blog/the-twin-is-the-page (the T3 conversion writeup) added to PAGE_MARKDOWN, the /blog index, the sitemap (LASTMOD 2026-07-19) and the signed llms.txt, re-signed. Carries v3.44.0: the services MCP card's duplicated transport bullet dropped from the twin. T3 (Tek-56) complete: all ten card pages render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so every sentence lives once and a page cannot drift from its markdown twin. Structure stays hand-built (kvs grids, the validator form, FAQ shells, price cards, hero/terminal/board/stats/steps chrome and the contact block on the homepage), and tools/verify.mjs guards the end state: no literal prose paragraphs in card functions outside two named homepage exceptions, every twin section rendered or declared markdown-only. Carries v3.42.0: erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.46.0 - the /llms-txt-validator page now lists the eighth structural check (inline HTML in the file is flagged as a warning, the no-html check the JSON and npm package already emit); What it checks and the validator FAQ updated from seven to eight, no llms.txt change and no re-sign. Carries v3.45.0: blog post /blog/the-twin-is-the-page (the T3 conversion writeup) added to PAGE_MARKDOWN, the /blog index, the sitemap (LASTMOD 2026-07-19) and the signed llms.txt, re-signed. Carries v3.44.0: the services MCP card's duplicated transport bullet dropped from the twin. T3 (Tek-56) complete: all ten card pages render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so every sentence lives once and a page cannot drift from its markdown twin. Structure stays hand-built (kvs grids, the validator form, FAQ shells, price cards, hero/terminal/board/stats/steps chrome and the contact block on the homepage), and tools/verify.mjs guards the end state: no literal prose paragraphs in card functions outside two named homepage exceptions, every twin section rendered or declared markdown-only. Carries v3.42.0: erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -895,6 +895,7 @@ Both views list the same checks below. The browser page and this markdown twin a
 - H2 sections group the content
 - Markdown links parse and use absolute URLs
 - The file stays small enough to be cheap for an agent to read
+- No HTML markup in the file, since llms.txt should be plain markdown (HTML tags are flagged as a warning)
 
 ## What it does not do
 
@@ -916,11 +917,11 @@ llms.txt is a plain text file at the root of a site that tells AI agents what th
 
 **What does the validator check?**
 
-Seven structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with a single H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, and the file stays small enough to be cheap for an agent to read.
+Eight structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with a single H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, the file stays small enough to be cheap for an agent to read, and the file carries no inline HTML, since llms.txt should be plain markdown.
 
 **Why is there no score?**
 
-Deliberately. Seven structural checks can honestly report pass, warn or fail, and a number stacked on top of them would look like an agent-readiness score without measuring one. Agent readiness is measured with independent public scanners and a manual review, which is the paid audit rather than this free check.
+Deliberately. Eight structural checks can honestly report pass, warn or fail, and a number stacked on top of them would look like an agent-readiness score without measuring one. Agent readiness is measured with independent public scanners and a manual review, which is the paid audit rather than this free check.
 
 **How does an agent call the validator?**
 
@@ -932,7 +933,7 @@ No. The fetched file is checked and discarded, the result goes back with a no-st
 
 **Can I run the checks in CI?**
 
-Yes. The same seven checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks.
+Yes. The same eight checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks.
 
 ## Related
 
@@ -2622,7 +2623,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.45.0",
+    "version": "3.46.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2873,7 +2874,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.45.0",
+  "version": "3.46.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
