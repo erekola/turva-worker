@@ -1,7 +1,7 @@
 {
   "_comment": "Canonical source of truth for turva.dev volatile facts. Edit here, then mirror to the surfaces that state these facts (turva-worker/src/worker.js, README.md, the turva-mcp worker and its README, and the erekola profile README), then run: node tools/verify.mjs  (add --live on a networked machine to GET every declared URL and verify the manifest signatures).",
   "businessId": "3600281-7",
-  "versions": { "site": "3.50.0", "mcp": "1.2.3" },
+  "versions": { "site": "3.51.0", "mcp": "1.2.3" },
   "prices": { "audit": 6500, "advisory": 3000, "implementation": 1500, "currency": "EUR" },
   "agentReadiness": {
     "measuredAt": "2026-07-17",
