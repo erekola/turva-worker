@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.51.1 - homepage scan board and evidence caption now show Commerce 100/100 instead of "optional", reflecting the v3.51.0 commerce-green result (Commerce 50 -> 100 on isitagentready; display only, no scanner-score change). Carries v3.51.0: x402 and MPP driven green on isitagentready without faking settlement: MPP x-payment-info flattened to the single-offer shorthand (intent/method/amount direct, the form the scanner reads and the IETF payment-discovery draft permits); and because the scanner probes GET /api for a 402, the /api and /api/ routes now return the canonical x402 402 challenge (real payTo wallet on Base, resource /api) while the free endpoint index moves to /api/v1. Free discovery stays open at /openapi.json, /.well-known/* and /api/v1; the 402 is a real challenge, settlement stays quote-on-request and no auto-settlement is claimed. Carries v3.50.0: Stripe added as a real fiat/card payment rail (turva.dev's Stripe account is active, charges enabled): three live Payment Links (audit 6500 EUR one-time, advisory 3000 EUR/month, implementation 1500 EUR/day) and a stripe offer (method stripe, amount in EUR cents, currency eur, the Payment Link URL in the description) added alongside the x402 offer in every payable operation's OpenAPI x-payment-info, so MPP payment discovery detects a real method turva actually accepts. This is not the fake Stripe declaration removed earlier: the rail is real now. x402 stays declared too; isitagentready still does not detect it and x402 is optional Commerce, so it is left as an honest red. Carries v3.48.0: x402 migrated v1 to v2 so the sole remaining scanner (isitagentready) can detect the payment surface: CAIP-2 network eip155:8453 (was base), the amount field (was the old required-amount key), x402Version 2, and the standard PAYMENT-REQUIRED base64 header on the 402 responses (serve402 and serveX402Root) alongside the existing accept-payment/x-payment-required. Still quote-on-request: the 402 challenge is real, settlement is not auto-wired. mpp stays honestly red because isitagentready's check only accepts tempo/stripe/lightning/card, not turva's real x402/USDC method. Carries v3.47.0: StartupHub removed site-wide: isitagentready.com (Cloudflare's scanner) is the sole named scanner, the homepage hero, terminal, board, stats and evidence rebuilt to its 100/100 Level 5 result plus the Internet.nl security stat, and #1, A+ and the Why-99 callout dropped; every startuphub.ai reference and link is gone from the front door, README, docs/agent-readiness.md, facts.json and verify.mjs (dated blog posts kept as history). x402-mesh removed from all surfaces (var, route, Link header, api-catalog, OpenAPI, llms.txt, ai.txt) and llms.txt re-signed. OpenAPI x-payment-info reshaped to the MPP standard (offers with intent charge, method x402, amount in USDC base units, currency the USDC contract on Base) plus a top-level x-service-info, so mpp and x402 are declared in the standard discovery form; settlement stays quote-on-request and the 402 challenge is authoritative. Carries v3.46.0: the /llms-txt-validator page now lists the eighth structural check (inline HTML in the file is flagged as a warning, the no-html check the JSON and npm package already emit); What it checks and the validator FAQ updated from seven to eight, no llms.txt change and no re-sign. Carries v3.45.0: blog post /blog/the-twin-is-the-page (the T3 conversion writeup) added to PAGE_MARKDOWN, the /blog index, the sitemap (LASTMOD 2026-07-19) and the signed llms.txt, re-signed. Carries v3.44.0: the services MCP card's duplicated transport bullet dropped from the twin. T3 (Tek-56) complete: all ten card pages render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so every sentence lives once and a page cannot drift from its markdown twin. Structure stays hand-built (kvs grids, the validator form, FAQ shells, price cards, hero/terminal/board/stats/steps chrome and the contact block on the homepage), and tools/verify.mjs guards the end state: no literal prose paragraphs in card functions outside two named homepage exceptions, every twin section rendered or declared markdown-only. Carries v3.42.0: erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.52.0 - new blog post /blog/finishing-the-optional-commerce-checks on completing the optional commerce checks (x402 and MPP green, with the real Stripe product links), added to PAGE_MARKDOWN, the /blog index, sitemap, meta and canonical, plus a Related pointer from the earlier honest-agent-commerce-checks post; agent-readiness and web-security measured dates refreshed to 2026-07-20 with scores unchanged (isitagentready 100/100 Level 5, Hardenize 13/13, Internet.nl 98/100). Carries v3.51.1: homepage scan board and evidence caption now show Commerce 100/100 instead of "optional", reflecting the v3.51.0 commerce-green result (Commerce 50 -> 100 on isitagentready; display only, no scanner-score change). Carries v3.51.0: x402 and MPP driven green on isitagentready without faking settlement: MPP x-payment-info flattened to the single-offer shorthand (intent/method/amount direct, the form the scanner reads and the IETF payment-discovery draft permits); and because the scanner probes GET /api for a 402, the /api and /api/ routes now return the canonical x402 402 challenge (real payTo wallet on Base, resource /api) while the free endpoint index moves to /api/v1. Free discovery stays open at /openapi.json, /.well-known/* and /api/v1; the 402 is a real challenge, settlement stays quote-on-request and no auto-settlement is claimed. Carries v3.50.0: Stripe added as a real fiat/card payment rail (turva.dev's Stripe account is active, charges enabled): three live Payment Links (audit 6500 EUR one-time, advisory 3000 EUR/month, implementation 1500 EUR/day) and a stripe offer (method stripe, amount in EUR cents, currency eur, the Payment Link URL in the description) added alongside the x402 offer in every payable operation's OpenAPI x-payment-info, so MPP payment discovery detects a real method turva actually accepts. This is not the fake Stripe declaration removed earlier: the rail is real now. x402 stays declared too; isitagentready still does not detect it and x402 is optional Commerce, so it is left as an honest red. Carries v3.48.0: x402 migrated v1 to v2 so the sole remaining scanner (isitagentready) can detect the payment surface: CAIP-2 network eip155:8453 (was base), the amount field (was the old required-amount key), x402Version 2, and the standard PAYMENT-REQUIRED base64 header on the 402 responses (serve402 and serveX402Root) alongside the existing accept-payment/x-payment-required. Still quote-on-request: the 402 challenge is real, settlement is not auto-wired. mpp stays honestly red because isitagentready's check only accepts tempo/stripe/lightning/card, not turva's real x402/USDC method. Carries v3.47.0: StartupHub removed site-wide: isitagentready.com (Cloudflare's scanner) is the sole named scanner, the homepage hero, terminal, board, stats and evidence rebuilt to its 100/100 Level 5 result plus the Internet.nl security stat, and #1, A+ and the Why-99 callout dropped; every startuphub.ai reference and link is gone from the front door, README, docs/agent-readiness.md, facts.json and verify.mjs (dated blog posts kept as history). x402-mesh removed from all surfaces (var, route, Link header, api-catalog, OpenAPI, llms.txt, ai.txt) and llms.txt re-signed. OpenAPI x-payment-info reshaped to the MPP standard (offers with intent charge, method x402, amount in USDC base units, currency the USDC contract on Base) plus a top-level x-service-info, so mpp and x402 are declared in the standard discovery form; settlement stays quote-on-request and the 402 challenge is authoritative. Carries v3.46.0: the /llms-txt-validator page now lists the eighth structural check (inline HTML in the file is flagged as a warning, the no-html check the JSON and npm package already emit); What it checks and the validator FAQ updated from seven to eight, no llms.txt change and no re-sign. Carries v3.45.0: blog post /blog/the-twin-is-the-page (the T3 conversion writeup) added to PAGE_MARKDOWN, the /blog index, the sitemap (LASTMOD 2026-07-19) and the signed llms.txt, re-signed. Carries v3.44.0: the services MCP card's duplicated transport bullet dropped from the twin. T3 (Tek-56) complete: all ten card pages render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so every sentence lives once and a page cannot drift from its markdown twin. Structure stays hand-built (kvs grids, the validator form, FAQ shells, price cards, hero/terminal/board/stats/steps chrome and the contact block on the homepage), and tools/verify.mjs guards the end state: no literal prose paragraphs in card functions outside two named homepage exceptions, every twin section rendered or declared markdown-only. Carries v3.42.0: erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -340,6 +340,48 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/finishing-the-optional-commerce-checks": `# Finishing the optional commerce checks
+
+2026-07-20
+
+Agent-native payments are moving from proposal to plumbing. This summer the x402 protocol became a Linux Foundation project, with Visa, Mastercard, Google and Stripe among its founding members. The chain being built runs from discovery to transaction, which means a site's payment surface has to be something an agent can find and read before any money moves.
+
+isitagentready.com scores that surface in its Commerce category. The category is optional and does not change the overall score, so turva.dev already read 100/100 and Level 5 with three of the five commerce checks green. Two were still red, x402 and MPP. This is the log of taking them green and leaving settlement exactly where it was.
+
+## What the scanner actually checks
+
+The two checks failed for a plain reason, and not the one an earlier note had assumed. The scanner exposes its own audit detail, so you can see what it fetches. For MPP it reads /openapi.json and looks for the payment fields directly on each payable operation. turva had declared them inside an offers array, a form the payment-discovery draft allows and this scanner does not read. Flattening the declaration to the single-offer form, same Stripe charge and same price, was all it needed.
+
+For x402 the scanner requests /api and expects an HTTP 402 with payment terms. turva served an open index at /api and a dedicated 402 endpoint elsewhere, so the probe saw a 200 and stopped. The fix was to make /api itself answer with the canonical x402 402, backed by a real wallet on Base, and to move the free endpoint index to /api/v1. The 402 is a genuine challenge, and the free discovery surfaces stay open at /openapi.json, under /.well-known, and at /api/v1.
+
+## Settlement did not change
+
+What did not move is the part worth stating plainly. turva does not auto-settle. The 402 challenge and the OpenAPI discovery both declare a real payment surface, priced in USDC on Base and payable by card through Stripe, but the money is confirmed out of band rather than taken by the site. An agent can discover the offer and read the terms. A person or an agent then completes the purchase, and scope for bespoke work is agreed in writing first. A green check here says the surface is present and correct. It does not say the site quietly charged anyone.
+
+An earlier post left these two checks red, on the reasoning that satisfying them meant disturbing surfaces that were already correct. Reading the scanner's probe more closely showed a cleaner path, so the position changed. That is the use of measuring against a tool you do not control. It shows you where you were wrong.
+
+## The services, payable now
+
+The three fixed offerings are live on Stripe, prices ex VAT:
+
+- [Agent-readiness audit, €6,500](https://buy.stripe.com/aFadR995G5xV6hi43N5EY00)
+- [Monthly advisory, €3,000, minimum three months](https://buy.stripe.com/7sYcN5eq04tRfRSeIr5EY01)
+- [Implementation day, €1,500](https://buy.stripe.com/6oUaEX81C0dBfRSbwf5EY02)
+
+The audit is fixed scope and can be paid up front. Advisory and implementation start with a short written exchange to set scope, then run the same way.
+
+## The rule, again
+
+A green check is worth something only when it reflects what an agent actually finds. Commerce is optional, so none of this moved the headline number. It moved whether the payment surface is real and discoverable for the moment agents start to pay, which is the part that will matter. The worker that produces these results is open source at codeberg.org/erekola/turva-worker, readable line by line.
+
+For an agent-readiness audit that reports measured results, contact info@turva.dev.
+
+## Related
+
+- [x402 and agent payments](/guides/x402-agent-payments)
+- [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks)
+- [Agentic commerce readiness](/guides/agentic-commerce-readiness)
+`,
   "/blog/the-twin-is-the-page": `# The twin is the page
 
 2026-07-19
@@ -1014,6 +1056,7 @@ All free tools on this site are collected on [the tools page](/tools).
 
 Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
 
+- [Finishing the optional commerce checks](/blog/finishing-the-optional-commerce-checks). 2026-07-20.
 - [The twin is the page](/blog/the-twin-is-the-page). 2026-07-19.
 - [Every response promised a rate limit. Nothing enforced it.](/blog/enforcing-the-rate-limit-i-advertised). 2026-07-18.
 - [Microsoft said the patches would get bigger. I measured how much bigger.](/blog/measuring-the-ai-patch-surge). 2026-07-15.
@@ -1338,6 +1381,7 @@ For an agent-readiness audit that reports measured results, contact info@turva.d
 
 ## Related
 
+- [Finishing the optional commerce checks](/blog/finishing-the-optional-commerce-checks)
 - [Agentic commerce readiness](/guides/agentic-commerce-readiness)
 - [x402 and agent payments](/guides/x402-agent-payments)
 - [What an agent-readiness audit is](/guides/agent-readiness-audit)
@@ -1445,7 +1489,7 @@ These are examples. The same discipline carries from one case to the next, so th
 
 ## Evidence
 
-turva.dev is my own reference build. It reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-07-17.
+turva.dev is my own reference build. It reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-07-20.
 
 - isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/
 
@@ -1453,7 +1497,7 @@ isitagentready.com is Cloudflare's agent-readiness scanner, and this site runs o
 
 The agent-readiness scanner is public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the number independently, run isitagentready.com against turva.dev.
 
-turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-07-16.
+turva.dev publishes its own web security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-07-20.
 
 - Hardenize: all 13 categories passed. https://www.hardenize.com/report/turva.dev
 - Internet.nl: 98/100. IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. https://internet.nl/site/turva.dev/
@@ -1967,7 +2011,7 @@ The audit checks the parts an agent reaches first. Discovery covers robots.txt, 
 
 The result is a list. Each check passes or fails, and each failure comes with a concrete fix. The point is that the outcome is verifiable. An independent scanner reads the site before and after, and the categories that were fixed read higher on the next scan. The claim is the number, not an assertion.
 
-turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-07-17. The audit a client receives runs the same checks against their site.
+turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-07-20. The audit a client receives runs the same checks against their site.
 
 For an audit, contact info@turva.dev. Engagement is async and evidence-based, and production credentials are not requested.
 
@@ -2193,7 +2237,7 @@ The difference shows up the moment something changes. A header gets dropped in a
 
 Measurement also makes a result legible to a buyer. A claim that a site is agent-ready is an assertion. A score from an independent scanner, with a category breakdown and a date, is evidence that can be checked. The honest version of the claim is the number, and the number can be re-run by anyone.
 
-This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-07-17.
+This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-07-20.
 
 For an audit that reports measured results rather than a checklist, contact info@turva.dev.
 
@@ -2611,7 +2655,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.51.1",
+    "version": "3.52.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2849,7 +2893,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.51.1",
+  "version": "3.52.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3327,7 +3371,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-07-19";
+var SITEMAP_LASTMOD = "2026-07-20";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -3380,6 +3424,7 @@ var SITEMAP_ENTRIES = [
   ["/blog/honest-agent-commerce-checks", "monthly", "0.6"],
   ["/blog/owning-your-fediverse-identity", "monthly", "0.6"],
   ["/blog/reliable-agent-decisions", "monthly", "0.6"],
+  ["/blog/finishing-the-optional-commerce-checks", "monthly", "0.6"],
   ["/blog/the-twin-is-the-page", "monthly", "0.6"],
   ["/blog/verifiable-agent-identity", "monthly", "0.6"],
   ["/badge", "monthly", "0.5"],
@@ -3450,7 +3495,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/tools"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/tools"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -3460,6 +3505,13 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/finishing-the-optional-commerce-checks": {
+    title: "Finishing the optional commerce checks | turva.dev",
+    description: "Taking the last two optional commerce checks, x402 and MPP, to green on isitagentready without faking settlement, and what the scanner actually probes.",
+    date: "2026-07-20",
+    image: "/og-finishing-the-optional-commerce-checks.jpg",
+    imageAlt: "Finishing the optional commerce checks"
+  },
   "/blog/the-twin-is-the-page": {
     title: "The twin is the page | turva.dev",
     description: "Ten card pages now render their prose from the markdown twin. What the parity gate caught before it retired and the check that replaced it.",
@@ -4004,7 +4056,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://codeberg.org/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 6500, "currency": "EUR", "unit": "fixed", "duration": "2-3 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-07-17" }, null, 2);
+var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. Scanners measure the site or API; a written report names the prioritized fixes; the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://codeberg.org/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 6500, "currency": "EUR", "unit": "fixed", "duration": "2-3 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-07-20" }, null, 2);
 var API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 function wantsMarkdown(request) {

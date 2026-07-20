@@ -16,7 +16,7 @@ What you buy is expertise and implementation, not access to a tool. The scoring 
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-07-17.
+Measured on `https://turva.dev` on 2026-07-20.
 
 | Scanner | Result |
 |---|---|
@@ -40,7 +40,7 @@ Commerce is optional in the isitagentready model. turva.dev's commerce surface i
 
 ## Web security
 
-Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-07-16.
+Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-07-20.
 
 | Scanner | Result |
 |---|---|
@@ -104,6 +104,7 @@ Plain-language explanations of the surfaces this Worker implements, and why each
 Notes on AI agents and the work of letting them read a site and act on a system safely. Published on turva.dev.
 
 * [Blog (index)](https://turva.dev/blog)
+* [Finishing the optional commerce checks](https://turva.dev/blog/finishing-the-optional-commerce-checks)
 * [The twin is the page](https://turva.dev/blog/the-twin-is-the-page)
 * [Every response promised a rate limit. Nothing enforced it.](https://turva.dev/blog/enforcing-the-rate-limit-i-advertised)
 * [Microsoft said the patches would get bigger. I measured how much bigger.](https://turva.dev/blog/measuring-the-ai-patch-surge)
