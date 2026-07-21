@@ -193,20 +193,17 @@ var LLMS_TXT = `# turva.dev
 - [How to let an AI agent work in your repo without leaking your secrets](https://turva.dev/blog/agent-secret-hygiene)
 - [How agent-ready are Finnish B2B sites? I scanned sixteen](https://turva.dev/blog/agent-readiness-finnish-b2b)
 - [When honesty and the checker disagree](https://turva.dev/blog/honesty-and-the-checker)
-- [Auditing the auditor with four AI agents](https://turva.dev/blog/auditing-the-auditor)
 - [Four AI agents re-checked the guides](https://turva.dev/blog/re-checking-the-guides)
 - [The page grew, the agent bill did not](https://turva.dev/blog/cheaper-pages-revisited)
 - [Moving the source from GitHub to Codeberg](https://turva.dev/blog/moving-source-to-codeberg)
 - [A free llms.txt validator](https://turva.dev/blog/free-llms-txt-validator)
 - [Agent access is now a setting](https://turva.dev/blog/agent-access-is-now-a-setting)
-- [What one agent-readiness scanner cannot tell you](https://turva.dev/blog/two-scanner-audit-method)
 - [Publishing an ai-catalog.json for agentic discovery](https://turva.dev/blog/publishing-an-ai-catalog)
 - [What the Open Knowledge Format is, and what it is not](https://turva.dev/blog/open-knowledge-format)
 - [What an agent pays to read your site](https://turva.dev/blog/cheaper-pages-for-agents)
 - [When an agent can prove it is Claude](https://turva.dev/blog/verifiable-agent-identity)
 - [What makes an AI agent's decisions reliable](https://turva.dev/blog/reliable-agent-decisions)
 - [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity)
-- [Passing the agent commerce checks without faking them](https://turva.dev/blog/honest-agent-commerce-checks)
 - [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender)
 
 ## Tools
@@ -372,14 +369,13 @@ The audit is fixed scope and can be paid up front. Advisory and implementation s
 
 ## The rule, again
 
-A green check is worth something only when it reflects what an agent actually finds. Commerce is optional, so none of this moved the headline number. It moved whether the payment surface is real and discoverable for the moment agents start to pay, which is the part that will matter. The worker that produces these results is open source at codeberg.org/erekola/turva-worker, readable line by line.
+A green check is worth something only when it reflects what an agent actually finds. Commerce is optional, so none of this moved the headline number. It moved whether the payment surface is real and discoverable for the moment agents start to pay, which is the part that will matter. The worker that produces these results is open source at github.com/erekola/turva-worker, readable line by line.
 
 For an agent-readiness audit that reports measured results, contact info@turva.dev.
 
 ## Related
 
 - [x402 and agent payments](/guides/x402-agent-payments)
-- [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks)
 - [Agentic commerce readiness](/guides/agentic-commerce-readiness)
 `,
   "/blog/the-twin-is-the-page": `# The twin is the page
@@ -410,7 +406,7 @@ The harness also caught one real bug before it went anywhere. A sentence on the 
 
 ## What did not change
 
-From the outside almost nothing moved. Both scanners read the site before and after the conversion and reported the same results. The homepage still serves a markdown version that is deliberately shorter than its HTML, and the layout is still code. That boundary is the honest one to draw. The markdown is the content contract, and the structure around it is the site's own business.
+From the outside almost nothing moved. The scanner read the site before and after the conversion and reported the same result. The homepage still serves a markdown version that is deliberately shorter than its HTML, and the layout is still code. That boundary is the honest one to draw. The markdown is the content contract, and the structure around it is the site's own business.
 
 Two limits are worth stating plainly. The checks run on my machine before a deploy, and there is no CI behind them. And the blast radius of a bad edit is unchanged, because all content lives in template literals in module scope, so one stray interpolation marker would still take down every page rather than one. A build step would solve that differently, and at some size it wins. At this size, one file that renders itself is cheaper to keep honest.
 
@@ -489,7 +485,6 @@ If you want your own agent-facing claims read the way a skeptic would read them,
 
 - [Response headers that help agents](/guides/response-headers-for-agents)
 - [When honesty and the checker disagree](/blog/honesty-and-the-checker)
-- [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks)
 `,
 
   "/blog/measuring-the-ai-patch-surge": `# Microsoft said the patches would get bigger. I measured how much bigger.
@@ -652,7 +647,7 @@ Over the past weeks I ran two independent agent-readiness scanners over sixteen 
 
 ## Key figures
 
-- Sixteen Finnish B2B sites scanned with two independent scanners, isitagentready.com and the startuphub.ai agent-readiness score.
+- Sixteen Finnish B2B sites scanned with an independent scanner, isitagentready.com.
 - Every site scored 50 or below out of 100. The range was 27 to 50, the average about 39, the median about 40.
 - Almost all sites landed at isitagentready Level 1 of 5, a couple at Level 0, one at Level 2, none higher.
 - The three most common gaps: HTML-only pages with heavy token overhead, missing structured data, and no action or capability layer.
@@ -680,7 +675,7 @@ AI agents are becoming a discovery and transaction channel. When an agent reads 
 The encouraging part is that the fixes are mostly known and mechanical. Serve markdown alongside HTML, add structured data, publish an llms.txt, expose the discovery manifests. Two of the sixteen had already started, they published a real llms.txt, and that is exactly why they sat at the top of the range.
 
 Note added July 17: one reading of the llms.txt point is circular, since
-both scanners score llms.txt directly, so publishing one raises the score
+the scanner scores llms.txt directly, so publishing one raises the score
 by construction. The observation stands as a description of the measured
 range, not as a causal claim about readiness.
 
@@ -696,7 +691,7 @@ To check where a site stands, the free llms.txt validator is at turva.dev/llms-t
 
 2026-07-06
 
-During the line-by-line pass that [read every line of this site](/blog/auditing-the-auditor), one of the smallest surfaces turned into the sharpest question in the audit. This site serves an auth.md file, a plain description of how an agent authenticates here. It said two things that did not sit together. One line read no issued credentials. Another said an API key is issued out of band on request. Both were trying to be honest, and side by side they were a contradiction.
+During the line-by-line pass that read every line of this site, one of the smallest surfaces turned into the sharpest question in the audit. This site serves an auth.md file, a plain description of how an agent authenticates here. It said two things that did not sit together. One line read no issued credentials. Another said an API key is issued out of band on request. Both were trying to be honest, and side by side they were a contradiction.
 
 ## Cleaning up a signal made the scanner fail
 
@@ -724,47 +719,7 @@ For an agent-readiness audit that reads your agent-facing claims the way a skept
 
 ## Related
 
-- [Auditing the auditor with four AI agents](/blog/auditing-the-auditor)
 - [How agents authenticate](/guides/agent-authentication)
-- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
-`,
-
-  "/blog/auditing-the-auditor": `# Auditing the auditor with four AI agents
-
-2026-07-04
-
-The company page of this site tells a buyer they can read every line before hiring me. An audit business should survive its own promise, so I pointed it at my own site. Four AI agents, all running Claude Fable 5, read the public surface line by line: the Worker source that renders turva.dev, about 5,400 lines of it, the MCP server behind mcp.turva.dev, and the READMEs of the public repos. They came back with 91 findings.
-
-## What 91 findings look like
-
-Most were the drift every living codebase accumulates. One surface advertised RS256 and ES256 for verification while the site's actual key is Ed25519. A response header named x-markdown-tokens carried a word count. A guide expanded MPP to the wrong protocol name. A table in one guide had never rendered as a table, because the renderer did not support tables. The legal page called this a registered company when it is a registered business. None of these move a scanner.
-
-About 60 fixes shipped, and both scanners were re-run after the deploys: startuphub.ai reads 100/100, grade A+, with all six categories at 100, and isitagentready.com reads Level 5. The scores were the same before most of these fixes, and that is the point. A scanner cannot see whether the key algorithm you advertise is the one you use. Line-by-line reading is the layer under the score.
-
-## Four HIGH alerts, and how they died
-
-The agents marked four findings HIGH. All four fell when verified, and they traced to two root causes.
-
-The first: the site claims 100/100 verified by two independent scanners, and the agents knew that one of those scanners, isitagentready.com, grades sites on levels, 0 to 5. A percentage from a level-based scanner reads like an invented number, so the claim was flagged as false advertising on the audit's own subject matter. The scanner's own scorecard settles it. Run the scan and the report shows 100/100 for this site next to Level 5. The claim stands as written.
-
-The second: an agent fetched the live MCP server card and read version 1.1.0 where the source says 1.2.0. Deployed code that trails its repo is a real problem anywhere, so HIGH was the right severity for the claim. It was still wrong. The fetch had come through a cache, and pulling the deployed Worker straight from the Cloudflare API showed 1.2.0, identical to the source. The finding described the measuring instrument, and the deployment was never out of sync.
-
-## The finding that held
-
-One HIGH survived. The MCP server's README promised that the service does no logging, and the Worker configuration had platform observability switched on, which stored a log line for every call. Promise and code disagreed, and this is the exact class of gap the audit exists to catch. The repair went the honest way around. Reality changed to match the words: observability is off, and the README now also says out loud that platform logs are disabled. Rewriting the README to say minimal logging would have been faster to ship, and worth less to anyone who reads it.
-
-## The hard part is the false positives
-
-A finding is a claim, and a claim gets the same treatment as marketing copy. Verify it against the primary source or drop it. Acting on the dead alerts here would have made the site worse, because fixing a correct claim plants a real error where a false alarm used to be. Read the scanner's own scorecard instead of assuming its scale, and pull the deployed artifact from the platform instead of trusting a cached fetch. Minutes of checking killed four HIGHs.
-
-The same discipline applies when you buy an audit. The report that reaches you should be the survivors, and a useful question for any auditor is how many findings were dropped between the raw scan and the written report. A report where the answer is zero usually means nobody checked.
-
-For an agent-readiness audit where the findings are verified before you read them, contact info@turva.dev.
-
-## Related
-
-- [What one agent-readiness scanner cannot tell you](/blog/two-scanner-audit-method)
-- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 - [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
 `,
 
@@ -772,7 +727,7 @@ For an agent-readiness audit where the findings are verified before you read the
 
 2026-07-04
 
-The guides on this site describe other people's specifications, and specifications move. A sentence that says "the specification says" is true the day it ships and starts aging the day after, and no scanner will tell you when it has gone stale. So the four AI agents that [read this site line by line](/blog/auditing-the-auditor) came back for a second pass, all running Claude Fable 5, each taking one family of standards: the agent commerce stack, MCP discovery, the discovery files from agents.json to llms.txt, and the plumbing of authentication and response headers. Their job was to re-read every specification claim in those guides against the primary source behind it.
+The guides on this site describe other people's specifications, and specifications move. A sentence that says "the specification says" is true the day it ships and starts aging the day after, and no scanner will tell you when it has gone stale. So the four AI agents that read this site line by line came back for a second pass, all running Claude Fable 5, each taking one family of standards: the agent commerce stack, MCP discovery, the discovery files from agents.json to llms.txt, and the plumbing of authentication and response headers. Their job was to re-read every specification claim in those guides against the primary source behind it.
 
 ## What had moved
 
@@ -798,7 +753,6 @@ For an audit that reads your agent-facing claims against the specifications they
 
 ## Related
 
-- [Auditing the auditor with four AI agents](/blog/auditing-the-auditor)
 - [MCP server cards explained](/guides/mcp-server-card)
 - [Agent commerce discovery: A2A, AP2, and ACP](/guides/agent-commerce-discovery)
 `,
@@ -827,7 +781,6 @@ For an audit that measures what agents pay to read your site, contact info@turva
 
 - [What an agent pays to read your site](/blog/cheaper-pages-for-agents)
 - [Serving markdown to agents](/guides/markdown-for-agents)
-- [What one agent-readiness scanner cannot tell you](/blog/two-scanner-audit-method)
 `,
 
   "/blog/moving-source-to-codeberg": `# Moving the source from GitHub to Codeberg
@@ -864,7 +817,6 @@ For an audit that checks a site the way a stranger's agent reaches it, contact i
 
 ## Related
 
-- [Auditing the auditor with four AI agents](/blog/auditing-the-auditor)
 - [Moving turva.dev off prerender.io](/blog/moving-off-prerender)
 - [Owning your fediverse identity](/blog/owning-your-fediverse-identity)
 `,
@@ -903,7 +855,7 @@ The first deploy failed its own self check. A Cloudflare Worker cannot fetch a U
 
 ## What it is not
 
-The validator reads one file and checks its shape. It does not measure whether agents can discover the site, read its pages as markdown, find its API or complete a purchase. That is audit territory, and an audit here runs a site against two independent scanners rather than one checklist.
+The validator reads one file and checks its shape. It does not measure whether agents can discover the site, read its pages as markdown, find its API or complete a purchase. That is audit territory, and an audit here runs a site against an independent scanner and manual review rather than one checklist.
 
 For an audit of the whole surface an agent sees, not just this one file, contact info@turva.dev.
 
@@ -1055,7 +1007,7 @@ All free tools on this site are collected on [the tools page](/tools).
 
   "/blog": `# Blog
 
-Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against independent scanners rather than asserted.
+Notes on AI agents, and the work of letting them read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against an independent scanner rather than asserted.
 
 - [Finishing the optional commerce checks](/blog/finishing-the-optional-commerce-checks). 2026-07-20.
 - [The twin is the page](/blog/the-twin-is-the-page). 2026-07-19.
@@ -1064,20 +1016,17 @@ Notes on AI agents, and the work of letting them read a site and act on a system
 - [How to let an AI agent work in your repo without leaking your secrets](/blog/agent-secret-hygiene). 2026-07-12.
 - [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b). 2026-07-07.
 - [When honesty and the checker disagree](/blog/honesty-and-the-checker). 2026-07-06.
-- [Auditing the auditor with four AI agents](/blog/auditing-the-auditor). 2026-07-04.
 - [Four AI agents re-checked the guides](/blog/re-checking-the-guides). 2026-07-04.
 - [The page grew, the agent bill did not](/blog/cheaper-pages-revisited). 2026-07-04.
 - [Moving the source from GitHub to Codeberg](/blog/moving-source-to-codeberg). 2026-07-04.
 - [A free llms.txt validator](/blog/free-llms-txt-validator). 2026-07-02.
 - [Agent access is now a setting](/blog/agent-access-is-now-a-setting). 2026-07-02.
-- [What one agent-readiness scanner cannot tell you](/blog/two-scanner-audit-method). 2026-07-01.
 - [Publishing an ai-catalog.json for agentic discovery](/blog/publishing-an-ai-catalog). 2026-06-29.
 - [What the Open Knowledge Format is, and what it is not](/blog/open-knowledge-format). 2026-06-27.
 - [What an agent pays to read your site](/blog/cheaper-pages-for-agents). 2026-06-26.
 - [When an agent can prove it is Claude](/blog/verifiable-agent-identity). 2026-06-25.
 - [What makes an AI agent's decisions reliable](/blog/reliable-agent-decisions). 2026-06-22.
 - [Owning your fediverse identity](/blog/owning-your-fediverse-identity). 2026-06-21.
-- [Passing the agent commerce checks without faking them](/blog/honest-agent-commerce-checks). 2026-06-21.
 - [Moving turva.dev off prerender.io](/blog/moving-off-prerender). 2026-06-20.
 `,
   "/blog/open-knowledge-format": `# What the Open Knowledge Format is, and what it is not
@@ -1136,7 +1085,7 @@ A cheaper page is a more reliable one. When the content fits comfortably inside 
 
 It also widens who can reach you. The assistants that answer questions and cite sources read better from clean text, so your pages are more likely to be used in full and represented accurately. The work an agent does against your site gets cheaper for whoever runs it, which makes you the easier site to integrate with when an agent is choosing where to act.
 
-The benefit is measurable. Independent scanners check for markdown content negotiation and for an llms.txt, and the result shows up as a higher score in the categories that name it. You do not take the improvement on faith. You read the number before the change and after it.
+The benefit is measurable. An independent scanner checks for markdown content negotiation and for an llms.txt, and the result shows up as a higher score in the categories that name it. You do not take the improvement on faith. You read the number before the change and after it.
 
 ## A small change that lasts
 
@@ -1260,32 +1209,6 @@ For an agent-readiness audit that reads the edge configuration next to the conte
 - [x402 and agent payments](/guides/x402-agent-payments)
 - [Sitemaps, robots.txt and agent access](/guides/sitemaps-and-robots-for-agents)
 `,
-  "/blog/two-scanner-audit-method": `# What one agent-readiness scanner cannot tell you
-
-2026-07-01
-
-Most agent-readiness checks run one scanner and stop. The report reads well, the grade looks final, and the site moves on. That grade says the site fits one vendor's model of what an agent needs. It says nothing about what that model left out.
-
-## A checklist is not a proof
-
-A scanner is built around a fixed set of checks and a fixed weighting between them. It can only fail a site on something it looks for. When a category sits outside a scanner's model, a real gap in that category passes clean, because nothing in the checklist asked about it. A high grade from a single tool is easy to over-read as finished, while the site can still stop an agent cold on the one thing that tool never checked.
-
-## Where two scanners disagree
-
-turva.dev is scored on two independent scanners with different category models, isitagentready.com and startuphub.ai. isitagentready.com carries no Quality category and marks Commerce as optional. startuphub.ai grades six categories, Discoverability, Content, Access Control, Capabilities, Commerce and Quality, so both of the categories the first scanner treats as thin get a full reading in the second. Running a site through both at once means a gap sitting in one model's blind spot still shows up in the other's report, before a buyer or an agent finds it the hard way.
-
-## What this changes about an audit
-
-Every audit here checks a site against both scanners, and a claim about the result carries the date it was verified and the categories the report named. A score nobody re-ran after a change is a guess wearing a number. Two readings of the same site are the cheapest way I know to stop fooling yourself about what "done" means, and it is the same discipline that runs on turva.dev itself before any change ships.
-
-For an agent-readiness audit that checks a site against more than one scanner, contact info@turva.dev.
-
-## Related
-
-- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
-- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
-- [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
-`,
   "/blog/publishing-an-ai-catalog": `# Publishing an ai-catalog.json for agentic discovery
 
 2026-06-29
@@ -1306,7 +1229,7 @@ An ai-catalog.json is easy to misread as another search file. It is not. It inde
 
 ## Honest about adoption
 
-In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at codeberg.org/erekola/turva-worker.
+In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at github.com/erekola/turva-worker.
 
 For an audit of a site's discovery surface, contact info@turva.dev.
 
@@ -1330,13 +1253,13 @@ The Worker decides by the request. A browser asking for HTML gets the rendered p
 
 ## What this removed
 
-The prerender.io branch is gone from the Worker. No request is sent to an external prerender service, and the token it used is no longer read. Sitejet now serves only static assets such as the social image, and those move to the Worker next. The page is one codebase, under version control, open source at codeberg.org/erekola/turva-worker.
+The prerender.io branch is gone from the Worker. No request is sent to an external prerender service, and the token it used is no longer read. Sitejet now serves only static assets such as the social image, and those move to the Worker next. The page is one codebase, under version control, open source at github.com/erekola/turva-worker.
 
 ## The result is measured, not asserted
 
-The change was verified the same way the service verifies client work: by independent scanners, before and after. StartupHub read 100/100, grade A+, with all six categories at 100. isitagentready read Level 5, Agent-Native. The homepage migration did not drop a point.
+The change was verified the same way the service verifies client work: by an independent scanner, before and after. isitagentready read Level 5, Agent-Native. The homepage migration did not drop a point.
 
-One more note. This change was planned and deployed in a single session with an AI agent, and the result was checked by two independent scanners with no stake in the outcome. The claims on this site are measurements anyone can reproduce. Either the next scan reads the same or higher, or it does not.
+One more note. This change was planned and deployed in a single session with an AI agent, and the result was checked by an independent scanner with no stake in the outcome. The claims on this site are measurements anyone can reproduce. Either the next scan reads the same or higher, or it does not.
 
 Written contact only. Email info@turva.dev, Signal @turva.19. First reply within one business day.
 
@@ -1344,47 +1267,6 @@ Written contact only. Email info@turva.dev, Signal @turva.19. First reply within
 
 - [Prerendering and why agents see empty pages](/guides/prerendering-for-agents)
 - [Serving markdown to agents](/guides/markdown-for-agents)
-- [What an agent-readiness audit is](/guides/agent-readiness-audit)
-`,
-  "/blog/honest-agent-commerce-checks": `# Passing the agent commerce checks without faking them
-
-2026-06-21
-
-turva.dev measures its own agent-readiness with two independent scanners. On startuphub.ai it ranks first among the publicly-scanned sites on the agent-readiness leaderboard at 99/100. On isitagentready.com, which checks 21 separate standards, it reaches Level 5. This is the log of taking the isitagentready commerce checks from mostly red to mostly green, without claiming a single capability the site does not actually have.
-
-## What was failing
-
-The site sat at Level 5, but four checks in the discovery and commerce categories were red: the A2A Agent Card, AP2 agent payments, ACP discovery, and x402. Each red check is a claim an agent cannot verify. The job was to clear them honestly and to keep the startuphub.ai score at 100 while doing it.
-
-## The A2A Agent Card
-
-An A2A Agent Card is a JSON file at /.well-known/agent-card.json that describes an agent interface, including its name, version, transport, and the skills it offers. turva now publishes one that points at its read-only HTTP and JSON surface, with skills that mirror the existing agent-skills index. The change was additive, a new file and a route, so it could not move the startuphub.ai score. The check went green.
-
-## The AP2 trap
-
-AP2 is the Agent Payments Protocol. A merchant declares support by adding an extension entry to its A2A card. The isitagentready fix text gave the extension URI as github.com/google-agentic-commerce/AP2/tree/v0.1.0. I used exactly that, and the check stayed red. The scanner validates against the real specification, which uses github.com/google-agentic-commerce/ap2/tree/v0.1, lowercase, version v0.1. The helper text was wrong and the spec was right. Once the URI matched the spec, AP2 went green. The lesson is to copy protocol identifiers from the specification, not from a fix message.
-
-## ACP, the honest way
-
-ACP is the Agentic Commerce Protocol. Its discovery document at /.well-known/acp.json had the wrong shape. The capabilities.services field has to be an array of strings from a closed set, and the site was sending an array of custom service objects. Editing that one field would have turned the check green on its own, because the scanner only reads the discovery file. It never calls the checkout endpoint.
-
-That was the shortcut, and it was the wrong one. A discovery document that says it supports checkout while the checkout URL returns nothing is a broken promise to any agent that follows it. So the site got a real, if minimal, checkout endpoint instead. POST /api/acp/checkout_sessions creates a genuine session for the audit. The session comes back in the not_ready_for_payment state with a message that the engagement is scoped and confirmed in writing within one business day. That is not a workaround. It is the actual model, async and quote first, so instant agent payment is not offered. The check is green because the claim is true.
-
-## What stays red, on purpose
-
-Two checks remain red and will stay that way. isitagentready reports x402 as missing, yet the site serves a working x402 endpoint that returns HTTP 402 with payment terms, and startuphub.ai reads it as present. The isitagentready probe looks at paths the site does not use for that purpose, and the only way to satisfy it would disturb surfaces that are already correct. Web Bot Auth is for sites that send signed bot requests to other sites, and turva only receives traffic, so it has no bot to authenticate. Publishing signing keys it never uses would be the same hollow signal the ACP shortcut would have been. Both scanners treat this check as informational rather than a failure.
-
-## The rule
-
-Every change was additive, and the startuphub.ai score read 100/100 on every re-scan. The principle is the one the whole site runs on. A scanner number is worth something only if it reflects what an agent actually finds, so a green check that lies is worth less than an honest red one. The worker that produces these results is open source at codeberg.org/erekola/turva-worker, readable line by line.
-
-For an agent-readiness audit that reports measured results, contact info@turva.dev.
-
-## Related
-
-- [Finishing the optional commerce checks](/blog/finishing-the-optional-commerce-checks)
-- [Agentic commerce readiness](/guides/agentic-commerce-readiness)
-- [x402 and agent payments](/guides/x402-agent-payments)
 - [What an agent-readiness audit is](/guides/agent-readiness-audit)
 `,
   "/guides/agent-commerce-discovery": `# Agent commerce discovery: A2A, AP2, and ACP
@@ -1421,7 +1303,7 @@ A checkout endpoint does not have to support instant payment to be real. The ACP
 
 These surfaces exist so an agent can act without guessing, which only holds when every claim resolves to something real. A card whose skills lead nowhere breaks the same way a checkout that never responds does, because the agent follows the signal and finds nothing. Publish what is true, and back each declaration with a surface that answers.
 
-turva.dev publishes an A2A Agent Card, an AP2 merchant declaration, and an ACP discovery document with a working checkout endpoint, verified by independent scanners. For an audit of a site's agent commerce surface, contact info@turva.dev.
+turva.dev publishes an A2A Agent Card, an AP2 merchant declaration, and an ACP discovery document with a working checkout endpoint, verified by an independent scanner. For an audit of a site's agent commerce surface, contact info@turva.dev.
 
 ## Related
 
@@ -1462,7 +1344,7 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 `,
   "/": `# Audits and advisory for products that AI agents read and act on
 
-Agent-readiness is the measurable starting point, scored by independent scanners. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.
+Agent-readiness is the measurable starting point, scored by an independent scanner. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.
 
 100/100 and Level 5, Agent-Native, on isitagentready.com, Cloudflare’s agent-readiness scanner. Business ID 3600281-7, registered in Finland.
 
@@ -1470,7 +1352,7 @@ Agent-readiness is the measurable starting point, scored by independent scanners
 
 An AI agent does not browse a site the way a person does. It reads machine-readable surfaces and acts on the parts it can reach, once it trusts what it found. I measure how a site, an API or a product holds up to that, fix what the measurement names, and stay on as the product changes.
 
-The measurable core is agent-readiness, scored by independent scanners and provable on the next scan. The wider work begins where readability ends. The data an agent acts on has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set. The first makes an agent able to read you. The second makes it safe to let one act.
+The measurable core is agent-readiness, scored by an independent scanner and provable on the next scan. The wider work begins where readability ends. The data an agent acts on has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set. The first makes an agent able to read you. The second makes it safe to let one act.
 
 ## Independent agent-readiness scan of turva.dev
 
@@ -1509,7 +1391,7 @@ Backed by a registered business, publicly verifiable: Business ID 3600281-7, reg
 
 ## The process has three stages and no surprises
 
-First, measurement. For agent-readiness, two independent scanners read the current state of the site or API and produce a numeric baseline with a categorized list of what is missing. For the wider work, the data path and the decision envelope are tested the way an agent would hit them, so the starting point is a fact rather than an opinion.
+First, measurement. For agent-readiness, an independent scanner reads the current state of the site or API and produces a numeric baseline with a categorized list of what is missing. For the wider work, the data path and the decision envelope are tested the way an agent would hit them, so the starting point is a fact rather than an opinion.
 
 Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need a background in any of this to follow it.
 
@@ -1523,7 +1405,7 @@ The result is checkable, not asserted. For agent-readiness that is the scanner n
 
 ## Services
 
-- Audit. Fixed scope. Two to three weeks. Two independent scanners run against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
+- Audit. Fixed scope. Two to three weeks. An independent scanner runs against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
 - Advisory. Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.
 - Implementation. On request. Worker-level changes, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.
 - Agent operations. On request. The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
@@ -1597,7 +1479,7 @@ A measurement of how agent-ready your site and APIs are today, with
 a prioritized list of what to fix first.
 
 What you get:
-- Two independent scanners run against the site or API
+- An independent scanner runs against the site or API
 - Manual review of /.well-known/ manifests, JSON-LD, head metadata
   and HTTP headers
 - Review of robots.txt, sitemap.xml, ai.txt and llms.txt against
@@ -1912,7 +1794,7 @@ What it does not fix is meaning. The format does not say what a metric concept m
 
 ## Where OKF fits with agent-readiness
 
-Agent-readiness, the kind measured by independent scanners, is about whether an agent can reach and read your public site at all. OKF sits next to that, one layer in. It is a way to package the internal knowledge an agent works from once it is past the front door: the catalog, the metrics and the rules a decision depends on.
+Agent-readiness, the kind measured by an independent scanner, is about whether an agent can reach and read your public site at all. OKF sits next to that, one layer in. It is a way to package the internal knowledge an agent works from once it is past the front door: the catalog, the metrics and the rules a decision depends on.
 
 So OKF is not a replacement for an llms.txt or a markdown surface on your site. It is the same instinct, plain text an agent can read without a special client, applied to the data and context behind the site rather than the pages in front of it. For a team thinking about what an agent acts on, not only what it can see, that is the part of the picture OKF addresses.
 
@@ -2418,7 +2300,7 @@ Most catalogs lose the agent before checkout. A price that lives only in rendere
 
 ## Readiness is testable
 
-Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built and verified its own agent commerce surface this way, across A2A, AP2, ACP and x402, checked by independent scanners.
+Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built and verified its own agent commerce surface this way, across A2A, AP2, ACP and x402, checked by an independent scanner.
 
 For an audit of whether AI shopping agents can discover and complete a purchase on your site, contact info@turva.dev.
 
@@ -2747,7 +2629,7 @@ var AGENT_JSON = JSON.stringify({
   "name_for_human": "turva.dev",
   "name_for_model": "turva_dev",
   "description_for_human": "Agent-readiness audits and advisory for product teams.",
-  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. Independent scanners measure the site or API, a written report names the prioritized fixes, the next scan verifies the result. Async-only engagement. Pricing (EUR, VAT not included): Audit €6,500 (fixed, 2-3 weeks), Advisory €3,000/month (minimum 3 months), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
+  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Async-only engagement. Pricing (EUR, VAT not included): Audit €6,500 (fixed, 2-3 weeks), Advisory €3,000/month (minimum 3 months), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
   "contact_email": "info@turva.dev",
   "legal_info_url": "https://turva.dev/legal",
   "logo_url": "https://turva.dev/logo.png",
@@ -2757,7 +2639,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"iWgoyToG1EisJR4fvZNK6_rhHDu-qMnpGSZvoj5vJ4GAgxbCokGTEVmCqBozaTAjwg7-Zx6tZrnnPeObxoMiDw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"G4OXqtuXv6RrXAARm7nN5tNbKU7cXZ4C_pu3nQd17R4xZXXsszz8Js5fNVQl6TX1gkK00VGYr3_R6LcLpAxpCQ\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"APkGCuxheHpyMEuWvlSRuwpASeRgT0GLo8V2O5oA6PywVth8eZ30GGI9ry9j0fC_2e8Ja3LB5sy6QJAESR4FAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"iWgoyToG1EisJR4fvZNK6_rhHDu-qMnpGSZvoj5vJ4GAgxbCokGTEVmCqBozaTAjwg7-Zx6tZrnnPeObxoMiDw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"1MaClIF8wFV568snVFAulHZGu7rBe7Gjh52f8PLJmv4jOvwPZ28FJnHSqFfJTKXqxA7mBLpyFc0mof4QvIwNBw\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -3270,7 +3152,7 @@ description: List the service offerings of turva.dev with prices (EUR).
 Use this skill to learn which services turva.dev offers and prices.
 
 ## Services (prices in EUR, VAT not included)
-- **Audit.** €6,500. Fixed scope, 2-3 weeks. Two scanners and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
+- **Audit.** €6,500. Fixed scope, 2-3 weeks. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, minimum 3 months. Async-only. Ongoing review, score tracking and a monthly AI-visibility delta across several AI platforms.
 - **Implementation.** €1,500 / day. Scoped per task. Cloudflare Workers, MCP servers, well-known manifests, JSON-LD.
 
@@ -3411,18 +3293,15 @@ var SITEMAP_ENTRIES = [
   ["/blog/agent-readiness-finnish-b2b", "monthly", "0.6"],
   ["/blog/honesty-and-the-checker", "monthly", "0.6"],
   ["/blog/enforcing-the-rate-limit-i-advertised", "monthly", "0.6"],
-  ["/blog/auditing-the-auditor", "monthly", "0.6"],
   ["/blog/re-checking-the-guides", "monthly", "0.6"],
   ["/blog/cheaper-pages-revisited", "monthly", "0.6"],
   ["/blog/moving-source-to-codeberg", "monthly", "0.6"],
   ["/blog/free-llms-txt-validator", "monthly", "0.6"],
   ["/blog/agent-access-is-now-a-setting", "monthly", "0.6"],
-  ["/blog/two-scanner-audit-method", "monthly", "0.6"],
   ["/blog/open-knowledge-format", "monthly", "0.6"],
   ["/blog/publishing-an-ai-catalog", "monthly", "0.6"],
   ["/blog/cheaper-pages-for-agents", "monthly", "0.6"],
   ["/blog/moving-off-prerender", "monthly", "0.6"],
-  ["/blog/honest-agent-commerce-checks", "monthly", "0.6"],
   ["/blog/owning-your-fediverse-identity", "monthly", "0.6"],
   ["/blog/reliable-agent-decisions", "monthly", "0.6"],
   ["/blog/finishing-the-optional-commerce-checks", "monthly", "0.6"],
@@ -3496,7 +3375,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/two-scanner-audit-method", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/blog/honest-agent-commerce-checks", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/auditing-the-auditor", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/tools"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/tools"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -3555,13 +3434,6 @@ var META_BY_PATH = {
     image: "/og-honesty-and-the-checker.jpg",
     imageAlt: "When honesty and the checker disagree"
   },
-  "/blog/auditing-the-auditor": {
-    title: "Auditing the auditor with four AI agents | turva.dev",
-    description: "Four AI agents read every line of turva.dev. Of 91 findings, four HIGH alerts failed verification and one held. False-positive discipline is the hard part.",
-    date: "2026-07-04",
-    image: "/og-auditing-the-auditor.jpg",
-    imageAlt: "Auditing the auditor with four AI agents"
-  },
   "/blog/re-checking-the-guides": {
     title: "Four AI agents re-checked the guides | turva.dev",
     description: "Four AI agents re-read the guides against the specifications behind them. One high finding, one expired draft, six small fixes. The scanners never noticed.",
@@ -3611,7 +3483,7 @@ var META_BY_PATH = {
   },
   "/blog": {
     title: "Blog: notes on AI agents and agent-readiness | turva.dev",
-    description: "Notes on AI agents and the work of letting them read a site and act on a system safely. Dated entries, checked against independent scanners.",
+    description: "Notes on AI agents and the work of letting them read a site and act on a system safely. Dated entries, checked against an independent scanner.",
     image: "/og-blog.jpg",
     imageAlt: "turva.dev blog"
   },
@@ -3642,13 +3514,6 @@ var META_BY_PATH = {
     date: "2026-06-20",
     image: "/og-moving-off-prerender.jpg",
     imageAlt: "Moving turva.dev off prerender.io"
-  },
-  "/blog/honest-agent-commerce-checks": {
-    title: "Passing the agent commerce checks without faking them | turva.dev",
-    description: "How turva.dev cleared the isitagentready commerce checks in June 2026, without faking a capability, while holding 100/100 on startuphub.ai.",
-    date: "2026-06-21",
-    image: "/og-honest-agent-commerce-checks.jpg",
-    imageAlt: "Passing the agent commerce checks without faking them"
   },
   "/guides/agent-commerce-discovery": {
     title: "Agent commerce discovery: A2A, AP2, and ACP | turva.dev",
@@ -3681,13 +3546,6 @@ var META_BY_PATH = {
     date: "2026-07-02",
     image: "/og-agent-access-is-now-a-setting.jpg",
     imageAlt: "Agent access is now a setting"
-  },
-  "/blog/two-scanner-audit-method": {
-    title: "What one agent-readiness scanner cannot tell you | turva.dev",
-    description: "Why every turva.dev audit checks a site against two independent agent-readiness scanners, and how different category models catch more gaps.",
-    date: "2026-07-01",
-    image: "/og-two-scanner-audit-method.jpg",
-    imageAlt: "What one agent-readiness scanner cannot tell you"
   },
   "/blog/publishing-an-ai-catalog": {
     title: "Publishing an ai-catalog.json for agentic discovery | turva.dev",
@@ -3740,7 +3598,7 @@ var META_BY_PATH = {
   },
   "/guides/agent-readiness-audit": {
     title: "What an agent-readiness audit is | turva.dev",
-    description: "An agent-readiness audit measures how well AI agents can discover, read, and act on a website or API, scored against current standards by independent scanners.",
+    description: "An agent-readiness audit measures how well AI agents can discover, read, and act on a website or API, scored against current standards by an independent scanner.",
     image: "/og-guide-agent-readiness-audit.jpg",
     imageAlt: "What an agent-readiness audit is"
   },
@@ -3912,7 +3770,7 @@ var SCHEMA_HOME = `<script type="application/ld+json">
 {"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://codeberg.org/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 {"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"1500","highPrice":"6500","offerCount":"3","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services","itemListElement":[
-{"@type":"Offer","name":"Audit","description":"Fixed scope, 2-3 weeks. Two independent scanners run against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"6500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"6500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€6,500 fixed price, two to three weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, 2-3 weeks. An independent scanner runs against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"6500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"6500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€6,500 fixed price, two to three weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Cloudflare Workers, MCP servers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}},
@@ -5100,7 +4958,7 @@ ${FOOTER_CSS}
 
   <section class="sec contact">
     <h2>Contact me</h2>
-    <p>Seeing where your site, API or product stands with AI agents starts with a measured baseline, a written report, and a prioritized list of what to fix first. For agent-readiness that baseline comes from two independent scanners. For the wider work it comes from testing the data path and the decision envelope directly. Async-only engagement. No calls and no calendar links. The first reply lands in writing within one business day.</p>
+    <p>Seeing where your site, API or product stands with AI agents starts with a measured baseline, a written report, and a prioritized list of what to fix first. For agent-readiness that baseline comes from an independent scanner. For the wider work it comes from testing the data path and the decision envelope directly. Async-only engagement. No calls and no calendar links. The first reply lands in writing within one business day.</p>
     <div class="contact-card">
       <a class="ch" href="mailto:info@turva.dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>info@turva.dev</span></a>
       <div class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg><span>Signal @turva.19</span></div>
