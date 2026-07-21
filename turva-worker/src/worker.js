@@ -945,8 +945,9 @@ agent-readiness score. A full audit measures discovery, content,
 access control and more: see [services](/services),
 or start with [llms.txt explained](/guides/llms-txt).
 
-Only the target domain's /llms.txt file is ever fetched. Agents can
-call this with Accept: application/json.
+Only the target site's /llms.txt is fetched, following a redirect between the
+bare domain and its www host when there is one. Agents can call this with
+Accept: application/json.
 
 All free tools on this site are collected on [the tools page](/tools).
 
@@ -966,11 +967,11 @@ Deliberately. Eight structural checks can honestly report pass, warn or fail, an
 
 **How does an agent call the validator?**
 
-GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Only the target site's /llms.txt file is fetched, and the response carries a no-store header.
+GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Only the target site's /llms.txt is fetched, following a redirect between the bare domain and its www host when there is one, and the response carries a no-store header.
 
 **Does the validator store anything?**
 
-No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file and never crawls the rest of the site.
+No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file, following a redirect between the bare domain and its www host when there is one, and never crawls the rest of the site.
 
 **Can I run the checks in CI?**
 
@@ -5443,12 +5444,13 @@ ${FOOTER_HTML}
 }
 
 // llms.txt validator: fetches a target site's /llms.txt server-side and
-// checks its structure against the llms.txt format. Only https://<host>/llms.txt
-// is ever requested, redirects are not followed (a redirect fails the first
-// check), the host must be a public DNS name
-// (no IP literals, no localhost/internal names, no ports, no credentials),
-// the fetch times out after 8 seconds and the body read is capped at 256 KB.
-// Results are never stored and result pages are served with no-store.
+// checks its structure against the llms.txt format. Redirects are followed
+// only to the same host or its www/apex twin (procad.fi and www.procad.fi),
+// and every hop is re-guarded: https only, a public DNS name (no IP literals,
+// no localhost/internal names, no ports, no credentials). An off-host or
+// unsafe redirect is never fetched and fails the first check. The fetch times
+// out after 8 seconds and the body read is capped at 256 KB. Results are
+// never stored and result pages are served with no-store.
 function normalizeHostInput(raw) {
   let s = String(raw || "").trim().toLowerCase();
   if (!s) return null;
@@ -5471,61 +5473,85 @@ function isValidPublicHost(host) {
 }
 
 async function fetchLlmsTxt(host) {
-  const target = "https://" + host + "/llms.txt";
-  const res = await fetch(target, {
-    redirect: "manual",
-    signal: AbortSignal.timeout(8000),
-    headers: {
-      "user-agent": "turva-llms-validator/1.0 (+https://turva.dev/llms-txt-validator)",
-      "accept": "text/plain, text/markdown;q=0.9, */*;q=0.1"
-    }
-  });
-  if (res.status >= 300 && res.status < 400) {
-    return { redirect: true, status: res.status, location: res.headers.get("location") || "" };
-  }
+  const reqApex = host.startsWith("www.") ? host.slice(4) : host;
   const cap = 262144;
-  let bytes = 0, truncated = false;
-  const chunks = [];
-  if (res.body) {
-    const reader = res.body.getReader();
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      bytes += value.length;
-      if (bytes > cap) {
-        truncated = true;
-        chunks.push(value.slice(0, value.length - (bytes - cap)));
-        bytes = cap;
-        await reader.cancel();
-        break;
+  let url = "https://" + host + "/llms.txt";
+  let redirectedFrom = null;
+  for (let hop = 0; ; hop++) {
+    const res = await fetch(url, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(8000),
+      headers: {
+        "user-agent": "turva-llms-validator/1.0 (+https://turva.dev/llms-txt-validator)",
+        "accept": "text/plain, text/markdown;q=0.9, */*;q=0.1"
       }
-      chunks.push(value);
+    });
+    if (res.status >= 300 && res.status < 400) {
+      const loc = res.headers.get("location") || "";
+      if (!loc) return { redirect: true, reason: "no-location", status: res.status, location: "" };
+      if (hop >= 4) return { redirect: true, reason: "too-many", status: res.status, location: loc.slice(0, 120) };
+      let next;
+      try { next = new URL(loc, url); } catch { return { redirect: true, reason: "bad-location", status: res.status, location: loc.slice(0, 120) }; }
+      const safeTarget = next.protocol === "https:" && !next.port && !next.username && !next.password && isValidPublicHost(next.hostname);
+      const twin = (next.hostname.startsWith("www.") ? next.hostname.slice(4) : next.hostname) === reqApex;
+      if (!safeTarget) return { redirect: true, reason: "unsafe-target", status: res.status, location: next.href.slice(0, 120) };
+      if (!twin) return { redirect: true, reason: "off-host", status: res.status, location: next.href.slice(0, 120) };
+      if (!redirectedFrom) redirectedFrom = url;
+      url = next.href;
+      continue;
     }
+    let bytes = 0, truncated = false;
+    const chunks = [];
+    if (res.body) {
+      const reader = res.body.getReader();
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        bytes += value.length;
+        if (bytes > cap) {
+          truncated = true;
+          chunks.push(value.slice(0, value.length - (bytes - cap)));
+          bytes = cap;
+          await reader.cancel();
+          break;
+        }
+        chunks.push(value);
+      }
+    }
+    const buf = new Uint8Array(bytes);
+    let o = 0;
+    for (const c of chunks) { buf.set(c, o); o += c.length; }
+    return {
+      status: res.status,
+      contentType: res.headers.get("content-type") || "",
+      text: new TextDecoder("utf-8").decode(buf),
+      bytes,
+      truncated,
+      redirectedFrom,
+      finalUrl: url
+    };
   }
-  const buf = new Uint8Array(bytes);
-  let o = 0;
-  for (const c of chunks) { buf.set(c, o); o += c.length; }
-  return {
-    status: res.status,
-    contentType: res.headers.get("content-type") || "",
-    text: new TextDecoder("utf-8").decode(buf),
-    bytes,
-    truncated
-  };
+}
+
+function redirectFailDetail(f) {
+  if (f.reason === "off-host") return "redirects to " + f.location + ", a different host; llms.txt is host-scoped, so validate that host directly";
+  if (f.reason === "unsafe-target") return "redirects to an unsupported target (" + f.location + "); only https redirects to the same site are followed";
+  if (f.reason === "too-many") return "too many redirects; the llms.txt is not served at a stable URL";
+  return "got a " + f.status + " redirect without a usable Location header";
 }
 
 function validateLlmsTxt(f) {
   const checks = [];
   const add = (id, status, label, detail) => checks.push({ id, status, label, detail });
   if (f.redirect) {
-    add("http-status", "fail", "File exists at /llms.txt", "expected HTTP 200 at /llms.txt, got a " + f.status + " redirect" + (f.location ? " to " + f.location.slice(0, 120) : "") + "; llms.txt should be served directly");
+    add("http-status", "fail", "File exists at /llms.txt", redirectFailDetail(f));
     return checks;
   }
   if (f.status !== 200) {
     add("http-status", "fail", "File exists at /llms.txt", "expected HTTP 200, got " + f.status);
     return checks;
   }
-  add("http-status", "pass", "File exists at /llms.txt", "HTTP 200");
+  add("http-status", "pass", "File exists at /llms.txt", f.redirectedFrom ? "HTTP 200, followed a redirect from " + f.redirectedFrom + " to " + f.finalUrl : "HTTP 200");
   const ct = f.contentType.toLowerCase();
   const looksHtml = /^\s*(<!doctype|<html|<head|<body)/i.test(f.text);
   if (looksHtml) {
