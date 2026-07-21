@@ -282,7 +282,7 @@ revoke prior correspondence.
 - Register: https://tietopalvelu.ytj.fi/yritys/3600281-7
 - Verified contact: <mailto:info@turva.dev>
 - Public profile: https://www.linkedin.com/in/erikrekola/
-- Source code: https://codeberg.org/erekola
+- Source code: https://github.com/erekola
 
 ## Supported identity types
 
@@ -994,7 +994,7 @@ Checks a site's /llms.txt structure against the format and reports each check as
 
 Open it at [turva.dev/llms-txt-validator](/llms-txt-validator).
 
-The same checks run in CI as an open npm package, [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI and the same JSON shape. Source on [Codeberg](https://codeberg.org/erekola/llms-txt-validator), mirrored on [GitHub](https://github.com/erekola/llms-txt-validator).
+The same checks run in CI as an open npm package, [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI and the same JSON shape. Source on [GitHub](https://github.com/erekola/llms-txt-validator), mirrored on [Codeberg](https://codeberg.org/erekola/llms-txt-validator).
 
 ## The agent-ready badge
 
@@ -1503,7 +1503,7 @@ turva.dev publishes its own web security scans too, on the same principle that t
 - Hardenize: all 13 categories passed. https://www.hardenize.com/report/turva.dev
 - Internet.nl: 98/100. IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. https://internet.nl/site/turva.dev/
 
-The Cloudflare Worker that produces these results is open source: https://codeberg.org/erekola/turva-worker. You can read every line before you hire me.
+The Cloudflare Worker that produces these results is open source: https://github.com/erekola/turva-worker. You can read every line before you hire me.
 
 Backed by a registered business, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: https://tietopalvelu.ytj.fi/yritys/3600281-7
 
@@ -4719,7 +4719,7 @@ var FOOTER_HTML = `<footer class="tv-foot">
     <a class="ft-row" href="https://www.linkedin.com/in/erikrekola/"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.4 8.9h3.1V21H3.4zM9.2 8.9h2.97v1.65h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V21h-3.1v-5.35c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9.2z"/></svg><span>LinkedIn</span></a>
     <a class="ft-row" rel="me" href="https://social.turva.dev/@erik"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M21.327 8.566c0-4.339-2.843-5.61-2.843-5.61-1.433-.658-3.894-.935-6.451-.956h-.063c-2.557.021-5.016.298-6.45.956 0 0-2.843 1.272-2.843 5.61 0 .993-.019 2.181.012 3.441.103 4.243.778 8.425 4.701 9.463 1.809.479 3.362.579 4.612.51 2.268-.126 3.541-.809 3.541-.809l-.075-1.646s-1.621.511-3.441.449c-1.804-.062-3.707-.194-3.999-2.409a4.523 4.523 0 0 1-.04-.621s1.77.433 4.014.536c1.372.063 2.658-.08 3.965-.236 2.506-.299 4.688-1.843 4.962-3.254.434-2.223.398-5.424.398-5.424zm-3.353 5.59h-2.081V9.057c0-1.075-.452-1.62-1.357-1.62-1 0-1.501.647-1.501 1.927v2.791h-2.069V9.364c0-1.28-.501-1.927-1.502-1.927-.905 0-1.357.546-1.357 1.62v5.099H5.626V8.903c0-1.074.273-1.927.823-2.558.566-.631 1.307-.955 2.228-.955 1.065 0 1.872.41 2.405 1.228l.518.869.519-.869c.533-.818 1.34-1.228 2.405-1.228.92 0 1.662.324 2.228.955.549.631.822 1.484.822 2.558v5.253z"/></svg><span>Mastodon</span></a>
     <a class="ft-row" rel="me" href="https://gravatar.com/erekola"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18.5c1-2.4 3-3.8 5.5-3.8s4.5 1.4 5.5 3.8"/></svg><span>Gravatar</span></a>
-    <a class="ft-row" href="https://codeberg.org/erekola"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span>Codeberg</span></a>
+    <a class="ft-row" href="https://github.com/erekola"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span>GitHub</span></a>
   </div>
   <div class="foot-meta">Tampere, Finland · <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">Business ID 3600281-7</a> · © 2026 turva.dev · All rights reserved</div>
 </footer>`;
@@ -4986,7 +4986,7 @@ ${FOOTER_CSS}
         </ul>
         <div class="cta">
           <a class="btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a>
-          <a class="btn-ghost" href="https://codeberg.org/erekola/turva-worker">Read the source</a>
+          <a class="btn-ghost" href="https://github.com/erekola/turva-worker">Read the source</a>
         </div>
         <p class="bizline">Business ID 3600281-7 &middot; registered in Finland</p>
       </div>
