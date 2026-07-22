@@ -2632,14 +2632,14 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8zvlU9fjmr-BHjKd2uDdd7ngGz0ajxC2paKzna2GR1UjNVECEPXH_pmBWFLBFfmFfXCLi0225Y4Z0whRS9qQBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8zvlU9fjmr-BHjKd2uDdd7ngGz0ajxC2paKzna2GR1UjNVECEPXH_pmBWFLBFfmFfXCLi0225Y4Z0whRS9qQBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Z6EoUy8EsAEjrAUThIDFuwFCbH_rTuDZ2IBvub7-gs8mWZTN7QKTr1ef6nZO-MVZliqPaMIHjwTdaoVHAW1NBQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"1MaClIF8wFV568snVFAulHZGu7rBe7Gjh52f8PLJmv4jOvwPZ28FJnHSqFfJTKXqxA7mBLpyFc0mof4QvIwNBw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8zvlU9fjmr-BHjKd2uDdd7ngGz0ajxC2paKzna2GR1UjNVECEPXH_pmBWFLBFfmFfXCLi0225Y4Z0whRS9qQBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8zvlU9fjmr-BHjKd2uDdd7ngGz0ajxC2paKzna2GR1UjNVECEPXH_pmBWFLBFfmFfXCLi0225Y4Z0whRS9qQBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4RHmDzOGMK8K_7rpulX2qj47VSiq8llf-sEjuw2dp3Jx0TmSQPeYO6zhcACiVcoXhILfijuGEEkfWfbqWXOUAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"1MaClIF8wFV568snVFAulHZGu7rBe7Gjh52f8PLJmv4jOvwPZ28FJnHSqFfJTKXqxA7mBLpyFc0mof4QvIwNBw\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
