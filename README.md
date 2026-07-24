@@ -2,7 +2,7 @@
 
 Cloudflare Worker that renders every page of [turva.dev](https://turva.dev) at the edge, with a deterministic head and matching `/.well-known/` manifests. AI agents and scanners read the same payload as humans, straight from the Worker.
 
-This repository is the open-source reference implementation behind turva.dev, which scores 100/100 at Level 5 Agent-Native on isitagentready.com, Cloudflare’s agent-readiness scanner. The Worker is public on purpose: a buyer can read every line before deciding anything.
+This repository is the open-source reference implementation behind turva.dev, which scores 100/100 at Level 5 Agent-Native on isitagentready.com, Cloudflare's agent-readiness scanner. The Worker is public on purpose: a buyer can read every line before deciding anything.
 
 turva.dev offers agent-readiness audits and advisory, and the wider work of making the data agents act on and the decisions they make reliable, across use cases from commerce and monitoring to operations under bad connectivity.
 
@@ -11,7 +11,7 @@ What you buy is expertise and implementation, not access to a tool. The scoring 
 ## What it does
 
 * Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `<head>` (meta, OpenGraph, JSON-LD, canonical).
-* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `ucp`, and OAuth discovery (`oauth-authorization-server`), among others; the full inventory is in the Endpoints table below.
+* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `ucp`, and OAuth discovery (`oauth-authorization-server`), among others. The full inventory is in the Endpoints table below.
 * Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
 
 ## Scanner results
@@ -20,9 +20,7 @@ Measured on `https://turva.dev` on 2026-07-20.
 
 | Scanner | Result |
 |---|---|
-| Cloudflare Agent-Ready (isitagentready.com) | 100/100, Level 5 Agent-Native |
-
-Cloudflare Agent-Ready and isitagentready.com are the same scanner on two domains, so they count as one result.
+| isitagentready.com (Cloudflare) | 100/100, Level 5 Agent-Native |
 
 ### isitagentready.com category breakdown
 
@@ -40,7 +38,7 @@ Commerce is optional in the isitagentready model. turva.dev's commerce surface i
 
 ## Web security
 
-Agent-readiness is one axis; the domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-07-20.
+Agent-readiness is one axis. The domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-07-20.
 
 | Scanner | Result |
 |---|---|
@@ -169,14 +167,14 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 | `/robots.txt` | Crawler directives |
 | `/sitemap.xml` | URL index |
 | `/blog/feed.xml` | Blog RSS feed |
-| `/<indexnow-key>.txt` | IndexNow key file; a weekly cron resubmits the canonical URLs |
+| `/<indexnow-key>.txt` | IndexNow key file. A weekly cron resubmits the canonical URLs |
 | Aliases | `/ai.txt`, `/security.txt`, `/.well-known/mcp.json`, `/.well-known/openid-configuration`, `/.well-known/openapi.json`, favicons, and fediverse redirects (`host-meta`, `webfinger`, `nodeinfo`) |
 | `/llms-txt-validator` | llms.txt structure checker (HTML form, JSON for agents) |
 | `/badge` and `/badge.svg` | Agent-ready badge criteria and embeddable SVG |
 
 ## Deploy
 
-Requires a Cloudflare account and the `wrangler` CLI. No runtime secret is needed; the Worker renders the whole site itself.
+Requires a Cloudflare account and the `wrangler` CLI. No runtime secret is needed. The Worker renders the whole site itself.
 ```
 cd turva-worker/turva-worker
 npm install
