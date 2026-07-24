@@ -4,7 +4,11 @@
   "assets": {
     "directory": "./public"
   },
-  "workers_dev": true,
+  // Off on purpose: a *.workers.dev hostname would serve the whole site outside the
+  // turva.dev zone, where the zone rules (including the /llms-txt-validator rate-limit
+  // rule) do not apply and every canonical URL points somewhere else. Routes below are
+  // the only public entry points.
+  "workers_dev": false,
   "preview_urls": false,
   "ratelimits": [
     {
