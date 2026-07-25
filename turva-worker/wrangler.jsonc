@@ -26,6 +26,16 @@
     {
       "pattern": "turva.dev/*",
       "zone_name": "turva.dev"
+    },
+    {
+      // The apex is canonical. This route exists so www.turva.dev reaches the
+      // Worker at all: handleRequest already 301s it to the apex, but without a
+      // route no Worker runs on that hostname. The DNS record must stay proxied
+      // for this route to be hit; the A record's 192.0.2.1 is an RFC 5737
+      // documentation address, not a reachable origin, so an unproxied or
+      // unrouted www.turva.dev fails instead of serving anything.
+      "pattern": "www.turva.dev/*",
+      "zone_name": "turva.dev"
     }
   ],
   "triggers": {
