@@ -24,7 +24,7 @@ Measured on `https://turva.dev` on 2026-07-20.
 
 ### isitagentready.com category breakdown
 
-isitagentready.com groups its checks into five categories. turva.dev passes every check in four of them.
+isitagentready.com groups its checks into five categories. turva.dev passes every check in all five.
 
 | Category | Result |
 |---|---|
@@ -32,9 +32,9 @@ isitagentready.com groups its checks into five categories. turva.dev passes ever
 | Content | 100/100 |
 | Bot Access Control | 100/100 |
 | API, Auth, MCP & A2A Discovery | 100/100 |
-| Commerce | Optional |
+| Commerce | 100/100 |
 
-Commerce is optional in the isitagentready model. turva.dev's commerce surface is quote-on-request: it publishes a working x402 payment endpoint but does not wire machine settlement, and it does not declare a payment rail it does not have, so the checks it does not implement are left honestly red rather than faked.
+Commerce is optional in the isitagentready model, and turva.dev passes all five of its checks: x402, MPP, UCP, ACP and AP2. The payment surface is real rather than declared. A request to /api answers with an x402 402 challenge naming a wallet on Base, and the payable operations carry live Stripe payment links. Settlement is still quote-on-request, confirmed out of band instead of executed automatically, so the site claims no rail it does not have.
 
 ## Web security
 
