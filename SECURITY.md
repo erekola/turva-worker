@@ -9,6 +9,16 @@ currently deployed version is supported; there are no released version branches.
 | ------- | --------- |
 | Current (deployed from main) | :white_check_mark: |
 
+## Open advisories
+
+Dependabot advisories against this repository are in the build and test
+toolchain rather than in what ships. `turva-worker/package.json` declares no
+runtime `dependencies` at all. Its only entry is `wrangler`, under
+`devDependencies`, so the deployed Worker bundles no third-party runtime code
+and no advisory against this repository reaches production. They are still
+cleared as they appear, because this repository is a reference implementation
+people fork. Checked 2026-07-26.
+
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability, please report it privately
