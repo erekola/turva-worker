@@ -3,9 +3,11 @@
 // This is the deploy gate the site runs on itself before every ship.
 // Source of truth: tools/facts.json. MIT, same license as the repo.
 //   node tools/verify.mjs          static, offline-safe
-//   node tools/verify.mjs --live   also GET every declared URL and verify the
+//   node tools/verify.mjs --live   also GET every declared URL, verify the
 //                                  Ed25519 signatures of the four signed
-//                                  manifests against the published JWKS
+//                                  manifests against the published JWKS, and
+//                                  speak MCP to mcp.turva.dev to prove the signed
+//                                  server card matches the running server
 import { readFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { createPublicKey, verify as edVerify } from 'node:crypto';
@@ -209,6 +211,7 @@ if (LIVE) {
     try { const r = await fetch(u, {redirect:'follow'}); check(r.ok, `GET ${u} -> ${r.status}`); }
     catch (e) { bad(`GET ${u} -> ${e.code||e.message}`); }
   }
+  const fetchBytesMcp = async (p) => Buffer.from(await (await fetch(base + p)).arrayBuffer());
   // Verify the four signed manifests against the published JWKS. Public-key
   // verification only; the same check anyone can run from these two URLs.
   try {
@@ -228,6 +231,65 @@ if (LIVE) {
       check(valid, `signature valid: ${p}`);
     }
   } catch (e) { bad('signature verification: ' + (e.code||e.message)); }
+
+  // MCP parity: the signed server card must describe the server that is actually
+  // running. Nothing else here can see this. The static checks read files, the
+  // URL checks read bytes, and the signature check proves the card was not altered
+  // in transit, but a card can be perfectly signed and still promise more than the
+  // server implements. That is exactly what happened: until 2026-07-24 the card
+  // declared resources and prompts capabilities while the live server declared only
+  // tools and answered -32601 to both, for weeks, invisibly. So: speak the protocol.
+  try {
+    const MCP = 'https://mcp.turva.dev/mcp';
+    const rpc = async (method, params, sid) => {
+      const h = { 'content-type': 'application/json', accept: 'application/json, text/event-stream' };
+      if (sid) h['mcp-session-id'] = sid;
+      const r = await fetch(MCP, { method: 'POST', headers: h, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params: params || {} }) });
+      const t = await r.text();
+      const line = t.match(/^data: (.*)$/m); // Streamable HTTP answers as SSE
+      return { res: r, body: JSON.parse(line ? line[1] : t) };
+    };
+    const card = JSON.parse((await fetchBytesMcp('/.well-known/mcp/server-card.json')).toString());
+    const init = await rpc('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'turva-verify', version: '1' } });
+    const sid = init.res.headers.get('mcp-session-id');
+    const live = init.body.result || {};
+
+    check(live.serverInfo && live.serverInfo.version === facts.versions.mcp,
+      `MCP live version == facts.json ${facts.versions.mcp} (saw ${live.serverInfo && live.serverInfo.version})`);
+    check(card.serverInfo.version === facts.versions.mcp,
+      `server-card version == facts.json ${facts.versions.mcp} (saw ${card.serverInfo.version})`);
+    check(card.serverInfo.name === (live.serverInfo && live.serverInfo.name),
+      `server-card name == live name (${card.serverInfo.name})`);
+
+    const cardCaps = Object.keys(card.capabilities || {}).sort();
+    const liveCaps = Object.keys(live.capabilities || {}).sort();
+    check(cardCaps.join(',') === liveCaps.join(','),
+      `capabilities parity: card [${cardCaps}] == live [${liveCaps}]`);
+
+    // Every capability the card declares must answer its list method. A declared
+    // capability that returns -32601 is a declared surface that does not resolve.
+    const listMethod = { tools: 'tools/list', resources: 'resources/list', prompts: 'prompts/list' };
+    for (const cap of cardCaps) {
+      const m = listMethod[cap];
+      if (!m) { bad(`server-card declares unknown capability "${cap}"`); continue; }
+      const r = await rpc(m, {}, sid);
+      const err = r.body.error;
+      check(!err, `declared capability "${cap}" answers ${m}${err ? ' -> ' + err.code + ' ' + err.message : ''}`);
+    }
+    // And the reverse: a method the card does not declare must NOT quietly work,
+    // otherwise the card understates the server and agents never find the surface.
+    for (const [cap, m] of Object.entries(listMethod)) {
+      if (cardCaps.includes(cap)) continue;
+      const r = await rpc(m, {}, sid);
+      check(!!r.body.error, `undeclared "${cap}" correctly does not answer ${m}`);
+    }
+
+    const cardTools = (card.tools || []).map((t) => t.name).sort();
+    const liveList = await rpc('tools/list', {}, sid);
+    const liveTools = ((liveList.body.result && liveList.body.result.tools) || []).map((t) => t.name).sort();
+    check(cardTools.length > 0 && cardTools.join(',') === liveTools.join(','),
+      `tool-name parity: card [${cardTools}] == live [${liveTools}]`);
+  } catch (e) { bad('MCP parity: ' + (e.code || e.message)); }
 } else {
   console.log('\n(static run - add --live on a networked machine to GET every declared URL and verify signatures)');
 }
