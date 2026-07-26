@@ -103,7 +103,10 @@ for (const [name,val] of [['audit',facts.prices.audit],['advisory',facts.prices.
 }
 
 console.log('\nVersions');
-const sv = facts.versions.site.replace(/\./g,'\\.');
+// Escape every regex metacharacter, not only the dot: a version string is not
+// user input, but a partial escape is the same defect wherever it is copied,
+// and CodeQL flags it as one (turva-worker alert #2, 2026-07-26).
+const sv = facts.versions.site.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 check((src.worker.text.match(new RegExp(`"version":\\s*"${sv}"`,'g'))||[]).length>=2, `worker.js site version ${facts.versions.site} (>=2 manifests)`);
 check(src.worker.text.includes(`worker v${facts.versions.site}`), `worker.js header v${facts.versions.site}`);
 // package.json "version" is inert (private, wrangler ignores it) but the repo
@@ -121,7 +124,11 @@ console.log('\nTwin gate (prose from PAGE_MARKDOWN)');
 // not have; that is what this gate checks. Mutation-tested from both sides:
 // a planted literal paragraph and a misspelled section name both fail the
 // run, and a named exception that goes unused also fails the run.
-const twDecode = (s) => s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&#x27;/g,"'");
+// One pass over the whole entity set, not a chain of replaces. A chain that
+// takes &amp; first turns &amp;lt; into < , which is a double unescape; one
+// pass leaves it as &lt; (turva-worker alert #1, 2026-07-26).
+const TW_ENTITIES = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&#x27;': "'" };
+const twDecode = (s) => s.replace(/&(?:amp|lt|gt|quot|#39|#x27);/g, (m) => TW_ENTITIES[m]);
 const twSquash = (s) => s.replace(/https?:\/\//g,'').replace(/\s+/g,' ').replace(/ ([,.;:])/g,'$1').trim();
 const twHtml = (s) => twSquash(twDecode(s.replace(/<[^>]+>/g,' ')));
 const twFnBody = (name) => {
