@@ -78,7 +78,8 @@ Full inventory of all 36 routes: [docs/endpoints.md](docs/endpoints.md).
 
 ## Deploy
 
-Requires a Cloudflare account and the `wrangler` CLI. No runtime secret is needed. The Worker renders the whole site itself.
+Requires a Cloudflare account and the `wrangler` CLI. No runtime secret is needed. The Worker renders the whole site itself. The Worker project lives in a subdirectory of the same name, so the repeated path below is not a typo.
+
 ```
 cd turva-worker/turva-worker
 npm install
