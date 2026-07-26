@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.59.0 - og:image:alt made descriptive on the last four card pages (2026-07-26, from the saved live HTML). /guides, /legal, /contact and /tools repeated their own title in the alt text, which tells a screen reader and an agent nothing the title has not already said, while /, /services, /company and /blog were given real descriptions in v3.57.0. Each alt now describes what that share card actually shows, in the same form as the four that were already right, and twitter:image:alt is derived from the same field so one edit covers both. Content only, no signed surface touched, no re-sign. Carries v3.58.0: hero proof rebuilt as one two-line element (2026-07-26). v3.57.0 merged the two hero badge pills into one, which fixed the parallelism but not the rendering: the merged pill is long enough to wrap between "on" and "isitagentready.com" at narrow widths, and .badges li carried align-items:center, so the 100/100 sat vertically centred against a two-line text block instead of sitting on the first line. The pill is replaced by a .hero-proof box that states the claim on line one (100/100 - Level 5 - Agent-Native) and its source on line two (on isitagentready.com - measured <date>), with baseline alignment on the claim row and white-space:nowrap per segment rather than on the whole line, so line two breaks between the domain and the date and never inside either. The single-item <ul> is gone, the element is a <div>, and the .badges rules were removed because the homepage hero was their only user. The measurement date moves here from the terminal line v3.57.0 added, so it is still derived from the Evidence lede rather than hardcoded and still appears exactly once in the hero. PAGE_MARKDOWN is untouched, so the twin sentence verify.mjs anchors its agent-readiness Measured count to is unchanged. Also: the free validator now has a no-typing example. /tools and the validator page link /llms-txt-validator?url=turva.dev, which runs the eight checks against this site's own llms.txt, so a first-time visitor sees a real result without inventing a domain, and no third-party site is publicly graded to do it. No signed surface touched, no re-sign. Carries v3.57.0: homepage repetition pass (2026-07-26, patch list 4). The "What an agent sees" demo printed the first 14 markdown lines, which included the whole "Audits, advisory, and implementation for product teams" section that renders again immediately below it, so a reader met the same ~120 words twice; the block now stops after that heading and carries a visible truncation marker, and the intro says it shows the opening of the markdown rather than the whole response. The Evidence stat cards are gone: 100/100 was stated three times inside four lines (evidence lede, stat card, evidence bullet) and Internet.nl 98/100 twice (stat card, bullet). The cards were the copies carrying no link, while the bullets that stay carry both the numbers and the scanner URLs the markdown twin needs, so the redundancy was removed from HTML chrome only and PAGE_MARKDOWN was untouched (verify.mjs anchors its agent-readiness n>=3 and security n>=1 Measured counts to the twin). The now-unused .stats and .stat CSS rules went with them. The two hero badge pills were not parallel, the second continued the first, and are one pill now; the verification terminal prints the measurement date, derived from the Evidence lede rather than hardcoded, so the hero no longer shows 100/100 with no date attached and no fifth measured-date sync point was created. The "Who I am" closing sentence dropped two more repetitions of the "either ... or it does not" construction plus the aphoristic "Measurable either way" tail, leaving the single instance in process step 03. Subpage og:image:alt on /services, /company and /blog described nothing ("turva.dev services and pricing", "turva.dev company information", "turva.dev blog") and now describe what each share card actually shows. Two share cards still said "independent scanners" in the plural four days after v3.55.1 made the copy singular: og-company.jpg and og-blog.jpg were regenerated to one scanner. No signed surface touched, no re-sign. Carries v3.56.0: full-Worker audit fixes (2026-07-24 taysauditti). The signed MCP server card no longer declares capabilities the server does not implement: resources and prompts are dropped from capabilities, because the live server declares only tools and answers -32601 Method not found to resources/list, prompts/list and resources/templates/list, so the Ed25519 signature was attesting to a bigger promise than the code delivers (measured 2026-07-24, same version, same minute, cache-buster confirmed). MCP version to 1.2.7, and the card MUST be re-signed with julkaisu/resign-server-card-local.mjs before deploy. The ACP discovery document declares https://turva.dev/api/acp as api_base_url and that URL returned the site's HTML 404; it now returns a small JSON index naming the checkout_sessions resource, the same treatment /api and /api/v1 already had. workers_dev is off in wrangler.jsonc, so the site is served on the turva.dev zone only and not additionally on a *.workers.dev hostname outside the zone's rules. llms.txt, ai-plugin.json and agent.json are untouched, so the server card is the only manifest re-signed. Carries v3.55.1: P2-8 wording fix: the agent-readiness scanner is singular in the three remaining plural copy spots (validator FAQ, buyer guide answer + its FAQ JSON-LD copy, company referee line); the method now reads as one independent scanner plus published security scans everywhere current; content-only change, no signed surface touched, no re-sign. Carries v3.55.0: Codeberg mirrors removed (Tek-64): Codeberg's new Terms of Use (2026-07-24 banner) disallow cryptocurrency-related projects and projects mostly written with generative AI tools, both of which describe this repo (real on-chain wallet in the payment surface, AI-assisted build), so the mirrors were deleted proactively the same day. Changes: a dated July 24 update note added to /blog/moving-source-to-codeberg after the July 21 note, the /tools validator paragraph drops the Codeberg mirror clause (GitHub only), and the sameAs arrays (#business, #person, blog-author JSON-LD and HOME_JSON) now list github.com/erekola instead of codeberg.org/erekola, aligning machine-readable identity with the canonical host (closes the 2026-07-24 audit P2-7). No signed surface changes: llms.txt keeps only the dated post title, so no re-sign. Carries v3.54.1: two Show HN audit corrections (2026-07-24 critical-reader audit): the moving-source-to-codeberg post gains a dated July 21 update note recording the Tek-59 flip back (GitHub canonical, Codeberg push mirror; the July 7 note's "Codeberg stays canonical for every source link" no longer described the live site), and the signed llms.txt gains the missing /blog/finishing-the-optional-commerce-checks entry (in PAGE_MARKDOWN, the /blog index and the sitemap since v3.52.0, never listed in llms.txt), so llms.txt MUST be re-signed (julkaisu/resign-llms-local.mjs) before deploy; SITEMAP_LASTMOD bumped to 2026-07-24. Carries v3.54.0: a trailing slash on any page path now redirects 301 to the canonical slashless URL. Before this only /services/, /company/, /contact/ and /legal/ worked, because those four were hand-written into LEGACY_REDIRECTS; /guides/, /blog/, /tools/, /badge/, /llms-txt-validator/ and every /guides/<slug>/ and /blog/<slug>/ returned 404. The normalizer derives the canonical path from PAGE_MARKDOWN instead of a maintained list, so a new page is covered the day it is added, and a path with no PAGE_MARKDOWN entry still returns an honest 404. Agent-API routes are unaffected: /api and /api/ keep returning the x402 402 challenge and /api/v1 and /api/v1/ keep returning the endpoint index. The Hashnode cross-post branch tolerates a trailing slash too, so /blog/<guide-slug>/ redirects straight to the guide. Carries v3.53.2: reworded the enforcing-the-rate-limit blog post meta description, dropping the orphaned scanner-point clause left over when the StartupHub scoreboard section was removed (no signed surface changed, no re-sign). Carries v3.53.1: finished the StartupHub removal: the remaining dated blog posts cleaned to one scanner (b2b reframed to isitagentready Level, cheaper-pages-revisited and re-checking-the-guides and publishing-an-ai-catalog de-attributed, the rate-limit post's StartupHub scoreboard section removed) and two meta descriptions; the ai-plugin/agent description_for_model made singular and re-signed; internal KB (context.md, audit method docs) aligned. No served surface names StartupHub now outside this dated version-history comment. Carries v3.53.0: StartupHub removed completely site-wide (Tek-60): agent-readiness copy on services, process, contact and JSON-LD moved from two independent scanners to one (isitagentready), with the published security scans as the second independent measurement; three blog posts built on the two-scanner method unpublished (two-scanner-audit-method, auditing-the-auditor, honest-agent-commerce-checks) and three lighter mentions cleaned (cheaper-pages-revisited, agent-readiness-finnish-b2b, moving-off-prerender); the signed llms.txt dropped those three post entries and was re-signed; dated measurement snapshots kept. Carries v3.52.1: footer Business ID linked to the YTJ business register (tietopalvelu.ytj.fi/yritys/3600281-7); display only, no scanner-score change. Carries v3.52.0: new blog post /blog/finishing-the-optional-commerce-checks on completing the optional commerce checks (x402 and MPP green, with the real Stripe product links), added to PAGE_MARKDOWN, the /blog index, sitemap, meta and canonical, plus a Related pointer from the earlier honest-agent-commerce-checks post; agent-readiness and web-security measured dates refreshed to 2026-07-20 with scores unchanged (isitagentready 100/100 Level 5, Hardenize 13/13, Internet.nl 98/100). Carries v3.51.1: homepage scan board and evidence caption now show Commerce 100/100 instead of "optional", reflecting the v3.51.0 commerce-green result (Commerce 50 -> 100 on isitagentready; display only, no scanner-score change). Carries v3.51.0: x402 and MPP driven green on isitagentready without faking settlement: MPP x-payment-info flattened to the single-offer shorthand (intent/method/amount direct, the form the scanner reads and the IETF payment-discovery draft permits); and because the scanner probes GET /api for a 402, the /api and /api/ routes now return the canonical x402 402 challenge (real payTo wallet on Base, resource /api) while the free endpoint index moves to /api/v1. Free discovery stays open at /openapi.json, /.well-known/* and /api/v1; the 402 is a real challenge, settlement stays quote-on-request and no auto-settlement is claimed. Carries v3.50.0: Stripe added as a real fiat/card payment rail (turva.dev's Stripe account is active, charges enabled): three live Payment Links (audit 6500 EUR one-time, advisory 3000 EUR/month, implementation 1500 EUR/day) and a stripe offer (method stripe, amount in EUR cents, currency eur, the Payment Link URL in the description) added alongside the x402 offer in every payable operation's OpenAPI x-payment-info, so MPP payment discovery detects a real method turva actually accepts. This is not the fake Stripe declaration removed earlier: the rail is real now. x402 stays declared too; isitagentready still does not detect it and x402 is optional Commerce, so it is left as an honest red. Carries v3.48.0: x402 migrated v1 to v2 so the sole remaining scanner (isitagentready) can detect the payment surface: CAIP-2 network eip155:8453 (was base), the amount field (was the old required-amount key), x402Version 2, and the standard PAYMENT-REQUIRED base64 header on the 402 responses (serve402 and serveX402Root) alongside the existing accept-payment/x-payment-required. Still quote-on-request: the 402 challenge is real, settlement is not auto-wired. mpp stays honestly red because isitagentready's check only accepts tempo/stripe/lightning/card, not turva's real x402/USDC method. Carries v3.47.0: StartupHub removed site-wide: isitagentready.com (Cloudflare's scanner) is the sole named scanner, the homepage hero, terminal, board, stats and evidence rebuilt to its 100/100 Level 5 result plus the Internet.nl security stat, and #1, A+ and the Why-99 callout dropped; every startuphub.ai reference and link is gone from the front door, README, docs/agent-readiness.md, facts.json and verify.mjs (dated blog posts kept as history). x402-mesh removed from all surfaces (var, route, Link header, api-catalog, OpenAPI, llms.txt, ai.txt) and llms.txt re-signed. OpenAPI x-payment-info reshaped to the MPP standard (offers with intent charge, method x402, amount in USDC base units, currency the USDC contract on Base) plus a top-level x-service-info, so mpp and x402 are declared in the standard discovery form; settlement stays quote-on-request and the 402 challenge is authoritative. Carries v3.46.0: the /llms-txt-validator page now lists the eighth structural check (inline HTML in the file is flagged as a warning, the no-html check the JSON and npm package already emit); What it checks and the validator FAQ updated from seven to eight, no llms.txt change and no re-sign. Carries v3.45.0: blog post /blog/the-twin-is-the-page (the T3 conversion writeup) added to PAGE_MARKDOWN, the /blog index, the sitemap (LASTMOD 2026-07-19) and the signed llms.txt, re-signed. Carries v3.44.0: the services MCP card's duplicated transport bullet dropped from the twin. T3 (Tek-56) complete: all ten card pages render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so every sentence lives once and a page cannot drift from its markdown twin. Structure stays hand-built (kvs grids, the validator form, FAQ shells, price cards, hero/terminal/board/stats/steps chrome and the contact block on the homepage), and tools/verify.mjs guards the end state: no literal prose paragraphs in card functions outside two named homepage exceptions, every twin section rendered or declared markdown-only. Carries v3.42.0: erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
+// turva.dev worker v3.60.0 - og:image:alt made descriptive on every guide and blog post (2026-07-26, from the first tools/live-dump.mjs run). Forty-one per-post cards carried the page title again as their alt text, which is the same defect v3.59.0 fixed on the four card pages: a screen reader and an agent got nothing the title had not already said. Each alt now reads "turva.dev guide card: ..." or "turva.dev blog card: ..." followed by the summary from that page's own meta description, so the alt describes what the card shows and cannot drift from the page. twitter:image:alt is derived from the same field. Content only, no signed surface touched, no re-sign. Carries v3.59.0: og:image:alt made descriptive on the last four card pages (2026-07-26, from the saved live HTML). /guides, /legal, /contact and /tools repeated their own title in the alt text, which tells a screen reader and an agent nothing the title has not already said, while /, /services, /company and /blog were given real descriptions in v3.57.0. Each alt now describes what that share card actually shows, in the same form as the four that were already right, and twitter:image:alt is derived from the same field so one edit covers both. Content only, no signed surface touched, no re-sign. Carries v3.58.0: hero proof rebuilt as one two-line element (2026-07-26). v3.57.0 merged the two hero badge pills into one, which fixed the parallelism but not the rendering: the merged pill is long enough to wrap between "on" and "isitagentready.com" at narrow widths, and .badges li carried align-items:center, so the 100/100 sat vertically centred against a two-line text block instead of sitting on the first line. The pill is replaced by a .hero-proof box that states the claim on line one (100/100 - Level 5 - Agent-Native) and its source on line two (on isitagentready.com - measured <date>), with baseline alignment on the claim row and white-space:nowrap per segment rather than on the whole line, so line two breaks between the domain and the date and never inside either. The single-item <ul> is gone, the element is a <div>, and the .badges rules were removed because the homepage hero was their only user. The measurement date moves here from the terminal line v3.57.0 added, so it is still derived from the Evidence lede rather than hardcoded and still appears exactly once in the hero. PAGE_MARKDOWN is untouched, so the twin sentence verify.mjs anchors its agent-readiness Measured count to is unchanged. Also: the free validator now has a no-typing example. /tools and the validator page link /llms-txt-validator?url=turva.dev, which runs the eight checks against this site's own llms.txt, so a first-time visitor sees a real result without inventing a domain, and no third-party site is publicly graded to do it. No signed surface touched, no re-sign. Carries v3.57.0: homepage repetition pass (2026-07-26, patch list 4). The "What an agent sees" demo printed the first 14 markdown lines, which included the whole "Audits, advisory, and implementation for product teams" section that renders again immediately below it, so a reader met the same ~120 words twice; the block now stops after that heading and carries a visible truncation marker, and the intro says it shows the opening of the markdown rather than the whole response. The Evidence stat cards are gone: 100/100 was stated three times inside four lines (evidence lede, stat card, evidence bullet) and Internet.nl 98/100 twice (stat card, bullet). The cards were the copies carrying no link, while the bullets that stay carry both the numbers and the scanner URLs the markdown twin needs, so the redundancy was removed from HTML chrome only and PAGE_MARKDOWN was untouched (verify.mjs anchors its agent-readiness n>=3 and security n>=1 Measured counts to the twin). The now-unused .stats and .stat CSS rules went with them. The two hero badge pills were not parallel, the second continued the first, and are one pill now; the verification terminal prints the measurement date, derived from the Evidence lede rather than hardcoded, so the hero no longer shows 100/100 with no date attached and no fifth measured-date sync point was created. The "Who I am" closing sentence dropped two more repetitions of the "either ... or it does not" construction plus the aphoristic "Measurable either way" tail, leaving the single instance in process step 03. Subpage og:image:alt on /services, /company and /blog described nothing ("turva.dev services and pricing", "turva.dev company information", "turva.dev blog") and now describe what each share card actually shows. Two share cards still said "independent scanners" in the plural four days after v3.55.1 made the copy singular: og-company.jpg and og-blog.jpg were regenerated to one scanner. No signed surface touched, no re-sign. Carries v3.56.0: full-Worker audit fixes (2026-07-24 taysauditti). The signed MCP server card no longer declares capabilities the server does not implement: resources and prompts are dropped from capabilities, because the live server declares only tools and answers -32601 Method not found to resources/list, prompts/list and resources/templates/list, so the Ed25519 signature was attesting to a bigger promise than the code delivers (measured 2026-07-24, same version, same minute, cache-buster confirmed). MCP version to 1.2.7, and the card MUST be re-signed with julkaisu/resign-server-card-local.mjs before deploy. The ACP discovery document declares https://turva.dev/api/acp as api_base_url and that URL returned the site's HTML 404; it now returns a small JSON index naming the checkout_sessions resource, the same treatment /api and /api/v1 already had. workers_dev is off in wrangler.jsonc, so the site is served on the turva.dev zone only and not additionally on a *.workers.dev hostname outside the zone's rules. llms.txt, ai-plugin.json and agent.json are untouched, so the server card is the only manifest re-signed. Carries v3.55.1: P2-8 wording fix: the agent-readiness scanner is singular in the three remaining plural copy spots (validator FAQ, buyer guide answer + its FAQ JSON-LD copy, company referee line); the method now reads as one independent scanner plus published security scans everywhere current; content-only change, no signed surface touched, no re-sign. Carries v3.55.0: Codeberg mirrors removed (Tek-64): Codeberg's new Terms of Use (2026-07-24 banner) disallow cryptocurrency-related projects and projects mostly written with generative AI tools, both of which describe this repo (real on-chain wallet in the payment surface, AI-assisted build), so the mirrors were deleted proactively the same day. Changes: a dated July 24 update note added to /blog/moving-source-to-codeberg after the July 21 note, the /tools validator paragraph drops the Codeberg mirror clause (GitHub only), and the sameAs arrays (#business, #person, blog-author JSON-LD and HOME_JSON) now list github.com/erekola instead of codeberg.org/erekola, aligning machine-readable identity with the canonical host (closes the 2026-07-24 audit P2-7). No signed surface changes: llms.txt keeps only the dated post title, so no re-sign. Carries v3.54.1: two Show HN audit corrections (2026-07-24 critical-reader audit): the moving-source-to-codeberg post gains a dated July 21 update note recording the Tek-59 flip back (GitHub canonical, Codeberg push mirror; the July 7 note's "Codeberg stays canonical for every source link" no longer described the live site), and the signed llms.txt gains the missing /blog/finishing-the-optional-commerce-checks entry (in PAGE_MARKDOWN, the /blog index and the sitemap since v3.52.0, never listed in llms.txt), so llms.txt MUST be re-signed (julkaisu/resign-llms-local.mjs) before deploy; SITEMAP_LASTMOD bumped to 2026-07-24. Carries v3.54.0: a trailing slash on any page path now redirects 301 to the canonical slashless URL. Before this only /services/, /company/, /contact/ and /legal/ worked, because those four were hand-written into LEGACY_REDIRECTS; /guides/, /blog/, /tools/, /badge/, /llms-txt-validator/ and every /guides/<slug>/ and /blog/<slug>/ returned 404. The normalizer derives the canonical path from PAGE_MARKDOWN instead of a maintained list, so a new page is covered the day it is added, and a path with no PAGE_MARKDOWN entry still returns an honest 404. Agent-API routes are unaffected: /api and /api/ keep returning the x402 402 challenge and /api/v1 and /api/v1/ keep returning the endpoint index. The Hashnode cross-post branch tolerates a trailing slash too, so /blog/<guide-slug>/ redirects straight to the guide. Carries v3.53.2: reworded the enforcing-the-rate-limit blog post meta description, dropping the orphaned scanner-point clause left over when the StartupHub scoreboard section was removed (no signed surface changed, no re-sign). Carries v3.53.1: finished the StartupHub removal: the remaining dated blog posts cleaned to one scanner (b2b reframed to isitagentready Level, cheaper-pages-revisited and re-checking-the-guides and publishing-an-ai-catalog de-attributed, the rate-limit post's StartupHub scoreboard section removed) and two meta descriptions; the ai-plugin/agent description_for_model made singular and re-signed; internal KB (context.md, audit method docs) aligned. No served surface names StartupHub now outside this dated version-history comment. Carries v3.53.0: StartupHub removed completely site-wide (Tek-60): agent-readiness copy on services, process, contact and JSON-LD moved from two independent scanners to one (isitagentready), with the published security scans as the second independent measurement; three blog posts built on the two-scanner method unpublished (two-scanner-audit-method, auditing-the-auditor, honest-agent-commerce-checks) and three lighter mentions cleaned (cheaper-pages-revisited, agent-readiness-finnish-b2b, moving-off-prerender); the signed llms.txt dropped those three post entries and was re-signed; dated measurement snapshots kept. Carries v3.52.1: footer Business ID linked to the YTJ business register (tietopalvelu.ytj.fi/yritys/3600281-7); display only, no scanner-score change. Carries v3.52.0: new blog post /blog/finishing-the-optional-commerce-checks on completing the optional commerce checks (x402 and MPP green, with the real Stripe product links), added to PAGE_MARKDOWN, the /blog index, sitemap, meta and canonical, plus a Related pointer from the earlier honest-agent-commerce-checks post; agent-readiness and web-security measured dates refreshed to 2026-07-20 with scores unchanged (isitagentready 100/100 Level 5, Hardenize 13/13, Internet.nl 98/100). Carries v3.51.1: homepage scan board and evidence caption now show Commerce 100/100 instead of "optional", reflecting the v3.51.0 commerce-green result (Commerce 50 -> 100 on isitagentready; display only, no scanner-score change). Carries v3.51.0: x402 and MPP driven green on isitagentready without faking settlement: MPP x-payment-info flattened to the single-offer shorthand (intent/method/amount direct, the form the scanner reads and the IETF payment-discovery draft permits); and because the scanner probes GET /api for a 402, the /api and /api/ routes now return the canonical x402 402 challenge (real payTo wallet on Base, resource /api) while the free endpoint index moves to /api/v1. Free discovery stays open at /openapi.json, /.well-known/* and /api/v1; the 402 is a real challenge, settlement stays quote-on-request and no auto-settlement is claimed. Carries v3.50.0: Stripe added as a real fiat/card payment rail (turva.dev's Stripe account is active, charges enabled): three live Payment Links (audit 6500 EUR one-time, advisory 3000 EUR/month, implementation 1500 EUR/day) and a stripe offer (method stripe, amount in EUR cents, currency eur, the Payment Link URL in the description) added alongside the x402 offer in every payable operation's OpenAPI x-payment-info, so MPP payment discovery detects a real method turva actually accepts. This is not the fake Stripe declaration removed earlier: the rail is real now. x402 stays declared too; isitagentready still does not detect it and x402 is optional Commerce, so it is left as an honest red. Carries v3.48.0: x402 migrated v1 to v2 so the sole remaining scanner (isitagentready) can detect the payment surface: CAIP-2 network eip155:8453 (was base), the amount field (was the old required-amount key), x402Version 2, and the standard PAYMENT-REQUIRED base64 header on the 402 responses (serve402 and serveX402Root) alongside the existing accept-payment/x-payment-required. Still quote-on-request: the 402 challenge is real, settlement is not auto-wired. mpp stays honestly red because isitagentready's check only accepts tempo/stripe/lightning/card, not turva's real x402/USDC method. Carries v3.47.0: StartupHub removed site-wide: isitagentready.com (Cloudflare's scanner) is the sole named scanner, the homepage hero, terminal, board, stats and evidence rebuilt to its 100/100 Level 5 result plus the Internet.nl security stat, and #1, A+ and the Why-99 callout dropped; every startuphub.ai reference and link is gone from the front door, README, docs/agent-readiness.md, facts.json and verify.mjs (dated blog posts kept as history). x402-mesh removed from all surfaces (var, route, Link header, api-catalog, OpenAPI, llms.txt, ai.txt) and llms.txt re-signed. OpenAPI x-payment-info reshaped to the MPP standard (offers with intent charge, method x402, amount in USDC base units, currency the USDC contract on Base) plus a top-level x-service-info, so mpp and x402 are declared in the standard discovery form; settlement stays quote-on-request and the 402 challenge is authoritative. Carries v3.46.0: the /llms-txt-validator page now lists the eighth structural check (inline HTML in the file is flagged as a warning, the no-html check the JSON and npm package already emit); What it checks and the validator FAQ updated from seven to eight, no llms.txt change and no re-sign. Carries v3.45.0: blog post /blog/the-twin-is-the-page (the T3 conversion writeup) added to PAGE_MARKDOWN, the /blog index, the sitemap (LASTMOD 2026-07-19) and the signed llms.txt, re-signed. Carries v3.44.0: the services MCP card's duplicated transport bullet dropped from the twin. T3 (Tek-56) complete: all ten card pages render their prose from PAGE_MARKDOWN at request time via the md* helpers after markdownToHtml, so every sentence lives once and a page cannot drift from its markdown twin. Structure stays hand-built (kvs grids, the validator form, FAQ shells, price cards, hero/terminal/board/stats/steps chrome and the contact block on the homepage), and tools/verify.mjs guards the end state: no literal prose paragraphs in card functions outside two named homepage exceptions, every twin section rendered or declared markdown-only. Carries v3.42.0: erikrekola.link dropped from the #person and blog-author sameAs arrays (the two Carries-notes below describe the earlier state): Gravatar is the single profile pointer, matching Wikidata P856. Carries v3.39.0: StartupHub row removed from the footer: the company-profile URL (startuphub.ai/startups/turva-dev) has served 404 to logged-out visitors since 2026-07-17 and a footer link to a 404 fails the read-every-line bar; the leaderboard links (startuphub.ai/agent-readiness) are a different path and stay. Restore the row if the listing returns. Carries v3.38.0: Gravatar footer row with rel="me" to gravatar.com/erekola beside the Mastodon rel="me" row, and gravatar.com/erekola in the #person and blog-author sameAs arrays next to erikrekola.link. Carries v3.37.0: tools in every nav menu (four inline nav blocks + cardPageNav link /tools between blog and company; the page shipped in v3.34.0 but no menu linked it). Carries v3.36.0: SITEMAP_LASTMOD unstuck from 2026-07-02 (now 2026-07-18; bump it whenever page content changes), agent-secret-hygiene gets its own OG card, /checkout redirects to /services, and the MCP server card moves to 1.2.2 (index.ts "registered company" corrected to "registered business", re-signed). Carries v3.35.0 (npm package on /tools + validator FAQ, erikrekola.link in sameAs). Carries v3.34.0 (/tools page), v3.33.0 (rate limit post in signed llms.txt) and the v3.32.0 homepage design patch batch: og:image:alt carries the scanner claims, hero + terminal + evidence rows unified to the corrected attribution (100/100 + Level 5 isitagentready.com, 99/100 + A+ + #1 startuphub.ai), a "Why 99 and not 100?" callout on the scan board in both twins linking the rate limit post, two example paragraphs pruned, audit tag is fixed scope. Standing rate limit state unchanged since v3.29/v3.30: RateLimit-Policy is the only rate limit field sent (draft-11 static policy form), enforcement 100/60 s per IP per CF location via the Workers binding, 429 + Retry-After past it, fail open; the draft RateLimit field is not sent because its r parameter is REQUIRED and limit() returns only { success }.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -2537,7 +2537,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.59.0",
+    "version": "3.60.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -2779,7 +2779,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.59.0",
+  "version": "3.60.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -3393,14 +3393,14 @@ var META_BY_PATH = {
     description: "Taking the last two optional commerce checks, x402 and MPP, to green on isitagentready without faking settlement, and what the scanner actually probes.",
     date: "2026-07-20",
     image: "/og-finishing-the-optional-commerce-checks.jpg",
-    imageAlt: "Finishing the optional commerce checks"
+    imageAlt: "turva.dev blog card: Taking the last two optional commerce checks, x402 and MPP, to green on isitagentready without faking settlement, and what the scanner actually probes."
   },
   "/blog/the-twin-is-the-page": {
     title: "The twin is the page | turva.dev",
     description: "Ten card pages now render their prose from the markdown twin. What the parity gate caught before it retired and the check that replaced it.",
     date: "2026-07-19",
     image: "/og-the-twin-is-the-page.jpg",
-    imageAlt: "The twin is the page"
+    imageAlt: "turva.dev blog card: Ten card pages now render their prose from the markdown twin. What the parity gate caught before it retired and the check that replaced it."
   },
   "/blog/enforcing-the-rate-limit-i-advertised": {
     title: "Every response promised a rate limit | turva.dev",
@@ -3421,35 +3421,35 @@ var META_BY_PATH = {
     description: "Coding agents run with your shell, so plaintext secrets on disk are exposed to them. Move git auth to a credential manager and the rest into an OS-encrypted vault.",
     date: "2026-07-12",
     image: "/og-agent-secret-hygiene.jpg",
-    imageAlt: "Secret hygiene when an agent works in your repo"
+    imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
   },
   "/blog/agent-readiness-finnish-b2b": {
     title: "Agent-readiness of Finnish B2B sites | turva.dev",
     description: "I ran an independent scanner over sixteen Finnish B2B sites. Almost every one landed at isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere.",
     date: "2026-07-07",
     image: "/og-agent-readiness-finnish-b2b.jpg",
-    imageAlt: "Agent-readiness of Finnish B2B sites"
+    imageAlt: "turva.dev blog card: I ran an independent scanner over sixteen Finnish B2B sites. Almost every one landed at isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere."
   },
   "/blog/honesty-and-the-checker": {
     title: "When honesty and the checker disagree | turva.dev",
     description: "Making this site's auth.md cleaner made the scanner fail. The honest form was the precise one, neither gutted nor padded to please the check.",
     date: "2026-07-06",
     image: "/og-honesty-and-the-checker.jpg",
-    imageAlt: "When honesty and the checker disagree"
+    imageAlt: "turva.dev blog card: Making this site's auth.md cleaner made the scanner fail. The honest form was the precise one, neither gutted nor padded to please the check."
   },
   "/blog/re-checking-the-guides": {
     title: "Four AI agents re-checked the guides | turva.dev",
     description: "Four AI agents re-read the guides against the specifications behind them. One high finding, one expired draft, six small fixes. The scanners never noticed.",
     date: "2026-07-04",
     image: "/og-re-checking-the-guides.jpg",
-    imageAlt: "Four AI agents re-checked the guides"
+    imageAlt: "turva.dev blog card: Four AI agents re-read the guides against the specifications behind them."
   },
   "/blog/cheaper-pages-revisited": {
     title: "The page grew, the agent bill did not | turva.dev",
     description: "The site kept growing after June's token-cost post. The 4 July scan reports an 83% token saving between the HTML and markdown forms.",
     date: "2026-07-04",
     image: "/og-cheaper-pages-revisited.jpg",
-    imageAlt: "The page grew, the agent bill did not"
+    imageAlt: "turva.dev blog card: The site kept growing after June's token-cost post. The 4 July scan reports an 83% token saving between the HTML and markdown forms."
   },
 
   "/blog/moving-source-to-codeberg": {
@@ -3457,14 +3457,14 @@ var META_BY_PATH = {
     description: "GitHub's spam filter silently hid this site's source from everyone but its owner for two weeks. The log of the 404s, the fix, and the move to Codeberg.",
     date: "2026-07-04",
     image: "/og-moving-source-to-codeberg.jpg",
-    imageAlt: "Moving the source from GitHub to Codeberg"
+    imageAlt: "turva.dev blog card: GitHub's spam filter silently hid this site's source from everyone but its owner for two weeks."
   },
   "/blog/free-llms-txt-validator": {
     title: "A free llms.txt validator | turva.dev",
     description: "turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored.",
     date: "2026-07-02",
     image: "/og-free-llms-txt-validator.jpg",
-    imageAlt: "A free llms.txt validator"
+    imageAlt: "turva.dev blog card: turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored."
   },
   "/tools": {
     title: "Free agent-readiness tools | turva.dev",
@@ -3495,74 +3495,74 @@ var META_BY_PATH = {
     description: "An agent pays to read your site in tokens, and an HTML-only page is expensive. How markdown content negotiation cuts that cost.",
     date: "2026-06-26",
     image: "/og-cheaper-pages-for-agents.jpg",
-    imageAlt: "What an agent pays to read your site"
+    imageAlt: "turva.dev blog card: An agent pays to read your site in tokens, and an HTML-only page is expensive."
   },
   "/blog/verifiable-agent-identity": {
     title: "When an agent can prove it is Claude | turva.dev",
     description: "Web Bot Auth gives an AI agent a verifiable, signed identity a site can check. What the tag is, where Claude stands today, and how agent-readiness uses it.",
     date: "2026-06-25",
     image: "/og-verifiable-agent-identity.jpg",
-    imageAlt: "When an agent can prove it is Claude"
+    imageAlt: "turva.dev blog card: Web Bot Auth gives an AI agent a verifiable, signed identity a site can check."
   },
   "/blog/reliable-agent-decisions": {
     title: "What makes an AI agent's decisions reliable | turva.dev",
     description: "What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do.",
     date: "2026-06-22",
     image: "/og-reliable-agent-decisions.jpg",
-    imageAlt: "What makes an AI agent's decisions reliable"
+    imageAlt: "turva.dev blog card: What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do."
   },
   "/blog/moving-off-prerender": {
     title: "Moving turva.dev off prerender.io | turva.dev",
     description: "The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop. Verified 100/100 Level 5 by an independent scanner.",
     date: "2026-06-20",
     image: "/og-moving-off-prerender.jpg",
-    imageAlt: "Moving turva.dev off prerender.io"
+    imageAlt: "turva.dev blog card: The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop."
   },
   "/guides/agent-commerce-discovery": {
     title: "Agent commerce discovery: A2A, AP2, and ACP | turva.dev",
     description: "A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint.",
     image: "/og-guide-agent-commerce-discovery.jpg",
-    imageAlt: "Agent commerce discovery: A2A, AP2, and ACP"
+    imageAlt: "turva.dev guide card: A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint."
   },
   "/blog/owning-your-fediverse-identity": {
     title: "Owning your fediverse identity | turva.dev",
     description: "Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker.",
     date: "2026-06-21",
     image: "/og-owning-your-fediverse-identity.jpg",
-    imageAlt: "Owning your fediverse identity"
+    imageAlt: "turva.dev blog card: Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker."
   },
   "/guides/agentic-resource-discovery": {
     title: "Agentic Resource Discovery and ai-catalog.json | turva.dev",
     description: "Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation.",
     image: "/og-guide-agentic-resource-discovery.jpg",
-    imageAlt: "Agentic Resource Discovery and ai-catalog.json"
+    imageAlt: "turva.dev guide card: Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation."
   },
   "/guides/open-knowledge-format": {
     title: "Open Knowledge Format (OKF) explained | turva.dev",
     description: "What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness.",
     image: "/og-guide-open-knowledge-format.jpg",
-    imageAlt: "Open Knowledge Format (OKF) explained"
+    imageAlt: "turva.dev guide card: What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness."
   },
   "/blog/agent-access-is-now-a-setting": {
     title: "Agent access is now a setting | turva.dev",
     description: "Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration. What that changes for agent readiness.",
     date: "2026-07-02",
     image: "/og-agent-access-is-now-a-setting.jpg",
-    imageAlt: "Agent access is now a setting"
+    imageAlt: "turva.dev blog card: Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration."
   },
   "/blog/publishing-an-ai-catalog": {
     title: "Publishing an ai-catalog.json for agentic discovery | turva.dev",
     description: "Google and a Linux Foundation group published Agentic Resource Discovery in 2026. turva.dev now serves an ai-catalog.json indexing its agent surfaces.",
     date: "2026-06-29",
     image: "/og-publishing-an-ai-catalog.jpg",
-    imageAlt: "Publishing an ai-catalog.json for agentic discovery"
+    imageAlt: "turva.dev blog card: Google and a Linux Foundation group published Agentic Resource Discovery in 2026."
   },
   "/blog/open-knowledge-format": {
     title: "What the Open Knowledge Format is, and what it is not | turva.dev",
     description: "Google Cloud shipped the Open Knowledge Format. What it is, what it is not yet, and how it relates to an agent-readiness audit.",
     date: "2026-06-27",
     image: "/og-open-knowledge-format.jpg",
-    imageAlt: "What the Open Knowledge Format is, and what it is not"
+    imageAlt: "turva.dev blog card: Google Cloud shipped the Open Knowledge Format. What it is, what it is not yet, and how it relates to an agent-readiness audit."
   },
   "/": {
     title: "Agent-readiness audits and advisory · turva.dev",
@@ -3603,127 +3603,127 @@ var META_BY_PATH = {
     title: "What an agent-readiness audit is | turva.dev",
     description: "An agent-readiness audit measures how well AI agents can discover, read, and act on a website or API, scored against current standards by an independent scanner.",
     image: "/og-guide-agent-readiness-audit.jpg",
-    imageAlt: "What an agent-readiness audit is"
+    imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read, and act on a website or API, scored against current standards by an independent scanner."
   },
   "/guides/llms-txt": {
     title: "llms.txt explained | turva.dev",
     description: "llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives, and how it differs from robots.txt and sitemaps.",
     image: "/og-guide-llms-txt.jpg",
-    imageAlt: "llms.txt explained"
+    imageAlt: "turva.dev guide card: llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives, and how it differs from robots.txt and sitemaps."
   },
   "/guides/mcp-server-card": {
     title: "MCP server cards explained | turva.dev",
     description: "An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and the tools it exposes. What it is and why it matters.",
     image: "/og-guide-mcp-server-card.jpg",
-    imageAlt: "MCP server cards explained"
+    imageAlt: "turva.dev guide card: An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and the tools it exposes."
   },
   "/guides/agents-json": {
     title: "What agents.json is | turva.dev",
     description: "agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one. What it is and why it matters.",
     image: "/og-guide-agents-json.jpg",
-    imageAlt: "What agents.json is"
+    imageAlt: "turva.dev guide card: agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one."
   },
   "/guides/x402-agent-payments": {
     title: "x402 and agent payments | turva.dev",
     description: "x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout. How agent payments work and why they matter.",
     image: "/og-guide-x402-agent-payments.jpg",
-    imageAlt: "x402 and agent payments"
+    imageAlt: "turva.dev guide card: x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout."
   },
   "/guides/response-headers-for-agents": {
     title: "Response headers that help agents | turva.dev",
     description: "The right HTTP response headers let AI agents work without parsing full HTML. Link, Vary, RateLimit and content type headers explained for agent-readiness.",
     image: "/og-guide-response-headers-for-agents.jpg",
-    imageAlt: "Response headers that help agents"
+    imageAlt: "turva.dev guide card: The right HTTP response headers let AI agents work without parsing full HTML."
   },
   "/guides/seo-vs-agent-readiness": {
     title: "SEO and agent-readiness are not the same | turva.dev",
     description: "SEO makes a site rank for people to click. Agent-readiness makes a site legible and usable by AI agents. Ranking alone does not guarantee presence in AI answers.",
     image: "/og-guide-seo-vs-agent-readiness.jpg",
-    imageAlt: "SEO and agent-readiness are not the same"
+    imageAlt: "turva.dev guide card: SEO makes a site rank for people to click. Agent-readiness makes a site legible and usable by AI agents."
   },
   "/guides/json-ld-structured-data": {
     title: "JSON-LD and structured data for agents | turva.dev",
     description: "JSON-LD states a page's facts as data an AI agent can read without parsing prose. How prices, organizations and services become legible to agents.",
     image: "/og-guide-json-ld-structured-data.jpg",
-    imageAlt: "JSON-LD and structured data for agents"
+    imageAlt: "turva.dev guide card: JSON-LD states a page's facts as data an AI agent can read without parsing prose."
   },
   "/guides/well-known-for-agents": {
     title: "The /.well-known directory for agents | turva.dev",
     description: "The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata.",
     image: "/og-guide-well-known-for-agents.jpg",
-    imageAlt: "The /.well-known directory for agents"
+    imageAlt: "turva.dev guide card: The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata."
   },
   "/guides/agent-authentication": {
     title: "How agents authenticate | turva.dev",
     description: "Agent authentication lets an automated client gain scoped access without a human login. OAuth discovery, protected resources and agent registration explained.",
     image: "/og-guide-agent-authentication.jpg",
-    imageAlt: "How agents authenticate"
+    imageAlt: "turva.dev guide card: Agent authentication lets an automated client gain scoped access without a human login."
   },
   "/guides/measurement-led-agent-readiness": {
     title: "Why agent-readiness should be measured, not asserted | turva.dev",
     description: "A hand-filled checklist records intentions. An independent scanner records what an agent actually finds. Why measured agent-readiness beats self-assessment.",
     image: "/og-guide-measurement-led-agent-readiness.jpg",
-    imageAlt: "Why agent-readiness should be measured, not asserted"
+    imageAlt: "turva.dev guide card: A hand-filled checklist records intentions. An independent scanner records what an agent actually finds."
   },
   "/guides/prerendering-for-agents": {
     title: "Prerendering and why agents see empty pages | turva.dev",
     description: "JavaScript-rendered sites return an empty shell to agents, so the content never arrives. Why prerendering and markdown delivery fix the most common agent gap.",
     image: "/og-guide-prerendering-for-agents.jpg",
-    imageAlt: "Prerendering and why agents see empty pages"
+    imageAlt: "turva.dev guide card: JavaScript-rendered sites return an empty shell to agents, so the content never arrives."
   },
   "/guides/sitemaps-and-robots-for-agents": {
     title: "Sitemaps, robots.txt and agent access | turva.dev",
     description: "robots.txt and the sitemap decide whether an agent is allowed in and what it can find. AI bot rules, Content Signals and complete sitemaps explained.",
     image: "/og-guide-sitemaps-and-robots-for-agents.jpg",
-    imageAlt: "Sitemaps, robots.txt and agent access"
+    imageAlt: "turva.dev guide card: robots.txt and the sitemap decide whether an agent is allowed in and what it can find."
   },
   "/guides/markdown-for-agents": {
     title: "Serving markdown to agents | turva.dev",
     description: "Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens. How content negotiation and llms-full.txt work.",
     image: "/og-guide-markdown-for-agents.jpg",
-    imageAlt: "Serving markdown to agents"
+    imageAlt: "turva.dev guide card: Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens."
   },
   "/guides/agent-readiness-aeo-geo": {
     title: "Agent-readiness, AEO and GEO: how they relate | turva.dev",
     description: "How AEO, GEO and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice.",
     image: "/og-guide-agent-readiness-aeo-geo.jpg",
-    imageAlt: "Agent-readiness, AEO and GEO: how they relate"
+    imageAlt: "turva.dev guide card: How AEO, GEO and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice."
   },
   "/guides/agentic-commerce-readiness": {
     title: "Agentic commerce readiness: selling to AI shopping agents | turva.dev",
     description: "What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase. Explained with A2A, AP2, ACP and x402.",
     image: "/og-guide-agentic-commerce-readiness.jpg",
-    imageAlt: "Agentic commerce readiness: selling to AI shopping agents"
+    imageAlt: "turva.dev guide card: What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase."
   },
   "/guides/letting-agents-act-on-data": {
     title: "Letting agents act on data: the decision envelope | turva.dev",
     description: "Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds. How to make that checkable.",
     image: "/og-guide-letting-agents-act-on-data.jpg",
-    imageAlt: "Letting agents act on data: the decision envelope"
+    imageAlt: "turva.dev guide card: Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds."
   },
   "/guides/ai-agent-use-cases": {
     title: "AI agent use cases: where agents read data and make decisions | turva.dev",
     description: "AI agent use cases across commerce, monitoring, field support, remote operations and back-office data work, and what makes each one reliable.",
     image: "/og-guide-ai-agent-use-cases.jpg",
-    imageAlt: "AI agent use cases: where agents read data and make decisions"
+    imageAlt: "turva.dev guide card: AI agent use cases across commerce, monitoring, field support, remote operations and back-office data work, and what makes each one reliable."
   },
   "/guides/get-cited-by-ai-assistants": {
     title: "How to get your site cited by AI assistants | turva.dev",
     description: "What it takes to be a source AI assistants cite: readable content, structured data, corroboration, indexing where assistants search, and measurement.",
     image: "/og-guide-get-cited-by-ai-assistants.jpg",
-    imageAlt: "How to get your site cited by AI assistants"
+    imageAlt: "turva.dev guide card: What it takes to be a source AI assistants cite: readable content, structured data, corroboration, indexing where assistants search, and measurement."
   },
   "/guides/choosing-an-agent-readiness-audit": {
     title: "Choosing an agent-readiness audit | turva.dev",
     description: "Who provides agent-readiness audits, what they cost, how long they take, and what you get. Pricing, deliverables, and how the engagement works.",
     image: "/og-guide-choosing-an-agent-readiness-audit.jpg",
-    imageAlt: "Choosing an agent-readiness audit"
+    imageAlt: "turva.dev guide card: Who provides agent-readiness audits, what they cost, how long they take, and what you get."
   },
   "/guides/agent-readiness-gaps": {
     title: "Common agent-readiness gaps on marketing sites | turva.dev",
     description: "Most marketing sites are strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes.",
     image: "/og-guide-agent-readiness-gaps.jpg",
-    imageAlt: "Common agent-readiness gaps on marketing sites"
+    imageAlt: "turva.dev guide card: Most marketing sites are strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes."
   }
 };
 
