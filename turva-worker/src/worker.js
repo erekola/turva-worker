@@ -2640,14 +2640,14 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8zvlU9fjmr-BHjKd2uDdd7ngGz0ajxC2paKzna2GR1UjNVECEPXH_pmBWFLBFfmFfXCLi0225Y4Z0whRS9qQBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8zvlU9fjmr-BHjKd2uDdd7ngGz0ajxC2paKzna2GR1UjNVECEPXH_pmBWFLBFfmFfXCLi0225Y4Z0whRS9qQBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"fgejkegdjwT50sq2ZKUkkCI3Vkiz-w5-mksZ1c_GUJJXSERFP00KfJTDWVZjFlHbko70nyst2Olqm4GD1VIiAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"OpW1IOea4E4gg1SdLu9AU5NDxuto5x4KfmzpvmLYd-8fiU5W56L0yJHy7blX6WFOOWThMtCjJfMF_JTAJJsvBg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8zvlU9fjmr-BHjKd2uDdd7ngGz0ajxC2paKzna2GR1UjNVECEPXH_pmBWFLBFfmFfXCLi0225Y4Z0whRS9qQBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8zvlU9fjmr-BHjKd2uDdd7ngGz0ajxC2paKzna2GR1UjNVECEPXH_pmBWFLBFfmFfXCLi0225Y4Z0whRS9qQBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"bEBusADwpx0RyDI3ewbqwGjbsGv6T2ZCRHG58WoKD7BU2hvLd1YHFxZSZtXVuA9l3DckfiWo05y2sa11K0iKCg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"OpW1IOea4E4gg1SdLu9AU5NDxuto5x4KfmzpvmLYd-8fiU5W56L0yJHy7blX6WFOOWThMtCjJfMF_JTAJJsvBg\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.2.7",
+    "version": "1.2.8",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -2665,7 +2665,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   },
   "tools": [
     { "name": "get_services", "description": "Service catalog (audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
-    { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, notable wins, measurement date, and verification links." },
+    { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, measurement date, and verification links." },
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl), with the scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." }
   ],
