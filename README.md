@@ -14,7 +14,7 @@ A consolidated reference to every surface agents read, with a short definition o
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-07-20: 100/100, Level 5 (Agent-Native) on isitagentready.com, Cloudflare's agent-readiness scanner.
+Measured on `https://turva.dev` on 2026-07-28: 100/100, Level 5 (Agent-Native) on isitagentready.com, Cloudflare's agent-readiness scanner.
 
 ### isitagentready.com category breakdown
 
@@ -32,7 +32,7 @@ Commerce is optional in the isitagentready model, and turva.dev passes all five 
 
 ## Web security
 
-Agent-readiness is one axis. The domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-07-20.
+Agent-readiness is one axis. The domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-07-28.
 
 | Scanner | Result |
 |---|---|

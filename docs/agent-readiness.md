@@ -52,7 +52,7 @@ Most marketing sites are strong for human readers and weak for agents. The recur
 
 ## Reference measurements for turva.dev
 
-turva.dev is the reference build maintained alongside this repository. Measured on `https://turva.dev` on 2026-07-20:
+turva.dev is the reference build maintained alongside this repository. Measured on `https://turva.dev` on 2026-07-28:
 
 - isitagentready.com (Cloudflare’s agent-readiness scanner): 100 / 100, Level 5 Agent-Native.
 
