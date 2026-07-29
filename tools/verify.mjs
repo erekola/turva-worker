@@ -248,28 +248,61 @@ if (LIVE) {
   // tools and answered -32601 to both, for weeks, invisibly. So: speak the protocol.
   try {
     const MCP = 'https://mcp.turva.dev/mcp';
-    const rpc = async (method, params, sid) => {
-      const h = { 'content-type': 'application/json', accept: 'application/json, text/event-stream' };
-      if (sid) h['mcp-session-id'] = sid;
-      const r = await fetch(MCP, { method: 'POST', headers: h, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params: params || {} }) });
+    // Revision 2026-07-28 is stateless: no initialize, no Mcp-Session-Id, no GET stream.
+    // Identity and capabilities come from server/discover, which servers MUST implement,
+    // and every POST must carry the three standard headers plus the _meta envelope. The
+    // header and the envelope must agree or the server answers 400 / -32020, so sending
+    // them from here also proves that rejection path is wired.
+    const REV = '2026-07-28';
+    const SERVER_INFO_KEY = 'io.modelcontextprotocol/serverInfo';
+    const rpc = async (method, params, extraHeaders) => {
+      const h = {
+        'content-type': 'application/json',
+        accept: 'application/json, text/event-stream',
+        'mcp-protocol-version': REV,
+        'mcp-method': method,
+        ...(extraHeaders || {}),
+      };
+      const body = {
+        jsonrpc: '2.0',
+        id: 1,
+        method,
+        params: {
+          ...(params || {}),
+          _meta: {
+            'io.modelcontextprotocol/protocolVersion': REV,
+            'io.modelcontextprotocol/clientInfo': { name: 'turva-verify', version: '1' },
+            'io.modelcontextprotocol/clientCapabilities': {},
+          },
+        },
+      };
+      const r = await fetch(MCP, { method: 'POST', headers: h, body: JSON.stringify(body) });
       const t = await r.text();
-      const line = t.match(/^data: (.*)$/m); // Streamable HTTP answers as SSE
-      return { res: r, body: JSON.parse(line ? line[1] : t) };
+      const line = t.match(/^data: (.*)$/m); // Streamable HTTP may answer as SSE
+      let parsed = null;
+      try { parsed = JSON.parse(line ? line[1] : t); } catch { parsed = null; }
+      return { res: r, body: parsed || {}, raw: t };
     };
     const card = JSON.parse((await fetchBytesMcp('/.well-known/mcp/server-card.json')).toString());
-    const init = await rpc('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'turva-verify', version: '1' } });
-    const sid = init.res.headers.get('mcp-session-id');
-    const live = init.body.result || {};
+    const disc = await rpc('server/discover');
+    const result = disc.body.result || {};
+    const liveInfo = (result._meta && result._meta[SERVER_INFO_KEY]) || {};
 
-    check(live.serverInfo && live.serverInfo.version === facts.versions.mcp,
-      `MCP live version == facts.json ${facts.versions.mcp} (saw ${live.serverInfo && live.serverInfo.version})`);
+    check(Array.isArray(result.supportedVersions) && result.supportedVersions.includes(REV),
+      `server/discover advertises ${REV} (saw ${JSON.stringify(result.supportedVersions)})`);
+    check(result.resultType === 'complete',
+      `server/discover resultType == complete (saw ${result.resultType})`);
+    check(Number.isFinite(result.ttlMs) && (result.cacheScope === 'public' || result.cacheScope === 'private'),
+      `server/discover carries the required cache hints (ttlMs ${result.ttlMs}, cacheScope ${result.cacheScope})`);
+    check(liveInfo.version === facts.versions.mcp,
+      `MCP live version == facts.json ${facts.versions.mcp} (saw ${liveInfo.version})`);
     check(card.serverInfo.version === facts.versions.mcp,
       `server-card version == facts.json ${facts.versions.mcp} (saw ${card.serverInfo.version})`);
-    check(card.serverInfo.name === (live.serverInfo && live.serverInfo.name),
+    check(card.serverInfo.name === liveInfo.name,
       `server-card name == live name (${card.serverInfo.name})`);
 
     const cardCaps = Object.keys(card.capabilities || {}).sort();
-    const liveCaps = Object.keys(live.capabilities || {}).sort();
+    const liveCaps = Object.keys(result.capabilities || {}).sort();
     check(cardCaps.join(',') === liveCaps.join(','),
       `capabilities parity: card [${cardCaps}] == live [${liveCaps}]`);
 
@@ -279,7 +312,7 @@ if (LIVE) {
     for (const cap of cardCaps) {
       const m = listMethod[cap];
       if (!m) { bad(`server-card declares unknown capability "${cap}"`); continue; }
-      const r = await rpc(m, {}, sid);
+      const r = await rpc(m, {});
       const err = r.body.error;
       check(!err, `declared capability "${cap}" answers ${m}${err ? ' -> ' + err.code + ' ' + err.message : ''}`);
     }
@@ -287,15 +320,26 @@ if (LIVE) {
     // otherwise the card understates the server and agents never find the surface.
     for (const [cap, m] of Object.entries(listMethod)) {
       if (cardCaps.includes(cap)) continue;
-      const r = await rpc(m, {}, sid);
-      check(!!r.body.error, `undeclared "${cap}" correctly does not answer ${m}`);
+      const r = await rpc(m, {});
+      check(!!r.body.error || r.res.status >= 400, `undeclared "${cap}" correctly does not answer ${m}`);
     }
 
     const cardTools = (card.tools || []).map((t) => t.name).sort();
-    const liveList = await rpc('tools/list', {}, sid);
+    const liveList = await rpc('tools/list', {});
     const liveTools = ((liveList.body.result && liveList.body.result.tools) || []).map((t) => t.name).sort();
     check(cardTools.length > 0 && cardTools.join(',') === liveTools.join(','),
       `tool-name parity: card [${cardTools}] == live [${liveTools}]`);
+
+    // The header/body agreement rule, proven rather than assumed: a POST whose
+    // Mcp-Method header contradicts the body must be refused, not served.
+    const mismatch = await rpc('tools/list', {}, { 'mcp-method': 'server/discover' });
+    check(mismatch.res.status === 400 && mismatch.body.error && mismatch.body.error.code === -32020,
+      `header/body mismatch refused with 400 and -32020 (saw ${mismatch.res.status} / ${mismatch.body.error && mismatch.body.error.code})`);
+
+    // GET and DELETE were session operations and no longer exist. They must be
+    // refused, not answered with an empty body, which is what the old transport did.
+    const getRes = await fetch(MCP, { method: 'GET', headers: { accept: 'application/json, text/event-stream' } });
+    check(getRes.status === 405, `GET ${MCP} answers 405 (saw ${getRes.status})`);
   } catch (e) { bad('MCP parity: ' + (e.code || e.message)); }
 } else {
   console.log('\n(static run - add --live on a networked machine to GET every declared URL and verify signatures)');
