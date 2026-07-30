@@ -42,7 +42,11 @@ var MTA_STS_POLICY = `version: STSv1
 mode: enforce
 mx: mx1.alias.proton.me
 mx: mx2.alias.proton.me
-max_age: 604800
+mx: mxext1.mailbox.org
+mx: mxext2.mailbox.org
+mx: mxext3.mailbox.org
+mx: mxext4.mailbox.org
+max_age: 86400
 `;
 
 var CSP_HTML = [
