@@ -378,16 +378,16 @@ if (LIVE) {
 
     // Names are not data. Everything above proves the card and the server agree on
     // WHICH tools exist. Nothing proved what those tools SERVE, and that gap shipped
-    // three times: a two-scanner sentence, a price beside the wrong measured date, and
-    // a category key that existed on no other surface. Each was caught by a person
-    // reading, which is not a gate. So call every data tool and diff the answer against
-    // facts.json, which is where these numbers are canonical.
+    // three times: a two-scanner sentence, a commerce sub-score beside the wrong
+    // measured date, and a category key that existed on no other surface. Each was caught
+    // by a person reading, which is not a gate. So call every data tool and diff the
+    // answer against facts.json, which is where these numbers are canonical.
     //
     // Every answer must carry resultType. That field is the lane discriminator, not a
-    // formality: measured 2026-08-01, a tools/call sent without the revision envelope
-    // lands on the SDK compatibility lane and returns the same 2486 bytes with a 200 and
-    // no resultType. A gate that only read the payload would pass while measuring a lane
-    // this server no longer claims to serve.
+    // formality: measured 2026-08-01, a get_services call sent without the revision
+    // envelope lands on the SDK compatibility lane and returns the same 2486 bytes with a
+    // 200 and no resultType. A gate that only read the payload would pass while measuring
+    // a lane this server no longer claims to serve.
     const callTool = async (name) => {
       const r = await rpc('tools/call', { name, arguments: {} }, { 'mcp-name': name });
       const result = r.body.result || {};
@@ -425,47 +425,55 @@ if (LIVE) {
 
     const rdy = await callTool('get_agent_readiness');
     if (rdy) {
-      const iar = facts.agentReadiness.isitagentready;
-      const want = ints(iar.score)[0];
+      const scanner = facts.agentReadiness.isitagentready;
       check(rdy.measured_at === facts.agentReadiness.measuredAt,
         `get_agent_readiness measured_at == facts.json ${facts.agentReadiness.measuredAt} (saw ${rdy.measured_at})`);
       const scan = (rdy.scans || []).find((s) => s.provider === 'isitagentready.com') || {};
-      check(String(scan.result || '').includes(iar.score) && String(scan.result || '').includes(iar.level),
-        `get_agent_readiness states ${iar.score} and ${iar.level} (saw ${JSON.stringify(scan.result)})`);
+      check(String(scan.result || '').includes(scanner.score) && String(scanner.level) && String(scan.result || '').includes(scanner.level),
+        `get_agent_readiness states ${scanner.score} and ${scanner.level} (saw ${JSON.stringify(scan.result)})`);
       // Read the category set defensively: if facts.json ever loses it, the failure
       // should name that and let the other checks still run, not throw out of the
       // whole MCP block and take thirty passes with it.
-      const cats = Array.isArray(iar.categories) ? iar.categories : [];
+      const cats = Array.isArray(scanner.categories) ? scanner.categories : [];
       check(cats.length > 0, 'facts.json records the isitagentready category set');
       const gotCats = scan.categories || {};
       check(cats.length > 0 && Object.keys(gotCats).sort().join(',') === cats.map((c) => c.id).sort().join(','),
         `get_agent_readiness category keys == facts.json [${cats.map((c) => c.id)}] (saw [${Object.keys(gotCats)}])`);
       for (const c of cats) {
-        const n = ints(gotCats[c.id]);
-        check(n.length === 3 && n[0] === want && n[1] === c.checks && n[2] === c.checks,
-          `get_agent_readiness ${c.id} reads ${want} and ${c.checks}/${c.checks} checks (saw ${JSON.stringify(gotCats[c.id])})`);
+        // Shaped, not scraped. Pulling loose integers accepted "100 (4/4 checks failed)"
+        // as a pass, and it broke on any added word. The score is derived from this
+        // category's own two counts rather than borrowed from the site total, which are
+        // different numbers that happen to agree while everything passes.
+        const m = String(gotCats[c.id]).match(/^(\d+) \((\d+)\/(\d+) checks?\)$/);
+        const pct = m && Math.round((Number(m[2]) / Number(m[3])) * 100);
+        check(!!m && Number(m[2]) === c.checks && Number(m[3]) === c.checks && Number(m[1]) === pct,
+          `get_agent_readiness ${c.id} reads ${c.checks}/${c.checks} checks passing (saw ${JSON.stringify(gotCats[c.id])})`);
       }
     }
 
-    const sec = await callTool('get_security_evidence');
-    if (sec) {
-      check(sec.measured_at === facts.security.measuredAt,
-        `get_security_evidence measured_at == facts.json ${facts.security.measuredAt} (saw ${sec.measured_at})`);
+    const secEv = await callTool('get_security_evidence');
+    if (secEv) {
+      check(secEv.measured_at === facts.security.measuredAt,
+        `get_security_evidence measured_at == facts.json ${facts.security.measuredAt} (saw ${secEv.measured_at})`);
       // The two records state the same measurement in different words on purpose
       // ("all 13 categories passed" against "13/13 categories passed", "98/100" against
       // a score beside a scale), so the numbers are compared and the prose is not.
-      const hz = (sec.scans || []).find((s) => s.provider === 'Hardenize') || {};
+      const hz = (secEv.scans || []).find((s) => s.provider === 'Hardenize') || {};
       const wantHz = ints(facts.security.hardenize.result)[0];
-      const gotHz = ints(hz.result);
-      check(gotHz.length > 0 && gotHz.every((n) => n === wantHz),
-        `get_security_evidence Hardenize reads ${wantHz} categories (saw ${JSON.stringify(hz.result)})`);
+      // The word carries as much of the claim as the number does: reading loose integers
+      // passed "13/13 categories failed" without complaint.
+      const hzM = String(hz.result).match(/^(\d+)\/(\d+) categories passed$/);
+      check(Number.isFinite(wantHz) && !!hzM && Number(hzM[1]) === wantHz && Number(hzM[2]) === wantHz,
+        `get_security_evidence Hardenize reads ${wantHz}/${wantHz} categories passed (saw ${JSON.stringify(hz.result)})`);
       check(hz.url === facts.security.hardenize.url,
         `get_security_evidence Hardenize url == facts.json (saw ${hz.url})`);
-      const inl = (sec.scans || []).find((s) => s.provider === 'Internet.nl') || {};
+      const inl = (secEv.scans || []).find((s) => s.provider === 'Internet.nl') || {};
       const wantInl = ints(facts.security.internetnl.score);
-      check(inl.score === wantInl[0],
+      check(Number.isFinite(wantInl[0]) && inl.score === wantInl[0],
         `get_security_evidence Internet.nl score == facts.json ${wantInl[0]} (saw ${JSON.stringify(inl.score)})`);
-      check(ints(inl.scale).slice(-1)[0] === wantInl[1],
+      // Both sides can go missing at once, and then undefined equals undefined: facts
+      // losing the "/100" and the served scale disappearing together read as a pass.
+      check(Number.isFinite(wantInl[1]) && ints(inl.scale).slice(-1)[0] === wantInl[1],
         `get_security_evidence Internet.nl scale tops out at ${wantInl[1]} (saw ${JSON.stringify(inl.scale)})`);
       check(inl.url === facts.security.internetnl.url,
         `get_security_evidence Internet.nl url == facts.json (saw ${inl.url})`);
