@@ -25,7 +25,9 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/auth.md` | Agent registration metadata (public key at `/.well-known/mcp-registry-auth`) |
 | `/agent/auth/register`, `/agent/auth/claim`, `/agent/auth/revoke` | Agent identity registration, out-of-band flow |
 | `/oauth/authorize`, `/oauth/token` | OAuth endpoints (spec-valid closed errors, see `/auth.md`) |
-| `/api` and `/api/v1` | API index JSON |
+| `/api` | x402 402 challenge. The free endpoint index moved to `/api/v1` in v3.51.0 |
+| `/api/v1` | API index JSON |
+| `POST /v1/message:send` | A2A HTTP+JSON transport, revision 0.3.0. Name a skill with `metadata.skillId` |
 | `/api/agent/audit`, `/api/agent/advisory`, `/api/agent/implementation` | x402 payable service routes (HTTP 402, quote-on-request) |
 | `/api/acp/checkout_sessions` | ACP checkout sessions (stateless, buyer review before payment) |
 | `/.well-known/agent-skills/<name>/skill.md` | Individual agent skill files |

@@ -74,7 +74,7 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 | `/x402`, `/api/agent/*` | Payment-required and payable service routes |
 | `/llms-txt-validator` | llms.txt structure checker |
 
-Full inventory of all 36 routes: [docs/endpoints.md](docs/endpoints.md).
+Full inventory of all 38 routes: [docs/endpoints.md](docs/endpoints.md).
 
 ## Deploy
 
