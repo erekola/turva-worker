@@ -77,9 +77,193 @@ check(src.readme.text.includes(ar), `README.md carries ${ar}`);
 
 console.log('\nScanner results');
 const iar = facts.agentReadiness.isitagentready, lvl = iar.level;
+// The category set is stated on six surfaces and facts.json is the only one of them
+// that is a source of truth. Read defensively: if the array ever goes missing the
+// checks below must name that and fail, not compare undefined against undefined and
+// report a pass, which is how a repaired gate went green in round 7.
+const CATS = Array.isArray(iar.categories) ? iar.categories : [];
 for (const k of Object.keys(src)) {
   check(containsAny(src[k].text, slashVariants(iar.score)), `${src[k].rel} shows ${iar.score}`);
   check(src[k].text.includes(lvl), `${src[k].rel} shows "${lvl}"`);
+}
+
+console.log('\nCategory set (facts.json owns which categories exist)');
+// Five checks and one board proved the score. Nothing proved the SET. The five
+// categories are stated on six surfaces, in six different spellings, and until
+// 2026-08-01 only the MCP tools/call gate and the static index.ts driver compared any
+// of them to anything. A six-category model shipped in guide prose and in the FAQ
+// JSON-LD once (v3.79.0), and a fifth category name that existed on no other surface
+// shipped in MCP once (v3.80.0), so both failure modes are real.
+//
+// The split: facts.json owns WHICH categories exist and how many checks each carries.
+// Each surface owns HOW it spells them, because "bot_access_control" is a machine key
+// and "bot access control" is user interface text. category.label is the board's
+// spelling, category.prose lists every other spelling in use, and every declared
+// prose spelling must be used somewhere or this section fails.
+//
+// EVERY surface here is read as a bounded region and its members are ENUMERATED, not
+// searched for. The first version of this section searched: it asked whether all five
+// were named and it never asked what else was named, so a sixth category passed on
+// three of the four surfaces. Measured, all three, on the day it was written.
+{
+  const spellings = (c) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase());
+  const resolve = (item) => CATS.find((c) => spellings(c).includes(String(item).trim().toLowerCase()));
+  check(CATS.length > 0, `facts.json records the category set (${CATS.length})`);
+  check(CATS.length > 0 && CATS.every((c) => typeof c.label === 'string' && c.label.trim().length > 0),
+    'every category carries a non-empty board label');
+  check(CATS.length > 0 && CATS.every((c) => Array.isArray(c.prose) && c.prose.every((x) => typeof x === 'string' && x.trim().length > 0)),
+    'every category carries a prose spelling list with no empty entries');
+  check(new Set(CATS.map((c) => c.id)).size === CATS.length,
+    `category ids are unique (${CATS.length} categories, ${new Set(CATS.map((c) => c.id)).size} distinct ids)`);
+  check(CATS.length > 0 && CATS.every((c) => Number.isInteger(c.checks) && c.checks > 0),
+    'every category carries a positive check count');
+  // Resolution has to be unambiguous. Containment is the obvious collision and it is
+  // not the only one: two spellings that merely OVERLAP, "bot access" and "access
+  // control", both resolve inside the single phrase "bot access control" while neither
+  // contains the other. So the rule below is containment, and every enumerating
+  // surface resolves by exact equality rather than by substring, which is what
+  // actually closes the overlap case.
+  const collide = [];
+  for (const a of CATS) for (const b of CATS) {
+    if (a.id === b.id) continue;
+    for (const x of spellings(a)) for (const y of spellings(b)) if (x.includes(y)) collide.push(`${a.id}:"${x}" contains ${b.id}:"${y}"`);
+  }
+  check(collide.length === 0, `category spellings do not collide across categories${collide.length ? ' :: ' + collide.join(' | ') : ''}`);
+
+  const used = new Set();
+  // Compare an enumerated list against the category set: same length, every item
+  // resolves, every category hit exactly once, and in the declared order.
+  const enumerated = (items, label, ordered) => {
+    const got = items.map((x) => String(x).trim());
+    const res = got.map(resolve);
+    check(got.length === CATS.length, `${label} enumerates exactly ${CATS.length} categories (saw ${got.length}: ${got.join(' / ') || 'none'})`);
+    const bad0 = got.filter((x, i) => !res[i]);
+    check(bad0.length === 0, `${label}: every item resolves to a category${bad0.length ? ' :: unknown ' + bad0.map((x) => `"${x}"`).join(', ') : ''}`);
+    check(got.length === CATS.length && res.every(Boolean) && new Set(res.map((c) => c.id)).size === CATS.length,
+      `${label}: no category is named twice`);
+    if (ordered) {
+      check(got.length === CATS.length && res.every(Boolean) && res.map((c) => c.id).join(',') === CATS.map((c) => c.id).join(','),
+        `${label}: in the facts.json order (saw [${got.join(', ')}])`);
+    }
+    got.forEach((x, i) => { if (res[i]) used.add(x.toLowerCase()); });
+  };
+  const span = (text, from, to, label) => {
+    const i = text.indexOf(from);
+    const j = i < 0 ? -1 : text.indexOf(to, i + from.length);
+    if (i < 0 || j < 0) { bad(`${label}: anchor not found (${i < 0 ? 'start' : 'end'})`); return null; }
+    return text.slice(i, j);
+  };
+  // The markdown section around a unique sentence, heading to heading. Anchoring a
+  // section by its own heading text does not work in this file: "## Frequently asked"
+  // appears in many guides, indexOf finds the first one, and the span then covers a
+  // different page entirely and captures nothing. The section is therefore located
+  // from a sentence that occurs once and expanded outward.
+  const sectionAround = (text, unique, label) => {
+    const i = text.indexOf(unique);
+    if (i < 0) { bad(`${label}: locating sentence not found`); return null; }
+    if (text.indexOf(unique, i + 1) >= 0) { bad(`${label}: locating sentence is not unique`); return null; }
+    const heads = [...text.matchAll(/^#{1,6} .+$/gm)];
+    const before = heads.filter((m) => m.index < i).slice(-1)[0];
+    const after = heads.find((m) => m.index > i);
+    return text.slice(before ? before.index : 0, after ? after.index : text.length);
+  };
+  const sc = iar.score.toLowerCase(), lv = lvl.toLowerCase();
+
+  // A. The evidence twin in PAGE_MARKDOWN. Short and stable enough to reconstruct
+  // WHOLE from facts.json, and compared by equality rather than by includes: an
+  // includes() let a sixth category be prepended to the list and still pass, because
+  // the wanted string was still in there further along. Measured 2026-08-01.
+  {
+    const A = span(src.worker.text, 'Scanner: isitagentready.com (third party, Cloudflare).', 'Agent-Native.', 'evidence twin');
+    if (A) {
+      const sp = CATS.map(spellings);
+      const want = `scanner: isitagentready.com (third party, cloudflare). ${sp[0][0]}, ${sp[1][1]}, ${sp[2][0]}, and ${sp[3][1]}: ${sc}. ${sp[4][0]}: ${sc}. verified ${sc}, ${lv}, `;
+      const gotA = A.toLowerCase().replace(/\s+/g, ' ');
+      check(gotA === want, `evidence twin is exactly the set and both scores${gotA === want ? '' : `\n        want: "${want}"\n        got:  "${gotA}"`}`);
+      [sp[0][0], sp[1][1], sp[2][0], sp[3][1], sp[4][0]].forEach((x) => used.add(x));
+    }
+  }
+
+  // B. The audit guide introduces each category as "<name> covers ...". The subjects
+  // are extracted and resolved, rather than the five known names being searched for:
+  // the first version counted the word "covers" inside a span that ENDED at the last
+  // category's own sentence, so a sixth category appended right after it fell outside
+  // the span entirely and passed. Measured 2026-08-01. The span is now the whole
+  // markdown section, heading to heading.
+  {
+    const B = sectionAround(src.worker.text, 'The audit checks the parts an agent reaches first.', 'audit guide');
+    if (B) {
+      const subjects = [...B.matchAll(/(?:^|\.\s+)([A-Z][^.\r\n]{0,60}?) covers /gm)].map((m) => m[1]);
+      enumerated(subjects, 'audit guide "<name> covers"', true);
+      // And nothing else in the section may use that introduction form, or a sixth
+      // category could hide behind a subject the regex above declines to capture.
+      const covers = (B.match(/\bcovers\b/g) || []).length;
+      check(covers === subjects.length,
+        `audit guide: every "covers" in the section is a category introduction (${covers} occurrences, ${subjects.length} captured)`);
+    }
+  }
+
+  // C. The FAQ answer in GUIDE_PAGE_FAQ (not SCHEMA_HOME, which carries its own
+  // FAQPage and does not name the category set at all). A plain comma list whose only
+  // internal punctuation is slashes, so it parses exactly.
+  {
+    const C = span(src.worker.text, 'It checks the surfaces an agent reaches first, covering ', '. Each check passes or fails', 'FAQ JSON-LD');
+    if (C) {
+      const list = C.slice(C.indexOf('covering ') + 'covering '.length)
+        .split(',').map((x) => x.replace(/^\s*and\s+/i, '').trim()).filter(Boolean);
+      enumerated(list, 'FAQ JSON-LD list', true);
+    }
+  }
+
+  // D. The README states the count in words and repeats the set as a table. The table
+  // rows are ALL parsed and then resolved; the first version filtered to resolvable
+  // rows before counting them, which made a sixth row literally invisible to its own
+  // count. Measured 2026-08-01, and it is the same defect as the two above.
+  {
+    const WORDS = ['zero','one','two','three','four','five','six','seven','eight','nine','ten'];
+    const word = WORDS[CATS.length] || String(CATS.length);
+    check(src.readme.text.includes(`groups its checks into ${word} categories`),
+      `README states the set size in words as "${word}" (${CATS.length} categories in facts.json)`);
+    check(src.readme.text.includes(`passes every check in all ${word}`), `README's "all ${word}" agrees with the set size`);
+    const D = span(src.readme.text, '### isitagentready.com category breakdown', '## Web security', 'README table');
+    if (D) {
+      const rows = [...D.matchAll(/^\| ([^|]+?) \| ([^|]+?) \|\s*$/gm)]
+        .map((m) => ({ cat: m[1].trim(), val: m[2].trim() }))
+        .filter((r) => r.cat !== 'Category' && !/^-+$/.test(r.cat));
+      enumerated(rows.map((r) => r.cat), 'README table', true);
+      const wrong = rows.filter((r) => r.val !== iar.score);
+      check(rows.length > 0 && wrong.length === 0,
+        `every README table row reads ${iar.score} (${wrong.length ? 'wrong: ' + wrong.map((r) => r.cat + ' = ' + r.val).join(', ') : 'all ' + rows.length + ' rows'})`);
+    }
+  }
+
+  // The dead-spelling rule. A spelling nobody uses is either a leftover from copy that
+  // has since changed, or room for a future mismatch to resolve into. Scoped to
+  // category.prose: the labels are the board's spelling, the board is a served
+  // surface, and the live gate proves every label is used by matching all of them
+  // against the served cells in order. A static run cannot see an unused label, and
+  // saying so is cheaper than a rule that fails offline for a reason that is not a
+  // defect.
+  const declared = CATS.flatMap((c) => (Array.isArray(c.prose) ? c.prose : []).map((x) => String(x).toLowerCase()));
+  const unused = declared.filter((x) => !used.has(x));
+  check(unused.length === 0, `every declared prose spelling is used on a surface${unused.length ? ' :: unused ' + unused.map((x) => `"${x}"`).join(', ') : ` (${declared.length} spellings)`}`);
+}
+
+console.log('\nService set (facts.json owns which services exist)');
+// Checked statically as well as live, because this file is the deploy gate and a
+// static run has to be able to see a corrupted facts.json. The served surfaces that
+// state the service set are checked in the live block.
+{
+  const S = Array.isArray(facts.services) ? facts.services : [];
+  check(S.length > 0, `facts.json records the service set (${S.length})`);
+  check(S.length > 0 && S.every((x) => typeof x.name === 'string' && x.name.trim()), 'every service carries a non-empty name');
+  check(new Set(S.map((x) => x.name)).size === S.length, 'service names are unique');
+  check(S.length > 0 && S.every((x) => x.priceKey === null || Number.isFinite(facts.prices[x.priceKey])),
+    'every service priceKey is null or resolves to a number in facts.json prices');
+  const keys = S.filter((x) => x.priceKey).map((x) => x.priceKey);
+  const priceKeys = Object.keys(facts.prices).filter((k) => k !== 'currency');
+  check(keys.slice().sort().join(',') === priceKeys.slice().sort().join(','),
+    `the priced services and facts.json prices name the same keys (services [${keys}], prices [${priceKeys}])`);
 }
 
 console.log('\nSecurity evidence');
@@ -251,6 +435,308 @@ if (LIVE) {
     try { const r = await fetch(u, {redirect:'follow'}); check(r.ok, `GET ${u} -> ${r.status}`); }
     catch (e) { bad(`GET ${u} -> ${e.code||e.message}`); }
   }
+  // The homepage scan board is a surface that states the category set, and nothing
+  // compared it to anything until 2026-08-01. It is read from the SERVED page rather
+  // than from worker.js on purpose: a gate that greps the source proves the string is
+  // in the source, which is a different claim from what a buyer's browser receives.
+  // The cells are read as a shaped list in order, so a dropped cell, an extra cell, a
+  // reordered cell and a changed score each fail on their own line. facts.json owns
+  // WHICH categories exist; category.label owns how the board spells them, because the
+  // board wording is user interface text and the id is a machine key, and forcing one
+  // to equal the other would change the page to suit the gate.
+  try {
+    const homeHtml = await (await fetch(base + '/')).text();
+    const gridM = homeHtml.match(/<div class="board-grid">([\s\S]*?)<\/div>\s*<div class="board-sum">([\s\S]*?)<\/div>/);
+    if (!gridM) bad('board: board-grid / board-sum not found in the served homepage');
+    else {
+      const cells = [...gridM[1].matchAll(/<div class="cell"><span class="cat">([^<]*)<\/span><span class="val">([^<]*)<\/span><\/div>/g)]
+        .map((m) => ({ cat: twDecode(m[1]).trim(), val: twDecode(m[2]).trim() }));
+      const wantLabels = CATS.map((c) => c.label);
+      // Both sides can go empty at once, and then two empty joins compare equal. The
+      // label check and the count check are separate lines so an empty facts.json
+      // cannot make the order check below vacuously true.
+      check(CATS.length > 0 && wantLabels.every((l) => typeof l === 'string' && l.length > 0),
+        `facts.json gives all ${CATS.length} categories a board label`);
+      check(cells.length === CATS.length, `board shows ${CATS.length} cells (saw ${cells.length})`);
+      check(cells.length > 0 && cells.length === CATS.length && cells.map((c) => c.cat).join(' | ') === wantLabels.join(' | '),
+        `board labels == facts.json labels, in order (saw [${cells.map((c) => c.cat).join(', ')}])`);
+      const wrongVal = cells.filter((c) => c.val !== iar.score);
+      check(cells.length > 0 && wrongVal.length === 0,
+        `every board cell reads ${iar.score} (${wrongVal.length ? 'wrong: ' + wrongVal.map((c) => c.cat + ' = ' + c.val).join(', ') : 'all ' + cells.length + ' cells'})`);
+      // The summary carries the same two claims the hero carries, so it is read as a
+      // whole string rather than as two independent substring searches: "100/100" and
+      // "Level 5" both appearing somewhere in the block does not prove they are the
+      // claim the block makes.
+      const sum = twSquash(twDecode(gridM[2].replace(/<[^>]+>/g, ' ')));
+      const wantSum = `verified ${iar.score} ${lvl} Agent-Native`;
+      check(sum === wantSum, `board summary reads "${wantSum}" (saw "${sum}")`);
+    }
+  } catch (e) { bad('board: ' + (e.code || e.message)); }
+
+  // --- A2A, WebMCP and the agent skills: three surfaces that SERVE data, none of
+  // which was compared to anything before 2026-08-01. The MCP gate below proved that
+  // names are not data; these are the same question asked of the other transports.
+  // facts.json owns the prices, the business ID and the service set. Every check calls
+  // the surface and reads the answer, rather than reading the source that produces it.
+  const SERVICES = Array.isArray(facts.services) ? facts.services : [];
+  const priceOf = (svc) => (svc.priceKey ? facts.prices[svc.priceKey] : 'on request');
+  const PRICED = SERVICES.filter((x) => x.priceKey);
+  const euroOf = (key) => '€' + facts.prices[key].toLocaleString('en-US');
+  // Every length comparison below is guarded by a positive floor as well. Two empty
+  // lists compare equal, two empty joins compare equal, and every() over an empty
+  // array is true, so an empty facts.json plus an empty answer reads as agreement.
+  // The board block above says this in its own comment and the first version of this
+  // block did not do it.
+  const nonEmpty = SERVICES.length > 0;
+
+  // The evidence twin, read as SERVED. The static section checks it in worker.js, and
+  // the board block's own argument applies here too: a source read proves the string
+  // is in the source. Agents read the markdown twin, so it is fetched the way they
+  // fetch it.
+  try {
+    const md = await (await fetch(base + '/', { headers: { accept: 'text/markdown' } })).text();
+    const sp = CATS.map((c) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase()));
+    const sc = iar.score.toLowerCase(), lv = lvl.toLowerCase();
+    const want = `scanner: isitagentready.com (third party, cloudflare). ${sp[0][0]}, ${sp[1][1]}, ${sp[2][0]}, and ${sp[3][1]}: ${sc}. ${sp[4][0]}: ${sc}. verified ${sc}, ${lv}, agent-native.`;
+    const i = md.toLowerCase().replace(/\s+/g, ' ').indexOf('scanner: isitagentready.com');
+    const gotMd = i < 0 ? '' : md.toLowerCase().replace(/\s+/g, ' ').slice(i, i + want.length);
+    check(CATS.length === 5 && gotMd === want,
+      `served markdown twin states the set and both scores${gotMd === want ? '' : `\n        want: "${want}"\n        got:  "${gotMd}"`}`);
+  } catch (e) { bad('served markdown twin: ' + (e.code || e.message)); }
+
+  // A2A HTTP+JSON transport. The card declares three skills and the endpoint answers
+  // them, so the question is whether what it answers agrees with facts.json. The skill
+  // is named in the request AND read back out of the answer, and the answer must carry
+  // exactly one part carrying only that skill's own fields: echoing the requested id
+  // beside the union of all three payloads would otherwise satisfy every value check
+  // below while answering a different question from the one asked.
+  try {
+    const a2a = async (skillId) => {
+      const body = { message: { kind: 'message', role: 'user', messageId: 'verify-' + (skillId || 'none'),
+        parts: [{ kind: 'text', text: 'verify' }], ...(skillId ? { metadata: { skillId } } : {}) } };
+      const r = await fetch(base + '/v1/message:send', {
+        method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+      });
+      const j = await r.json().catch(() => ({}));
+      const msg = j.message || {};
+      const parts = Array.isArray(msg.parts) ? msg.parts : [];
+      return { status: r.status, skills: (msg.metadata || {}).skills, parts, data: (parts[0] || {}).data };
+    };
+    // One field that belongs to exactly one skill. Present in its own answer, absent
+    // from the other two, which is what a union payload cannot satisfy.
+    const OWN = { services: 'services', 'contact-info': 'email', 'company-info': 'sameAs' };
+    const card = JSON.parse(await (await fetch(base + '/.well-known/agent-card.json')).text());
+    const cardSkills = (card.skills || []).map((x) => x.id).sort();
+    check(cardSkills.length > 0, `A2A card declares skills (${cardSkills.join(', ') || 'none'})`);
+    check(cardSkills.join(',') === Object.keys(OWN).sort().join(','),
+      `A2A card declares the skills this gate knows how to read (saw [${cardSkills}])`);
+
+    const answers = {};
+    for (const id of Object.keys(OWN)) {
+      const r = await a2a(id);
+      answers[id] = r;
+      check(r.status === 200 && r.parts.length === 1 && r.data && r.data.skill === id
+        && Array.isArray(r.skills) && r.skills.join(',') === id,
+        `A2A answers ${id} with one part for the skill it was asked for (status ${r.status}, parts ${r.parts.length}, skill ${JSON.stringify(r.data && r.data.skill)}, metadata ${JSON.stringify(r.skills)})`);
+      const own = OWN[id];
+      const foreign = Object.entries(OWN).filter(([k]) => k !== id).map(([, f]) => f).filter((f) => r.data && f in r.data);
+      check(!!r.data && own in r.data && foreign.length === 0,
+        `A2A ${id} carries its own field "${own}" and no other skill's${foreign.length ? ' :: also carries ' + foreign.join(', ') : ''}`);
+    }
+
+    const aList = (answers.services.data && Array.isArray(answers.services.data.services)) ? answers.services.data.services : [];
+    check(nonEmpty && aList.length === SERVICES.length,
+      `A2A services lists all ${SERVICES.length} services (saw ${aList.length})`);
+    check(nonEmpty && aList.length === SERVICES.length && aList.map((x) => x.name).join(' | ') === SERVICES.map((x) => x.name).join(' | '),
+      `A2A service names == facts.json, in order (saw [${aList.map((x) => x.name).join(', ')}])`);
+    for (const want of SERVICES) {
+      const got = aList.find((x) => x.name === want.name);
+      const p = want.priceKey ? (got && got.price) : (got && got.pricing);
+      check(!!got && p === priceOf(want), `A2A services ${want.name} == ${priceOf(want)} (saw ${JSON.stringify(p)})`);
+    }
+    const pricedA = aList.filter((x) => typeof x.price === 'number').length;
+    check(PRICED.length > 0 && pricedA === PRICED.length, `A2A prices exactly ${PRICED.length} of ${aList.length} services (saw ${pricedA})`);
+    check(aList.length > 0 && aList.every((x) => typeof x.price !== 'number' || x.currency === facts.prices.currency),
+      `A2A priced services all carry currency ${facts.prices.currency}`);
+
+    for (const id of ['contact-info', 'company-info']) {
+      const d = answers[id].data || {};
+      check(d.businessId === facts.businessId, `A2A ${id} states Business ID ${facts.businessId} (saw ${JSON.stringify(d.businessId)})`);
+    }
+    // Every channel an agent is handed has to be one it can act on. A bare username is
+    // not, and that shipped once inside two quote manifests (v3.73.0).
+    const con = answers['contact-info'].data || {};
+    check(/^[^@\s]+@[^@\s]+$/.test(String(con.email || '')), `A2A contact-info email is an address (saw ${JSON.stringify(con.email)})`);
+    for (const k of ['signal', 'linkedin']) {
+      check(/^https:\/\//.test(String(con[k] || '')), `A2A contact-info ${k} is an https URL (saw ${JSON.stringify(con[k])})`);
+    }
+    // Card and transport must declare the same skills in BOTH directions. Card to
+    // transport is the loop above. Transport to card is this: with no skillId the
+    // endpoint returns everything it implements, so its own set is readable, and a
+    // fourth skill the card never declares would be a surface no agent can find.
+    const all = await a2a(null);
+    check(Array.isArray(all.skills) && all.skills.length > 0 && all.skills.slice().sort().join(',') === cardSkills.join(','),
+      `A2A transport implements exactly the card's skills (transport [${all.skills}], card [${cardSkills}])`);
+    check(Array.isArray(all.parts) && all.parts.length === cardSkills.length,
+      `A2A returns one part per skill when none is named (saw ${all.parts.length} of ${cardSkills.length})`);
+    const bogus = await a2a('trust-and-safety');
+    check(bogus.status === 400, `A2A refuses an undeclared skillId with 400 (saw ${bogus.status})`);
+  } catch (e) { bad('A2A message:send: ' + (e.code || e.message)); }
+
+  // WebMCP in-page tools. Structurally these run in a browser, so a gate is tempted to
+  // read WEBMCP_SCRIPT out of worker.js and call that proof. It is not: the CSP hash
+  // gate proves the script is intact in the SOURCE, and what was never proved is what
+  // the tools RETURN. So the script is taken from the SERVED page and executed.
+  //
+  // Executing bytes fetched from the network is the dangerous half of that idea, and
+  // node:vm is not a security boundary: any host function handed into the context
+  // gives back the host realm through its own .constructor, which was measured working
+  // here on 2026-08-01 (fetch.constructor('return process')() returned the real
+  // process, and reading a file off the machine followed from it). Two changes make
+  // this safe. First, the served script must be byte-identical to WEBMCP_SCRIPT in
+  // this repo before a single line of it is executed, so what runs is code already in
+  // the tree and the difference this gate exists to find is reported rather than run.
+  // Second, the context is built with no host object and no host prototype reachable
+  // from it: the stubs are constructed inside the context from a bootstrap string, the
+  // /services markdown is fetched out here and passed in as a string, and the context
+  // object itself has a null prototype.
+  try {
+    const { createContext, runInContext } = await import('node:vm');
+    const homeHtml2 = await (await fetch(base + '/')).text();
+    // Every script element, typed or not, plus any external one. The first version
+    // skipped elements carrying any type= attribute, so a second modelContext script
+    // with type="module", or one loaded with src=, was invisible to a check whose own
+    // message claimed the page carries exactly one.
+    const allScripts = [...homeHtml2.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)];
+    const external = allScripts.filter((m) => /\bsrc\s*=/.test(m[1]));
+    check(external.length === 0, `served homepage loads no external script (saw ${external.length})`);
+    const inline = allScripts.filter((m) => m[2].includes('modelContext')).map((m) => m[2]);
+    check(inline.length === 1, `served homepage carries exactly one script mentioning modelContext (saw ${inline.length})`);
+
+    // Source side, sliced the same way the CSP hash check slices it.
+    const w = src.worker.text;
+    const at = w.indexOf('var WEBMCP_SCRIPT = `<script>');
+    const from = at < 0 ? -1 : w.indexOf('<script>', at) + '<script>'.length;
+    const to = from < 0 ? -1 : w.indexOf('<\\/script>', from);
+    const sourceBody = (at < 0 || to < 0) ? null : w.slice(from, to).replace(/\r\n/g, '\n');
+    check(!!sourceBody, 'WEBMCP_SCRIPT body found in worker.js');
+
+    const servedBody = inline.length === 1 ? inline[0] : null;
+    const identical = !!sourceBody && servedBody === sourceBody;
+    check(identical, `served WebMCP script is byte-identical to WEBMCP_SCRIPT in this repo${identical ? '' : ` (source ${sourceBody ? sourceBody.length : 'n/a'} bytes, served ${servedBody ? servedBody.length : 'n/a'} bytes)`}`);
+
+    if (identical) {
+      const svcMdForTool = await (await fetch(base + '/services', { headers: { accept: 'text/markdown' } })).text();
+      // Object.create(null), not {}. createContext contextifies the object it is given,
+      // and that object is made in THIS realm, so `this.constructor.constructor` inside
+      // the context walks back out to the host Function and reaches process. Measured
+      // both ways on 2026-08-01: createContext({}) leaks, createContext(Object.create(null))
+      // does not, because a null-prototype object has no constructor to walk.
+      const ctx = createContext(Object.create(null));
+      runInContext(`
+        globalThis.__md = ${JSON.stringify(svcMdForTool)};
+        globalThis.__provided = null;
+        globalThis.navigator = { modelContext: { provideContext: function (a) { globalThis.__provided = a; } } };
+        globalThis.fetch = function () { return Promise.resolve({ ok: true, status: 200, text: function () { return Promise.resolve(globalThis.__md); } }); };
+      `, ctx, { timeout: 5000 });
+      runInContext(servedBody, ctx, { timeout: 5000 });
+      const provided = ctx.__provided;
+      const tools = (provided && Array.isArray(provided.tools)) ? provided.tools : [];
+      check(tools.length > 0, `WebMCP script registers tools when executed (saw ${tools.length})`);
+      const byName = Object.fromEntries(tools.map((t) => [t.name, t]));
+      const answers = {};
+      // runInContext's timeout does not cover a promise settled after it returns, so
+      // the await gets its own deadline.
+      const deadline = (p, ms, what) => Promise.race([p,
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timed out after ' + ms + ' ms')), ms).unref?.())]);
+      for (const t of tools) {
+        try { answers[t.name] = await deadline(t.execute({}), 10000, t.name); }
+        catch (e) { bad(`WebMCP ${t.name} failed when called: ${e.message}`); }
+      }
+      check(tools.length > 0 && tools.every((t) => answers[t.name] && typeof answers[t.name] === 'object'),
+        `every WebMCP tool returns an object (${tools.map((t) => t.name).join(', ') || 'none'})`);
+
+      const wc = answers.get_contact || {};
+      check(!!byName.get_contact && wc.businessId === facts.businessId,
+        `WebMCP get_contact Business ID == ${facts.businessId} (saw ${JSON.stringify(wc.businessId)})`);
+      check(/^https:\/\//.test(String(wc.signalUrl || '')), `WebMCP get_contact signalUrl is an https URL (saw ${JSON.stringify(wc.signalUrl)})`);
+      check(/^https:\/\//.test(String(wc.linkedin || '')), `WebMCP get_contact linkedin is an https URL (saw ${JSON.stringify(wc.linkedin)})`);
+
+      const ws = answers.get_services || {};
+      const wp = ws.pricing || {};
+      check(!!byName.get_services && wp.currency === facts.prices.currency,
+        `WebMCP get_services currency == ${facts.prices.currency} (saw ${JSON.stringify(wp.currency)})`);
+      for (const svc of PRICED) {
+        const got = (wp[svc.priceKey] || {}).price;
+        check(got === facts.prices[svc.priceKey],
+          `WebMCP get_services ${svc.priceKey} price == ${facts.prices[svc.priceKey]} (saw ${JSON.stringify(got)})`);
+      }
+      // The markdown it hands back is the page a person reads, and the price is bound
+      // to its own heading. An unbound search for the amount passed a markdown with
+      // the three prices swapped between the three services, because all three numbers
+      // were still somewhere on the page.
+      const wmd = String(ws.markdown || '');
+      check(wmd.length > 0, `WebMCP get_services returns the /services markdown (${wmd.length} bytes)`);
+      for (const svc of PRICED) {
+        const re = new RegExp(`##\\s+${svc.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s+\\*\\*${euroOf(svc.priceKey).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+        check(re.test(wmd), `WebMCP get_services markdown prices ${svc.name} at ${euroOf(svc.priceKey)} under its own heading`);
+      }
+      const wco = answers.get_company || {};
+      check(!!byName.get_company && wco.businessId === facts.businessId,
+        `WebMCP get_company Business ID == ${facts.businessId} (saw ${JSON.stringify(wco.businessId)})`);
+    }
+  } catch (e) { bad('WebMCP tools: ' + (e.code || e.message)); }
+
+  // Agent skills. This surface has already served the wrong thing once: the services
+  // skill listed three offerings on a site that sells five, and it was caught by a
+  // person reading (v3.81.0). The index digest is computed at request time from the
+  // same string it indexes, so it proves the index and the file agree as served and
+  // nothing about drift from facts.json; the content checks below do that work.
+  try {
+    const idx = JSON.parse(await (await fetch(base + '/.well-known/agent-skills/index.json')).text());
+    const skills = Array.isArray(idx.skills) ? idx.skills : [];
+    check(skills.length > 0, `agent-skills index lists skills (${skills.map((s) => s.name).join(', ') || 'none'})`);
+    const bodies = {};
+    for (const s of skills) {
+      const r = await fetch(base + s.url);
+      const text = await r.text();
+      bodies[s.name] = text;
+      check(r.ok, `agent-skills ${s.name} GET ${s.url} -> ${r.status}`);
+      const want = 'sha256:' + createHash('sha256').update(Buffer.from(text, 'utf8')).digest('hex');
+      check(!!s.digest && s.digest === want, `agent-skills ${s.name} digest matches the served file (${s.digest === want ? 'ok' : s.digest + ' vs ' + want})`);
+    }
+    const svcMd = bodies.services || '';
+    check(svcMd.length > 0, 'agent-skills services skill was served');
+    // All five, not three, and enumerated rather than searched for: the bullets are
+    // read out of the file and compared to the set, so a sixth offering is as visible
+    // as a missing one.
+    const bullets = [...svcMd.matchAll(/^- \*\*([^*]+?)\.\*\*/gm)].map((m) => m[1].trim());
+    check(nonEmpty && bullets.length === SERVICES.length && bullets.join(' | ') === SERVICES.map((x) => x.name).join(' | '),
+      `agent-skills services skill lists exactly the ${SERVICES.length} services, in order (saw [${bullets.join(', ')}])`);
+    for (const svc of PRICED) {
+      check(svcMd.includes(`**${svc.name}.** ${euroOf(svc.priceKey)}`), `agent-skills services skill prices ${svc.name} at ${euroOf(svc.priceKey)}`);
+    }
+    // And the reverse, because "on request" is a claim too: neither unpriced service
+    // may acquire a number here.
+    for (const svc of SERVICES.filter((x) => !x.priceKey)) {
+      check(svcMd.includes(`**${svc.name}.** On request.`), `agent-skills services skill keeps ${svc.name} on request`);
+    }
+    // Read the form, not the value. An earlier version searched the whole file for the
+    // number and passed while the stated Business ID was wrong, because the same digits
+    // also sit inside the YTJ register URL two lines down: one occurrence changed, one
+    // did not, and a substring search cannot tell a claim from a link. Caught by
+    // mutation on 2026-08-01, and it is the same defect as pulling loose integers out
+    // of a scanner string.
+    const esc = (x) => String(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const bidRe = new RegExp('\\*\\*Business ID[^*]*\\*\\*\\s*' + esc(facts.businessId));
+    for (const name of ['contact-info', 'company-info']) {
+      const body = bodies[name] || '';
+      check(bidRe.test(body), `agent-skills ${name} states Business ID ${facts.businessId} as its own field`);
+      const stray = [...body.matchAll(/\*\*Business ID[^*]*\*\*\s*(\S+)/g)].map((m) => m[1]).filter((v) => v !== facts.businessId);
+      check(stray.length === 0, `agent-skills ${name} states no other Business ID${stray.length ? ' :: ' + stray.join(', ') : ''}`);
+    }
+  } catch (e) { bad('agent skills: ' + (e.code || e.message)); }
+
   const fetchBytesMcp = async (p) => Buffer.from(await (await fetch(base + p)).arrayBuffer());
   // Verify the four signed manifests against the published JWKS. Public-key
   // verification only; the same check anyone can run from these two URLs.
@@ -481,8 +967,14 @@ if (LIVE) {
 
     const pri = await callTool('get_principles');
     if (pri) {
-      check(JSON.stringify(pri).includes(facts.businessId),
-        `get_principles states Business ID ${facts.businessId}`);
+      // Anchored to the phrase that makes it a claim. A bare includes() would also be
+      // satisfied by the digits inside a YTJ register URL, which is the same defect
+      // that was measured and fixed in the agent-skills block above on 2026-08-01;
+      // nothing in get_principles carries that URL today, so this is closing the door
+      // before it opens.
+      const priTxt = JSON.stringify(pri);
+      check(priTxt.includes(`Business ID ${facts.businessId}`),
+        `get_principles states "Business ID ${facts.businessId}" as a claim, not as a URL fragment`);
     }
 
     // The name-agreement rule, proven rather than assumed. Without this a server that
