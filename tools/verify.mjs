@@ -373,6 +373,116 @@ if (LIVE) {
     // refused, not answered with an empty body, which is what the old transport did.
     const getRes = await fetch(MCP, { method: 'GET', headers: { accept: 'application/json, text/event-stream' } });
     check(getRes.status === 405, `GET ${MCP} answers 405 (saw ${getRes.status})`);
+    const delRes = await fetch(MCP, { method: 'DELETE', headers: { accept: 'application/json, text/event-stream' } });
+    check(delRes.status === 405, `DELETE ${MCP} answers 405 (saw ${delRes.status})`);
+
+    // Names are not data. Everything above proves the card and the server agree on
+    // WHICH tools exist. Nothing proved what those tools SERVE, and that gap shipped
+    // three times: a two-scanner sentence, a price beside the wrong measured date, and
+    // a category key that existed on no other surface. Each was caught by a person
+    // reading, which is not a gate. So call every data tool and diff the answer against
+    // facts.json, which is where these numbers are canonical.
+    //
+    // Every answer must carry resultType. That field is the lane discriminator, not a
+    // formality: measured 2026-08-01, a tools/call sent without the revision envelope
+    // lands on the SDK compatibility lane and returns the same 2486 bytes with a 200 and
+    // no resultType. A gate that only read the payload would pass while measuring a lane
+    // this server no longer claims to serve.
+    const callTool = async (name) => {
+      const r = await rpc('tools/call', { name, arguments: {} }, { 'mcp-name': name });
+      const result = r.body.result || {};
+      const first = (result.content || [])[0] || {};
+      if (r.body.error || first.type !== 'text') {
+        bad(`tools/call ${name} -> ${r.res.status} ${JSON.stringify(r.body.error || first)}`);
+        return null;
+      }
+      check(result.resultType === 'complete',
+        `tools/call ${name} answers on revision ${REV} (resultType ${JSON.stringify(result.resultType)})`);
+      try { return JSON.parse(first.text); } catch { bad(`tools/call ${name} answer is not JSON`); return null; }
+    };
+    const ints = (v) => (String(v).match(/\d+/g) || []).map(Number);
+
+    const svc = await callTool('get_services');
+    if (svc) {
+      check(svc.currency === facts.prices.currency,
+        `get_services currency == facts.json ${facts.prices.currency} (saw ${svc.currency})`);
+      const byId = Object.fromEntries((svc.services || []).map((s) => [s.id, s]));
+      for (const id of ['audit', 'advisory', 'implementation']) {
+        const got = byId[id] && byId[id].price;
+        check(got === facts.prices[id],
+          `get_services ${id} price == facts.json ${facts.prices[id]} (saw ${JSON.stringify(got)})`);
+      }
+      // Quote-on-request is a claim in its own right, so the reverse is a check too: a
+      // number on either of these two is a price this business never agreed to.
+      for (const id of ['agent-operations', 'mcp-server-design']) {
+        const got = byId[id] && byId[id].price;
+        check(got === 'on request', `get_services ${id} stays on request (saw ${JSON.stringify(got)})`);
+      }
+      const priced = (svc.services || []).filter((s) => typeof s.price === 'number').length;
+      check(priced === 3,
+        `get_services prices exactly 3 of ${(svc.services || []).length} services (saw ${priced})`);
+    }
+
+    const rdy = await callTool('get_agent_readiness');
+    if (rdy) {
+      const iar = facts.agentReadiness.isitagentready;
+      const want = ints(iar.score)[0];
+      check(rdy.measured_at === facts.agentReadiness.measuredAt,
+        `get_agent_readiness measured_at == facts.json ${facts.agentReadiness.measuredAt} (saw ${rdy.measured_at})`);
+      const scan = (rdy.scans || []).find((s) => s.provider === 'isitagentready.com') || {};
+      check(String(scan.result || '').includes(iar.score) && String(scan.result || '').includes(iar.level),
+        `get_agent_readiness states ${iar.score} and ${iar.level} (saw ${JSON.stringify(scan.result)})`);
+      // Read the category set defensively: if facts.json ever loses it, the failure
+      // should name that and let the other checks still run, not throw out of the
+      // whole MCP block and take thirty passes with it.
+      const cats = Array.isArray(iar.categories) ? iar.categories : [];
+      check(cats.length > 0, 'facts.json records the isitagentready category set');
+      const gotCats = scan.categories || {};
+      check(cats.length > 0 && Object.keys(gotCats).sort().join(',') === cats.map((c) => c.id).sort().join(','),
+        `get_agent_readiness category keys == facts.json [${cats.map((c) => c.id)}] (saw [${Object.keys(gotCats)}])`);
+      for (const c of cats) {
+        const n = ints(gotCats[c.id]);
+        check(n.length === 3 && n[0] === want && n[1] === c.checks && n[2] === c.checks,
+          `get_agent_readiness ${c.id} reads ${want} and ${c.checks}/${c.checks} checks (saw ${JSON.stringify(gotCats[c.id])})`);
+      }
+    }
+
+    const sec = await callTool('get_security_evidence');
+    if (sec) {
+      check(sec.measured_at === facts.security.measuredAt,
+        `get_security_evidence measured_at == facts.json ${facts.security.measuredAt} (saw ${sec.measured_at})`);
+      // The two records state the same measurement in different words on purpose
+      // ("all 13 categories passed" against "13/13 categories passed", "98/100" against
+      // a score beside a scale), so the numbers are compared and the prose is not.
+      const hz = (sec.scans || []).find((s) => s.provider === 'Hardenize') || {};
+      const wantHz = ints(facts.security.hardenize.result)[0];
+      const gotHz = ints(hz.result);
+      check(gotHz.length > 0 && gotHz.every((n) => n === wantHz),
+        `get_security_evidence Hardenize reads ${wantHz} categories (saw ${JSON.stringify(hz.result)})`);
+      check(hz.url === facts.security.hardenize.url,
+        `get_security_evidence Hardenize url == facts.json (saw ${hz.url})`);
+      const inl = (sec.scans || []).find((s) => s.provider === 'Internet.nl') || {};
+      const wantInl = ints(facts.security.internetnl.score);
+      check(inl.score === wantInl[0],
+        `get_security_evidence Internet.nl score == facts.json ${wantInl[0]} (saw ${JSON.stringify(inl.score)})`);
+      check(ints(inl.scale).slice(-1)[0] === wantInl[1],
+        `get_security_evidence Internet.nl scale tops out at ${wantInl[1]} (saw ${JSON.stringify(inl.scale)})`);
+      check(inl.url === facts.security.internetnl.url,
+        `get_security_evidence Internet.nl url == facts.json (saw ${inl.url})`);
+    }
+
+    const pri = await callTool('get_principles');
+    if (pri) {
+      check(JSON.stringify(pri).includes(facts.businessId),
+        `get_principles states Business ID ${facts.businessId}`);
+    }
+
+    // The name-agreement rule, proven rather than assumed. Without this a server that
+    // ignored Mcp-Name would answer get_services to a header asking for get_principles,
+    // and every check above would still pass because the body asked for the right tool.
+    const nameMismatch = await rpc('tools/call', { name: 'get_services', arguments: {} }, { 'mcp-name': 'get_principles' });
+    check(nameMismatch.res.status === 400 && nameMismatch.body.error && nameMismatch.body.error.code === -32020,
+      `Mcp-Name/body mismatch refused with 400 and -32020 (saw ${nameMismatch.res.status} / ${nameMismatch.body.error && nameMismatch.body.error.code})`);
   } catch (e) { bad('MCP parity: ' + (e.code || e.message)); }
 } else {
   console.log('\n(static run - add --live on a networked machine to GET every declared URL and verify signatures)');

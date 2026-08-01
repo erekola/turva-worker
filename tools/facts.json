@@ -5,7 +5,17 @@
   "prices": { "audit": 6500, "advisory": 3000, "implementation": 1500, "currency": "EUR" },
   "agentReadiness": {
     "measuredAt": "2026-08-01",
-    "isitagentready": { "level": "Level 5", "score": "100/100" }
+    "isitagentready": {
+      "level": "Level 5",
+      "score": "100/100",
+      "categories": [
+        { "id": "discoverability", "checks": 4 },
+        { "id": "content", "checks": 1 },
+        { "id": "bot_access_control", "checks": 2 },
+        { "id": "api_auth_mcp_a2a_discovery", "checks": 8 },
+        { "id": "commerce", "checks": 5 }
+      ]
+    }
   },
   "security": {
     "measuredAt": "2026-08-01",
