@@ -10,6 +10,7 @@
 //                                  server card matches the running server
 import { readFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { createPublicKey, verify as edVerify } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -114,6 +115,35 @@ check(src.worker.text.includes(`worker v${facts.versions.site}`), `worker.js hea
 // cannot drift silently.
 const pkgSite = JSON.parse(readFileSync(join(ROOT, 'turva-worker/package.json'), 'utf8'));
 check(pkgSite.version === facts.versions.site, `turva-worker package.json version == ${facts.versions.site} (saw ${pkgSite.version})`);
+
+console.log('\nCSP script hash');
+// script-src carries no 'unsafe-inline', so the sha256 in the CSP is the only
+// permission the one inline script has. Editing WEBMCP_SCRIPT without moving the
+// hash blocks that script on every page, and nothing else in this file could see
+// it (the drift shipped once, on 2026-08-01, and was caught by a reader). The
+// hash is over the served string, so CRLF is normalised to LF first: a template
+// literal normalises its line terminators per the ECMAScript spec, and the file
+// on disk is CRLF.
+{
+  const w = src.worker.text;
+  const at = w.indexOf('var WEBMCP_SCRIPT = `<script>');
+  const from = at < 0 ? -1 : w.indexOf('<script>', at) + '<script>'.length;
+  const to = from < 0 ? -1 : w.indexOf('<\\/script>', from);
+  if (at < 0 || to < 0) bad('CSP: WEBMCP_SCRIPT body not found');
+  else {
+    const body = w.slice(from, to).replace(/\r\n/g, '\n');
+    const want = createHash('sha256').update(body, 'utf8').digest('base64');
+    // Matched against the script-src directive itself, not the file. The hash
+    // sitting anywhere in worker.js proves nothing: it could be in a comment,
+    // or in style-src, and script-src would still carry no permission.
+    const dir = (w.match(/"script-src ([^"]*)"/) || [])[1] || '';
+    check(dir.includes(`'sha256-${want}'`), `CSP script-src carries the current WEBMCP_SCRIPT hash (sha256-${want}, script-src is "${dir}")`);
+    // A substitution or an escape in the body would make the source slice and
+    // the served string differ, and the hash above would then be computed over
+    // the wrong bytes. Neither appears today; this fails the run if one lands.
+    check(!/[\\`]|\$\{/.test(body), 'WEBMCP_SCRIPT body has no escape or substitution (source slice == served string)');
+  }
+}
 
 console.log('\nTwin gate (prose from PAGE_MARKDOWN)');
 // End state of the 2026-07-18 conversion: every card page renders its prose
