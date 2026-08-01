@@ -78,7 +78,16 @@ test("every path listed in the API index resolves", async () => {
   for (const url of Object.values(idx.endpoints)) {
     const u = new URL(url);
     if (u.hostname !== "turva.dev") continue; // mcp.turva.dev is a separate Worker
-    const r = await get(u.pathname);
+    // A POST-only endpoint answers 405 to a GET, which is a resolving path rather than a
+    // missing one. Probing it with its own method keeps this gate meaningful for both kinds:
+    // an undeclared or dead path still fails, because the HTML 404 is neither 200 nor 402.
+    const r = u.pathname.endsWith(":send")
+      ? await worker.fetch(new Request(u.toString(), {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ message: { role: "user", parts: [], messageId: "idx" } })
+        }), env, {})
+      : await get(u.pathname);
     assert.ok(r.status === 200 || r.status === 402, u.pathname + " -> " + r.status);
   }
 });
@@ -93,4 +102,113 @@ test("unmatched paths return the Worker's own 404, with no origin behind it", as
   const r = await get("/definitely-not-a-page");
   assert.equal(r.status, 404);
   assert.match(r.headers.get("content-type"), /text\/html/);
+});
+
+// A2A: the agent card declared url + HTTP+JSON transport and three skills while nothing
+// answered on that transport at all, so a POST got the homepage HTML. Found by the monthly
+// credibility audit 2026-08-01. These cases bind three things that had drifted apart: the
+// card's url, the card's skill descriptions, and the data the endpoint actually returns.
+// A first version asserted only that some object came back, and a mutation test that swapped
+// the contact and company payloads passed it, so every skill now asserts content unique to it.
+const a2aSend = (body) => worker.fetch(new Request("https://turva.dev/v1/message:send", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify(body)
+}), env, {});
+
+test("A2A: the transport the card declares answers, in the envelope the spec defines", async () => {
+  const card = await (await get("/.well-known/agent-card.json")).json();
+  assert.equal(card.preferredTransport, "HTTP+JSON");
+  assert.equal(new URL(card.url).pathname.replace(/\/$/, ""), "", "card url is the transport base");
+  const res = await a2aSend({ message: { role: "user", parts: [{ kind: "text", text: "services" }], messageId: "t1" } });
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get("content-type"), /application\/json/);
+  const body = await res.json();
+  // Spec 0.3.0 REST binding: the response is { message?, task? }, not a bare Message.
+  assert.equal(body.kind, undefined, "a bare Message hands a conformant client undefined");
+  assert.equal(body.message.kind, "message");
+  assert.equal(body.message.role, "agent");
+  assert.ok(body.message.messageId);
+  assert.deepEqual(body.message.metadata.skills, ["services"]);
+});
+
+test("A2A: every skill the card declares returns the data its own description promises", async () => {
+  const card = await (await get("/.well-known/agent-card.json")).json();
+  const byId = Object.fromEntries(card.skills.map((s) => [s.id, s]));
+  assert.deepEqual(Object.keys(byId).sort(), ["company-info", "contact-info", "services"]);
+  const dataFor = async (id) => {
+    const r = await a2aSend({ message: { role: "user", parts: [], messageId: "t", metadata: { skillId: id } } });
+    assert.equal(r.status, 200, id + " must resolve");
+    const b = await r.json();
+    assert.deepEqual(b.message.metadata.skills, [id]);
+    assert.equal(b.message.parts.length, 1);
+    assert.equal(b.message.parts[0].kind, "data");
+    return b.message.parts[0].data;
+  };
+
+  const services = await dataFor("services");
+  assert.equal(services.skill, "services");
+  assert.ok(Array.isArray(services.services) && services.services.length >= 5, "all five offerings");
+  assert.ok(services.engagement.length > 10);
+  assert.equal(services.businessId, undefined, "services must not answer with the company payload");
+
+  // The card promises email, Signal, LinkedIn and the business ID here, so the test reads the
+  // card's own description and requires each named channel to come back.
+  const contact = await dataFor("contact-info");
+  assert.equal(contact.skill, "contact-info");
+  const desc = byId["contact-info"].description.toLowerCase();
+  for (const named of ["email", "signal", "linkedin", "business id"]) {
+    assert.ok(desc.includes(named), "card still promises " + named);
+  }
+  assert.match(contact.email, /@turva\.dev$/);
+  assert.match(contact.signal, /^https:\/\/signal\.me\//);
+  assert.match(contact.linkedin, /linkedin\.com/);
+  assert.match(contact.businessId, /^\d{7}-\d$/);
+
+  const company = await dataFor("company-info");
+  assert.equal(company.skill, "company-info");
+  assert.ok(company.founder && company.description && Array.isArray(company.sameAs));
+  assert.equal(company.email, undefined, "company must not answer with the contact payload");
+});
+
+test("A2A: wrong method, bad body, unknown skill and unknown method all answer as JSON", async () => {
+  const g = await get("/v1/message:send");
+  assert.equal(g.status, 405);
+  assert.equal(g.headers.get("allow"), "POST, OPTIONS");
+  assert.match(g.headers.get("content-type"), /application\/json/);
+
+  const bad = await a2aSend({});
+  assert.equal(bad.status, 400);
+  assert.equal((await bad.json()).error.code, -32602);
+
+  // A named skill that does not exist is an error, not a silent success that returns everything.
+  const unknownSkill = await a2aSend({ message: { role: "user", parts: [], messageId: "t", metadata: { skillId: "nope" } } });
+  assert.equal(unknownSkill.status, 400);
+  const us = await unknownSkill.json();
+  assert.equal(us.error.code, -32602);
+  assert.deepEqual(us.error.data.skills, ["services", "contact-info", "company-info"]);
+
+  // A deeply nested array used to reach String() and throw RangeError out of the handler,
+  // answering 500 to an 8 kB body. Only a string is accepted now.
+  let deep = [];
+  for (let i = 0; i < 4000; i++) deep = [deep];
+  const nested = await a2aSend({ message: { role: "user", parts: [], messageId: "t", metadata: { skillId: deep } } });
+  assert.equal(nested.status, 200, "a non-string skillId must not crash the handler");
+
+  const unknown = await get("/v1/tasks/get");
+  assert.equal(unknown.status, 404);
+  const u = await unknown.json();
+  assert.equal(u.error.code, -32601);
+  assert.ok(u.error.data.supported.includes("POST /v1/message:send"));
+
+  // /v1/card is the authenticated extended card and this card declares no support for it.
+  const cardRoute = await get("/v1/card");
+  assert.equal(cardRoute.status, 404);
+
+  const pre = await worker.fetch(new Request("https://turva.dev/v1/message:send", { method: "OPTIONS" }), env, {});
+  assert.equal(pre.status, 204);
+  assert.equal(pre.headers.get("access-control-allow-methods"), "POST, OPTIONS");
+
+  const slash = await get("/v1/message:send/");
+  assert.equal(slash.status, 301);
 });
