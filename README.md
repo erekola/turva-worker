@@ -92,7 +92,7 @@ Route the Worker to your domain under **Workers & Pages, your-worker, Settings, 
 
 MIT licensed. Fork it, replace the source-of-truth object with your own data, then deploy.
 
-If you want an audit of your domain against the same scanner set and a tailored configuration, see [turva.dev](https://turva.dev) or [Erik Rekola on LinkedIn](https://www.linkedin.com/in/erikrekola).
+If you want an audit of your domain against the same scanners this repository is measured by, isitagentready for agent-readiness plus the published Hardenize and Internet.nl security scans, and a tailored configuration, see [turva.dev](https://turva.dev) or [Erik Rekola on LinkedIn](https://www.linkedin.com/in/erikrekola).
 
 ## Security
 

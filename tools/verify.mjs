@@ -186,7 +186,10 @@ const twMdTwin = (path) => {
 //   home agent box intro (the md twin carries its own Markdown views note)
 //   home contact intro (CTA block, per-medium wording).
 const twConverted = {
-  '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: ['Contact'],
+  // 'Independent agent-readiness scan of turva.dev' is hand-rendered as the scan board, not as prose.
+  // It was previously 'covered' by a mdParas() call in serveHomeHtml whose result nothing interpolated,
+  // so this gate read a no-op as proof the section was rendered (2026-08-01).
+  '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: ['Contact', 'Independent agent-readiness scan of turva.dev'],
     prose: ['Every page on this site is also served as plain markdown',
             'Seeing where your site, API or product stands with AI agents starts'] },
   '/blog':    { fn: 'serveBlogHtml',    mdOnly: [] },
