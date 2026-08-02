@@ -669,14 +669,56 @@ if (LIVE) {
     // Every script element, typed or not, plus any external one. The first version
     // skipped elements carrying any type= attribute, so a second modelContext script
     // with type="module", or one loaded with src=, was invisible to a check whose own
-    // message claimed the page carries exactly one. Tag names and attribute names
-    // are case-insensitive in HTML, so both patterns carry the i flag: an uppercase
-    // <SCRIPT> or SRC= would otherwise be invisible to the same check, which is the
-    // same defect one level down (CodeQL js/bad-tag-filter, 2026-08-02).
-    const allScripts = [...homeHtml2.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
-    const external = allScripts.filter((m) => /\bsrc\s*=/i.test(m[1]));
+    // message claimed the page carries exactly one.
+    // A regexp cannot do this job, and two CodeQL alerts said so in a row: browsers
+    // accept <SCRIPT> and end tags such as </script foo="bar">, so every pattern that
+    // looked right still missed one corner. This scans by index, the way a parser reads
+    // this one element: the opening tag ends at the first >, and the element ends at the
+    // first </script that is followed by whitespace, a slash or >. It is a scan and not
+    // a parser, and the remaining differences from a browser all make this gate louder
+    // rather than quieter: a script written inside an HTML comment or inside <textarea>
+    // is counted, script data double escaping ends the element early, and an unclosed
+    // element is not counted at all. The one case that can still hand this gate a wrong
+    // body is an unclosed <script inside a comment, and the byte-identity check below
+    // is what catches that.
+    const scriptElements = (html) => {
+      const low = html.toLowerCase();
+      const out = [];
+      let i = 0;
+      while ((i = low.indexOf('<script', i)) !== -1) {
+        const nameEnd = i + 7;
+        if (!/[\s/>]/.test(html[nameEnd] || '')) { i = nameEnd; continue; }
+        // The opening tag ends at the first > that is NOT inside a quoted attribute
+        // value. A hostile read of this function found that case: in
+        // <script data-x="a>b" src="https://cdn.example/x.js"> the attribute list was
+        // cut at the quoted >, src= fell outside it, and the gate reported "no external
+        // script" about a page that loads one. That was the only difference from a
+        // browser parser that made this gate quieter instead of louder.
+        let openEnd = -1;
+        let quote = '';
+        for (let j = nameEnd; j < html.length; j++) {
+          const ch = html[j];
+          if (quote) { if (ch === quote) quote = ''; continue; }
+          if (ch === '"' || ch === "'") { quote = ch; continue; }
+          if (ch === '>') { openEnd = j; break; }
+        }
+        if (openEnd === -1) break;
+        let close = low.indexOf('</script', openEnd);
+        while (close !== -1 && !/[\s/>]/.test(html[close + 8] || '')) close = low.indexOf('</script', close + 8);
+        if (close === -1) break;
+        const closeEnd = html.indexOf('>', close);
+        if (closeEnd === -1) break;
+        out.push({ attrs: html.slice(nameEnd, openEnd), body: html.slice(openEnd + 1, close) });
+        i = closeEnd + 1;
+      }
+      return out;
+    };
+    const allScripts = scriptElements(homeHtml2);
+    // \b would also fire on data-src=, so the boundary is spelled out: start of the
+    // attribute list, whitespace, a slash, or the quote that closed the previous value.
+    const external = allScripts.filter((s) => /(?:^|[\s/"'])src\s*=/i.test(s.attrs));
     check(external.length === 0, `served homepage loads no external script (saw ${external.length})`);
-    const inline = allScripts.filter((m) => m[2].includes('modelContext')).map((m) => m[2]);
+    const inline = allScripts.filter((s) => s.body.includes('modelContext')).map((s) => s.body);
     check(inline.length === 1, `served homepage carries exactly one script mentioning modelContext (saw ${inline.length})`);
 
     // Source side, sliced the same way the CSP hash check slices it.
