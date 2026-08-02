@@ -669,9 +669,12 @@ if (LIVE) {
     // Every script element, typed or not, plus any external one. The first version
     // skipped elements carrying any type= attribute, so a second modelContext script
     // with type="module", or one loaded with src=, was invisible to a check whose own
-    // message claimed the page carries exactly one.
-    const allScripts = [...homeHtml2.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)];
-    const external = allScripts.filter((m) => /\bsrc\s*=/.test(m[1]));
+    // message claimed the page carries exactly one. Tag names and attribute names
+    // are case-insensitive in HTML, so both patterns carry the i flag: an uppercase
+    // <SCRIPT> or SRC= would otherwise be invisible to the same check, which is the
+    // same defect one level down (CodeQL js/bad-tag-filter, 2026-08-02).
+    const allScripts = [...homeHtml2.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+    const external = allScripts.filter((m) => /\bsrc\s*=/i.test(m[1]));
     check(external.length === 0, `served homepage loads no external script (saw ${external.length})`);
     const inline = allScripts.filter((m) => m[2].includes('modelContext')).map((m) => m[2]);
     check(inline.length === 1, `served homepage carries exactly one script mentioning modelContext (saw ${inline.length})`);
