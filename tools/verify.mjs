@@ -419,6 +419,69 @@ check(twcPages === Object.keys(twConverted).length, `converted gate covered ${tw
 const twPlanted = twHtml('<p>Planted twin gate self test paragraph that must read as literal prose well over the eighty character floor.</p>');
 check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as long prose');
 
+// --- Card checkout links. Every other surface conditions payment on a scope agreed in
+// writing, and on 2026-08-02 one published post did not: it carried these three links
+// under "The services, payable now" and told the reader the audit "can be paid up
+// front". Nothing caught it, because a live payment link is not a claim any checker
+// reads and the post is dated, which is normally the reason to leave a page alone.
+// The rule this gates is the class rather than that sentence: wherever the site names
+// a checkout URL, the paragraph around it has to carry the condition too.
+{
+  const w = src.worker.text;
+  // The condition is matched as whole sentences, not as the phrase "agreed in writing".
+  // The loose version passed a planted naked link, because an unrelated sentence about
+  // bespoke work carries the same phrase 400 characters up the page. A gate that any
+  // nearby wording can satisfy is not measuring the thing it was built for.
+  const CONDITIONS = [
+    'Scope is agreed in writing before any of the three is paid.',
+    'completed by a person after the scope is agreed in writing',
+  ];
+  const WINDOW = 400;
+  const naked = [];
+  for (const [name, text] of [['worker.js', w], ['README.md', src.readme.text]]) {
+    for (const m of text.matchAll(/https:\/\/buy\.stripe\.com\/[A-Za-z0-9]+/g)) {
+      const near = text.slice(Math.max(0, m.index - WINDOW), m.index + WINDOW);
+      if (!CONDITIONS.some((c) => near.includes(c))) naked.push(name + ' ' + m[0]);
+    }
+  }
+  const hits = [...w.matchAll(/https:\/\/buy\.stripe\.com\/[A-Za-z0-9]+/g)];
+  check(hits.length > 0, 'worker.js names at least one card checkout link');
+  check(CONDITIONS.every((c) => w.includes(c)), 'both condition sentences are present to match against');
+  check(naked.length === 0,
+    `every checkout link sits within ${WINDOW} characters of a condition sentence${naked.length ? ' :: naked: ' + [...new Set(naked)].join(', ') : ''}`);
+  const lines = w.split(/\r?\n/);
+  let h = 0; while (h < lines.length && (lines[h].startsWith('//') || lines[h].trim() === '')) h++;
+  const body = lines.slice(h).join('\n');
+  check(h > 0 && body.length > 0 && !/^\s*\/\//.test(body), `release-log header skipped before the wording test (${h} lines)`);
+  const invites = [...body.matchAll(/payable now|paid up front/gi)].map((m) => m[0]);
+  check(invites.length === 0,
+    `nothing the Worker serves invites payment before scope${invites.length ? ' :: ' + [...new Set(invites)].join(', ') : ''}`);
+}
+
+// --- VAT ID. It lived only in the ProfessionalService JSON-LD until 2026-08-02, on no
+// page a person reads, while /company promises reverse charge to EU B2B buyers, who are
+// exactly the people who need it. Now that it is prose on two pages it needs the same
+// treatment as every other number: one owner in facts.json, and no second spelling
+// anywhere. The third check is the one that matters. Asserting the value is present
+// says nothing about a mistyped copy sitting beside it, which is the defect shape the
+// agent-skills Business ID check found on 2026-08-01.
+{
+  const w = src.worker.text;
+  const want = facts.vatId;
+  check(typeof want === 'string' && /^FI\d{8}$/.test(want), `facts.json vatId is well formed (saw ${JSON.stringify(want)})`);
+  check(w.includes(`"vatID":"${want}"`), `JSON-LD vatID == facts.json ${want}`);
+  const seen = [...new Set([...w.matchAll(/\bFI\d{8}\b/g)].map((m) => m[0]))];
+  check(seen.length === 1 && seen[0] === want,
+    `worker.js spells one VAT ID and it is ${want} (saw ${JSON.stringify(seen)})`);
+  // Derivable from the business ID, so a drift between the two is the likelier error
+  // than a typo in either alone.
+  check(want === 'FI' + facts.businessId.replace('-', ''),
+    `vatId matches businessId ${facts.businessId} with the hyphen removed`);
+  const readers = ['VAT-registered, VAT ID ' + want + '.', "turva.dev's own VAT ID is " + want + '.'];
+  check(readers.every((t) => w.includes(t)),
+    'the VAT ID is stated in prose on /legal and /company, not only in JSON-LD');
+}
+
 if (LIVE) {
   console.log('\nLive (URLs + signatures)');
   const base = 'https://turva.dev';
