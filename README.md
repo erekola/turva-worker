@@ -32,14 +32,15 @@ Commerce is optional in the isitagentready model, and turva.dev passes all five 
 
 ## Web security
 
-Agent-readiness is one axis. The domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-08-01.
+Agent-readiness is one axis. The domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-08-04.
 
 | Scanner | Result |
 |---|---|
 | Hardenize | All 13 categories passed |
-| Internet.nl | 98/100 |
+| Internet.nl website test | 98/100 |
+| Internet.nl email test | 95/100 |
 
-On Internet.nl, IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. The result is documented, not hidden.
+On the Internet.nl website test, IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. On the email test, IPv6, DNSSEC, DMARC with DKIM and SPF, and RPKI pass in full, and the deduction is in the cipher configuration of the receiving mail servers, which the mail provider operates. Both results are documented, not hidden.
 
 ## Verify
 
@@ -47,7 +48,8 @@ Every claim above is publicly auditable. Run the scanners yourself or open the c
 
 * isitagentready scanner: https://isitagentready.com/
 * Hardenize report: https://www.hardenize.com/report/turva.dev
-* Internet.nl report: https://internet.nl/site/turva.dev/
+* Internet.nl website report: https://internet.nl/site/turva.dev/
+* Internet.nl email report: https://internet.nl/mail/turva.dev/
 * Company (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7
 
 The repo also carries the deploy gate the site runs on itself: [tools/verify.mjs](tools/verify.mjs) checks the source against [tools/facts.json](tools/facts.json), the single home for the volatile facts: versions, prices, scanner results and measured dates. The static run checks file integrity, pricing, versions, measured-date anchors and the twin gate that fails the run if hand-written prose appears outside the markdown twins. The live run also fetches every declared surface and verifies the Ed25519 signatures of the four signed manifests against the published JWKS.

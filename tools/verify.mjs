@@ -271,6 +271,9 @@ const H = facts.security.hardenize, I = facts.security.internetnl;
 for (const k of Object.keys(src)) check(src[k].text.includes(H.url), `${src[k].rel} links canonical Hardenize URL`);
 for (const k of Object.keys(src)) check(containsAny(src[k].text, slashVariants(I.score)), `${src[k].rel} shows Internet.nl ${I.score}`);
 check(src.worker.text.includes(I.url), `Internet.nl URL in worker.js`);
+const IM = facts.security.internetnlMail;
+for (const k of Object.keys(src)) check(containsAny(src[k].text, slashVariants(IM.score)), `${src[k].rel} shows the Internet.nl mail test ${IM.score}`);
+check(src.worker.text.includes(IM.url), `Internet.nl mail URL in worker.js`);
 for (const k of Object.keys(src)) check(/13 categories/.test(src[k].text), `${src[k].rel} states 13 categories`);
 // Timestamped or per-domain report URLs rot: Hardenize report snapshots expire
 // and isitagentready is a SPA whose per-domain URLs render an empty page.
@@ -1071,6 +1074,14 @@ if (LIVE) {
         `get_security_evidence Internet.nl scale tops out at ${wantInl[1]} (saw ${JSON.stringify(inl.scale)})`);
       check(inl.url === facts.security.internetnl.url,
         `get_security_evidence Internet.nl url == facts.json (saw ${inl.url})`);
+      const inlM = (secEv.scans || []).find((s) => s.provider === 'Internet.nl (email)') || {};
+      const wantInlM = ints(facts.security.internetnlMail.score);
+      check(Number.isFinite(wantInlM[0]) && inlM.score === wantInlM[0],
+        `get_security_evidence Internet.nl mail score == facts.json ${wantInlM[0]} (saw ${JSON.stringify(inlM.score)})`);
+      check(Number.isFinite(wantInlM[1]) && ints(inlM.scale).slice(-1)[0] === wantInlM[1],
+        `get_security_evidence Internet.nl mail scale tops out at ${wantInlM[1]} (saw ${JSON.stringify(inlM.scale)})`);
+      check(inlM.url === facts.security.internetnlMail.url,
+        `get_security_evidence Internet.nl mail url == facts.json (saw ${inlM.url})`);
     }
 
     const pri = await callTool('get_principles');
