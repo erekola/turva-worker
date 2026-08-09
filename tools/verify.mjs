@@ -387,6 +387,7 @@ const twConverted = {
   '/contact': { fn: 'serveContactHtml', mdOnly: [] },
   '/company': { fn: 'serveCompanyHtml', mdOnly: [] },
   '/legal':   { fn: 'serveLegalHtml',   mdOnly: [] },
+  '/shopify-agent-storefront-check': { fn: 'serveShopifyHtml', mdOnly: [] },
   '/guides':  { fn: 'serveGuidesHtml',  mdOnly: [] },
 };
 let twcPages = 0;
@@ -1004,7 +1005,14 @@ if (LIVE) {
       check(svc.currency === facts.prices.currency,
         `get_services currency == facts.json ${facts.prices.currency} (saw ${svc.currency})`);
       const byId = Object.fromEntries((svc.services || []).map((s) => [s.id, s]));
-      for (const id of ['audit', 'advisory', 'implementation']) {
+      // The id list is derived from facts.json rather than written out here. It was a
+      // literal ['audit', 'advisory', 'implementation'] until 2026-08-09, so a fourth
+      // priced service was invisible to this gate: the loop asked only about the three
+      // it already knew, and the count below was a hardcoded 3. Same defect as
+      // /blog/my-gate-could-not-see-a-sixth, in a gate that post did not read. priceKey
+      // doubles as the MCP service id; the reverse check below keeps the unpriced ones honest.
+      for (const s of PRICED) {
+        const id = s.priceKey;
         const got = byId[id] && byId[id].price;
         check(got === facts.prices[id],
           `get_services ${id} price == facts.json ${facts.prices[id]} (saw ${JSON.stringify(got)})`);
@@ -1016,8 +1024,8 @@ if (LIVE) {
         check(got === 'on request', `get_services ${id} stays on request (saw ${JSON.stringify(got)})`);
       }
       const priced = (svc.services || []).filter((s) => typeof s.price === 'number').length;
-      check(priced === 3,
-        `get_services prices exactly 3 of ${(svc.services || []).length} services (saw ${priced})`);
+      check(priced === PRICED.length,
+        `get_services prices exactly ${PRICED.length} of ${(svc.services || []).length} services (saw ${priced})`);
     }
 
     const rdy = await callTool('get_agent_readiness');
