@@ -799,6 +799,73 @@ if (LIVE) {
     }
   } catch (e) { bad('WebMCP tools: ' + (e.code || e.message)); }
 
+  // --- Published price lists. Five documents carry a catalogue of priced services, and until
+  // 2026-08-09 nothing compared any of them to facts.json. The service set moved to four priced
+  // services and all five stayed at three, including a SIGNED server card whose own
+  // serverInfo.description already named the fourth: one document contradicting itself. The change
+  // that caused it touched every surface this file already watched and no surface it did not, which
+  // is the finding rather than the drift.
+  //
+  // Enumerate, do not search. The set is read off the document and compared to facts.json PRICED
+  // three ways at once: same length, every element found resolves to a member, no member resolved
+  // twice. A search for each expected name passes a list that is missing one, and a length check
+  // alone passes a list with one name twice and another absent. See /blog/my-gate-could-not-see-a-sixth.
+  //
+  // These are catalogues and not payable-rail lists, which is why all five belong here. The
+  // surfaces deliberately left at three are /openapi.json, /.well-known/x402 and the x402 challenge:
+  // those enumerate what an agent can actually pay for, and the Shopify check has no card link and
+  // no on-chain resource by decision (mds/decisions.md Tek-176).
+  const priceList = (label, found) => {
+    const want = PRICED.map((s) => s.name);
+    const seen = new Set(), dupes = [];
+    for (const n of found) { if (seen.has(n)) dupes.push(n); else seen.add(n); }
+    const unknown = found.filter((n) => !want.includes(n));
+    const missing = want.filter((n) => !found.includes(n));
+    const ok = nonEmpty && found.length === want.length && !unknown.length && !dupes.length && !missing.length;
+    check(ok, `${label} enumerates exactly the ${want.length} priced services (saw ${found.length}: [${found.join(', ')}]`
+      + `${missing.length ? ', missing: ' + missing.join(', ') : ''}`
+      + `${unknown.length ? ', unknown: ' + unknown.join(', ') : ''}`
+      + `${dupes.length ? ', duplicated: ' + dupes.join(', ') : ''})`);
+  };
+  const byKey = Object.fromEntries(PRICED.map((s) => [s.priceKey, s.name]));
+  // Each surface names the block it owns, so the amount check reads the same object the name
+  // check read. An earlier draft re-derived the block with a conditional on the picker function,
+  // which is the kind of cleverness this file exists to catch.
+  const priceListSurfaces = [
+    ['/.well-known/mcp/server-card.json', (d) => (d.meta || {}).pricing || {},
+      (p) => Object.keys(p).filter((k) => k !== 'currency' && k !== 'vatIncluded').map((k) => byKey[k] || k),
+      (p, key) => (p[key] || {}).price],
+    ['/.well-known/ap2', (d) => d.pricing || {}, (p) => (p.items || []).map((i) => i.name),
+      (p, key) => ((p.items || []).find((i) => i.name === byKey[key]) || {}).price],
+    ['/.well-known/mpp', (d) => d.pricing || {}, (p) => (p.items || []).map((i) => i.name),
+      (p, key) => ((p.items || []).find((i) => i.name === byKey[key]) || {}).price],
+    ['/.well-known/ucp', (d) => ((d.ucp || {}).pricing || {}), (p) => (p.items || []).map((i) => i.name),
+      (p, key) => ((p.items || []).find((i) => i.name === byKey[key]) || {}).price],
+  ];
+  for (const [path, block, names, amountOf] of priceListSurfaces) {
+    try {
+      const p = block(JSON.parse(await (await fetch(base + path)).text()));
+      priceList(path, names(p));
+      for (const s of PRICED) check(amountOf(p, s.priceKey) === facts.prices[s.priceKey],
+        `${path} prices ${s.name} at ${facts.prices[s.priceKey]} (saw ${JSON.stringify(amountOf(p, s.priceKey))})`);
+    } catch (e) { bad(`price list ${path}: ` + (e.code || e.message)); }
+  }
+  // The two signed plugin manifests state the price list as prose for a model to read, so the
+  // enumeration is the count of euro amounts plus membership of every one of them. Prose cannot be
+  // parsed into a list, but it can be counted, and a fourth service missing from a sentence changes
+  // the count.
+  for (const path of ['/.well-known/ai-plugin.json', '/.well-known/agent.json']) {
+    try {
+      const d = JSON.parse(await (await fetch(base + path)).text());
+      const desc = String(d.description_for_model || '');
+      const amounts = desc.match(/\u20ac[\d,]+/g) || [];
+      check(nonEmpty && amounts.length === PRICED.length,
+        `${path} description_for_model states ${PRICED.length} prices (saw ${amounts.length}: [${amounts.join(', ')}])`);
+      for (const s of PRICED) check(amounts.includes(euroOf(s.priceKey)),
+        `${path} description_for_model prices ${s.name} at ${euroOf(s.priceKey)}`);
+    } catch (e) { bad(`plugin manifest ${path}: ` + (e.code || e.message)); }
+  }
+
   // Agent skills. This surface has already served the wrong thing once: the services
   // skill listed three offerings on a site that sells five, and it was caught by a
   // person reading (v3.81.0). The index digest is computed at request time from the
