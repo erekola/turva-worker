@@ -6,7 +6,7 @@ This file is a consolidated reference to those surfaces. Each entry gives a shor
 
 ## What an agent-readiness audit is
 
-An agent-readiness audit measures how well AI agents can discover, read, and act on a website or API, scored against current standards by independent scanners rather than a self-assessment. The output is a list of the surfaces an agent looks for, what it found on each, and where the gaps are. Full guide: https://turva.dev/guides/agent-readiness-audit
+An agent-readiness audit measures how well AI agents can discover, read, and act on a website or API, scored against current standards by an independent scanner rather than a self-assessment. The output is a list of the surfaces an agent looks for, what it found on each, and where the gaps are. Full guide: https://turva.dev/guides/agent-readiness-audit
 
 ## Why this is separate from SEO
 

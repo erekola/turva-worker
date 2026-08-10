@@ -486,6 +486,289 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     'the VAT ID is stated in prose on /legal and /company, not only in JSON-LD');
 }
 
+// ============================================================================
+// Rot gates. Round 12 package B1 (2026-08-10) found seven values that are right
+// today and watched by nothing, plus one published price list that had already
+// drifted. Every check below answers "would anyone notice if this stopped being
+// true", not "is it true now". The finding each one closes is named.
+//
+// Enumerate, do not search: same length, every element a member, none matched
+// twice. A search for each expected name passes a list missing one, and a length
+// check alone passes a list carrying one name twice. See B1-02.
+// ============================================================================
+{
+  const w = src.worker.text;
+  const PRICED = (facts.services || []).filter((s) => s.priceKey);
+  const euroOf = (k) => '€' + facts.prices[k].toLocaleString('en-US');
+  const today = new Date().toISOString().slice(0, 10);
+  const days = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
+  const constOf = (name) => (w.match(new RegExp('var ' + name + ' = "([^"]*)"')) || [])[1];
+  // A missing end anchor used to slice to the end of the file, silently handing a
+  // 186 kB region to a check whose name promised one constant. Anchors are data too:
+  // a gate reading the wrong block is the failure mode this file exists to catch.
+  const anchorFails = [];
+  const region = (start, end) => {
+    const i = w.indexOf(start);
+    if (i < 0) { anchorFails.push('start missing: ' + start.slice(0, 44)); return ''; }
+    if (!end) return w.slice(i);
+    const j = w.indexOf(end, i + start.length);
+    if (j < 0) { anchorFails.push('end missing after ' + start.slice(0, 30) + ': ' + end.slice(0, 30)); return ''; }
+    return w.slice(i, j);
+  };
+  const setSame = (label, found, want) => {
+    const seen = new Set(), dupes = [];
+    for (const n of found) { if (seen.has(n)) dupes.push(n); else seen.add(n); }
+    const unknown = found.filter((n) => !want.includes(n));
+    const missing = want.filter((n) => !found.includes(n));
+    check(want.length > 0 && found.length === want.length && !unknown.length && !dupes.length && !missing.length,
+      `${label} enumerates exactly ${want.length} (saw ${found.length}: [${found.join(', ')}]`
+      + `${missing.length ? ', missing: ' + missing.join(', ') : ''}`
+      + `${unknown.length ? ', unknown: ' + unknown.join(', ') : ''}`
+      + `${dupes.length ? ', duplicated: ' + dupes.join(', ') : ''})`);
+  };
+  // Every euro amount in a passage, resolved back to the service it prices. Prose
+  // cannot be parsed into a list, but the amounts in it can be, and a fourth service
+  // missing from a sentence changes the set.
+  const euroKeys = (text) => (text.match(/€\d{1,3}(?:,\d{3})*/g) || [])
+    .map((a) => (PRICED.find((s) => euroOf(s.priceKey) === a) || {}).priceKey || a);
+
+  console.log('\nPublished price lists in worker.js (B1-02)');
+  // The v3.90.0 gate reads six manifests and the /services markdown. It reads no page
+  // prose, no JSON-LD and no META_BY_PATH, and on 2026-08-09 the buyer guide shipped a
+  // three-service price list while its own FAQ JSON-LD on the same URL listed four.
+  {
+    const home = region('var SCHEMA_HOME', '\nfunction appendAgentLinks');
+    const cat = region('"hasOfferCatalog"', '\n{"@type":"FAQPage"');
+    const offers = [...cat.matchAll(/\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)];
+    setSame('SCHEMA_HOME OfferCatalog', offers.map((m) => m[1]), PRICED.map((s) => s.name));
+    for (const s of PRICED) {
+      const got = (offers.find((m) => m[1] === s.name) || [])[2];
+      check(got === String(facts.prices[s.priceKey]),
+        `SCHEMA_HOME Offer ${s.name} priced ${facts.prices[s.priceKey]} (saw ${JSON.stringify(got)})`);
+    }
+    const agg = (home.match(/"@type":"AggregateOffer"[^}]*}/) || [''])[0];
+    const nums = PRICED.map((s) => facts.prices[s.priceKey]);
+    check(agg.includes(`"offerCount":"${PRICED.length}"`), `AggregateOffer offerCount == ${PRICED.length}`);
+    check(agg.includes(`"lowPrice":"${Math.min(...nums)}"`), `AggregateOffer lowPrice == ${Math.min(...nums)}`);
+    check(agg.includes(`"highPrice":"${Math.max(...nums)}"`), `AggregateOffer highPrice == ${Math.max(...nums)}`);
+  }
+  {
+    const faq = region('var BUYER_FAQ', '\nfunction buildBuyerFaqJsonLd');
+    const cost = faq.split('\n').find((l) => l.includes('does an agent-readiness audit cost')) || '';
+    setSame('BUYER_FAQ cost answer', euroKeys(cost), PRICED.map((s) => s.priceKey));
+    const md = (twMdTwin('/guides/choosing-an-agent-readiness-audit') || '').replace(/\r\n/g, '\n');
+    const sec = md.split('\n## ').find((s) => s.startsWith('What an audit costs')) || '';
+    setSame('/guides/choosing-an-agent-readiness-audit price prose', euroKeys(sec), PRICED.map((s) => s.priceKey));
+  }
+  {
+    const acp = region('var ACP_SERVICES', '\nfunction buildAcpCheckoutSession');
+    const rows = [...acp.matchAll(/^  (\w+): \{ item: "(\w+)", name: "([^"]+)", amount: (\d+)/gm)];
+    setSame('ACP_SERVICES', rows.map((m) => m[1]), PRICED.map((s) => s.priceKey));
+    for (const m of rows) {
+      check(m[1] === m[2], `ACP_SERVICES ${m[1]} key == item id (saw ${m[2]})`);
+      check(Number(m[4]) === facts.prices[m[1]] * 100,
+        `ACP_SERVICES ${m[1]} amount == ${facts.prices[m[1]] * 100} cents (saw ${m[4]})`);
+    }
+    // HOME_JSON is the surface project-do-not-fix.md points at when it says the catalogue
+    // is deliberately narrower than the service set. That sentence is only true while this
+    // list holds every service, and it named the wrong count for a day (B1-21).
+    const home = (w.match(/var HOME_JSON = JSON\.stringify\(([\s\S]*?), null, 2\);/) || [])[1] || '{}';
+    const hs = JSON.parse(home).services || [];
+    setSame('HOME_JSON services', hs.map((s) => s.name), (facts.services || []).map((s) => s.name));
+    for (const s of facts.services || []) {
+      const got = hs.find((x) => x.name === s.name) || {};
+      check(s.priceKey ? got.price === facts.prices[s.priceKey] : got.pricing === 'on request',
+        `HOME_JSON ${s.name} ${s.priceKey ? 'priced ' + facts.prices[s.priceKey] : 'stays on request'} (saw ${JSON.stringify(s.priceKey ? got.price : got.pricing)})`);
+    }
+    const shop = region('function buildShopifyServiceJsonLd', '\nfunction ');
+    const prices = [...shop.matchAll(/"price": "(\d+)"/g)].map((m) => m[1]);
+    check(prices.length === 2 && prices.every((p) => p === String(facts.prices.shopify)),
+      `buildShopifyServiceJsonLd states ${facts.prices.shopify} in both price fields (saw [${prices.join(', ')}])`);
+  }
+
+  console.log('\nNavigation menus (B1-15)');
+  // The same eight-item menu is five independent copies, and /tools shipped in v3.34.0
+  // with no menu linking it until v3.37.0 added it to all five by hand. Nothing compared
+  // them. Order is part of the claim, so the sequences are compared, not the sets.
+  {
+    const uls = [...w.matchAll(/<ul class="nv-menu">\r?\n([\s\S]*?)<\/ul>/g)]
+      .map((m) => [...m[1].matchAll(/<li><a href="([^"]+)"/g)].map((x) => x[1]));
+    const itemsSrc = (w.match(/const items = (\[\[[\s\S]*?\]\]);/) || [])[1] || '[]';
+    const generated = JSON.parse(itemsSrc).map((p) => p[0]);
+    const inline = uls.filter((u) => u.length > 0);
+    check(uls.length === 5, `five nv-menu blocks in worker.js (saw ${uls.length})`);
+    check(uls.length - inline.length === 1, `exactly one nv-menu is generated from an items array (saw ${uls.length - inline.length})`);
+    check(generated.length === 8, `cardPageNav items array has 8 entries (saw ${generated.length})`);
+    const want = generated.join(' ');
+    for (let i = 0; i < inline.length; i++) {
+      check(inline[i].join(' ') === want,
+        `inline nav ${i + 1} carries the same paths in the same order as cardPageNav (saw [${inline[i].join(', ')}])`);
+    }
+    // aria-current="page" is a claim that this menu item IS the page being served, and
+    // /shopify-agent-storefront-check made it about /services for a screen reader until
+    // 2026-08-10 (B1-13). Every cardPageNav argument must be a path the router serves.
+    // Not "the path exists somewhere" but "the page passes its OWN path", which is the
+    // claim aria-current="page" makes. The Shopify page passed /services for a week.
+    const navCalls = [];
+    for (const m of w.matchAll(/cardPageNav\("([^"]*)"\)/g)) {
+      const head = w.lastIndexOf('\nfunction ', m.index);
+      const upto = w.slice(head, m.index);
+      navCalls.push({ arg: m[1], fn: (upto.match(/^\nfunction (\w+)/) || [])[1] || '?', page: (upto.match(/buildMetaBlock\("([^"]*)"/) || [])[1] });
+    }
+    const wrongNav = navCalls.filter((c) => c.page !== c.arg);
+    check(navCalls.length > 0 && wrongNav.length === 0,
+      `every cardPageNav call passes the path its own page serves (${navCalls.length} calls`
+      + `${wrongNav.length ? ' :: ' + wrongNav.map((c) => `${c.fn} serves ${c.page} but passes ${c.arg}`).join(', ') : ''})`);
+  }
+
+  console.log('\nHand-maintained dates (B1-16)');
+  // Three constants that turn into a false claim by the calendar passing rather than by
+  // anyone editing them. SITEMAP_LASTMOD was stuck at 2026-07-02 once already (v3.36.0).
+  {
+    const lastmod = constOf('SITEMAP_LASTMOD');
+    const released = (facts.released || {}).site;
+    check(!!released && days(released, today) >= 0, `facts.json released.site ${released} is not in the future`);
+    check(lastmod === released, `SITEMAP_LASTMOD == facts.json released.site ${released} (saw ${lastmod})`);
+    const metaDates = [...w.matchAll(/\n    date: "(\d{4}-\d{2}-\d{2})"/g)].map((m) => m[1]).sort();
+    const newest = metaDates[metaDates.length - 1];
+    check(!!newest && days(newest, lastmod) >= 0,
+      `SITEMAP_LASTMOD ${lastmod} is not older than the newest dated page ${newest}`);
+    const pvu = constOf('PRICE_VALID_UNTIL');
+    check(days(today, pvu) > 30, `PRICE_VALID_UNTIL ${pvu} is more than 30 days away (Google reads a past one as a withdrawn offer)`);
+    const exp = (w.match(/\nExpires: (\S+)/) || [])[1] || '';
+    const expDay = exp.slice(0, 10);
+    check(days(today, expDay) > 30 && days(today, expDay) <= 366,
+      `security.txt Expires ${expDay} is 31 to 366 days out, per RFC 9116 (saw ${days(today, expDay)} days)`);
+  }
+
+  console.log('\nMarkdown the renderer drops silently (B1-18)');
+  // markdownToHtml knows ##, paragraphs, "- " lists and four-space code. A ### heading,
+  // a numbered list, a fenced block or a wrapped list item renders as literal markup on
+  // a published page, and node --check, node --test and this file all stay green. The
+  // card pages use the md* helpers instead and are excluded by name, not by guess.
+  {
+    const cards = new Set(Object.keys(twConverted));
+    const keys = [...w.slice(twPmStart).matchAll(/\n  "(\/[^"]*)": `/g)].map((m) => m[1]);
+    check(keys.length > 20, `PAGE_MARKDOWN twins found (${keys.length})`);
+    const probs = [];
+    for (const k of keys.filter((k) => !cards.has(k))) {
+      const md = (twMdTwin(k) || '').replace(/\r\n/g, '\n');
+      if (/^### /m.test(md)) probs.push(k + ': ### heading');
+      if (/^\d+\. /m.test(md)) probs.push(k + ': numbered list');
+      if (/^```/m.test(md)) probs.push(k + ': fenced code block');
+      for (const block of md.split(/\n{2,}/)) {
+        const lines = block.split('\n').filter((l) => l.trim() !== '');
+        if (lines.length > 1 && /^- /.test(lines[0]) && lines.some((l) => !/^- /.test(l))) {
+          probs.push(k + ': wrapped list item (' + lines.find((l) => !/^- /.test(l)).trim().slice(0, 40) + ')');
+        }
+      }
+    }
+    check(probs.length === 0, `no twin rendered by markdownToHtml uses a construct it drops${probs.length ? ' :: ' + probs.join(' | ') : ''}`);
+    // And the FAQ half: mdFaqBlocks now throws on an answerless question, which is a
+    // build failure at request time. This names the page before a deploy can.
+    const empties = [];
+    for (const k of keys) {
+      const md = (twMdTwin(k) || '').replace(/\r\n/g, '\n');
+      const sec = md.split('\n## ').find((s) => s.startsWith('Frequently asked'));
+      if (!sec) continue;
+      const blocks = sec.split('\n\n').slice(1).map((b) => b.trim()).filter(Boolean);
+      for (let i = 0; i < blocks.length; i++) {
+        const q = blocks[i].match(/^\*\*(.+?)\*\*$/s);
+        if (q && (i + 1 >= blocks.length || /^\*\*(.+?)\*\*$/s.test(blocks[i + 1]))) empties.push(k + ': ' + q[1].slice(0, 40));
+      }
+    }
+    check(empties.length === 0, `every published FAQ question is followed by an answer${empties.length ? ' :: ' + empties.join(' | ') : ''}`);
+  }
+
+  console.log('\nBlog index, three homes (B1-19)');
+  // LLMS_TXT, the /blog twin and META_BY_PATH each carry the post list. The twin gate
+  // compares "## " headings and /blog has none, so it passes on an empty comparison and
+  // the reader never sees the twin list anyway (mdLead drops it).
+  {
+    const llms = region('var LLMS_TXT', '\nvar ');
+    const a = [...llms.matchAll(/\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/blog\/[a-z0-9-]+)\)/g)].map((m) => m[1]);
+    const twin = (twMdTwin('/blog') || '').replace(/\r\n/g, '\n');
+    const b = [...twin.matchAll(/\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\. (\d{4}-\d{2}-\d{2})\./g)];
+    const meta = [...w.slice(w.indexOf('var META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)].map((m) => m[1]);
+    setSame('LLMS_TXT blog list vs META_BY_PATH', a, meta);
+    setSame('/blog twin list vs META_BY_PATH', b.map((m) => m[1]), meta);
+    const wrong = b.filter((m) => !w.includes(`"${m[1]}": {`) || !region(`  "${m[1]}": {`, '\n  },').includes(`date: "${m[2]}"`));
+    check(b.length > 0 && wrong.length === 0,
+      `every /blog index date matches META_BY_PATH${wrong.length ? ' :: ' + wrong.map((m) => m[1] + ' says ' + m[2]).join(', ') : ''}`);
+  }
+
+  console.log('\nBlog modification dates (B1-11)');
+  // dateModified was datePublished for every post, including one whose own body reads
+  // "Corrected 2026-08-02": structured data telling a reader the page had not been
+  // touched while the page said it had. The marker in the prose owns the date.
+  {
+    const MONTHS = { January: '01', February: '02', March: '03', April: '04', May: '05', June: '06', July: '07', August: '08', September: '09', October: '10', November: '11', December: '12' };
+    const bad2 = [];
+    for (const m of w.slice(w.indexOf('var META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)) {
+      const path = m[1];
+      const entry = region(`  "${path}": {`, '\n  },');
+      const declared = (entry.match(/modified: "(\d{4}-\d{2}-\d{2})"/) || [])[1] || null;
+      const date = (entry.match(/date: "(\d{4}-\d{2}-\d{2})"/) || [])[1] || '';
+      const md = (twMdTwin(path) || '').replace(/\r\n/g, '\n');
+      const marks = [];
+      for (const x of md.matchAll(/^Corrected (\d{4}-\d{2}-\d{2})/gm)) marks.push(x[1]);
+      for (const x of md.matchAll(/^(?:Note added|Update,|Status,) ([A-Z][a-z]+) (\d{1,2})[:,]/gm)) {
+        if (MONTHS[x[1]]) marks.push(date.slice(0, 4) + '-' + MONTHS[x[1]] + '-' + String(x[2]).padStart(2, '0'));
+      }
+      const want = marks.sort().pop() || null;
+      if (want !== declared) bad2.push(`${path}: prose says ${want || 'no modification'}, META_BY_PATH says ${declared || 'none'}`);
+    }
+    check(bad2.length === 0, `every post that declares a modification in its prose carries the same modified date${bad2.length ? ' :: ' + bad2.join(' | ') : ''}`);
+    // The first version of this check searched for one line of source and passed while
+    // the /blog hub, forty lines below it, still copied datePublished into dateModified
+    // for all 22 posts. Every assignment is enumerated instead.
+    const dm = [...w.matchAll(/dateModified = ([^;]+);/g)].map((x) => x[1].trim());
+    check(dm.length >= 2 && dm.every((x) => /\.modified \|\|/.test(x)),
+      `every dateModified assignment reads the modified field first (saw ${dm.length}: [${dm.join(' | ')}])`);
+  }
+
+  console.log('\nx402 amounts, two constants (B1-20)');
+  // The same three USDC amounts live in X402_MANIFEST and X402_ROUTES with nothing
+  // comparing them, and they encode a EUR/USDC rate that has no source and no
+  // measurement date anywhere. Consistency is checkable; the rate itself is not.
+  {
+    const man = region('var X402_MANIFEST', '\nvar ');
+    const acc = [...man.matchAll(/"amount": "(\d+)",\s*\n\s*"resource": "https:\/\/turva\.dev(\/api\/agent\/\w+)"/g)]
+      .map((m) => ({ path: m[2], amount: m[1] }));
+    const routesSrc = region('var X402_ROUTES', 'var ACP_SERVICES');
+    const routes = [...routesSrc.matchAll(/"(\/api\/agent\/(\w+))": \{[\s\S]*?amountUsdcMicro: "(\d+)",\s*\n\s*amountEurCents: (\d+)/g)]
+      .map((m) => ({ path: m[1], key: m[2], usdc: m[3], cents: Number(m[4]) }));
+    setSame('X402_MANIFEST priced resources vs X402_ROUTES', acc.map((x) => x.path), routes.map((r) => r.path));
+    const rates = [];
+    for (const r of routes) {
+      const fromManifest = (acc.find((x) => x.path === r.path) || {}).amount;
+      check(fromManifest === r.usdc, `x402 ${r.path} amount identical in both constants (manifest ${fromManifest}, route ${r.usdc})`);
+      check(r.cents === facts.prices[r.key] * 100, `x402 ${r.path} EUR cents == facts.json ${facts.prices[r.key] * 100} (saw ${r.cents})`);
+      check(man.includes(`(€${facts.prices[r.key].toLocaleString('en-US')} / ${Number(r.usdc) / 1e6} USDC)`),
+        `x402 manifest description for ${r.path} states €${facts.prices[r.key].toLocaleString('en-US')} and ${Number(r.usdc) / 1e6} USDC`);
+      rates.push((Number(r.usdc) / 1e6) / facts.prices[r.key]);
+    }
+    const spread = rates.length ? (Math.max(...rates) - Math.min(...rates)) / Math.min(...rates) : 1;
+    check(rates.length === routes.length && routes.length > 0 && spread < 0.001,
+      `one USDC per EUR rate across all ${routes.length} amounts (${rates.map((x) => x.toFixed(4)).join(', ')}, spread ${(spread * 100).toFixed(3)} %)`);
+  }
+
+  console.log('\nStateless checkout says so (B1-10)');
+  // The surface holds no state, which the 404 body explained and no successful response
+  // did: cancel returned 200 "canceled" and the next GET on the same id returned
+  // not_ready_for_payment, two live answers about one resource that read as a contradiction.
+  {
+    const acp = region('function buildAcpCheckoutSession', '\nfunction acpHeaders');
+    const cancel = region('if (action === "cancel")', 'if (action === "complete")');
+    check(/Sessions are stateless/.test(acp), 'a created or retrieved checkout session states that sessions are stateless');
+    check(/Sessions are stateless/.test(cancel), 'a canceled checkout session states that sessions are stateless');
+    check(/Sessions are stateless/.test(region('code": "not_found", "message": "Unknown checkout session id', '\n')), 'the 404 body still explains statelessness');
+  }
+
+  check(anchorFails.length === 0,
+    `every source anchor these gates read resolves${anchorFails.length ? ' :: ' + anchorFails.join(' | ') : ''}`);
+}
+
 if (LIVE) {
   console.log('\nLive (URLs + signatures)');
   const base = 'https://turva.dev';

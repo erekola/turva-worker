@@ -153,6 +153,13 @@ Thumbs.db
 THREAT_MODEL.md
 VULN-FINDINGS.*
 
+# Stale copy of the deploy gate. Deleted 2026-08-09 by Erik's decision, the second time:
+# the first deletion was recorded 2026-08-02 (CHANGELOG) and the file was on disk again a
+# week later, untracked and unignored, and it had already made a wrong line number look
+# confirmed twice (gotchas.md 2026-08-02 (jatko 2), kierros 12 loydos B2-01). The rule is
+# here so a recreated copy cannot reach the public repo even through a hand-run git add -A.
+tools/verify.proxy.mjs
+
 # Local secrets, never commit
 .dev.vars
 .dev.vars.*
