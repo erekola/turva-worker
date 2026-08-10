@@ -332,6 +332,21 @@ console.log('\nCSP script hash');
   }
 }
 
+// The pages that publish a FAQPage, enumerated from the twins by the static gate and
+// re-read from the served HTML by the live one.
+const faqPaths = [];
+const setSameLive = (label, found, want) => {
+  const seen = new Set(), dupes = [];
+  for (const n of found) { if (seen.has(n)) dupes.push(n); else seen.add(n); }
+  const unknown = found.filter((n) => !want.includes(n));
+  const missing = want.filter((n) => !found.includes(n));
+  check(want.length > 0 && found.length === want.length && !unknown.length && !dupes.length && !missing.length,
+    `${label} enumerates exactly ${want.length} (saw ${found.length}`
+    + `${missing.length ? ', missing: ' + missing.join(' | ') : ''}`
+    + `${unknown.length ? ', unknown: ' + unknown.join(' | ') : ''}`
+    + `${dupes.length ? ', duplicated: ' + dupes.join(' | ') : ''})`);
+};
+
 console.log('\nTwin gate (prose from PAGE_MARKDOWN)');
 // End state of the 2026-07-18 conversion: every card page renders its prose
 // from its PAGE_MARKDOWN twin at request time, so twin parity holds by
@@ -553,12 +568,17 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     check(agg.includes(`"highPrice":"${Math.max(...nums)}"`), `AggregateOffer highPrice == ${Math.max(...nums)}`);
   }
   {
-    const faq = region('var BUYER_FAQ', '\nfunction buildBuyerFaqJsonLd');
-    const cost = faq.split('\n').find((l) => l.includes('does an agent-readiness audit cost')) || '';
-    setSame('BUYER_FAQ cost answer', euroKeys(cost), PRICED.map((s) => s.priceKey));
+    // The buyer guide used to state its prices twice on one URL, in a prose section and in
+    // a BUYER_FAQ answer beside it, and on 2026-08-09 the prose said three services while
+    // the FAQ said four. Since v3.92.0 the page's Frequently asked section is the only home
+    // and the FAQPage is derived from it, so there is one passage and it is the one a
+    // reader sees. Two checks became one because one of the two homes ceased to exist.
     const md = (twMdTwin('/guides/choosing-an-agent-readiness-audit') || '').replace(/\r\n/g, '\n');
-    const sec = md.split('\n## ').find((s) => s.startsWith('What an audit costs')) || '';
-    setSame('/guides/choosing-an-agent-readiness-audit price prose', euroKeys(sec), PRICED.map((s) => s.priceKey));
+    const sec = md.split('\n## ').find((s) => s.startsWith('Frequently asked')) || '';
+    const blocks = sec.split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+    const qi = blocks.indexOf('**What does an agent-readiness audit cost?**');
+    check(qi > 0, 'the buyer guide carries its cost question in the twin');
+    setSame('buyer guide cost answer', euroKeys(qi > 0 ? blocks[qi + 1] || '' : ''), PRICED.map((s) => s.priceKey));
   }
   {
     const acp = region('var ACP_SERVICES', '\nfunction buildAcpCheckoutSession');
@@ -680,6 +700,57 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     check(empties.length === 0, `every published FAQ question is followed by an answer${empties.length ? ' :: ' + empties.join(' | ') : ''}`);
   }
 
+  console.log('\nFAQ, one home per page (B1-03)');
+  // Nineteen pages published a FAQPage whose questions appeared on no page in any form, so
+  // a crawler read a question and answer a reader could not see. Finding that needs an
+  // enumeration rather than a search, and in both directions: the twins that carry a
+  // Frequently asked section and the pages that publish a FAQPage are the same set, and
+  // every published pair is read from its own twin rather than typed beside it. Run against
+  // the tree before v3.92.0 this section fails, which is the reason it is written this way.
+  {
+    // A lone trailing CR survives a \r\n replace here, because region() ends on the \n.
+    const gpf = region('var GUIDE_PAGE_FAQ = {', '\n};').replace(/\r/g, '');
+    const rows = [...gpf.matchAll(/\n  "([^"]+)": mdFaqBlocks\("([^"]+)", "Frequently asked"\)\.pairs,/g)];
+    const crossed = rows.filter((m) => m[1] !== m[2]).map((m) => `${m[1]} reads ${m[2]}`);
+    check(rows.length > 0 && crossed.length === 0,
+      `every GUIDE_PAGE_FAQ entry reads its own twin (${rows.length} entries)${crossed.length ? ' :: ' + crossed.join(', ') : ''}`);
+    // A pair typed here rather than in the twin is the whole defect, so the shape is banned
+    // rather than counted: the block may hold nothing but the derivation lines.
+    const strays = gpf.split('\n').slice(1)
+      .filter((l) => l.trim() && !/^  "[^"]+": mdFaqBlocks\("[^"]+", "Frequently asked"\)\.pairs,$/.test(l));
+    check(strays.length === 0,
+      `GUIDE_PAGE_FAQ holds no FAQ typed beside the twin${strays.length ? ' :: ' + strays[0].trim().slice(0, 60) : ''}`);
+    check(!/\bvar BUYER_FAQ\b/.test(w), 'no page keeps a second FAQ home beside its twin (BUYER_FAQ is gone)');
+
+    const twinKeys = [...w.slice(twPmStart).matchAll(/\n  "(\/[^"]*)": `/g)].map((m) => m[1]);
+    const hasFaq = (p) => /\n## Frequently asked\n/.test((twMdTwin(p) || '').replace(/\r\n/g, '\n'));
+    const faqTwins = twinKeys.filter(hasFaq);
+    // mdSection reads the first section of a given name, so a twin with two of them
+    // publishes one and renders the other as loose prose, and every count above still
+    // agrees with itself. A mutation test went green on exactly that (2026-08-10).
+    const twice = twinKeys.filter((p) => ((twMdTwin(p) || '').replace(/\r\n/g, '\n').match(/\n## Frequently asked\n/g) || []).length > 1);
+    check(twice.length === 0, `no twin carries the section twice${twice.length ? ' :: ' + twice.join(', ') : ''}`);
+    // A card page builds its FAQ by name. Every other twin carrying a section is a guide,
+    // rendered by the one generic path in serveGuideHtml, so the two lists together are
+    // every page that can publish one.
+    const byName = [...new Set([...w.matchAll(/\bmdFaq(?:Card|Rows)\("([^"]+)", "Frequently asked"\)/g)].map((m) => m[1]))];
+    setSame('FAQ rendered by name vs card pages carrying a section', byName, Object.keys(twConverted).filter(hasFaq));
+    setSame('twins with a Frequently asked section vs pages publishing a FAQPage',
+      faqTwins, [...new Set([...rows.map((m) => m[1]), ...byName])]);
+
+    const gfn = twFnBody('serveGuideHtml') || '';
+    check(gfn.includes('const faqHead = "\\n## Frequently asked\\n";') && gfn.includes('mdFaqCard(pathname, "Frequently asked")'),
+      'serveGuideHtml renders the section as a card for any guide twin that carries one');
+    check(gfn.includes('markdownToHtml(md.slice(0, faqAt))') && gfn.includes('markdownToHtml(md.slice(faqEnd))'),
+      'serveGuideHtml renders the article around the card, so a question is not published twice');
+    // 27 of the 46 pages this template serves render no card at all (22 blog posts and the
+    // five guides with no FAQ), and the first version handed all 46 the card rules: 1 010
+    // bytes of CSS with no element to match, on a site that sells cheap pages for agents.
+    check(gfn.includes('${faqAt === -1 ? "" : SCARD_CSS + "\\n" + FAQ_CSS + "\\n"}'),
+      'the guide template serves the card styles only to the pages that render a card');
+    faqPaths.push(...faqTwins);
+  }
+
   console.log('\nBlog index, three homes (B1-19)');
   // LLMS_TXT, the /blog twin and META_BY_PATH each carry the post list. The twin gate
   // compares "## " headings and /blog has none, so it passes on an empty comparison and
@@ -784,6 +855,44 @@ if (LIVE) {
   for (const u of [H.url, I.url, 'https://isitagentready.com/']) {
     try { const r = await fetch(u, {redirect:'follow'}); check(r.ok, `GET ${u} -> ${r.status}`); }
     catch (e) { bad(`GET ${u} -> ${e.code||e.message}`); }
+  }
+
+  console.log('\nFAQ published where a reader can see it (B1-03)');
+  // Read from the served page, not from worker.js: a gate that greps the source proves the
+  // string is in the source, which was true all along while the reader saw nothing. The
+  // list of pages comes from the twins, so a page that stops publishing its FAQ is a
+  // missing card here rather than a page nobody checks.
+  {
+    const faqNodes = (html) => {
+      const out = [];
+      for (const m of html.matchAll(/<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/g)) {
+        let j; try { j = JSON.parse(m[1].replace(/<\\\/script/g, '</script')); } catch { continue; }
+        const walk = (n) => {
+          if (Array.isArray(n)) { n.forEach(walk); return; }
+          if (!n || typeof n !== 'object') return;
+          if (n['@type'] === 'FAQPage') for (const q of n.mainEntity || []) out.push({ q: twSquash(q.name), a: twSquash((q.acceptedAnswer || {}).text || '') });
+          if (n['@graph']) walk(n['@graph']);
+        };
+        walk(j);
+      }
+      return out;
+    };
+    check(faqPaths.length > 0, `pages publishing a FAQPage, enumerated from the twins (${faqPaths.length})`);
+    for (const p of faqPaths) {
+      let page;
+      try { page = await (await fetch(base + p)).text(); }
+      catch (e) { bad(`GET ${p} -> ${e.code || e.message}`); continue; }
+      const cards = [...page.matchAll(/<div class="faq">([\s\S]*?)<\/div>/g)];
+      check(cards.length === 1, `${p}: exactly one FAQ card on the page (saw ${cards.length})`);
+      const vis = cards.length === 1
+        ? [...cards[0][1].matchAll(/<p class="q">([\s\S]*?)<\/p>\s*<p>([\s\S]*?)<\/p>/g)].map((m) => ({ q: twHtml(m[1]), a: twHtml(m[2]) }))
+        : [];
+      const jl = faqNodes(page);
+      setSameLive(`${p}: questions on the page vs in the FAQPage`, vis.map((x) => x.q), jl.map((x) => x.q));
+      const wrong = jl.filter((n) => !vis.some((v) => v.q === n.q && v.a === n.a));
+      check(jl.length > 0 && wrong.length === 0,
+        `${p}: every published answer is the text the reader sees${wrong.length ? ' :: ' + wrong.map((x) => x.q).join('; ') : ''}`);
+    }
   }
   // The homepage scan board is a surface that states the category set, and nothing
   // compared it to anything until 2026-08-01. It is read from the SERVED page rather
@@ -1461,6 +1570,97 @@ if (LIVE) {
     check(nameMismatch.res.status === 400 && nameMismatch.body.error && nameMismatch.body.error.code === -32020,
       `Mcp-Name/body mismatch refused with 400 and -32020 (saw ${nameMismatch.res.status} / ${nameMismatch.body.error && nameMismatch.body.error.code})`);
   } catch (e) { bad('MCP parity: ' + (e.code || e.message)); }
+
+  // --- MTA-STS. The policy is mode: enforce, so a wrong MX list here does not produce an
+  // error message, it stops inbound mail: a sender that cannot match the receiving MX against
+  // this file refuses to deliver. The four names lived only in MTA_STS_POLICY and nothing
+  // compared them to the zone (round 12, B1-17). Three sources are compared here because they
+  // can disagree in three ways: DNS is the authority, the constant is the claim in the repo,
+  // and the served file is what a sending MTA actually reads.
+  try {
+    const dns = (await import('node:dns')).promises;
+    const mailDomain = 'turva.dev';
+    const polSrc = (src.worker.text.match(/var MTA_STS_POLICY = `([\s\S]*?)`;/) || [])[1] || '';
+    // The source is CRLF and a JS template literal is LF at runtime, so the served bytes are
+    // LF. RFC 8461 allows either (sts-policy-term = LF / CRLF), so this normalises and
+    // everything else has to match exactly.
+    const pol = polSrc.replace(/\r\n/g, '\n');
+    // \s spans the line break, so ':\s*(.+)' read a value off the NEXT line and passed a policy
+    // the receiving end rejects (sts-policy-field-delim is ":" *WSP, and WSP is SP/HTAB only).
+    // The trailing [ \t]* is the other half: RFC 8461 allows *WSP after a field, so a stray space
+    // must not fail. Both measured 2026-08-10.
+    const field = (k) => (pol.match(new RegExp('^' + k + ':[ \\t]*(.+?)[ \\t]*$', 'm')) || [])[1];
+    const polMx = [...pol.matchAll(/^mx:[ \t]*(\S+)[ \t]*$/gm)].map((m) => m[1].toLowerCase().replace(/\.$/, ''));
+    check(field('version') === 'STSv1', `MTA_STS_POLICY version: STSv1 (saw ${JSON.stringify(field('version'))})`);
+    check(field('mode') === 'enforce', `MTA_STS_POLICY mode: enforce (saw ${JSON.stringify(field('mode'))})`);
+    // RFC 8461 sets no floor for max_age (the text only says implementers SHOULD prefer values
+    // as long as is practical), but it does set a ceiling: section 3.2 defines the value as a
+    // non-negative integer with a maximum of 31557600. The floor here is the site's own claim,
+    // not the RFC's: a policy of 0 seconds would be legal and would mean nothing is cached.
+    const maxAge = Number(field('max_age'));
+    check(/^\d{1,10}$/.test(field('max_age') || '') && maxAge > 0 && maxAge <= 31557600,
+      `MTA_STS_POLICY max_age is a positive integer no greater than the RFC 8461 maximum of 31557600 (saw ${JSON.stringify(field('max_age'))})`);
+    check(polMx.length > 0, `MTA_STS_POLICY names at least one mx (saw ${polMx.length})`);
+
+    const zoneMx = (await dns.resolveMx(mailDomain)).map((r) => r.exchange.toLowerCase().replace(/\.$/, ''));
+    // An mx: entry may be a wildcard covering exactly one label (RFC 8461 section 4.1), so
+    // membership is covered-by rather than string equality, and it is read in both directions:
+    // every host the zone hands a sender must be allowed by the policy, and every line in the
+    // policy must still match something. A one-way check passes a policy with a dead name in it.
+    const covers = (pat, host) => pat.startsWith('*.')
+      ? host.endsWith(pat.slice(1)) && host.split('.').length === pat.split('.').length
+      : pat === host;
+    const uncovered = zoneMx.filter((h) => !polMx.some((p) => covers(p, h)));
+    const unused = polMx.filter((p) => !zoneMx.some((h) => covers(p, h)));
+    check(zoneMx.length > 0 && uncovered.length === 0 && unused.length === 0,
+      `MTA-STS policy allows exactly the ${mailDomain} MX set, and no line of it is dead (zone: [${zoneMx.join(', ')}], policy: [${polMx.join(', ')}]`
+      + `${uncovered.length ? ', MX the policy does not allow: ' + uncovered.join(', ') : ''}`
+      + `${unused.length ? ', policy lines matching no MX: ' + unused.join(', ') : ''})`);
+
+    const stsUrl = `https://mta-sts.${mailDomain}/.well-known/mta-sts.txt`;
+    // RFC 8461 section 3.3: "Policies fetched via HTTPS are only valid if the HTTP response code
+    // is 200 (OK). HTTP 3xx redirects MUST NOT be followed." node fetch follows them by default,
+    // so the gate has to refuse them the way a conforming sender does; otherwise it would read a
+    // policy through a redirect and report green on a host no sender can fetch from.
+    const stsRes = await fetch(stsUrl, { redirect: 'manual', headers: { 'cache-control': 'no-cache' } });
+    const stsBody = await stsRes.text();
+    check(stsRes.status === 200, `${stsUrl} -> ${stsRes.status} (RFC 8461 accepts 200 only, and no redirect)`);
+    check(String(stsRes.headers.get('content-type') || '').startsWith('text/plain'),
+      `policy content-type is text/plain (saw ${JSON.stringify(stsRes.headers.get('content-type'))})`);
+    const stsNorm = stsBody.replace(/\r\n/g, '\n');
+    check(pol.length > 0 && stsNorm === pol,
+      `served policy is identical to MTA_STS_POLICY after CRLF normalisation (${stsNorm.length} served vs ${pol.length} in source)`);
+
+    // The TXT id is the cache key. In enforce mode a sender keeps its cached policy until the
+    // id changes, so a policy edited without a new id reaches nobody for up to max_age. This
+    // proves the record is there and well formed; it cannot prove the id was bumped.
+    const txt = (await dns.resolveTxt(`_mta-sts.${mailDomain}`)).map((r) => r.join(''));
+    const sts = txt.filter((r) => r.startsWith('v=STSv1'));
+    // RFC 8461 section 3.1: sts-field-delim = *WSP ";" *WSP, extension fields are allowed and
+    // field order is not significant. The first regex here was turva's own exact spelling while
+    // the message claimed RFC well-formedness, which is a narrower thing wearing a wider name.
+    const stsOk = /^v=STSv1(?:[ \t]*;[ \t]*[A-Za-z0-9_.-]+=[^;\s]+)+[ \t]*;?[ \t]*$/.test(sts[0] || '')
+      && /(?:^|;)[ \t]*id=[A-Za-z0-9]{1,32}[ \t]*(?:;|$)/.test(sts[0] || '');
+    check(sts.length === 1 && stsOk,
+      `_mta-sts.${mailDomain} has exactly one STSv1 record carrying an id, per RFC 8461 section 3.1 (saw ${JSON.stringify(txt)})`);
+
+    // And the half the record alone cannot prove. The id is the cache key: a sender keeps its
+    // cached policy until the id changes, so a policy edited without a new id reaches nobody
+    // for up to max_age, and in enforce mode that is mail that does not arrive. facts.json
+    // owns both halves on one line. Editing the policy turns the hash red, and updating the hash
+    // to clear it puts the id to bump in Cloudflare DNS under the same cursor. That is a prompt
+    // to a person and NOT a check: whoever updates the hash can still leave the id alone, and
+    // all four checks here would be green with a changed policy behind an unchanged cache key.
+    // Measured 2026-08-10. Deriving the id from the policy would make it a check, and that is a
+    // DNS format change and Erik's decision (mds/decisions.md Tek-188).
+    const ms = facts.mtaSts || {};
+    const polSha = createHash('sha256').update(Buffer.from(pol, 'utf8')).digest('hex');
+    check(ms.policySha256 === polSha,
+      `facts.json mtaSts.policySha256 == the policy in worker.js (facts ${String(ms.policySha256).slice(0, 16)}..., worker.js ${polSha.slice(0, 16)}...)`);
+    const liveId = ((sts[0] || '').match(/id=([A-Za-z0-9]+)/) || [])[1];
+    check(!!ms.txtId && ms.txtId === liveId,
+      `facts.json mtaSts.txtId == the id served in DNS (facts ${JSON.stringify(ms.txtId)}, DNS ${JSON.stringify(liveId)})`);
+  } catch (e) { bad('MTA-STS: ' + (e.code || e.message)); }
 } else {
   console.log('\n(static run - add --live on a networked machine to GET every declared URL and verify signatures)');
 }
