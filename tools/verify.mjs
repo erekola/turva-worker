@@ -274,7 +274,13 @@ check(src.worker.text.includes(I.url), `Internet.nl URL in worker.js`);
 const IM = facts.security.internetnlMail;
 for (const k of Object.keys(src)) check(containsAny(src[k].text, slashVariants(IM.score)), `${src[k].rel} shows the Internet.nl mail test ${IM.score}`);
 check(src.worker.text.includes(IM.url), `Internet.nl mail URL in worker.js`);
-for (const k of Object.keys(src)) check(/13 categories/.test(src[k].text), `${src[k].rel} states 13 categories`);
+// Fixed 2026-08-16 (round 12, finding B4-19, surface B2-07). The number 13 was hardcoded into
+// this regex while its canonical home is facts.security.hardenize.result ("all 13 categories
+// passed"), and the Rot gates block lower in this same file already derives it correctly. A
+// second copy of a measured number is not a second proof; it is the place the number rots.
+const HZ_CATS = (/(\d+)\s+categories/.exec(H.result) || [])[1];
+check(!!HZ_CATS, `facts.security.hardenize.result carries the category count (${H.result})`);
+for (const k of Object.keys(src)) check(new RegExp(HZ_CATS + ' categories').test(src[k].text), `${src[k].rel} states ${HZ_CATS} categories`);
 // Timestamped or per-domain report URLs rot: Hardenize report snapshots expire
 // and isitagentready is a SPA whose per-domain URLs render an empty page.
 // Only the canonical forms may appear.
@@ -284,10 +290,21 @@ const deadIar = /isitagentready\.com\/[A-Za-z0-9]/;
 for (const f of Object.values(src)) check(!deadIar.test(f.text), `${f.rel}: no dead per-domain isitagentready URL`);
 
 console.log('\nPricing');
-for (const [name,val] of [['audit',facts.prices.audit],['advisory',facts.prices.advisory],['implementation',facts.prices.implementation]]) {
+// Fixed 2026-08-16 (round 12, finding B4-14, surface B2-07). Three keys were hardcoded here
+// while facts.json's services table names FOUR priceKey rows: shopify was never checked on
+// this path, and the loop bound a price to a bare string rather than to a named service. The
+// Rot gates block lower in this same file already derives its set from
+// facts.services.filter(s => s.priceKey), so this block was the one copy that could drift.
+// Enumerate, do not search: a search for each expected name passes a list missing one.
+const PRICED_STATIC = (facts.services || []).filter((s) => s.priceKey);
+check(PRICED_STATIC.length > 0, `facts.json names at least one priced service (${PRICED_STATIC.length})`);
+for (const svc of PRICED_STATIC) {
+  const val = facts.prices[svc.priceKey];
+  check(Number.isFinite(val), `facts.prices resolves ${svc.priceKey} to a number (${svc.name})`);
+  if (!Number.isFinite(val)) continue;
   const euro = '€' + val.toLocaleString('en-US');
-  check(src.worker.text.includes(`"price": ${val}`), `worker.js "price": ${val} (${name})`);
-  check(src.worker.text.includes(euro), `worker.js ${euro} (${name})`);
+  check(src.worker.text.includes(`"price": ${val}`), `worker.js "price": ${val} (${svc.name})`);
+  check(src.worker.text.includes(euro), `worker.js ${euro} (${svc.name})`);
 }
 
 console.log('\nVersions');
