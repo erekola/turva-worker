@@ -8,7 +8,10 @@
 //                                  manifests against the published JWKS, and
 //                                  speak MCP to mcp.turva.dev to prove the signed
 //                                  server card matches the running server
-import { readFileSync } from 'node:fs';
+// existsSync lisatty 2026-08-16: og-cards.json -tarkistus kaytti sita ilman importtia, ja se ei
+// ollut koskaan ajanut, koska manifesti oli tyhja. Ensimmainen kortti manifestissa kaatoi koko
+// verify-ajon ReferenceErroriin. Tarkistus joka ei ole koskaan ajanut ei ole vihrea vaan ajamaton.
+import { readFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createPublicKey, verify as edVerify } from 'node:crypto';
