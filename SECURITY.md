@@ -17,7 +17,7 @@ runtime `dependencies` at all. Its only entry is `wrangler`, under
 `devDependencies`, so the deployed Worker bundles no third-party runtime code
 and no advisory against this repository reaches production. They are still
 cleared as they appear, because this repository is a reference implementation
-people fork. Checked 2026-07-26.
+people fork. Checked 2026-08-16.
 
 ## Reporting a Vulnerability
 

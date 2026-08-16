@@ -1774,7 +1774,7 @@ of it.
 Large sites are covered in full. If a site is big enough that the
 live checks reach a tool quota, the quota is raised rather than the
 coverage reduced. Once the audit is complete, the fixes it lists are
-typically about a day of implementation work, whether your team does them or I do. The audit is what identifies that day of work and orders it by impact.
+typically about a day of implementation work, whether your team does them or I do. That figure is an estimate scoped to the findings this audit lists, not a fixed quote, and the audit is what identifies that work and orders it by impact.
 
 Suited for teams that want a clear picture of where they stand
 before deciding what to do about it.
@@ -1934,7 +1934,7 @@ No. The two are separate fixed-scope diagnoses and either can be bought on its o
 
 **How much work are the fixes after the audit?**
 
-In most cases, once the audit is complete, the fixes it lists are about a day of implementation work. Your team can do them with the report as the spec, or turva.dev implements them as a scoped engagement.
+In most cases, once the audit is complete, the fixes it lists are about a day of implementation work. That figure is an estimate scoped to the findings the report lists, not a fixed quote. Your team can do them with the report as the spec, or turva.dev implements them as a scoped engagement.
 
 **Will you sign an NDA, and how is our material handled?**
 
@@ -5589,7 +5589,7 @@ strong{color:#F2F4F3;}
 .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1.1rem;}
 .lede{font-size:1.16rem;line-height:1.55;color:#C9D1CE;margin:0;max-width:40rem;}
 .hero-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(258px,1fr);gap:1.6rem;align-items:center;margin:1.7rem 0 0;}
-.hero-proof{display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin:0 0 1.3rem;border:1px solid rgba(93,241,143,0.28);border-radius:14px;padding:13px 20px;background:rgba(93,241,143,0.04);color:#C9D1CE;font:400 14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;}
+.hero-proof{max-width:100%;overflow-wrap:anywhere;display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin:0 0 1.3rem;border:1px solid rgba(93,241,143,0.28);border-radius:14px;padding:13px 20px;background:rgba(93,241,143,0.04);color:#C9D1CE;font:400 14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;}
 .hero-proof .hp-claim{display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline;}
 .hero-proof .hp-src{display:flex;flex-wrap:wrap;gap:0 8px;font-size:12.5px;color:#9AA3A0;}
 .hero-proof .hp-score{color:#5DF18F;font-weight:600;}
@@ -5599,11 +5599,11 @@ strong{color:#F2F4F3;}
 .btn:hover{background:#7df7a6;text-decoration:none;}
 .btn-ghost{display:inline-block;color:#F2F4F3;font-weight:600;border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:.65rem 1.15rem;font-size:.92rem;transition:border-color .15s ease,color .15s ease;}
 .btn-ghost:hover{border-color:#5DF18F;color:#5DF18F;text-decoration:none;}
-.terminal{border:1px solid rgba(255,255,255,0.14);border-radius:12px;overflow:hidden;background:#06100F;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.84rem;}
-.tm-bar{display:flex;align-items:center;gap:.5rem;padding:.55rem .8rem;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.08);}
+.terminal{min-width:0;max-width:100%;border:1px solid rgba(255,255,255,0.14);border-radius:12px;overflow:hidden;background:#06100F;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.84rem;}
+.tm-bar{display:flex;min-width:0;align-items:center;gap:.5rem;padding:.55rem .8rem;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.08);}
 .tm-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
 .tm-dot.r{background:#ff5f56;}.tm-dot.y{background:#ffbd2e;}.tm-dot.g{background:#27c93f;}
-.tm-title{margin-left:.45rem;color:#9AA3A0;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tm-title{min-width:0;flex:0 1 auto;margin-left:.45rem;color:#9AA3A0;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tm-body{padding:.9rem .85rem 1.05rem;line-height:1.75;}
 .tm-cmd{color:#F2F4F3;word-break:break-word;}
 .tm-cmd .pr{color:#5DF18F;margin-right:.5rem;}
@@ -5621,7 +5621,7 @@ strong{color:#F2F4F3;}
 .cell:hover{border-color:rgba(93,241,143,0.45);transform:translateY(-1px);}
 .cell .cat{display:block;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .25rem;}
 .cell .val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.02rem;color:#5DF18F;font-weight:700;}
-.board-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}.whynot{margin:.85rem 0 0;font-size:.85rem;line-height:1.55;color:#96A79C;border-left:2px solid #5DF18F;padding:.1rem 0 .1rem .8rem;}.whynot b,.whynot strong{color:#F2F5F3;}.bizline{margin:.7rem 0 0;font-size:.78rem;color:#9AA3A0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+.board-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}.whynot{margin:.85rem 0 0;font-size:.85rem;line-height:1.55;color:#96A79C;border-left:2px solid #5DF18F;padding:.1rem 0 .1rem .8rem;}.whynot b,.whynot strong{color:#F2F5F3;}.bizline{max-width:100%;overflow-wrap:anywhere;margin:.7rem 0 0;font-size:.78rem;color:#9AA3A0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
 .board-sum b{color:#5DF18F;}
 .pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
 .sec{padding:1.9rem 0;border-top:0.5px solid rgba(255,255,255,0.07);}
@@ -5986,7 +5986,7 @@ a:hover{text-decoration:underline;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
 @media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
 ${SCARD_CSS}
-.kvs{display:grid;grid-template-columns:max-content 1fr;gap:.55rem .7rem;align-items:baseline;}
+.kvs{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.55rem .7rem;align-items:baseline;}
 .kv{display:contents;}
 .kv .k{color:#9AA3A0;font-size:.88rem;}
 .kv .v{color:#5DF18F;font-weight:600;word-break:break-word;}

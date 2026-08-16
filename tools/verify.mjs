@@ -16,6 +16,22 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
+
+// FETCH TIMEOUT, added 2026-08-16 (round 12, follow-up work item 1 from the round-12 wrap-up).
+// Every one of the 19 network calls in this file ran without a timeout. Node's fetch has no
+// default one, so a single unanswered request hung the whole gate with no error and no exit
+// code, and a hung gate reads exactly like a slow one. Wrapping fetch once here fixes all
+// call sites at the same time, and it cannot be forgotten at a new call site the way a
+// per-call option can. An explicit init.signal still wins, so a caller that wants its own
+// abort behaviour keeps it. Override with VERIFY_FETCH_TIMEOUT_MS when a slow network is the
+// expected condition rather than the fault being measured.
+const FETCH_TIMEOUT_MS = Number(process.env.VERIFY_FETCH_TIMEOUT_MS || 20000);
+const nativeFetch = globalThis.fetch;
+const fetch = (input, init = {}) => (
+  init && init.signal
+    ? nativeFetch(input, init)
+    : nativeFetch(input, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
+);
 const LIVE = process.argv.includes('--live');
 const facts = JSON.parse(readFileSync(join(ROOT, 'tools/facts.json'), 'utf8'));
 
@@ -29,6 +45,22 @@ for (const [k, rel] of Object.entries(FILES)) {
   src[k] = { rel, buf: readFileSync(p), text: readFileSync(p, 'utf8') };
 }
 
+// B2-20 (round 12, batch E16). Two published files in this repo were read by no gate at
+// all, so their numbers, dates and spellings could drift silently, and one of them had
+// already started to. They are NOT added to FILES, because every check that loops over
+// FILES asks for the scanner score and the level, and SECURITY.md states neither. They get
+// their own object and their own checks below: what a file claims decides what is asked of
+// it, not which list it happens to sit in.
+const DOCS = {
+  security:  'SECURITY.md',
+  readiness: 'docs/agent-readiness.md',
+};
+const doc = {};
+for (const [k, rel] of Object.entries(DOCS)) {
+  const p = join(ROOT, rel);
+  doc[k] = { rel, buf: readFileSync(p), text: readFileSync(p, 'utf8') };
+}
+
 let fails = 0, passes = 0;
 const ok  = (m) => { passes++; console.log('  pass  ' + m); };
 const bad = (m) => { fails++;  console.log('  FAIL  ' + m); };
@@ -39,7 +71,7 @@ const containsAny = (t, arr) => arr.some((s) => t.includes(s));
 console.log('turva.dev verify  (source of truth: tools/facts.json)\n');
 
 console.log('Integrity');
-for (const f of Object.values(src)) {
+for (const f of [...Object.values(src), ...Object.values(doc)]) {
   let nul = 0; for (let i=0;i<f.buf.length;i++) if (f.buf[i]===0) nul++;
   const crlf = (f.text.match(/\r\n/g)||[]).length;
   const lf = (f.text.match(/\n/g)||[]).length;
@@ -52,6 +84,64 @@ for (const f of Object.values(src)) {
 }
 try { execSync(`node --check "${join(ROOT, FILES.worker)}"`); ok('worker.js parses (node --check)'); }
 catch (e) { bad('worker.js node --check: ' + String(e.stderr||e.message).slice(0,200)); }
+
+console.log('\nSecret files stay out of the public repo');
+// B2-12 (round 12, batch E16). Three lines in the repo root .gitignore are the only thing
+// keeping the threat model and the vulnerability findings out of the public repository, and
+// no gate read them. Deleting them produced no red anywhere, and the next `git add -A` would
+// have published both files. This does not prove the files are untracked, which git owns; it
+// proves the rule that keeps them untracked is still written down.
+{
+  const giText = readFileSync(join(ROOT, '.gitignore'), 'utf8');
+  const giLines = giText.split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
+  // Written out one by one rather than looped, so each excluded path is named in the check
+  // itself. A loop over a list reads the same and hides which entry went missing.
+  check(giLines.includes('THREAT_MODEL.md'), '.gitignore still excludes THREAT_MODEL.md');
+  check(giLines.includes('VULN-FINDINGS.*'), '.gitignore still excludes VULN-FINDINGS.*');
+  check(giLines.includes('tools/verify.proxy.mjs'), '.gitignore still excludes tools/verify.proxy.mjs');
+}
+
+console.log('\nShare card manifest (tools/og-cards.json)');
+// B2-21 (round 12, batch E16, Erik's decision 2026-08-16). An og card's headline and subhead
+// are JPEG pixels, so no text gate could read them: not this file, not tools/kielletyt.mjs,
+// not the style pass. Three measured drifts (findings B2-22, B2-23 and B2-24) all happened the
+// same way, the text surface was corrected and the card was not. tools/make-og-card.py now
+// records what it laid into each card, so the words exist as text somewhere and can be gated.
+//
+// The manifest is itself a claim surface in a public repo, and an unwatched claim surface in
+// this repo has drifted before (mds/gotchas.md 2026-07-25), so it is gated in the same change
+// that creates it rather than later.
+//
+// TWO LIMITS, both decisions rather than oversights, and neither is pretended away.
+// 1. The manifest states what was MEANT to be laid into the card, not what was laid. It is not
+//    a substitute for reading the pixels; it is the source of truth the pixels are built from.
+// 2. Cards generated before 2026-08-16 are NOT in it, because their texts were never stored
+//    anywhere. Coverage therefore starts at 0 and grows one card at a time, forward only.
+//    The count is PRINTED below rather than asserted, because asserting a floor that is zero
+//    today would be a check that cannot fail, and asserting tomorrow's number here would be the
+//    hardcoded value this whole file exists to remove.
+{
+  const cardsRaw = readFileSync(join(ROOT, 'tools/og-cards.json'), 'utf8');
+  let cards = null;
+  try { cards = JSON.parse(cardsRaw); } catch (e) { bad('tools/og-cards.json does not parse: ' + e.message); }
+  const isObj = !!cards && typeof cards === 'object' && !Array.isArray(cards);
+  check(isObj, 'og-cards.json is a JSON object keyed by file name');
+  const names = isObj ? Object.keys(cards) : [];
+  // Deterministic file: the generator writes sorted keys, so a diff shows only real changes.
+  check(names.slice().sort().join(',') === names.join(','), `og-cards.json keys are sorted (${names.length} cards recorded)`);
+  const publicDir = join(ROOT, 'turva-worker/public');
+  const missingFile = names.filter((n) => !existsSync(join(publicDir, n)));
+  check(missingFile.length === 0,
+    `every og-cards.json entry names a file in turva-worker/public${missingFile.length ? ' (missing: ' + missingFile.join(', ') + ')' : ''}`);
+  const unreferenced = names.filter((n) => !src.worker.text.includes(`"/${n}"`));
+  check(unreferenced.length === 0,
+    `every og-cards.json entry is referenced by worker.js${unreferenced.length ? ' (not referenced: ' + unreferenced.join(', ') + ')' : ''}`);
+  const fields = ['kicker', 'white', 'green', 'subhead'];
+  const incomplete = names.filter((n) => !fields.every((f) => typeof cards[n][f] === 'string' && cards[n][f].trim().length > 0));
+  check(incomplete.length === 0,
+    `every og-cards.json entry carries ${fields.join(', ')}${incomplete.length ? ' (incomplete: ' + incomplete.join(', ') + ')' : ''}`);
+  console.log(`  note  og card text coverage: ${names.length} cards carry their text in the manifest (forward only, see the comment above)`);
+}
 
 console.log('\nMeasured dates');
 const ar = facts.agentReadiness.measuredAt, sec = facts.security.measuredAt;
@@ -74,6 +164,12 @@ check(secNear.length>=1 && secNear.every(d=>d===sec), `worker.js security "Measu
 const lvm = src.worker.text.match(/"lastVerified":\s*"(\d{4}-\d{2}-\d{2})"/);
 check(!!lvm && lvm[1]===ar, `worker.js HOME_JSON lastVerified == ${ar}`);
 check(src.readme.text.includes(ar), `README.md carries ${ar}`);
+// B2-06 (round 12, batch E16). Only the agent-readiness date was anchored in README.md,
+// although the same file carries the security measurement date in its own sentence
+// ("Measured on `turva.dev` on <date>") and `sec` was already read above. That sentence does
+// not match the "Measured <date>" pattern used for worker.js either, because a word sits in
+// between, so nothing was watching it. Both dates are anchored now.
+check(src.readme.text.includes(sec), `README.md carries ${sec}`);
 
 console.log('\nScanner results');
 const iar = facts.agentReadiness.isitagentready, lvl = iar.level;
@@ -85,6 +181,23 @@ const CATS = Array.isArray(iar.categories) ? iar.categories : [];
 for (const k of Object.keys(src)) {
   check(containsAny(src[k].text, slashVariants(iar.score)), `${src[k].rel} shows ${iar.score}`);
   check(src[k].text.includes(lvl), `${src[k].rel} shows "${lvl}"`);
+}
+
+// B2-20 (round 12, batch E16). The two files read into `doc` above are checked here against
+// facts.json, each on what it actually claims. agent-readiness.md states the scanner numbers
+// and the measurement date; SECURITY.md states neither, and its one volatile value is the day
+// the advisories were last cleared, which had no canonical home at all and was 14 days old.
+// It has one now (facts.security.advisoriesCheckedAt), so the date can no longer drift
+// silently in a published file.
+console.log('\nPublished docs that state a fact (SECURITY.md, docs/agent-readiness.md)');
+check(containsAny(doc.readiness.text, slashVariants(iar.score)), `${doc.readiness.rel} shows ${iar.score}`);
+check(doc.readiness.text.includes(lvl), `${doc.readiness.rel} shows "${lvl}"`);
+check(doc.readiness.text.includes(ar), `${doc.readiness.rel} carries ${ar}`);
+{
+  const checkedAt = facts.security.advisoriesCheckedAt;
+  check(typeof checkedAt === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(checkedAt),
+    `facts.json records when the advisories were last checked (${checkedAt})`);
+  check(doc.security.text.includes(`Checked ${checkedAt}`), `${doc.security.rel} carries Checked ${checkedAt}`);
 }
 
 console.log('\nCategory set (facts.json owns which categories exist)');
@@ -106,6 +219,24 @@ console.log('\nCategory set (facts.json owns which categories exist)');
 // were named and it never asked what else was named, so a sixth category passed on
 // three of the four surfaces. Measured, all three, on the day it was written.
 {
+  // Tek-225 (2026-08-16). The three surfaces below used to have their sentence shape written
+  // into this file. It now lives in facts.json next to the categories it describes, and this
+  // block fails loudly if a field is missing, so the move cannot silently turn into a gate
+  // that reads nothing. Same reason category.prose has to be USED somewhere: a declared value
+  // nobody reads is not evidence.
+  const SW = (iar && iar.surfaceWording) || {};
+  const swMissing = [];
+  for (const [k, keys] of [['evidenceTwin', ['spanFrom', 'spanTo', 'spellingIndex', 'template']],
+                           ['auditGuide', ['introVerb', 'locatingSentence']],
+                           ['readme', ['countSentence', 'allSentence']]]) {
+    if (!SW[k]) { swMissing.push(k); continue; }
+    for (const kk of keys) if (!SW[k][kk]) swMissing.push(`${k}.${kk}`);
+  }
+  check(swMissing.length === 0,
+    `facts.json declares the wording of all three gate-owned surfaces${swMissing.length ? ' :: missing ' + swMissing.join(', ') : ''}`);
+  check(Array.isArray(SW.evidenceTwin && SW.evidenceTwin.spellingIndex) && SW.evidenceTwin.spellingIndex.length === CATS.length,
+    `evidence twin spellingIndex has one entry per category (${(SW.evidenceTwin && SW.evidenceTwin.spellingIndex || []).length} of ${CATS.length})`);
+
   const spellings = (c) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase());
   const resolve = (item) => CATS.find((c) => spellings(c).includes(String(item).trim().toLowerCase()));
   check(CATS.length > 0, `facts.json records the category set (${CATS.length})`);
@@ -174,13 +305,27 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   // includes() let a sixth category be prepended to the list and still pass, because
   // the wanted string was still in there further along. Measured 2026-08-01.
   {
-    const A = span(src.worker.text, 'Scanner: isitagentready.com (third party, Cloudflare).', 'Agent-Native.', 'evidence twin');
-    if (A) {
+    const A = span(src.worker.text, SW.evidenceTwin.spanFrom, SW.evidenceTwin.spanTo, 'evidence twin');
+    // B2-10 (round 12, batch E16). The line below indexes sp[4] directly, so a facts.json
+    // that lost a category threw a TypeError out of the whole static run instead of naming
+    // the missing set and failing on it. Two places in this file promise the opposite
+    // behaviour in prose. The live twin already guards the same string with CATS.length === 5;
+    // this is that guard on the static side, and it is a guard on the CONSTRUCTION, because
+    // the throw happens while `want` is built rather than when it is compared.
+    if (CATS.length !== 5) bad(`evidence twin: facts.json names ${CATS.length} categories, the twin sentence is written for 5`);
+    else if (A) {
       const sp = CATS.map(spellings);
-      const want = `scanner: isitagentready.com (third party, cloudflare). ${sp[0][0]}, ${sp[1][1]}, ${sp[2][0]}, and ${sp[3][1]}: ${sc}. ${sp[4][0]}: ${sc}. verified ${sc}, ${lv}, `;
+      // The sentence shape comes from facts.json (surfaceWording.evidenceTwin), not from
+      // this file. spellingIndex says WHICH declared spelling each position uses, so a
+      // surface that changes its wording changes it in the data the gate reads.
+      const picked = SW.evidenceTwin.spellingIndex.map((ix, i) => sp[i][ix]);
+      const want = SW.evidenceTwin.template
+        .replace(/\{(\d)\}/g, (_, i) => picked[Number(i)])
+        .replace(/\{score\}/g, sc)
+        .replace(/\{level\}/g, lv);
       const gotA = A.toLowerCase().replace(/\s+/g, ' ');
       check(gotA === want, `evidence twin is exactly the set and both scores${gotA === want ? '' : `\n        want: "${want}"\n        got:  "${gotA}"`}`);
-      [sp[0][0], sp[1][1], sp[2][0], sp[3][1], sp[4][0]].forEach((x) => used.add(x));
+      picked.forEach((x) => used.add(x));
     }
   }
 
@@ -191,15 +336,16 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   // the span entirely and passed. Measured 2026-08-01. The span is now the whole
   // markdown section, heading to heading.
   {
-    const B = sectionAround(src.worker.text, 'The audit checks the parts an agent reaches first.', 'audit guide');
+    const B = sectionAround(src.worker.text, SW.auditGuide.locatingSentence, 'audit guide');
+    const VERB = SW.auditGuide.introVerb;
     if (B) {
-      const subjects = [...B.matchAll(/(?:^|\.\s+)([A-Z][^.\r\n]{0,60}?) covers /gm)].map((m) => m[1]);
-      enumerated(subjects, 'audit guide "<name> covers"', true);
+      const subjects = [...B.matchAll(new RegExp(`(?:^|\\.\\s+)([A-Z][^.\\r\\n]{0,60}?) ${VERB} `, 'gm'))].map((m) => m[1]);
+      enumerated(subjects, `audit guide "<name> ${VERB}"`, true);
       // And nothing else in the section may use that introduction form, or a sixth
       // category could hide behind a subject the regex above declines to capture.
-      const covers = (B.match(/\bcovers\b/g) || []).length;
+      const covers = (B.match(new RegExp(`\\b${VERB}\\b`, 'g')) || []).length;
       check(covers === subjects.length,
-        `audit guide: every "covers" in the section is a category introduction (${covers} occurrences, ${subjects.length} captured)`);
+        `audit guide: every "${VERB}" in the section is a category introduction (${covers} occurrences, ${subjects.length} captured)`);
     }
   }
 
@@ -222,9 +368,11 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   {
     const WORDS = ['zero','one','two','three','four','five','six','seven','eight','nine','ten'];
     const word = WORDS[CATS.length] || String(CATS.length);
-    check(src.readme.text.includes(`groups its checks into ${word} categories`),
+    const countS = SW.readme.countSentence.replace(/\{countWord\}/g, word);
+    const allS = SW.readme.allSentence.replace(/\{countWord\}/g, word);
+    check(src.readme.text.includes(countS),
       `README states the set size in words as "${word}" (${CATS.length} categories in facts.json)`);
-    check(src.readme.text.includes(`passes every check in all ${word}`), `README's "all ${word}" agrees with the set size`);
+    check(src.readme.text.includes(allS), `README's "all ${word}" agrees with the set size`);
     const D = span(src.readme.text, '### isitagentready.com category breakdown', '## Web security', 'README table');
     if (D) {
       const rows = [...D.matchAll(/^\| ([^|]+?) \| ([^|]+?) \|\s*$/gm)]
@@ -260,6 +408,14 @@ console.log('\nService set (facts.json owns which services exist)');
   check(new Set(S.map((x) => x.name)).size === S.length, 'service names are unique');
   check(S.length > 0 && S.every((x) => x.priceKey === null || Number.isFinite(facts.prices[x.priceKey])),
     'every service priceKey is null or resolves to a number in facts.json prices');
+  // B2-11 (round 12, batch E16). facts.json carried no service id at all, which is why the
+  // MCP gate below had two of them hardcoded. The ids are canonical here now, so both the
+  // priced and the unpriced set are derived rather than copied.
+  check(S.length > 0 && S.every((x) => typeof x.id === 'string' && /^[a-z0-9-]+$/.test(x.id)),
+    'every service carries a lowercase id');
+  check(new Set(S.map((x) => x.id)).size === S.length, 'service ids are unique');
+  check(S.length > 0 && S.every((x) => x.priceKey === null || x.priceKey === x.id),
+    'a priced service uses its own id as its price key');
   const keys = S.filter((x) => x.priceKey).map((x) => x.priceKey);
   const priceKeys = Object.keys(facts.prices).filter((k) => k !== 'currency');
   check(keys.slice().sort().join(',') === priceKeys.slice().sort().join(','),
@@ -342,6 +498,13 @@ console.log('\nCSP script hash');
     // or in style-src, and script-src would still carry no permission.
     const dir = (w.match(/"script-src ([^"]*)"/) || [])[1] || '';
     check(dir.includes(`'sha256-${want}'`), `CSP script-src carries the current WEBMCP_SCRIPT hash (sha256-${want}, script-src is "${dir}")`);
+    // B2-08 (round 12, batch E16). The comment at the top of this block rests the whole
+    // argument on script-src carrying no 'unsafe-inline', and nothing here asked. The hash
+    // is only the sole permission the inline script has if that is true, so it is a check.
+    // Read from the same directive string as the hash, never from the file: the hash check
+    // itself was once a file-wide search and went green on a mutation that moved the hash
+    // into style-src (agent-memory/project-do-not-fix.md, 2026-08-01).
+    check(!dir.includes(`'unsafe-inline'`), `CSP script-src carries no 'unsafe-inline' (script-src is "${dir}")`);
     // A substitution or an escape in the body would make the source slice and
     // the served string differ, and the hash above would then be computed over
     // the wrong bytes. Neither appears today; this fails the run if one lands.
@@ -450,7 +613,28 @@ for (const [path, cfg] of Object.entries(twConverted)) {
   twcPages++;
   check(probs.length === 0, `${path}: prose from markdown${probs.length ? ' :: ' + probs.join(' | ') : ''}`);
 }
-check(twcPages === Object.keys(twConverted).length, `converted gate covered ${twcPages} pages`);
+// B2-09 (round 12, batch E16). This compared the loop counter to the length of the same
+// literal, so both operands came from one object and a page missing from twConverted was
+// invisible to the gate. The message read as a coverage proof and proved nothing: the only
+// way it could go red was a `continue` above that had already printed its own FAIL. The set
+// is derived from worker.js now, in both directions.
+//
+// serveGuideHtml is a named exception with a reason: it renders any guide path rather than
+// one fixed path, and its twin is gated separately below (the FAQ and guide sections read
+// twMdTwin for the guide pages by name). The exception list is itself checked against
+// worker.js, so a renamed renderer cannot hide inside it.
+const twServeFns = [...new Set([...src.worker.text.matchAll(/function (serve\w*Html)\s*\(/g)].map((m) => m[1]))];
+const twSkipFns = ['serveGuideHtml'];
+const twGated = new Set(Object.values(twConverted).map((c) => c.fn));
+const twUngated = twServeFns.filter((f) => !twGated.has(f) && !twSkipFns.includes(f));
+const twNoRenderer = [...twGated].filter((f) => !twServeFns.includes(f));
+const twSkipStale = twSkipFns.filter((f) => !twServeFns.includes(f));
+check(twServeFns.length > 0 && twcPages === Object.keys(twConverted).length
+  && twUngated.length === 0 && twNoRenderer.length === 0 && twSkipStale.length === 0,
+  `converted gate covered ${twcPages} of ${twServeFns.length} worker.js page renderers`
+  + `${twUngated.length ? ', ungated: ' + twUngated.join(', ') : ''}`
+  + `${twNoRenderer.length ? ', names no renderer: ' + twNoRenderer.join(', ') : ''}`
+  + `${twSkipStale.length ? ', exception names no renderer: ' + twSkipStale.join(', ') : ''}`);
 // Negative control: the extractor must read a planted paragraph as long prose.
 const twPlanted = twHtml('<p>Planted twin gate self test paragraph that must read as literal prose well over the eighty character floor.</p>');
 check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as long prose');
@@ -1495,13 +1679,27 @@ if (LIVE) {
       }
       // Quote-on-request is a claim in its own right, so the reverse is a check too: a
       // number on either of these two is a price this business never agreed to.
-      for (const id of ['agent-operations', 'mcp-server-design']) {
-        const got = byId[id] && byId[id].price;
-        check(got === 'on request', `get_services ${id} stays on request (saw ${JSON.stringify(got)})`);
+      //
+      // B2-11 (round 12, batch E16). These two ids were written out by hand, so a third
+      // quote-on-request service would have been unchecked, and facts.json carried no id to
+      // derive them from. It does now, and the set comes from there.
+      const UNPRICED = SERVICES.filter((x) => !x.priceKey);
+      check(UNPRICED.length > 0, `facts.json names at least one quote-on-request service (${UNPRICED.length})`);
+      for (const s of UNPRICED) {
+        const got = byId[s.id] && byId[s.id].price;
+        check(got === 'on request', `get_services ${s.id} stays on request (saw ${JSON.stringify(got)})`);
       }
       const priced = (svc.services || []).filter((s) => typeof s.price === 'number').length;
       check(priced === PRICED.length,
         `get_services prices exactly ${PRICED.length} of ${(svc.services || []).length} services (saw ${priced})`);
+      // And the total, which this block printed without comparing it to anything: a seventh
+      // service in the answer changed the message and no check.
+      check(nonEmpty && (svc.services || []).length === SERVICES.length,
+        `get_services answers with exactly the facts.json service set (${SERVICES.length} services, saw ${(svc.services || []).length})`);
+      const gotIds = (svc.services || []).map((s) => s.id).sort().join(',');
+      const wantIds = SERVICES.map((s) => s.id).sort().join(',');
+      check(nonEmpty && gotIds === wantIds,
+        `get_services names the facts.json service ids (want [${wantIds}], saw [${gotIds}])`);
     }
 
     const rdy = await callTool('get_agent_readiness');

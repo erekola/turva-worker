@@ -1,6 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.js";
+import { readFileSync } from "node:fs";
+
+// facts.json owns which services exist. The service count used to be written into this
+// file by hand, as `>= 5` with a message saying "all five offerings", so it was wrong by
+// one and loose in the direction that matters: a service dropping out of the A2A answer
+// still passed. Corrected 2026-08-16 (round 12, batch E16, finding B2-18).
+const facts = JSON.parse(readFileSync(new URL("../../tools/facts.json", import.meta.url), "utf8"));
 
 // Route-level tests for the Worker, run offline against the module itself.
 // Why these exist: "every declared surface resolves in code" was a habit enforced
@@ -148,7 +155,8 @@ test("A2A: every skill the card declares returns the data its own description pr
 
   const services = await dataFor("services");
   assert.equal(services.skill, "services");
-  assert.ok(Array.isArray(services.services) && services.services.length >= 5, "all five offerings");
+  assert.ok(Array.isArray(services.services), "services answers with a list");
+  assert.equal(services.services.length, facts.services.length, "every offering facts.json names");
   assert.ok(services.engagement.length > 10);
   assert.equal(services.businessId, undefined, "services must not answer with the company payload");
 

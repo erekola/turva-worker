@@ -7,12 +7,12 @@
   "released": { "site": "2026-08-11" },
   "prices": { "shopify": 1900, "audit": 6500, "advisory": 3000, "implementation": 1500, "currency": "EUR" },
   "services": [
-    { "name": "Shopify agent storefront check", "priceKey": "shopify" },
-    { "name": "Audit",                          "priceKey": "audit" },
-    { "name": "Advisory",                       "priceKey": "advisory" },
-    { "name": "Implementation",                 "priceKey": "implementation" },
-    { "name": "Agent operations",               "priceKey": null },
-    { "name": "MCP server design",              "priceKey": null }
+    { "id": "shopify",           "name": "Shopify agent storefront check", "priceKey": "shopify" },
+    { "id": "audit",             "name": "Audit",                          "priceKey": "audit" },
+    { "id": "advisory",          "name": "Advisory",                       "priceKey": "advisory" },
+    { "id": "implementation",    "name": "Implementation",                 "priceKey": "implementation" },
+    { "id": "agent-operations",  "name": "Agent operations",               "priceKey": null },
+    { "id": "mcp-server-design", "name": "MCP server design",              "priceKey": null }
   ],
   "agentReadiness": {
     "measuredAt": "2026-08-01",
@@ -25,13 +25,25 @@
         { "id": "bot_access_control",         "checks": 2, "label": "bot access control",     "prose": [] },
         { "id": "api_auth_mcp_a2a_discovery", "checks": 8, "label": "api, auth, mcp & a2a",   "prose": ["api, auth, mcp and a2a discovery", "api/auth/mcp and a2a discovery", "api, auth, mcp & a2a discovery"] },
         { "id": "commerce",                   "checks": 5, "label": "commerce",               "prose": [] }
-      ]
+      ],
+      "_surfaceWordingComment": "Added 2026-08-16 (Tek-225, round 8 section 2). On three surfaces the gate OWNED the wording: the sentence shape was hardcoded in tools/verify.mjs and read from nowhere, so verify.mjs was both the rule and the only record of the rule. Published wording belongs next to the published data, the same way category.label does. verify.mjs now reads these fields and fails if one is missing, so this is not a second copy of a value: it is the only copy, and the gate is the reader.",
+      "surfaceWording": {
+        "evidenceTwin": {
+          "spanFrom": "Scanner: isitagentready.com (third party, Cloudflare).",
+          "spanTo": "Agent-Native.",
+          "spellingIndex": [0, 1, 0, 1, 0],
+          "template": "scanner: isitagentready.com (third party, cloudflare). {0}, {1}, {2}, and {3}: {score}. {4}: {score}. verified {score}, {level}, "
+        },
+        "auditGuide": { "introVerb": "covers", "locatingSentence": "The audit checks the parts an agent reaches first." },
+        "readme": { "countSentence": "groups its checks into {countWord} categories", "allSentence": "passes every check in all {countWord}" }
+      }
     }
   },
   "security": {
     "measuredAt": "2026-08-04",
     "hardenize": { "result": "all 13 categories passed", "url": "https://www.hardenize.com/report/turva.dev" },
     "internetnl": { "score": "98/100", "url": "https://internet.nl/site/turva.dev/" },
-    "internetnlMail": { "score": "95/100", "url": "https://internet.nl/mail/turva.dev/" }
+    "internetnlMail": { "score": "95/100", "url": "https://internet.nl/mail/turva.dev/" },
+    "advisoriesCheckedAt": "2026-08-16"
   }
 }
