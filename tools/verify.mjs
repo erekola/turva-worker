@@ -678,6 +678,49 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     `nothing the Worker serves invites payment before scope${invites.length ? ' :: ' + [...new Set(invites)].join(', ') : ''}`);
 }
 
+// --- CHANNELS, added 2026-08-16 (Tek-238), the last of round 8 section 3's open items.
+// The declared VALUES other than prices were compared to nothing: facts.json owned the money and
+// the category set, while the contact channels were repeated by hand across the footer, the
+// JSON-LD sameAs list, the agent manifests and the profile READMEs. That is the same shape as the
+// priced services drifting from four to three, only with no gate anywhere.
+//
+// WHAT IS CHECKED, stated narrowly. Every channel declared in facts.json.channels appears in
+// worker.js, and every sameAs entry in the JSON-LD resolves to a declared channel. It is a
+// membership and cardinality check, not a per-surface map: proving that each surface names the
+// right SUBSET would need each surface to declare which subset it owns, and inventing that
+// declaration now would be building a schema to satisfy a gate rather than to describe the site.
+// The second half is the one that earns its keep: it is what stops a seventh link appearing in
+// sameAs without anyone declaring it, which is the direction this kind of list actually drifts.
+{
+  const CH = facts.channels || {};
+  const chKeys = Object.keys(CH);
+  check(chKeys.length > 0, `facts.json declares the contact channels (${chKeys.length})`);
+  const puuttuu = chKeys.filter((k) => !src.worker.text.includes(CH[k]));
+  check(chKeys.length > 0 && puuttuu.length === 0,
+    `every declared channel appears in worker.js${puuttuu.length ? ' :: missing ' + puuttuu.join(', ') : ''}`);
+  // sameAs is the union of two declared lists, not one. The first version of this check assumed
+  // every sameAs entry is a contact channel and failed on its first run against the business
+  // registry and Wikidata entries, which are identity references rather than ways to reach a
+  // person. That failure is the reason facts.json now carries both lists: the gate found the
+  // missing distinction, and the distinction is what lets a future addition be classified.
+  const ID = facts.identityRefs || {};
+  const sallitut = new Set([...Object.values(CH), ...Object.values(ID)].filter((v) => String(v).startsWith('https://')));
+  check(Object.keys(ID).length > 0, `facts.json declares the identity references (${Object.keys(ID).length})`);
+  const idPuuttuu = Object.keys(ID).filter((k) => !src.worker.text.includes(ID[k]));
+  check(Object.keys(ID).length > 0 && idPuuttuu.length === 0,
+    `every declared identity reference appears in worker.js${idPuuttuu.length ? ' :: missing ' + idPuuttuu.join(', ') : ''}`);
+  // matchAll, not match. The first version used .match() and read only the FIRST of the five
+  // sameAs blocks in worker.js, so four fifths of the surface it claims to cover were invisible
+  // to it, including the Person block on every article. An independent review found that on the
+  // same day it was written, and it is the reason the count below is printed: a gate that says
+  // "4 entries" when the file holds five blocks is telling you where it stopped looking.
+  const lohkot = [...src.worker.text.matchAll(/"sameAs":\s*\[([\s\S]*?)\]/g)];
+  const sameAs = [...new Set(lohkot.flatMap((m) => [...m[1].matchAll(/"(https:[^"]+)"/g)].map((x) => x[1])))];
+  const vieraat = sameAs.filter((u) => !sallitut.has(u));
+  check(sameAs.length > 0 && vieraat.length === 0,
+    `every sameAs entry is a declared channel or identity reference (${lohkot.length} blocks, ${sameAs.length} distinct entries${vieraat.length ? ', undeclared: ' + vieraat.join(', ') : ''})`);
+}
+
 // --- VAT ID. It lived only in the ProfessionalService JSON-LD until 2026-08-02, on no
 // page a person reads, while /company promises reverse charge to EU B2B buyers, who are
 // exactly the people who need it. Now that it is prose on two pages it needs the same
@@ -1163,6 +1206,78 @@ if (LIVE) {
     check(CATS.length === 5 && gotMd === want,
       `served markdown twin states the set and both scores${gotMd === want ? '' : `\n        want: "${want}"\n        got:  "${gotMd}"`}`);
   } catch (e) { bad('served markdown twin: ' + (e.code || e.message)); }
+
+  // EVERY canonical path's markdown twin, not just two of them. Added 2026-08-16 (Tek-237),
+  // and this closes round 8 section 3's last open item together with the two checks above it.
+  //
+  // WHAT THIS ASKS, stated narrowly so it is not read as more than it is. For every path in
+  // CANONICAL_PATHS it asks the page the way an agent asks: GET with `accept: text/markdown`.
+  // It then checks four things per path. The response is 200. The content type is markdown
+  // rather than HTML, because the real failure mode here is silent fallback: a path where
+  // negotiation is not wired answers 200 with a full HTML document and looks fine to anything
+  // that only checks the status. The body carries no `<!DOCTYPE`, which catches the same
+  // fallback from the other side. And the markdown's first heading matches the served HTML's
+  // <h1>, which is what makes this a comparison rather than a liveness probe.
+  //
+  // WHAT IT DOES NOT ASK. It does not compare the served markdown byte for byte against the
+  // PAGE_MARKDOWN twin in worker.js. That would need a parser for a JS object of template
+  // literals, and a parser that is subtly wrong reports subtly wrong results forever. Two
+  // paths ARE compared against their source content above, and those two stay the deep check.
+  // This is the wide one. Saying which is which is the point: a wide check presented as a deep
+  // one is how a gate passes for the wrong reason.
+  //
+  // WHY IT IS OPT-IN, and this was measured before the check ever ran. Fifty-seven paths at two
+  // requests each is 114 requests, and this site enforces its own advertised rate limit of 100
+  // requests per 60 s per IP (verified against the zone on 2026-08-16: action block, 600 s
+  // mitigation). A gate that trips the control it is verifying would fail for a reason that has
+  // nothing to do with the twins, and would block the operator's own IP for ten minutes while
+  // doing it. So it runs only with `--twins`, and it paces itself under the limit. Erik's call
+  // 2026-08-16 was to take the three new gates into trial use and drop any that cause trouble;
+  // an opt-in flag is what makes dropping it a decision rather than an incident.
+  if (LIVE && process.argv.includes('--twins')) try {
+    const cpM = src.worker.text.match(/var CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
+    const paths = cpM ? [...cpM[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
+    check(paths.length > 2, `CANONICAL_PATHS parsed from worker.js (${paths.length} paths)`);
+    const rikki = [];
+    const rajoitettu = [];
+    // 1100 ms between requests: 114 requests spread over about 125 s, roughly 55 in any 60 s window.
+    // The first version used 700 ms and justified it with this block's own 114 requests alone. An
+    // independent review pointed out the obvious omission: the same --live run makes 40 to 65 other
+    // requests with no pacing at all, and they share the quota. 55 leaves room for those.
+    const odota = (ms) => new Promise((r) => setTimeout(r, ms));
+    for (const pth of paths) {
+      try {
+        await odota(1100);
+        const r = await fetch(base + pth, { headers: { accept: 'text/markdown' } });
+        const ct = (r.headers.get('content-type') || '').toLowerCase();
+        const body = await r.text();
+        // 429 on eri asia kuin rikkinainen kaksonen, ja ilman tata eroa portti raportoi oman
+        // liikenteensa sivuston vikana. Riippumaton tarkastus nosti taman 2026-08-16: 700 ms
+        // tahdistus laskettiin vain taman lohkon 114 pyynnosta, mutta samassa --live-ajossa on
+        // 40 to 65 muuta tahdistamatonta pyyntoa, jotka kaikki lasketaan samaan 100/60 s
+        // kiintioon. Tahdistus nostettiin 1100 millisekuntiin ja 429 raportoidaan omanaan.
+        if (r.status === 429) { rajoitettu.push(pth); continue; }
+        if (!r.ok) { rikki.push(`${pth}: HTTP ${r.status}`); continue; }
+        if (!ct.includes('markdown')) { rikki.push(`${pth}: content-type ${ct || 'none'}`); continue; }
+        if (/<!DOCTYPE/i.test(body)) { rikki.push(`${pth}: body is an HTML document`); continue; }
+        if (!body.trim()) { rikki.push(`${pth}: empty body`); continue; }
+        const mdH1 = (body.match(/^#\s+(.+)$/m) || [])[1];
+        await odota(1100);
+        const htmlRes = await fetch(base + pth);
+        const html = await htmlRes.text();
+        const htmlH1raw = (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1];
+        if (!mdH1 || !htmlH1raw) { rikki.push(`${pth}: no h1 in ${!mdH1 ? 'markdown' : 'html'}`); continue; }
+        const norm = (s) => s.replace(/<[^>]+>/g, '').replace(/&middot;/g, '·').replace(/&amp;/g, '&')
+          .replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+        if (norm(mdH1) !== norm(htmlH1raw)) rikki.push(`${pth}: h1 differs, md "${norm(mdH1)}" vs html "${norm(htmlH1raw)}"`);
+      } catch (e) { rikki.push(`${pth}: ${e.code || e.message}`); }
+    }
+    check(paths.length > 2 && rikki.length === 0 && rajoitettu.length === 0,
+      `every canonical path serves a markdown twin whose h1 matches the HTML (${paths.length} paths`
+      + `${rikki.length ? ', broken: ' + rikki.slice(0, 6).join('; ') + (rikki.length > 6 ? ` and ${rikki.length - 6} more` : '') : ''}`
+      + `${rajoitettu.length ? `; RATE LIMITED on ${rajoitettu.length} paths, this run measured the limiter and not the twins, raise the pacing and re-run` : ''})`);
+  } catch (e) { bad('canonical markdown twins: ' + (e.code || e.message)); }
+  else if (LIVE) console.log('  skip  canonical markdown twins (add --twins; 114 paced requests, see the note above)');
 
   // A2A HTTP+JSON transport. The card declares three skills and the endpoint answers
   // them, so the question is whether what it answers agrees with facts.json. The skill

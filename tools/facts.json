@@ -14,6 +14,21 @@
     { "id": "agent-operations",  "name": "Agent operations",               "priceKey": null },
     { "id": "mcp-server-design", "name": "MCP server design",              "priceKey": null }
   ],
+  "_channelsComment": "Added 2026-08-16 (Tek-238). The contact channels are declared on many surfaces (footer, JSON-LD sameAs, agent manifests, profile READMEs) and were compared to nothing: only prices had a home here. A channel that is renamed, retired or mistyped on one surface and not another is exactly the drift facts.json exists to stop, and it is the same defect class as the three-versus-four priced services. verify.mjs reads this list, so it is the only copy and the gate is its reader.",
+  "channels": {
+    "email": "info@turva.dev",
+    "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK",
+    "linkedin": "https://www.linkedin.com/in/erikrekola/",
+    "mastodon": "https://social.turva.dev/@erik",
+    "gravatar": "https://gravatar.com/erekola",
+    "github": "https://github.com/erekola"
+  },
+  "_identityRefsComment": "Separate from channels on purpose, and the split was found by the gate rather than designed: the first version of the sameAs check assumed every sameAs entry is a contact channel, and it immediately failed on these two. They are identity references, not places to reach a person. There are TWO Wikidata items on purpose and they are not a typo for each other: Q140276251 is turva.dev the organization and Q140276321 is Erik Rekola the person, verified on Wikidata 2026-08-16. An independent review read the pair as drift, which is exactly why both are declared here by name. sameAs is the union of the two lists, and keeping them apart is what lets the gate say which kind of entry an addition is.",
+  "identityRefs": {
+    "businessRegistry": "https://tietopalvelu.ytj.fi/yritys/3600281-7",
+    "wikidataOrganization": "https://www.wikidata.org/wiki/Q140276251",
+    "wikidataPerson": "https://www.wikidata.org/wiki/Q140276321"
+  },
   "agentReadiness": {
     "measuredAt": "2026-08-01",
     "isitagentready": {
