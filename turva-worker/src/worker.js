@@ -2448,6 +2448,20 @@ OKF is new and small, version 0.1, and the semantic half is still open. That mak
 
 For an audit of how legibly AI agents can read your site and the data behind it, contact info@turva.dev.
 
+## Frequently asked
+
+**What is the Open Knowledge Format?**
+
+An open specification from Google Cloud that represents a body of knowledge as a directory of plain markdown files. Each concept is one UTF-8 document with a YAML frontmatter block and a body. Google Cloud published it in June 2026 as version 0.1.
+
+**What does OKF actually standardize?**
+
+The shape of the files, not yet their meaning. Version 0.1 fixes the folder of markdown files, the frontmatter, two reserved filenames and one required field. What a concept must contain is left to producers.
+
+**Does OKF replace llms.txt?**
+
+No. An llms.txt and a markdown surface make the pages in front of the site readable. OKF packages the knowledge behind it, the catalog, the metrics and the rules a decision depends on. It is the same instinct one layer in.
+
 ## Related
 
 - [llms.txt explained](/guides/llms-txt)
@@ -3146,6 +3160,20 @@ Measure first, because the three overlap and you do not want to pay for the same
 
 For a measured audit across agent-readiness, AEO and the agent surfaces an engine cannot see, contact info@turva.dev.
 
+## Frequently asked
+
+**What is the difference between AEO and GEO?**
+
+AEO engineers the page so an engine can quote it, through structure, schema and passages that stand alone. GEO engineers the trust signal around the page. AEO gives the engine something to quote, GEO gives it a reason to trust the quote.
+
+**How is agent-readiness wider than AEO and GEO?**
+
+AEO and GEO stop at being read and cited. Agent-readiness adds the surfaces an agent needs to act on, such as an MCP server it can call, an API catalog it can enumerate, authentication it can pass and commerce endpoints it can transact against.
+
+**In which order should AEO, GEO and agent-readiness work be done?**
+
+Measure first, because the three overlap and the same fix should not be paid for twice. Page-level gaps are AEO and agent-readiness work and are fixable on the site. Trust gaps are GEO work, earned offsite over time.
+
 ## Related
 
 - [SEO and agent-readiness are not the same](/guides/seo-vs-agent-readiness)
@@ -3178,6 +3206,20 @@ Whether an agent can buy is observable, the same way agent-readiness is. Declare
 
 For an audit of whether AI shopping agents can discover and complete a purchase on your site, contact info@turva.dev.
 
+## Frequently asked
+
+**What does an AI shopping agent need in order to buy?**
+
+An offer with a price and currency it can parse rather than infer from a layout, a checkout it can drive through a protocol instead of a page built for a mouse, and a purchase that behaves predictably, so the same call produces the same result.
+
+**What does requires_escalation mean in UCP?**
+
+That programmatic execution is blocked by something like age verification or a regulatory step. It is not failure. The Embedded Checkout Protocol lets a person complete the blocking step without the session being thrown away.
+
+**Why does a failed agent purchase look like no traffic?**
+
+Because the agent does not complain. A price that lives only in rendered HTML, a CAPTCHA wall, or a discovery file that claims a capability the endpoint does not answer ends the purchase silently, and the agent moves to a competitor whose path resolves.
+
 ## Related
 
 - [Agent commerce discovery: A2A, AP2, and ACP](/guides/agent-commerce-discovery)
@@ -3208,6 +3250,20 @@ Letting agents act is not removing people. The stronger pattern carries a human 
 An agent that acts has to be auditable. Log what it decided and why, keep the envelope explicit rather than implied, and verify after the fact that it stayed inside the boundary. Guardrails have to be checkable to count. That separates an agent that is impressive in a demo from one you would let touch a real operation.
 
 This is the work behind the Agent operations engagement. For a review of the data path, the decision envelope, and where a human stays in the loop, contact info@turva.dev.
+
+## Frequently asked
+
+**What is a decision envelope?**
+
+The permissions, the thresholds and the explicit list of what an agent may touch and what it may not. The judgment is front-loaded into that boundary by a person who knew the stakes, so a correct decision is the one the envelope allowed.
+
+**Where is the decision envelope written down in a protocol?**
+
+In commerce first. UCP carries a checkout state called requires_escalation, where the agent has reached the edge of what it may finish alone. AP2 does the same on the payment side, where a mandate records the limits the user agreed to beforehand.
+
+**What makes an acting agent auditable?**
+
+A log of what it decided and why, an envelope that is explicit rather than implied, and a check after the fact that it stayed inside the boundary. Guardrails have to be checkable to count.
 
 ## Related
 
@@ -3248,6 +3304,20 @@ An agent makes a time-critical call locally, where the round trip to a human is 
 These are examples. The same discipline carries from one case to the next, and the question is rarely whether an agent could do the work. What decides the outcome is whether the data reaching it is clean and the envelope around it is set.
 
 If you want an agent to do one of these reliably, or to measure how ready your site or API is for agents in the first place, contact info@turva.dev.
+
+## Frequently asked
+
+**Where is an AI agent actually useful?**
+
+Wherever data moves and a decision follows. It reads a machine-readable surface, decides inside the limits it was given, and acts on what it finds. The same pattern repeats from commerce to monitoring to back-office work.
+
+**What decides whether an agent use case works?**
+
+Rarely whether the agent could do the work. What decides the outcome is whether the data reaching it is clean and whether the envelope around it is set.
+
+**Which use case depends most on the data path?**
+
+Operations over a link that drops. The agent has to hold its last safe state and resume cleanly when data returns, because one lost packet can stall every decision queued behind it.
 
 ## Related
 
@@ -5474,6 +5544,11 @@ var GUIDE_PAGE_FAQ = {
   "/llms-txt-validator": mdFaqBlocks("/llms-txt-validator", "Frequently asked").pairs,
   "/guides/agentic-resource-discovery": mdFaqBlocks("/guides/agentic-resource-discovery", "Frequently asked").pairs,
   "/blog/i-thought-it-was-a-small-job": mdFaqBlocks("/blog/i-thought-it-was-a-small-job", "Frequently asked").pairs,
+  "/guides/ai-agent-use-cases": mdFaqBlocks("/guides/ai-agent-use-cases", "Frequently asked").pairs,
+  "/guides/letting-agents-act-on-data": mdFaqBlocks("/guides/letting-agents-act-on-data", "Frequently asked").pairs,
+  "/guides/agent-readiness-aeo-geo": mdFaqBlocks("/guides/agent-readiness-aeo-geo", "Frequently asked").pairs,
+  "/guides/agentic-commerce-readiness": mdFaqBlocks("/guides/agentic-commerce-readiness", "Frequently asked").pairs,
+  "/guides/open-knowledge-format": mdFaqBlocks("/guides/open-knowledge-format", "Frequently asked").pairs,
   "/blog/reliable-agent-decisions": mdFaqBlocks("/blog/reliable-agent-decisions", "Frequently asked").pairs,
   "/blog/agent-secret-hygiene": mdFaqBlocks("/blog/agent-secret-hygiene", "Frequently asked").pairs,
   "/blog/verifiable-agent-identity": mdFaqBlocks("/blog/verifiable-agent-identity", "Frequently asked").pairs,
