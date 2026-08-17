@@ -2504,6 +2504,10 @@ llms.txt is a plain text file at the root of a site that tells AI agents and lan
 
 No. llms.txt is not a ranking trick. It gives models a curated map of the content so they read the real page rather than guessing from a cached snippet.
 
+**What does an llms.txt file contain?**
+
+The site name and a short summary, then the key pages and resources as markdown links, often grouped under headings. Some sites also publish llms-full.txt, which bundles the full text so an agent can read everything in one request.
+
 ## Related
 
 - [Serving markdown to agents](/guides/markdown-for-agents)
@@ -2532,6 +2536,10 @@ An MCP server card is a small JSON file, usually at /.well-known/mcp/server-card
 **Why publish an MCP server card?**
 
 Without a card or a registry listing an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live. The card turns an invisible server into a discoverable one.
+
+**Where does an MCP server card live?**
+
+Usually at /.well-known/mcp/server-card.json. An agent fetches that predictable path, reads which tools the server exposes, and calls them without a human wiring up the connection.
 
 ## Related
 
@@ -2593,6 +2601,10 @@ x402 is a way for a site to ask an agent to pay before it returns a resource, us
 
 Agent commerce is held back by payment, not by capability. An agent can find a product and compare options, then stall at a checkout flow built for a person. A declared payment surface lets the agent complete the purchase the same way it completed the search.
 
+**What stops an agent from completing a purchase today?**
+
+The checkout, not the capability. An agent can find a product and compare options, then stall at a flow built for a person entering card details. A declared payment surface removes that stop.
+
 ## Related
 
 - [Agent commerce discovery: A2A, AP2, and ACP](/guides/agent-commerce-discovery)
@@ -2620,6 +2632,10 @@ A Link header points an agent at machine-readable resources such as an API catal
 **Why do response headers matter to agents?**
 
 An agent reads the status and headers before the body and decides what to do from them. If the headers already say where the structured data is and what formats are available, the agent can skip parsing a page built for human display.
+
+**Which header makes markdown content negotiation reliable?**
+
+A Vary header that includes Accept. It is what keeps the negotiation reliable when the same URL can return more than one representation of the page.
 
 ## Related
 
@@ -2649,6 +2665,10 @@ No. SEO makes a site rank in a list of links for a person to click. Agent-readin
 **Why does search ranking not guarantee presence in AI answers?**
 
 They are scored on different things. A search engine ranks pages by keywords and backlinks. An assistant cites a site when it can read the content cleanly and corroborate it, which depends on the discovery and content surface rather than ranking signals.
+
+**Can a site rank well and still be invisible to agents?**
+
+Yes. Ranking is scored on keywords and backlinks, while an agent needs to read the content cleanly and find the discovery surfaces. A page can win the search result and still be opaque to the client that reads it.
 
 ## Related
 
@@ -2707,6 +2727,10 @@ The /.well-known directory is a standard place at the root of a site where agent
 **What files do agents look for under /.well-known?**
 
 An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment and agent-payment manifests, and a security contact. Each one turns discovery into a lookup rather than a search.
+
+**Why do agents use the well-known directory instead of crawling pages?**
+
+Because it turns discovery into a lookup rather than a search. An agent fetches a predictable path and reads a manifest that points it to everything else, instead of inferring capabilities from navigation.
 
 ## Related
 
@@ -2865,6 +2889,10 @@ An agent reads robots.txt to learn the rules and the sitemap to learn the map be
 
 A Content-Signal directive declares how content may be used, separating ordinary search from AI input and training. It gives a site granular control instead of an all-or-nothing block.
 
+**Can robots.txt name AI crawlers specifically?**
+
+Yes. robots.txt can name AI crawlers explicitly rather than treating every client the same, and a Content-Signal directive separates ordinary search from AI input and training.
+
 ## Related
 
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
@@ -2893,6 +2921,10 @@ An HTML page is built for a browser, and an agent that reads it pays for all the
 **How does an agent request the markdown version?**
 
 Through content negotiation. An agent sends an Accept header asking for text/markdown and the server returns the markdown form at the same URL. A site can also publish llms-full.txt to bundle the whole site as text in one request.
+
+**What does an agent pay for when it reads an HTML page?**
+
+The markup, scripts and layout it does not need. That cost is counted in tokens, so a page built for a browser is expensive for a client that only wants the text.
 
 ## Related
 
@@ -3143,6 +3175,10 @@ A site is cited when the assistant can reach its content, read it cheaply, confi
 **Why does corroboration matter for citation?**
 
 An assistant is more likely to cite a claim it can confirm in more than one place. Open-source code, a public company record, trusted directory listings, and genuine third-party mentions raise confidence. The signal is consistency across sources, not volume.
+
+**What makes a claim easy for an assistant to confirm?**
+
+Facts stated as data rather than prose, and the same fact visible in more than one place. Open-source code, a public company record and genuine third-party mentions raise confidence, and consistency matters more than volume.
 
 ## Related
 
