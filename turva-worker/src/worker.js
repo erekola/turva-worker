@@ -4441,9 +4441,9 @@ var META_BY_PATH = {
   },
   "/guides/agent-readiness-audit": {
     title: "What an agent-readiness audit is | turva.dev",
-    description: "An agent-readiness audit measures how well AI agents can discover, read, and act on a website or API, scored against current standards by an independent scanner.",
+    description: "An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored against current standards by an independent scanner.",
     image: "/og-guide-agent-readiness-audit.jpg",
-    imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read, and act on a website or API, scored against current standards by an independent scanner."
+    imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored against current standards by an independent scanner."
   },
   "/guides/llms-txt": {
     title: "llms.txt explained | turva.dev",
@@ -4477,9 +4477,9 @@ var META_BY_PATH = {
   },
   "/guides/seo-vs-agent-readiness": {
     title: "SEO and agent-readiness are not the same | turva.dev",
-    description: "SEO makes a site rank for people to click. Agent-readiness makes a site legible and usable by AI agents. Ranking alone does not guarantee presence in AI answers.",
+    description: "SEO makes a site rank for people to click. Agent-readiness makes it legible and usable by AI agents. Ranking alone does not guarantee presence in AI answers.",
     image: "/og-guide-seo-vs-agent-readiness.jpg",
-    imageAlt: "turva.dev guide card: SEO makes a site rank for people to click. Agent-readiness makes a site legible and usable by AI agents."
+    imageAlt: "turva.dev guide card: SEO makes a site rank for people to click. Agent-readiness makes it legible and usable by AI agents."
   },
   "/guides/json-ld-structured-data": {
     title: "JSON-LD and structured data for agents | turva.dev",
