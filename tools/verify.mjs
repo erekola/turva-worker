@@ -544,6 +544,20 @@ console.log('\nTwin gate (prose from PAGE_MARKDOWN)');
 // pass leaves it as &lt; (turva-worker alert #1, 2026-07-26).
 const TW_ENTITIES = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&#x27;': "'" };
 const twDecode = (s) => s.replace(/&(?:amp|lt|gt|quot|#39|#x27);/g, (m) => TW_ENTITIES[m]);
+// Same family, used by the h1 twin comparison below. Two rules. Strip tags to a
+// FIXED POINT rather than in one pass: deleting the match is what CodeQL flags
+// as incomplete multi-character sanitization (js/incomplete-multi-character-
+// sanitization, turva-worker alert #6, 2026-08-17), because a delete can move a
+// surviving < next to a surviving >. And decode in ONE pass over the entity set
+// instead of a chain of replaces, the same rule as twDecode above (alert #1,
+// 2026-07-26). Strip runs before decode, never after: decoding first would turn
+// &lt;b&gt; into a tag and hand it to the stripper. The entity set is deliberately
+// only these two, exactly what the h1 comparison decoded before, because adding
+// &lt; and friends would decide that new h1 pairs match, which moves the set that
+// passes the gate and is a decision, not a fix (Tek-160).
+const H1_ENTITIES = { '&middot;': '\u00b7', '&amp;': '&' };
+const h1Strip = (s) => { let prev; do { prev = s; s = s.replace(/<[^>]+>/g, ''); } while (s !== prev); return s; };
+const h1Decode = (s) => s.replace(/&(?:middot|amp);/g, (m) => H1_ENTITIES[m]);
 const twSquash = (s) => s.replace(/https?:\/\//g,'').replace(/\s+/g,' ').replace(/ ([,.;:])/g,'$1').trim();
 const twHtml = (s) => twSquash(twDecode(s.replace(/<[^>]+>/g,' ')));
 const twFnBody = (name) => {
@@ -1270,7 +1284,7 @@ if (LIVE) {
         const html = await htmlRes.text();
         const htmlH1raw = (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1];
         if (!mdH1 || !htmlH1raw) { rikki.push(`${pth}: no h1 in ${!mdH1 ? 'markdown' : 'html'}`); continue; }
-        const norm = (s) => s.replace(/<[^>]+>/g, '').replace(/&middot;/g, '·').replace(/&amp;/g, '&')
+        const norm = (s) => h1Decode(h1Strip(s))
           .replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
         if (norm(mdH1) !== norm(htmlH1raw)) rikki.push(`${pth}: h1 differs, md "${norm(mdH1)}" vs html "${norm(htmlH1raw)}"`);
       } catch (e) { rikki.push(`${pth}: ${e.code || e.message}`); }
