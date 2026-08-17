@@ -864,6 +864,20 @@ I build this into my own setup because I sell the audit that checks for it. A pr
 
 None of this is exotic. It is one habit applied everywhere. The operating system holds the secret, encrypted and scoped to you, and the code asks for it when it needs it. An agent can then do its work in your repo without ever seeing a key in the clear.
 
+## Frequently asked
+
+**Where should secrets live if an AI agent works in your repo?**
+
+In storage the operating system encrypts and scopes to your account. The Data Protection API on Windows, the Keychain on macOS, libsecret on Linux. Scripts ask for the secret when they run instead of reading it off disk.
+
+**Why is a token in a plain file a bigger risk than it used to be?**
+
+Because the file is no longer only yours. A coding agent reads your files and runs your build, and so does every backup or synced folder that copies your working directory. A stray copy or a screen-share exposes the same plaintext.
+
+**Why does a git push keep asking for authentication on Windows?**
+
+Windows Credential Manager caps a single entry at 2560 bytes and some forges issue OAuth tokens past that. The write fails while fetch still works, so nothing looks wrong until every command re-authenticates. Git Credential Manager splits the token across entries.
+
 ## Related
 
 - [Letting agents act on your data](/guides/letting-agents-act-on-data)
@@ -1333,6 +1347,20 @@ None of this is a rebuild. It is a small piece of code at the edge that picks th
 
 For an audit of how cheaply agents can read your site, contact info@turva.dev.
 
+## Frequently asked
+
+**Why does a normal HTML page cost an agent more to read?**
+
+Navigation, styling, scripts and structured data all arrive whether the agent needs them or not. The agent either spends its budget getting past that markup or runs out of room and reads only part of the page.
+
+**How much cheaper is a markdown version of a page?**
+
+On this site the homepage as markdown costs roughly a third of the HTML, a couple of thousand tokens against several thousand. An llms.txt sits alongside it, so an agent can read the structure of the site in one request instead of crawling it page by page.
+
+**Does serving markdown mean duplicating the site?**
+
+No. It is content negotiation. The site keeps serving HTML to browsers, and when an agent asks for the markdown form of a page it gets the same content with the markup stripped out. One URL answers in the format the client asked for.
+
 ## Related
 
 - [Serving markdown to agents](/guides/markdown-for-agents)
@@ -1368,6 +1396,20 @@ The concrete uses are easy to name. Validate Web Bot Auth signatures at the edge
 None of this is live for Claude on the day I publish this, and I will not write as though it were. The directory is public for a reason. Check it, and admit what it actually says rather than what a vendor page claims. When the entry appears, the work on the receiving side is already done, and the audit has a new line that can be measured rather than asserted.
 
 For an agent-readiness audit that covers how your site recognizes and admits AI agents, contact info@turva.dev.
+
+## Frequently asked
+
+**How can a site tell which AI agent is at the door?**
+
+With Web Bot Auth. The agent publishes the public half of a signing key at a fixed location and signs every request it sends, and the site or its edge checks that signature against the published key. Copying the header does not reproduce it.
+
+**Why is a user-agent string not enough to identify an agent?**
+
+It is just text, and anything can send it. An IP range drifts as providers move their infrastructure around. The site is left guessing, and the guess collapses into blocking too much or trusting too much.
+
+**Can a block-all bot rule block an agent the user asked for?**
+
+Yes. A site that switches on a rule that blocks AI bots can block a request that a person asked an agent to make, and operators have had to add a manual exception by hand to let it through.
 
 ## Related
 
@@ -1406,6 +1448,20 @@ Autonomy is not the absence of people. The strongest setups take an expert's jud
 This is why I have stopped describing my work as only agent-readiness. Reading a site is the first step, the precondition for everything after it. What an agent can actually do once the inputs are clean and the envelope is set, with a person kept where judgment belongs, is the rest of the distance. That is the work I am moving toward.
 
 For an agent-readiness audit, or a conversation about letting agents act on your systems safely, contact info@turva.dev.
+
+## Frequently asked
+
+**What limits the reliability of an AI agent's decisions?**
+
+Rarely the model. Two things sit below it. The data that reaches the agent, and the envelope of settings it is allowed to act inside. A decision is bounded by its inputs, and a correct decision is the one the settings allowed.
+
+**Why does the network layer decide whether an agent can act?**
+
+A link drops as a crane passes over it, a satellite hop adds the better part of a second, and one lost packet stalls every packet queued behind it. The agent waits on stale input while the moment to act goes by.
+
+**What does good autonomy look like in practice?**
+
+A well-set boundary rather than a clever model. The judgment is front-loaded into permissions, thresholds and an explicit list of what the agent may touch. Draw the envelope loosely and a capable agent still does something, just not what you wanted.
 
 ## Related
 
@@ -5382,6 +5438,10 @@ var GUIDE_PAGE_FAQ = {
   "/llms-txt-validator": mdFaqBlocks("/llms-txt-validator", "Frequently asked").pairs,
   "/guides/agentic-resource-discovery": mdFaqBlocks("/guides/agentic-resource-discovery", "Frequently asked").pairs,
   "/blog/i-thought-it-was-a-small-job": mdFaqBlocks("/blog/i-thought-it-was-a-small-job", "Frequently asked").pairs,
+  "/blog/reliable-agent-decisions": mdFaqBlocks("/blog/reliable-agent-decisions", "Frequently asked").pairs,
+  "/blog/agent-secret-hygiene": mdFaqBlocks("/blog/agent-secret-hygiene", "Frequently asked").pairs,
+  "/blog/verifiable-agent-identity": mdFaqBlocks("/blog/verifiable-agent-identity", "Frequently asked").pairs,
+  "/blog/cheaper-pages-for-agents": mdFaqBlocks("/blog/cheaper-pages-for-agents", "Frequently asked").pairs,
   "/guides/agent-commerce-discovery": mdFaqBlocks("/guides/agent-commerce-discovery", "Frequently asked").pairs,
   "/guides/agent-readiness-audit": mdFaqBlocks("/guides/agent-readiness-audit", "Frequently asked").pairs,
   "/guides/llms-txt": mdFaqBlocks("/guides/llms-txt", "Frequently asked").pairs,
