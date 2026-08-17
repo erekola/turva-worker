@@ -389,6 +389,28 @@ It does not prove the workspace is correct. It proves that 367 specific things w
 
 It also does not prove the week was worth it. That depends on whether the next audit I sell is better because of it, and I do not know that yet.
 
+## Frequently asked
+
+**What does a line by line audit find that a scanner does not?**
+
+Three things no gate could see, because each value was plausible alone. One measurement written as 458 pixels in one document and 514 in another. An allow list pinned to an old package version, so an install script stayed blocked. A grid track that refused to shrink.
+
+**How long does a file by file audit of a workspace take?**
+
+Seven days, for 2 307 text files and 28 826 789 bytes, roughly 8 million tokens. It produced 367 findings across nine packages, 69 recorded decisions and 50 new entries in the trap log. It produced no invoice, no proposal and no sent message.
+
+**Do automated gates remove the need to read the code?**
+
+No. Seven gates run as editor hooks and block the action rather than warn. 23 more run on demand or on ship, and three of those perform 314 mechanical checks offline, 567 with live URLs included. A green gate tells you only what it checked.
+
+**What should a quality gate do when it finds a problem?**
+
+Block the action. The gates here stop the edit tool, git in the agent shell, generated files written to the workspace root, and repo edits made before the trap log has been read. A warning is something a tired person reads past.
+
+**Does a file by file audit prove the workspace is correct?**
+
+No. It proves that 367 specific things were read and classified, and that each was either fixed or written down as a decision with a reason. Whether the week was worth it depends on whether the next audit is better, and that is not known yet.
+
 ## Related
 
 - [Measurement-led agent readiness](/guides/measurement-led-agent-readiness)
@@ -5359,6 +5381,7 @@ var GUIDE_PAGE_FAQ = {
   "/shopify-agent-storefront-check": mdFaqBlocks("/shopify-agent-storefront-check", "Frequently asked").pairs,
   "/llms-txt-validator": mdFaqBlocks("/llms-txt-validator", "Frequently asked").pairs,
   "/guides/agentic-resource-discovery": mdFaqBlocks("/guides/agentic-resource-discovery", "Frequently asked").pairs,
+  "/blog/i-thought-it-was-a-small-job": mdFaqBlocks("/blog/i-thought-it-was-a-small-job", "Frequently asked").pairs,
   "/guides/agent-commerce-discovery": mdFaqBlocks("/guides/agent-commerce-discovery", "Frequently asked").pairs,
   "/guides/agent-readiness-audit": mdFaqBlocks("/guides/agent-readiness-audit", "Frequently asked").pairs,
   "/guides/llms-txt": mdFaqBlocks("/guides/llms-txt", "Frequently asked").pairs,
