@@ -1611,6 +1611,10 @@ An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that 
 
 AP2 support is declared as an extension inside the A2A Agent Card, using the URI https://github.com/google-agentic-commerce/ap2/tree/v0.1 (lowercase, version v0.1). Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject.
 
+**Why does an AP2 declaration fail validation?**
+
+Usually the case of the extension URI. Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject. The accepted form is lowercase and v0.1.
+
 ## Related
 
 - [x402 and agent payments](/guides/x402-agent-payments)
@@ -2548,6 +2552,10 @@ An agent-readiness audit measures how well an AI agent can discover, read, and a
 
 It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, and each failure comes with a concrete fix an independent scanner can verify before and after.
 
+**What does an agent-readiness audit produce?**
+
+A pass or fail on each check, and a concrete fix for every failure that an independent scanner can verify before and after. The result is scored against current standards rather than opinion.
+
 ## Related
 
 - [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
@@ -2649,6 +2657,10 @@ agents.json is a machine-readable file that declares what an AI agent can do on 
 **How is agents.json different from llms.txt?**
 
 llms.txt tells an agent what the site contains. agents.json describes the actions an agent can take, so a site moves from something an agent can read to something an agent can operate.
+
+**Does agents.json replace llms.txt?**
+
+No. llms.txt tells an agent what the site contains and agents.json describes the actions an agent can take. Together they move a site from something an agent can read to something an agent can operate.
 
 ## Related
 
@@ -2777,6 +2789,10 @@ JSON-LD is a block of structured data in a page that states facts in a form a ma
 
 An agent reading raw HTML has to guess which number is a price and which is a shipping estimate. A JSON-LD Offer with a price and a currency removes the guess, and declared types let an agent place a page in context and decide whether to trust and cite it.
 
+**What should JSON-LD state on a page?**
+
+What the page is about, who runs it, what it sells and at what price, as data rather than sentences. An Offer with a price and a currency removes the guess an agent would otherwise make.
+
 ## Related
 
 - [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
@@ -2849,6 +2865,10 @@ An ai-catalog.json is a static JSON manifest at /.well-known/ai-catalog.json tha
 
 No. ARD is a discovery layer for AI agents, not a search file. It indexes the resources an agent can call through their own protocols. Google has said publicly that llms.txt does not affect its search results, and the same applies to an ai-catalog.
 
+**Where does an ai-catalog.json live?**
+
+At /.well-known/ai-catalog.json, as a static JSON manifest. Agents and registries read the resources a site offers from that one path instead of inferring them from its pages.
+
 ## Related
 
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
@@ -2877,6 +2897,10 @@ An agent proves who it is through discoverable standards such as OAuth discovery
 **Why does scoped, discoverable auth matter?**
 
 A site that exposes capability without scoped auth either stays closed to agents or invites unsafe workarounds. Proper discovery lets an agent request the least access it needs without handling a password it should never see.
+
+**What does an agent need to discover before it can authenticate?**
+
+Where to request access and what scopes exist. OAuth discovery at a well-known path tells it both, so it can request a token tied to a specific permission rather than a blanket login.
 
 ## Related
 
@@ -2908,6 +2932,10 @@ A checklist filled in by hand records intentions. An independent scanner records
 
 A claim that a site is agent-ready is an assertion. A score from an independent scanner, with a category breakdown and a date, is evidence anyone can re-run. The honest version of the claim is the number.
 
+**Why can a site pass a checklist and still fail a scan?**
+
+Because a checklist filled in by hand records intentions and a scanner records what an agent actually finds. The two often disagree, especially after a deploy drops a header or changes a content type.
+
 ## Related
 
 - [What an agent-readiness audit is](/guides/agent-readiness-audit)
@@ -2937,6 +2965,10 @@ Many sites render content with JavaScript in the browser, so the first response 
 **How do you fix empty pages for agents?**
 
 Serve the real content in the first response for clients that need it, through prerendering at the server or edge, or serve a markdown version of the page on request, which skips rendering and costs a fraction of the tokens.
+
+**Is prerendering the only fix for empty pages?**
+
+No. Serving a markdown version of the page on request also works, and it skips rendering and costs a fraction of the tokens. Either way the real content has to be in the first response.
 
 ## Related
 
@@ -3032,6 +3064,10 @@ Client-side rendering that returns an empty shell to non-browser agents, no llms
 **Are agent-readiness gaps hard to fix?**
 
 No. The work is mostly at the edge and in a few small files, and the result shows up immediately in a scanner. A site does not have to rebuild to become legible to agents, it has to publish what agents already look for.
+
+**Which gap costs a marketing site the most?**
+
+Client-side rendering that returns an empty shell to non-browser agents. Nothing else on the page matters if the first response carries no content, and prices and facts are then left for the agent to infer.
 
 ## Related
 
