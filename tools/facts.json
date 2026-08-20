@@ -2,7 +2,7 @@
   "_comment": "Canonical source of truth for turva.dev volatile facts. Edit here, then mirror to the surfaces that state these facts (turva-worker/src/worker.js, README.md, the turva-mcp worker and its README, and the erekola profile README), then run: node tools/verify.mjs  (add --live on a networked machine to GET every declared URL and verify the manifest signatures).",
   "businessId": "3600281-7",
   "vatId": "FI36002817",
-  "versions": { "site": "3.102.0", "mcp": "1.3.6" },
+  "versions": { "site": "3.103.0", "mcp": "1.3.6" },
   "mtaSts": { "txtId": "20260804163000", "policySha256": "b0c9f2510733af63407355a825220d06171acf8fd6d29e2553c73cbd936ad8c8" },
   "released": { "site": "2026-08-16" },
   "prices": { "shopify": 1900, "audit": 6500, "advisory": 3000, "implementation": 1500, "currency": "EUR" },
@@ -30,7 +30,7 @@
     "wikidataPerson": "https://www.wikidata.org/wiki/Q140276321"
   },
   "agentReadiness": {
-    "measuredAt": "2026-08-01",
+    "measuredAt": "2026-08-20",
     "isitagentready": {
       "level": "Level 5",
       "score": "100/100",
@@ -38,7 +38,7 @@
         { "id": "discoverability",            "checks": 4, "label": "discoverability",        "prose": [] },
         { "id": "content",                    "checks": 1, "label": "content",                "prose": ["content accessibility"] },
         { "id": "bot_access_control",         "checks": 2, "label": "bot access control",     "prose": [] },
-        { "id": "api_auth_mcp_a2a_discovery", "checks": 8, "label": "api, auth, mcp & a2a",   "prose": ["api, auth, mcp and a2a discovery", "api/auth/mcp and a2a discovery", "api, auth, mcp & a2a discovery"] },
+        { "id": "api_auth_mcp_a2a_discovery", "checks": 9, "label": "api, auth, mcp & a2a",   "prose": ["api, auth, mcp and a2a discovery", "api/auth/mcp and a2a discovery", "api, auth, mcp & a2a discovery"] },
         { "id": "commerce",                   "checks": 5, "label": "commerce",               "prose": [] }
       ],
       "_surfaceWordingComment": "Added 2026-08-16 (Tek-225, round 8 section 2). On three surfaces the gate OWNED the wording: the sentence shape was hardcoded in tools/verify.mjs and read from nowhere, so verify.mjs was both the rule and the only record of the rule. Published wording belongs next to the published data, the same way category.label does. verify.mjs now reads these fields and fails if one is missing, so this is not a second copy of a value: it is the only copy, and the gate is the reader.",
