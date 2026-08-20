@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.103.0 - The agent-readiness numbers are re-measured and the API, auth, MCP and A2A category is nine checks rather than eight, because the scanner added ard and this site passes it. The published form is now Level 5, 21 of 21 scored checks, webBotAuth informational. The score and the level did not move, only the denominator, which is a property of the scanner and not of this site. Measured dates go to 2026-08-20 on every surface that carries one, and two of those surfaces live in other repositories: the verify gate found them, a file sweep did not. No signed manifest carries the score, the level, the check count or the date, so there is no re-sign. SITEMAP_LASTMOD is unchanged, because no page text moved. Carries v3.103.0.
+// turva.dev worker v3.104.0 - The services twin no longer excludes MCP and agent-to-agent cards from an implementation day. Erik decided 2026-08-21 that the day covers MCP work, at least for now, so the card and the discovery paths that point at it are typical work, and what stays a separate engagement is building the server itself. The homepage list already said MCP server work, so this closes a contradiction inside one file rather than adding a claim, and MCP server design stays a listed service priced on request. Page text moved, so SITEMAP_LASTMOD moves to 2026-08-20, which is the UTC date the source changed and the date the release gate accepts in every timezone. No signed manifest carries this prose, so there is no re-sign. Carries v3.104.0.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1958,14 +1958,16 @@ Typical work:
 - JSON-LD generators for product, organization and article schemas
 - ai.txt and llms.txt authoring
 - Signed content and agent authentication patterns
+- An MCP server card and an agent-to-agent card for a server that
+  already runs, and the discovery paths that point at it
 
 What a day does not cover:
 - DNS records for agent discovery, which need your DNS rather than an
   edge worker
 - Tool declarations inside your pages, which are application work
 - Agent commerce protocols, which need working payment flows behind them
-- MCP and agent-to-agent cards, which point at a running server and are
-  priced as their own engagement
+- Building the MCP server itself, which is its own engagement, so a card
+  written on a day points at a server that already runs
 
 You check the work yourself. Run the scanner before the day and after it,
 so the result is a number you produced. I do not promise a readiness
@@ -3514,7 +3516,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.103.0",
+    "version": "3.104.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3758,7 +3760,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.103.0",
+  "version": "3.104.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4273,7 +4275,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-08-16";
+var SITEMAP_LASTMOD = "2026-08-20";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
