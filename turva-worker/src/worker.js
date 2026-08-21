@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.105.0 - The agent-readiness audit is 4 300 EUR and two weeks, down from 6 500 EUR and two to three weeks, with a new Stripe payment link and a post that gives the reasoning.
+// turva.dev worker v3.105.1 - Re-signs the four signed manifests after the price change. v3.105.0 shipped new llms.txt, agent.json and server-card bytes under the previous signatures, so the live signature check went red on all four; the content is unchanged from v3.105.0 and only the signatures move.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -3598,7 +3598,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.105.0",
+    "version": "3.105.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3700,7 +3700,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"vF0z-ju6uXcf2LBirtSKi2misfejNtSKApl_gm4Coq9bLPb8fLpgNgCWfaNfCi6AejOpoT7sOLVe-q0nxdSUAA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"vF0z-ju6uXcf2LBirtSKi2misfejNtSKApl_gm4Coq9bLPb8fLpgNgCWfaNfCi6AejOpoT7sOLVe-q0nxdSUAA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"noivBYHZsZQJgLTgWIIrq-L-KX7ERtAzdo1BkxZk5AOuoclq7A9i_vMceaRwjAga0njxKGRJ_vpe4BmhMPufBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-Aqd0bQuVFvcboDzlHHkT2so_4Abs5iiEdx5GrPLgdLLdjjSoMkFOXL6OplWTnZTP7mUFStbc4Err5TIV9siCA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Sso6ovs2AWzaFQ0fPF0oVmqmNson5Vc31ESTFJl68KM6ySrtxmevzcZOQOU_CXfLcJoDu7Sirc5geP8mJTWzDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"6nNj2YDay_VGkxAm40pHhi4MyjdR5LK-jVY0_bsbSKEsUT3Ftwos7XLxCwPuwbCe49vx7KnsaWPsoTulxAAiDw\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -3842,7 +3842,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.105.0",
+  "version": "3.105.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
