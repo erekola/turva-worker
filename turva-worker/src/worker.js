@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.105.1 - Re-signs the four signed manifests after the price change. v3.105.0 shipped new llms.txt, agent.json and server-card bytes under the previous signatures, so the live signature check went red on all four; the content is unchanged from v3.105.0 and only the signatures move.
+// turva.dev worker v3.105.2 - Homepage services list still said the audit takes two to three weeks. Tek-257 changed it to two weeks on 2026-08-21, and that line carries no price, so the price sweep did not reach it.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1808,7 +1808,7 @@ The result is checkable, not asserted. For agent-readiness that is the scanner n
 ## Services
 
 - Shopify agent storefront check. €1,900. Fixed scope. What an AI shopper receives from one live Shopify store, across browser WebMCP, remote MCP and Agentic channels. Four written deliverables in 48 hours, and a retest within 14 days.
-- Audit. Fixed scope. Two to three weeks. An independent scanner runs against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
+- Audit. Fixed scope. Two weeks. An independent scanner runs against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
 - Advisory. Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.
 - Implementation. €1,500 per day. Changes at the edge, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.
 - Agent operations. On request. The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
@@ -3598,7 +3598,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.105.1",
+    "version": "3.105.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3842,7 +3842,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.105.1",
+  "version": "3.105.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
