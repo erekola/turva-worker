@@ -3786,7 +3786,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Sso6ovs2AWzaFQ0fPF0oVmqmNson5Vc31ESTFJl68KM6ySrtxmevzcZOQOU_CXfLcJoDu7Sirc5geP8mJTWzDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"6nNj2YDay_VGkxAm40pHhi4MyjdR5LK-jVY0_bsbSKEsUT3Ftwos7XLxCwPuwbCe49vx7KnsaWPsoTulxAAiDw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Sso6ovs2AWzaFQ0fPF0oVmqmNson5Vc31ESTFJl68KM6ySrtxmevzcZOQOU_CXfLcJoDu7Sirc5geP8mJTWzDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"U72EN7TSpSnjYIttsJydOhJKA6LFt1BKkffkH7I_rkWjohSOociQbxOrQ_ui_rjx9VoYWFAgp6DsyB8wNlFyDQ\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -4583,10 +4583,10 @@ function getCanonicalForPath(pathname) {
 var META_BY_PATH = {
   "/blog/agent-readiness-code-hosts": {
     title: "I scanned fourteen code hosts. Not one served an MCP server card. | turva.dev",
-    description: "Fourteen code host surfaces scanned with an independent scanner on one day. Not one publishes an MCP server card, and the highest reading was Level 1 of 5.",
+    description: "Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
     date: "2026-08-22",
     image: "/og-agent-readiness-code-hosts.jpg",
-    imageAlt: "turva.dev blog card: Fourteen code host surfaces scanned with an independent scanner on one day. Not one publishes an MCP server card, and the highest reading was Level 1 of 5.",
+    imageAlt: "turva.dev blog card: Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
   },
   "/blog/cheating-to-keep-the-old-price": {
     title: "It would be cheating to keep the old price | turva.dev",
