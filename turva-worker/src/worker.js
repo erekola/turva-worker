@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.105.2 - Homepage services list still said the audit takes two to three weeks. Tek-257 changed it to two weeks on 2026-08-21, and that line carries no price, so the price sweep did not reach it.
+// turva.dev worker v3.105.3 - The MCP server card guide still named /.well-known/mcp/catalog.json and promised the card lists the tools, and the OKF guide still said version 0.1. The same tool claim also sat in the page META and in the OG card's pixels, where no text gate reads.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -2506,19 +2506,19 @@ Terms last updated: 2026-08-11.
 
   "/guides/open-knowledge-format": `# Open Knowledge Format (OKF) explained
 
-The Open Knowledge Format is an open specification from Google Cloud that represents a body of knowledge as a directory of plain markdown files. Each concept file carries a small block of YAML frontmatter and a free-form body. The goal is a portable way to hand an AI agent the context it needs, readable by a person and parseable by a machine, with no SDK and no catalog to lock into. Google Cloud published it in June 2026 as version 0.1.
+The Open Knowledge Format is an open specification from Google Cloud that represents a body of knowledge as a directory of plain markdown files. Each concept file carries a small block of YAML frontmatter and a free-form body. The goal is a portable way to hand an AI agent the context it needs, readable by a person and parseable by a machine, with no SDK and no catalog to lock into. Google Cloud published version 0.1 in June 2026 and version 0.2 in July 2026.
 
 ## What an OKF bundle contains
 
 A bundle is a folder of markdown files, and the unit inside it is a concept. A concept is anything worth capturing for an agent: a table, a dataset, a metric, a runbook, an API. Every concept is one UTF-8 markdown document with two parts. A YAML frontmatter block at the top, fenced by a line of three dashes above and below, and a markdown body underneath.
 
-The format asks for exactly one field, type. Everything else is optional, including title, description, resource, tags and a timestamp. What types exist and what fields each carries is left to whoever produces the bundle. Concepts reference each other with ordinary markdown links, so the folder becomes a graph of related knowledge rather than a flat list of files.
+The format asks for exactly one field, type. Everything else is optional, including title, description, resource, tags and a generated block that records who last changed the concept and when. What types exist and what fields each carries is left to whoever produces the bundle. Concepts reference each other with ordinary markdown links, so the folder becomes a graph of related knowledge rather than a flat list of files.
 
 ## Structural interoperability, not yet semantic
 
-Version 0.1 fixes a small set of things and leaves the rest open. It fixes the shape of a bundle as a folder of markdown files, the YAML frontmatter, two reserved filenames and the single required field. That is structural interoperability: any tool can open a bundle and know where the pieces are.
+Version 0.2 fixes a small set of things and leaves the rest open. It fixes the shape of a bundle as a folder of markdown files, the YAML frontmatter, two reserved filenames and the single required field, all carried forward from version 0.1 unchanged. That is structural interoperability: any tool can open a bundle and know where the pieces are. Version 0.2 also added optional provenance and trust keys, among them sources, generated, verified, status and stale_after, and it retired two version 0.1 surfaces, since the concept timestamp became generated.at and the body Citations list became sources in the frontmatter.
 
-What it does not fix is meaning. The format does not say what a metric concept must contain, or how two producers should agree on the same field names. That is semantic interoperability, and version 0.1 leaves it to producers and to conventions that have not been written yet. This is the line to keep in mind when reading the announcements around OKF. It standardizes the shape of the files, not yet what the files mean.
+What it does not fix is meaning. The format does not say what a metric concept must contain, or how two producers should agree on the same field names. That is semantic interoperability, and version 0.2 leaves it to producers and to conventions that have not been written yet. This is the line to keep in mind when reading the announcements around OKF. It standardizes the shape of the files, not yet what the files mean.
 
 ## Where OKF fits with agent-readiness
 
@@ -2528,7 +2528,7 @@ So OKF is not a replacement for an llms.txt or a markdown surface on your site. 
 
 ## What to do with it today
 
-OKF is new and small, version 0.1, and the semantic half is still open. That makes it worth understanding now and worth watching, but early to build an entire knowledge catalog on. If you already serve markdown to agents and keep an llms.txt, you have the instinct OKF formalizes, and adopting it later will be a short step rather than a rebuild.
+OKF is new and small, version 0.2 since July 2026, and the semantic half is still open. That makes it worth understanding now and worth watching, but early to build an entire knowledge catalog on. If you already serve markdown to agents and keep an llms.txt, you have the instinct OKF formalizes, and adopting it later will be a short step rather than a rebuild.
 
 For an audit of how legibly AI agents can read your site and the data behind it, contact info@turva.dev.
 
@@ -2536,11 +2536,11 @@ For an audit of how legibly AI agents can read your site and the data behind it,
 
 **What is the Open Knowledge Format?**
 
-An open specification from Google Cloud that represents a body of knowledge as a directory of plain markdown files. Each concept is one UTF-8 document with a YAML frontmatter block and a body. Google Cloud published it in June 2026 as version 0.1.
+An open specification from Google Cloud that represents a body of knowledge as a directory of plain markdown files. Each concept is one UTF-8 document with a YAML frontmatter block and a body. Google Cloud published version 0.1 in June 2026 and version 0.2 in July 2026.
 
 **What does OKF actually standardize?**
 
-The shape of the files, not yet their meaning. Version 0.1 fixes the folder of markdown files, the frontmatter, two reserved filenames and one required field. What a concept must contain is left to producers.
+The shape of the files, not yet their meaning. Version 0.2 fixes the folder of markdown files, the frontmatter, two reserved filenames and one required field. What a concept must contain is left to producers.
 
 **Does OKF replace llms.txt?**
 
@@ -2613,7 +2613,7 @@ A model cites content it can read cleanly and corroborate. That means machine-re
 
 **What is an MCP server card?**
 
-An MCP server card is a JSON file, usually at /.well-known/mcp/server-card.json, that lets an agent discover a site's Model Context Protocol server and the tools it exposes, so the agent can call them without a human wiring up the connection.
+An MCP server card is a JSON file that lets an agent discover a site's Model Context Protocol server, its endpoint and its transport, so the agent can connect without a human wiring up the connection. Deployed cards commonly sit at /.well-known/mcp/server-card.json.
 
 **Is agent-readiness the same as SEO?**
 
@@ -2701,7 +2701,7 @@ The site name and a short summary, then the key pages and resources as markdown 
 
   "/guides/mcp-server-card": `# MCP server cards explained
 
-An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. It usually lives at /.well-known/mcp/server-card.json, though the path is not yet standardized. SEP-2127, the open proposal behind the card, now develops it as an experimental MCP extension. As of July 2026 its draft recommends serving the card at the MCP endpoint URL followed by /server-card, with a site-level catalog at /.well-known/mcp/catalog.json, so the convention may still move. An agent reads the card, finds the endpoint, and can then connect without a human wiring up the connection first.
+An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. Deployed cards, turva.dev's among them, commonly sit at /.well-known/mcp/server-card.json. SEP-2127, the open proposal behind the card, now develops it as an experimental MCP extension. As of August 2026 its draft reserves a different default, the MCP endpoint URL followed by /server-card, and it does not recommend a /.well-known path for the card itself. Site-level discovery sits in the Agentic Resource Discovery catalog at /.well-known/ai-catalog.json instead, so the convention is still moving. An agent reads the card, finds the endpoint, and can then connect without a human wiring up the connection first.
 
 The Model Context Protocol is a standard way for agents to use external tools and data. A server implements the protocol and exposes a set of tools, and the card is how that server announces itself. Without a card or a registry listing, an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live.
 
@@ -2715,7 +2715,7 @@ For sites that want to expose a capability to agents, the card is the cheapest h
 
 **What is an MCP server card?**
 
-An MCP server card is a small JSON file, usually at /.well-known/mcp/server-card.json, that describes a site's Model Context Protocol server so an agent can find it, learn which tools it exposes, and call them without a human wiring up the connection.
+An MCP server card is a small JSON file that describes a site's Model Context Protocol server, its endpoint and its transport, so an agent can connect without a human wiring up the connection. The current draft leaves the tool list to the live connection rather than to the card.
 
 **Why publish an MCP server card?**
 
@@ -2723,7 +2723,7 @@ Without a card or a registry listing an agent has no reliable way to discover th
 
 **Where does an MCP server card live?**
 
-Usually at /.well-known/mcp/server-card.json. An agent fetches that predictable path, reads which tools the server exposes, and calls them without a human wiring up the connection.
+Deployed cards commonly sit at /.well-known/mcp/server-card.json, and turva.dev serves one there. The current draft reserves a different default, the MCP endpoint URL followed by /server-card, so an agent may have to try both until the convention settles.
 
 ## Related
 
@@ -3274,7 +3274,7 @@ An agent needs three things in machine-readable form. It needs to find the offer
 
 ## The protocols in play
 
-Checkout is becoming a protocol rather than a page. Stripe and OpenAI shipped Instant Checkout inside ChatGPT in 2025. Google and Shopify introduced the Universal Commerce Protocol in early 2026, and it now carries its own discovery manifest at /.well-known/ucp. The discovery layer is settling on a small set of standards. An A2A Agent Card describes the interface, AP2 authorizes agent payments, ACP carries the checkout, and x402 lets an agent meet a price with HTTP 402 and continue. A site does not need all of them, but it needs the ones its buyers' agents speak, declared where an agent looks.
+Checkout is becoming a protocol rather than a page. OpenAI documents the Agentic Commerce Protocol as the connective layer between merchants and shoppers in ChatGPT. Google and Shopify introduced the Universal Commerce Protocol in early 2026, and it now carries its own discovery manifest at /.well-known/ucp. The discovery layer is settling on a small set of standards. An A2A Agent Card describes the interface, AP2 authorizes agent payments, ACP carries the checkout, and x402 lets an agent meet a price with HTTP 402 and continue. A site does not need all of them, but it needs the ones its buyers' agents speak, declared where an agent looks.
 
 ## Where the protocol draws the line
 
@@ -3598,7 +3598,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.105.2",
+    "version": "3.105.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3842,7 +3842,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.105.2",
+  "version": "3.105.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4357,7 +4357,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-08-21";
+var SITEMAP_LASTMOD = "2026-08-22";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -4765,9 +4765,9 @@ var META_BY_PATH = {
   },
   "/guides/mcp-server-card": {
     title: "MCP server cards explained | turva.dev",
-    description: "An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and the tools it exposes. What it is and why it matters.",
+    description: "An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and connect to it. What it is and why it matters.",
     image: "/og-guide-mcp-server-card.jpg",
-    imageAlt: "turva.dev guide card: An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and the tools it exposes."
+    imageAlt: "turva.dev guide card: An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and connect to it."
   },
   "/guides/agents-json": {
     title: "What agents.json is | turva.dev",
