@@ -190,6 +190,7 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog)
+- [I scanned fourteen code hosts. Not one served an MCP server card.](https://turva.dev/blog/agent-readiness-code-hosts)
 - [It would be cheating to keep the old price](https://turva.dev/blog/cheating-to-keep-the-old-price)
 - [I thought it was a small job](https://turva.dev/blog/i-thought-it-was-a-small-job)
 - [My gate could not see a sixth](https://turva.dev/blog/my-gate-could-not-see-a-sixth)
@@ -356,6 +357,90 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/agent-readiness-code-hosts": `# I scanned fourteen code hosts. Not one served an MCP server card.
+
+2026-08-22
+
+Cursor launched Origin on August 17 and calls it a Git forge for the agentic era. I ran an independent agent-readiness scanner over its public surface and over thirteen other code hosts on August 22. Not one of them reached Level 2 of 5.
+
+## Key figures
+
+- Fourteen code host surfaces scanned with the isitagentready scanner on 2026-08-22, one run each.
+- Highest reading was Level 1 of 5. Six surfaces reached it, belonging to Cursor Origin, GitLab, SourceForge, Forgejo and Azure DevOps. The other eight read Level 0.
+- The scanner group named API, Auth, MCP & A2A Discovery holds nine checks. Across the sample it ran 124 times and passed twice.
+- Zero MCP server cards, zero API catalogs, zero agent skills indexes, zero ARD manifests and zero auth.md files across all fourteen. GitLab answered 403 rather than 404 on most of those paths. The A2A card and WebMCP checks completed on thirteen, and both read zero there.
+- Both passes were OpenID Connect metadata, which is published so people can log in and not so agents can find anything.
+
+## What was measured, and what was not
+
+The scanner reads a public web surface. It does not log in, and it does not see a repository. Origin itself sits behind a Cursor paid plan, so the reading describes cursor.com and its marketing page for Origin, not the forge. Four targets redirected somewhere else, GitLab to its marketing site and Azure DevOps to a Microsoft product page, so GitLab was measured a second time from the application at gitlab.com/explore. Both readings landed at Level 1, with different checks passing on each.
+
+One host is missing from the count. savannah.gnu.org did not answer on two attempts, once with a network error and once with a 502, and an unreachable site is not a zero.
+
+For scale, my own site reads Level 5 of 5 on the same scanner on the same day. That comparison is not a fair fight and I am not presenting it as one. turva.dev is a one-person advisory site with sixty canonical pages, and a code host carries multi-tenant load plus an access model that a site like mine never has to solve. It does show that the manifests in question are not expensive to publish.
+
+## The numbers
+
+| Host | Level | Checks passed |
+|---|---|---|
+| cursor.com/origin | 1/5 | 3 |
+| gitlab.com marketing | 1/5 | 4 |
+| gitlab.com/explore | 1/5 | 4 |
+| sourceforge.net | 1/5 | 3 |
+| forgejo.org | 1/5 | 3 |
+| dev.azure.com | 1/5 | 3 |
+| github.com | 0/5 | 2 |
+| bitbucket.org | 0/5 | 2 |
+| sr.ht | 0/5 | 2 |
+| gitea.com | 0/5 | 3 |
+| gitee.com | 0/5 | 2 |
+| launchpad.net | 0/5 | 3 |
+| radicle.dev | 0/5 | 3 |
+| gerritcodereview.com | 0/5 | 1 |
+
+For almost every host the passing checks were the same two, a robots.txt the scanner reads as valid and a robots.txt whose rules reach AI crawlers, either by naming them or by letting the wildcard cover them. That is the floor an ordinary site reaches without trying. Gerrit sits below it, because its robots.txt carries no User-agent line at all, so the file is read as invalid and the AI rules check falls with it.
+
+## GitHub runs an MCP server. Nothing on github.com says so.
+
+This is the finding I keep coming back to. GitHub operates a production MCP server, and I used it on the same day I ran these scans. It works. But github.com serves no MCP server card, no API catalog and no Link header pointing at either, so an agent that arrives without being told about the server has no way to discover it. The capability exists and the announcement does not.
+
+The same shape repeats across the sample. What follows is a reading of how these products are sold, which the scan does not measure. Several of them are sold as the place where agents work on code, and on every one of them the way in is a docs page written for a person.
+
+## Three things the scan does not prove
+
+GitLab answered HTTP 403 to most of the well-known paths, including the API catalog, auth.md, the MCP card, the A2A card, the skills index and the ARD manifest. A 403 is a refusal, not evidence that a file is absent, and I have recorded those as failures only because the check got no answer.
+
+Two checks did not complete on Gitee, and for different reasons. The A2A card fetch aborted and the WebMCP check timed out at eight seconds. Its discovery group was therefore scored on seven of nine.
+
+The sample is fourteen surfaces I picked by hand. It is not a random draw and it does not cover every code host. Read it as a snapshot of one day.
+
+## Why any of this matters
+
+An agent that lands on a code host today can read the marketing copy. It cannot ask the site what it is able to do, because nothing on the site answers that question in a format an agent parses. Every integration therefore has to be hard-coded by a human who already knows the endpoint exists.
+
+The fixes are small and mostly mechanical. A server card is a JSON file at a known path. An API catalog is a linkset. A Link header is one line of response configuration. None of it requires rebuilding a forge, and none of it had been done on any of the fourteen surfaces I measured.
+
+If you want to check a site yourself, the scanner is public and the free llms.txt validator is at turva.dev/llms-txt-validator. The audit and advisory work is at turva.dev.
+
+## Frequently asked
+
+**Does this mean GitHub is broken?**
+
+No. GitHub works, and so does its MCP server, which I used on the same day I ran the scan. The reading describes one thing only, whether the site announces what it can do in a format an agent finds without being told. On that point github.com reads zero, and so does every other host in the sample.
+
+**Why would a code host publish an MCP server card?**
+
+So that an agent arriving at the domain can learn that a server exists, where it is and what it does, without a human pasting the endpoint into a config file first. The card is a JSON file at a known path. It does not change the forge and it does not expose anything the docs do not already say.
+
+**How do I check a host myself?**
+
+Run the same public scanner against the domain and read the group named API, Auth, MCP & A2A Discovery. The result is a snapshot of that day, mine included, because these specifications move month to month.
+
+## Related
+
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+- [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
+- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b)`,
   "/blog/cheating-to-keep-the-old-price": `# It would be cheating to keep the old price
 
 2026-08-21
@@ -1340,6 +1425,7 @@ All free tools on this site are collected on [the tools page](/tools).
 
 The work here is letting an agent read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against an independent scanner rather than asserted.
 
+- [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts). 2026-08-22.
 - [It would be cheating to keep the old price](/blog/cheating-to-keep-the-old-price). 2026-08-21.
 - [I thought it was a small job](/blog/i-thought-it-was-a-small-job). 2026-08-16.
 - [My gate could not see a sixth](/blog/my-gate-could-not-see-a-sixth). 2026-08-04.
@@ -4408,6 +4494,7 @@ var SITEMAP_ENTRIES = [
   ["/blog/moving-off-prerender", "monthly", "0.6"],
   ["/blog/owning-your-fediverse-identity", "monthly", "0.6"],
   ["/blog/reliable-agent-decisions", "monthly", "0.6"],
+  ["/blog/agent-readiness-code-hosts", "monthly", "0.6"],
   ["/blog/cheating-to-keep-the-old-price", "monthly", "0.6"],
   ["/blog/i-thought-it-was-a-small-job", "monthly", "0.6"],
   ["/blog/my-gate-could-not-see-a-sixth", "monthly", "0.6"],
@@ -4484,7 +4571,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -4494,6 +4581,13 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/agent-readiness-code-hosts": {
+    title: "I scanned fourteen code hosts. Not one served an MCP server card. | turva.dev",
+    description: "Fourteen code host surfaces scanned with an independent scanner on one day. Not one publishes an MCP server card, and the highest reading was Level 1 of 5.",
+    date: "2026-08-22",
+    image: "/og-agent-readiness-code-hosts.jpg",
+    imageAlt: "turva.dev blog card: Fourteen code host surfaces scanned with an independent scanner on one day. Not one publishes an MCP server card, and the highest reading was Level 1 of 5.",
+  },
   "/blog/cheating-to-keep-the-old-price": {
     title: "It would be cheating to keep the old price | turva.dev",
     description: "The audit drops to 4,300 euros and two weeks. The part a client paid for twice is now a written checklist.",
@@ -5635,6 +5729,7 @@ var GUIDE_PAGE_FAQ = {
   "/shopify-agent-storefront-check": mdFaqBlocks("/shopify-agent-storefront-check", "Frequently asked").pairs,
   "/llms-txt-validator": mdFaqBlocks("/llms-txt-validator", "Frequently asked").pairs,
   "/guides/agentic-resource-discovery": mdFaqBlocks("/guides/agentic-resource-discovery", "Frequently asked").pairs,
+  "/blog/agent-readiness-code-hosts": mdFaqBlocks("/blog/agent-readiness-code-hosts", "Frequently asked").pairs,
   "/blog/cheating-to-keep-the-old-price": mdFaqBlocks("/blog/cheating-to-keep-the-old-price", "Frequently asked").pairs,
   "/blog/i-thought-it-was-a-small-job": mdFaqBlocks("/blog/i-thought-it-was-a-small-job", "Frequently asked").pairs,
   "/guides/ai-agent-use-cases": mdFaqBlocks("/guides/ai-agent-use-cases", "Frequently asked").pairs,
