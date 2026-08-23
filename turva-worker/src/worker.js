@@ -6017,7 +6017,7 @@ function serveHomeHtml(canonicalUrl) {
   const svcCards = mdLists("/", "Services")[0].map((it) => {
     const svcName = it.split(". ")[0];
     const tag = it.includes("Fixed scope") ? "fixed scope" : it.includes("Monthly retainer") ? "monthly" : it.includes("per day") ? "per day" : "on request";
-    return `<div class="svc"><span class="svc-tag">${tag}</span><span class="svc-t">${svcName}</span><p>${it.slice(svcName.length + 2)}</p></div>`;
+    return `<div class="svc"><div class="svc-h"><span class="svc-t">${svcName}</span><span class="svc-tag">${tag}</span></div><p>${it.slice(svcName.length + 2)}</p></div>`;
   }).join("\n      ");
   const body = `<!doctype html>
 <html lang="en">
@@ -6110,10 +6110,11 @@ ${FAQ_CSS}
 .notes li{position:relative;padding:0 0 0 1.6rem;font-size:.92rem;color:#C9D1CE;line-height:1.6;}
 .notes li::before{content:"✓";position:absolute;left:0;top:0;color:#5DF18F;font-weight:700;}
 .svcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:.7rem;margin:.2rem 0 0;}
-.svc{position:relative;background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:1.05rem 1.05rem 1.1rem;transition:border-color .15s ease,transform .15s ease;}
+.svc{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:1.05rem 1.05rem 1.1rem;transition:border-color .15s ease,transform .15s ease;}
 .svc:hover{border-color:rgba(93,241,143,0.4);transform:translateY(-1px);}
-.svc-tag{position:absolute;top:.95rem;right:1rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;letter-spacing:.03em;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.22);border-radius:999px;padding:.12rem .55rem;}
-.svc-t{display:block;font-size:1.05rem;font-weight:700;color:#5DF18F;margin:0 3.5rem .45rem 0;}
+.svc-tag{flex:0 0 auto;white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;letter-spacing:.03em;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.22);border-radius:999px;padding:.12rem .55rem;}
+.svc-h{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;margin:0 0 .45rem;}
+.svc-t{display:block;font-size:1.05rem;font-weight:700;color:#5DF18F;margin:0;min-width:0;}
 .svc p{font-size:.86rem;margin:0;color:#9AA3A0;line-height:1.55;}
 .contact{border-top:1px solid rgba(93,241,143,0.2);}
 .contact-card{border:1px solid rgba(255,255,255,0.14);border-radius:14px;background:rgba(93,241,143,0.04);padding:1.2rem 1.2rem 1rem;margin:.4rem 0 0;}
