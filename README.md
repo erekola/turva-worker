@@ -71,12 +71,13 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 |---|---|
 | `/` and all HTML routes | Rendered by the Worker from markdown |
 | `/llms.txt`, `/llms-full.txt` | LLM consumption guide, whole site as text |
+| `/<page>.md` | Markdown twin of any page at its own address (llms.txt v2) |
 | `/.well-known/mcp/server-card.json` | MCP server card |
 | `/.well-known/signatures.json`, `/.well-known/jwks.json` | Ed25519 signatures and keys |
 | `/x402`, `/api/agent/*` | Payment-required and payable service routes |
 | `/llms-txt-validator` | llms.txt structure checker |
 
-Full inventory of all 38 routes: [docs/endpoints.md](docs/endpoints.md).
+Full inventory of all 39 routes: [docs/endpoints.md](docs/endpoints.md).
 
 ## Deploy
 

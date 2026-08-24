@@ -8,6 +8,7 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/.well-known/ai.txt` | AI agent disclosure |
 | `/llms.txt` | LLM consumption guide |
 | `/llms-full.txt` | The whole site as one text file |
+| `/<page>.md` | The markdown twin of any page at its own address, `/index.md` for the home page (llms.txt v2) |
 | `/.well-known/agent.json` | ai-plugin / agent manifest |
 | `/.well-known/mcp/server-card.json` | MCP server card |
 | `/.well-known/agent-card.json` | A2A agent card |

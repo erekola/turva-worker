@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.105.3 - The MCP server card guide still named /.well-known/mcp/catalog.json and promised the card lists the tools, and the OKF guide still said version 0.1. The same tool claim also sat in the page META and in the OG card's pixels, where no text gate reads.
+// turva.dev worker v3.106.0 - llms.txt v2 (published 2026-08-10) adopted in full. Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -1285,7 +1285,9 @@ For an audit of the whole surface an agent sees, not just this one file, contact
 
 Enter a domain and this page fetches its /llms.txt and checks the
 structure: the first non-empty line is an H1 title, an optional blockquote
-summary, H2 sections with link lists. Free, no signup, nothing stored.
+summary, H2 sections with link lists. It also reads the site's home page for
+the two link relations v2 of the format recommends. Free, no signup, nothing
+stored.
 
 ## How to use it
 
@@ -1305,6 +1307,13 @@ Both views list the same checks below. The browser page and this markdown twin a
 - Markdown links parse and use absolute URLs
 - The file stays small enough to be cheap for an agent to read
 - No HTML markup in the file, since llms.txt should be plain markdown (HTML tags are flagged as a warning)
+- Whether the home page points at the llms.txt with rel="describedby", which v2 recommends
+- Whether the home page points at a markdown version with rel="alternate" type="text/markdown", which v2 recommends
+
+The last two report pass or information, never a warning and never a failure.
+They describe the site rather than the file, and v2 is two weeks old at the time of
+writing, so warning about them would turn valid files into files with warnings for
+following the version of the format they were written against.
 
 ## What it does not do
 
@@ -1313,9 +1322,10 @@ agent-readiness score. A full audit measures discoverability, content accessibil
 access control and more: see [services](/services),
 or start with [llms.txt explained](/guides/llms-txt).
 
-Only the target site's /llms.txt is fetched, following a redirect to the
-same host or its www twin when there is one. Agents can call this with
-Accept: application/json.
+Two documents are fetched from the target site, its /llms.txt and its home
+page, each following a redirect to the same host or its www twin when there is
+one. Nothing else is requested and the site is never crawled. Agents can call
+this with Accept: application/json.
 
 All free tools on this site are collected on [the tools page](/tools).
 
@@ -1327,7 +1337,7 @@ llms.txt is a plain text file at the root of a site that tells AI agents what th
 
 **What does the validator check?**
 
-Eight structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with an H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, the file stays small enough to be cheap for an agent to read, and the file carries no inline HTML, since llms.txt should be plain markdown.
+Eight structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with an H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, the file stays small enough to be cheap for an agent to read, and the file carries no inline HTML, since llms.txt should be plain markdown. Two further checks read the site's home page for the link relations v2 recommends, rel="describedby" to the llms.txt and rel="alternate" type="text/markdown" to a markdown version, and both are reported as information rather than as a warning.
 
 **Why is there no score?**
 
@@ -1335,15 +1345,15 @@ Deliberately. Eight structural checks can honestly report pass, warn or fail, an
 
 **How does an agent call the validator?**
 
-GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Only the target site's /llms.txt is fetched, following a redirect to the same host or its www twin when there is one, and the response carries a no-store header.
+GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Two documents are fetched from the target site, its /llms.txt and its home page, each following a redirect to the same host or its www twin when there is one, and the response carries a no-store header.
 
 **Does the validator store anything?**
 
-No. The fetched file is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads the single llms.txt file, following a redirect to the same host or its www twin when there is one, and never crawls the rest of the site.
+No. What is fetched is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads two documents, the llms.txt file and the home page, each following a redirect to the same host or its www twin when there is one, and never crawls the rest of the site.
 
 **Can I run the checks in CI?**
 
-Yes. The same eight checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks.
+Yes. The same checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks. The two v2 checks never fail that build, since they are reported as information.
 
 ## Related
 
@@ -1358,7 +1368,7 @@ Three tools this site publishes for anyone to use: an llms.txt validator, an emb
 
 ## llms.txt validator
 
-Checks a site's /llms.txt structure against the format and reports each check as pass, warn or fail. Nothing is stored. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header.
+Checks a site's /llms.txt structure against the format and reports each check as pass, warn or fail, plus two v2 link relation checks reported as information. Nothing is stored. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header.
 
 Open it at [turva.dev/llms-txt-validator](/llms-txt-validator), or [run it against this site's own file](/llms-txt-validator?url=turva.dev) without typing anything.
 
@@ -1954,9 +1964,11 @@ In writing: email info@turva.dev or Signal @turva.19. First reply within one bus
 
 ## Markdown views
 
-You are reading the markdown view of this page, served with Accept:
-text/markdown content negotiation. Every page on this site has one,
-at the same URL, at a fraction of the token cost of the HTML.
+You are reading the markdown view of this page. Every page on this
+site has one, and there are two ways to it: the page URL with .md
+appended, which is what llms.txt v2 asks for, or the page URL itself
+with Accept: text/markdown. Both return this same document, at a
+fraction of the token cost of the HTML.
 
 ## More
 - [Services](https://turva.dev/services)
@@ -2750,9 +2762,11 @@ A pass or fail on each check, and a concrete fix for every failure that an indep
 
   "/guides/llms-txt": `# llms.txt explained
 
-llms.txt is a plain text file at the root of a site that tells AI agents and language models what the site contains and where the important content lives. It works like a guide written for machines. A human reads the rendered page, an agent reads llms.txt and follows the links it lists.
+llms.txt is a plain text file that tells AI agents and language models what a site contains and where the important content lives. It sits at /llms.txt at the root of a site, or at any path inside it, in which case it covers the pages under that path and the most specific file applies. It works like a guide written for machines. A human reads the rendered page, an agent reads llms.txt and follows the links it lists.
 
-The format is simple. The file opens with the site name and a short summary, then lists the key pages and resources as markdown links, often grouped under headings. Some sites also publish llms-full.txt, a single file that bundles the full text of the site so an agent can read everything in one request instead of crawling many pages.
+The format is simple. The file opens with the site name as an H1, then a short summary as a blockquote, then the key pages and resources as markdown links grouped under H2 headings. Only the H1 is required. Some sites also publish llms-full.txt, a single file that bundles the full text of the site so an agent can read everything in one request instead of crawling many pages.
+
+The proposal reached v2 in August 2026 and the file format did not change. What changed is how an agent finds the machine-readable forms. A page now names them with two standard link relations, rel="alternate" type="text/markdown" for the markdown version of the page and rel="describedby" for the llms.txt that covers it, given either as HTML link elements or as an HTTP Link header. v2 also accepts both address forms for a markdown version, page.html.md and page.md, and it drops the context expansion tooling that v1 described, so the Optional section is a convention for secondary links and carries no mechanical meaning any more.
 
 The reason it matters is cost and clarity. A normal HTML page carries navigation, scripts, and styling that an agent has to wade through, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a fraction of the HTML, which is the difference between an agent reading the page reliably and an agent truncating it.
 
@@ -2762,13 +2776,13 @@ Whether a site needs one depends on whether it wants to be legible to agents. If
 
 Check any site's llms.txt structure with the free validator at https://turva.dev/llms-txt-validator.
 
-turva.dev publishes llms.txt and llms-full.txt and serves markdown on request. For an audit of how legible a site is to agents, contact info@turva.dev.
+turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. For an audit of how legible a site is to agents, contact info@turva.dev.
 
 ## Frequently asked
 
 **What is llms.txt?**
 
-llms.txt is a plain text file at the root of a site that tells AI agents and language models what the site contains and where the important content lives. It does not replace robots.txt or a sitemap, it complements them.
+llms.txt is a plain text file that tells AI agents and language models what a site contains and where the important content lives. It sits at the root of a site or at any path inside it, where it covers the pages under that path. It does not replace robots.txt or a sitemap, it complements them.
 
 **Does llms.txt help with search ranking?**
 
@@ -2777,6 +2791,10 @@ No. llms.txt is not a ranking trick. It gives models a curated map of the conten
 **What does an llms.txt file contain?**
 
 The site name and a short summary, then the key pages and resources as markdown links, often grouped under headings. Some sites also publish llms-full.txt, which bundles the full text so an agent can read everything in one request.
+
+**What changed in v2 of llms.txt?**
+
+The file format did not change. v2 added two standard link relations so an agent finds a page's markdown version and its llms.txt without guessing, accepted page.md alongside page.html.md as the address of a markdown version, defined what an llms.txt in a subpath covers, and dropped the context expansion tooling along with the mechanical meaning of the Optional section.
 
 ## Related
 
@@ -3198,13 +3216,13 @@ Yes. robots.txt can name AI crawlers explicitly rather than treating every clien
 
 An HTML page is built for a browser, and an agent that reads it pays for all the markup, scripts, and layout it does not need. Serving a markdown version of the same page gives an agent the content without the wrapper, which is both cheaper and less error-prone.
 
-The mechanism is content negotiation. An agent sends an Accept header asking for text/markdown, and the server returns the markdown form of the page at the same URL. A site can also publish llms-full.txt, a single file that bundles the whole site as text, so an agent can read everything in one request instead of fetching many pages.
+The mechanism is content negotiation. An agent sends an Accept header asking for text/markdown, and the server returns the markdown form of the page at the same URL. Since v2 of the llms.txt proposal there is a second way in. The markdown form also lives at its own address, the page URL with .md appended, and the page points at it with rel="alternate" type="text/markdown", so a client that never sends an Accept header still finds it. A site can also publish llms-full.txt, a single file that bundles the whole site as text, so an agent can read everything in one request instead of fetching many pages.
 
 The saving is large. On turva.dev the markdown form of a page costs a fraction of the tokens the HTML would, and the difference decides whether an agent reads a page in full or truncates it halfway. A model that runs out of budget on markup is a model that answers from a partial reading.
 
 Markdown delivery is not a separate site, it is the same content offered in a second form. The page stays as it is for people, and an agent that asks for text gets text. Paired with a clear llms.txt that lists where the content lives, it makes a site fast and reliable to read at machine speed.
 
-turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. For an audit of a site's content surface for agents, contact info@turva.dev.
+turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. Every page also answers at its own .md address, and /guides/markdown-for-agents and /guides/markdown-for-agents.md return the same markdown byte for byte. For an audit of a site's content surface for agents, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -3214,7 +3232,7 @@ An HTML page is built for a browser, and an agent that reads it pays for all the
 
 **How does an agent request the markdown version?**
 
-Through content negotiation. An agent sends an Accept header asking for text/markdown and the server returns the markdown form at the same URL. A site can also publish llms-full.txt to bundle the whole site as text in one request.
+Through content negotiation. An agent sends an Accept header asking for text/markdown and the server returns the markdown form at the same URL. Since v2 of the llms.txt proposal the markdown form also has its own address, the page URL with .md appended, which a client can fetch without sending any header. A site can also publish llms-full.txt to bundle the whole site as text in one request.
 
 **What does an agent pay for when it reads an HTML page?**
 
@@ -3684,7 +3702,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.105.3",
+    "version": "3.106.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3928,7 +3946,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.105.3",
+  "version": "3.106.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -5328,6 +5346,16 @@ function wantsJson(request) {
   return prefersType(request, "application/json", true);
 }
 
+// v2 of the llms.txt proposal asks for the markdown version of a page at a URL an
+// agent can derive without an Accept header: ".md" appended to the page URL, or the
+// extension replaced. Every page here is extensionless, so appending is the form that
+// applies, and the spec names index.md for a URL with no file name, which is the
+// homepage. One helper builds it so the head link, the Link header and the route can
+// never disagree about the address.
+function markdownUrlFor(canonicalUrl) {
+  return canonicalUrl.endsWith("/") ? canonicalUrl + "index.md" : canonicalUrl + ".md";
+}
+
 function serveMarkdown(body, canonicalUrl) {
   const tokens = body.split(/\s+/).filter(Boolean).length;
   const headers = new Headers({
@@ -5833,7 +5861,7 @@ function buildValidatorAppJsonLd(canonicalUrl) {
   return `<script type="application/ld+json">\n${json2}\n<\/script>`;
 }
 
-var FOOTER_CSS = `main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#5DF18F;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-x:auto;white-space:nowrap}.vform{display:flex;gap:10px;margin:6px 0}.vform input{flex:1;min-width:0;background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:10px 12px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:14px}.vform button{background:#5DF18F;color:#06100F;border:0;border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer;font-size:14px}.chk{display:flex;gap:10px;margin:8px 0;align-items:baseline;flex-wrap:wrap}.chk .s{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700}.chk.pass .s{color:#5DF18F}.chk.warn .s{color:#E8C15A}.chk.fail .s{color:#F17F5D}.chk .d{color:#96A79C;font-size:14px}.verr{color:#F17F5D}
+var FOOTER_CSS = `main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#5DF18F;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-x:auto;white-space:nowrap}.vform{display:flex;gap:10px;margin:6px 0}.vform input{flex:1;min-width:0;background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:10px 12px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:14px}.vform button{background:#5DF18F;color:#06100F;border:0;border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer;font-size:14px}.chk{display:flex;gap:10px;margin:8px 0;align-items:baseline;flex-wrap:wrap}.chk .s{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700}.chk.pass .s{color:#5DF18F}.chk.warn .s{color:#E8C15A}.chk.fail .s{color:#F17F5D}.chk.info .s{color:#7FB2D9}.chk .d{color:#96A79C;font-size:14px}.verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:1.9rem clamp(20px,5vw,72px);display:flex;flex-direction:column;gap:1rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:9px;}
 .tv-foot .foot-brand svg{display:block;width:22px;height:22px;}
@@ -5924,7 +5952,7 @@ ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
-<link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
+<link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
 html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 body{--col-half:22rem;}
@@ -5994,7 +6022,7 @@ ${FOOTER_HTML}
   });
   appendAgentLinks(headers);
   applySecurityHeaders(headers, "html");
-  headers.append("Link", `<${canonicalUrl}>; rel="alternate"; type="text/markdown"`);
+  headers.append("Link", `<${markdownUrlFor(canonicalUrl)}>; rel="alternate"; type="text/markdown"`);
   return new Response(body, { status: 200, headers });
 }
 
@@ -6033,7 +6061,7 @@ ${metaBlock}
 ${SCHEMA_HOME}
 ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
-<link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
+<link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
 html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:46rem;margin:0 auto;padding:0 clamp(20px,5vw,72px) 3rem;}
@@ -6313,7 +6341,7 @@ ${FOOTER_HTML}
   });
   appendAgentLinks(headers);
   applySecurityHeaders(headers, "html");
-  headers.append("Link", `<${canonicalUrl}>; rel="alternate"; type="text/markdown"`);
+  headers.append("Link", `<${markdownUrlFor(canonicalUrl)}>; rel="alternate"; type="text/markdown"`);
   return new Response(body, { status: 200, headers });
 }
 
@@ -6336,7 +6364,7 @@ ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
-<link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
+<link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
 html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:46rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
@@ -6434,7 +6462,7 @@ ${FOOTER_HTML}
   });
   appendAgentLinks(headers);
   applySecurityHeaders(headers, "html");
-  headers.append("Link", `<${canonicalUrl}>; rel="alternate"; type="text/markdown"`);
+  headers.append("Link", `<${markdownUrlFor(canonicalUrl)}>; rel="alternate"; type="text/markdown"`);
   return new Response(body, { status: 200, headers });
 }
 
@@ -6504,7 +6532,7 @@ ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
-<link rel="alternate" href="${canonicalUrl}" type="text/markdown" />
+<link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
 ${CARDPAGE_CSS}
 ${FOOTER_CSS}
@@ -6540,7 +6568,7 @@ function cardPageHeaders(canonicalUrl) {
   });
   appendAgentLinks(headers);
   applySecurityHeaders(headers, "html");
-  headers.append("Link", `<${canonicalUrl}>; rel="alternate"; type="text/markdown"`);
+  headers.append("Link", `<${markdownUrlFor(canonicalUrl)}>; rel="alternate"; type="text/markdown"`);
   return headers;
 }
 
@@ -6706,10 +6734,15 @@ function isValidPublicHost(host) {
   return true;
 }
 
-async function fetchLlmsTxt(host) {
+// The second argument was added for the v2 discovery checks, which need the site's
+// home page as well as its llms.txt. It is one parameter and nothing else moved:
+// the redirect budget, the same-host rule, the credential and port rejections and
+// the 256 KB cap are the guards this function was measured against, and a rewrite
+// would have put them back in play for a feature that does not need them.
+async function fetchLlmsTxt(host, path, accept) {
   const reqApex = host.startsWith("www.") ? host.slice(4) : host;
   const cap = 262144;
-  let url = "https://" + host + "/llms.txt";
+  let url = "https://" + host + (path || "/llms.txt");
   let redirectedFrom = null;
   // One 8 s budget for the whole redirect chain, not 8 s per hop: the error shown to
   // the reader says "timed out after 8 seconds", and with up to five hops a per-hop
@@ -6721,7 +6754,7 @@ async function fetchLlmsTxt(host) {
       signal: AbortSignal.timeout(Math.max(1, deadline - Date.now())),
       headers: {
         "user-agent": "turva-llms-txt-validator (+https://turva.dev/llms-txt-validator)",
-        "accept": "text/plain, text/markdown;q=0.9, */*;q=0.1"
+        "accept": accept || "text/plain, text/markdown;q=0.9, */*;q=0.1"
       }
     });
     if (res.status >= 300 && res.status < 400) {
@@ -6762,6 +6795,7 @@ async function fetchLlmsTxt(host) {
     return {
       status: res.status,
       contentType: res.headers.get("content-type") || "",
+      linkHeader: res.headers.get("link") || "",
       text: new TextDecoder("utf-8").decode(buf),
       bytes,
       truncated,
@@ -6845,6 +6879,59 @@ function validateLlmsTxt(f) {
   return checks;
 }
 
+// v2 of the llms.txt proposal (August 2026) left the file format alone and added one
+// thing: a page should say where its markdown version and its llms.txt are, using
+// rel="alternate" type="text/markdown" and rel="describedby", as HTML link elements
+// or as a Link response header. That is a property of the SITE, not of the file, so
+// these two land in their own status, "info". They are reported, they are never a
+// warn and never a fail, and the summary line and the CLI's --strict exit code stay
+// exactly what they were. v2 is two weeks old, so a warn here would have turned files
+// into "valid with warnings" for following the version of the format they were written
+// against, which is a change to who passes rather than a new measurement (Tek-160).
+// How common the relations are in the wild has not been measured, so nothing here
+// claims it.
+function findLinkRelations(html, linkHeader) {
+  const found = { describedby: null, markdown: null };
+  // Comments are stripped first. A commented-out link element is not published,
+  // and counting one would report a relation the site does not serve, which is the
+  // one thing a measurement may not do. With no </head> the first 64 KB are
+  // scanned, body included, so a truncated or malformed document does not
+  // silently report nothing found.
+  const text = String(html || "").replace(/<!--[\s\S]*?-->/g, "");
+  const cut = text.toLowerCase().indexOf("</head>");
+  const head = cut === -1 ? text.slice(0, 65536) : text.slice(0, cut);
+  for (const tag of head.match(/<link\b[^>]*>/gi) || []) {
+    const rel = ((tag.match(/\brel\s*=\s*["']?([^"'>]+)/i) || [])[1] || "").toLowerCase().trim().split(/\s+/);
+    const type = ((tag.match(/\btype\s*=\s*["']?([^"'>\s]+)/i) || [])[1] || "").toLowerCase();
+    const href = ((tag.match(/\bhref\s*=\s*"([^"]*)"|\bhref\s*=\s*'([^']*)'|\bhref\s*=\s*([^\s"'>]+)/i) || []).slice(1).find((x) => x !== undefined) || "").trim();
+    if (!found.describedby && rel.includes("describedby")) found.describedby = href || "(link element without href)";
+    if (!found.markdown && rel.includes("alternate") && type.startsWith("text/markdown")) found.markdown = href || "(link element without href)";
+  }
+  for (const part of String(linkHeader || "").split(/,(?=\s*<)/)) {
+    const href = ((part.match(/<([^>]*)>/) || [])[1] || "").trim();
+    const rel = ((part.match(/rel\s*=\s*"?([^";,]+)"?/i) || [])[1] || "").toLowerCase().trim().split(/\s+/);
+    const type = ((part.match(/type\s*=\s*"?([^";,]+)"?/i) || [])[1] || "").toLowerCase().trim();
+    if (!found.describedby && rel.includes("describedby")) found.describedby = href || "(Link header without a target)";
+    if (!found.markdown && rel.includes("alternate") && type.startsWith("text/markdown")) found.markdown = href || "(Link header without a target)";
+  }
+  return found;
+}
+
+function validateV2Discovery(found, unreadReason) {
+  const checks = [];
+  const add = (id, status, label, detail) => checks.push({ id, status, label, detail });
+  if (!found) {
+    add("v2-describedby", "info", "Home page points to its llms.txt (v2)", unreadReason);
+    add("v2-markdown-alternate", "info", "Home page points to a markdown version (v2)", unreadReason);
+    return checks;
+  }
+  add("v2-describedby", found.describedby ? "pass" : "info", "Home page points to its llms.txt (v2)",
+    found.describedby ? 'rel="describedby" to ' + found.describedby.slice(0, 120) : 'no rel="describedby" in the head or the Link header; v2 recommends it so an agent finds the file without guessing');
+  add("v2-markdown-alternate", found.markdown ? "pass" : "info", "Home page points to a markdown version (v2)",
+    found.markdown ? 'rel="alternate" type="text/markdown" to ' + found.markdown.slice(0, 120) : 'no rel="alternate" type="text/markdown" in the head or the Link header; v2 recommends it so an agent finds the markdown form without guessing');
+  return checks;
+}
+
 function summarizeChecks(checks) {
   if (checks.some((c) => c.status === "fail")) return "not valid";
   if (checks.some((c) => c.status === "warn")) return "valid with warnings";
@@ -6863,6 +6950,8 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
     } else if (host === "turva.dev" || host === "www.turva.dev") {
       // A Worker cannot fetch its own zone, so the site's own llms.txt is
       // validated directly from the same constant that serves /llms.txt.
+      const ownHome = serveHomeHtml("https://turva.dev/");
+      const ownHtml = await ownHome.text();
       result = {
         target: "https://turva.dev/llms.txt",
         checks: validateLlmsTxt({
@@ -6871,12 +6960,23 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
           text: LLMS_TXT,
           bytes: new TextEncoder().encode(LLMS_TXT).length,
           truncated: false
-        })
+        }).concat(validateV2Discovery(findLinkRelations(ownHtml, ownHome.headers.get("link") || "")))
       };
     } else {
       try {
         const fetched = await fetchLlmsTxt(host);
-        result = { target: "https://" + host + "/llms.txt", checks: validateLlmsTxt(fetched) };
+        let discovery;
+        try {
+          const home = await fetchLlmsTxt(host, "/", "text/html, */*;q=0.1");
+          discovery = home.redirect
+            ? validateV2Discovery(null, "the home page redirects away from this host, so this was not measured")
+            : home.status !== 200
+              ? validateV2Discovery(null, "the home page returned HTTP " + home.status + ", so this was not measured")
+              : validateV2Discovery(findLinkRelations(home.text, home.linkHeader));
+        } catch {
+          discovery = validateV2Discovery(null, "the home page could not be read, so this was not measured");
+        }
+        result = { target: "https://" + host + "/llms.txt", checks: validateLlmsTxt(fetched).concat(discovery) };
       } catch (err) {
         error = "Could not fetch https://" + host + "/llms.txt: " + (err && err.name === "TimeoutError" ? "timed out after 8 seconds" : "network error") + ".";
       }
@@ -6894,7 +6994,7 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
     return new Response(JSON.stringify(payload, null, 2), { status: payload.error ? 400 : 200, headers });
   }
   const head = cardPageHead(buildMetaBlock("/llms-txt-validator", canonicalUrl), buildGuideJsonLd("/llms-txt-validator", canonicalUrl) + "\n" + buildGuidePageFaqJsonLd("/llms-txt-validator", canonicalUrl) + "\n" + buildValidatorAppJsonLd(canonicalUrl), canonicalUrl);
-  const mark = { pass: "\u2713", warn: "!", fail: "\u2717" };
+  const mark = { pass: "\u2713", warn: "!", fail: "\u2717", info: "i" };
   let resultHtml = "";
   if (error) {
     resultHtml = `<div class="scard"><h2>Result</h2><p class="verr">${escapeHtml(error)}</p></div>`;
@@ -7418,6 +7518,26 @@ async function handleRequest(request, env) {
     }
   }
 
+  // The markdown twin at its own address. Same string the Accept: text/markdown path
+  // serves, so the two forms cannot drift apart, and serveMarkdown carries the
+  // canonical link back to the HTML page so the .md URL is an alternate and not a
+  // second page. /auth.md and the skill.md files have no PAGE_MARKDOWN entry and fall
+  // through to their own handlers untouched.
+  if (pathname.endsWith(".md")) {
+    if (pathname === "/index.md" || pathname === "/index.html.md") {
+      return serveMarkdown(HOME_MARKDOWN, "https://turva.dev/");
+    }
+    // v2 allows the appended form and the extension-replaced form both. These
+    // pages carry no extension, so ".html.md" is literally neither, but an agent
+    // that assumes .html will build it and the guide on this site says v2 accepts
+    // both forms. Answering it costs one line and keeps that sentence from
+    // reading as a promise this site does not keep.
+    const mdBase = pathname.endsWith(".html.md") ? pathname.slice(0, -8) : pathname.slice(0, -3);
+    if (PAGE_MARKDOWN[mdBase]) {
+      return serveMarkdown(PAGE_MARKDOWN[mdBase], getCanonicalForPath(mdBase) || "https://turva.dev" + mdBase);
+    }
+  }
+
   if (wantsJson(request) && pathname === "/") {
     const resp = serveStatic(HOME_JSON, "application/json; charset=utf-8", "agent-api");
     resp.headers.append("vary", "Accept");
@@ -7598,5 +7718,6 @@ export {
   worker_default as default,
   escapeHtml,
   renderInline,
-  markdownToHtml
+  markdownToHtml,
+  findLinkRelations
 };

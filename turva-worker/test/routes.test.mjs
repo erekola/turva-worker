@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker from "../src/worker.js";
+import worker, { findLinkRelations } from "../src/worker.js";
 import { readFileSync } from "node:fs";
 
 // facts.json owns which services exist. The service count used to be written into this
@@ -219,4 +219,99 @@ test("A2A: wrong method, bad body, unknown skill and unknown method all answer a
 
   const slash = await get("/v1/message:send/");
   assert.equal(slash.status, 301);
+});
+
+// v2 of the llms.txt proposal asks for the markdown version of a page at an address an
+// agent can derive without an Accept header. The twin already existed behind content
+// negotiation, so the risk of adding the address is not that it 404s, it is that the two
+// forms drift apart and the site starts answering two different documents at one page.
+// Every canonical path in the sitemap is checked byte for byte here, offline, which is
+// the cheap half of the live --twins run in tools/verify.mjs.
+
+const sitemapPaths = async () => {
+  const xml = await (await get("/sitemap.xml")).text();
+  return [...xml.matchAll(/<loc>https:\/\/turva\.dev([^<]*)<\/loc>/g)].map((m) => m[1]);
+};
+
+test("every canonical path answers at its .md address with the same bytes as the negotiated twin", async () => {
+  const paths = await sitemapPaths();
+  assert.ok(paths.length > 40, "sitemap should list the pages, got " + paths.length);
+  const broken = [];
+  for (const path of paths) {
+    if (path.endsWith(".md")) continue;
+    const mdUrl = path === "/" ? "/index.md" : path + ".md";
+    const direct = await get(mdUrl);
+    if (direct.status !== 200) { broken.push(mdUrl + ": HTTP " + direct.status); continue; }
+    if (!/text\/markdown/.test(direct.headers.get("content-type") || "")) { broken.push(mdUrl + ": not markdown"); continue; }
+    const negotiated = await get(path, { headers: { accept: "text/markdown" } });
+    const a = await direct.text(), b = await negotiated.text();
+    if (a !== b) broken.push(mdUrl + ": differs from the negotiated twin");
+    if (direct.headers.get("content-location") !== "https://turva.dev" + path) broken.push(mdUrl + ": content-location is not the page");
+  }
+  assert.deepEqual(broken, [], "the .md address and the negotiated twin must be the same document");
+});
+
+test("the homepage markdown answers at both names v2 allows for a URL with no file name", async () => {
+  const home = await (await get("/", { headers: { accept: "text/markdown" } })).text();
+  for (const p of ["/index.md", "/index.html.md"]) {
+    const r = await get(p);
+    assert.equal(r.status, 200, p);
+    assert.equal(await r.text(), home, p + " must serve the home markdown");
+  }
+});
+
+test("both address forms v2 names answer for a page, not only for the home page", async () => {
+  const plain = await get("/guides/llms-txt.md");
+  const withHtml = await get("/guides/llms-txt.html.md");
+  assert.equal(withHtml.status, 200, "/guides/llms-txt.html.md must answer");
+  assert.equal(await withHtml.text(), await plain.text(), "both forms must return the same document");
+  assert.equal((await get("/auth.html.md")).status, 404, "the form does not invent pages that do not exist");
+});
+
+// The parser that reads another site's link relations. It is measured here as well as
+// in the npm package, because the hosted validator is the canonical one: a parser that
+// reports a relation the target does not actually serve is the one failure a check on
+// someone else's site may not have. Both cases below were found by an independent
+// review on the day this shipped.
+test("findLinkRelations does not count what a page did not publish", () => {
+  assert.deepEqual(
+    findLinkRelations('<head><!-- <link rel="alternate" type="text/markdown" href="/commented.md"> --></head>', ""),
+    { describedby: null, markdown: null });
+  assert.equal(findLinkRelations("<head><link rel=alternate type=text/markdown href=/noquotes.md></head>", "").markdown, "/noquotes.md");
+  assert.equal(findLinkRelations('<head><link rel="alternate stylesheet" type="text/css" href="/a.css"></head>', "").markdown, null);
+  assert.equal(findLinkRelations('<head><link rel="alternate" type="text/markdown; charset=utf-8" href="/a.md"></head>', "").markdown, "/a.md");
+  const f = findLinkRelations("", '</a,b.md>; rel="alternate"; type="text/markdown", </llms.txt>; rel="describedby"');
+  assert.equal(f.markdown, "/a,b.md");
+  assert.equal(f.describedby, "/llms.txt");
+});
+
+test("the .md route does not swallow paths that are not page twins", async () => {
+  const auth = await get("/auth.md");
+  assert.equal(auth.status, 200);
+  assert.match(await auth.text(), /^# Auth\.md/, "/auth.md is its own document, not a page twin");
+  assert.equal((await get("/no-such-page.md")).status, 404);
+});
+
+test("a page points at its markdown address with the two v2 relations", async () => {
+  const r = await get("/guides/llms-txt");
+  const html = await r.text();
+  const link = r.headers.get("link") || "";
+  assert.match(html, /<link rel="alternate" href="https:\/\/turva\.dev\/guides\/llms-txt\.md" type="text\/markdown" \/>/);
+  assert.ok(link.includes('<https://turva.dev/guides/llms-txt.md>; rel="alternate"; type="text/markdown"'), "Link header must name the .md address");
+  assert.ok(link.includes('</llms.txt>; rel="describedby"'), "Link header must name the llms.txt that describes the page");
+});
+
+test("the validator reports the two v2 relations and its summary does not move", async () => {
+  const r = await get("/llms-txt-validator?url=turva.dev", { headers: { accept: "application/json" } });
+  const j = await json(r);
+  const ids = j.checks.map((c) => c.id);
+  assert.ok(ids.includes("v2-describedby") && ids.includes("v2-markdown-alternate"), "both v2 checks must be reported");
+  for (const id of ["v2-describedby", "v2-markdown-alternate"]) {
+    const c = j.checks.find((x) => x.id === id);
+    assert.equal(c.status, "pass", id + " must pass for this site, measured from the page it serves");
+  }
+  assert.equal(j.summary, "valid");
+  const fileOnly = j.checks.filter((c) => !c.id.startsWith("v2-"));
+  assert.equal(fileOnly.length, 8, "the eight file checks are unchanged");
+  assert.ok(!j.checks.some((c) => c.status === "info"), "nothing here should be unmeasured");
 });
