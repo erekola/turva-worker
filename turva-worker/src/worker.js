@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.106.0 - llms.txt v2 (published 2026-08-10) adopted in full. Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -155,71 +155,71 @@ var LLMS_TXT = `# turva.dev
 > Language: English.
 
 ## Services
-- [Services](https://turva.dev/services)
-- [Shopify agent storefront check](https://turva.dev/shopify-agent-storefront-check)
-- [Company](https://turva.dev/company)
-- [Contact](https://turva.dev/contact)
-- [Legal](https://turva.dev/legal)
+- [Services](https://turva.dev/services.md)
+- [Shopify agent storefront check](https://turva.dev/shopify-agent-storefront-check.md)
+- [Company](https://turva.dev/company.md)
+- [Contact](https://turva.dev/contact.md)
+- [Legal](https://turva.dev/legal.md)
 
 ## Guides
-- [Agent-readiness guides](https://turva.dev/guides)
-- [What an agent-readiness audit is](https://turva.dev/guides/agent-readiness-audit)
-- [How to get your site cited by AI assistants](https://turva.dev/guides/get-cited-by-ai-assistants)
-- [llms.txt explained](https://turva.dev/guides/llms-txt)
-- [MCP server cards explained](https://turva.dev/guides/mcp-server-card)
-- [What agents.json is](https://turva.dev/guides/agents-json)
-- [x402 and agent payments](https://turva.dev/guides/x402-agent-payments)
-- [Response headers that help agents](https://turva.dev/guides/response-headers-for-agents)
-- [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness)
-- [Agent-readiness, AEO and GEO: how they relate](https://turva.dev/guides/agent-readiness-aeo-geo)
-- [Letting agents act on data: the decision envelope](https://turva.dev/guides/letting-agents-act-on-data)
-- [AI agent use cases: where agents read data and make decisions](https://turva.dev/guides/ai-agent-use-cases)
-- [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data)
-- [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents)
-- [Agentic Resource Discovery and ai-catalog.json](https://turva.dev/guides/agentic-resource-discovery)
-- [How agents authenticate](https://turva.dev/guides/agent-authentication)
-- [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness)
-- [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents)
-- [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
-- [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents)
-- [Open Knowledge Format (OKF) explained](https://turva.dev/guides/open-knowledge-format)
-- [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
-- [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
-- [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery)
-- [Agentic commerce readiness: selling to AI shopping agents](https://turva.dev/guides/agentic-commerce-readiness)
+- [Agent-readiness guides](https://turva.dev/guides.md)
+- [What an agent-readiness audit is](https://turva.dev/guides/agent-readiness-audit.md)
+- [How to get your site cited by AI assistants](https://turva.dev/guides/get-cited-by-ai-assistants.md)
+- [llms.txt explained](https://turva.dev/guides/llms-txt.md)
+- [MCP server cards explained](https://turva.dev/guides/mcp-server-card.md)
+- [What agents.json is](https://turva.dev/guides/agents-json.md)
+- [x402 and agent payments](https://turva.dev/guides/x402-agent-payments.md)
+- [Response headers that help agents](https://turva.dev/guides/response-headers-for-agents.md)
+- [SEO and agent-readiness are not the same](https://turva.dev/guides/seo-vs-agent-readiness.md)
+- [Agent-readiness, AEO and GEO: how they relate](https://turva.dev/guides/agent-readiness-aeo-geo.md)
+- [Letting agents act on data: the decision envelope](https://turva.dev/guides/letting-agents-act-on-data.md)
+- [AI agent use cases: where agents read data and make decisions](https://turva.dev/guides/ai-agent-use-cases.md)
+- [JSON-LD and structured data for agents](https://turva.dev/guides/json-ld-structured-data.md)
+- [The /.well-known directory for agents](https://turva.dev/guides/well-known-for-agents.md)
+- [Agentic Resource Discovery and ai-catalog.json](https://turva.dev/guides/agentic-resource-discovery.md)
+- [How agents authenticate](https://turva.dev/guides/agent-authentication.md)
+- [Why agent-readiness should be measured, not asserted](https://turva.dev/guides/measurement-led-agent-readiness.md)
+- [Prerendering and why agents see empty pages](https://turva.dev/guides/prerendering-for-agents.md)
+- [Sitemaps, robots.txt and agent access](https://turva.dev/guides/sitemaps-and-robots-for-agents.md)
+- [Serving markdown to agents](https://turva.dev/guides/markdown-for-agents.md)
+- [Open Knowledge Format (OKF) explained](https://turva.dev/guides/open-knowledge-format.md)
+- [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps.md)
+- [Choosing an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit.md)
+- [Agent commerce discovery: A2A, AP2, and ACP](https://turva.dev/guides/agent-commerce-discovery.md)
+- [Agentic commerce readiness: selling to AI shopping agents](https://turva.dev/guides/agentic-commerce-readiness.md)
 
 ## Blog
-- [Blog](https://turva.dev/blog)
-- [I scanned fourteen code hosts. Not one served an MCP server card.](https://turva.dev/blog/agent-readiness-code-hosts)
-- [It would be cheating to keep the old price](https://turva.dev/blog/cheating-to-keep-the-old-price)
-- [I thought it was a small job](https://turva.dev/blog/i-thought-it-was-a-small-job)
-- [My gate could not see a sixth](https://turva.dev/blog/my-gate-could-not-see-a-sixth)
-- [A red reading that measured my own client](https://turva.dev/blog/red-reading-that-measured-my-own-client)
-- [The checks that pass for the wrong reason](https://turva.dev/blog/checks-that-pass-for-the-wrong-reason)
-- [Finishing the optional commerce checks](https://turva.dev/blog/finishing-the-optional-commerce-checks)
-- [The twin is the page](https://turva.dev/blog/the-twin-is-the-page)
-- [Every response promised a rate limit. Nothing enforced it.](https://turva.dev/blog/enforcing-the-rate-limit-i-advertised)
-- [Microsoft said the patches would get bigger. I measured how much bigger.](https://turva.dev/blog/measuring-the-ai-patch-surge)
-- [How to let an AI agent work in your repo without leaking your secrets](https://turva.dev/blog/agent-secret-hygiene)
-- [How agent-ready are Finnish B2B sites? I scanned sixteen](https://turva.dev/blog/agent-readiness-finnish-b2b)
-- [When honesty and the checker disagree](https://turva.dev/blog/honesty-and-the-checker)
-- [Four AI agents re-checked the guides](https://turva.dev/blog/re-checking-the-guides)
-- [The page grew, the agent bill did not](https://turva.dev/blog/cheaper-pages-revisited)
-- [Moving the source from GitHub to Codeberg](https://turva.dev/blog/moving-source-to-codeberg)
-- [A free llms.txt validator](https://turva.dev/blog/free-llms-txt-validator)
-- [Agent access is now a setting](https://turva.dev/blog/agent-access-is-now-a-setting)
-- [Publishing an ai-catalog.json for agentic discovery](https://turva.dev/blog/publishing-an-ai-catalog)
-- [What the Open Knowledge Format is, and what it is not](https://turva.dev/blog/open-knowledge-format)
-- [What an agent pays to read your site](https://turva.dev/blog/cheaper-pages-for-agents)
-- [When an agent can prove it is Claude](https://turva.dev/blog/verifiable-agent-identity)
-- [What makes an AI agent's decisions reliable](https://turva.dev/blog/reliable-agent-decisions)
-- [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity)
-- [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender)
+- [Blog](https://turva.dev/blog.md)
+- [I scanned fourteen code hosts. Not one served an MCP server card.](https://turva.dev/blog/agent-readiness-code-hosts.md)
+- [It would be cheating to keep the old price](https://turva.dev/blog/cheating-to-keep-the-old-price.md)
+- [I thought it was a small job](https://turva.dev/blog/i-thought-it-was-a-small-job.md)
+- [My gate could not see a sixth](https://turva.dev/blog/my-gate-could-not-see-a-sixth.md)
+- [A red reading that measured my own client](https://turva.dev/blog/red-reading-that-measured-my-own-client.md)
+- [The checks that pass for the wrong reason](https://turva.dev/blog/checks-that-pass-for-the-wrong-reason.md)
+- [Finishing the optional commerce checks](https://turva.dev/blog/finishing-the-optional-commerce-checks.md)
+- [The twin is the page](https://turva.dev/blog/the-twin-is-the-page.md)
+- [Every response promised a rate limit. Nothing enforced it.](https://turva.dev/blog/enforcing-the-rate-limit-i-advertised.md)
+- [Microsoft said the patches would get bigger. I measured how much bigger.](https://turva.dev/blog/measuring-the-ai-patch-surge.md)
+- [How to let an AI agent work in your repo without leaking your secrets](https://turva.dev/blog/agent-secret-hygiene.md)
+- [How agent-ready are Finnish B2B sites? I scanned sixteen](https://turva.dev/blog/agent-readiness-finnish-b2b.md)
+- [When honesty and the checker disagree](https://turva.dev/blog/honesty-and-the-checker.md)
+- [Four AI agents re-checked the guides](https://turva.dev/blog/re-checking-the-guides.md)
+- [The page grew, the agent bill did not](https://turva.dev/blog/cheaper-pages-revisited.md)
+- [Moving the source from GitHub to Codeberg](https://turva.dev/blog/moving-source-to-codeberg.md)
+- [A free llms.txt validator](https://turva.dev/blog/free-llms-txt-validator.md)
+- [Agent access is now a setting](https://turva.dev/blog/agent-access-is-now-a-setting.md)
+- [Publishing an ai-catalog.json for agentic discovery](https://turva.dev/blog/publishing-an-ai-catalog.md)
+- [What the Open Knowledge Format is, and what it is not](https://turva.dev/blog/open-knowledge-format.md)
+- [What an agent pays to read your site](https://turva.dev/blog/cheaper-pages-for-agents.md)
+- [When an agent can prove it is Claude](https://turva.dev/blog/verifiable-agent-identity.md)
+- [What makes an AI agent's decisions reliable](https://turva.dev/blog/reliable-agent-decisions.md)
+- [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity.md)
+- [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender.md)
 
 ## Tools
-- [Free tools for agent-readiness](https://turva.dev/tools)
-- [llms.txt validator](https://turva.dev/llms-txt-validator)
-- [The agent-ready badge](https://turva.dev/badge)
+- [Free tools for agent-readiness](https://turva.dev/tools.md)
+- [llms.txt validator](https://turva.dev/llms-txt-validator.md)
+- [The agent-ready badge](https://turva.dev/badge.md)
 
 ## Pricing (EUR, VAT not included)
 - Shopify agent storefront check: €1,900 (fixed scope, 48 hours)
@@ -1333,7 +1333,7 @@ All free tools on this site are collected on [the tools page](/tools).
 
 **What is llms.txt?**
 
-llms.txt is a plain text file at the root of a site that tells AI agents what the site contains and where the important content lives. It opens with the site name and a short summary, then lists the key pages as markdown links grouped under headings. This validator checks that structure.
+llms.txt is a plain text file that tells AI agents what a site contains and where the important content lives. It sits at the root of a site or at any path inside it, where it covers the pages under that path. It opens with the site name and a short summary, then lists the key pages as markdown links grouped under headings. This validator checks that structure.
 
 **What does the validator check?**
 
@@ -3702,7 +3702,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.106.0",
+    "version": "3.107.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3804,7 +3804,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Sso6ovs2AWzaFQ0fPF0oVmqmNson5Vc31ESTFJl68KM6ySrtxmevzcZOQOU_CXfLcJoDu7Sirc5geP8mJTWzDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"U72EN7TSpSnjYIttsJydOhJKA6LFt1BKkffkH7I_rkWjohSOociQbxOrQ_ui_rjx9VoYWFAgp6DsyB8wNlFyDQ\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Sso6ovs2AWzaFQ0fPF0oVmqmNson5Vc31ESTFJl68KM6ySrtxmevzcZOQOU_CXfLcJoDu7Sirc5geP8mJTWzDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Oyh3MraE8x9nj4hAurDe_jbphmMzqCdHiUPz66LdvVXCXrsNIXfencX5k1KiHv4YSJJ7D3tmXGCNX0zXA8-VAQ\"\n    }\n  }\n}";
 
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
@@ -3946,7 +3946,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.106.0",
+  "version": "3.107.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"

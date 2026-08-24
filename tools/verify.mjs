@@ -1018,7 +1018,11 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // the reader never sees the twin list anyway (mdLead drops it).
   {
     const llms = region('var LLMS_TXT', '\nvar ');
-    const a = [...llms.matchAll(/\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/blog\/[a-z0-9-]+)\)/g)].map((m) => m[1]);
+    // The .md suffix arrived with llms.txt v2 (2026-08-24): the file's links point at the
+    // markdown twin of each page now. The gate compares PATHS, so the suffix is optional in
+    // the pattern and never part of the captured path. Without this the regex matched zero
+    // links and the gate would have passed on two empty sets.
+    const a = [...llms.matchAll(/\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/blog\/[a-z0-9-]+)(?:\.md)?\)/g)].map((m) => m[1]);
     const twin = (twMdTwin('/blog') || '').replace(/\r\n/g, '\n');
     const b = [...twin.matchAll(/\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\. (\d{4}-\d{2}-\d{2})\./g)];
     const meta = [...w.slice(w.indexOf('var META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)].map((m) => m[1]);
