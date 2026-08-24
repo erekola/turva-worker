@@ -277,6 +277,35 @@ test("findLinkRelations does not count what a page did not publish", () => {
   assert.deepEqual(
     findLinkRelations('<head><!-- <link rel="alternate" type="text/markdown" href="/commented.md"> --></head>', ""),
     { describedby: null, markdown: null });
+  // An unterminated comment swallows the rest of the document for a real parser,
+  // so nothing behind it is published either.
+  assert.deepEqual(
+    findLinkRelations('<head><!-- <link rel="describedby" href="/x.txt"><link rel="alternate" type="text/markdown" href="/x.md">', ""),
+    { describedby: null, markdown: null });
+  // script and style are raw text: <!-- inside them opens no comment, so a link
+  // element after the closing tag IS published. Checked against parse5.
+  assert.equal(findLinkRelations('<head><script><!--\nvar x = 1;\n</script><link rel="describedby" href="/real">', "").describedby, "/real");
+  assert.equal(findLinkRelations('<head><style><!-- .a{} </style><link rel="describedby" href="/real">', "").describedby, "/real");
+  // A link element written inside a script is not published, and neither is
+  // anything after an unclosed script.
+  assert.equal(findLinkRelations('<head><script>var s = "<link rel=describedby href=/nope>";</script>', "").describedby, null);
+  assert.equal(findLinkRelations('<head><script>var x = 1;<link rel="describedby" href="/nope">', "").describedby, null);
+  // <!--> and <!---> are empty comments, not unterminated ones.
+  assert.equal(findLinkRelations('<head><!--><link rel="describedby" href="/after">', "").describedby, "/after");
+  assert.equal(findLinkRelations('<head><!---><link rel="describedby" href="/after">', "").describedby, "/after");
+  assert.equal(findLinkRelations('<head><!-- x --!><link rel="describedby" href="/after">', "").describedby, "/after");
+  // The strip is one left to right pass, so a comment that only MENTIONS a script
+  // tag in prose does not eat the document up to the next real </script>.
+  assert.equal(
+    findLinkRelations('<head><!-- put your <script> tag here --><link rel="alternate" type="text/markdown" href="/found"><script>var r = 1;</script></head>', "").markdown,
+    "/found");
+  // title and textarea are RCDATA: a link tag written in a title is TEXT, not markup,
+  // and a page whose title mentions HTML syntax is exactly what this validator reads.
+  assert.equal(findLinkRelations('<head><title>How to use <link rel=describedby> for llms.txt</title></head>', "").describedby, null);
+  assert.equal(findLinkRelations('<head><title>How to use <link rel=describedby></title><link rel="describedby" href="/real"></head>', "").describedby, "/real");
+  // template content is inert, so a link element inside one is not published.
+  assert.equal(findLinkRelations('<head><template><link rel="describedby" href="/inert"></template></head>', "").describedby, null);
+  assert.equal(findLinkRelations('<head><template><link rel="describedby" href="/inert"></template><link rel="describedby" href="/real"></head>', "").describedby, "/real");
   assert.equal(findLinkRelations("<head><link rel=alternate type=text/markdown href=/noquotes.md></head>", "").markdown, "/noquotes.md");
   assert.equal(findLinkRelations('<head><link rel="alternate stylesheet" type="text/css" href="/a.css"></head>', "").markdown, null);
   assert.equal(findLinkRelations('<head><link rel="alternate" type="text/markdown; charset=utf-8" href="/a.md"></head>', "").markdown, "/a.md");

@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -3702,7 +3702,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.107.0",
+    "version": "3.107.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3946,7 +3946,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.107.0",
+  "version": "3.107.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6897,7 +6897,40 @@ function findLinkRelations(html, linkHeader) {
   // one thing a measurement may not do. With no </head> the first 64 KB are
   // scanned, body included, so a truncated or malformed document does not
   // silently report nothing found.
-  const text = String(html || "").replace(/<!--[\s\S]*?-->/g, "");
+  //
+  // What the single replace below removes, and why each part of it is there. Every
+  // shape named here was measured against a real HTML parser (parse5) rather than
+  // reasoned about, because reasoning is what got the first two attempts wrong.
+  //
+  // 1. An unterminated <!-- comments out the rest of the document, so the strip runs
+  //    to the end of the input: a link element behind it is not published. The bare
+  //    <!-- left in the text is also what CodeQL js/incomplete-multi-character-
+  //    sanitization reports, alert #7, 2026-08-24.
+  // 2. <!--> and <!---> are EMPTY comments, not unterminated ones, and --!> ends a
+  //    comment as well, so what follows them is published.
+  // 3. script, style, title and textarea are raw text or RCDATA, where a tag is
+  //    text rather than markup and <!-- opens no comment, and template content is
+  //    inert. A link element inside any of them is not published, and one after the
+  //    closing tag is. An unclosed one swallows the rest of the document. title is
+  //    in the list because a page whose title mentions HTML syntax is exactly the
+  //    kind of page this validator reads.
+  // 4. ONE pass over the whole input, not one pass per rule. Order matters both ways:
+  //    a comment that mentions <script> in prose would otherwise eat everything up to
+  //    the next real </script>, and <script><!-- ... </script> would otherwise hide
+  //    every link element after it. A single left to right scan settles each of them
+  //    at the position it starts, which is what a tokenizer does.
+  //
+  // Four known differences from a real parser, measured over 35 document shapes on
+  // 2026-08-24 and left standing on purpose, because closing them means parsing HTML
+  // rather than reading it. noscript: parse5 parses with scripting on and reads its
+  // content as raw text, but an agent that does not run scripts sees the elements
+  // inside, so a link element there counts as published here. Nested templates: the
+  // inner closing tag ends the strip. A literal <!-- inside an attribute value is
+  // read as an unterminated comment and hides the rest, which is the safer direction
+  // but still wrong. And a parser closes the head at the first text node, so a link
+  // element it would move into the body is still counted here as served, which it is.
+  const text = String(html || "").replace(
+    /<!--(?:>|->)|<!--[\s\S]*?(?:--!?>|$)|<(script|style|template|title|textarea)\b[^>]*>[\s\S]*?(?:<\/\1\s*>|$)/gi, "");
   const cut = text.toLowerCase().indexOf("</head>");
   const head = cut === -1 ? text.slice(0, 65536) : text.slice(0, cut);
   for (const tag of head.match(/<link\b[^>]*>/gi) || []) {
