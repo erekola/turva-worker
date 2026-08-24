@@ -303,6 +303,28 @@ test("findLinkRelations does not count what a page did not publish", () => {
   // and a page whose title mentions HTML syntax is exactly what this validator reads.
   assert.equal(findLinkRelations('<head><title>How to use <link rel=describedby> for llms.txt</title></head>', "").describedby, null);
   assert.equal(findLinkRelations('<head><title>How to use <link rel=describedby></title><link rel="describedby" href="/real"></head>', "").describedby, "/real");
+  // A tag that never closes is not a tag, and the scan must not slow down over it.
+  // The regex this replaced was quadratic: 16 000 unclosed "<link" measured 196 ms and
+  // 256 KB of them would have taken minutes. Generous bound so the test is not flaky.
+  const pathological = "<link".repeat(52428);
+  const t0 = Date.now();
+  assert.deepEqual(findLinkRelations(pathological, ""), { describedby: null, markdown: null });
+  assert.deepEqual(findLinkRelations("", "<".repeat(65536)), { describedby: null, markdown: null });
+  assert.ok(Date.now() - t0 < 2000, "256 KB of unclosed tags must not take seconds");
+  // "<link<link<link rel=..." is ONE tag whose name is "link<link<link", not a link
+  // element, so nothing is published. Measured against parse5.
+  assert.equal(findLinkRelations('<head><link<link<link rel="describedby" href="/real">', "").describedby, null);
+  // A real link element after an unclosed tag IS read.
+  assert.equal(findLinkRelations('<head><meta<link rel="describedby" href="/real">', "").describedby, null);
+  assert.equal(findLinkRelations('<head><p class="x"><link rel="describedby" href="/real">', "").describedby, "/real");
+  // Three shapes a 200 000 input fuzz run against parse5 turned up (Tek-127).
+  // A "<" that no letter follows is text, and the tag after it is still a tag.
+  assert.equal(findLinkRelations('<head><<style><link rel="describedby" href="/x"></style>', "").describedby, null);
+  assert.equal(findLinkRelations('<head><<link rel="describedby" href="/real">', "").describedby, "/real");
+  // A ">" inside a quoted attribute value does not end the tag.
+  assert.equal(findLinkRelations('<head><link data-x="a>b" rel="describedby" href="/q">', "").describedby, "/q");
+  // </script/> closes a raw text element as well.
+  assert.equal(findLinkRelations('<head><script>var s = "x";</script/><link rel="describedby" href="/real">', "").describedby, "/real");
   // template content is inert, so a link element inside one is not published.
   assert.equal(findLinkRelations('<head><template><link rel="describedby" href="/inert"></template></head>', "").describedby, null);
   assert.equal(findLinkRelations('<head><template><link rel="describedby" href="/inert"></template><link rel="describedby" href="/real"></head>', "").describedby, "/real");

@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -3702,7 +3702,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.107.1",
+    "version": "3.107.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3946,7 +3946,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.107.1",
+  "version": "3.107.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6879,6 +6879,119 @@ function validateLlmsTxt(f) {
   return checks;
 }
 
+// A "<" starts a tag only when a letter, "!", "/" or "?" follows it. Anything else is
+// text, and the NEXT "<" can still start a tag. Measured, not assumed: without this rule
+// "<<style><link rel=describedby ...>" read the link as published while a real parser
+// treats the first "<" as text, opens style, and publishes nothing.
+function startsTag(c) {
+  return c !== undefined && (c === "!" || c === "/" || c === "?" || (c >= "a" && c <= "z"));
+}
+
+// The end of the tag that starts at lt: the first ">" that is NOT inside a quoted
+// attribute value. A quote opens a value only right after "=", which is what the
+// tokenizer does. indexOf(">") is wrong here: <link data-x="a>b" rel="describedby"> is
+// one tag for a parser and two for indexOf, and the relation was lost.
+function tagEnd(text, lt) {
+  let quote = "", afterEq = false;
+  for (let j = lt + 1; j < text.length; j++) {
+    const c = text[j];
+    if (quote) { if (c === quote) quote = ""; continue; }
+    if (c === ">") return j;
+    if (c === "=") { afterEq = true; continue; }
+    if (c === " " || c === "\t" || c === "\n" || c === "\r" || c === "\f") continue;
+    if (afterEq && (c === '"' || c === "'")) { quote = c; afterEq = false; continue; }
+    afterEq = false;
+  }
+  return -1;
+}
+
+// The comment and raw text strip is one left to right scan by index, not a regex, and
+// that is a measured decision rather than a style. A character class that reads a tag's
+// attributes, /<(script|style)\b[^>]*>/, is quadratic on input the TARGET site controls:
+// every "<script" with no ">" after it scans to the end of the document, and 256 KB of
+// them took seconds. Bounding the class to a fixed length fixes the speed and buys a
+// worse bug: an open tag longer than the bound stops being recognised, its element is
+// not stripped, and a <link rel="describedby"> written inside a script string is then
+// read as a published relation, which is the one thing this measurement may not do. A
+// scan has no bound and no backtracking, and it visits every character once.
+//
+// What it removes, all of it measured against a real HTML parser (parse5) rather than
+// reasoned about. An unterminated <!-- comments out the rest of the document, so the
+// scan stops there. <!--> and <!---> are EMPTY comments, not unterminated ones, and
+// --!> ends a comment as well. script, style, title and textarea are raw text or
+// RCDATA, where a tag is text rather than markup, and template content is inert, so a
+// link element inside any of them is not published while one after the closing tag is;
+// an unclosed one swallows the rest of the document. Order is not a choice in a single
+// scan, which is what earlier versions got wrong in both directions: a comment that
+// mentions <script> in prose is only a comment, and <script><!-- ... </script> hides
+// nothing that follows it.
+var RAW_TEXT_ELEMENTS = ["script", "style", "template", "title", "textarea"];
+
+// The end of a raw text element: the first </name that is followed by optional
+// whitespace and a ">". Returns the index after it, or -1 when the element never closes.
+function rawTextEnd(lower, name, from) {
+  const needle = "</" + name;
+  for (let at = lower.indexOf(needle, from); at !== -1; at = lower.indexOf(needle, at + needle.length)) {
+    let j = at + needle.length;
+    const space = () => { while (j < lower.length && (lower[j] === " " || lower[j] === "\t" || lower[j] === "\n" || lower[j] === "\r" || lower[j] === "\f")) j++; };
+    space();
+    if (lower[j] === "/") { j++; space(); }   // </script/> closes the element too
+    if (lower[j] === ">") return j + 1;
+  }
+  return -1;
+}
+
+function stripCommentsAndRawText(html) {
+  const text = String(html || "");
+  const lower = text.toLowerCase();
+  const out = [];
+  let i = 0;
+  for (;;) {
+    const lt = lower.indexOf("<", i);
+    if (lt === -1) { out.push(text.slice(i)); break; }
+    out.push(text.slice(i, lt));
+    if (lower.startsWith("<!--", lt)) {
+      if (lower.startsWith("<!-->", lt)) { i = lt + 5; continue; }
+      if (lower.startsWith("<!--->", lt)) { i = lt + 6; continue; }
+      const dashes = lower.indexOf("-->", lt + 4);
+      const bang = lower.indexOf("--!>", lt + 4);
+      if (dashes === -1 && bang === -1) break;
+      i = (bang === -1 || (dashes !== -1 && dashes <= bang)) ? dashes + 3 : bang + 4;
+      continue;
+    }
+    if (!startsTag(lower[lt + 1])) { out.push("<"); i = lt + 1; continue; }
+    const gt = tagEnd(text, lt);
+    if (gt === -1) break;
+    const name = (/^<([a-z]+)(?=[\s/>]|$)/.exec(lower.slice(lt, Math.min(lt + 12, gt + 1))) || [])[1];
+    if (!name || !RAW_TEXT_ELEMENTS.includes(name)) { out.push(text.slice(lt, gt + 1)); i = gt + 1; continue; }
+    const end = rawTextEnd(lower, name, gt + 1);
+    if (end === -1) break;
+    i = end;
+  }
+  return out.join("");
+}
+
+// Tags are found by index and not by /<link\b[^>]*>/g, on purpose. That regex is
+// quadratic on input the TARGET site controls: every "<link" with no ">" after it makes
+// the character class scan to the end of the document, and "<link" repeated 16 000 times
+// measured 196 ms where this loop measures under 1 ms. CodeQL reports the same shape as
+// js/polynomial-redos (alerts #4 and #5 on the package repo, 2026-08-24). This scan
+// visits every character once: from each "<" it reads to the next ">" and then continues
+// after it, which is what the regex meant to say.
+function* htmlTags(text) {
+  const lower = text.toLowerCase();
+  let i = 0;
+  for (;;) {
+    const open = lower.indexOf("<", i);
+    if (open === -1) return;
+    if (!startsTag(lower[open + 1])) { i = open + 1; continue; }
+    const close = tagEnd(text, open);
+    if (close === -1) return;
+    yield text.slice(open, close + 1);
+    i = close + 1;
+  }
+}
+
 // v2 of the llms.txt proposal (August 2026) left the file format alone and added one
 // thing: a page should say where its markdown version and its llms.txt are, using
 // rel="alternate" type="text/markdown" and rel="describedby", as HTML link elements
@@ -6892,48 +7005,26 @@ function validateLlmsTxt(f) {
 // claims it.
 function findLinkRelations(html, linkHeader) {
   const found = { describedby: null, markdown: null };
-  // Comments are stripped first. A commented-out link element is not published,
-  // and counting one would report a relation the site does not serve, which is the
-  // one thing a measurement may not do. With no </head> the first 64 KB are
-  // scanned, body included, so a truncated or malformed document does not
-  // silently report nothing found.
-  //
-  // What the single replace below removes, and why each part of it is there. Every
-  // shape named here was measured against a real HTML parser (parse5) rather than
-  // reasoned about, because reasoning is what got the first two attempts wrong.
-  //
-  // 1. An unterminated <!-- comments out the rest of the document, so the strip runs
-  //    to the end of the input: a link element behind it is not published. The bare
-  //    <!-- left in the text is also what CodeQL js/incomplete-multi-character-
-  //    sanitization reports, alert #7, 2026-08-24.
-  // 2. <!--> and <!---> are EMPTY comments, not unterminated ones, and --!> ends a
-  //    comment as well, so what follows them is published.
-  // 3. script, style, title and textarea are raw text or RCDATA, where a tag is
-  //    text rather than markup and <!-- opens no comment, and template content is
-  //    inert. A link element inside any of them is not published, and one after the
-  //    closing tag is. An unclosed one swallows the rest of the document. title is
-  //    in the list because a page whose title mentions HTML syntax is exactly the
-  //    kind of page this validator reads.
-  // 4. ONE pass over the whole input, not one pass per rule. Order matters both ways:
-  //    a comment that mentions <script> in prose would otherwise eat everything up to
-  //    the next real </script>, and <script><!-- ... </script> would otherwise hide
-  //    every link element after it. A single left to right scan settles each of them
-  //    at the position it starts, which is what a tokenizer does.
-  //
-  // Four known differences from a real parser, measured over 35 document shapes on
-  // 2026-08-24 and left standing on purpose, because closing them means parsing HTML
-  // rather than reading it. noscript: parse5 parses with scripting on and reads its
-  // content as raw text, but an agent that does not run scripts sees the elements
-  // inside, so a link element there counts as published here. Nested templates: the
-  // inner closing tag ends the strip. A literal <!-- inside an attribute value is
-  // read as an unterminated comment and hides the rest, which is the safer direction
-  // but still wrong. And a parser closes the head at the first text node, so a link
-  // element it would move into the body is still counted here as served, which it is.
-  const text = String(html || "").replace(
-    /<!--(?:>|->)|<!--[\s\S]*?(?:--!?>|$)|<(script|style|template|title|textarea)\b[^>]*>[\s\S]*?(?:<\/\1\s*>|$)/gi, "");
+  // Comments and raw text are stripped first: a commented-out link element is not
+  // published, and counting one would report a relation the site does not serve, which
+  // is the one thing a measurement may not do. See stripCommentsAndRawText above for
+  // what that means shape by shape. With no </head> the first 64 KB are scanned, body
+  // included, so a truncated or malformed document does not silently report nothing
+  // found. Three known differences from a real parser are left standing on purpose,
+  // because closing them means parsing HTML rather than reading it: noscript, whose
+  // content an agent that does not run scripts does see; nested templates, where the
+  // inner closing tag ends the strip; and the head a parser closes at its first text
+  // node, whose link elements are still counted here as served, which they are.
+  // Measured over 48 document shapes against parse5, 2026-08-24: 46 identical, those
+  // three the only differences, and none of them reports a relation that is not there.
+  const text = stripCommentsAndRawText(html);
   const cut = text.toLowerCase().indexOf("</head>");
   const head = cut === -1 ? text.slice(0, 65536) : text.slice(0, cut);
-  for (const tag of head.match(/<link\b[^>]*>/gi) || []) {
+  for (const tag of htmlTags(head)) {
+    // The name has to END at "link": a real parser reads "<link<link" as ONE tag whose
+    // NAME is "link<link", not as a link element, so \b would count a relation the site
+    // does not publish. Measured against parse5, 2026-08-24.
+    if (!/^<link(?=[\s/>])/i.test(tag)) continue;
     const rel = ((tag.match(/\brel\s*=\s*["']?([^"'>]+)/i) || [])[1] || "").toLowerCase().trim().split(/\s+/);
     const type = ((tag.match(/\btype\s*=\s*["']?([^"'>\s]+)/i) || [])[1] || "").toLowerCase();
     const href = ((tag.match(/\bhref\s*=\s*"([^"]*)"|\bhref\s*=\s*'([^']*)'|\bhref\s*=\s*([^\s"'>]+)/i) || []).slice(1).find((x) => x !== undefined) || "").trim();
@@ -6941,7 +7032,9 @@ function findLinkRelations(html, linkHeader) {
     if (!found.markdown && rel.includes("alternate") && type.startsWith("text/markdown")) found.markdown = href || "(link element without href)";
   }
   for (const part of String(linkHeader || "").split(/,(?=\s*<)/)) {
-    const href = ((part.match(/<([^>]*)>/) || [])[1] || "").trim();
+    const lt = part.indexOf("<");
+    const gt = lt === -1 ? -1 : part.indexOf(">", lt + 1);
+    const href = (gt === -1 ? "" : part.slice(lt + 1, gt)).trim();
     const rel = ((part.match(/rel\s*=\s*"?([^";,]+)"?/i) || [])[1] || "").toLowerCase().trim().split(/\s+/);
     const type = ((part.match(/type\s*=\s*"?([^";,]+)"?/i) || [])[1] || "").toLowerCase().trim();
     if (!found.describedby && rel.includes("describedby")) found.describedby = href || "(Link header without a target)";
