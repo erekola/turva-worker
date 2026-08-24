@@ -896,7 +896,19 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       const upto = w.slice(head, m.index);
       navCalls.push({ arg: m[1], fn: (upto.match(/^\nfunction (\w+)/) || [])[1] || '?', page: (upto.match(/buildMetaBlock\("([^"]*)"/) || [])[1] });
     }
-    const wrongNav = navCalls.filter((c) => c.page !== c.arg);
+    // 2026-08-24, Tek-269. briefHtmlPage on ensimmainen sivu joka EI kuulu valikkoon:
+    // se palvelee polkua /brief/<tunnus>, jota ei ole nv-menussa eika saa olla, koska
+    // sivu on yhden asiakkaan eika julkinen. Oikea arvo sille on tyhja, jolloin yksikaan
+    // valikon kohta ei saa aria-current="page". Ehto EI ole loysatty muotoon "tyhja
+    // kelpaa aina", koska silloin sivu joka vain unohtaa oman polkunsa lapaisisi. Poikkeus
+    // on nimetty funktiokohtaisesti, ja alla oleva erillinen ehto kaataa ajon jos nimetty
+    // funktio katoaa, jotta poikkeus ei jaa elamaan uudelleennimeamisen yli.
+    const NAV_ULKOPUOLELLA = new Set(['briefHtmlPage']);
+    for (const nimi of NAV_ULKOPUOLELLA) {
+      check(navCalls.some((c) => c.fn === nimi),
+        `cardPageNav exception ${nimi} still exists (a rename must not keep the exception alive)`);
+    }
+    const wrongNav = navCalls.filter((c) => (NAV_ULKOPUOLELLA.has(c.fn) ? c.arg !== '' : c.page !== c.arg));
     check(navCalls.length > 0 && wrongNav.length === 0,
       `every cardPageNav call passes the path its own page serves (${navCalls.length} calls`
       + `${wrongNav.length ? ' :: ' + wrongNav.map((c) => `${c.fn} serves ${c.page} but passes ${c.arg}`).join(', ') : ''})`);

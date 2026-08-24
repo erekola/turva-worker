@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -3702,7 +3702,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.107.2",
+    "version": "3.107.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3946,7 +3946,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.107.2",
+  "version": "3.107.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -5423,6 +5423,12 @@ function markdownToHtml(md) {
       const head = cells(tl[0]).map((c) => `<th>${c}</th>`).join("");
       const rows = tl.slice(2).filter((l) => l.startsWith("|")).map((l) => `<tr>${cells(l).map((c) => `<td>${c}</td>`).join("")}</tr>`).join("");
       html.push(`<table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`);
+    } else if (/^-{3,}$/.test(trimmed)) {
+      // Vaakaviiva. Lisatty 2026-08-24 (Tek-269) briefsivua varten: ilman tata rivi
+      // "---" latoutuisi kappaleeksi jossa lukee kirjaimellisesti ---. Mitattu samana
+      // paivana ettei yksikaan PAGE_MARKDOWN-lohko sisalla riviaan joka on tasan ---,
+      // joten tama ei muuta yhdenkaan olemassa olevan sivun ulostuloa.
+      html.push("<hr />");
     } else if (trimmed.startsWith("## ")) {
       html.push(`<h2>${renderInline(trimmed.slice(3).trim())}</h2>`);
     } else if (trimmed.startsWith("# ")) {
@@ -6572,6 +6578,137 @@ function cardPageHeaders(canonicalUrl) {
   return headers;
 }
 
+// ---------------------------------------------------------------------------
+// BRIEF, Tek-269 (2026-08-24). Yhden asiakkaan agent-readiness-brief kolmessa
+// muodossa samasta osoitteesta: HTML selaimelle, .md ja .json koneelle.
+//
+// MIKSI KV EIKA PAGE_MARKDOWN. Tama repo on JULKINEN. Asiakkaan brief nimeaa
+// yrityksen ja sen puutteet, joten sen kirjoittaminen worker.js:aan julkaisisi
+// ne pysyvasti julkisessa repossa eika se olisi peruttavissa jalkikateen. Lisaksi
+// jokainen lahteva brief olisi koodimuutos, deploy ja push. Sisalto tulee siksi
+// KV:sta ja tama tiedosto kantaa vain reitin.
+//
+// SISALTOA EI RENDEROIDA TASSA. KV:ssa on valmis markdown ja valmis JSON, jotka
+// docs/auditit/briefgen/template.py tuottaa samasta lohkolistasta kuin PDF:n. HTML
+// ladotaan siita samasta markdownista. Worker ei siis muodosta yhtaan virketta
+// itse, eika mikaan kolmesta muodosta voi sanoa eri asiaa kuin toinen.
+//
+// EI HAKUKONEISIIN. Polku ei ole CANONICAL_PATHS:issa eika SITEMAP_ENTRIES:issa,
+// tunnus on arvaamaton, ja jokainen vastaus kantaa noindex-otsakkeen. robots.txt:aa
+// EI muuteta: sen sisalto on osa tuotteen omaa mitattavaa pintaa, eika Disallow-rivin
+// vaikutusta skannerin bot-access-control-tarkistuksiin ole mitattu.
+//
+// TUNTEMATON TUNNUS VASTAA TASAN KUTEN MIKA TAHANSA TUNTEMATON POLKU, eli 404:lla.
+// Erillinen "briefia ei ole" -sivu kertoisi ulkopuoliselle, etta polku on olemassa.
+var BRIEF_ID = /^[a-z0-9][a-z0-9-]{7,79}$/;
+
+function briefRoute(pathname) {
+  if (!pathname.startsWith("/brief/")) return null;
+  var rest = pathname.slice("/brief/".length);
+  var muoto = "html";
+  if (rest.endsWith(".md")) { muoto = "md"; rest = rest.slice(0, -3); }
+  else if (rest.endsWith(".json")) { muoto = "json"; rest = rest.slice(0, -5); }
+  if (!BRIEF_ID.test(rest)) return null;
+  return { id: rest, muoto: muoto };
+}
+
+function briefUnescape(md) {
+  // template.py:n _md_suoja() suojaa rivin alun merkit kenoviivalla, jotta oikea
+  // markdown-jasennin ei lue proosaa listaksi tai otsikoksi. markdownToHtml() ei
+  // tunne kenoviivasuojausta, joten se latoisi kenoviivan nakyviin. Purku tehdaan
+  // VAIN HTML-latomista varten; .md-vastaus menee ulos tavulleen sellaisena kuin
+  // se on KV:ssa, koska se on kirjoitettu markdown-jasentimelle.
+  return md.replace(/\\([#>+*\-.)])/g, "$1");
+}
+
+function briefHeaders(kind, kieli) {
+  var headers = new Headers();
+  // Yksityinen sivu, ei valimuistiin. Brief voi saada paivatyn uusintaskannauslohkon,
+  // ja reunalla oleva vanha kopio sanoisi silloin eri asian kuin KV.
+  headers.set("cache-control", "private, no-store");
+  headers.set("X-Robots-Tag", "noindex, nofollow");
+  headers.set("content-language", kieli === "fi" ? "fi" : "en");
+  headers.set("vary", "Accept");
+  applySecurityHeaders(headers, kind);
+  return headers;
+}
+
+function briefHtmlPage(rec, canonicalUrl) {
+  var kieli = rec.kieli === "fi" ? "fi" : "en";
+  var otsikko = (rec.otsikko || rec.yritys || "agent readiness brief") + " · turva.dev";
+  var kuvaus = kieli === "fi"
+    ? "Agent-readiness-briiffi, " + (rec.yritys || "") + ". Sama sisalto markdownina ja JSONina samasta osoitteesta."
+    : "Agent readiness brief, " + (rec.yritys || "") + ". The same content as markdown and JSON at the same address.";
+  var vaihtoehdot = kieli === "fi"
+    ? "Sama sisalto koneluettavana: <a href=\"" + canonicalUrl + ".md\">markdown</a> ja <a href=\"" + canonicalUrl + ".json\">JSON</a>."
+    : "The same content, machine readable: <a href=\"" + canonicalUrl + ".md\">markdown</a> and <a href=\"" + canonicalUrl + ".json\">JSON</a>.";
+  return `<!doctype html>
+<html lang="${kieli}">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0A1316" />
+<meta name="robots" content="noindex, nofollow" />
+<title>${escapeHtml(otsikko)}</title>
+<meta name="description" content="${escapeHtml(kuvaus)}" />
+<link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
+<link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
+${WEBMCP_SCRIPT}
+<link rel="alternate" href="${canonicalUrl}.md" type="text/markdown" />
+<link rel="alternate" href="${canonicalUrl}.json" type="application/json" />
+<style>
+${CARDPAGE_CSS}
+${FOOTER_CSS}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+${cardPageNav("")}
+<main id="main">
+${markdownToHtml(briefUnescape(rec.md))}
+<p class="date">${vaihtoehdot}</p>
+</main>
+${FOOTER_HTML}
+</body>
+</html>`;
+}
+
+async function serveBrief(route, pathname, env) {
+  var kv = env && env.BRIEFIT;
+  // Ilman bindingia reitti ei ole olemassa. Nain testit ja deployta edeltava tila
+  // vastaavat samoin kuin tuntemattomaan polkuun, eika puuttuva binding ole 500.
+  if (!kv || typeof kv.get !== "function") return serve404(pathname);
+  var rec = null;
+  try {
+    rec = await kv.get(route.id, { type: "json" });
+  } catch (err) {
+    console.error("brief KV error:", err && err.stack ? err.stack : String(err));
+    return serve404(pathname);
+  }
+  if (!rec || typeof rec.md !== "string" || !rec.json) return serve404(pathname);
+  var canonicalUrl = "https://turva.dev/brief/" + route.id;
+  if (route.muoto === "md") {
+    var mh = briefHeaders("agent-api", rec.kieli);
+    mh.set("content-type", "text/markdown; charset=utf-8");
+    mh.set("content-location", canonicalUrl);
+    mh.append("Link", `<${canonicalUrl}>; rel="canonical"`);
+    mh.set("x-markdown-words", String(rec.md.split(/\s+/).filter(Boolean).length));
+    return new Response(rec.md, { status: 200, headers: mh });
+  }
+  if (route.muoto === "json") {
+    var jh = briefHeaders("agent-api", rec.kieli);
+    jh.set("content-type", "application/json; charset=utf-8");
+    jh.set("content-location", canonicalUrl);
+    jh.append("Link", `<${canonicalUrl}>; rel="canonical"`);
+    return new Response(JSON.stringify(rec.json, null, 2) + "\n", { status: 200, headers: jh });
+  }
+  var hh = briefHeaders("html", rec.kieli);
+  hh.set("content-type", "text/html; charset=utf-8");
+  hh.append("Link", `<${canonicalUrl}.md>; rel="alternate"; type="text/markdown"`);
+  return new Response(briefHtmlPage(rec, canonicalUrl), { status: 200, headers: hh });
+}
+
+
 function serveCompanyHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/company", canonicalUrl), buildGuideJsonLd("/company", canonicalUrl), canonicalUrl);
   const body = `${head}
@@ -6905,51 +7042,133 @@ function tagEnd(text, lt) {
   return -1;
 }
 
-// The comment and raw text strip is one left to right scan by index, not a regex, and
-// that is a measured decision rather than a style. A character class that reads a tag's
-// attributes, /<(script|style)\b[^>]*>/, is quadratic on input the TARGET site controls:
-// every "<script" with no ">" after it scans to the end of the document, and 256 KB of
-// them took seconds. Bounding the class to a fixed length fixes the speed and buys a
-// worse bug: an open tag longer than the bound stops being recognised, its element is
-// not stripped, and a <link rel="describedby"> written inside a script string is then
-// read as a published relation, which is the one thing this measurement may not do. A
-// scan has no bound and no backtracking, and it visits every character once.
-//
-// What it removes, all of it measured against a real HTML parser (parse5) rather than
-// reasoned about. An unterminated <!-- comments out the rest of the document, so the
-// scan stops there. <!--> and <!---> are EMPTY comments, not unterminated ones, and
-// --!> ends a comment as well. script, style, title and textarea are raw text or
-// RCDATA, where a tag is text rather than markup, and template content is inert, so a
-// link element inside any of them is not published while one after the closing tag is;
-// an unclosed one swallows the rest of the document. Order is not a choice in a single
-// scan, which is what earlier versions got wrong in both directions: a comment that
-// mentions <script> in prose is only a comment, and <script><!-- ... </script> hides
-// nothing that follows it.
-var RAW_TEXT_ELEMENTS = ["script", "style", "template", "title", "textarea"];
+// The head is where a real parser says it ends, not where the text "</head>" happens to
+// appear. Erik's decision 2026-08-24: the two v2 checks describe what the page's HEAD
+// points at, so a link element the parser moves into the body is not one of them. That is
+// the strict reading, and it is what the HTML parsing spec's "in head" insertion mode
+// does: whitespace, comments, doctype and the head-only elements keep the head open;
+// the first text node, the first body-level element and </head>, </body>, </html> or
+// </br> close it; any other end tag in the head is a parse error and is ignored.
+var HEAD_ELEMENTS = ["base", "basefont", "bgsound", "link", "meta", "noframes", "script", "style", "template", "title", "noscript"];
+// Once </head> has been seen the parser is in "after head", and that list is the one above
+// WITHOUT noscript: a noscript there opens the body instead of staying in the head.
+var AFTER_HEAD_ELEMENTS = ["base", "basefont", "bgsound", "link", "meta", "noframes", "script", "style", "template", "title"];
+// Their content is not markup: script, style, title, noscript (a parser with scripting on
+// reads it as raw text) and noframes are raw text or RCDATA, and template content is inert.
+var HEAD_SKIPPED_CONTENT = ["script", "style", "title", "noscript", "noframes", "template"];
 
-// The end of a raw text element: the first </name that is followed by optional
-// whitespace and a ">". Returns the index after it, or -1 when the element never closes.
+// The end of a raw text or RCDATA element: the first </name that is followed by optional
+// whitespace, an optional "/" (a parser closes on </script/> too) and a ">". Returns the
+// index after it, or -1 when the element never closes, which means the rest of the
+// document is inside it.
+function skipSpace(lower, j) {
+  while (j < lower.length && (lower[j] === " " || lower[j] === "\t" || lower[j] === "\n" || lower[j] === "\r" || lower[j] === "\f")) j++;
+  return j;
+}
+
+// True when the character ends a tag name: whitespace, "/", ">" or the end of the input.
+function isTagBoundary(c) {
+  return c === undefined || c === ">" || c === "/" || c === " " || c === "\t" || c === "\n" || c === "\r" || c === "\f";
+}
+
+// The index just after "</name ... >", or -1 when that is not an end tag there.
+function endTagAt(lower, name, at) {
+  if (!lower.startsWith("</" + name, at)) return -1;
+  let j = skipSpace(lower, at + name.length + 2);
+  if (lower[j] === "/") j = skipSpace(lower, j + 1);
+  return lower[j] === ">" ? j + 1 : -1;
+}
+
 function rawTextEnd(lower, name, from) {
-  const needle = "</" + name;
-  for (let at = lower.indexOf(needle, from); at !== -1; at = lower.indexOf(needle, at + needle.length)) {
-    let j = at + needle.length;
-    const space = () => { while (j < lower.length && (lower[j] === " " || lower[j] === "\t" || lower[j] === "\n" || lower[j] === "\r" || lower[j] === "\f")) j++; };
-    space();
-    if (lower[j] === "/") { j++; space(); }   // </script/> closes the element too
-    if (lower[j] === ">") return j + 1;
+  for (let at = lower.indexOf("</" + name, from); at !== -1; at = lower.indexOf("</" + name, at + name.length + 2)) {
+    const end = endTagAt(lower, name, at);
+    if (end !== -1) return end;
   }
   return -1;
 }
 
-function stripCommentsAndRawText(html) {
+// script is not plain raw text: <!-- puts the tokenizer in the escaped state, a nested
+// <script there puts it in the double escaped state, and in THAT state </script only ends
+// the escape, not the element. Without this the legacy shape
+// <script><!-- ... <script>...</script> ... --></script> ended early and the rest of the
+// script was read as markup, which is the wrong direction. 4 of 240 000 fuzz inputs.
+function scriptEnd(lower, from) {
+  let i = from, escaped = false, doubleEscaped = false;
+  while (i < lower.length) {
+    if (lower.startsWith("<!--", i)) { escaped = true; i += 4; continue; }
+    if (escaped && lower.startsWith("-->", i)) { escaped = false; doubleEscaped = false; i += 3; continue; }
+    if (escaped && !doubleEscaped && lower.startsWith("<script", i) && isTagBoundary(lower[i + 7])) { doubleEscaped = true; i += 7; continue; }
+    if (lower.startsWith("</script", i)) {
+      if (doubleEscaped) { doubleEscaped = false; i += 8; continue; }
+      const end = endTagAt(lower, "script", i);
+      if (end !== -1) return end;
+      i += 8;
+      continue;
+    }
+    const next = lower.indexOf("<", i + 1);
+    i = next === -1 ? lower.length : next;
+  }
+  return -1;
+}
+
+// The end of a nested template: templates count, so an inner </template> does not close
+// an outer one. Returns the index after the closing tag, or -1 when it never closes.
+function templateEnd(lower, from) {
+  let depth = 1;
+  // Both searches resume from their own previous hit. Restarting either one from a shared
+  // cursor is quadratic: "</templateX" repeated made every round scan to the end of the
+  // input again, and 1 MB of it measured 15 686 ms.
+  let open = lower.indexOf("<template", from);
+  let close = lower.indexOf("</template", from);
+  for (;;) {
+    if (close === -1) return -1;
+    if (open !== -1 && open < close) {
+      if (isTagBoundary(lower[open + 9])) depth++;
+      open = lower.indexOf("<template", open + 9);
+      continue;
+    }
+    let j = close + 10;
+    j = skipSpace(lower, j);
+    if (lower[j] === "/") j = skipSpace(lower, j + 1);
+    if (lower[j] !== ">") {
+      // Not an end tag: for the tokenizer the rest of the name runs to the next ">", and a
+      // "<" inside it is part of the name rather than a new tag.
+      const bogus = lower.indexOf(">", close + 10);
+      if (bogus === -1) return -1;
+      close = lower.indexOf("</template", bogus + 1);
+      if (open !== -1 && open < bogus) open = lower.indexOf("<template", bogus + 1);
+      continue;
+    }
+    depth--;
+    if (depth === 0) return j + 1;
+    close = lower.indexOf("</template", j + 1);
+  }
+}
+
+// One left to right scan by index that returns the head, with comments and the content of
+// the raw text and template elements already removed. Why a scan and not a regex: a
+// character class that reads a tag's attributes is quadratic on input the TARGET site
+// controls (CodeQL js/polynomial-redos, alerts #4 and #5, 2026-08-24), and bounding the
+// class trades that speed bug for a worse correctness bug, because an open tag longer than
+// the bound stops being recognised and the element's own text is then read as markup. A
+// scan has no bound and no backtracking, and it visits every character once.
+//
+// The shapes, all measured against a real HTML parser (parse5) rather than reasoned about.
+// An unterminated <!-- comments out the rest of the document. <!--> and <!---> are EMPTY
+// comments, not unterminated ones, and --!> ends a comment as well. A "<" that no letter,
+// "!", "/" or "?" follows is text. A ">" inside a quoted attribute value does not end a
+// tag. </script/> closes a raw text element as well as </script> does.
+function headOfDocument(html) {
   const text = String(html || "");
   const lower = text.toLowerCase();
   const out = [];
-  let i = 0;
+  let i = 0, afterHead = false;
   for (;;) {
     const lt = lower.indexOf("<", i);
-    if (lt === -1) { out.push(text.slice(i)); break; }
-    out.push(text.slice(i, lt));
+    const gap = lt === -1 ? text.slice(i) : text.slice(i, lt);
+    if (gap.trim() !== "") break;
+    out.push(gap);
+    if (lt === -1) break;
     if (lower.startsWith("<!--", lt)) {
       if (lower.startsWith("<!-->", lt)) { i = lt + 5; continue; }
       if (lower.startsWith("<!--->", lt)) { i = lt + 6; continue; }
@@ -6959,14 +7178,37 @@ function stripCommentsAndRawText(html) {
       i = (bang === -1 || (dashes !== -1 && dashes <= bang)) ? dashes + 3 : bang + 4;
       continue;
     }
-    if (!startsTag(lower[lt + 1])) { out.push("<"); i = lt + 1; continue; }
+    if (!startsTag(lower[lt + 1])) break;
     const gt = tagEnd(text, lt);
     if (gt === -1) break;
-    const name = (/^<([a-z]+)(?=[\s/>]|$)/.exec(lower.slice(lt, Math.min(lt + 12, gt + 1))) || [])[1];
-    if (!name || !RAW_TEXT_ELEMENTS.includes(name)) { out.push(text.slice(lt, gt + 1)); i = gt + 1; continue; }
-    const end = rawTextEnd(lower, name, gt + 1);
-    if (end === -1) break;
-    i = end;
+    if (lower[lt + 1] === "!" || lower[lt + 1] === "?") { i = gt + 1; continue; }
+    const head14 = lower.slice(lt, Math.min(lt + 14, gt + 1));
+    const endTag = (/^<\/([a-z]+)/.exec(head14) || [])[1];
+    if (endTag) {
+      // </body>, </html> and </br> start the body. </head> does NOT end the search: after
+      // it a parser still puts base, link, meta, script, style, title and template into the
+      // HEAD element until real body content starts, and every other end tag in the head is
+      // a parse error that is ignored. Measured against parse5: without this, 2 660 of
+      // 200 000 fuzz inputs lost a relation the head really carries.
+      if (endTag === "body" || endTag === "html" || endTag === "br") break;
+      if (endTag === "head") afterHead = true;
+      i = gt + 1;
+      continue;
+    }
+    const name = (/^<([a-z]+)(?=[\s/>]|$)/.exec(head14) || [])[1];
+    if (!name) break;
+    if (name === "html" || name === "head") { i = gt + 1; continue; }
+    if (!(afterHead ? AFTER_HEAD_ELEMENTS : HEAD_ELEMENTS).includes(name)) break;   // <body> and the first body level element
+    if (HEAD_SKIPPED_CONTENT.includes(name)) {
+      const end = name === "template" ? templateEnd(lower, gt + 1)
+        : name === "script" ? scriptEnd(lower, gt + 1)
+        : rawTextEnd(lower, name, gt + 1);
+      if (end === -1) break;
+      i = end;
+      continue;
+    }
+    out.push(text.slice(lt, gt + 1));
+    i = gt + 1;
   }
   return out.join("");
 }
@@ -7005,21 +7247,13 @@ function* htmlTags(text) {
 // claims it.
 function findLinkRelations(html, linkHeader) {
   const found = { describedby: null, markdown: null };
-  // Comments and raw text are stripped first: a commented-out link element is not
-  // published, and counting one would report a relation the site does not serve, which
-  // is the one thing a measurement may not do. See stripCommentsAndRawText above for
-  // what that means shape by shape. With no </head> the first 64 KB are scanned, body
-  // included, so a truncated or malformed document does not silently report nothing
-  // found. Three known differences from a real parser are left standing on purpose,
-  // because closing them means parsing HTML rather than reading it: noscript, whose
-  // content an agent that does not run scripts does see; nested templates, where the
-  // inner closing tag ends the strip; and the head a parser closes at its first text
-  // node, whose link elements are still counted here as served, which they are.
-  // Measured over 48 document shapes against parse5, 2026-08-24: 46 identical, those
-  // three the only differences, and none of them reports a relation that is not there.
-  const text = stripCommentsAndRawText(html);
-  const cut = text.toLowerCase().indexOf("</head>");
-  const head = cut === -1 ? text.slice(0, 65536) : text.slice(0, cut);
+  // Only the head, and only what a parser would put there: a commented-out link element
+  // is not published, a link element inside a script or a template is not published, and
+  // a link element the parser moves into the body is not what these two checks are about.
+  // Counting any of them would report a relation the site does not serve, which is the one
+  // thing a measurement may not do. See headOfDocument above for the shape by shape rules.
+  // The 64 KB bound is a cap on work, not a rule: a head longer than that is not a head.
+  const head = headOfDocument(html).slice(0, 65536);
   for (const tag of htmlTags(head)) {
     // The name has to END at "link": a real parser reads "<link<link" as ONE tag whose
     // NAME is "link<link", not as a link element, so \b would count a relation the site
@@ -7649,6 +7883,11 @@ async function handleRequest(request, env) {
   // canonical link back to the HTML page so the .md URL is an alternate and not a
   // second page. /auth.md and the skill.md files have no PAGE_MARKDOWN entry and fall
   // through to their own handlers untouched.
+  // BRIEF, Tek-269. Ennen .md-kasittelya, jotta /brief/<id>.md ei koskaan kulje
+  // PAGE_MARKDOWN-logiikan lapi. briefRoute palauttaa null jokaiselle muulle polulle.
+  var briefR = briefRoute(pathname);
+  if (briefR) return serveBrief(briefR, pathname, env);
+
   if (pathname.endsWith(".md")) {
     if (pathname === "/index.md" || pathname === "/index.html.md") {
       return serveMarkdown(HOME_MARKDOWN, "https://turva.dev/");

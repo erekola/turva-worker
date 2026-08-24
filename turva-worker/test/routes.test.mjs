@@ -316,15 +316,34 @@ test("findLinkRelations does not count what a page did not publish", () => {
   assert.equal(findLinkRelations('<head><link<link<link rel="describedby" href="/real">', "").describedby, null);
   // A real link element after an unclosed tag IS read.
   assert.equal(findLinkRelations('<head><meta<link rel="describedby" href="/real">', "").describedby, null);
-  assert.equal(findLinkRelations('<head><p class="x"><link rel="describedby" href="/real">', "").describedby, "/real");
+  // A p element ends the head, so what follows it is body content and not one of these
+  // two checks. Erik's decision 2026-08-24: the strict reading of "the page's head".
+  assert.equal(findLinkRelations('<head><p class="x"><link rel="describedby" href="/real">', "").describedby, null);
+  assert.equal(findLinkRelations('<head><meta charset="utf-8"><link rel="describedby" href="/real">', "").describedby, "/real");
+  // A link element after </head> but before any body content is still in the head for a
+  // parser, and it is counted.
+  assert.equal(findLinkRelations('<head></head><link rel="describedby" href="/real">', "").describedby, "/real");
   // Three shapes a 200 000 input fuzz run against parse5 turned up (Tek-127).
   // A "<" that no letter follows is text, and the tag after it is still a tag.
   assert.equal(findLinkRelations('<head><<style><link rel="describedby" href="/x"></style>', "").describedby, null);
-  assert.equal(findLinkRelations('<head><<link rel="describedby" href="/real">', "").describedby, "/real");
+  // A "<" that no letter follows is text, and text ends the head, so nothing after it is
+  // head metadata any more.
+  assert.equal(findLinkRelations('<head><<link rel="describedby" href="/real">', "").describedby, null);
   // A ">" inside a quoted attribute value does not end the tag.
   assert.equal(findLinkRelations('<head><link data-x="a>b" rel="describedby" href="/q">', "").describedby, "/q");
   // </script/> closes a raw text element as well.
   assert.equal(findLinkRelations('<head><script>var s = "x";</script/><link rel="describedby" href="/real">', "").describedby, "/real");
+  // Text in the head ends the head.
+  assert.equal(findLinkRelations('<head>hello<link rel="describedby" href="/real">', "").describedby, null);
+  // Three shapes an independent 240 000 input fuzz round found, all measured against parse5.
+  // After </head> the parser is in "after head", where noscript is NOT one of the elements
+  // that still go into the head: it opens the body instead.
+  assert.equal(findLinkRelations('<head></head><noscript><link rel=describedby href=/a></noscript><link rel=describedby href=/z>', "").describedby, null);
+  // "</templateX" is not an end tag: for the tokenizer the name runs on to the next ">".
+  assert.equal(findLinkRelations('<head><template></templateX</template><link rel=describedby href=/z></head>', "").describedby, null);
+  // Inside a script, <!-- and a nested <script> put the tokenizer in the double escaped
+  // state, where </script> ends the escape and not the element.
+  assert.equal(findLinkRelations('<head><script><!-- <script>x</script> --></script><link rel=describedby href=/real>', "").describedby, "/real");
   // template content is inert, so a link element inside one is not published.
   assert.equal(findLinkRelations('<head><template><link rel="describedby" href="/inert"></template></head>', "").describedby, null);
   assert.equal(findLinkRelations('<head><template><link rel="describedby" href="/inert"></template><link rel="describedby" href="/real"></head>', "").describedby, "/real");
@@ -365,4 +384,119 @@ test("the validator reports the two v2 relations and its summary does not move",
   const fileOnly = j.checks.filter((c) => !c.id.startsWith("v2-"));
   assert.equal(fileOnly.length, 8, "the eight file checks are unchanged");
   assert.ok(!j.checks.some((c) => c.status === "info"), "nothing here should be unmeasured");
+});
+
+// ---------------------------------------------------------------------------
+// BRIEF-REITTI, Tek-269. Ensimmainen reitti joka lukee env:sta bindingin, joten
+// nama testit tuovat mukanaan ensimmaisen mock-env:n tassa tiedostossa. Kaksi
+// asiaa on tarkoituksella testattu negatiivisena: puuttuva binding ja tuntematon
+// tunnus vastaavat MOLEMMAT 404:lla, koska erillinen virhesivu kertoisi
+// ulkopuoliselle etta polku on olemassa.
+const BRIEF_MD = [
+  "turva.dev",
+  "",
+  "Agent readiness brief",
+  "",
+  "---",
+  "",
+  "# Testiyhtio ja kaksi puuttuvaa riviä",
+  "",
+  "## Where agents act",
+  "",
+  "- Ensimmainen kohta.",
+  "- Toinen kohta.",
+  "",
+  "isitagentready: Level 1 / 5, basic web presence",
+  "",
+  "| discoverability | bot access control |",
+  "| --- | --- |",
+  "| 3/4 | 1/2 |",
+  "",
+  "1\\. Tama on lause eika lista."
+].join("\n") + "\n";
+
+const BRIEF_REC = {
+  id: "testiyhtio-7f3k9q2m",
+  yritys: "Testiyhtio Oy",
+  kieli: "fi",
+  otsikko: "Testiyhtio ja kaksi puuttuvaa riviä",
+  md: BRIEF_MD,
+  json: { tyyppi: "agent-readiness-brief", kieli: "fi", kohde: { yritys: "Testiyhtio Oy" } }
+};
+
+const briefEnv = {
+  BRIEFIT: {
+    get: async (avain, opts) => {
+      assert.equal(opts && opts.type, "json", "brief luetaan JSONina");
+      return avain === BRIEF_REC.id ? BRIEF_REC : null;
+    }
+  }
+};
+
+const getBrief = (path) =>
+  worker.fetch(new Request("https://turva.dev" + path, { method: "GET" }), briefEnv);
+
+test("brief: HTML vastaa, kantaa noindexin eika mene valimuistiin", async () => {
+  const r = await getBrief("/brief/" + BRIEF_REC.id);
+  assert.equal(r.status, 200);
+  assert.match(r.headers.get("content-type"), /text\/html/);
+  assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow");
+  assert.equal(r.headers.get("cache-control"), "private, no-store");
+  assert.equal(r.headers.get("content-language"), "fi");
+  const html = await r.text();
+  assert.match(html, /<html lang="fi">/, "suomenkielinen brief on suomenkielinen sivu");
+  assert.match(html, /<meta name="robots" content="noindex, nofollow" \/>/);
+  assert.match(html, /<h1>Testiyhtio ja kaksi puuttuvaa riviä<\/h1>/);
+  assert.match(html, /<hr \/>/, "vaakaviiva ei saa latoutua kappaleeksi jossa lukee ---");
+  assert.ok(!/<p>---<\/p>/.test(html), "--- ei saa jaada nakyviin");
+  assert.match(html, /<th>discoverability<\/th>/, "taulukko latoutuu taulukkona");
+  assert.match(html, /<li>Ensimmainen kohta\.<\/li>/);
+  assert.ok(!/1\\\./.test(html), "markdownin kenoviivasuojaus ei saa nakya sivulla");
+  assert.match(html, /1\. Tama on lause/, "suojattu rivi latoutuu proosana");
+});
+
+test("brief: .md vastaa tavulleen sen mita KV:ssa on", async () => {
+  const r = await getBrief("/brief/" + BRIEF_REC.id + ".md");
+  assert.equal(r.status, 200);
+  assert.match(r.headers.get("content-type"), /text\/markdown/);
+  assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow");
+  assert.equal(await r.text(), BRIEF_MD, "markdown menee ulos muuttumattomana");
+  assert.equal(r.headers.get("content-location"), "https://turva.dev/brief/" + BRIEF_REC.id);
+});
+
+test("brief: .json vastaa tallennetun rakenteen", async () => {
+  const r = await getBrief("/brief/" + BRIEF_REC.id + ".json");
+  assert.equal(r.status, 200);
+  assert.match(r.headers.get("content-type"), /application\/json/);
+  assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow");
+  const j = JSON.parse(await r.text());
+  assert.equal(j.tyyppi, "agent-readiness-brief");
+  assert.equal(j.kohde.yritys, "Testiyhtio Oy");
+});
+
+test("brief: kaikki kolme muotoa tulevat samasta tunnuksesta", async () => {
+  const [h, m, j] = await Promise.all([
+    getBrief("/brief/" + BRIEF_REC.id),
+    getBrief("/brief/" + BRIEF_REC.id + ".md"),
+    getBrief("/brief/" + BRIEF_REC.id + ".json")
+  ]);
+  for (const r of [h, m, j]) assert.equal(r.status, 200);
+  const html = await h.text();
+  const kanta = "https://turva.dev/brief/" + BRIEF_REC.id;
+  assert.ok(html.includes('href="' + kanta + '.md"'), "sivu linkittaa oman markdowninsa");
+  assert.ok(html.includes('href="' + kanta + '.json"'), "sivu linkittaa oman JSONinsa");
+});
+
+test("brief: tuntematon tunnus ja puuttuva binding vastaavat molemmat 404", async () => {
+  const tuntematon = await getBrief("/brief/eioleolemassa-000000");
+  assert.equal(tuntematon.status, 404);
+  const ilmanBindingia = await get("/brief/" + BRIEF_REC.id);
+  assert.equal(ilmanBindingia.status, 404, "ilman KV-bindingia reitti ei ole olemassa");
+});
+
+test("brief: hakemistoa ei ole eika kelvoton tunnus paase lapi", async () => {
+  for (const p of ["/brief/", "/brief", "/brief/lyhyt", "/brief/ISOT-KIRJAIMET-EIVAT-KELPAA", "/brief/../etc"]) {
+    const r = await getBrief(p);
+    assert.equal(r.status, 404, p + " ei saa vastata");
+  }
 });

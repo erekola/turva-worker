@@ -17,6 +17,16 @@
       "simple": { "limit": 100, "period": 60 }
     }
   ],
+  "kv_namespaces": [
+    {
+      // Tek-269 (2026-08-24). Asiakaskohtaiset briefit, yksi avain per brief, arvona
+      // valmis markdown ja valmis JSON. Sisalto EI ole tassa repossa, koska repo on
+      // julkinen ja brief nimeaa asiakkaan yrityksen ja sen puutteet. Kirjoitus tapahtuu
+      // erikseen komennolla, ei deployn yhteydessa, joten uusi brief ei ole koodimuutos.
+      "binding": "BRIEFIT",
+      "id": "457b974771c6471885cb0ba1ae64804d"
+    }
+  ],
   "compatibility_date": "2026-04-09",
   "routes": [
     {
