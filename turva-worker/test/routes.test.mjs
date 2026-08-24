@@ -500,3 +500,23 @@ test("brief: hakemistoa ei ole eika kelvoton tunnus paase lapi", async () => {
     assert.equal(r.status, 404, p + " ei saa vastata");
   }
 });
+
+test("brief: Accept-neuvottelu vastaa samasta osoitteesta, kuten muuallakin sivustolla", async () => {
+  const U = "/brief/" + BRIEF_REC.id;
+  const tapaus = [
+    [{}, /text\/html/],
+    [{ Accept: "text/html" }, /text\/html/],
+    [{ Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" }, /text\/html/],
+    [{ Accept: "text/markdown" }, /text\/markdown/],
+    [{ Accept: "application/json" }, /application\/json/]
+  ];
+  for (const [headers, odotus] of tapaus) {
+    const r = await worker.fetch(new Request("https://turva.dev" + U, { headers }), briefEnv);
+    assert.equal(r.status, 200, JSON.stringify(headers));
+    assert.match(r.headers.get("content-type"), odotus, JSON.stringify(headers));
+    assert.equal(r.headers.get("vary"), "Accept", "neuvoteltu vastaus kantaa vary: Accept");
+    assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow", "myos neuvoteltu vastaus on noindex");
+  }
+  const md = await worker.fetch(new Request("https://turva.dev" + U, { headers: { Accept: "text/markdown" } }), briefEnv);
+  assert.equal(await md.text(), BRIEF_MD, "neuvoteltu markdown on sama kuin paate-osoitteen");
+});

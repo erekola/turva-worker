@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -3702,7 +3702,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.108.0",
+    "version": "3.108.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3946,7 +3946,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.108.0",
+  "version": "3.108.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -5424,8 +5424,11 @@ function markdownToHtml(md) {
       const rows = tl.slice(2).filter((l) => l.startsWith("|")).map((l) => `<tr>${cells(l).map((c) => `<td>${c}</td>`).join("")}</tr>`).join("");
       html.push(`<table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`);
     } else if (/^-{3,}$/.test(trimmed)) {
-      // Vaakaviiva. Lisatty 2026-08-24 (Tek-269) briefsivua varten: ilman tata rivi
-      // "---" latoutuisi kappaleeksi jossa lukee kirjaimellisesti ---. Mitattu samana
+      // Vaakaviiva. Lisatty 2026-08-24 (Tek-269). Syntyi briefsivua varten, mutta brief
+      // EI enaa tuota vaakaviivaa markdowniinsa: tyylipassin R6 luki sen irralliseksi
+      // riviksi rungossa, joten se jai samana paivana pois template.py:n markdownista ja
+      // on nyt vain PDF:n koriste. Haara jaa tanne, koska se on oikea tapa lukea
+      // markdownin vaakaviiva ja mika tahansa sivu voi kayttaa sita. Mitattu samana
       // paivana ettei yksikaan PAGE_MARKDOWN-lohko sisalla riviaan joka on tasan ---,
       // joten tama ei muuta yhdenkaan olemassa olevan sivun ulostuloa.
       html.push("<hr />");
@@ -6673,7 +6676,7 @@ ${FOOTER_HTML}
 </html>`;
 }
 
-async function serveBrief(route, pathname, env) {
+async function serveBrief(route, pathname, env, request) {
   var kv = env && env.BRIEFIT;
   // Ilman bindingia reitti ei ole olemassa. Nain testit ja deployta edeltava tila
   // vastaavat samoin kuin tuntemattomaan polkuun, eika puuttuva binding ole 500.
@@ -6687,6 +6690,15 @@ async function serveBrief(route, pathname, env) {
   }
   if (!rec || typeof rec.md !== "string" || !rec.json) return serve404(pathname);
   var canonicalUrl = "https://turva.dev/brief/" + route.id;
+  // ACCEPT-NEUVOTTELU KUULUU TANNEKIN. Mitattu livesta 2026-08-24: paate-osoitteet
+  // toimivat, mutta `Accept: text/markdown` briefin omaan osoitteeseen palautti HTML:n.
+  // Koko sivusto vastaa muuten Acceptiin, ja markdown-neuvottelu on yksi niista
+  // tarkistuksista jotka skanneri lukee lapaisseeksi, joten uusi reitti oli ainoa pinta
+  // joka ei pitanyt talon omaa lupausta. Sivu kantaa jo `vary: Accept`.
+  if (route.muoto === "html") {
+    if (wantsJson(request)) route = { id: route.id, muoto: "json" };
+    else if (wantsMarkdown(request)) route = { id: route.id, muoto: "md" };
+  }
   if (route.muoto === "md") {
     var mh = briefHeaders("agent-api", rec.kieli);
     mh.set("content-type", "text/markdown; charset=utf-8");
@@ -7886,7 +7898,7 @@ async function handleRequest(request, env) {
   // BRIEF, Tek-269. Ennen .md-kasittelya, jotta /brief/<id>.md ei koskaan kulje
   // PAGE_MARKDOWN-logiikan lapi. briefRoute palauttaa null jokaiselle muulle polulle.
   var briefR = briefRoute(pathname);
-  if (briefR) return serveBrief(briefR, pathname, env);
+  if (briefR) return serveBrief(briefR, pathname, env, request);
 
   if (pathname.endsWith(".md")) {
     if (pathname === "/index.md" || pathname === "/index.html.md") {
