@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -3702,7 +3702,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.108.2",
+    "version": "3.108.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -3946,7 +3946,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.108.2",
+  "version": "3.108.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6636,11 +6636,14 @@ function briefHeaders(kind, kieli) {
   return headers;
 }
 
-// Briefsivun oma valistys. Erik 2026-08-26: valia otsikon alle. Brief on
+// Briefsivun oma valistys. Erik 2026-08-26: valia otsikon alle, ensin h1:n ja
+// alaotsikon valiin (CARDPAGE_CSS antaa h1:lle 0,6rem, mika riittaa lyhyelle
+// korttisivulle mutta ei kaksiriviselle briefotsikolle) ja sen jalkeen. Brief on
 // pitka asiakirja jossa on kuusi valiotsikkoa, ja CARDPAGE_CSS:n 0,85rem on
 // mitoitettu lyhyille korttisivuille. Tama koskee VAIN /brief/-sivua: sama
 // CARDPAGE_CSS servaa julkiset korttisivut, eika niiden ladontaa muuteta tassa.
-var BRIEF_CSS = `main h2{margin:2.3rem 0 1.35rem;}
+var BRIEF_CSS = `main h1{margin-bottom:1.7rem;}
+main h2{margin:2.3rem 0 1.35rem;}
 main h2:first-child{margin-top:0;}`;
 
 function briefHtmlPage(rec, canonicalUrl) {
