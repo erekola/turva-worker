@@ -2464,6 +2464,24 @@ Scan the code with a phone to open a Signal chat. The code image is at /signal-q
 
 Signal is end-to-end encrypted. Scanning shares no account of yours.
 
+## Encrypted email
+
+Mail to erik@turva.dev can be OpenPGP encrypted. Encryption is
+optional, and an unencrypted message gets the same reply time.
+
+The public key is at https://turva.dev/pgp-key.asc, and it is also
+published for automatic discovery, so a mail client that supports Web
+Key Directory finds it from the address alone. RSA 4096, valid until
+27 July 2036.
+
+Fingerprint:
+
+7D66 37F2 A37B A45F 56D6 9D3A 95D8 AE0F CEDF EE35
+
+Compare the fingerprint against the key before you use it, because a
+key served over the web is only as trustworthy as the page that served
+it.
+
 ## Response times
 
 - Email and Signal: within one business day
@@ -3636,10 +3654,107 @@ Grounding: disallowed
 
 var SECURITY_TXT = `Contact: mailto:info@turva.dev
 Expires: 2027-05-28T00:00:00.000Z
+Encryption: https://turva.dev/pgp-key.asc
 Preferred-Languages: en
 Canonical: https://turva.dev/.well-known/security.txt
 Policy: https://turva.dev/legal
 `;
+
+var PGP_PUBLIC_KEY = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+ryIdpLieCCDGwb5HNKC8Up5EHRdd3atx
+=BNdG
+-----END PGP PUBLIC KEY BLOCK-----`;
+
+// Erik 2026-08-26. Web Key Directory, direct method. The hash is the z-base-32
+// SHA-1 of the lowercased local part of the address the key names, which is
+// "erik", not "info". Recomputing it from a different local part serves a key
+// no client will accept, because the client checks the user ID against the
+// address it looked up.
+var PGP_WKD_HASH = "agk5kn8g6dnzi4z7szws1t9ns6xgw14y";
+
+// WKD serves the raw key, not the armored block. Deriving the bytes from
+// PGP_PUBLIC_KEY keeps one source of truth: a replaced key cannot leave the
+// two surfaces disagreeing, because there is only one place to replace it.
+var pgpKeyBytes = null;
+function getPgpKeyBytes() {
+  if (pgpKeyBytes) return pgpKeyBytes;
+  const lines = PGP_PUBLIC_KEY.split("\n");
+  const b64 = [];
+  let inArmor = false;
+  let pastHeaders = false;
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (line.startsWith("-----BEGIN")) { inArmor = true; continue; }
+    if (line.startsWith("-----END")) break;
+    if (!inArmor) continue;
+    // Armor headers (Comment:, Version:) run until the first blank line. Do not
+    // depend on that blank line alone: an armor written without one would leave
+    // pastHeaders false, and the function would return zero bytes in silence,
+    // which is a wrong key served with a 200. Recognise a header by its shape too.
+    if (!pastHeaders) {
+      if (line === "") { pastHeaders = true; continue; }
+      if (/^[A-Za-z][A-Za-z-]*: /.test(line)) continue;
+      pastHeaders = true;
+    }
+    if (line === "") continue;
+    if (line.startsWith("=")) continue; // CRC24 checksum, not key data
+    b64.push(line);
+  }
+  // A key that dearmors to nothing must fail loudly, not serve an empty body.
+  if (b64.length === 0) throw new Error("PGP_PUBLIC_KEY has no armored body");
+  const bin = atob(b64.join(""));
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  pgpKeyBytes = out;
+  return out;
+}
 
 var MCP_REGISTRY_AUTH = "v=MCPv1; k=ed25519; p=ObG30Um8l6QhTDd7Xztiekz8e575d6H2TViwi6Atu8k=\n";
 
@@ -6756,6 +6871,7 @@ ${cardPageNav("/contact")}
 <main id="main">
   ${mdPageStart("/contact")}
   ${mdKvsCard("/contact", "Channels", contactSignalQr())}
+  ${mdCard("/contact", "Encrypted email")}
   ${mdCard("/contact", "Response times")}
   ${mdCard("/contact", "What to include in a first message")}
   ${mdCard("/contact", "Confidentiality")}
@@ -8078,6 +8194,17 @@ async function handleRequest(request, env) {
   }
   if (pathLower === "/.well-known/security.txt" || pathLower === "/security.txt") {
     return serveStatic(SECURITY_TXT, "text/plain; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/pgp-key.asc" || pathLower === "/.well-known/pgp-key.asc") {
+    return serveStatic(PGP_PUBLIC_KEY, "application/pgp-keys; charset=utf-8", "agent-api");
+  }
+  // WKD direct method. The policy file must exist and may be empty; its
+  // presence is what tells a client the domain supports WKD at all.
+  if (pathLower === "/.well-known/openpgpkey/policy") {
+    return serveStatic("", "text/plain; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/openpgpkey/hu/" + PGP_WKD_HASH) {
+    return serveStatic(getPgpKeyBytes(), "application/octet-stream", "agent-api");
   }
   if (pathLower === "/.well-known/mcp-registry-auth") {
     return serveStatic(MCP_REGISTRY_AUTH, "text/plain; charset=utf-8", "agent-api");

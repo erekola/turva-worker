@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker, { findLinkRelations } from "../src/worker.js";
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 // facts.json owns which services exist. The service count used to be written into this
 // file by hand, as `>= 5` with a message saying "all five offerings", so it was wrong by
@@ -519,4 +520,101 @@ test("brief: Accept-neuvottelu vastaa samasta osoitteesta, kuten muuallakin sivu
   }
   const md = await worker.fetch(new Request("https://turva.dev" + U, { headers: { Accept: "text/markdown" } }), briefEnv);
   assert.equal(await md.text(), BRIEF_MD, "neuvoteltu markdown on sama kuin paate-osoitteen");
+});
+
+// OpenPGP surfaces, added 2026-08-26. These test what the site PROMISES, not what
+// the router happens to do: the contact page prints a fingerprint and an address,
+// and both claims are checked against the key that is actually served. A key swap
+// that leaves the printed fingerprint behind fails here, before a deploy.
+const ZB32 = "ybndrfg8ejkmcpqxot1uwisza345h769";
+function zbase32(bytes) {
+  let bits = "";
+  for (const b of bytes) bits += b.toString(2).padStart(8, "0");
+  let out = "";
+  for (let i = 0; i < bits.length; i += 5) out += ZB32[parseInt(bits.slice(i, i + 5).padEnd(5, "0"), 2)];
+  return out;
+}
+function dearmor(text) {
+  const lines = text.split("\n");
+  const b64 = [];
+  let inArmor = false, pastHeaders = false;
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (line.startsWith("-----BEGIN")) { inArmor = true; continue; }
+    if (line.startsWith("-----END")) break;
+    if (!inArmor) continue;
+    if (!pastHeaders) { if (line === "") pastHeaders = true; continue; }
+    if (line === "" || line.startsWith("=")) continue;
+    b64.push(line);
+  }
+  return Buffer.from(b64.join(""), "base64");
+}
+// RFC 4880 section 12.2: a v4 fingerprint is SHA-1 over 0x99, the two-byte length
+// of the public-key packet body, and the body itself.
+function v4Fingerprint(keyBytes) {
+  const first = keyBytes[0];
+  assert.equal(first & 0x80, 0x80, "not an OpenPGP packet header");
+  let tag, bodyStart, bodyLen;
+  if (first & 0x40) {
+    tag = first & 0x3f;
+    const l = keyBytes[1];
+    if (l < 192) { bodyLen = l; bodyStart = 2; }
+    else if (l < 224) { bodyLen = ((l - 192) << 8) + keyBytes[2] + 192; bodyStart = 3; }
+    else { bodyLen = keyBytes.readUInt32BE(2); bodyStart = 6; }
+  } else {
+    tag = (first >> 2) & 0x0f;
+    const lt = first & 0x03;
+    if (lt === 0) { bodyLen = keyBytes[1]; bodyStart = 2; }
+    else if (lt === 1) { bodyLen = keyBytes.readUInt16BE(1); bodyStart = 3; }
+    else { bodyLen = keyBytes.readUInt32BE(1); bodyStart = 5; }
+  }
+  assert.equal(tag, 6, "first packet must be the public key packet");
+  const body = keyBytes.subarray(bodyStart, bodyStart + bodyLen);
+  const head = Buffer.from([0x99, (bodyLen >> 8) & 0xff, bodyLen & 0xff]);
+  return createHash("sha1").update(Buffer.concat([head, body])).digest("hex").toUpperCase();
+}
+
+test("PGP: /pgp-key.asc serves a public key and never private material", async () => {
+  const r = await get("/pgp-key.asc");
+  assert.equal(r.status, 200);
+  assert.match(r.headers.get("content-type"), /application\/pgp-keys/);
+  const body = await r.text();
+  assert.match(body, /^-----BEGIN PGP PUBLIC KEY BLOCK-----/);
+  assert.match(body, /-----END PGP PUBLIC KEY BLOCK-----\s*$/);
+  assert.equal(/PRIVATE KEY/.test(body), false, "a private key must never reach this route");
+});
+
+test("PGP: the fingerprint printed on the contact page is the fingerprint of the served key", async () => {
+  const armored = await (await get("/pgp-key.asc")).text();
+  const fpr = v4Fingerprint(dearmor(armored));
+  const page = await (await get("/contact")).text();
+  const printed = (page.match(/[0-9A-F]{4}(?:[ ][0-9A-F]{4}){9}/) || [""])[0].replace(/ /g, "");
+  assert.equal(printed, fpr, "contact page prints " + printed + " but the served key is " + fpr);
+});
+
+test("PGP: WKD serves the same key as bytes, at the hash of the address the page names", async () => {
+  const page = await (await get("/contact")).text();
+  const local = (page.match(/([a-z0-9._-]+)@turva\.dev can be OpenPGP/) || [])[1];
+  assert.ok(local, "the contact page must name the address encrypted mail goes to");
+  const hash = zbase32(createHash("sha1").update(local).digest());
+  const r = await get("/.well-known/openpgpkey/hu/" + hash);
+  assert.equal(r.status, 200, "WKD must answer at the hash of " + local);
+  assert.match(r.headers.get("content-type"), /application\/octet-stream/);
+  const served = Buffer.from(await r.arrayBuffer());
+  const armored = await (await get("/pgp-key.asc")).text();
+  assert.deepEqual(served, dearmor(armored), "WKD bytes must be the armored key, dearmored");
+});
+
+test("PGP: the WKD policy file exists, which is what advertises WKD at all", async () => {
+  const r = await get("/.well-known/openpgpkey/policy");
+  assert.equal(r.status, 200);
+});
+
+test("PGP: the Encryption field in security.txt resolves", async () => {
+  const txt = await (await get("/.well-known/security.txt")).text();
+  const m = txt.match(/^Encryption: (\S+)$/m);
+  assert.ok(m, "security.txt must declare Encryption");
+  const r = await get(new URL(m[1]).pathname);
+  assert.equal(r.status, 200, m[1] + " must resolve");
+  assert.match(r.headers.get("content-type"), /application\/pgp-keys/);
 });
