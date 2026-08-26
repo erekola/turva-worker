@@ -618,3 +618,23 @@ test("PGP: the Encryption field in security.txt resolves", async () => {
   assert.equal(r.status, 200, m[1] + " must resolve");
   assert.match(r.headers.get("content-type"), /application\/pgp-keys/);
 });
+
+test("PGP: the WKD advanced method serves the same bytes as the direct method", async () => {
+  const hash = zbase32(createHash("sha1").update("erik").digest());
+  const adv = await worker.fetch(new Request(
+    "https://openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/hu/" + hash + "?l=erik"), env);
+  assert.equal(adv.status, 200, "the advanced host must answer");
+  assert.match(adv.headers.get("content-type"), /application\/octet-stream/);
+  const direct = await get("/.well-known/openpgpkey/hu/" + hash);
+  assert.deepEqual(Buffer.from(await adv.arrayBuffer()), Buffer.from(await direct.arrayBuffer()),
+    "both WKD methods must serve the identical key");
+});
+
+test("PGP: the advanced host serves its own policy file and redirects everything else", async () => {
+  const pol = await worker.fetch(new Request(
+    "https://openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/policy"), env);
+  assert.equal(pol.status, 200);
+  const other = await worker.fetch(new Request("https://openpgpkey.turva.dev/services"), env);
+  assert.equal(other.status, 301, "the advanced host is not a second copy of the site");
+  assert.equal(other.headers.get("location"), "https://turva.dev/");
+});

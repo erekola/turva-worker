@@ -7931,6 +7931,21 @@ async function handleRequest(request, env) {
     return Response.redirect("https://turva.dev/", 301);
   }
 
+  // WKD advanced method, Tek-288. Its URLs live on their own host and repeat the
+  // domain inside the path, and a client that finds them never needs the fallback
+  // to the direct method. The bytes are the same key from the same constant, so
+  // the two methods cannot drift apart. Both stay published on purpose: a client
+  // that never asks the advanced host still finds the direct one.
+  if (hostname === "openpgpkey.turva.dev") {
+    if (pathLower === "/.well-known/openpgpkey/turva.dev/hu/" + PGP_WKD_HASH) {
+      return serveStatic(getPgpKeyBytes(), "application/octet-stream", "agent-api");
+    }
+    if (pathLower === "/.well-known/openpgpkey/turva.dev/policy") {
+      return serveStatic("", "text/plain; charset=utf-8", "agent-api");
+    }
+    return Response.redirect("https://turva.dev/", 301);
+  }
+
   if (hostname === "www.turva.dev") {
     return Response.redirect("https://turva.dev" + pathname + url.search, 301);
   }

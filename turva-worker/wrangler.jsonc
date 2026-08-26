@@ -34,6 +34,13 @@
       "zone_name": "turva.dev"
     },
     {
+      // WKD advanced method (Tek-288). Without this route no Worker runs on that
+      // hostname at all, so the DNS record alone would answer with the zone default
+      // and the advanced lookup would fail while looking configured.
+      "pattern": "openpgpkey.turva.dev/*",
+      "zone_name": "turva.dev"
+    },
+    {
       "pattern": "turva.dev/*",
       "zone_name": "turva.dev"
     },
