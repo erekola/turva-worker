@@ -551,6 +551,12 @@ function dearmor(text) {
 }
 // RFC 4880 section 12.2: a v4 fingerprint is SHA-1 over 0x99, the two-byte length
 // of the public-key packet body, and the body itself.
+// The SHA-1 is the specification and not a choice: a v4 fingerprint IS this digest,
+// so SHA-256 here would compute a number no OpenPGP implementation accepts. CodeQL
+// reads both SHA-1 calls in this file as password hashing (js/insufficient-password-hash,
+// alerts 8 and 9, 2026-08-27). There is no password and no secret on either line: the
+// inputs are a public key and a public local part, and the output is an identifier.
+// Do not replace either digest.
 function v4Fingerprint(keyBytes) {
   const first = keyBytes[0];
   assert.equal(first & 0x80, 0x80, "not an OpenPGP packet header");
@@ -596,6 +602,11 @@ test("PGP: WKD serves the same key as bytes, at the hash of the address the page
   const page = await (await get("/contact")).text();
   const local = (page.match(/([a-z0-9._-]+)@turva\.dev can be OpenPGP/) || [])[1];
   assert.ok(local, "the contact page must name the address encrypted mail goes to");
+  // WKD hashes the local part with SHA-1 and z-base-32 by specification
+  // (draft-koch-openpgp-webkey-service section 3.1), which is what makes the address
+  // a path. Section 5 of the same draft says outright that this SHA-1 is not a security
+  // feature and only maps the local part to a fixed-size string, so a stronger digest
+  // here would serve the key at an address no mail client looks at.
   const hash = zbase32(createHash("sha1").update(local).digest());
   const r = await get("/.well-known/openpgpkey/hu/" + hash);
   assert.equal(r.status, 200, "WKD must answer at the hash of " + local);
