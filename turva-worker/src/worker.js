@@ -2752,7 +2752,7 @@ The audit checks the parts an agent reaches first. Discoverability covers robots
 
 The result is a list. Each check passes or fails, and each failure comes with a concrete fix. The point is that the outcome is verifiable. An independent scanner reads the site before and after, and the categories that were fixed read higher on the next scan. The claim is the number, not an assertion.
 
-turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-08-20. The audit a client receives runs the same checks against their site.
+turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-08-20. That is one scan on one day, and the scanner's check set moves, so a scan run today is a new measurement rather than a confirmation of this one. The audit a client receives runs the same checks against their site.
 
 For an audit, contact info@turva.dev. Engagement is async and evidence-based, and production credentials are not requested.
 
@@ -2993,7 +2993,7 @@ JSON-LD is a block of structured data in a page that states facts in a form a ma
 
 A human reads a price from a layout and a currency symbol. An agent reading raw HTML has to guess which number is the price and which is a shipping estimate. A JSON-LD Offer with a price and a currency removes the guess. The same applies to the organization behind a site, the services it offers, and the questions it answers, each expressed as a typed object an agent can rely on.
 
-Structured data also connects a page to the wider graph an agent builds. Declared types such as Organization, Service, FAQPage, and Article let an agent place a page in context and decide whether to trust and cite it. A page that states its facts as data is easier for a model to summarize correctly and to attribute.
+Structured data also connects a page to the wider graph an agent builds. Declared types such as Organization, Service, FAQPage, and Article let an agent place a page in context. They do not make a claim true and they oblige nobody to cite it. What they remove is parsing ambiguity, and trust and citation stay decisions of the system that reads the page.
 
 The cost of getting it wrong is silent. An agent does not report that it failed to parse a price, it just acts on a worse guess. Clean JSON-LD is one of the cheapest ways to make a page legible, and it sits in the same family as the response headers and well-known manifests an agent reads first.
 
@@ -3007,7 +3007,7 @@ JSON-LD is a block of structured data in a page that states facts in a form a ma
 
 **Why does structured data matter for agents?**
 
-An agent reading raw HTML has to guess which number is a price and which is a shipping estimate. A JSON-LD Offer with a price and a currency removes the guess, and declared types let an agent place a page in context and decide whether to trust and cite it.
+An agent reading raw HTML has to guess which number is a price and which is a shipping estimate. A JSON-LD Offer with a price and a currency removes the guess, and declared types let an agent place a page in context. Trust and citation stay decisions of the system that reads the page.
 
 **What should JSON-LD state on a page?**
 
@@ -3059,7 +3059,7 @@ Agentic Resource Discovery, or ARD, is an open specification for telling AI agen
 
 ## What it is
 
-A site advertises its agentic resources by serving a static JSON manifest at /.well-known/ai-catalog.json. The manifest is a small envelope with a specVersion (turva.dev publishes 1.0), a host block that names the operator, and an entries array. Each entry describes one resource with a stable identifier, a display name, a type, a url, and a short description. A resource can be an MCP server, an A2A agent, an API, or a skill set. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
+A site advertises its agentic resources by serving a static JSON manifest at /.well-known/ai-catalog.json. The manifest is a small envelope with a specVersion, a host block that names the operator, and an entries array. Each entry describes one resource with a stable identifier, a display name, a type, a url, and a short description. A resource can be an MCP server, an A2A agent, an API, or a skill set. The work is early: the repository that carries it calls itself a temporary working repo and its field names are still being argued in pull requests, so validate a manifest against the draft the client you care about actually reads. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
 
 ## Where it sits
 
@@ -3104,7 +3104,7 @@ The pattern follows existing standards. OAuth discovery at a well-known path tel
 
 The reason this matters is trust and blast radius. A site that exposes capability without scoped, discoverable auth either stays closed to agents or invites unsafe workarounds. Proper discovery lets an agent request the least access it needs, and lets the site grant capability without handing over a password the agent should never see.
 
-A short auth description, sometimes published as an auth.md, gives an agent a human-readable entry point to the same flow. Together with OAuth discovery it answers the agent's first question about any action, which is how do I get permission to do this safely.
+A short auth description, sometimes published as an auth.md, gives an agent a human-readable entry point to the same flow. It is a site convention rather than a standard. The OAuth metadata documents define the machine-readable discovery and say nothing about a written page or a registration route, so an agent follows only the endpoints a site advertises for itself. Together with OAuth discovery it answers the agent's first question about any action, which is how do I get permission to do this safely.
 
 turva.dev publishes OAuth discovery, a protected resource description, and an agent registration entry point, and it never requests production credentials in an engagement. For an audit of a site's authentication surface, contact info@turva.dev.
 
@@ -3138,7 +3138,7 @@ The difference shows up the moment something changes. A header gets dropped in a
 
 Measurement also makes a result legible to a buyer. A claim that a site is agent-ready is an assertion. A score from an independent scanner, with a category breakdown and a date, is evidence that can be checked. The honest version of the claim is the number, and the number can be re-run by anyone.
 
-This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-08-20.
+This is the standard turva.dev applies to its own site and to client sites. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the next scan reads higher in the categories the report named. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-08-20. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
 
 For an audit that reports measured results rather than a checklist, contact info@turva.dev.
 
@@ -3234,7 +3234,7 @@ Yes. robots.txt can name AI crawlers explicitly rather than treating every clien
 
 An HTML page is built for a browser, and an agent that reads it pays for all the markup, scripts, and layout it does not need. Serving a markdown version of the same page gives an agent the content without the wrapper, which is both cheaper and less error-prone.
 
-The mechanism is content negotiation. An agent sends an Accept header asking for text/markdown, and the server returns the markdown form of the page at the same URL. Since v2 of the llms.txt proposal there is a second way in. The markdown form also lives at its own address, the page URL with .md appended, and the page points at it with rel="alternate" type="text/markdown", so a client that never sends an Accept header still finds it. A site can also publish llms-full.txt, a single file that bundles the whole site as text, so an agent can read everything in one request instead of fetching many pages.
+The mechanism is content negotiation. An agent sends an Accept header asking for text/markdown, and the server returns the markdown form of the page at the same URL. Since v2 of the llms.txt proposal there is a second way in. The markdown form also lives at its own address. A plain page URL takes .md appended, a URL ending in .html has that suffix replaced, and a directory-style URL takes an index form. The page points at that address with rel="alternate" type="text/markdown", so a client that never sends an Accept header can still find it. A client that reads neither signal gets the HTML, which is why the markdown form is an addition to the page and never a replacement for it. A site can also publish llms-full.txt, a single file that bundles the whole site as text, so an agent can read everything in one request instead of fetching many pages.
 
 The saving is large. On turva.dev the markdown form of a page costs a fraction of the tokens the HTML would, and the difference decides whether an agent reads a page in full or truncates it halfway. A model that runs out of budget on markup is a model that answers from a partial reading.
 
@@ -3265,7 +3265,7 @@ The markup, scripts and layout it does not need. That cost is counted in tokens,
 
   "/guides/agent-readiness-gaps": `# Common agent-readiness gaps on marketing sites
 
-Most marketing sites are strong for people and weak for agents, and the gaps are predictable. A readiness review tends to find the same handful of misses, each of which quietly removes the site from an agent's view.
+Marketing sites are often strong for people and weak for agents, and the gaps are predictable. The evidence here is one documented scan of Finnish company sites, a small and non-random sample, so read it as what recurred in the sites reviewed rather than as a count of the whole web. A readiness review tends to find the same handful of misses, each of which quietly removes the site from an agent's view.
 
 The first is rendering. A site that builds its content with JavaScript returns an empty shell to any agent that does not run a browser, so for those clients the content never arrives in the first response. The second is discovery. No llms.txt and a thin or missing sitemap, so an agent has nothing to read but rendered pages. The third is cost. Only HTML is offered, with no markdown form, so an agent spends its budget on markup and truncates the page.
 
@@ -3337,7 +3337,7 @@ For an audit, contact info@turva.dev.
 
   "/guides/agent-readiness-aeo-geo": `# Agent-readiness, AEO and GEO: how they relate
 
-Three terms describe overlapping work, and the difference matters when you decide what to fix. Answer engine optimization (AEO) is about the pages, so an AI engine can quote them as the answer to a question. Generative engine optimization (GEO) is about the signal around the pages, so an engine trusts the source enough to cite it. Agent-readiness is wider than both, because it also covers whether an agent can act on the site, not only read and cite it.
+Three terms describe overlapping work, and the difference matters when you decide what to fix. Answer engine optimization, AEO, is about the pages, so an AI engine can quote them as the answer to a question. Generative engine optimization, GEO, is about the signal around the pages, so an engine has something to weigh when it decides whether to cite the source. Both are working labels rather than standardized disciplines, and neither one buys a citation. Agent-readiness is wider than both, because it also covers whether an agent can act on the site, not only read and cite it.
 
 ## At a glance
 
@@ -3396,11 +3396,11 @@ An agent needs three things in machine-readable form. It needs to find the offer
 
 ## The protocols in play
 
-Checkout is becoming a protocol rather than a page. OpenAI documents the Agentic Commerce Protocol as the connective layer between merchants and shoppers in ChatGPT. Google and Shopify introduced the Universal Commerce Protocol in early 2026, and it now carries its own discovery manifest at /.well-known/ucp. The discovery layer is settling on a small set of standards. An A2A Agent Card describes the interface, AP2 authorizes agent payments, ACP carries the checkout, and x402 lets an agent meet a price with HTTP 402 and continue. A site does not need all of them, but it needs the ones its buyers' agents speak, declared where an agent looks.
+Checkout is becoming a protocol rather than a page. OpenAI documents the Agentic Commerce Protocol as the connective layer between merchants and shoppers in ChatGPT. Google and Shopify introduced the Universal Commerce Protocol in early 2026, and it now carries its own discovery manifest at /.well-known/ucp. The discovery layer is settling on a small set of standards. An A2A Agent Card describes the interface, AP2 authorizes agent payments, ACP carries the checkout, and x402 lets an agent meet a price with HTTP 402 and continue. A site does not need all of them. It needs the ones its buyers' agents speak, declared where an agent looks.
 
 ## Where the protocol draws the line
 
-UCP writes down the boundary between what an agent may finish alone and what a person has to approve. Its checkout capability is a state machine, and one of its states, requires_escalation, means programmatic execution is blocked by something like age verification or a regulatory step. Escalation is not failure. As of July 2026 the specification defines an Embedded Checkout Protocol for that state, a bidirectional JSON-RPC 2.0 channel between the agent's host and the merchant's checkout interface, so a person completes the blocking step without the session being thrown away. The cart carries a signals object for abuse prevention, and the specification is explicit that its values must not be buyer-asserted claims. A site that treats escalation as a dead end loses the sale at the exact point where a human was willing to finish it.
+UCP writes down the boundary between what an agent may finish alone and what a person has to approve. Its checkout capability is a state machine, and one of its states, requires_escalation, means programmatic execution is blocked by something like age verification or a regulatory step. Escalation is not failure. The specification defines an Embedded Checkout Protocol, which is checkout's own use of the shared Embedded Protocol transport rather than a mechanism built for escalation alone. It can carry an embedded checkout through a whole session, including the steps where the buyer has to enter something or approve something. When the checkout state says requires_escalation, the platform can hand the buyer to a continue_url instead, so the session is not thrown away. The cart carries a signals object for abuse prevention, and the specification is explicit that its values must not be buyer-asserted claims. A site that treats escalation as a dead end loses the sale at the exact point where a human was willing to finish it.
 
 ## Where sites fail the agent
 
@@ -3445,7 +3445,7 @@ A correct decision is not an agent doing whatever it infers. It is an agent acti
 
 ## The envelope is starting to appear in protocols
 
-Commerce is the first place the boundary got written down. As of July 2026 the Universal Commerce Protocol carries a checkout state called requires_escalation, which means the agent has reached the edge of what it may finish alone and a person has to complete the step. AP2 does the same on the payment side, where a mandate records the limits the user agreed to before the agent acted. Both encode a decision somebody made in advance. Neither decides for you where the line sits, and that is a judgment about which actions are reversible and who carries the cost when one is not.
+Commerce is the first place the boundary got written down. The Universal Commerce Protocol carries a checkout state called requires_escalation, which means the agent has reached the edge of what it may finish alone and a person has to complete the step. AP2 does the same on the payment side, where a mandate records the limits the user agreed to before the agent acted. Both encode a decision somebody made in advance. Decision envelope is the name this guide gives that pattern, and neither specification uses the term, so do not go looking for it in either document. Neither decides for you where the line sits, and that is a judgment about which actions are reversible and who carries the cost when one is not.
 
 ## Keep a person where judgment belongs
 
@@ -3495,7 +3495,7 @@ An agent guides a person doing physical work, drawing on the same data an expert
 
 ## Operations under bad connectivity
 
-An agent runs a remote system over a link that drops, holding its last safe state and resuming cleanly when data returns. This is where the data path matters most, because one lost packet can stall every decision queued behind it.
+An agent runs a remote system over a link that drops, holding its last safe state and resuming when data returns. This is where the data path matters most. A lost packet delays delivery and can trigger recovery, and whether the decisions queued behind it stall depends on the transport and on how the application treats state that has gone stale.
 
 ## Back-office and data work
 
@@ -3523,7 +3523,7 @@ Rarely whether the agent could do the work. What decides the outcome is whether 
 
 **Which use case depends most on the data path?**
 
-Operations over a link that drops. The agent has to hold its last safe state and resume cleanly when data returns, because one lost packet can stall every decision queued behind it.
+Operations over a link that drops. The agent has to hold its last safe state and resume when data returns, because a lost packet delays delivery and the decisions queued behind it may stall depending on the transport.
 
 ## Related
 
@@ -5100,9 +5100,9 @@ var META_BY_PATH = {
   },
   "/guides/agent-readiness-gaps": {
     title: "Common agent-readiness gaps on marketing sites | turva.dev",
-    description: "Most marketing sites are strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes.",
+    description: "Marketing sites are often strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes.",
     image: "/og-guide-agent-readiness-gaps.jpg",
-    imageAlt: "turva.dev guide card: Most marketing sites are strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes."
+    imageAlt: "turva.dev guide card: Marketing sites are often strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes."
   }
 };
 
@@ -7110,8 +7110,12 @@ function validateLlmsTxt(f) {
   }
   const lines = f.text.split(/\r?\n/);
   const firstIdx = lines.findIndex((l) => l.trim() !== "");
-  const first = firstIdx === -1 ? "" : lines[firstIdx].trim();
-  if (/^# \S/.test(first)) {
+  const firstRaw = firstIdx === -1 ? "" : lines[firstIdx];
+  const first = firstRaw.trim();
+  // The line is read as markdown and not trimmed first. Four spaces or a tab make it an
+  // indented code block rather than a heading, and trimming erased that difference, so
+  // "    # Site" passed as the H1 until 2026-08-29. CommonMark allows three spaces.
+  if (/^ {0,3}# \S/.test(firstRaw)) {
     add("h1-title", "pass", "Starts with an H1 title", JSON.stringify(first.slice(0, 80)));
   } else {
     add("h1-title", "fail", "Starts with an H1 title", "the first non-empty line should be a markdown H1 (# Site name)");
@@ -7123,19 +7127,40 @@ function validateLlmsTxt(f) {
     add("summary", "warn", "Blockquote summary after the title", "recommended by the format (> one-line summary), not required");
   }
   const h2Count = (f.text.match(/^## /gm) || []).length;
-  if (h2Count > 0) {
-    add("sections", "pass", "H2 sections group the content", h2Count + " section" + (h2Count === 1 ? "" : "s"));
+  // A section counts when it carries a file list. An H2 followed by a paragraph satisfied
+  // this check until 2026-08-29, and the format puts each section's links in a list.
+  let sectionsWithList = 0;
+  {
+    let inSection = false, counted = false;
+    for (const l of lines) {
+      if (/^## /.test(l)) { inSection = true; counted = false; continue; }
+      if (/^# /.test(l)) { inSection = false; continue; }
+      if (inSection && !counted && /^ {0,3}[-*+] .*\[[^\][]*\]\([^)\s]+\)/.test(l)) { sectionsWithList++; counted = true; }
+    }
+  }
+  if (h2Count > 0 && sectionsWithList > 0) {
+    add("sections", "pass", "H2 sections group the content", h2Count + " section" + (h2Count === 1 ? "" : "s") + ", " + sectionsWithList + " carrying a file list");
+  } else if (h2Count > 0) {
+    add("sections", "warn", "H2 sections group the content", h2Count + " section" + (h2Count === 1 ? "" : "s") + " but no file list under any of them; the format puts a section's links in a markdown list");
   } else {
     add("sections", "warn", "H2 sections group the content", "no H2 sections found; sections are the convention for grouping links");
   }
   const links = [...f.text.matchAll(/\[([^\][]*)\]\(([^)\s]{1,2048})\)/g)];
-  const absolute = links.filter((m) => /^https?:\/\//.test(m[2])).length;
+  // An entry an agent can use has a name and a target with a host. An empty name and a
+  // bare "https://" both counted as valid absolute links until 2026-08-29.
+  const named = links.filter((m) => m[1].trim() !== "");
+  const unnamed = links.length - named.length;
+  const absolute = named.filter((m) => /^https?:\/\/[^/\s?#]+/.test(m[2])).length;
   if (links.length === 0) {
     add("links", "warn", "Markdown links an agent can follow", "no markdown links found");
-  } else if (absolute === links.length) {
-    add("links", "pass", "Markdown links an agent can follow", links.length + " link" + (links.length === 1 ? "" : "s") + ", all absolute URLs");
+  } else if (unnamed > 0) {
+    add("links", "warn", "Markdown links an agent can follow", links.length + " link" + (links.length === 1 ? "" : "s") + ", " + unnamed + " with an empty link name; an entry needs a name an agent can show");
+  } else if (absolute === named.length) {
+    add("links", "pass", "Markdown links an agent can follow", named.length + " link" + (named.length === 1 ? "" : "s") + ", all absolute URLs");
   } else {
-    add("links", "warn", "Markdown links an agent can follow", links.length + " links, " + (links.length - absolute) + " relative; absolute URLs travel better when the file is read out of context");
+    const relativeCount = named.filter((m) => !/^[a-z][a-z0-9+.-]*:/i.test(m[2])).length;
+    const hostless = named.length - absolute - relativeCount;
+    add("links", "warn", "Markdown links an agent can follow", named.length + " links, " + relativeCount + " relative" + (hostless > 0 ? " and " + hostless + " with a scheme but no host" : "") + "; absolute URLs travel better when the file is read out of context");
   }
   if (f.truncated) {
     add("size", "warn", "Small enough to be cheap to read", "over 256 KB, read truncated");
@@ -7395,20 +7420,27 @@ function findLinkRelations(html, linkHeader) {
     // NAME is "link<link", not as a link element, so \b would count a relation the site
     // does not publish. Measured against parse5, 2026-08-24.
     if (!/^<link(?=[\s/>])/i.test(tag)) continue;
-    const rel = ((tag.match(/\brel\s*=\s*["']?([^"'>]+)/i) || [])[1] || "").toLowerCase().trim().split(/\s+/);
-    const type = ((tag.match(/\btype\s*=\s*["']?([^"'>\s]+)/i) || [])[1] || "").toLowerCase();
-    const href = ((tag.match(/\bhref\s*=\s*"([^"]*)"|\bhref\s*=\s*'([^']*)'|\bhref\s*=\s*([^\s"'>]+)/i) || []).slice(1).find((x) => x !== undefined) || "").trim();
-    if (!found.describedby && rel.includes("describedby")) found.describedby = href || "(link element without href)";
-    if (!found.markdown && rel.includes("alternate") && type.startsWith("text/markdown")) found.markdown = href || "(link element without href)";
+    // The attribute name has to start the token. \b sits between the hyphen and the name,
+    // so data-rel, data-type and data-href were read as the real attributes until
+    // 2026-08-29, and a page could claim a relation it does not publish.
+    const rel = ((tag.match(/(?:^|[\s/])rel\s*=\s*["']?([^"'>]+)/i) || [])[1] || "").toLowerCase().trim().split(/\s+/);
+    const type = ((tag.match(/(?:^|[\s/])type\s*=\s*["']?([^"'>\s]+)/i) || [])[1] || "").toLowerCase();
+    const href = ((tag.match(/(?:^|[\s/])href\s*=\s*"([^"]*)"|(?:^|[\s/])href\s*=\s*'([^']*)'|(?:^|[\s/])href\s*=\s*([^\s"'>]+)/i) || []).slice(1).find((x) => x !== undefined) || "").trim();
+    // text/markdown, not anything that starts with it, and a relation without a target is
+    // not a relation: both passed until 2026-08-29.
+    const isMarkdown = type.split(";")[0].trim() === "text/markdown";
+    if (!found.describedby && href && rel.includes("describedby")) found.describedby = href;
+    if (!found.markdown && href && rel.includes("alternate") && isMarkdown) found.markdown = href;
   }
   for (const part of String(linkHeader || "").split(/,(?=\s*<)/)) {
     const lt = part.indexOf("<");
     const gt = lt === -1 ? -1 : part.indexOf(">", lt + 1);
     const href = (gt === -1 ? "" : part.slice(lt + 1, gt)).trim();
-    const rel = ((part.match(/rel\s*=\s*"?([^";,]+)"?/i) || [])[1] || "").toLowerCase().trim().split(/\s+/);
-    const type = ((part.match(/type\s*=\s*"?([^";,]+)"?/i) || [])[1] || "").toLowerCase().trim();
-    if (!found.describedby && rel.includes("describedby")) found.describedby = href || "(Link header without a target)";
-    if (!found.markdown && rel.includes("alternate") && type.startsWith("text/markdown")) found.markdown = href || "(Link header without a target)";
+    const rel = ((part.match(/(?:^|[;\s])rel\s*=\s*"?([^";,]+)"?/i) || [])[1] || "").toLowerCase().trim().split(/\s+/);
+    const type = ((part.match(/(?:^|[;\s])type\s*=\s*"?([^";,]+)"?/i) || [])[1] || "").toLowerCase().trim();
+    const isMarkdownHeader = type.split(";")[0].trim() === "text/markdown";
+    if (!found.describedby && href && rel.includes("describedby")) found.describedby = href;
+    if (!found.markdown && href && rel.includes("alternate") && isMarkdownHeader) found.markdown = href;
   }
   return found;
 }
