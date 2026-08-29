@@ -90,7 +90,11 @@ const transientCode = (e) => (e && (TRANSIENT.has(e.code) || TRANSIENT.has((e.ca
 // the output. The fallback reads the SAME name and type, and it is never silent: the check line
 // names the resolver that answered, because a measurement that changes instrument without saying
 // so is the defect this file exists to catch.
-const DOH = 'https://cloudflare-dns.com/dns-query';
+// 1.1.1.2 by IP, not by name: a resolver looked up through the resolver that is broken is not a
+// fallback. Erik 2026-08-29 asked for this path directly, and it is now the FIRST reader for these
+// two records, with the machine's own resolver as the second. On his machine the system path costs
+// six seconds of timeouts before it gives up, and it answers nothing that this does not.
+const DOH = 'https://1.1.1.2/dns-query';
 let dohUsed = false;
 const dohQuery = async (name, type) => {
   const r = await fetch(`${DOH}?name=${encodeURIComponent(name)}&type=${type}`,
@@ -110,7 +114,9 @@ const dohQuery = async (name, type) => {
 
 // One retry pair before a transient error is believed: a single timed-out UDP packet is not a
 // measurement either. Three attempts total, 400 ms and 800 ms apart.
-const retryTransient = async (label, fn, doh) => {
+// Three attempts for a plain HTTPS read that timed out. No second instrument here: the policy has
+// exactly one address, and reading it from somewhere else would not be reading it.
+const retryTransient = async (fn) => {
   let last;
   for (let i = 0; i < 3; i++) {
     try { return await fn(); } catch (e) {
@@ -119,9 +125,26 @@ const retryTransient = async (label, fn, doh) => {
       if (i < 2) await new Promise((r) => setTimeout(r, 400 * (i + 1)));
     }
   }
-  if (doh) {
-    console.log(`  note  ${label}: the system resolver timed out three times, reading the same record over DNS-over-HTTPS`);
-    return await doh();
+  throw last;
+};
+
+// DoH first, the machine's own resolver second. The order is the whole point: on the machine that
+// ships this, dns.resolve* speaks plain UDP to a server that never answers, so putting it first
+// bought six seconds of nothing on every run. An ANSWER from either path is final, including
+// NXDOMAIN and NODATA, which are findings and not reasons to ask someone else. Only a transient
+// error moves the read to the second path, and the move is always printed.
+const readRecord = async (label, doh, system) => {
+  try { return await doh(); } catch (e) {
+    if (!transientCode(e)) throw e;
+    console.log(`  note  ${label}: DNS-over-HTTPS did not answer (${e.code || e.message}), falling back to this machine's own resolver`);
+  }
+  let last;
+  for (let i = 0; i < 3; i++) {
+    try { return await system(); } catch (e) {
+      last = e;
+      if (!transientCode(e)) throw e;
+      if (i < 2) await new Promise((r) => setTimeout(r, 400 * (i + 1)));
+    }
   }
   throw last;
 };
@@ -2033,7 +2056,7 @@ if (LIVE) {
       `MTA_STS_POLICY max_age is a positive integer no greater than the RFC 8461 maximum of 31557600 (saw ${JSON.stringify(field('max_age'))})`);
     check(polMx.length > 0, `MTA_STS_POLICY names at least one mx (saw ${polMx.length})`);
 
-    const zoneMx = (await retryTransient('resolveMx', () => dns.resolveMx(mailDomain), () => dohQuery(mailDomain, 'MX'))).map((r) => r.exchange.toLowerCase().replace(/\.$/, ''));
+    const zoneMx = (await readRecord('MX', () => dohQuery(mailDomain, 'MX'), () => dns.resolveMx(mailDomain))).map((r) => r.exchange.toLowerCase().replace(/\.$/, ''));
     // An mx: entry may be a wildcard covering exactly one label (RFC 8461 section 4.1), so
     // membership is covered-by rather than string equality, and it is read in both directions:
     // every host the zone hands a sender must be allowed by the policy, and every line in the
@@ -2053,7 +2076,7 @@ if (LIVE) {
     // is 200 (OK). HTTP 3xx redirects MUST NOT be followed." node fetch follows them by default,
     // so the gate has to refuse them the way a conforming sender does; otherwise it would read a
     // policy through a redirect and report green on a host no sender can fetch from.
-    const stsRes = await retryTransient('policy fetch', () => fetch(stsUrl, { redirect: 'manual', headers: { 'cache-control': 'no-cache' } }));
+    const stsRes = await retryTransient(() => fetch(stsUrl, { redirect: 'manual', headers: { 'cache-control': 'no-cache' } }));
     const stsBody = await stsRes.text();
     check(stsRes.status === 200, `${stsUrl} -> ${stsRes.status} (RFC 8461 accepts 200 only, and no redirect)`);
     check(String(stsRes.headers.get('content-type') || '').startsWith('text/plain'),
@@ -2065,7 +2088,7 @@ if (LIVE) {
     // The TXT id is the cache key. In enforce mode a sender keeps its cached policy until the
     // id changes, so a policy edited without a new id reaches nobody for up to max_age. This
     // proves the record is there and well formed; it cannot prove the id was bumped.
-    const txt = (await retryTransient('resolveTxt', () => dns.resolveTxt(`_mta-sts.${mailDomain}`), () => dohQuery(`_mta-sts.${mailDomain}`, 'TXT'))).map((r) => r.join(''));
+    const txt = (await readRecord('TXT', () => dohQuery(`_mta-sts.${mailDomain}`, 'TXT'), () => dns.resolveTxt(`_mta-sts.${mailDomain}`))).map((r) => r.join(''));
     const sts = txt.filter((r) => r.startsWith('v=STSv1'));
     // RFC 8461 section 3.1: sts-field-delim = *WSP ";" *WSP, extension fields are allowed and
     // field order is not significant. The first regex here was turva's own exact spelling while
@@ -2089,7 +2112,7 @@ if (LIVE) {
     check(ms.policySha256 === polSha,
       `facts.json mtaSts.policySha256 == the policy in worker.js (facts ${String(ms.policySha256).slice(0, 16)}..., worker.js ${polSha.slice(0, 16)}...)`);
     const liveId = ((sts[0] || '').match(/id=([A-Za-z0-9]+)/) || [])[1];
-    if (dohUsed) console.log('  note  the MX and TXT reads above came from DNS-over-HTTPS, not from this machine\'s configured resolver');
+    console.log(`  note  the MX and TXT reads above came from ${dohUsed ? DOH + ' over DNS-over-HTTPS' : "this machine's own resolver"}`);
     check(!!ms.txtId && ms.txtId === liveId,
       `facts.json mtaSts.txtId == the id served in DNS (facts ${JSON.stringify(ms.txtId)}, DNS ${JSON.stringify(liveId)})`);
   } catch (e) {
