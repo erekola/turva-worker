@@ -2893,11 +2893,11 @@ No. llms.txt tells an agent what the site contains and agents.json describes the
 
 x402 is a way for a site to ask an agent to pay before it returns a resource, using the long-reserved HTTP 402 Payment Required status. It lets an automated client discover a price, pay, and continue, without a human stepping in to enter card details.
 
-When an agent requests a paid resource, the server responds with 402 and a manifest that states what is being sold and how to pay. The agent reads the terms, signs a payment payload for a supported method, and retries the request with the payload attached; the server or its facilitator settles the payment. The transaction happens in the protocol, not in a checkout page built for human eyes.
+When an agent requests a paid resource, the server responds with 402 and a manifest that states what is being sold and how to pay. The agent reads the terms, signs a payment payload for a supported method, and retries the request with the payload attached. The server or its facilitator then settles the payment. The transaction happens in the protocol, not in a checkout page built for human eyes.
 
 This matters because agent commerce is held back by payment, not by capability. An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A declared payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search.
 
-x402 belongs to a small family of agent payment standards, and its relationship to AP2 is specific rather than parallel. As of July 2026 x402 is the stablecoin settlement path inside AP2, carried by a separate A2A settlement extension built with Coinbase, so an AP2 mandate can authorize an onchain settlement that leaves the same audit trail a card payment does. A site that publishes these signals tells agents that it is open for automated business, and in the case of the open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
+x402 belongs to a small family of agent payment standards, and its relationship to AP2 is worth stating precisely. They are separate specifications. AP2 defines the mandates and receipts that authorize a payment, and x402 defines an HTTP 402 payment flow that a separate extension, a2a-x402, carries into agent-to-agent work. As of August 2026 the AP2 documentation describes the two as complementary and says the alignment is ongoing, so a site treats them as protocols it may support side by side rather than as one finished stack. A site that publishes these signals tells agents that it is open for automated business, and in the case of the open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
 
 turva.dev publishes an x402 endpoint and manifest. For an audit of a site's commerce surface for agents, contact info@turva.dev.
 
@@ -2960,9 +2960,9 @@ Search engine optimization makes a site rank in a list of links for a person to 
 
 SEO is built around keywords, backlinks, and a results page where a human chooses. The page is the destination. Agent-readiness is built around machine-readable surfaces such as llms.txt, structured data, response headers, and well-known manifests, where the agent is the reader and the page may never be seen by a person at all. A site can rank well on Google and still be opaque to an agent, and a site can be highly legible to agents while ranking modestly in classic search.
 
-The gap is widening as people ask assistants instead of typing queries. When an answer comes from a model rather than a list of links, the question is not where a site ranks but whether the model can read the site cleanly and is willing to cite it. That depends on the discovery and content surface, not on the usual ranking signals.
+The gap is widening as people ask assistants instead of typing queries. When an answer comes from a model rather than a list of links, ranking is not the only question. Whether the model can read the site cleanly and is willing to cite it matters too, and that depends on the discovery and content surface.
 
-This is why ranking on a search engine does not guarantee presence in an AI answer. They are scored on different things. A site that wants both has to do both, and the agent-readiness side is the one most teams have not started.
+How much ranking still counts depends on the product. Google states that its generative features in Search are rooted in the same core ranking and quality systems, so the search work carries over there. An assistant that retrieves outside a search index is scored on other things, and an agent that reads a page to act on it is scored on none of them. A site that wants all of this has to do both sides, and the agent-readiness side is the one most teams have not started.
 
 turva.dev measures the agent-readiness side and reports exactly which checks pass or fail. For an audit, contact info@turva.dev.
 
@@ -2974,7 +2974,7 @@ No. SEO makes a site rank in a list of links for a person to click. Agent-readin
 
 **Why does search ranking not guarantee presence in AI answers?**
 
-They are scored on different things. A search engine ranks pages by keywords and backlinks. An assistant cites a site when it can read the content cleanly and corroborate it, which depends on the discovery and content surface rather than ranking signals.
+It depends on the product. Google states that its generative features in Search use the same core ranking and quality systems, so ranking carries over there. An assistant that retrieves outside a search index cites a site when it can read the content cleanly and corroborate it, which depends on the discovery and content surface.
 
 **Can a site rank well and still be invisible to agents?**
 
@@ -3199,11 +3199,11 @@ No. Serving a markdown version of the page on request also works, and it skips r
 
   "/guides/sitemaps-and-robots-for-agents": `# Sitemaps, robots.txt and agent access
 
-robots.txt and the sitemap are the oldest machine-readable files on the web, and they still decide whether an agent is allowed in and what it can find. An agent reads robots.txt to learn the rules and the sitemap to learn the map, before it reads any page.
+robots.txt and the sitemap are the oldest machine-readable files on the web, and they still decide whether an agent is allowed in and what it can find. A well-behaved agent reads robots.txt to learn the rules and the sitemap to learn the map before it reads any page. Not every client does either, so these files set the terms for the agents that follow them rather than for all traffic.
 
-robots.txt does two jobs for agents. It sets crawl rules, and it can name AI crawlers explicitly, so a site states whether it welcomes GPTBot and similar clients rather than leaving them to guess. A Content-Signal directive can go further and declare how content may be used, separating ordinary search from AI input and training, which gives a site granular control instead of an all-or-nothing block.
+robots.txt does two jobs for agents. It sets crawl rules, and it can name AI crawlers explicitly, so a site states whether it welcomes GPTBot and similar clients rather than leaving them to guess. A Content-Signal directive can go further and declare how content may be used, separating ordinary search from AI input and training, which states a granular preference instead of an all-or-nothing block. It is a stated preference and not an enforcement mechanism, and the Content Signals documentation says plainly that some automated systems may ignore it.
 
-The sitemap answers the other question, which is what exists. A complete sitemap lists every canonical URL with a last-modified date, so an agent can find the real pages without inferring them from navigation. A page that is not in the sitemap is a page an agent may never reach.
+The sitemap answers the other question, which is what exists. A complete sitemap lists every canonical URL, so an agent can find the real pages without inferring them from navigation. A last-modified date is optional in the sitemaps protocol and still worth publishing, because it tells a returning client what changed. The sitemap is a hint to the client rather than a guarantee that anything gets fetched. A page that is not in it is still a page an agent may never reach.
 
 Getting these wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident removes a site from that assistant's answers. A stale sitemap hides new pages. The files are small and the fix is fast, which is why they are the first thing a readiness review checks.
 
@@ -3213,15 +3213,15 @@ turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a co
 
 **How do robots.txt and the sitemap affect AI agents?**
 
-An agent reads robots.txt to learn the rules and the sitemap to learn the map before it reads any page. robots.txt can name AI crawlers explicitly, and the sitemap lists every canonical URL so an agent finds the real pages without inferring them from navigation.
+A well-behaved agent reads robots.txt to learn the rules and the sitemap to learn the map before it reads any page, though not every client does either. robots.txt can name AI crawlers explicitly, and the sitemap lists every canonical URL so an agent finds the real pages without inferring them from navigation.
 
 **What is a Content-Signal directive in robots.txt?**
 
-A Content-Signal directive declares how content may be used, separating ordinary search from AI input and training. It gives a site granular control instead of an all-or-nothing block.
+A Content-Signal directive declares how content may be used, separating ordinary search from AI input and training. It states a granular preference instead of an all-or-nothing block, and its own documentation says some automated systems may ignore it.
 
 **Can robots.txt name AI crawlers specifically?**
 
-Yes. robots.txt can name AI crawlers explicitly rather than treating every client the same, and a Content-Signal directive separates ordinary search from AI input and training.
+Yes. robots.txt can name AI crawlers explicitly rather than treating every client the same, and a Content-Signal directive separates ordinary search from AI input and training. Both express a preference that a client can ignore.
 
 ## Related
 
@@ -3536,7 +3536,7 @@ When a person asks ChatGPT, Perplexity, Claude, or Gemini a question, the assist
 
 ## Be readable, not just rendered
 
-An assistant that does not run JavaScript sees an empty shell where a client-rendered page should be. The first requirement is that the content arrives in the response: a prerendered or static page, a markdown form served through content negotiation, and an llms.txt that maps the site. A page an assistant cannot read is a page it cannot cite.
+An assistant that does not run JavaScript sees an empty shell where a client-rendered page should be. The first requirement is that the content arrives in the response, which means a prerendered or static page. A markdown form served through content negotiation and an llms.txt that maps the site help the clients that read them, and no assistant is obliged to. Google states that Search, including its generative features, ignores llms.txt, so publish the file for the clients that use it rather than as a route into Google. A page an assistant cannot read is a page it cannot cite.
 
 ## State your facts as data
 
@@ -3548,7 +3548,7 @@ An assistant is more likely to cite a claim it can confirm in more than one plac
 
 ## Be indexed where the assistant searches
 
-Several assistants retrieve through a search index before they answer. If a site is not indexed where the assistant looks, it cannot be cited regardless of quality. Submitting URLs through the index protocols a site supports, and keeping the sitemap and llms.txt current, is how new content reaches that layer.
+Several assistants retrieve through a search index before they answer. If a site is not indexed where the assistant looks, it cannot be cited regardless of quality. Submitting URLs through the index protocols a site supports, and keeping the sitemap current, is how new content reaches that layer.
 
 ## Measure it
 
