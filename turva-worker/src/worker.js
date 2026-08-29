@@ -3919,10 +3919,27 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Sso6ovs2AWzaFQ0fPF0oVmqmNson5Vc31ESTFJl68KM6ySrtxmevzcZOQOU_CXfLcJoDu7Sirc5geP8mJTWzDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Oyh3MraE8x9nj4hAurDe_jbphmMzqCdHiUPz66LdvVXCXrsNIXfencX5k1KiHv4YSJJ7D3tmXGCNX0zXA8-VAQ\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KGlfNizvHWJrwEcUdVkBR2NjhziGG8UEWkSmaZjuwjb5xZMA8fWDcqIJXLpK1g6cSiPde7uVd7Dj3vvQSHm7Aw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zth1eJQTzJflIfUqIoE6IxGsJBpRzMNmJia_Fzc6OFFeNEiBYs3N4tnVbnTUeSBK2WubOkZqHJrV0Volt9GSAQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Oyh3MraE8x9nj4hAurDe_jbphmMzqCdHiUPz66LdvVXCXrsNIXfencX5k1KiHv4YSJJ7D3tmXGCNX0zXA8-VAQ\"\n    }\n  }\n}";
 
+// The four keys the Server Card schema requires live at the top level, and the keys the
+// deployed convention uses live beside them. The schema restricts neither additional nor
+// unevaluated properties, so a document may carry both, and the MCP project's own card at
+// modelcontextprotocol.io does exactly that. Read the schema before moving anything here:
+// $schema has to be the /v1/ URL, name is reverse-DNS with one slash, and description is
+// capped at 100 characters. Measured against the schema and against the scanner 2026-08-29,
+// see mds/decisions.md Tek-298. Changing this file means re-signing it,
+// julkaisu/resign-server-card-local.mjs.
 var MCP_SERVER_CARD = JSON.stringify({
-  "$schema": "https://modelcontextprotocol.io/schemas/server-card/2025-10.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
+  "name": "turva.dev/turva-mcp",
+  "title": "turva.dev",
+  "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
+  "version": "1.3.6",
+  "websiteUrl": "https://turva.dev/",
+  "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
+  "remotes": [
+    { "type": "streamable-http", "url": "https://mcp.turva.dev/mcp" }
+  ],
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
@@ -3948,7 +3965,7 @@ var MCP_SERVER_CARD = JSON.stringify({
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl), with the scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." }
   ],
-  "meta": {
+  "_meta": {
     "homepage": "https://turva.dev/",
     "mcpEndpoint": "https://mcp.turva.dev/mcp",
     "openapi": "https://turva.dev/openapi.json",

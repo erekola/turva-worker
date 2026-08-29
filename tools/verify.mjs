@@ -1578,7 +1578,7 @@ if (LIVE) {
   // check read. An earlier draft re-derived the block with a conditional on the picker function,
   // which is the kind of cleverness this file exists to catch.
   const priceListSurfaces = [
-    ['/.well-known/mcp/server-card.json', (d) => (d.meta || {}).pricing || {},
+    ['/.well-known/mcp/server-card.json', (d) => (d._meta || d.meta || {}).pricing || {},
       (p) => Object.keys(p).filter((k) => k !== 'currency' && k !== 'vatIncluded').map((k) => byKey[k] || k),
       (p, key) => (p[key] || {}).price],
     ['/.well-known/ap2', (d) => d.pricing || {}, (p) => (p.items || []).map((i) => i.name),
