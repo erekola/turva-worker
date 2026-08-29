@@ -28,7 +28,7 @@ isitagentready.com groups its checks into five categories. turva.dev passes ever
 | API, Auth, MCP & A2A Discovery | 100/100 |
 | Commerce | 100/100 |
 
-Commerce is optional in the isitagentready model, and turva.dev passes all five of its checks: x402, MPP, UCP, ACP and AP2. The payment surface is real rather than declared. A request to /api answers with an x402 402 challenge naming a wallet on Base, and the payable operations carry live Stripe payment links. Settlement is still quote-on-request, confirmed out of band instead of executed automatically, so the site claims no rail it does not have.
+Commerce is optional in the isitagentready model, and turva.dev passes it. The named checks are not listed here, because the scanner reports a different commerce set through its MCP tool than through its public page, and a figure a reader cannot reproduce on the page he opens does not belong in a claim. The payment surface is real rather than declared. A request to /api answers with an x402 402 challenge naming a wallet on Base, and the payable operations carry live Stripe payment links. Settlement is still quote-on-request, confirmed out of band instead of executed automatically, so the site claims no rail it does not have.
 
 ## Web security
 

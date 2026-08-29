@@ -249,8 +249,13 @@ console.log('\nCategory set (facts.json owns which categories exist)');
     'every category carries a prose spelling list with no empty entries');
   check(new Set(CATS.map((c) => c.id)).size === CATS.length,
     `category ids are unique (${CATS.length} categories, ${new Set(CATS.map((c) => c.id)).size} distinct ids)`);
-  check(CATS.length > 0 && CATS.every((c) => Number.isInteger(c.checks) && c.checks > 0),
-    'every category carries a positive check count');
+  // The per-category check COUNT was dropped from facts.json on 2026-08-29. The scanner
+  // reports a different check set through its MCP tool than through its public page
+  // (commerce 5/5 with ap2 versus 4/4 without it, api/auth 9 versus 8), so a count is a
+  // figure a buyer cannot reproduce on the surface he checks. The category set and the
+  // per-category score stay, because those agree on both surfaces.
+  check(CATS.length > 0 && CATS.every((c) => c.checks === undefined),
+    'no category carries a check count (dropped 2026-08-29, see decisions.md)');
   // Resolution has to be unambiguous. Containment is the obvious collision and it is
   // not the only one: two spellings that merely OVERLAP, "bot access" and "access
   // control", both resolve inside the single phrase "bot access control" while neither
@@ -1871,10 +1876,9 @@ if (LIVE) {
         // as a pass, and it broke on any added word. The score is derived from this
         // category's own two counts rather than borrowed from the site total, which are
         // different numbers that happen to agree while everything passes.
-        const m = String(gotCats[c.id]).match(/^(\d+) \((\d+)\/(\d+) checks?\)$/);
-        const pct = m && Math.round((Number(m[2]) / Number(m[3])) * 100);
-        check(!!m && Number(m[2]) === c.checks && Number(m[3]) === c.checks && Number(m[1]) === pct,
-          `get_agent_readiness ${c.id} reads ${c.checks}/${c.checks} checks passing (saw ${JSON.stringify(gotCats[c.id])})`);
+        const m = String(gotCats[c.id]).match(/^(\d+)$/);
+        check(!!m && Number(m[1]) === 100,
+          `get_agent_readiness ${c.id} reads 100 with no check count (saw ${JSON.stringify(gotCats[c.id])})`);
       }
     }
 
