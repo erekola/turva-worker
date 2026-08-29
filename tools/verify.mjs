@@ -64,9 +64,67 @@ for (const [k, rel] of Object.entries(DOCS)) {
   doc[k] = { rel, buf: readFileSync(p), text: readFileSync(p, 'utf8') };
 }
 
-let fails = 0, passes = 0;
+let fails = 0, passes = 0, unmeasured = 0;
 const ok  = (m) => { passes++; console.log('  pass  ' + m); };
 const bad = (m) => { fails++;  console.log('  FAIL  ' + m); };
+// A check that could not be TAKEN is not a check that FAILED, and reporting it as a failure is
+// what teaches a reader to skip the report (Tek-118, Tek-261). Added 2026-08-29 after the live
+// step was red in three shipped runs and in a dry run with no deploy: the cause was a DNS
+// timeout on the operator's own machine, not the domain. The route into this is deliberately
+// narrow, see TRANSIENT below: a missing record, a wrong policy or a non-200 stays a FAIL,
+// because a gate that can call its own blindness a pass is worse than no gate (gotchas
+// 2026-08-10 (jatko 4)).
+const unmet = (m) => { unmeasured++; console.log('  SKIP  ' + m); };
+// Codes that mean "this machine could not ask", never "the answer was wrong". ENOTFOUND and
+// ENODATA are absent on purpose: they are answers, and a missing MTA-STS record is a finding.
+const TRANSIENT = new Set(['ETIMEOUT', 'ETIMEDOUT', 'ESERVFAIL', 'EAI_AGAIN', 'ECONNRESET',
+  'ENETUNREACH', 'EHOSTUNREACH', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT']);
+const transientCode = (e) => (e && (TRANSIENT.has(e.code) || TRANSIENT.has((e.cause || {}).code)))
+  ? (e.code || (e.cause || {}).code) : null;
+// The system resolver is not the only path to a public record, and on one machine here it is not
+// a working one: every query that machine makes goes out over DNS-over-HTTPS, while node's
+// dns.resolve* speaks plain UDP through c-ares to whatever server the adapter names, and those
+// queries never reached the operator's resolver at all (NextDNS log, 2026-08-29: the MX and TXT
+// reads from the failing runs are absent, the ones from Windows own resolver are there and were
+// allowed). So when the system path times out, ask the same public record over DoH and say so in
+// the output. The fallback reads the SAME name and type, and it is never silent: the check line
+// names the resolver that answered, because a measurement that changes instrument without saying
+// so is the defect this file exists to catch.
+const DOH = 'https://cloudflare-dns.com/dns-query';
+let dohUsed = false;
+const dohQuery = async (name, type) => {
+  const r = await fetch(`${DOH}?name=${encodeURIComponent(name)}&type=${type}`,
+    { headers: { accept: 'application/dns-json' }, signal: AbortSignal.timeout(6000) });
+  if (!r.ok) { const e = new Error(`DoH ${type} ${name} -> ${r.status}`); e.code = 'EDOHSTATUS'; throw e; }
+  const j = await r.json();
+  // NXDOMAIN and NODATA are ANSWERS. They keep their own error codes so the caller treats them
+  // as findings, exactly as the system resolver's ENOTFOUND and ENODATA are treated.
+  if (j.Status === 3) { const e = new Error(`DoH ${type} ${name} -> NXDOMAIN`); e.code = 'ENOTFOUND'; throw e; }
+  const ans = (j.Answer || []).filter((a) => a.type === (type === 'MX' ? 15 : 16));
+  if (!ans.length) { const e = new Error(`DoH ${type} ${name} -> no ${type} record`); e.code = 'ENODATA'; throw e; }
+  dohUsed = true;
+  return type === 'MX'
+    ? ans.map((a) => { const [pref, ex] = String(a.data).trim().split(/\s+/); return { priority: Number(pref), exchange: ex }; })
+    : ans.map((a) => [String(a.data).replace(/^"|"$/g, '').replace(/" "/g, '')]);
+};
+
+// One retry pair before a transient error is believed: a single timed-out UDP packet is not a
+// measurement either. Three attempts total, 400 ms and 800 ms apart.
+const retryTransient = async (label, fn, doh) => {
+  let last;
+  for (let i = 0; i < 3; i++) {
+    try { return await fn(); } catch (e) {
+      last = e;
+      if (!transientCode(e)) throw e;
+      if (i < 2) await new Promise((r) => setTimeout(r, 400 * (i + 1)));
+    }
+  }
+  if (doh) {
+    console.log(`  note  ${label}: the system resolver timed out three times, reading the same record over DNS-over-HTTPS`);
+    return await doh();
+  }
+  throw last;
+};
 const check = (cond, m) => (cond ? ok(m) : bad(m));
 const slashVariants = (s) => s.includes('/') ? [s, s.replace('/', ' / ')] : [s];
 const containsAny = (t, arr) => arr.some((s) => t.includes(s));
@@ -1945,7 +2003,13 @@ if (LIVE) {
   // can disagree in three ways: DNS is the authority, the constant is the claim in the repo,
   // and the served file is what a sending MTA actually reads.
   try {
-    const dns = (await import('node:dns')).promises;
+    // A dedicated resolver with a short budget, not the default one. c-ares defaults to 5 s per
+    // try and several tries per server, so on a machine whose configured server never answers the
+    // three attempts below took minutes before the DoH fallback got its turn. 2 s and one try
+    // each: three attempts cost six seconds, and a resolver that has not answered in two seconds
+    // is not the one this run should wait for.
+    const dnsMod = await import('node:dns');
+    const dns = new dnsMod.promises.Resolver({ timeout: 2000, tries: 1 });
     const mailDomain = 'turva.dev';
     const polSrc = (src.worker.text.match(/var MTA_STS_POLICY = `([\s\S]*?)`;/) || [])[1] || '';
     // The source is CRLF and a JS template literal is LF at runtime, so the served bytes are
@@ -1969,7 +2033,7 @@ if (LIVE) {
       `MTA_STS_POLICY max_age is a positive integer no greater than the RFC 8461 maximum of 31557600 (saw ${JSON.stringify(field('max_age'))})`);
     check(polMx.length > 0, `MTA_STS_POLICY names at least one mx (saw ${polMx.length})`);
 
-    const zoneMx = (await dns.resolveMx(mailDomain)).map((r) => r.exchange.toLowerCase().replace(/\.$/, ''));
+    const zoneMx = (await retryTransient('resolveMx', () => dns.resolveMx(mailDomain), () => dohQuery(mailDomain, 'MX'))).map((r) => r.exchange.toLowerCase().replace(/\.$/, ''));
     // An mx: entry may be a wildcard covering exactly one label (RFC 8461 section 4.1), so
     // membership is covered-by rather than string equality, and it is read in both directions:
     // every host the zone hands a sender must be allowed by the policy, and every line in the
@@ -1989,7 +2053,7 @@ if (LIVE) {
     // is 200 (OK). HTTP 3xx redirects MUST NOT be followed." node fetch follows them by default,
     // so the gate has to refuse them the way a conforming sender does; otherwise it would read a
     // policy through a redirect and report green on a host no sender can fetch from.
-    const stsRes = await fetch(stsUrl, { redirect: 'manual', headers: { 'cache-control': 'no-cache' } });
+    const stsRes = await retryTransient('policy fetch', () => fetch(stsUrl, { redirect: 'manual', headers: { 'cache-control': 'no-cache' } }));
     const stsBody = await stsRes.text();
     check(stsRes.status === 200, `${stsUrl} -> ${stsRes.status} (RFC 8461 accepts 200 only, and no redirect)`);
     check(String(stsRes.headers.get('content-type') || '').startsWith('text/plain'),
@@ -2001,7 +2065,7 @@ if (LIVE) {
     // The TXT id is the cache key. In enforce mode a sender keeps its cached policy until the
     // id changes, so a policy edited without a new id reaches nobody for up to max_age. This
     // proves the record is there and well formed; it cannot prove the id was bumped.
-    const txt = (await dns.resolveTxt(`_mta-sts.${mailDomain}`)).map((r) => r.join(''));
+    const txt = (await retryTransient('resolveTxt', () => dns.resolveTxt(`_mta-sts.${mailDomain}`), () => dohQuery(`_mta-sts.${mailDomain}`, 'TXT'))).map((r) => r.join(''));
     const sts = txt.filter((r) => r.startsWith('v=STSv1'));
     // RFC 8461 section 3.1: sts-field-delim = *WSP ";" *WSP, extension fields are allowed and
     // field order is not significant. The first regex here was turva's own exact spelling while
@@ -2025,12 +2089,23 @@ if (LIVE) {
     check(ms.policySha256 === polSha,
       `facts.json mtaSts.policySha256 == the policy in worker.js (facts ${String(ms.policySha256).slice(0, 16)}..., worker.js ${polSha.slice(0, 16)}...)`);
     const liveId = ((sts[0] || '').match(/id=([A-Za-z0-9]+)/) || [])[1];
+    if (dohUsed) console.log('  note  the MX and TXT reads above came from DNS-over-HTTPS, not from this machine\'s configured resolver');
     check(!!ms.txtId && ms.txtId === liveId,
       `facts.json mtaSts.txtId == the id served in DNS (facts ${JSON.stringify(ms.txtId)}, DNS ${JSON.stringify(liveId)})`);
-  } catch (e) { bad('MTA-STS: ' + (e.code || e.message)); }
+  } catch (e) {
+    const t = transientCode(e);
+    if (t) unmet('MTA-STS not measured from this machine: ' + t + '. The DNS or HTTPS call timed out '
+      + 'after three attempts, which says nothing about the record. Run this again on a network that '
+      + 'resolves, and read mds/decisions.md Tek-299 before treating it as a finding.');
+    else bad('MTA-STS: ' + (e.code || e.message));
+  }
 } else {
   console.log('\n(static run - add --live on a networked machine to GET every declared URL and verify signatures)');
 }
 
-console.log(`\n${fails ? 'RESULT: FAIL' : 'RESULT: OK'}  -  ${passes} passed, ${fails} failed`);
+// The unmeasured count rides on the same line so it cannot be read past, and the exit code
+// stays keyed to failures alone: a measurement this machine could not take is not the site's
+// problem, and calling it one is the defect this line was written to stop.
+console.log(`\n${fails ? 'RESULT: FAIL' : 'RESULT: OK'}  -  ${passes} passed, ${fails} failed`
+  + (unmeasured ? `, ${unmeasured} NOT MEASURED (see the SKIP lines above)` : ''));
 process.exit(fails ? 1 : 0);
