@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -190,6 +190,7 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [TRACE signs how an agent ran, not what it was allowed to reach](https://turva.dev/blog/trace-runtime-attestation.md)
 - [I scanned fourteen code hosts. Not one served an MCP server card.](https://turva.dev/blog/agent-readiness-code-hosts.md)
 - [It would be cheating to keep the old price](https://turva.dev/blog/cheating-to-keep-the-old-price.md)
 - [I thought it was a small job](https://turva.dev/blog/i-thought-it-was-a-small-job.md)
@@ -357,6 +358,56 @@ cannot be deleted until the statutory retention period ends.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/trace-runtime-attestation": `# TRACE signs how an agent ran, not what it was allowed to reach
+
+2026-08-30
+
+The Linux Foundation now governs TRACE, short for Trust, Runtime Attestation and Compliance Evidence. OPAQUE contributed the specification, announced on 25 August 2026, and developed it together with AMD, Intel, Microsoft and the Technology Innovation Institute. The idea is one signed artifact, called a Trust Record, that says which model ran, on what hardware, under which policy, against which class of data and which tools it called. The point of signing it inside a trusted execution environment is that the operator cannot write it afterwards. An ordinary audit log is written by the system being audited. This one is not.
+
+That is a real distinction and it is the same distinction my own work rests on. A number someone reports about themselves is a claim. A number a third party can check is evidence. TRACE moves runtime logging from the first category toward the second.
+
+Then I read the project's own documentation instead of the press release, and the interesting part is what the specification refuses to promise.
+
+## The level is the claim, not the name
+
+TRACE has three trust levels and they are not close to equivalent.
+
+Level 0 is software-only signing. The project writes that a privileged operator with root access can produce a valid-looking Level 0 record for a run that never happened, or that violated policy. The documentation puts Level 0 in development, internal audit trails and staging environments, and says so plainly.
+
+Level 1 requires the record to be signed by a key generated inside a verified TEE, with a non-zero measurement of the launch state and a verifier that has actually checked the quote. This is where hardware-rooted starts meaning something.
+
+Level 2 adds a SCITT transparency log entry at a resolvable address, so a third party can check later that the record has not been altered since it was logged. It still does not prove that every field in the record was correct in the first place.
+
+So "we use TRACE" is not a statement about assurance. The level is the statement, and a vendor who names the standard without naming the level has told you nothing. Anyone who has read an agent-readiness score without the scanner and the level next to it will recognise the shape of that problem.
+
+## Two limits worth knowing before anyone builds on this
+
+The specification is honest about both, which is more than most standards manage.
+
+Revocation is the place where the project's own two documents pull in different directions. They agree on the underlying fact. A signature stays mathematically valid forever, so a record signed by a key that has since been revoked keeps verifying on a machine with no network. The limitations page then says the verifier has to consult current revocation status at verification time and calls that an online step by definition. The specification says close to the opposite and says it by design: revocation statements are anchored in the same transparency log as the records they govern, verifiers cache a signed revocation bundle carrying an expiry, and the text describes this as deliberately replacing a status endpoint that would require a callback. Which behaviour you get depends on which of the two a given implementation followed, so ask. Both documents agree on the fallback, and it is the sane one. A verifier holding no revocation bundle, or only an expired one, reports that instead of treating it as a pass.
+
+Platform state is not appraised. On the AMD path the verification chain checks the report signature and the certificate chain from the VCEK up to a root the operator pins, and it checks the measurement binding. What it has no field for is the state of the machine that produced the report. As the documentation puts it, a verifier reading a conformant claim cannot appraise platform state even when the producer did check it.
+
+Neither of these makes TRACE useless. They make it a layer with edges, and knowing where the edges are is the whole job when you are the one signing off.
+
+## The half TRACE does not cover
+
+A Trust Record proves how an agent ran. It says nothing about whether the systems that agent touched were readable to it, whether the tool it called should have been callable at all, or whether the decision boundary around it was written down anywhere.
+
+That is the split I keep running into. Attestation is evidence about execution. Agent-readiness is evidence about the surface: whether your site, your data and your endpoints answer a machine the way they answer a person, and whether the permissions around them are something you can point at rather than something living in one engineer's head. An organisation can have a perfect Level 2 record of an agent doing exactly the wrong thing, correctly, against data it should never have been given.
+
+Both halves are receipts. They are receipts about different questions.
+
+## What this is worth today
+
+The specification is a developer preview. Version 0.2 is current and the draft says its fields and conformance requirements may change before v1.0. The download figure in the announcement is the contributing vendor's own number and it counts installs, not deployments, so it is not evidence of adoption. Treat all of that as a snapshot of this month, exactly as you should treat any number I publish about my own site.
+
+The part that is already useful is the vocabulary. If you run agents against production data, the question to ask a vendor is not whether they support TRACE. Ask which level their records reach, whether their verification checks revocation, and what happens to the answer when the network is down. Those three questions are answerable today and they do not depend on the specification reaching v1.0.
+
+For EU buyers there is one more concrete hook. The project states that Level 0 does not satisfy the tamper-evident logging requirement of EU AI Act Article 12, and that DORA Article 9 needs Level 1 or above with transparency log anchoring. If someone shows you a compliance story built on software-only signing, that gap is written down in the specification's own limitations page.
+
+Sources: [Linux Foundation press release, 25 August 2026](https://www.linuxfoundation.org/press/linux-foundation-welcomes-trace-to-advance-verifiable-runtime-evidence-for-ai-workloads), [TRACE v0.2 specification](https://trace.agentrust-io.com/spec/trace-v0.2/), [TRACE trust levels](https://trace.agentrust-io.com/docs/trust-levels/), [TRACE known limitations](https://trace.agentrust-io.com/LIMITATIONS/), [trace-spec on GitHub](https://github.com/agentrust-io/trace-spec).
+`,
   "/blog/agent-readiness-code-hosts": `# I scanned fourteen code hosts. Not one served an MCP server card.
 
 2026-08-22
@@ -1435,6 +1486,7 @@ All free tools on this site are collected on [the tools page](/tools).
 
 The work here is letting an agent read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against an independent scanner rather than asserted.
 
+- [TRACE signs how an agent ran, not what it was allowed to reach](/blog/trace-runtime-attestation). 2026-08-30.
 - [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts). 2026-08-22.
 - [It would be cheating to keep the old price](/blog/cheating-to-keep-the-old-price). 2026-08-21.
 - [I thought it was a small job](/blog/i-thought-it-was-a-small-job). 2026-08-16.
@@ -3817,7 +3869,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.108.5",
+    "version": "3.109.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -4078,7 +4130,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.108.5",
+  "version": "3.109.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4593,7 +4645,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-08-28";
+var SITEMAP_LASTMOD = "2026-08-30";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -4628,6 +4680,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/trace-runtime-attestation", "monthly", "0.6"],
   ["/blog/measuring-the-ai-patch-surge", "monthly", "0.6"],
   ["/blog/agent-secret-hygiene", "monthly", "0.6"],
   ["/blog/agent-readiness-finnish-b2b", "monthly", "0.6"],
@@ -4721,7 +4774,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -4731,6 +4784,13 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/trace-runtime-attestation": {
+    title: "TRACE signs how an agent ran, not what it was allowed to reach | turva.dev",
+    description: "The Linux Foundation now governs TRACE. Its own documentation is where the limits are: three trust levels, and Level 0 records a privileged operator can forge.",
+    date: "2026-08-30",
+    image: "/og-trace-runtime-attestation.jpg",
+    imageAlt: "turva.dev blog card: The Linux Foundation now governs TRACE. Its own documentation is where the limits are: three trust levels, and Level 0 records a privileged operator can forge.",
+  },
   "/blog/agent-readiness-code-hosts": {
     title: "I scanned fourteen code hosts. Not one served an MCP server card. | turva.dev",
     description: "Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
