@@ -284,6 +284,7 @@ check(doc.readiness.text.includes(ar), `${doc.readiness.rel} carries ${ar}`);
   check(doc.security.text.includes(`Checked ${checkedAt}`), `${doc.security.rel} carries Checked ${checkedAt}`);
 }
 
+let CAT_LOOKUP = () => undefined;
 console.log('\nCategory set (facts.json owns which categories exist)');
 // Five checks and one board proved the score. Nothing proved the SET. The five
 // categories are stated on six surfaces, in six different spellings, and until
@@ -323,6 +324,11 @@ console.log('\nCategory set (facts.json owns which categories exist)');
 
   const spellings = (c) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase());
   const resolve = (item) => CATS.find((c) => spellings(c).includes(String(item).trim().toLowerCase()));
+  // Sama haku tarvitaan kolmella muulla pinnalla (README-taulu, etusivun taulu ja MCP:n
+  // live-vastaus), jotka kaikki vertasivat riviaan KOKONAISPISTEESEEN 2026-08-30 asti.
+  // Se on gotchas 2026-08-01 (jatko 18) Ansa 4. Nostettu moduulitasolle, jotta jokainen
+  // pinta lukee saman kentan samalla tavalla eika kukin keksi omaa hakuaan.
+  CAT_LOOKUP = resolve;
   check(CATS.length > 0, `facts.json records the category set (${CATS.length})`);
   check(CATS.length > 0 && CATS.every((c) => typeof c.label === 'string' && c.label.trim().length > 0),
     'every category carries a non-empty board label');
@@ -337,6 +343,16 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   // per-category score stay, because those agree on both surfaces.
   check(CATS.length > 0 && CATS.every((c) => c.checks === undefined),
     'no category carries a check count (dropped 2026-08-29, see decisions.md)');
+  // The per-category SCORE, added 2026-08-30. It is not the count that Tek-296 dropped:
+  // the count's DENOMINATOR differs between the scanner's public page and its MCP tool
+  // (commerce 5 versus 4, api/auth 9 versus 8), which is why the count cannot be published,
+  // but the score is the same on both surfaces because 9/9 and 8/8 are both 100. Until this
+  // field existed every surface repeated the site-wide score in every category, and the
+  // board check below enforced exactly that. See gotchas 2026-08-01 (jatko 18) Ansa 4.
+  // CATS.length > 0 is part of the condition on purpose: an empty category list must not
+  // make `every` vacuously true, the same reason the label check above carries it.
+  check(CATS.length > 0 && CATS.every((c) => typeof c.score === 'string' && c.score.trim().length > 0),
+    'every category carries a non-empty score');
   // Resolution has to be unambiguous. Containment is the obvious collision and it is
   // not the only one: two spellings that merely OVERLAP, "bot access" and "access
   // control", both resolve inside the single phrase "bot access control" while neither
@@ -468,9 +484,16 @@ console.log('\nCategory set (facts.json owns which categories exist)');
         .map((m) => ({ cat: m[1].trim(), val: m[2].trim() }))
         .filter((r) => r.cat !== 'Category' && !/^-+$/.test(r.cat));
       enumerated(rows.map((r) => r.cat), 'README table', true);
-      const wrong = rows.filter((r) => r.val !== iar.score);
+      // Korjattu 2026-08-30 yhdessa etusivun taulun kanssa: rivi verrattiin ennen
+      // kokonaispisteeseen, mika on oikein vain niin kauan kuin jokainen kategoria on taysi.
+      // Puuttuva odotusarvo on FAIL eika ohitus, jotta kaksi katoavaa arvoa eivat vertaudu
+      // toisiinsa (sama osio, Ansa 2).
+      const wrong = rows.filter((r) => {
+        const want = (CAT_LOOKUP(r.cat) || {}).score;
+        return typeof want !== 'string' || want.trim().length === 0 || r.val !== want;
+      });
       check(rows.length > 0 && wrong.length === 0,
-        `every README table row reads ${iar.score} (${wrong.length ? 'wrong: ' + wrong.map((r) => r.cat + ' = ' + r.val).join(', ') : 'all ' + rows.length + ' rows'})`);
+        `every README table row reads its own category score from facts.json (${wrong.length ? 'wrong: ' + wrong.map((r) => r.cat + ' = ' + r.val + ' want ' + JSON.stringify((CAT_LOOKUP(r.cat) || {}).score)).join(', ') : 'all ' + rows.length + ' rows'})`);
     }
   }
 
@@ -1203,6 +1226,89 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     `every source anchor these gates read resolves${anchorFails.length ? ' :: ' + anchorFails.join(' | ') : ''}`);
 }
 
+// --- The homepage scan board, read STATICALLY from worker.js source ------------------
+// WHY THIS EXISTS. The board is hand-written HTML in worker.js. Tek-303 bound each cell's
+// VALUE to its own category's score in facts.json, but the only gate that read the board
+// was the live one further down, which fetches the served page. That means a plain
+// `node tools/verify.mjs` could not see the deployed page and facts.json drifting apart,
+// and the gap was noted as a side finding on 2026-08-01 (jatko 18) and left open until
+// 2026-08-30 (work queue B2).
+//
+// WHAT THIS CLAIM IS WORTH, said out loud because a green gate proves only what it
+// measures. Reading the source is a WEAKER claim than reading the served bytes: it proves
+// the string is in worker.js, not that a buyer's browser receives it. That distinction is
+// the whole point of gotchas 2026-07-26 (jatko 2), and it is why this block does not
+// replace the live one. What it adds is the half the live gate cannot give: it runs
+// without the network, on every static run, before any deploy, so a source edit that
+// breaks the binding fails at the desk rather than after the fact. The two gates answer
+// two different questions and both stay.
+//
+// BOTH DIRECTIONS ARE FAULTS, and that is deliberate. A cell that no longer matches its
+// category is drift in the surface. A category that has lost its score or its label is
+// drift in the data, and comparing an empty want against an empty got reads as agreement
+// (Ansa 2 in the same 2026-08-01 entry, measured in this very file). So a missing or
+// empty expected value is a FAIL here too, never a skip.
+const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
+  const virheet = [];
+  const gridM = lahde.match(/<div class="board-grid">([\s\S]*?)<\/div>\s*<div class="board-sum">([\s\S]*?)<\/div>/);
+  if (!gridM) return ['board-grid / board-sum not found in worker.js source'];
+  const cells = [...gridM[1].matchAll(/<div class="cell"><span class="cat">([^<]*)<\/span><span class="val">([^<]*)<\/span><\/div>/g)]
+    .map((m) => ({ cat: twDecode(m[1]).trim(), val: twDecode(m[2]).trim() }));
+  const want = (Array.isArray(kategoriat) ? kategoriat : []);
+  if (!want.length) virheet.push('facts.json declares no categories, so the board would be compared against nothing');
+  for (const c of want) {
+    if (typeof c.label !== 'string' || !c.label.trim()) virheet.push(`category ${c.id} has no board label in facts.json`);
+    if (typeof c.score !== 'string' || !c.score.trim()) virheet.push(`category ${c.id} has no score in facts.json`);
+  }
+  if (cells.length !== want.length) virheet.push(`board has ${cells.length} cells, facts.json declares ${want.length} categories`);
+  const gotLabels = cells.map((c) => c.cat).join(' | ');
+  const wantLabels = want.map((c) => String(c.label)).join(' | ');
+  if (!cells.length || gotLabels !== wantLabels) virheet.push(`board labels/order [${gotLabels}] != facts.json [${wantLabels}]`);
+  const byLabel = new Map(want.map((c) => [String(c.label), c]));
+  for (const c of cells) {
+    const w = (byLabel.get(c.cat) || {}).score;
+    if (typeof w !== 'string' || !w.trim() || c.val !== w) virheet.push(`cell "${c.cat}" reads ${JSON.stringify(c.val)}, facts.json says ${JSON.stringify(w)}`);
+  }
+  const sum = twSquash(twDecode(gridM[2].replace(/<[^>]+>/g, ' ')));
+  const wantSum = `verified ${kokonaispiste} ${taso} Agent-Native`;
+  if (sum !== wantSum) virheet.push(`board summary reads ${JSON.stringify(sum)}, want ${JSON.stringify(wantSum)}`);
+  return virheet;
+};
+{
+  // CONTROLS FIRST (Tek-118). A check that has never run is not green, it is unrun
+  // (gotchas 2026-08-16 (jatko 14)), and a negative test can be green for the wrong
+  // reason (2026-08-16 (jatko 9)). So both directions are exercised on synthetic input
+  // whose result does not depend on what is on disk, and the control set is asymmetric
+  // on purpose: the surface drifting from the data, and the data losing its value.
+  const kSarja = (rivit, summa) =>
+    `<div class="board-grid">${rivit}</div>\n<div class="board-sum"><span>verified</span> <b>${summa}</b> <span class="pill">Level 5</span> <span class="pill">Agent-Native</span></div>`;
+  const kCell = (cat, val) => `<div class="cell"><span class="cat">${cat}</span><span class="val">${val}</span></div>`;
+  const kCats = [{ id: 'a', label: 'alpha', score: '100/100' }, { id: 'b', label: 'beta', score: '90/100' }];
+  const kHyva = kSarja(kCell('alpha', '100/100') + kCell('beta', '90/100'), '100/100');
+  const kAjautunut = kSarja(kCell('alpha', '100/100') + kCell('beta', '80/100'), '100/100');   // pinta ajautui datasta
+  const kPuuttuva = kSarja(kCell('alpha', '100/100'), '100/100');                              // solu katosi pinnalta
+  const kJarjestys = kSarja(kCell('beta', '90/100') + kCell('alpha', '100/100'), '100/100');    // solut vaihtoivat paikkaa
+  const kSumma = kSarja(kCell('alpha', '100/100') + kCell('beta', '90/100'), '99/100');         // yhteenveto ajautui
+  const kTyhjaData = [{ id: 'a', label: 'alpha', score: '100/100' }, { id: 'b', label: 'beta', score: '' }];
+  const c1 = boardLoydot(kHyva, kCats, '100/100', 'Level 5').length === 0;
+  const c2 = boardLoydot(kAjautunut, kCats, '100/100', 'Level 5').length > 0;
+  const c3 = boardLoydot(kPuuttuva, kCats, '100/100', 'Level 5').length > 0;
+  const c4 = boardLoydot(kJarjestys, kCats, '100/100', 'Level 5').length > 0;
+  const c5 = boardLoydot(kSumma, kCats, '100/100', 'Level 5').length > 0;
+  const c6 = boardLoydot(kHyva, kTyhjaData, '100/100', 'Level 5').length > 0;   // data menetti arvon
+  const c7 = boardLoydot(kHyva, [], '100/100', 'Level 5').length > 0;           // tyhja ei ole sopu
+  const c8 = boardLoydot('<p>no board here</p>', kCats, '100/100', 'Level 5').length > 0;
+  const kaikki = c1 && c2 && c3 && c4 && c5 && c6 && c7 && c8;
+  if (!kaikki) {
+    bad(`static board gate: OWN CONTROLS DO NOT HOLD (clean ${c1}, drifted cell ${c2}, missing cell ${c3}, `
+      + `reordered ${c4}, drifted summary ${c5}, empty data ${c6}, no categories ${c7}, no board ${c8})`);
+  } else {
+    const loydot = boardLoydot(src.worker.text, CATS, iar.score, lvl);
+    check(loydot.length === 0,
+      `static board gate: worker.js source board == facts.json (${loydot.length ? loydot.join(' | ') : `${CATS.length} cells, labels, order, values and summary; 8 controls green; the SERVED page is proved by --live, not here`})`);
+  }
+}
+
 if (LIVE) {
   console.log('\nLive (URLs + signatures)');
   const base = 'https://turva.dev';
@@ -1282,9 +1388,21 @@ if (LIVE) {
       check(cells.length === CATS.length, `board shows ${CATS.length} cells (saw ${cells.length})`);
       check(cells.length > 0 && cells.length === CATS.length && cells.map((c) => c.cat).join(' | ') === wantLabels.join(' | '),
         `board labels == facts.json labels, in order (saw [${cells.map((c) => c.cat).join(', ')}])`);
-      const wrongVal = cells.filter((c) => c.val !== iar.score);
+      // Until 2026-08-30 this line read `c.val !== iar.score`, i.e. every cell had to equal
+      // the SITE-WIDE score. That is right only while every category is full, and it is the
+      // trap recorded in gotchas 2026-08-01 (jatko 18) Ansa 4. The cell is now compared to
+      // its own category's score in facts.json.
+      // A missing or empty expected value is a FAIL, not a skip. Without that, a facts.json
+      // that lost the field and a board that lost the number would compare undefined against
+      // undefined and print `pass ... saw undefined`, which is Ansa 2 in the same entry and
+      // was measured in this very file.
+      const catByLabel = new Map(CATS.map((c) => [String(c.label), c]));
+      const wrongVal = cells.filter((c) => {
+        const want = (catByLabel.get(c.cat) || {}).score;
+        return typeof want !== 'string' || want.trim().length === 0 || c.val !== want;
+      });
       check(cells.length > 0 && wrongVal.length === 0,
-        `every board cell reads ${iar.score} (${wrongVal.length ? 'wrong: ' + wrongVal.map((c) => c.cat + ' = ' + c.val).join(', ') : 'all ' + cells.length + ' cells'})`);
+        `every board cell reads its own category score from facts.json (${wrongVal.length ? 'wrong: ' + wrongVal.map((c) => c.cat + ' = ' + c.val + ' want ' + JSON.stringify((catByLabel.get(c.cat) || {}).score)).join(', ') : 'all ' + cells.length + ' cells'})`);
       // The summary carries the same two claims the hero carries, so it is read as a
       // whole string rather than as two independent substring searches: "100/100" and
       // "Level 5" both appearing somewhere in the block does not prove they are the
@@ -1957,9 +2075,16 @@ if (LIVE) {
         // as a pass, and it broke on any added word. The score is derived from this
         // category's own two counts rather than borrowed from the site total, which are
         // different numbers that happen to agree while everything passes.
-        const m = String(gotCats[c.id]).match(/^(\d+)$/);
-        check(!!m && Number(m[1]) === 100,
-          `get_agent_readiness ${c.id} reads 100 with no check count (saw ${JSON.stringify(gotCats[c.id])})`);
+        // Korjattu 2026-08-30. Odotusarvo oli kirjoitettu tahan literaalina (100), eli
+        // portilla oli oma kopio julkaistusta luvusta: jos luku muuttuu, portti vahtisi
+        // vanhaa arvoa. Se luetaan nyt facts.jsonin kategoriakohtaisesta kentasta.
+        // Muoto tarkistetaan yha, koska irrallisten kokonaislukujen poiminta hyvaksyi
+        // kerran merkityksen kaantavan sanan (gotchas 2026-08-01 (jatko 18) Ansa 3):
+        // vertailu on koko merkkijonolle eika sen sisalta loytyville numeroille.
+        const want = typeof c.score === 'string' ? c.score.trim() : '';
+        if (!want) { check(false, `facts.json category ${c.id} carries a score for the MCP comparison`); continue; }
+        check(String(gotCats[c.id]) === want,
+          `get_agent_readiness ${c.id} == facts.json ${JSON.stringify(want)} (saw ${JSON.stringify(gotCats[c.id])})`);
       }
     }
 

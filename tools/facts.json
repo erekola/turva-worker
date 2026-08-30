@@ -34,12 +34,13 @@
     "isitagentready": {
       "level": "Level 5",
       "score": "100/100",
+      "_categoryScoreComment": "score lisattiin 2026-08-30. measuredAt EI noussut, ja se on tarkoituksellista: paiva on peilattu viidelle julkaistulle pinnalle (worker.js kolmessa kohdassa, HOME_JSON lastVerified, README.md, docs/agent-readiness.md) ja sen nostaminen on oma muutoksensa ja oma deploynsa. 2026-08-30 ajettiin kaksi riippumatonta mittausta ja ne antoivat tasmalleen saman kuin 2026-08-20, eli lukema ei ole vanhentunut vaan vahvistettu; ks. työt/kategoriapiste/mittaukset-raw.txt. Ennen sita jokainen pinta toisti KOKONAISPISTEEN jokaisessa kategoriassa, ja verify.mjs vahti sita rivilla joka vaati cell.val === iar.score. Se on oikein vain niin kauan kuin kaikki menee lapi, ja se ansa on kirjattu jo 2026-08-01 (jatko 18) Ansa 4. ARVO ON PISTEMAARA SADASTA, EI TARKISTUKSIA TARKISTUKSISTA, ja se on pakotettu eika valittu: skanneri raportoi eri NIMITTAJAN julkisella sivullaan kuin MCP-rajapinnassaan (commerce 5/5 vastaan 4/4, api/auth 9 vastaan 8), mika oli Tek-296:n koko syy, mutta OSUUS on molemmilla sama koska 9/9 ja 8/8 ovat kumpikin 100. Muoto 100/100 valittiin siksi, etta etusivun taulu kayttaa jo sita eika sen tarvitse muuttua. Kentta checks EI palaa; se on tarkistusten lukumaara ja verify.mjs kaataa ajon jos se ilmestyy.",
       "categories": [
-        { "id": "discoverability",            "label": "discoverability",        "prose": [] },
-        { "id": "content",                    "label": "content",                "prose": ["content accessibility"] },
-        { "id": "bot_access_control",         "label": "bot access control",     "prose": [] },
-        { "id": "api_auth_mcp_a2a_discovery", "label": "api, auth, mcp & a2a",   "prose": ["api, auth, mcp and a2a discovery", "api/auth/mcp and a2a discovery", "api, auth, mcp & a2a discovery"] },
-        { "id": "commerce",                   "label": "commerce",               "prose": [] }
+        { "id": "discoverability",            "label": "discoverability",        "score": "100/100", "prose": [] },
+        { "id": "content",                    "label": "content",                "score": "100/100", "prose": ["content accessibility"] },
+        { "id": "bot_access_control",         "label": "bot access control",     "score": "100/100", "prose": [] },
+        { "id": "api_auth_mcp_a2a_discovery", "label": "api, auth, mcp & a2a",   "score": "100/100", "prose": ["api, auth, mcp and a2a discovery", "api/auth/mcp and a2a discovery", "api, auth, mcp & a2a discovery"] },
+        { "id": "commerce",                   "label": "commerce",               "score": "100/100", "prose": [] }
       ],
       "_surfaceWordingComment": "Added 2026-08-16 (Tek-225, round 8 section 2). On three surfaces the gate OWNED the wording: the sentence shape was hardcoded in tools/verify.mjs and read from nowhere, so verify.mjs was both the rule and the only record of the rule. Published wording belongs next to the published data, the same way category.label does. verify.mjs now reads these fields and fails if one is missing, so this is not a second copy of a value: it is the only copy, and the gate is the reader.",
       "surfaceWording": {
