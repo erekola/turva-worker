@@ -649,3 +649,25 @@ test("PGP: the advanced host serves its own policy file and redirects everything
   assert.equal(other.status, 301, "the advanced host is not a second copy of the site");
   assert.equal(other.headers.get("location"), "https://turva.dev/");
 });
+
+// Every canonical page RENDERS, in both forms. Added 2026-08-31 after /services shipped a 500
+// to every browser and no gate saw it: the page builders throw on malformed page markdown
+// (mdPcard: "does not open with a **price** block"), a bold price block had been rewrapped
+// onto three lines, and verify.mjs, the 39 tests here and check-docs were all green because
+// not one of them asked the router for the HTML of a page. The sitemap is the list, so a new
+// page is covered the day it is published rather than the day someone remembers this file.
+test("every page in the sitemap renders as HTML and as markdown", async () => {
+  const xml = await (await get("/sitemap.xml")).text();
+  const paths = [...xml.matchAll(/<loc>https:\/\/turva\.dev([^<]*)<\/loc>/g)].map((m) => m[1] || "/");
+  assert.ok(paths.length > 10, `the sitemap must list the pages (saw ${paths.length})`);
+  for (const path of paths) {
+    const html = await get(path);
+    assert.equal(html.status, 200, `${path} must render as HTML (saw ${html.status})`);
+    const body = await html.text();
+    assert.ok(body.length > 500 && !/Internal Server Error/.test(body),
+      `${path} must return a real page, not an error (${body.length} bytes)`);
+    const md = await get(path, { headers: { Accept: "text/markdown" } });
+    assert.equal(md.status, 200, `${path} must render as markdown (saw ${md.status})`);
+    assert.ok((await md.text()).length > 100, `${path} markdown must not be empty`);
+  }
+});
