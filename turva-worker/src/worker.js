@@ -49,7 +49,7 @@ max_age: 604800
 
 var CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-aKlb0igJUBpaIswN+2W7JxkrGLB89YJtZNFchOmOrcU='",
+  "script-src 'self' 'sha256-gPnpfxNGa34Ym/x20eYfj5xKHRhwjbEHT2c1tZ6vJJo='",
   "style-src 'self' 'unsafe-inline' https: data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
@@ -227,6 +227,8 @@ var LLMS_TXT = `# turva.dev
 - Audit: €4,300 (fixed scope, two weeks)
 - Advisory: €3,000 / month (monthly retainer, minimum 3 months)
 - Implementation: €1,500 / day (scoped per task)
+- Audit fix implementation: €499 (fixed, sold only together with the audit)
+- Shopify correction implementation: €999 (fixed, sold only together with the Shopify agent storefront check)
 
 Final price is confirmed in writing after scope is agreed.
 
@@ -1984,7 +1986,7 @@ Agent-readiness is a measurable property of a site, an API, or a product surface
 
 **How much does it cost?**
 
-Prices (EUR, VAT not included): Shopify agent storefront check €1,900 fixed price, Audit €4,300 fixed price, Advisory €3,000/month (minimum 3 months), Implementation €1,500/day scoped per task. Final price is confirmed in writing after scope is agreed.
+Prices (EUR, VAT not included): Shopify agent storefront check €1,900 fixed price, Audit €4,300 fixed price, Advisory €3,000/month (minimum 3 months), Implementation €1,500/day scoped per task, or a fixed €499 for implementing exactly the fixes an audit lists and €999 for the corrections a Shopify check lists, each bought together with that diagnosis. Final price is confirmed in writing after scope is agreed.
 
 **Do I need to share production credentials?**
 
@@ -2004,7 +2006,7 @@ The audit is fixed scope, two weeks.
 
 **Can our engineering team implement the fixes?**
 
-Yes. The audit report is the spec. Either I implement or your team does the work with the report as the spec.
+Yes, and the report is written for that. Every finding carries a fix instruction, and a link to the guide on this site for that surface where there is one. Either your team does the work from the report or I do. If you want me to, implementing exactly the fixes the report lists is €499 when it is bought together with the audit.
 
 **How is the result verified?**
 
@@ -2080,9 +2082,16 @@ What you get:
 
 What you do not get:
 - Calls or meetings
-- Implementation of the corrections, which is a separate engagement
+- Implementation of the corrections, which is bought separately and
+  priced below
 - A penetration test, or any Shopify, MCP, WebMCP or UCP certification
 - A test order, because the cart lifecycle stops before payment
+
+If you would rather not do the corrections yourself, implementing exactly
+the corrections this check lists is €999 when it is bought together with
+the check. That is the whole correction plan at a fixed price instead of
+the €1,500 day rate. Anything outside the plan is scoped separately at the
+day rate.
 
 The audit is not a prerequisite. The full scope, the exclusions and the preflight are on the
 [product page](/shopify-agent-storefront-check).
@@ -2107,6 +2116,9 @@ What you get:
   (answer engine optimization, AEO)
 - Written report with findings ranked by score impact and
   implementation cost
+- A fix instruction for every finding, and a link to the guide on this
+  site for that surface where there is one, so your team can do the work
+  without buying implementation
 - One round of written follow-up questions
 
 How it is measured:
@@ -2119,7 +2131,8 @@ How it is measured:
 
 What you do not get:
 - Calls or meetings
-- Implementation of the fixes (separate engagement)
+- Implementation of the fixes, which is bought separately and priced
+  below
 - Ongoing monitoring (separate engagement)
 
 Levels move with the check set. The same site can read Level 1 on a full
@@ -2130,7 +2143,13 @@ of it.
 Large sites are covered in full. If a site is big enough that the
 live checks reach a tool quota, the quota is raised rather than the
 coverage reduced. Once the audit is complete, the fixes it lists are
-typically about a day of implementation work, whether your team does them or I do. That figure is an estimate scoped to the findings this audit lists, not a fixed quote, and the audit is what identifies that work and orders it by impact.
+typically about a day of implementation work, whether your team does them or I do. That figure is an estimate scoped to the findings this audit lists, not a fixed quote, and the audit is what identifies that work and orders it by impact. The report carries the instructions for that work, so the implementation day is a choice rather than a condition.
+
+If you would rather not do it yourself, implementing exactly the fixes
+this audit lists is €499 when it is bought together with the audit.
+That is the whole list at a fixed price instead of the €1,500 day rate.
+Anything outside the list the report names is scoped separately at the
+day rate.
 
 Suited for teams that want a clear picture of where they stand
 before deciding what to do about it.
@@ -2165,7 +2184,9 @@ responsibility rather than a one-off cleanup.
 
 ## Implementation
 
-**€1,500 per day. Scoped per task.**
+**€1,500 per day. Scoped per task. €499 for the audit's own fix list, or
+€999 for the Shopify check's own correction plan, when bought together
+with that diagnosis.**
 
 Hands-on work on the fixes the audit identified, or new agent-ready
 infrastructure built from scratch. The audit comes first, because the day
@@ -2276,7 +2297,7 @@ An agent readiness audit measures how well AI agents can discover, read, and act
 
 **What does an agent readiness audit cost?**
 
-The Shopify agent storefront check is €1,900, fixed scope, delivered in 48 hours. The audit is €4,300, fixed scope, delivered in two weeks. Ongoing advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. All prices exclude VAT. Agent operations and MCP server design engagements are priced on request.
+The Shopify agent storefront check is €1,900, fixed scope, delivered in 48 hours. The audit is €4,300, fixed scope, delivered in two weeks. Ongoing advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. Implementing exactly what a diagnosis lists is a fixed €499 with the audit and €999 with the Shopify check, bought together with that diagnosis. All prices exclude VAT. Agent operations and MCP server design engagements are priced on request.
 
 **How is the audit delivered?**
 
@@ -2370,7 +2391,7 @@ Five written deliverables. The first four are sent as one package within 48 hour
 - Prioritised correction plan. Up to five specific changes, their owner and a ready acceptance check.
 - Retest. One verification of up to two corrected items within 14 days.
 
-Implementation of the corrections is not included. Your team can act on the plan directly, or the corrections can be bought separately as implementation days.
+Implementation of the corrections is not included in the €1,900. Your team can act on the plan directly, or implementing exactly the corrections this check lists is €999 when it is bought together with the check. Work outside the plan is scoped separately at the €1,500 implementation day rate.
 
 ## Price and timing
 
@@ -2416,7 +2437,7 @@ No. The Shopify agent storefront check is a separate fixed-scope diagnosis with 
 
 **What does it cost, and what is the delivery time?**
 
-€1,900 plus VAT, fixed scope. Four written deliverables arrive as one package within 48 elapsed hours of the agreed written kickoff. The fifth is a retest of up to two corrected items, within 14 days.
+€1,900 plus VAT, fixed scope. Four written deliverables arrive as one package within 48 elapsed hours of the agreed written kickoff. The fifth is a retest of up to two corrected items, within 14 days. Implementing exactly the corrections this check lists is a further €999, bought together with the check.
 
 **Do you need access to my Shopify Admin?**
 
@@ -2724,6 +2745,8 @@ No. An llms.txt and a markdown surface make the pages in front of the site reada
 
 These short guides explain, in plain language, what makes a website or an API easy for AI agents to read and use. Each one covers a single topic and takes a few minutes to read. They are free, and they cover the same surfaces an [agent-readiness audit](/services) measures.
 
+Every guide here is re-read against its primary sources at least once a month, and the two families that move fastest, agent commerce and MCP discovery, more often than that. Specifications move, and a sentence that was true the day it shipped can stop being true without anything on this site changing.
+
 The first guide explains what an agent-readiness audit is.
 
 ## Discovery and content
@@ -2802,7 +2825,7 @@ Most sites are built for human readers and search crawlers. AI agents read diffe
 
 The audit checks the parts an agent reaches first. Discoverability covers robots.txt, the sitemap, the response headers, and the DNS records that let an agent find resources without parsing a full HTML page. Content accessibility covers llms.txt, markdown content negotiation, and whether the site can return a clean text version that saves an agent most of the tokens an HTML page would cost. Bot access control covers the AI-bot rules, the content signals, and the bot-authentication directory that tell an agent how it is allowed to behave. API, auth, MCP and A2A discovery covers an MCP server card, an agent card, an OpenAPI description, an API catalog, and OAuth discovery, so an agent can enumerate what the site offers and authenticate safely. Commerce covers payment surfaces such as x402 and structured pricing, so an agent can transact.
 
-The result is a list. Each check passes or fails, and each failure comes with a concrete fix. The point is that the outcome is verifiable. An independent scanner reads the site before and after, and the categories that were fixed read higher on the next scan. The claim is the number, not an assertion.
+The result is a list. Each check passes or fails, and each failure comes with a concrete fix instruction and, where this site has a guide for that surface, a link to it. The report is written so your own team can do the work, which means implementation is something you buy if you want it rather than something the report forces on you. The point is that the outcome is verifiable. An independent scanner reads the site before and after, and the categories that were fixed read higher on the next scan. The claim is the number, not an assertion.
 
 turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-08-30. That is one scan on one day, and the scanner's check set moves, so a scan run today is a new measurement rather than a confirmation of this one. The audit a client receives runs the same checks against their site.
 
@@ -2820,7 +2843,7 @@ It checks the surfaces an agent reaches first, covering discoverability, content
 
 **What does an agent-readiness audit produce?**
 
-A pass or fail on each check, and a concrete fix for every failure that an independent scanner can verify before and after. The result is scored against current standards rather than opinion.
+A pass or fail on each check, and a concrete fix instruction for every failure, with a link to the guide on this site for that surface where there is one. Your own team can do the work from the report. An independent scanner verifies the result before and after, and the scoring is against current standards rather than opinion.
 
 ## Related
 
@@ -4547,6 +4570,10 @@ Use this skill to learn which services turva.dev offers, and which of them carry
 - **Agent operations.** On request. The data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
 - **MCP server design.** On request. Read-only discovery tools and streamable HTTP transport.
 
+Two add-ons are sold only together with the diagnosis they follow, and neither can be bought on its own.
+- **Audit fix implementation.** €499. Fixed. Exactly the fixes the audit report lists. Requires the audit.
+- **Shopify correction implementation.** €999. Fixed. Exactly the corrections the check's plan lists. Requires the Shopify agent storefront check.
+
 Final price is confirmed in writing after scope is agreed.
 
 ## Model
@@ -4628,7 +4655,7 @@ var WEBMCP_SCRIPT = `<script>
  inputSchema: { type: 'object', properties: {} },
  execute: async function() {
  const r = await fetch('/services', { headers: { Accept: 'text/markdown' } });
- return { markdown: await r.text(), pricing: { currency: 'EUR', vatIncluded: false, shopify: { price: 1900, unit: 'fixed' }, audit: { price: 4300, unit: 'fixed' }, advisory: { price: 3000, unit: 'month', minimumCommitmentMonths: 3 }, implementation: { price: 1500, unit: 'day' } } };
+ return { markdown: await r.text(), pricing: { currency: 'EUR', vatIncluded: false, shopify: { price: 1900, unit: 'fixed' }, audit: { price: 4300, unit: 'fixed' }, advisory: { price: 3000, unit: 'month', minimumCommitmentMonths: 3 }, implementation: { price: 1500, unit: 'day' } }, bundledImplementation: [{ name: 'Audit fix implementation', price: 499, currency: 'EUR', unit: 'fixed', requires: 'audit', soldSeparately: false }, { name: 'Shopify correction implementation', price: 999, currency: 'EUR', unit: 'fixed', requires: 'shopify', soldSeparately: false }] };
  }
  },
  {
@@ -5360,7 +5387,7 @@ var A2A_SKILL_IDS = ["services", "contact-info", "company-info"];
 
 function a2aSkillData(home, skillId) {
   if (skillId === "services") {
-    return { skill: "services", services: home.services, engagement: home.engagement };
+    return { skill: "services", services: home.services, bundledImplementation: home.bundledImplementation, engagement: home.engagement };
   }
   if (skillId === "contact-info") {
     // The card promises email, Signal, LinkedIn and the business ID. Every one of them is
@@ -5483,7 +5510,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 1900, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-08-30" }, null, 2);
+var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 1900, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 999, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-08-30" }, null, 2);
 var API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"

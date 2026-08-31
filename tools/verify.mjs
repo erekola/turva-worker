@@ -575,6 +575,84 @@ for (const svc of PRICED_STATIC) {
   check(src.worker.text.includes(euro), `worker.js ${euro} (${svc.name})`);
 }
 
+console.log('\nBundled implementation add-ons (Tek-317)');
+// Added 2026-08-31. These two are priced but they are NOT services: they are sold only
+// together with the diagnosis they follow, so putting them in facts.prices would have made
+// them standalone products to every gate above and to every checkout surface below. The
+// claim this block defends is exactly that split: the amounts are declared on the catalog
+// surfaces an agent reads, and they are absent from the surfaces an agent buys from.
+{
+  const B = Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : [];
+  const w = src.worker.text;
+  const ids = (facts.services || []).map((s) => s.id);
+  check(B.length > 0, `facts.json declares the bundled add-ons (${B.length})`);
+  check(B.length > 0 && B.every((x) => typeof x.id === 'string' && /^[a-z0-9-]+$/.test(x.id)), 'every bundled add-on carries a lowercase id');
+  check(new Set(B.map((x) => x.id)).size === B.length, 'bundled add-on ids are unique');
+  check(new Set(B.map((x) => x.name)).size === B.length, 'bundled add-on names are unique');
+  check(B.length > 0 && B.every((x) => Number.isFinite(x.price)), 'every bundled add-on carries a numeric price');
+  check(B.length > 0 && B.every((x) => typeof x.scope === 'string' && x.scope.trim()), 'every bundled add-on carries a scope sentence');
+  check(B.length > 0 && B.every((x) => ids.includes(x.requires)), `every bundled add-on requires a service that exists (${B.map((x) => x.requires).join(', ')})`);
+  // The whole point of the split. A key in prices is a standalone product to every other
+  // gate in this file, and these cannot be bought on their own.
+  const priceKeys = Object.keys(facts.prices);
+  check(B.every((x) => !priceKeys.includes(x.id)), 'no bundled add-on id doubles as a facts.prices key');
+  for (const x of B) {
+    const euro = '\u20ac' + x.price.toLocaleString('en-US');
+    check(w.includes(euro), `worker.js states ${euro} (${x.name})`);
+    check(w.includes(`"price": ${x.price}`) || w.includes(`price: ${x.price}`), `worker.js carries a structured price ${x.price} (${x.name})`);
+    // Absent from the checkout surfaces, in cents. An amount that appears here would mean an
+    // agent can buy the add-on without the diagnosis, which is the thing being promised away.
+    const cents = String(x.price * 100);
+    const acpI = w.indexOf('var ACP_SERVICES');
+    const acp = acpI < 0 ? '' : w.slice(acpI, w.indexOf('\nfunction buildAcpCheckoutSession', acpI));
+    check(acpI >= 0 && !acp.includes(cents), `ACP_SERVICES does not sell ${x.name} on its own (${cents} cents absent)`);
+  }
+  // Per-surface, not file-wide. The first version of this block searched the whole of
+  // worker.js for the amount, and an independent reviewer measured that deleting €499 from
+  // the llms.txt price list left the gate green, because the same amount sits on eight other
+  // surfaces in the same file. A gate that cannot see one surface go dark is not watching
+  // that surface. Anchors are data: a missing end anchor slices to the end of the file.
+  {
+    const regionOf = (label, start, end) => {
+      const i = w.indexOf(start);
+      if (i < 0) { bad(`bundled add-ons: ${label} start anchor missing (${start.slice(0, 40)})`); return null; }
+      const j = w.indexOf(end, i + start.length);
+      if (j < 0) { bad(`bundled add-ons: ${label} end anchor missing (${end.slice(0, 40)})`); return null; }
+      return w.slice(i, j);
+    };
+    const SURFACES = [
+      ['llms.txt price list',      '## Pricing (EUR, VAT not included)', 'Final price is confirmed'],
+      ['services skill markdown',  'var SKILL_SERVICES = ',              'var SKILL_COMPANY = '],
+      ['WebMCP get_services',      "name: 'get_services'",               "name: 'get_company'"],
+    ];
+    for (const [label, a, z] of SURFACES) {
+      const r = regionOf(label, a, z);
+      if (r === null) continue;
+      for (const x of B) {
+        const euro = '\u20ac' + x.price.toLocaleString('en-US');
+        check(r.includes(euro) || r.includes(`price: ${x.price}`) || r.includes(`"price": ${x.price}`),
+          `${label} states ${x.price} (${x.name})`);
+      }
+    }
+    // The A2A services skill answers from HOME_JSON, so the field has to be handed through.
+    check(w.includes('bundledImplementation: home.bundledImplementation'),
+      'a2aSkillData("services") hands the bundled add-ons to A2A');
+  }
+
+  // HOME_JSON is what A2A services and the JSON twin hand an agent, so the add-ons are read
+  // back from it rather than from the source line that writes them.
+  const homeSrc = (w.match(/var HOME_JSON = JSON\.stringify\(([\s\S]*?), null, 2\);/) || [])[1] || '{}';
+  let hb = [];
+  try { hb = JSON.parse(homeSrc).bundledImplementation || []; } catch { hb = []; }
+  check(hb.length === B.length, `HOME_JSON lists all ${B.length} bundled add-ons (saw ${hb.length})`);
+  for (const x of B) {
+    const got = hb.find((h) => h.name === x.name) || {};
+    check(got.price === x.price, `HOME_JSON ${x.name} priced ${x.price} (saw ${JSON.stringify(got.price)})`);
+    check(got.soldSeparately === false, `HOME_JSON ${x.name} says it is not sold separately (saw ${JSON.stringify(got.soldSeparately)})`);
+    check(typeof got.requires === 'string' && got.requires.trim(), `HOME_JSON ${x.name} names what it requires (saw ${JSON.stringify(got.requires)})`);
+  }
+}
+
 console.log('\nVersions');
 // Escape every regex metacharacter, not only the dot: a version string is not
 // user input, but a partial escape is the same defect wherever it is copied,
@@ -2052,6 +2130,24 @@ if (LIVE) {
       const wantIds = SERVICES.map((s) => s.id).sort().join(',');
       check(nonEmpty && gotIds === wantIds,
         `get_services names the facts.json service ids (want [${wantIds}], saw [${gotIds}])`);
+      // The bundled add-ons (Tek-317). turva-mcp is a separate repo, so no static check in
+      // this file can read it, and an independent reviewer named that gap: the two amounts
+      // lived there watched by nothing. They are watched HERE, live, which is the only place
+      // this repo can see that server at all. Absent field, wrong price or a missing
+      // requires all fail, and so does an add-on the MCP sells without its diagnosis.
+      const BUN = Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : [];
+      const mb = Array.isArray(svc.bundled_implementation) ? svc.bundled_implementation : [];
+      check(BUN.length > 0 && mb.length === BUN.length,
+        `get_services lists all ${BUN.length} bundled add-ons (saw ${mb.length})`);
+      for (const x of BUN) {
+        const got = mb.find((m) => m.id === x.id);
+        check(!!got && got.price === x.price,
+          `get_services bundled ${x.id} priced ${x.price} (saw ${JSON.stringify(got && got.price)})`);
+        check(!!got && got.requires === x.requires,
+          `get_services bundled ${x.id} requires ${x.requires} (saw ${JSON.stringify(got && got.requires)})`);
+        check(!!got && got.sold_separately === false,
+          `get_services bundled ${x.id} is not sold separately (saw ${JSON.stringify(got && got.sold_separately)})`);
+      }
     }
 
     const rdy = await callTool('get_agent_readiness');

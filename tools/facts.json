@@ -6,6 +6,11 @@
   "mtaSts": { "txtId": "20260804163000", "policySha256": "b0c9f2510733af63407355a825220d06171acf8fd6d29e2553c73cbd936ad8c8" },
   "released": { "site": "2026-08-30" },
   "prices": { "shopify": 1900, "audit": 4300, "advisory": 3000, "implementation": 1500, "currency": "EUR" },
+  "_bundledComment": "Added 2026-08-31 (Tek-317). Implementation of exactly what a diagnosis lists, sold ONLY together with that diagnosis. These are deliberately NOT in prices/services: verify.mjs binds a priced service to a price key one to one, and a service listed there is a thing an agent can buy on its own. These two cannot be bought on their own, so they are declared on the catalog surfaces (HOME_JSON, A2A services, WebMCP get_services, llms.txt, the services skill) with their requires field, and they are absent from the checkout surfaces (ACP_SERVICES, x402, AP2/MPP/UCP) on purpose. verify.mjs reads this list, so it is the only copy.",
+  "bundledImplementation": [
+    { "id": "audit-fixes",    "name": "Audit fix implementation",            "price": 499, "requires": "audit",   "scope": "Exactly the fixes the audit report lists." },
+    { "id": "shopify-fixes",  "name": "Shopify correction implementation",   "price": 999, "requires": "shopify", "scope": "Exactly the corrections the check's plan lists." }
+  ],
   "services": [
     { "id": "shopify",           "name": "Shopify agent storefront check", "priceKey": "shopify" },
     { "id": "audit",             "name": "Audit",                          "priceKey": "audit" },
