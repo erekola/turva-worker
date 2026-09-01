@@ -1,6 +1,6 @@
 {
   "name": "turva-worker",
-  "version": "3.112.3",
+  "version": "3.112.4",
   "private": true,
   "type": "module",
   "scripts": {
