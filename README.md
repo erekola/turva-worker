@@ -14,7 +14,7 @@ A consolidated reference to every surface agents read, with a short definition o
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-08-30: 100/100, Level 5 (Agent-Native) on isitagentready.com, Cloudflare's agent-readiness scanner.
+Measured on `https://turva.dev` on 2026-09-01: 100/100, Level 5 (Agent-Native) on isitagentready.com, Cloudflare's agent-readiness scanner.
 
 ### isitagentready.com category breakdown
 

@@ -488,6 +488,41 @@ test("brief: kaikki kolme muotoa tulevat samasta tunnuksesta", async () => {
   assert.ok(html.includes('href="' + kanta + '.json"'), "sivu linkittaa oman JSONinsa");
 });
 
+test("brief: loppuvalimerkki ohjataan pois, ei 404, Tek-323", async () => {
+  // Postiohjelma linkittaa tekstiosan osoitteen itse ja osa niista ottaa virkkeen
+  // lopettavan pisteen mukaan. Ilman tata reittia lukija saa 404:n juuri siita
+  // osoitteesta jonka viestin oli maara toimittaa. Mitattu 2026-08-31 elavana.
+  const kanta = "/brief/" + BRIEF_REC.id;
+  for (const [polku, kohde] of [
+    [kanta + ".", kanta],
+    [kanta + ",", kanta],
+    [kanta + ")", kanta],
+    [kanta + ".).", kanta],
+    [kanta + ".md.", kanta + ".md"],
+    [kanta + ".json)", kanta + ".json"]
+  ]) {
+    const r = await getBrief(polku);
+    assert.equal(r.status, 301, polku + " ohjataan");
+    assert.equal(r.headers.get("location"), "https://turva.dev" + kohde, polku + " ohjautuu oikeaan");
+    assert.match(r.headers.get("x-robots-tag") || "", /noindex/, polku + " ohjaus kantaa noindexin");
+  }
+});
+
+test("brief: siivous ei pelasta kelvotonta tunnusta eika koske muihin polkuihin, Tek-323", async () => {
+  // Portti saa korjata VAIN loppuvalimerkin. Jos se pelastaisi liian lyhyen tai
+  // isokirjaimisen tunnuksen, se avaisi polun jonka BRIEF_ID nimenomaan sulkee.
+  // "/brief/.." EI ole tassa listassa, ja syy on mittaus eika mielipide: URL-jasennin
+  // normalisoi sen poluksi "/" ennen kuin worker nakee sita, joten se vastaa 200:lla
+  // etusivuna eika kerro tasta reitista mitaan. Kelvottomuus testataan tunnuksella.
+  for (const p of ["/brief/lyhyt.", "/brief/ISOT.", "/brief/.", "/brief/", "/brief/aaaaaaa."]) {
+    const r = await getBrief(p);
+    assert.equal(r.status, 404, p + " ei saa ohjautua");
+  }
+  // Muut polut eivat kuulu tahan reittiin lainkaan.
+  const muu = await getBrief("/services.");
+  assert.notEqual(muu.status, 301, "siivous ei saa vuotaa /brief/-polun ulkopuolelle");
+});
+
 test("brief: tuntematon tunnus ja puuttuva binding vastaavat molemmat 404", async () => {
   const tuntematon = await getBrief("/brief/eioleolemassa-000000");
   assert.equal(tuntematon.status, 404);
