@@ -32,7 +32,7 @@ Commerce is optional in the isitagentready model, and turva.dev passes it. The n
 
 ## Web security
 
-Agent-readiness is one axis. The domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-08-28.
+Agent-readiness is one axis. The domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-09-01.
 
 | Scanner | Result |
 |---|---|
