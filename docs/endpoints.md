@@ -10,6 +10,7 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/llms-full.txt` | The whole site as one text file |
 | `/<page>.md` | The markdown twin of any page at its own address, `/index.md` for the home page (llms.txt v2) |
 | `/.well-known/agent.json` | ai-plugin / agent manifest |
+| `/.well-known/ai-plugin.json` | ai-plugin manifest, byte-identical to `agent.json` and signed with it (round 15 P3-1 added the row; the route existed and was verified all along) |
 | `/.well-known/mcp/server-card.json` | MCP server card |
 | `/.well-known/agent-card.json` | A2A agent card |
 | `/.well-known/ai-catalog.json` | Agentic Resource Discovery catalog |

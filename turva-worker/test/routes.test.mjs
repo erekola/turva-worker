@@ -815,3 +815,33 @@ test("footer: the copyright year is this year, read per request and not at modul
     assert.ok(!html.includes("1970 turva.dev"), path + " footer must not read the epoch year");
   }
 });
+
+test("R15 P4-2: OPTIONS answers 204 with preflight headers on every agent-api surface, not only /x402, /api/* and /agent/auth/*", async () => {
+  // Round 15 measured live that OPTIONS on /api, /openapi.json, /llms.txt and the
+  // /.well-known/ manifests fell through to the GET handler and returned the body with
+  // no access-control-allow-methods header. The preflight branch in src/worker.js now
+  // covers them; /v1/message:send keeps its own POST-only preflight and the fediverse
+  // aliases keep redirecting.
+  for (const path of ["/api", "/openapi.json", "/llms.txt", "/llms-full.txt", "/auth.md", "/robots.txt", "/.well-known/ai-plugin.json", "/.well-known/mcp/server-card.json", "/.well-known/agent-card.json", "/.well-known/x402", "/.well-known/api-catalog", "/x402", "/api/v1"]) {
+    const r = await worker.fetch(new Request("https://turva.dev" + path, { method: "OPTIONS" }), env, {});
+    assert.equal(r.status, 204, path + " must answer 204 to OPTIONS");
+    assert.equal(r.headers.get("access-control-allow-methods"), "GET, POST, OPTIONS", path);
+    assert.equal(r.headers.get("access-control-allow-origin"), "*", path);
+    assert.ok(r.headers.get("access-control-max-age"), path + " carries access-control-max-age");
+  }
+  const fedi = await worker.fetch(new Request("https://turva.dev/.well-known/webfinger", { method: "OPTIONS" }), env, {});
+  assert.equal(fedi.status, 301, "fediverse aliases still redirect on OPTIONS");
+  const a2a = await worker.fetch(new Request("https://turva.dev/v1/message:send", { method: "OPTIONS" }), env, {});
+  assert.equal(a2a.headers.get("access-control-allow-methods"), "POST, OPTIONS", "A2A keeps its own POST-only preflight");
+});
+
+test("R15 P1a-1: the agent-commerce-discovery guide states the AP2 URI without hyperlinking it", async () => {
+  // The URI is an identifier the A2A card declares (kept as is, see project-do-not-fix), but
+  // as an address it answers 404, so the guide must not render it as a link.
+  const r = await worker.fetch(new Request("https://turva.dev/guides/agent-commerce-discovery"), env, {});
+  assert.equal(r.status, 200);
+  const html = await r.text();
+  assert.ok(html.includes("google-agentic-commerce/ap2/tree/v0.1"), "the URI is still stated");
+  assert.ok(!/href="https:\/\/github\.com\/google-agentic-commerce\/ap2\/tree\/v0\.1"/.test(html), "the lowercase URI is not a hyperlink");
+  assert.ok(html.includes("identifier, not an address"), "the guide says why");
+});

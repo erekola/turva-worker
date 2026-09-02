@@ -1552,6 +1552,20 @@ if (LIVE) {
     catch (e) { bad(`GET ${u} -> ${e.code||e.message}`); }
   }
 
+  // Round 15 P4-2: a CORS preflight is part of the served contract of an agent-api surface.
+  // Live, OPTIONS on /api, /openapi.json, /llms.txt and every /.well-known/ manifest fell
+  // through to the GET handler and returned the body with no preflight headers, while
+  // /x402 and /api/v1 answered 204. Ask every agent-api surface the same question.
+  for (const p of ['/api', '/api/v1', '/x402', '/openapi.json', '/llms.txt', '/auth.md',
+    '/.well-known/ai-plugin.json', '/.well-known/mcp/server-card.json', '/.well-known/agent-card.json',
+    '/.well-known/x402', '/.well-known/api-catalog']) {
+    try {
+      const r = await fetch(base+p, { method: 'OPTIONS', redirect: 'manual', headers: { origin: 'https://example.com', 'access-control-request-method': 'GET' } });
+      check(r.status === 204 && r.headers.get('access-control-allow-methods') === 'GET, POST, OPTIONS',
+        `OPTIONS ${p} -> 204 with preflight headers (saw ${r.status} / ${r.headers.get('access-control-allow-methods')})`);
+    } catch (e) { bad(`OPTIONS ${p} -> ${e.code||e.message}`); }
+  }
+
   console.log('\nFAQ published where a reader can see it (B1-03)');
   // Read from the served page, not from worker.js: a gate that greps the source proves the
   // string is in the source, which was true all along while the reader saw nothing. The
