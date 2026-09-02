@@ -802,3 +802,16 @@ test("R3b-1: the IndexNow key file carries the agent-api security-header profile
   assert.equal(defaultProfile.headers.get("cross-origin-resource-policy"), "same-origin",
     "the default profile used elsewhere must stay same-origin, or this is not actually testing a difference");
 });
+
+test("footer: the copyright year is this year, read per request and not at module load", async () => {
+  // Round 14 R1f-1 first computed the year in global scope, and Workers freeze the clock at
+  // the epoch there, so the live footer read 1970. The year must come from the request clock.
+  const year = String(new Date().getUTCFullYear());
+  for (const path of ["/", "/services", "/guides/llms-txt", "/blog"]) {
+    const res = await get(path);
+    assert.equal(res.status, 200, path);
+    const html = await res.text();
+    assert.ok(html.includes("\u00a9 " + year + " turva.dev"), path + " footer carries " + year);
+    assert.ok(!html.includes("1970 turva.dev"), path + " footer must not read the epoch year");
+  }
+});
