@@ -19,6 +19,11 @@ and no advisory against this repository reaches production. They are still
 cleared as they appear, because this repository is a reference implementation
 people fork. Checked 2026-08-16.
 
+`package.json` also carries `"overrides": { "esbuild": "0.28.1" }`. wrangler
+pinned a vulnerable `esbuild` `0.27.3` at the time (GHSA-g7r4-m6w7-qqqr,
+GHSA-gv7w-rqvm-qjhr), and the override stays until wrangler's own dependency
+moves to at least `0.28.1` (Tek-16, 2026-06-14).
+
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability, please report it privately

@@ -1203,11 +1203,19 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       'serveGuideHtml renders the section as a card for any guide twin that carries one');
     check(gfn.includes('markdownToHtml(md.slice(0, faqAt))') && gfn.includes('markdownToHtml(md.slice(faqEnd))'),
       'serveGuideHtml renders the article around the card, so a question is not published twice');
-    // 27 of the 46 pages this template serves render no card at all (22 blog posts and the
-    // five guides with no FAQ), and the first version handed all 46 the card rules: 1 010
-    // bytes of CSS with no element to match, on a site that sells cheap pages for agents.
+    // Historical count only, corrected 2026-09-02 (round 14, R2b14-4). This comment said
+    // "27 of the 46 pages" and both numbers had already gone stale by round 13 (K13-V3,
+    // 2026-08-20) as the guide and blog set grew past the tree it was written against. The
+    // real counts are computed below from the same twinKeys/twConverted/hasFaq values this
+    // block already reads and are printed in the check message instead of hand-typed, so
+    // growth cannot reproduce the defect this replaces: the rule itself (guarded above) was
+    // never wrong, only its own description of how many pages it applies to.
+    const cardPagePaths = new Set(Object.keys(twConverted));
+    const guideServedPaths = twinKeys.filter((p) => !cardPagePaths.has(p));
+    const guideNoCardPaths = guideServedPaths.filter((p) => !hasFaq(p));
     check(gfn.includes('${faqAt === -1 ? "" : SCARD_CSS + "\\n" + FAQ_CSS + "\\n"}'),
-      'the guide template serves the card styles only to the pages that render a card');
+      `the guide template serves the card styles only to the pages that render a card `
+      + `(${guideNoCardPaths.length} of ${guideServedPaths.length} pages this template serves render no card, counted from disk, not written by hand)`);
     faqPaths.push(...faqTwins);
   }
 
@@ -1384,6 +1392,146 @@ const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
     const loydot = boardLoydot(src.worker.text, CATS, iar.score, lvl);
     check(loydot.length === 0,
       `static board gate: worker.js source board == facts.json (${loydot.length ? loydot.join(' | ') : `${CATS.length} cells, labels, order, values and summary; 8 controls green; the SERVED page is proved by --live, not here`})`);
+  }
+}
+
+console.log('\nOAuth scope count in prose (round 14, R1a-14-1)');
+// AUTH_MD spells the scope count as a word ("three scope names"), far from the two
+// objects that actually own the list. Nothing compared the word to scopes_supported,
+// so a scope added or removed would leave the sentence wrong and silent. Both objects
+// are read directly and compared to EACH OTHER too, so a divergence between the two
+// specs is caught rather than papered over by trusting only one of them.
+{
+  const scopeMatches = [...src.worker.text.matchAll(/"scopes_supported":\s*\[([^\]]*)\]/g)];
+  const counts = scopeMatches.map((m) => (m[1].match(/"[^"]+"/g) || []).length);
+  check(scopeMatches.length === 2 && counts.length === 2 && counts[0] === counts[1] && counts[0] > 0,
+    `OAUTH_DISCOVERY and OAUTH_PROTECTED_RESOURCE scopes_supported agree on a nonzero count (saw ${JSON.stringify(counts)}, ${scopeMatches.length} scopes_supported arrays found)`);
+  const SCOPE_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+  const n = counts[0] || 0;
+  const word = SCOPE_WORDS[n] || String(n);
+  const scopeWordM = src.worker.text.match(/authorization server, (\w+) scope names/);
+  check(!!scopeWordM && n > 0 && scopeWordM[1] === word,
+    `AUTH_MD states the scope count in words as "${word}" (${n} scopes in OAUTH_DISCOVERY/OAUTH_PROTECTED_RESOURCE, saw ${JSON.stringify(scopeWordM && scopeWordM[1])})`);
+}
+
+console.log('\nRobots.txt agent lists, generated and checked (round 14, R1a-14-2)');
+// ROBOTS_TXT is built from ROBOTS_ALLOW_AGENTS and ROBOTS_DISALLOW_AGENTS since round 13
+// (R1a-2), so a hand-typed copy cannot drift from its siblings any more. But nothing
+// proved the two lists still produce what this file claims they produce: every Allow
+// block carrying the Content-Signal line, every Disallow block carrying none. The
+// construction is EXECUTED here against the real source text via new Function, not
+// re-implemented in a second copy, so a change to the join/map logic itself is
+// exercised the same way it runs at request time, not just the two array literals.
+{
+  const robotsStart = 'var ROBOTS_ALLOW_AGENTS = [';
+  const robotsEnd = '+ "Sitemap: https://turva.dev/sitemap.xml\\n";';
+  const ri = src.worker.text.indexOf(robotsStart);
+  const rj = ri < 0 ? -1 : src.worker.text.indexOf(robotsEnd, ri);
+  if (ri < 0 || rj < 0) {
+    bad('robots.txt agent lists: ROBOTS_ALLOW_AGENTS..ROBOTS_TXT block not found in worker.js');
+  } else {
+    const robotsBlock = src.worker.text.slice(ri, rj + robotsEnd.length);
+    let ROBOTS_ALLOW_AGENTS, ROBOTS_DISALLOW_AGENTS, ROBOTS_TXT;
+    try {
+      ({ ROBOTS_ALLOW_AGENTS, ROBOTS_DISALLOW_AGENTS, ROBOTS_TXT } = new Function(robotsBlock
+        + '\nreturn { ROBOTS_ALLOW_AGENTS: ROBOTS_ALLOW_AGENTS, ROBOTS_DISALLOW_AGENTS: ROBOTS_DISALLOW_AGENTS, ROBOTS_TXT: ROBOTS_TXT };')());
+    } catch (e) {
+      bad('robots.txt agent lists: could not evaluate the ROBOTS_TXT construction: ' + e.message);
+    }
+    if (ROBOTS_TXT !== undefined) {
+      const robotsEsc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      check(Array.isArray(ROBOTS_ALLOW_AGENTS) && ROBOTS_ALLOW_AGENTS.length > 0,
+        `ROBOTS_ALLOW_AGENTS parsed from worker.js (${(ROBOTS_ALLOW_AGENTS || []).length} agents)`);
+      check(Array.isArray(ROBOTS_DISALLOW_AGENTS) && ROBOTS_DISALLOW_AGENTS.length > 0,
+        `ROBOTS_DISALLOW_AGENTS parsed from worker.js (${(ROBOTS_DISALLOW_AGENTS || []).length} agents)`);
+      const allowMissing = (ROBOTS_ALLOW_AGENTS || []).filter((ua) =>
+        !new RegExp(`User-agent: ${robotsEsc(ua)}\nAllow: /\nContent-Signal: search=yes, ai-input=yes, ai-train=yes\n`).test(ROBOTS_TXT));
+      check(allowMissing.length === 0,
+        `every ROBOTS_ALLOW_AGENTS member has an Allow block carrying the Content-Signal line in generated robots.txt${allowMissing.length ? ' :: ' + allowMissing.join(', ') : ''}`);
+      const disallowWrong = (ROBOTS_DISALLOW_AGENTS || []).filter((ua) => {
+        const hasDisallow = new RegExp(`User-agent: ${robotsEsc(ua)}\nDisallow: /\n`).test(ROBOTS_TXT);
+        const hasSignal = new RegExp(`User-agent: ${robotsEsc(ua)}\nDisallow: /\nContent-Signal`).test(ROBOTS_TXT);
+        return !hasDisallow || hasSignal;
+      });
+      check(disallowWrong.length === 0,
+        `every ROBOTS_DISALLOW_AGENTS member has a Disallow block with no Content-Signal line in generated robots.txt${disallowWrong.length ? ' :: ' + disallowWrong.join(', ') : ''}`);
+    }
+  }
+}
+
+console.log('\nSitemap and canonical path sets agree (round 14, R14d-5)');
+// Two parallel path sets both claim to enumerate "published pages" and nothing compared
+// them: SITEMAP_ENTRIES feeds sitemap.xml and the scheduled IndexNow submit, CANONICAL_PATHS
+// feeds every <link rel="canonical"> and getCanonicalForPath. /auth.md is the one allowed
+// asymmetry, named and reasoned rather than silently excluded: it is a machine-readable
+// markdown document with its own route, not an HTML page, so it stays in the sitemap for
+// agents without a canonical link or an IndexNow entry.
+{
+  const smM = src.worker.text.match(/var SITEMAP_ENTRIES = \[([\s\S]*?)\n\];/);
+  const cpM3 = src.worker.text.match(/var CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
+  const sitemapPaths = smM ? [...smM[1].matchAll(/\["([^"]+)"/g)].map((m) => m[1]) : [];
+  const canonicalPaths = cpM3 ? [...cpM3[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
+  check(sitemapPaths.length > 2 && canonicalPaths.length > 2,
+    `SITEMAP_ENTRIES (${sitemapPaths.length}) and CANONICAL_PATHS (${canonicalPaths.length}) both parsed from worker.js`);
+  const ALLOWED_SITEMAP_ONLY = ['/auth.md'];
+  const sitemapExtra = sitemapPaths.filter((p) => !canonicalPaths.includes(p) && !ALLOWED_SITEMAP_ONLY.includes(p));
+  const canonicalExtra = canonicalPaths.filter((p) => !sitemapPaths.includes(p));
+  check(sitemapExtra.length === 0,
+    `every SITEMAP_ENTRIES path is in CANONICAL_PATHS or the named allowlist (${ALLOWED_SITEMAP_ONLY.join(', ')})${sitemapExtra.length ? ' :: ' + sitemapExtra.join(', ') : ''}`);
+  check(canonicalExtra.length === 0,
+    `every CANONICAL_PATHS path is in SITEMAP_ENTRIES${canonicalExtra.length ? ' :: ' + canonicalExtra.join(', ') : ''}`);
+}
+
+console.log('\nRate limiter: wrangler.jsonc vs worker.js literals (round 14, R1g-1)');
+// The 100/60 s figure is written out as a literal in three places in worker.js (the
+// enforcement comment, the RateLimit-Policy header, and the 429 body) and none of them
+// read the wrangler.jsonc binding that actually sets the limit. A change to the binding
+// would leave every one of those three sentences advertising a number nobody enforces.
+{
+  const wranglerPath = join(ROOT, 'turva-worker/wrangler.jsonc');
+  const wranglerText = readFileSync(wranglerPath, 'utf8');
+  const rlM = wranglerText.match(/"name":\s*"RATE_LIMITER"[\s\S]{0,200}?"simple":\s*\{\s*"limit":\s*(\d+),\s*"period":\s*(\d+)\s*\}/);
+  const rlLimit = rlM ? Number(rlM[1]) : null;
+  const rlPeriod = rlM ? Number(rlM[2]) : null;
+  check(rlLimit !== null && rlPeriod !== null,
+    `wrangler.jsonc RATE_LIMITER simple.limit/period parsed (limit=${rlLimit}, period=${rlPeriod})`);
+  if (rlLimit !== null && rlPeriod !== null) {
+    check(src.worker.text.includes(`'"default";q=${rlLimit};w=${rlPeriod}'`),
+      `worker.js RateLimit-Policy header literal matches wrangler.jsonc (q=${rlLimit};w=${rlPeriod})`);
+    const rlWording = `${rlLimit} requests per ${rlPeriod} seconds`;
+    const rlWordingCount = (src.worker.text.match(new RegExp(rlWording.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+    check(rlWordingCount >= 2,
+      `worker.js states "${rlWording}" at least twice, covering the enforcement comment and the 429 body (saw ${rlWordingCount})`);
+  }
+}
+
+console.log('\nCurrency symbol matches facts.prices.currency (round 14, R2a-3)');
+// facts.prices.currency is read by NAME in several places (see priceKeys above) but its
+// VALUE was compared to nothing on a static run: every euro figure in worker.js uses a
+// literal "€", never facts.prices.currency. If the currency were ever changed in
+// facts.json, nothing here would notice the symbols in worker.js still say euro.
+{
+  const CURRENCY_SYMBOL = { EUR: '€', USD: '$', GBP: '£' };
+  const cur = facts.prices.currency;
+  check(cur === 'EUR', `facts.prices.currency is EUR (saw ${JSON.stringify(cur)})`);
+  const symbol = CURRENCY_SYMBOL[cur];
+  check(!!symbol, `a symbol is known for facts.prices.currency ${JSON.stringify(cur)}`);
+  if (symbol) {
+    // A bare "$" would match every template-literal interpolation ("${...}") in this
+    // file, so a stray currency symbol is one immediately followed by a digit, the shape
+    // a price actually takes, never a bare occurrence.
+    // Two or more consecutive digits, not one: a bare "$1" or "$2" in this file is a
+    // regex replacement backreference (String.prototype.replace's '$1'), not a price, and
+    // an earlier version of this check flagged one inside an unrelated mailto: linkifier.
+    const strayFound = Object.entries(CURRENCY_SYMBOL).filter(([k]) => k !== cur)
+      .filter(([, s]) => new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\d{2,}').test(src.worker.text))
+      .map(([k]) => k);
+    check(strayFound.length === 0,
+      `worker.js prices no service in a currency symbol other than ${symbol}${strayFound.length ? ' :: found ' + strayFound.join(', ') : ''}`);
+    const priceVals = Object.entries(facts.prices).filter(([k]) => k !== 'currency').map(([, v]) => v);
+    const missingSymbol = priceVals.filter((v) => !src.worker.text.includes(`${symbol}${v.toLocaleString('en-US')}`));
+    check(priceVals.length > 0 && missingSymbol.length === 0,
+      `every facts.prices amount appears in worker.js written with ${symbol}${missingSymbol.length ? ' :: missing ' + missingSymbol.join(', ') : ''}`);
   }
 }
 
@@ -1806,6 +1954,28 @@ if (LIVE) {
         check(got === facts.prices[svc.priceKey],
           `WebMCP get_services ${svc.priceKey} price == ${facts.prices[svc.priceKey]} (saw ${JSON.stringify(got)})`);
       }
+      // R2b14-1 (round 14). The loop above priced each known service but never asked
+      // whether wp carried anything else: an extra key, or a missing one, both pass
+      // silently, unlike the MCP tools/call sibling below, which enumerates its id set
+      // exactly (missing/unknown/duplicated). WebMCP's get_services never represents the
+      // quote-on-request services at all here (no id-keyed array, just this pricing
+      // object), so the equivalent of the sibling's UNPRICED loop is asserting none of
+      // their price keys ever show up in wp either, which the exact-set comparison below
+      // already does as a side effect of comparing wpKeys to wantKeys one for one.
+      {
+        const wpKeys = Object.keys(wp).filter((k) => k !== 'currency' && k !== 'vatIncluded');
+        const wantKeys = PRICED.map((s) => s.priceKey);
+        const wpSeen = new Set(), wpDupes = [];
+        for (const k of wpKeys) { if (wpSeen.has(k)) wpDupes.push(k); else wpSeen.add(k); }
+        const wpUnknown = wpKeys.filter((k) => !wantKeys.includes(k));
+        const wpMissing = wantKeys.filter((k) => !wpKeys.includes(k));
+        check(!!byName.get_services && wantKeys.length > 0 && wpKeys.length === wantKeys.length
+          && !wpUnknown.length && !wpDupes.length && !wpMissing.length,
+          `WebMCP get_services pricing carries exactly the ${wantKeys.length} priced keys, no unpriced service and no stray key (saw [${wpKeys.join(', ')}]`
+          + `${wpMissing.length ? ', missing: ' + wpMissing.join(', ') : ''}`
+          + `${wpUnknown.length ? ', unknown: ' + wpUnknown.join(', ') : ''}`
+          + `${wpDupes.length ? ', duplicated: ' + wpDupes.join(', ') : ''})`);
+      }
       // The markdown it hands back is the page a person reads, and the price is bound
       // to its own heading. An unbound search for the amount passed a markdown with
       // the three prices swapped between the three services, because all three numbers
@@ -1952,6 +2122,24 @@ if (LIVE) {
       return createPublicKey({ key: der, format: 'der', type: 'spki' });
     };
     const keyByKid = Object.fromEntries(jwks.keys.map((k) => [k.kid, jwkToKey(k)]));
+    // R2b14-2 (round 14). The loop below iterates Object.entries(sigs.signatures) and
+    // never checked how many entries that was: a signatures.json that lost every entry
+    // would run the loop zero times, issue zero bad() calls, and pass. The expected count
+    // is read from worker.js's own SIGNATURES_JSON rather than hardcoded here, so this
+    // cannot itself go stale when a manifest is added to or removed from the signing set.
+    {
+      const sjM = src.worker.text.match(/var SIGNATURES_JSON = "((?:[^"\\]|\\.)*)";/);
+      let wantSigCount = null;
+      if (sjM) {
+        try {
+          const decodedSigJson = new Function('return "' + sjM[1] + '"')();
+          wantSigCount = Object.keys(JSON.parse(decodedSigJson).signatures).length;
+        } catch (e) { /* leaves wantSigCount null; the check below fails closed on that */ }
+      }
+      const gotSigCount = Object.keys(sigs.signatures).length;
+      check(wantSigCount !== null && wantSigCount > 0 && gotSigCount === wantSigCount,
+        `/.well-known/signatures.json carries the same number of entries as worker.js SIGNATURES_JSON (want ${wantSigCount}, saw ${gotSigCount})`);
+    }
     for (const [p, s] of Object.entries(sigs.signatures)) {
       const body = await fetchBytes(p);
       const pub = keyByKid[s.kid];
@@ -2150,11 +2338,28 @@ if (LIVE) {
       }
     }
 
+    // R2b14-3 (round 14). Both blocks below read a scans array with .find(), which
+    // returns only the FIRST member whose provider matches and says nothing about the
+    // rest: a duplicated or malformed second entry for the same provider would sit right
+    // after the one .find() returns and nothing here would see it. Checked once per array
+    // (this function covers all four .find() call sites that follow, since each reads the
+    // same rdy.scans or secEv.scans snapshot), before any of them run.
+    const scansSane = (arr, label) => {
+      const list = Array.isArray(arr) ? arr : [];
+      const providers = list.map((s) => s && s.provider);
+      const seen = new Set(), dupes = [];
+      for (const p of providers) { if (seen.has(p)) dupes.push(p); else seen.add(p); }
+      check(list.length > 0 && dupes.length === 0 && providers.every((p) => typeof p === 'string' && p.trim()),
+        `${label} scans: ${list.length} entries, each names a provider exactly once${dupes.length ? ' :: duplicated ' + dupes.join(', ') : ''}`);
+      return list;
+    };
+
     const rdy = await callTool('get_agent_readiness');
     if (rdy) {
       const scanner = facts.agentReadiness.isitagentready;
       check(rdy.measured_at === facts.agentReadiness.measuredAt,
         `get_agent_readiness measured_at == facts.json ${facts.agentReadiness.measuredAt} (saw ${rdy.measured_at})`);
+      scansSane(rdy.scans, 'get_agent_readiness');
       const scan = (rdy.scans || []).find((s) => s.provider === 'isitagentready.com') || {};
       check(String(scan.result || '').includes(scanner.score) && String(scanner.level) && String(scan.result || '').includes(scanner.level),
         `get_agent_readiness states ${scanner.score} and ${scanner.level} (saw ${JSON.stringify(scan.result)})`);
@@ -2191,6 +2396,7 @@ if (LIVE) {
       // The two records state the same measurement in different words on purpose
       // ("all 13 categories passed" against "13/13 categories passed", "98/100" against
       // a score beside a scale), so the numbers are compared and the prose is not.
+      scansSane(secEv.scans, 'get_security_evidence');
       const hz = (secEv.scans || []).find((s) => s.provider === 'Hardenize') || {};
       const wantHz = ints(facts.security.hardenize.result)[0];
       // The word carries as much of the claim as the number does: reading loose integers

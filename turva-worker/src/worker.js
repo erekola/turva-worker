@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.112.6 - round 14 read the four repos byte by byte and this release carries its worker.js fixes: article:modified_time and the sitemap lastmod read the modified date the JSON-LD already read, the x402 merchant block carries legal_name and business_id like its three siblings, AP2 and MPP name the same quote channels, the OpenAPI description names every x402 challenge root, the footer year is computed, robots.txt is generated from one list, the CORS preflight runs after the host redirects, the IndexNow key file keeps its agent-api profile under rate limiting, the home Services tags fail closed, the badge alt text matches the SVG, the hosted validator carries the npm package's contentType guard, auth.md names the six year retention period, the TRACE post carries a Related section, and the ARD, SEP-2127, AP2, IETF and CyberGym claims carry their sources. The MCP server card moves to 1.3.10 because its get_security_evidence description now names the Internet.nl mail scan, so the card bytes and their signature move together. v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -94,57 +94,15 @@ function applySecurityHeaders(headers, kind) {
   }
 }
 
-var ROBOTS_TXT = `# robots.txt
-# Content Signals per contentsignals.org
-
-User-agent: *
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-
-User-agent: GPTBot
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-
-User-agent: OAI-SearchBot
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-
-User-agent: ChatGPT-User
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-
-User-agent: ClaudeBot
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-
-User-agent: Claude-User
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-
-User-agent: Claude-SearchBot
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-
-User-agent: PerplexityBot
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-
-User-agent: Perplexity-User
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-
-User-agent: Google-Extended
-Allow: /
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-
-User-agent: FacebookBot
-Disallow: /
-
-User-agent: Meta-ExternalAgent
-Disallow: /
-
-Sitemap: https://turva.dev/sitemap.xml
-`;
+// One list, one signal line. The ten Allow blocks used to be ten hand-typed copies of
+// the same Content-Signal line (round 13 R1a-2); now a copy cannot drift from its siblings.
+var ROBOTS_ALLOW_AGENTS = ["*", "GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User", "Claude-SearchBot", "PerplexityBot", "Perplexity-User", "Google-Extended"];
+var ROBOTS_DISALLOW_AGENTS = ["FacebookBot", "Meta-ExternalAgent"];
+var ROBOTS_CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=yes";
+var ROBOTS_TXT = "# robots.txt\n# Content Signals per contentsignals.org\n\n"
+  + ROBOTS_ALLOW_AGENTS.map(function(ua) { return "User-agent: " + ua + "\nAllow: /\n" + ROBOTS_CONTENT_SIGNAL + "\n\n"; }).join("")
+  + ROBOTS_DISALLOW_AGENTS.map(function(ua) { return "User-agent: " + ua + "\nDisallow: /\n\n"; }).join("")
+  + "Sitemap: https://turva.dev/sitemap.xml\n";
 
 var LLMS_TXT = `# turva.dev
 
@@ -341,7 +299,8 @@ To revoke prior correspondence or request deletion of stored
 metadata, use https://turva.dev/agent/auth/revoke
 or email <mailto:info@turva.dev?subject=agent%20revocation>.
 Records held to meet Finnish accounting obligations (invoices)
-cannot be deleted until the statutory retention period ends.
+cannot be deleted until the statutory retention period ends,
+six years for invoice records under Finnish accounting law.
 
 ## Engagement principles
 
@@ -409,6 +368,12 @@ The part that is already useful is the vocabulary. If you run agents against pro
 For EU buyers there is one more concrete hook. The project states that Level 0 does not satisfy the tamper-evident logging requirement of EU AI Act Article 12, and that DORA Article 9 needs Level 1 or above with transparency log anchoring. If someone shows you a compliance story built on software-only signing, that gap is written down in the specification's own limitations page.
 
 Sources: [Linux Foundation press release, 25 August 2026](https://www.linuxfoundation.org/press/linux-foundation-welcomes-trace-to-advance-verifiable-runtime-evidence-for-ai-workloads), [TRACE v0.2 specification](https://trace.agentrust-io.com/spec/trace-v0.2/), [TRACE trust levels](https://trace.agentrust-io.com/docs/trust-levels/), [TRACE known limitations](https://trace.agentrust-io.com/LIMITATIONS/), [trace-spec on GitHub](https://github.com/agentrust-io/trace-spec).
+
+## Related
+
+- [When an agent can prove it is Claude](/blog/verifiable-agent-identity)
+- [How agents authenticate](/guides/agent-authentication)
+- [Letting agents act on data: the decision envelope](/guides/letting-agents-act-on-data)
 `,
   "/blog/agent-readiness-code-hosts": `# I scanned fourteen code hosts. Not one served an MCP server card.
 
@@ -1005,7 +970,7 @@ The well was not draining. It was being sipped. What we are watching is not a bu
 
 ## The capability is in the harness
 
-MDASH is over a hundred agents, multi-model debate across model families, and a separate pipeline that proves candidates before a human ever sees them. Microsoft reports it at 88,45 % on CyberGym, a benchmark for real-world vulnerability discovery. Anthropic's gated frontier model, Claude Mythos, is reported at 83,1 % on the same benchmark.
+MDASH is over a hundred agents, multi-model debate across model families, and a separate pipeline that proves candidates before a human ever sees them. Microsoft reports it at 88,45 % on [CyberGym](https://arxiv.org/abs/2506.02548), a benchmark for real-world vulnerability discovery, in its [12 May 2026 announcement](https://www.microsoft.com/en-us/security/blog/2026/05/12/defense-at-ai-speed-microsofts-new-multi-model-agentic-security-system-tops-leading-industry-benchmark/). Anthropic's gated frontier model, Claude Mythos, is reported at 83,1 % on the same benchmark; the same Microsoft post names that figure as the entry just below its own, and [GeekWire's coverage](https://www.geekwire.com/2026/microsofts-multi-agent-ai-system-tops-anthropics-mythos-on-cybersecurity-benchmark/) attributes it to Mythos.
 
 I am not going to tell you the harness beats the model. Those two figures come from two different parties under conditions neither published, and five points is well inside what a difference in evaluation setup can produce. What the pair does establish is an order of magnitude: an orchestration layer running an ensemble, distilled models included, lands in the same range as the most capable model anyone has built.
 
@@ -1471,7 +1436,7 @@ against the displaying site by anyone, at any time.
 
 Copy this HTML where you want the badge to appear:
 
-    <a href="https://turva.dev/badge"><img src="https://turva.dev/badge.svg" alt="agent-ready, criteria at turva.dev/badge" width="216" height="36" loading="lazy"></a>
+    <a href="https://turva.dev/badge"><img src="https://turva.dev/badge.svg" alt="agent-ready. Criteria at turva.dev/badge" width="216" height="36" loading="lazy"></a>
 
 The image is 216 by 36 pixels, dark background, under one kilobyte.
 
@@ -2896,7 +2861,7 @@ The file format did not change. v2 added two standard link relations so an agent
 
   "/guides/mcp-server-card": `# MCP server cards explained
 
-An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. Deployed cards, turva.dev's among them, commonly sit at /.well-known/mcp/server-card.json. SEP-2127, the open proposal behind the card, now develops it as an experimental MCP extension. As of September 2026 its draft reserves a different default, the MCP endpoint URL followed by /server-card, and it does not recommend a /.well-known path for the card itself. Site-level discovery sits in the Agentic Resource Discovery catalog at /.well-known/ai-catalog.json instead, so the convention is still moving. An agent reads the card, finds the endpoint, and can then connect without a human wiring up the connection first.
+An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. Deployed cards, turva.dev's among them, commonly sit at /.well-known/mcp/server-card.json. [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), the open proposal behind the card, now develops it as an [experimental MCP extension](https://github.com/modelcontextprotocol/experimental-ext-server-card). As of September 2026 its draft reserves a different default, the MCP endpoint URL followed by /server-card, and it does not recommend a /.well-known path for the card itself. Site-level discovery sits in the Agentic Resource Discovery catalog at /.well-known/ai-catalog.json instead, so the convention is still moving. An agent reads the card, finds the endpoint, and can then connect without a human wiring up the connection first.
 
 The Model Context Protocol is a standard way for agents to use external tools and data. A server implements the protocol and exposes a set of tools, and the card is how that server announces itself. Without a card or a registry listing, an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live.
 
@@ -2970,7 +2935,7 @@ When an agent requests a paid resource, the server responds with 402 and a manif
 
 This matters because agent commerce is held back by payment, not by capability. An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A declared payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search.
 
-x402 belongs to a small family of agent payment standards, and its relationship to AP2 is worth stating precisely. They are separate specifications. AP2 defines the mandates and receipts that authorize a payment, and x402 defines an HTTP 402 payment flow that a separate extension, a2a-x402, carries into agent-to-agent work. As of September 2026 the AP2 documentation describes the two as complementary and says the alignment is ongoing, so a site treats them as protocols it may support side by side rather than as one finished stack. A site that publishes these signals tells agents that it is open for automated business, and in the case of the open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
+x402 belongs to a small family of agent payment standards, and its relationship to AP2 is worth stating precisely. They are separate specifications. AP2 defines the mandates and receipts that authorize a payment, and x402 defines an HTTP 402 payment flow that a separate extension, a2a-x402, carries into agent-to-agent work. As of September 2026 the AP2 project ships x402 scenarios among its own [samples](https://github.com/google-agentic-commerce/AP2/tree/main/code/samples/python/scenarios/a2a/human-present/x402) and the [a2a-x402 extension](https://github.com/google-agentic-commerce/a2a-x402) carries its own specification, so a site treats them as protocols it may support side by side rather than as one finished stack. A site that publishes these signals tells agents that it is open for automated business, and in the case of the open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
 
 turva.dev publishes an x402 endpoint and manifest. For an audit of a site's commerce surface for agents, contact info@turva.dev.
 
@@ -2998,7 +2963,7 @@ The checkout, not the capability. An agent can find a product and compare option
 
 Response headers are the metadata a server sends with every page, and the right ones let an AI agent work without parsing the full HTML. They are the cheapest place to make a site more legible to automated clients, because an agent reads them before it reads the body.
 
-A Link header can point an agent straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the agent finds them without crawling. A Vary header that includes Accept tells caches and agents that the site can return different formats for the same URL, which is what makes markdown content negotiation reliable. RateLimit and RateLimit-Policy headers let a well-behaved agent throttle itself instead of guessing, though as of July 2026 their IETF draft, revision 11 from May 2026, remains active without yet becoming a standard. Content-Language and a clean content type remove ambiguity about what the agent is reading.
+A Link header can point an agent straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the agent finds them without crawling. A Vary header that includes Accept tells caches and agents that the site can return different formats for the same URL, which is what makes markdown content negotiation reliable. RateLimit and RateLimit-Policy headers let a well-behaved agent throttle itself instead of guessing, though as of July 2026 their [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/), revision 11 from May 2026, remains active without yet becoming a standard. Content-Language and a clean content type remove ambiguity about what the agent is reading.
 
 The reason headers matter is order. An agent fetches the response, reads the status and headers first, and decides what to do next from them. If the headers already say where the structured data is and what formats are available, the agent can skip the expensive step of parsing a page built for human display.
 
@@ -3128,7 +3093,7 @@ Because it turns discovery into a lookup rather than a search. An agent fetches 
 
   "/guides/agentic-resource-discovery": `# Agentic Resource Discovery and ai-catalog.json
 
-Agentic Resource Discovery, or ARD, is an open specification for telling AI agents what a site offers, in one machine-readable file. Instead of inferring from pages whether a site has an MCP server, an agent interface, or an API, the site publishes a single index that names each resource and where to reach it. The specification appeared in 2026, is licensed under Apache 2.0, and builds on the AI Catalog data model maintained by a working group under the Linux Foundation.
+Agentic Resource Discovery, or ARD, is an open specification for telling AI agents what a site offers, in one machine-readable file. Instead of inferring from pages whether a site has an MCP server, an agent interface, or an API, the site publishes a single index that names each resource and where to reach it. The specification appeared in 2026, is licensed under Apache 2.0, and builds on the AI Catalog data model maintained by a working group under the Linux Foundation, as its [June 2026 announcement](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/) states.
 
 ## What it is
 
@@ -3144,7 +3109,7 @@ An ai-catalog.json is not a ranking trick and it is not a content map. llms.txt 
 
 ## Why it matters
 
-Adoption is early. In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json, so publishing one now is a forward move rather than table stakes. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
+Adoption is early. In a June 2026 check I ran against their public well-known paths, none of the launch partners the [announcement](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/) shows yet served a discoverable ai-catalog.json, so publishing one now is a forward move rather than table stakes. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
 
 turva.dev serves an ai-catalog.json at /.well-known/ai-catalog.json that indexes its MCP server, its A2A agent, its API, and its agent skills, each of which already resolves on its own. For an audit of a site's discovery surface, contact info@turva.dev.
 
@@ -3890,8 +3855,8 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.112.5",
-    "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes.",
+    "version": "3.112.6",
+    "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
   },
@@ -3992,7 +3957,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"UDY6ybVf-GlNRSBMh03MyObBBff0SEPmlh_Zbk1oW0HJ8gZB_EMdL2rRxBvTVLwAShQgKCG_L3qYUWk6MqMeAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Ii1jVXc7l10Q_dROhKVTkwOTNtjQ4YB_ej2PvncAJlKVWDVkCwWnz0yA6zmVXSTH1CUeom14rZAUGKcsXFftDg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"795bMSleZa8Z6BvaBmpuFXfxLtmu-5Jvwn5wFztmzLPt8e86ejiXjgQNuI2Igmk8gsTrhh3DqyFfjrUPxz-qBA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Ii1jVXc7l10Q_dROhKVTkwOTNtjQ4YB_ej2PvncAJlKVWDVkCwWnz0yA6zmVXSTH1CUeom14rZAUGKcsXFftDg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -4007,7 +3972,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "turva.dev/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.3.9",
+  "version": "1.3.10",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -4016,7 +3981,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.3.9",
+    "version": "1.3.10",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -4035,7 +4000,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "tools": [
     { "name": "get_services", "description": "Service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
     { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, measurement date, and verification links." },
-    { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl), with the scan date." },
+    { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl site and mail), with the scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." }
   ],
   "_meta": {
@@ -4115,7 +4080,7 @@ var AP2_MANIFEST = JSON.stringify({
   "quote_endpoint": {
     "type": "human_contact",
     "channels": [
-      { "type": "email", "value": "mailto:info@turva.dev" },
+      { "type": "email", "value": "mailto:info@turva.dev?subject=Quote%20request" },
       { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" },
       { "type": "linkedin", "value": "https://www.linkedin.com/in/erikrekola/" }
     ],
@@ -4151,7 +4116,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.112.5",
+  "version": "3.112.6",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4365,6 +4330,8 @@ var X402_MANIFEST = JSON.stringify({
   ],
   "merchant": {
     "name": "turva.dev",
+    "legal_name": "Erik Rekola",
+    "business_id": "3600281-7",
     "country": "FI",
     "contact": "mailto:info@turva.dev"
   }
@@ -4439,7 +4406,8 @@ var MPP_MANIFEST = JSON.stringify({
     "supported_rails": ["card-stripe-link", "x402-base-usdc"],
     "quote_channels": [
       { "type": "email", "value": "mailto:info@turva.dev?subject=Quote%20request" },
-      { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" }
+      { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" },
+      { "type": "linkedin", "value": "https://www.linkedin.com/in/erikrekola/" }
     ],
     "typical_response_time": "P1D",
     "languages": ["en"]
@@ -4738,9 +4706,9 @@ function buildSitemapXml() {
     const path = e[0], cf = e[1], pr = e[2];
     let lastmod;
     if (path.indexOf("/blog/") === 0) {
-      lastmod = (META_BY_PATH[path] && META_BY_PATH[path].date) || SITEMAP_LASTMOD;
+      lastmod = (META_BY_PATH[path] && (META_BY_PATH[path].modified || META_BY_PATH[path].date)) || SITEMAP_LASTMOD;
     } else if (path === "/blog") {
-      const ds = Object.keys(META_BY_PATH).filter(function(k) { return k.indexOf("/blog/") === 0; }).map(function(k) { return META_BY_PATH[k].date; }).filter(Boolean).sort();
+      const ds = Object.keys(META_BY_PATH).filter(function(k) { return k.indexOf("/blog/") === 0; }).map(function(k) { return META_BY_PATH[k].modified || META_BY_PATH[k].date; }).filter(Boolean).sort();
       lastmod = ds.length ? ds[ds.length - 1] : SITEMAP_LASTMOD;
     } else {
       lastmod = SITEMAP_LASTMOD;
@@ -5216,7 +5184,7 @@ function buildMetaBlock(pathname, canonicalUrl) {
   if (isArticle) {
     articleMeta = `\n<meta property="article:author" content="https://www.linkedin.com/in/erikrekola/" />\n<meta property="article:section" content="${pathname.startsWith("/blog/") ? "Blog" : "Guides"}" />`;
     if (m.date) {
-      articleMeta += `\n<meta property="article:published_time" content="${m.date}" />\n<meta property="article:modified_time" content="${m.date}" />`;
+      articleMeta += `\n<meta property="article:published_time" content="${m.date}" />\n<meta property="article:modified_time" content="${m.modified || m.date}" />`;
     }
   }
   const st = escapeHtml(m.title);
@@ -6140,7 +6108,7 @@ var FOOTER_HTML = `<footer class="tv-foot">
     <a class="ft-row" rel="me" href="https://gravatar.com/erekola"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18.5c1-2.4 3-3.8 5.5-3.8s4.5 1.4 5.5 3.8"/></svg><span>Gravatar</span></a>
     <a class="ft-row" href="https://github.com/erekola"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span>GitHub</span></a>
   </div>
-  <div class="foot-meta">Tampere, Finland · <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">Business ID 3600281-7</a> · © 2026 turva.dev</div>
+  <div class="foot-meta">Tampere, Finland · <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">Business ID 3600281-7</a> · © ${new Date().getUTCFullYear()} turva.dev</div>
 </footer>`;
 
 function serveGuideHtml(pathname, canonicalUrl) {
@@ -6268,7 +6236,11 @@ function serveHomeHtml(canonicalUrl) {
   const stepBody = (t) => t.slice(t.indexOf(". ") + 2);
   const svcCards = mdLists("/", "Services")[0].map((it) => {
     const svcName = it.split(". ")[0];
-    const tag = it.includes("Fixed scope") ? "fixed scope" : it.includes("Monthly retainer") ? "monthly" : it.includes("per day") ? "per day" : "on request";
+    // Fail closed: every service line must carry one of the four pricing phrases. A
+    // phrase that drifts in the twin used to fall silently into "on request" (round 13
+    // R1f-3); now the home page render, which routes.test.mjs exercises, throws instead.
+    const tag = it.includes("Fixed scope") ? "fixed scope" : it.includes("Monthly retainer") ? "monthly" : it.includes("per day") ? "per day" : it.includes("On request") ? "on request" : null;
+    if (!tag) throw new Error("home Services line carries no pricing phrase: " + svcName);
     return `<div class="svc"><div class="svc-h"><span class="svc-t">${svcName}</span><span class="svc-tag">${tag}</span></div><p>${it.slice(svcName.length + 2)}</p></div>`;
   }).join("\n      ");
   const body = `<!doctype html>
@@ -7099,7 +7071,7 @@ ${cardPageNav("/badge")}
   ${mdCard("/badge", "What it is, and what it is not")}
   <div class="scard"><h2>How to embed it</h2>
     <p>The badge looks like this:</p>
-    <p><img src="/badge.svg" alt="agent-ready, criteria at turva.dev/badge" width="216" height="36"></p>
+    <p><img src="/badge.svg" alt="agent-ready. Criteria at turva.dev/badge" width="216" height="36"></p>
     ${mdBodyHtml("/badge", "How to embed it")}
   </div>
   ${mdCard("/badge", "If your site is not there yet")}
@@ -7308,7 +7280,7 @@ function validateLlmsTxt(f) {
     return checks;
   }
   add("http-status", "pass", "File exists at /llms.txt", f.redirectedFrom ? "HTTP 200, followed a redirect from " + f.redirectedFrom + " to " + f.finalUrl : "HTTP 200");
-  const ct = f.contentType.toLowerCase();
+  const ct = (f.contentType || "").toLowerCase();
   const looksHtml = /^\s*(<!doctype|<html|<head|<body)/i.test(f.text);
   if (looksHtml) {
     add("content-type", "fail", "Response is plain text", "the body looks like an HTML page, not an llms.txt file");
@@ -8098,7 +8070,7 @@ var worker_default = {
             // /llms-txt-validator is one path with two policies: the JSON branch is an agent
             // API that sets CORS deliberately, the HTML branch is a page. A path regex cannot
             // tell them apart, so the accepted request decides, which is what this comment asks.
-            const rlAgent = /^\/(api|v1|x402|openapi\.json|llms(-full)?\.txt|\.well-known|agent\/auth|auth\.md|robots\.txt|sitemap\.xml|security\.txt|ai\.txt|api-catalog|blog\/feed\.xml|oauth\/(authorize|token)|favicon\.(ico|svg))(\/|$)/.test(rlPath)
+            const rlAgent = /^\/(api|v1|x402|openapi\.json|llms(-full)?\.txt|\.well-known|agent\/auth|auth\.md|robots\.txt|sitemap\.xml|security\.txt|ai\.txt|api-catalog|blog\/feed\.xml|oauth\/(authorize|token)|favicon\.(ico|svg)|[0-9a-f]{32}\.txt)(\/|$)/.test(rlPath)
               || (rlPath === "/llms-txt-validator" && wantsJson(request));
             applySecurityHeaders(rlHeaders, rlAgent ? "agent-api" : "default");
             if (rlAgent) rlHeaders.set("access-control-allow-origin", "*");
@@ -8159,16 +8131,6 @@ async function handleRequest(request, env) {
   const hostname = url.hostname;
   const pathLower = pathname.toLowerCase();
 
-  if (request.method === "OPTIONS" && (pathLower === "/x402" || pathLower === "/x402/" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/"))) {
-    const headers = new Headers({
-      "access-control-allow-origin": "*",
-      "access-control-allow-methods": "GET, POST, OPTIONS",
-      "access-control-allow-headers": "Content-Type, Accept, X-PAYMENT",
-      "access-control-max-age": "86400"
-    });
-    return new Response(null, { status: 204, headers });
-  }
-
   if (hostname === "mta-sts.turva.dev") {
     if (pathLower === "/.well-known/mta-sts.txt") return serveMtaStsPolicy();
     return Response.redirect("https://turva.dev/", 301);
@@ -8191,6 +8153,19 @@ async function handleRequest(request, env) {
 
   if (hostname === "www.turva.dev") {
     return Response.redirect("https://turva.dev" + pathname + url.search, 301);
+  }
+
+  // CORS preflight answers only on the apex, after the host redirects above, so the
+  // promise that mta-sts, openpgpkey and www send everything else to turva.dev holds
+  // for OPTIONS too (round 13 R1g-3: the preflight used to run before the host checks).
+  if (request.method === "OPTIONS" && (pathLower === "/x402" || pathLower === "/x402/" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/"))) {
+    const headers = new Headers({
+      "access-control-allow-origin": "*",
+      "access-control-allow-methods": "GET, POST, OPTIONS",
+      "access-control-allow-headers": "Content-Type, Accept, X-PAYMENT",
+      "access-control-max-age": "86400"
+    });
+    return new Response(null, { status: 204, headers });
   }
 
   if (pathLower === "/.well-known/host-meta" || pathLower === "/.well-known/webfinger" || pathLower === "/.well-known/nodeinfo") {

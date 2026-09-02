@@ -35,6 +35,10 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/.well-known/signatures.json` | Ed25519 signatures for the signed manifests |
 | `/.well-known/jwks.json` | Public keys for verifying the signatures |
 | `/.well-known/security.txt` | Security contact (RFC 9116) |
+| `/pgp-key.asc`, `/.well-known/pgp-key.asc` | PGP public key |
+| `/.well-known/openpgpkey/policy` | WKD advanced method policy for turva.dev |
+| `/.well-known/openpgpkey/hu/<hash>` | WKD advanced method key lookup for turva.dev |
+| `openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/policy`, `openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/hu/<hash>` | WKD advanced method on its own subdomain, required for the DNS record to resolve (Tek-288) |
 | `/x402` | HTTP 402 payment-required endpoint |
 | `/robots.txt` | Crawler directives |
 | `/sitemap.xml` | URL index |
