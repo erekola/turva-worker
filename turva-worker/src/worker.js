@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.112.8 - round 15 read the served public surface and this release carries its two worker.js fixes: the agent-commerce-discovery guide no longer hyperlinks the AP2 extension URI, which is an identifier that answers 404 as an address, and OPTIONS answers 204 with preflight headers on every agent-api surface instead of only /x402, /api/* and /agent/auth/*. v3.112.7 - hotfix: the footer year is read per request, because Workers freeze the global-scope clock at the epoch and v3.112.6 served "1970" live for the minutes it was up. v3.112.6 - round 14 read the four repos byte by byte and this release carries its worker.js fixes: article:modified_time and the sitemap lastmod read the modified date the JSON-LD already read, the x402 merchant block carries legal_name and business_id like its three siblings, AP2 and MPP name the same quote channels, the OpenAPI description names every x402 challenge root, the footer year is computed, robots.txt is generated from one list, the CORS preflight runs after the host redirects, the IndexNow key file keeps its agent-api profile under rate limiting, the home Services tags fail closed, the badge alt text matches the SVG, the hosted validator carries the npm package's contentType guard, auth.md names the six year retention period, the TRACE post carries a Related section, and the ARD, SEP-2127, AP2, IETF and CyberGym claims carry their sources. The MCP server card moves to 1.3.10 because its get_security_evidence description now names the Internet.nl mail scan, so the card bytes and their signature move together. v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.113.0 - every page title ends in " · turva.dev": the six card pages have since 2026-06-24 and the 46 guides, posts and hubs used a pipe, so one rule now covers all 52 and the three places that strip the suffix for the feed, the blog index and the blog JSON-LD accept either separator. The services page carries the same Service node, AggregateOffer and OfferCatalog the home page has carried since v3.75.0, read from one constant so the two cannot drift, because an agent landing on the price page from search got prices in prose and FAQ answers only. The primary navigation carries aria-label="Main" on every page, so a screen reader landmark list names it. v3.112.8 - round 15 read the served public surface and this release carries its two worker.js fixes: the agent-commerce-discovery guide no longer hyperlinks the AP2 extension URI, which is an identifier that answers 404 as an address, and OPTIONS answers 204 with preflight headers on every agent-api surface instead of only /x402, /api/* and /agent/auth/*. v3.112.7 - hotfix: the footer year is read per request, because Workers freeze the global-scope clock at the epoch and v3.112.6 served "1970" live for the minutes it was up. v3.112.6 - round 14 read the four repos byte by byte and this release carries its worker.js fixes: article:modified_time and the sitemap lastmod read the modified date the JSON-LD already read, the x402 merchant block carries legal_name and business_id like its three siblings, AP2 and MPP name the same quote channels, the OpenAPI description names every x402 challenge root, the footer year is computed, robots.txt is generated from one list, the CORS preflight runs after the host redirects, the IndexNow key file keeps its agent-api profile under rate limiting, the home Services tags fail closed, the badge alt text matches the SVG, the hosted validator carries the npm package's contentType guard, auth.md names the six year retention period, the TRACE post carries a Related section, and the ARD, SEP-2127, AP2, IETF and CyberGym claims carry their sources. The MCP server card moves to 1.3.10 because its get_security_evidence description now names the Internet.nl mail scan, so the card bytes and their signature move together. v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -3855,7 +3855,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.112.8",
+    "version": "3.113.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -4116,7 +4116,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.112.8",
+  "version": "3.113.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4735,7 +4735,7 @@ function buildBlogFeedXml() {
     .sort((a, b) => b.meta.date.localeCompare(a.meta.date));
   const items = posts.map(({ path, meta }) => {
     const url = "https://turva.dev" + path;
-    const title = esc((meta.title || "").replace(/ \| turva\.dev$/, ""));
+    const title = esc((meta.title || "").replace(/ [|\u00B7] turva\.dev$/, ""));
     return `    <item>
       <title>${title}</title>
       <link>${url}</link>
@@ -4776,56 +4776,56 @@ function getCanonicalForPath(pathname) {
 
 var META_BY_PATH = {
   "/blog/trace-runtime-attestation": {
-    title: "TRACE signs how an agent ran, not what it was allowed to reach | turva.dev",
+    title: "TRACE signs how an agent ran, not what it was allowed to reach · turva.dev",
     description: "The Linux Foundation now governs TRACE. Its own documentation is where the limits are: three trust levels, and Level 0 records a privileged operator can forge.",
     date: "2026-08-30",
     image: "/og-trace-runtime-attestation.jpg",
     imageAlt: "turva.dev blog card: The Linux Foundation now governs TRACE. Its own documentation is where the limits are: three trust levels, and Level 0 records a privileged operator can forge.",
   },
   "/blog/agent-readiness-code-hosts": {
-    title: "I scanned fourteen code hosts. Not one served an MCP server card. | turva.dev",
+    title: "I scanned fourteen code hosts. Not one served an MCP server card. · turva.dev",
     description: "Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
     date: "2026-08-22",
     image: "/og-agent-readiness-code-hosts.jpg",
     imageAlt: "turva.dev blog card: Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
   },
   "/blog/cheating-to-keep-the-old-price": {
-    title: "It would be cheating to keep the old price | turva.dev",
+    title: "It would be cheating to keep the old price · turva.dev",
     description: "The audit drops to 4,300 euros and two weeks. The part a client paid for twice is now a written checklist.",
     date: "2026-08-21",
     image: "/og-cheating-to-keep-the-old-price.jpg",
     imageAlt: "turva.dev blog card: The audit drops to 4,300 euros and two weeks. The part a client paid for twice is now a written checklist.",
   },
   "/blog/i-thought-it-was-a-small-job": {
-    title: "I thought it was a small job | turva.dev",
+    title: "I thought it was a small job · turva.dev",
     description: "I read my own workspace file by file. Seven days, 367 findings across 2 307 text files, and nothing billable shipped that week.",
     date: "2026-08-16",
     image: "/og-i-thought-it-was-a-small-job.jpg",
     imageAlt: "turva.dev blog card: I read my own workspace file by file. Seven days, 367 findings across 2 307 text files, and nothing billable shipped that week.",
   },
   "/blog/my-gate-could-not-see-a-sixth": {
-    title: "My gate could not see a sixth | turva.dev",
+    title: "My gate could not see a sixth · turva.dev",
     description: "My gate checked five categories on six surfaces and passed a sixth on three of them. A check that asks whether these five are there is not a check of the set.",
     date: "2026-08-04",
     image: "/og-my-gate-could-not-see-a-sixth.jpg",
     imageAlt: "turva.dev blog card: My gate checked five categories on six surfaces and passed a sixth on three of them. A check that asks whether these five are there is not a check of the set.",
   },
   "/blog/red-reading-that-measured-my-own-client": {
-    title: "A red reading that measured my own client | turva.dev",
+    title: "A red reading that measured my own client · turva.dev",
     description: "My MCP server answered Method not found to the request its new revision requires, and the fault was in my request. What a compatibility lane hides.",
     date: "2026-07-30",
     image: "/og-red-reading-that-measured-my-own-client.jpg",
     imageAlt: "turva.dev blog card: My MCP server answered Method not found to the request its new revision requires, and the fault was in my request. What a compatibility lane hides."
   },
   "/blog/checks-that-pass-for-the-wrong-reason": {
-    title: "The checks that pass for the wrong reason | turva.dev",
+    title: "The checks that pass for the wrong reason · turva.dev",
     description: "A spec release left thirteen links pointing at the living draft, and my own gate kept passing while measuring the wrong lane. The same defect twice.",
     date: "2026-07-29",
     image: "/og-checks-that-pass-for-the-wrong-reason.jpg",
     imageAlt: "turva.dev blog card: A spec release left thirteen links pointing at the living draft, and my own gate kept passing while measuring the wrong lane. The same defect twice."
   },
   "/blog/finishing-the-optional-commerce-checks": {
-    title: "Finishing the optional commerce checks | turva.dev",
+    title: "Finishing the optional commerce checks · turva.dev",
     description: "Taking the last two optional commerce checks, x402 and MPP, to green on isitagentready without faking settlement, and what the scanner actually probes.",
     date: "2026-07-20",
     modified: "2026-08-02",
@@ -4833,21 +4833,21 @@ var META_BY_PATH = {
     imageAlt: "turva.dev blog card: Taking the last two optional commerce checks, x402 and MPP, to green on isitagentready without faking settlement, and what the scanner actually probes."
   },
   "/blog/the-twin-is-the-page": {
-    title: "The twin is the page | turva.dev",
+    title: "The twin is the page · turva.dev",
     description: "Ten card pages now render their prose from the markdown twin. What the parity gate caught before it retired and the check that replaced it.",
     date: "2026-07-19",
     image: "/og-the-twin-is-the-page.jpg",
     imageAlt: "turva.dev blog card: Ten card pages now render their prose from the markdown twin. What the parity gate caught before it retired and the check that replaced it."
   },
   "/blog/enforcing-the-rate-limit-i-advertised": {
-    title: "Every response promised a rate limit | turva.dev",
+    title: "Every response promised a rate limit · turva.dev",
     description: "A site sent rate limit headers no code enforced. The fix, the measurement that proved nothing, and the draft archaeology behind the header.",
     date: "2026-07-18",
     image: "/og-enforcing-the-rate-limit-i-advertised.jpg",
     imageAlt: "Every response promised a rate limit. Nothing enforced it."
   },
   "/blog/measuring-the-ai-patch-surge": {
-    title: "Measuring the AI patch surge: Microsoft's July package | turva.dev",
+    title: "Measuring the AI patch surge: Microsoft's July package · turva.dev",
     description: "Microsoft said customers would see a higher volume of security updates and gave no number. Twelve months of MSRC CVRF data: the July package is 3,0 times the baseline, and the median CVE got more severe.",
     date: "2026-07-15",
     modified: "2026-07-17",
@@ -4855,14 +4855,14 @@ var META_BY_PATH = {
     imageAlt: "Measuring the AI patch surge from MSRC data"
   },
   "/blog/agent-secret-hygiene": {
-    title: "Secret hygiene when an agent works in your repo | turva.dev",
+    title: "Secret hygiene when an agent works in your repo · turva.dev",
     description: "Coding agents run with your shell, so plaintext secrets on disk are exposed to them. Move git auth to a credential manager and the rest into an OS-encrypted vault.",
     date: "2026-07-12",
     image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
   },
   "/blog/agent-readiness-finnish-b2b": {
-    title: "Agent-readiness of Finnish B2B sites | turva.dev",
+    title: "Agent-readiness of Finnish B2B sites · turva.dev",
     description: "I ran an independent scanner over sixteen Finnish B2B sites. Almost every one landed at isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere.",
     date: "2026-07-07",
     modified: "2026-07-17",
@@ -4870,14 +4870,14 @@ var META_BY_PATH = {
     imageAlt: "turva.dev blog card: I ran an independent scanner over sixteen Finnish B2B sites. Almost every one landed at isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere."
   },
   "/blog/honesty-and-the-checker": {
-    title: "When honesty and the checker disagree | turva.dev",
+    title: "When honesty and the checker disagree · turva.dev",
     description: "Making this site's auth.md cleaner made the scanner fail. The honest form was the precise one, neither gutted nor padded to please the check.",
     date: "2026-07-06",
     image: "/og-honesty-and-the-checker.jpg",
     imageAlt: "turva.dev blog card: Making this site's auth.md cleaner made the scanner fail. The honest form was the precise one, neither gutted nor padded to please the check."
   },
   "/blog/re-checking-the-guides": {
-    title: "Four AI agents re-checked the guides | turva.dev",
+    title: "Four AI agents re-checked the guides · turva.dev",
     description: "Four AI agents re-read the guides against the specifications behind them. One high finding, one expired draft, six small fixes. The scanners never noticed.",
     date: "2026-07-04",
     modified: "2026-07-16",
@@ -4885,7 +4885,7 @@ var META_BY_PATH = {
     imageAlt: "turva.dev blog card: Four AI agents re-read the guides against the specifications behind them."
   },
   "/blog/cheaper-pages-revisited": {
-    title: "The page grew, the agent bill did not | turva.dev",
+    title: "The page grew, the agent bill did not · turva.dev",
     description: "The site kept growing after June's token-cost post. The 4 July scan reports an 83% token saving between the HTML and markdown forms.",
     date: "2026-07-04",
     image: "/og-cheaper-pages-revisited.jpg",
@@ -4893,7 +4893,7 @@ var META_BY_PATH = {
   },
 
   "/blog/moving-source-to-codeberg": {
-    title: "Moving the source from GitHub to Codeberg | turva.dev",
+    title: "Moving the source from GitHub to Codeberg · turva.dev",
     description: "GitHub's spam filter silently hid this site's source from everyone but its owner for two weeks. The log of the 404s, the fix, and the move to Codeberg.",
     date: "2026-07-04",
     modified: "2026-07-26",
@@ -4901,105 +4901,105 @@ var META_BY_PATH = {
     imageAlt: "turva.dev blog card: GitHub's spam filter silently hid this site's source from everyone but its owner for two weeks."
   },
   "/blog/free-llms-txt-validator": {
-    title: "A free llms.txt validator | turva.dev",
+    title: "A free llms.txt validator · turva.dev",
     description: "turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored.",
     date: "2026-07-02",
     image: "/og-free-llms-txt-validator.jpg",
     imageAlt: "turva.dev blog card: turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored."
   },
   "/tools": {
-    title: "Free agent-readiness tools | turva.dev",
+    title: "Free agent-readiness tools · turva.dev",
     description: "Three free tools: an llms.txt validator with JSON output, an embeddable agent-ready badge, and a public read-only MCP server. No signup, agent-friendly.",
     image: "/og-tools.jpg",
     imageAlt: "turva.dev tools card: the free llms.txt validator, the agent-ready badge and the public MCP server, each usable by a person or by an agent."
   },
   "/llms-txt-validator": {
-    title: "Free llms.txt validator with JSON output | turva.dev",
+    title: "Free llms.txt validator with JSON output · turva.dev",
     description: "Free llms.txt validator. Fetches a site's /llms.txt and checks the structure: H1 title, blockquote summary, H2 link sections. JSON output for agents.",
     image: "/og-llms-txt-validator.jpg",
     imageAlt: "llms.txt validator"
   },
   "/badge": {
-    title: "The agent-ready badge: criteria and embed code | turva.dev",
+    title: "The agent-ready badge: criteria and embed code · turva.dev",
     description: "An embeddable SVG badge for sites that meet public agent-readiness criteria: a turva.dev audit or 100/100 on a public scanner. Criteria and embed code.",
     image: "/og-badge.jpg",
     imageAlt: "turva.dev badge card: the embeddable agent-ready badge, a self-declared claim against public criteria that anyone can re-check by running the same scanner."
   },
   "/blog": {
-    title: "Blog: notes on AI agents and agent-readiness | turva.dev",
+    title: "Blog: notes on AI agents and agent-readiness · turva.dev",
     description: "Notes on AI agents and the work of letting them read a site and act on a system safely. Dated entries, checked against an independent scanner.",
     image: "/og-blog.jpg",
     imageAlt: "turva.dev blog card: dated notes on AI agents and the work of letting them act."
   },
   "/blog/cheaper-pages-for-agents": {
-    title: "What an agent pays to read your site | turva.dev",
+    title: "What an agent pays to read your site · turva.dev",
     description: "An agent pays to read your site in tokens, and an HTML-only page is expensive. How markdown content negotiation cuts that cost.",
     date: "2026-06-26",
     image: "/og-cheaper-pages-for-agents.jpg",
     imageAlt: "turva.dev blog card: An agent pays to read your site in tokens, and an HTML-only page is expensive."
   },
   "/blog/verifiable-agent-identity": {
-    title: "When an agent can prove it is Claude | turva.dev",
+    title: "When an agent can prove it is Claude · turva.dev",
     description: "Web Bot Auth gives an AI agent a verifiable, signed identity a site can check. What the tag is, where Claude stands today, and how agent-readiness uses it.",
     date: "2026-06-25",
     image: "/og-verifiable-agent-identity.jpg",
     imageAlt: "turva.dev blog card: Web Bot Auth gives an AI agent a verifiable, signed identity a site can check."
   },
   "/blog/reliable-agent-decisions": {
-    title: "What makes an AI agent's decisions reliable | turva.dev",
+    title: "What makes an AI agent's decisions reliable · turva.dev",
     description: "What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do.",
     date: "2026-06-22",
     image: "/og-reliable-agent-decisions.jpg",
     imageAlt: "turva.dev blog card: What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do."
   },
   "/blog/moving-off-prerender": {
-    title: "Moving turva.dev off prerender.io | turva.dev",
+    title: "Moving turva.dev off prerender.io · turva.dev",
     description: "The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop. Verified 100/100 Level 5 by an independent scanner.",
     date: "2026-06-20",
     image: "/og-moving-off-prerender.jpg",
     imageAlt: "turva.dev blog card: The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop."
   },
   "/guides/agent-commerce-discovery": {
-    title: "Agent commerce discovery: A2A, AP2, and ACP | turva.dev",
+    title: "Agent commerce discovery: A2A, AP2, and ACP · turva.dev",
     description: "A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint.",
     image: "/og-guide-agent-commerce-discovery.jpg",
     imageAlt: "turva.dev guide card: A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint."
   },
   "/blog/owning-your-fediverse-identity": {
-    title: "Owning your fediverse identity | turva.dev",
+    title: "Owning your fediverse identity · turva.dev",
     description: "Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker.",
     date: "2026-06-21",
     image: "/og-owning-your-fediverse-identity.jpg",
     imageAlt: "turva.dev blog card: Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker."
   },
   "/guides/agentic-resource-discovery": {
-    title: "Agentic Resource Discovery and ai-catalog.json | turva.dev",
+    title: "Agentic Resource Discovery and ai-catalog.json · turva.dev",
     description: "Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation.",
     image: "/og-guide-agentic-resource-discovery.jpg",
     imageAlt: "turva.dev guide card: Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation."
   },
   "/guides/open-knowledge-format": {
-    title: "Open Knowledge Format (OKF) explained | turva.dev",
+    title: "Open Knowledge Format (OKF) explained · turva.dev",
     description: "What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness.",
     image: "/og-guide-open-knowledge-format.jpg",
     imageAlt: "turva.dev guide card: What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness."
   },
   "/blog/agent-access-is-now-a-setting": {
-    title: "Agent access is now a setting | turva.dev",
+    title: "Agent access is now a setting · turva.dev",
     description: "Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration. What that changes for agent readiness.",
     date: "2026-07-02",
     image: "/og-agent-access-is-now-a-setting.jpg",
     imageAlt: "turva.dev blog card: Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration."
   },
   "/blog/publishing-an-ai-catalog": {
-    title: "Publishing an ai-catalog.json for agentic discovery | turva.dev",
+    title: "Publishing an ai-catalog.json for agentic discovery · turva.dev",
     description: "Google and a Linux Foundation group published Agentic Resource Discovery in 2026. turva.dev now serves an ai-catalog.json indexing its agent surfaces.",
     date: "2026-06-29",
     image: "/og-publishing-an-ai-catalog.jpg",
     imageAlt: "turva.dev blog card: Google and a Linux Foundation group published Agentic Resource Discovery in 2026."
   },
   "/blog/open-knowledge-format": {
-    title: "What the Open Knowledge Format is, and what it is not | turva.dev",
+    title: "What the Open Knowledge Format is, and what it is not · turva.dev",
     description: "Google Cloud shipped the Open Knowledge Format. What it is, what it is not yet, and how it relates to an agent-readiness audit.",
     date: "2026-06-27",
     image: "/og-open-knowledge-format.jpg",
@@ -5041,133 +5041,133 @@ var META_BY_PATH = {
     imageAlt: "turva.dev legal card: terms, privacy and GDPR in plain language, Finnish law, no tracking and no cookies."
   },
   "/guides": {
-    title: "Agent-readiness guides | turva.dev",
+    title: "Agent-readiness guides · turva.dev",
     description: "Short, focused guides on the surfaces that make a website or API readable and usable by AI agents. Audits, llms.txt, MCP, structured data, payments and more.",
     image: "/og-guides.jpg",
     imageAlt: "turva.dev guides card: short guides on the surfaces that make a site or API readable and usable by AI agents, one surface at a time."
   },
   "/guides/agent-readiness-audit": {
-    title: "What an agent-readiness audit is | turva.dev",
+    title: "What an agent-readiness audit is · turva.dev",
     description: "An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored against current standards by an independent scanner.",
     image: "/og-guide-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored against current standards by an independent scanner."
   },
   "/guides/llms-txt": {
-    title: "llms.txt explained | turva.dev",
+    title: "llms.txt explained · turva.dev",
     description: "llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives, and how it differs from robots.txt and sitemaps.",
     image: "/og-guide-llms-txt.jpg",
     imageAlt: "turva.dev guide card: llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives, and how it differs from robots.txt and sitemaps."
   },
   "/guides/mcp-server-card": {
-    title: "MCP server cards explained | turva.dev",
+    title: "MCP server cards explained · turva.dev",
     description: "An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and connect to it. What it is and why it matters.",
     image: "/og-guide-mcp-server-card.jpg",
     imageAlt: "turva.dev guide card: An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and connect to it."
   },
   "/guides/agents-json": {
-    title: "What agents.json is | turva.dev",
+    title: "What agents.json is · turva.dev",
     description: "agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one. What it is and why it matters.",
     image: "/og-guide-agents-json.jpg",
     imageAlt: "turva.dev guide card: agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one."
   },
   "/guides/x402-agent-payments": {
-    title: "x402 and agent payments | turva.dev",
+    title: "x402 and agent payments · turva.dev",
     description: "x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout. How agent payments work and why they matter.",
     image: "/og-guide-x402-agent-payments.jpg",
     imageAlt: "turva.dev guide card: x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout."
   },
   "/guides/response-headers-for-agents": {
-    title: "Response headers that help agents | turva.dev",
+    title: "Response headers that help agents · turva.dev",
     description: "The right HTTP response headers let AI agents work without parsing full HTML. Link, Vary, RateLimit and content type headers explained for agent-readiness.",
     image: "/og-guide-response-headers-for-agents.jpg",
     imageAlt: "turva.dev guide card: The right HTTP response headers let AI agents work without parsing full HTML."
   },
   "/guides/seo-vs-agent-readiness": {
-    title: "SEO and agent-readiness are not the same | turva.dev",
+    title: "SEO and agent-readiness are not the same · turva.dev",
     description: "SEO makes a site rank for people to click. Agent-readiness makes it legible and usable by AI agents. Ranking alone does not guarantee presence in AI answers.",
     image: "/og-guide-seo-vs-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: SEO makes a site rank for people to click. Agent-readiness makes it legible and usable by AI agents."
   },
   "/guides/json-ld-structured-data": {
-    title: "JSON-LD and structured data for agents | turva.dev",
+    title: "JSON-LD and structured data for agents · turva.dev",
     description: "JSON-LD states a page's facts as data an AI agent can read without parsing prose. How prices, organizations and services become legible to agents.",
     image: "/og-guide-json-ld-structured-data.jpg",
     imageAlt: "turva.dev guide card: JSON-LD states a page's facts as data an AI agent can read without parsing prose."
   },
   "/guides/well-known-for-agents": {
-    title: "The /.well-known directory for agents | turva.dev",
+    title: "The /.well-known directory for agents · turva.dev",
     description: "The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata.",
     image: "/og-guide-well-known-for-agents.jpg",
     imageAlt: "turva.dev guide card: The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata."
   },
   "/guides/agent-authentication": {
-    title: "How agents authenticate | turva.dev",
+    title: "How agents authenticate · turva.dev",
     description: "Agent authentication lets an automated client gain scoped access without a human login. OAuth discovery, protected resources and agent registration explained.",
     image: "/og-guide-agent-authentication.jpg",
     imageAlt: "turva.dev guide card: Agent authentication lets an automated client gain scoped access without a human login."
   },
   "/guides/measurement-led-agent-readiness": {
-    title: "Why agent-readiness should be measured, not asserted | turva.dev",
+    title: "Why agent-readiness should be measured, not asserted · turva.dev",
     description: "A hand-filled checklist records intentions. An independent scanner records what an agent actually finds. Why measured agent-readiness beats self-assessment.",
     image: "/og-guide-measurement-led-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: A hand-filled checklist records intentions. An independent scanner records what an agent actually finds."
   },
   "/guides/prerendering-for-agents": {
-    title: "Prerendering and why agents see empty pages | turva.dev",
+    title: "Prerendering and why agents see empty pages · turva.dev",
     description: "JavaScript-rendered sites return an empty shell to agents, so the content never arrives. Why prerendering and markdown delivery fix the most common agent gap.",
     image: "/og-guide-prerendering-for-agents.jpg",
     imageAlt: "turva.dev guide card: JavaScript-rendered sites return an empty shell to agents, so the content never arrives."
   },
   "/guides/sitemaps-and-robots-for-agents": {
-    title: "Sitemaps, robots.txt and agent access | turva.dev",
+    title: "Sitemaps, robots.txt and agent access · turva.dev",
     description: "robots.txt and the sitemap decide whether an agent is allowed in and what it can find. AI bot rules, Content Signals and complete sitemaps explained.",
     image: "/og-guide-sitemaps-and-robots-for-agents.jpg",
     imageAlt: "turva.dev guide card: robots.txt and the sitemap decide whether an agent is allowed in and what it can find."
   },
   "/guides/markdown-for-agents": {
-    title: "Serving markdown to agents | turva.dev",
+    title: "Serving markdown to agents · turva.dev",
     description: "Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens. How content negotiation and llms-full.txt work.",
     image: "/og-guide-markdown-for-agents.jpg",
     imageAlt: "turva.dev guide card: Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens."
   },
   "/guides/agent-readiness-aeo-geo": {
-    title: "Agent-readiness, AEO and GEO: how they relate | turva.dev",
+    title: "Agent-readiness, AEO and GEO: how they relate · turva.dev",
     description: "How AEO, GEO and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice.",
     image: "/og-guide-agent-readiness-aeo-geo.jpg",
     imageAlt: "turva.dev guide card: How AEO, GEO and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice."
   },
   "/guides/agentic-commerce-readiness": {
-    title: "Agentic commerce readiness: selling to AI shopping agents | turva.dev",
+    title: "Agentic commerce readiness: selling to AI shopping agents · turva.dev",
     description: "What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase. Explained with A2A, AP2, ACP and x402.",
     image: "/og-guide-agentic-commerce-readiness.jpg",
     imageAlt: "turva.dev guide card: What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase."
   },
   "/guides/letting-agents-act-on-data": {
-    title: "Letting agents act on data: the decision envelope | turva.dev",
+    title: "Letting agents act on data: the decision envelope · turva.dev",
     description: "Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds. How to make that checkable.",
     image: "/og-guide-letting-agents-act-on-data.jpg",
     imageAlt: "turva.dev guide card: Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds."
   },
   "/guides/ai-agent-use-cases": {
-    title: "AI agent use cases: where agents read data and make decisions | turva.dev",
+    title: "AI agent use cases: where agents read data and make decisions · turva.dev",
     description: "AI agent use cases across commerce, monitoring, field support, remote operations and back-office data work, and what makes each one reliable.",
     image: "/og-guide-ai-agent-use-cases.jpg",
     imageAlt: "turva.dev guide card: AI agent use cases across commerce, monitoring, field support, remote operations and back-office data work, and what makes each one reliable."
   },
   "/guides/get-cited-by-ai-assistants": {
-    title: "How to get your site cited by AI assistants | turva.dev",
+    title: "How to get your site cited by AI assistants · turva.dev",
     description: "What it takes to be a source AI assistants cite: readable content, structured data, corroboration, indexing where assistants search, and measurement.",
     image: "/og-guide-get-cited-by-ai-assistants.jpg",
     imageAlt: "turva.dev guide card: What it takes to be a source AI assistants cite: readable content, structured data, corroboration, indexing where assistants search, and measurement."
   },
   "/guides/choosing-an-agent-readiness-audit": {
-    title: "Choosing an agent-readiness audit | turva.dev",
+    title: "Choosing an agent-readiness audit · turva.dev",
     description: "Who provides agent-readiness audits, what they cost, how long they take, and what you get. Pricing, deliverables, and how the engagement works.",
     image: "/og-guide-choosing-an-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: Who provides agent-readiness audits, what they cost, how long they take, and what you get."
   },
   "/guides/agent-readiness-gaps": {
-    title: "Common agent-readiness gaps on marketing sites | turva.dev",
+    title: "Common agent-readiness gaps on marketing sites · turva.dev",
     description: "Marketing sites are often strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes.",
     image: "/og-guide-agent-readiness-gaps.jpg",
     imageAlt: "turva.dev guide card: Marketing sites are often strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes."
@@ -5188,7 +5188,7 @@ function buildMetaBlock(pathname, canonicalUrl) {
     }
   }
   const st = escapeHtml(m.title);
-  // Social cards and Medium's importer read og:title, and the " | turva.dev" suffix
+  // Social cards and Medium's importer read og:title, and the " · turva.dev" suffix
   // that belongs in <title> only repeats the domain there. Strip it for og/twitter.
   const sot = escapeHtml(m.title.replace(/\s*[|\u00b7]\s*turva\.dev$/, ""));
   const sd = escapeHtml(m.description);
@@ -5214,17 +5214,22 @@ function buildMetaBlock(pathname, canonicalUrl) {
 
 var PRICE_VALID_UNTIL = "2026-12-31";
 
+// The Service node with its AggregateOffer and OfferCatalog is one constant because two
+// pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
+// second copy would be a second price list, and verify.mjs reads this one against facts.json.
+var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
+{"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
+{"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
+{"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, MCP servers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
+]}}`;
+
 var SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
 {"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
-{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
-{"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
-{"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
-{"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
-{"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, MCP servers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
-]}},
+${SCHEMA_SERVICE},
 {"@type":"FAQPage","@id":"https://turva.dev/#faq","inLanguage":"en","mainEntity":[
 ${mdFaqBlocks("/", "Frequently asked").pairs.map((p) => `{"@type":"Question","name":${JSON.stringify(p.q)},"acceptedAnswer":{"@type":"Answer","text":${JSON.stringify(p.a)}}}`).join(",\n")}
 ]}
@@ -5276,7 +5281,7 @@ function serve404(pathname) {
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
 <link rel="alternate" type="application/rss+xml" title="turva.dev blog" href="https://turva.dev/blog/feed.xml" />
-<title>Page not found | turva.dev</title>
+<title>Page not found · turva.dev</title>
 <style>
 html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;color-scheme:dark;}
 main{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 4rem;}
@@ -5298,7 +5303,7 @@ ${FOOTER_CSS}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<nav class="turva-nav">
+<nav class="turva-nav" aria-label="Main">
   <a class="nv-brand" href="/">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
@@ -5895,7 +5900,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
     const posts = Object.keys(PAGE_MARKDOWN).filter((k) => k.startsWith("/blog/")).map((k) => {
       const pm = META_BY_PATH[k] || {};
       const pmH1 = (PAGE_MARKDOWN[k] || "").match(/^# (.+)$/m);
-      const item = { "@type": "BlogPosting", "headline": pmH1 ? pmH1[1].trim() : (pm.title || "").split(" | turva.dev")[0], "url": "https://turva.dev" + k };
+      const item = { "@type": "BlogPosting", "headline": pmH1 ? pmH1[1].trim() : (pm.title || "").replace(/ [|\u00B7] turva\.dev$/, ""), "url": "https://turva.dev" + k };
       if (pm.date) { item.datePublished = pm.date; item.dateModified = pm.modified || pm.date; }
       return item;
     });
@@ -6182,7 +6187,7 @@ ${faqAt === -1 ? "" : SCARD_CSS + "\n" + FAQ_CSS + "\n"}${FOOTER_CSS}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<nav class="turva-nav">
+<nav class="turva-nav" aria-label="Main">
   <a class="nv-brand" href="/">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
@@ -6359,7 +6364,7 @@ ${FOOTER_CSS}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<nav class="turva-nav">
+<nav class="turva-nav" aria-label="Main">
   <a class="nv-brand" href="/">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
@@ -6547,7 +6552,11 @@ ${footerHtml()}
 function serveServicesHtml(canonicalUrl) {
   const metaBlock = buildMetaBlock("/services", canonicalUrl);
   const jsonLd = buildGuideJsonLd("/services", canonicalUrl) +
-    (GUIDE_PAGE_FAQ["/services"] ? "\n" + buildGuidePageFaqJsonLd("/services", canonicalUrl) : "");
+    (GUIDE_PAGE_FAQ["/services"] ? "\n" + buildGuidePageFaqJsonLd("/services", canonicalUrl) : "") +
+    // The price page carries the priced Service node itself, with the same @id values as the
+    // home page, so both documents resolve to one graph and an agent that lands here from
+    // search reads machine-readable prices instead of prose and FAQ answers only.
+    `\n<script type="application/ld+json">\n{"@context":"https://schema.org","@graph":[\n${SCHEMA_SERVICE}\n]}\n<\/script>`;
   const start = mdParas("/services", "How to start", 3);
   const body = `<!doctype html>
 <html lang="en">
@@ -6613,7 +6622,7 @@ ${FOOTER_CSS}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<nav class="turva-nav">
+<nav class="turva-nav" aria-label="Main">
   <a class="nv-brand" href="/">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
@@ -6744,7 +6753,7 @@ ${FOOTER_CSS}
 function cardPageNav(current) {
   const items = [["/","home"],["/services","services"],["/guides","guides"],["/blog","blog"],["/tools","tools"],["/company","company"],["/legal","legal"],["/contact","contact"]];
   const lis = items.map(([href,label]) => `    <li><a href="${href}"${href === current ? ' aria-current="page"' : ''}>${label}</a></li>`).join("\n");
-  return `<nav class="turva-nav">
+  return `<nav class="turva-nav" aria-label="Main">
   <a class="nv-brand" href="/">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
@@ -7775,7 +7784,7 @@ function blogPostLinks() {
     .filter((p) => p.meta.date)
     .sort((a, b) => b.meta.date.localeCompare(a.meta.date));
   return posts.map(({ path, meta }) =>
-    `  <a class="post" href="${path}"><span class="pt">${escapeHtml((meta.title || "").replace(/ \| turva\.dev$/, ""))}</span><span class="pd">${meta.date}</span></a>`
+    `  <a class="post" href="${path}"><span class="pt">${escapeHtml((meta.title || "").replace(/ [|\u00B7] turva\.dev$/, ""))}</span><span class="pd">${meta.date}</span></a>`
   ).join("\n");
 }
 

@@ -66,6 +66,33 @@ test("commerce surfaces never report an unpaid request as paid", async () => {
   assert.equal((await get("/api/agent/audit", { headers: { "X-PAYMENT": "forged" } })).status, 402);
 });
 
+test("/services carries the same priced Service node as the home page, and both read facts.json", async () => {
+  // v3.113.0: an agent landing on the price page from search used to get prices in prose and
+  // FAQ answers only, while the home page carried the AggregateOffer and OfferCatalog. The node
+  // is one constant now; this test reads both rendered pages so a future split cannot drift.
+  const offersOf = (html) => {
+    const i = html.indexOf('"hasOfferCatalog"');
+    assert.ok(i > 0, "hasOfferCatalog present");
+    const block = html.slice(i, html.indexOf("</script>", i));
+    return [...block.matchAll(/\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)].map((m) => [m[1], Number(m[2])]);
+  };
+  const home = offersOf(await (await get("/")).text());
+  const services = offersOf(await (await get("/services")).text());
+  assert.deepEqual(services, home, "the two pages carry the same offers");
+  const priced = facts.services.filter((x) => x.priceKey).map((x) => [x.name, facts.prices[x.priceKey]]);
+  assert.deepEqual(services, priced, "the offers are exactly the priced services facts.json names");
+  assert.ok((await (await get("/services")).text()).includes('"@id":"https://turva.dev/#service"'), "same @id as the home page");
+});
+
+test("the primary navigation is a named landmark on every page", async () => {
+  for (const p of ["/", "/services", "/contact", "/legal", "/company", "/blog", "/guides", "/tools", "/nonexistent-path"]) {
+    const html = await (await get(p)).text();
+    const navs = html.match(/<nav\b[^>]*>/g) || [];
+    assert.equal(navs.length, 1, p + " has one nav");
+    assert.match(navs[0], /aria-label="Main"/, p + " nav is named");
+  }
+});
+
 test("a trailing slash redirects to the canonical path for every served page", async () => {
   for (const p of ["/services", "/company", "/contact", "/legal", "/guides", "/blog", "/tools", "/badge",
                    "/llms-txt-validator", "/guides/llms-txt", "/blog/reliable-agent-decisions"]) {

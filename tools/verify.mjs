@@ -1000,8 +1000,10 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // prose, no JSON-LD and no META_BY_PATH, and on 2026-08-09 the buyer guide shipped a
   // three-service price list while its own FAQ JSON-LD on the same URL listed four.
   {
-    const home = region('var SCHEMA_HOME', '\nfunction appendAgentLinks');
-    const cat = region('"hasOfferCatalog"', '\n{"@type":"FAQPage"');
+    // Since v3.113.0 the Service node lives in SCHEMA_SERVICE, one constant that both the
+    // home page and /services render, so the price gate reads that constant and not SCHEMA_HOME.
+    const home = region('var SCHEMA_SERVICE', '\nvar SCHEMA_HOME');
+    const cat = region('"hasOfferCatalog"', '\nvar SCHEMA_HOME');
     const offers = [...cat.matchAll(/\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)];
     setSame('SCHEMA_HOME OfferCatalog', offers.map((m) => m[1]), PRICED.map((s) => s.name));
     for (const s of PRICED) {
