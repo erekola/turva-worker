@@ -1563,8 +1563,11 @@ if (LIVE) {
     '/.well-known/x402', '/.well-known/api-catalog']) {
     try {
       const r = await fetch(base+p, { method: 'OPTIONS', redirect: 'manual', headers: { origin: 'https://example.com', 'access-control-request-method': 'GET' } });
-      check(r.status === 204 && r.headers.get('access-control-allow-methods') === 'GET, POST, OPTIONS',
-        `OPTIONS ${p} -> 204 with preflight headers (saw ${r.status} / ${r.headers.get('access-control-allow-methods')})`);
+      // Round 16 (S1-4): the preflight advertises the methods the route honours, so a GET-only
+      // surface says GET, OPTIONS and only the x402 roots add POST.
+      const want = (p === '/api' || p === '/x402') ? 'GET, POST, OPTIONS' : 'GET, OPTIONS';
+      check(r.status === 204 && r.headers.get('access-control-allow-methods') === want,
+        `OPTIONS ${p} -> 204 with preflight headers (saw ${r.status} / ${r.headers.get('access-control-allow-methods')}, want ${want})`);
     } catch (e) { bad(`OPTIONS ${p} -> ${e.code||e.message}`); }
   }
 
