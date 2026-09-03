@@ -20,9 +20,12 @@ cleared as they appear, because this repository is a reference implementation
 people fork. Checked 2026-08-16.
 
 `package.json` also carries `"overrides": { "esbuild": "0.28.1" }`. wrangler
-pinned a vulnerable `esbuild` `0.27.3` at the time (GHSA-g7r4-m6w7-qqqr,
-GHSA-gv7w-rqvm-qjhr), and the override stays until wrangler's own dependency
-moves to at least `0.28.1` (Tek-16, 2026-06-14).
+pinned a vulnerable `esbuild` `0.27.3` at the time (GHSA-g7r4-m6w7-qqqr, an
+arbitrary file read in the development server on Windows, fixed in 0.28.1),
+and the override stays until wrangler's own dependency moves to at least
+`0.28.1` (Tek-16, 2026-06-14). A second advisory this paragraph used to cite
+beside it, GHSA-gv7w-rqvm-qjhr, was withdrawn by GitHub on 2026-06-17 and no
+longer carries the pin; the first one does on its own (corrected 2026-09-03).
 
 ## Reporting a Vulnerability
 

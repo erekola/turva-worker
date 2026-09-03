@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker, { findLinkRelations } from "../src/worker.js";
+import worker, { findLinkRelations, markdownToHtml } from "../src/worker.js";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 
@@ -849,12 +849,16 @@ test("R15 P4-2: OPTIONS answers 204 with preflight headers on every agent-api su
   // no access-control-allow-methods header. The preflight branch in src/worker.js now
   // covers them; /v1/message:send keeps its own POST-only preflight and the fediverse
   // aliases keep redirecting.
-  for (const path of ["/api", "/openapi.json", "/llms.txt", "/llms-full.txt", "/auth.md", "/robots.txt", "/.well-known/ai-plugin.json", "/.well-known/mcp/server-card.json", "/.well-known/agent-card.json", "/.well-known/x402", "/.well-known/api-catalog", "/x402", "/api/v1"]) {
+  for (const path of ["/api", "/openapi.json", "/llms.txt", "/llms-full.txt", "/auth.md", "/robots.txt", "/.well-known/ai-plugin.json", "/.well-known/mcp/server-card.json", "/.well-known/agent-card.json", "/.well-known/x402", "/.well-known/api-catalog", "/x402", "/api/v1", "/oauth/token", "/oauth/authorize"]) {
     const r = await worker.fetch(new Request("https://turva.dev" + path, { method: "OPTIONS" }), env, {});
     assert.equal(r.status, 204, path + " must answer 204 to OPTIONS");
-    assert.equal(r.headers.get("access-control-allow-methods"), "GET, POST, OPTIONS", path);
+    // Round 16 (S1-4): the preflight advertises the methods the route honours, so a GET-only
+    // surface says GET, OPTIONS and only the x402 roots and payable routes add POST.
+    const postRoute = path === "/api" || path === "/x402" || path.startsWith("/oauth/");
+    assert.equal(r.headers.get("access-control-allow-methods"), postRoute ? "GET, POST, OPTIONS" : "GET, OPTIONS", path);
     assert.equal(r.headers.get("access-control-allow-origin"), "*", path);
     assert.ok(r.headers.get("access-control-max-age"), path + " carries access-control-max-age");
+    assert.equal(r.headers.get("ratelimit-policy"), '"default";q=100;w=60', path + " preflight carries the security headers (round 16 S1-3)");
   }
   const fedi = await worker.fetch(new Request("https://turva.dev/.well-known/webfinger", { method: "OPTIONS" }), env, {});
   assert.equal(fedi.status, 301, "fediverse aliases still redirect on OPTIONS");
@@ -871,4 +875,103 @@ test("R15 P1a-1: the agent-commerce-discovery guide states the AP2 URI without h
   assert.ok(html.includes("google-agentic-commerce/ap2/tree/v0.1"), "the URI is still stated");
   assert.ok(!/href="https:\/\/github\.com\/google-agentic-commerce\/ap2\/tree\/v0\.1"/.test(html), "the lowercase URI is not a hyperlink");
   assert.ok(html.includes("identifier, not an address"), "the guide says why");
+});
+
+
+test("R16 S1-1: a method the route does not serve answers 405 with Allow, on pages and agent surfaces alike", async () => {
+  // Round 16 measured live that POST, PUT, DELETE and PATCH on /, /llms.txt, /openapi.json and
+  // /.well-known/agent-card.json answered 200 with the GET body and no Allow header.
+  for (const path of ["/", "/services", "/llms.txt", "/openapi.json", "/.well-known/agent-card.json", "/guides/llms-txt.md", "/sitemap.xml"]) {
+    for (const method of ["POST", "PUT", "DELETE", "PATCH"]) {
+      const r = await worker.fetch(new Request("https://turva.dev" + path, { method, headers: { "content-type": "application/json" }, body: method === "DELETE" ? undefined : "{}" }), env, {});
+      assert.equal(r.status, 405, method + " " + path + " must answer 405");
+      assert.equal(r.headers.get("allow"), "GET, HEAD, OPTIONS", method + " " + path);
+      assert.equal(r.headers.get("ratelimit-policy"), '"default";q=100;w=60', method + " " + path + " carries the security headers");
+    }
+  }
+  const agent = await worker.fetch(new Request("https://turva.dev/llms.txt", { method: "PUT" }), env, {});
+  assert.equal(agent.headers.get("access-control-allow-origin"), "*", "an agent-api 405 stays readable cross-origin");
+  const page = await worker.fetch(new Request("https://turva.dev/", { method: "PUT" }), env, {});
+  assert.equal(page.headers.get("access-control-allow-origin"), null, "a page 405 does not open CORS");
+  // HEAD is a GET without the body and stays a 200.
+  const head = await worker.fetch(new Request("https://turva.dev/llms.txt", { method: "HEAD" }), env, {});
+  assert.equal(head.status, 200);
+  assert.equal((await head.text()).length, 0);
+});
+
+test("R16 S1-1: POST keeps working exactly where a handler or the OpenAPI document knows it", async () => {
+  const pairs = [
+    ["/v1/message:send", [200, 400]],
+    ["/api/agent/audit", [402]],
+    ["/api", [402]],
+    ["/x402", [402]],
+    ["/agent/auth/register", [200]],
+    ["/oauth/token", [400, 401, 403]],
+    ["/api/acp/checkout_sessions", [201]]
+  ];
+  for (const [path, statuses] of pairs) {
+    const r = await worker.fetch(new Request("https://turva.dev" + path, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" }), env, {});
+    assert.ok(statuses.includes(r.status), "POST " + path + " answered " + r.status + ", wanted one of " + statuses.join("/"));
+  }
+  // PUT on a payable route is still refused: the route serves GET and POST, nothing else.
+  const put = await worker.fetch(new Request("https://turva.dev/api/agent/audit", { method: "PUT" }), env, {});
+  assert.equal(put.status, 405);
+  assert.equal(put.headers.get("allow"), "GET, HEAD, POST, OPTIONS");
+  // The ACP family keeps its own per-path 405 bodies.
+  const acp = await worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "PUT" }), env, {});
+  assert.equal(acp.status, 405);
+  assert.equal(JSON.parse(await acp.text()).code, "method_not_allowed");
+});
+
+test("R16 S1-2: OPTIONS on a page answers 204 and Allow instead of the page", async () => {
+  for (const path of ["/", "/services", "/guides/llms-txt", "/legal", "/nonexistent"]) {
+    const r = await worker.fetch(new Request("https://turva.dev" + path, { method: "OPTIONS" }), env, {});
+    assert.equal(r.status, 204, "OPTIONS " + path);
+    assert.equal(r.headers.get("allow"), "GET, HEAD, OPTIONS", "OPTIONS " + path);
+    assert.equal((await r.text()).length, 0, "OPTIONS " + path + " carries no body");
+    assert.equal(r.headers.get("access-control-allow-origin"), null, "a page preflight does not open CORS");
+  }
+  const www = await worker.fetch(new Request("https://www.turva.dev/", { method: "OPTIONS" }), env, {});
+  assert.equal(www.status, 301, "the host redirects still run before the method gate");
+});
+
+test("R16 S3-1: the validator cuts its details on a code point boundary, so a truncated emoji cannot become invalid UTF-8", async () => {
+  const raw = "a".repeat(299) + "\u{1F600}" + "b".repeat(20);
+  const r = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(raw), { headers: { accept: "text/html" } }), env, {});
+  assert.equal(r.status, 200);
+  const bytes = new Uint8Array(await r.arrayBuffer());
+  const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  assert.ok(text.includes('value="' + "a".repeat(299) + '"'), "the echoed value ends at the last whole character");
+});
+
+test("R16 verifier C: the markdown renderer strips bidi controls from every href it writes", () => {
+  const rtlo = "\u202E";
+  const html = markdownToHtml("[label](https://example.com/a" + rtlo + "b) and https://example.com/x" + rtlo + "y here and example.com/p" + rtlo + "q there");
+  assert.ok(!/href="[^"]*[\u202A-\u202E\u2066-\u2069]/.test(html), "no bidi control inside an href: " + html);
+  assert.ok(html.includes('href="https://example.com/ab"'), html);
+  assert.ok(html.includes('href="https://example.com/xy"'), html);
+  assert.ok(html.includes('href="https://example.com/pq"'), html);
+});
+
+test("R16 S2-2 and C5-11: the OpenAPI document and the API catalog name /api/v1 and the ACP checkout operations", async () => {
+  const spec = JSON.parse(await (await get("/openapi.json")).text());
+  assert.ok(spec.paths["/api/v1"] && spec.paths["/api/v1"].get, "/api/v1 is an OpenAPI path");
+  assert.ok(spec.paths["/api/acp/checkout_sessions"] && spec.paths["/api/acp/checkout_sessions"].post);
+  assert.ok(spec.paths["/api/acp/checkout_sessions/{session_id}"].get);
+  assert.ok(spec.paths["/api/acp/checkout_sessions/{session_id}/complete"].post);
+  assert.ok(spec.paths["/api/acp/checkout_sessions/{session_id}/cancel"].post);
+  assert.ok(!spec.info.description.includes("ACP enabled on /api/agent/*"), "the description no longer places ACP on the x402 routes");
+  // The MPP reading of x-payment-info must stay at three operations (do-not-fix, Tek-160).
+  const paid = Object.values(spec.paths).flatMap((ops) => Object.values(ops)).filter((op) => op && op["x-payment-info"]);
+  assert.equal(paid.length, 3, "exactly three operations carry x-payment-info");
+  const cat = JSON.parse(await (await get("/.well-known/api-catalog")).text());
+  assert.ok(cat.linkset[0]["service-desc"].some((l) => l.href === "https://turva.dev/api/v1"), "the API catalog names /api/v1");
+  const live = await get("/api/v1");
+  assert.equal(live.status, 200);
+});
+
+test("R16 S4-1: no live brief address and no prospect name sits in the source", async () => {
+  const src = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  assert.ok(!/\/brief\/[a-z0-9]+-[a-z0-9]{13}\b/.test(src), "a real brief address (name-13 random chars) must not appear in the source");
+  assert.ok(!/Lecklen|Eduhouse/i.test(src), "prospect names stay out of the public source");
 });

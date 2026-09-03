@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.114.1 - the 567-sites post carries a Frequently asked section (FAQPage); v3.114.0 was: new blog post /blog/website-agent-readiness-567-sites (567 sites, one scanner, ten weeks); v3.113.0 was: every page title ends in " · turva.dev": the six card pages have since 2026-06-24 and the 46 guides, posts and hubs used a pipe, so one rule now covers all 52 and the three places that strip the suffix for the feed, the blog index and the blog JSON-LD accept either separator. The services page carries the same Service node, AggregateOffer and OfferCatalog the home page has carried since v3.75.0, read from one constant so the two cannot drift, because an agent landing on the price page from search got prices in prose and FAQ answers only. The primary navigation carries aria-label="Main" on every page, so a screen reader landmark list names it. v3.112.8 - round 15 read the served public surface and this release carries its two worker.js fixes: the agent-commerce-discovery guide no longer hyperlinks the AP2 extension URI, which is an identifier that answers 404 as an address, and OPTIONS answers 204 with preflight headers on every agent-api surface instead of only /x402, /api/* and /agent/auth/*. v3.112.7 - hotfix: the footer year is read per request, because Workers freeze the global-scope clock at the epoch and v3.112.6 served "1970" live for the minutes it was up. v3.112.6 - round 14 read the four repos byte by byte and this release carries its worker.js fixes: article:modified_time and the sitemap lastmod read the modified date the JSON-LD already read, the x402 merchant block carries legal_name and business_id like its three siblings, AP2 and MPP name the same quote channels, the OpenAPI description names every x402 challenge root, the footer year is computed, robots.txt is generated from one list, the CORS preflight runs after the host redirects, the IndexNow key file keeps its agent-api profile under rate limiting, the home Services tags fail closed, the badge alt text matches the SVG, the hosted validator carries the npm package's contentType guard, auth.md names the six year retention period, the TRACE post carries a Related section, and the ARD, SEP-2127, AP2, IETF and CyberGym claims carry their sources. The MCP server card moves to 1.3.10 because its get_security_evidence description now names the Internet.nl mail scan, so the card bytes and their signature move together. v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.115.0 - round 16 read the code and every served surface as a hostile reader, and this release carries its worker.js fixes: a method gate answers 405 with an Allow header where a GET route used to serve its body to POST, PUT, DELETE and PATCH, the CORS preflight advertises only the methods it honours and carries the security headers, OPTIONS on a page answers 204 instead of the page, the validator cuts its details on code point boundaries so a truncated emoji cannot turn into invalid UTF-8, the markdown renderer strips bidi controls from every href, the OpenAPI document describes ACP at its real path and lists /api/v1 and the four checkout operations, the API catalog names /api/v1, the home and services prose date the 48 hour promise from the agreed written kickoff as the JSON-LD already did, two guides link the claims they make, the response-headers guide says which rate limit header this site sends and why, two data posts point forward to the 567-sites post, the price post no longer reads as if a client had paid the old price, signatures.json says which bytes a signature covers, and a live brief address and a prospect name are gone from the code comments. The MCP server card moves to 1.3.11 because mcp.turva.dev now answers 405 to methods its CORS header never offered on the discovery documents. v3.114.2 was: four blog meta descriptions cut to the 160 the recipe allows; v3.114.1 was: the 567-sites post carries a Frequently asked section (FAQPage); v3.114.0 was: new blog post /blog/website-agent-readiness-567-sites (567 sites, one scanner, ten weeks); v3.113.0 was: every page title ends in " · turva.dev": the six card pages have since 2026-06-24 and the 46 guides, posts and hubs used a pipe, so one rule now covers all 52 and the three places that strip the suffix for the feed, the blog index and the blog JSON-LD accept either separator. The services page carries the same Service node, AggregateOffer and OfferCatalog the home page has carried since v3.75.0, read from one constant so the two cannot drift, because an agent landing on the price page from search got prices in prose and FAQ answers only. The primary navigation carries aria-label="Main" on every page, so a screen reader landmark list names it. v3.112.8 - round 15 read the served public surface and this release carries its two worker.js fixes: the agent-commerce-discovery guide no longer hyperlinks the AP2 extension URI, which is an identifier that answers 404 as an address, and OPTIONS answers 204 with preflight headers on every agent-api surface instead of only /x402, /api/* and /agent/auth/*. v3.112.7 - hotfix: the footer year is read per request, because Workers freeze the global-scope clock at the epoch and v3.112.6 served "1970" live for the minutes it was up. v3.112.6 - round 14 read the four repos byte by byte and this release carries its worker.js fixes: article:modified_time and the sitemap lastmod read the modified date the JSON-LD already read, the x402 merchant block carries legal_name and business_id like its three siblings, AP2 and MPP name the same quote channels, the OpenAPI description names every x402 challenge root, the footer year is computed, robots.txt is generated from one list, the CORS preflight runs after the host redirects, the IndexNow key file keeps its agent-api profile under rate limiting, the home Services tags fail closed, the badge alt text matches the SVG, the hosted validator carries the npm package's contentType guard, auth.md names the six year retention period, the TRACE post carries a Related section, and the ARD, SEP-2127, AP2, IETF and CyberGym claims carry their sources. The MCP server card moves to 1.3.10 because its get_security_evidence description now names the Internet.nl mail scan, so the card bytes and their signature move together. v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -70,6 +70,11 @@ var PERMISSIONS_POLICY = [
   "publickey-credentials-get=()", "screen-wake-lock=()", "sync-xhr=()",
   "usb=()", "web-share=()", "xr-spatial-tracking=()"
 ].join(", ");
+
+// The agent-API paths, as one regex, so the 429 answer in worker_default and the 405 answer
+// in serve405 describe the same surface the same way. /llms-txt-validator is the one path with
+// two policies and is decided by the accepted request (see the 429 branch).
+var AGENT_API_PATH_RE = /^\/(api|v1|x402|openapi\.json|llms(-full)?\.txt|\.well-known|agent\/auth|auth\.md|robots\.txt|sitemap\.xml|security\.txt|ai\.txt|api-catalog|blog\/feed\.xml|oauth\/(authorize|token)|favicon\.(ico|svg)|[0-9a-f]{32}\.txt)(\/|$)/;
 
 function applySecurityHeaders(headers, kind) {
   headers.delete("nel");
@@ -523,7 +528,8 @@ Run the same public scanner against the domain and read the group named API, Aut
 
 - [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
 - [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
-- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b)`,
+- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b)
+- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites)`,
   "/blog/cheating-to-keep-the-old-price": `# It would be cheating to keep the old price
 
 2026-08-21
@@ -532,13 +538,13 @@ The agent-readiness audit is now €4,300 and two weeks. It was €6,500 and two
 
 The scanner is the same one, isitagentready. The manual checks that sit over the scanner are the same. The re-scan after the fixes is still the thing the engagement is judged on, and it is still the only claim I make about the result.
 
-What moved is that the part a client used to pay for twice is now written down once.
+What moved is that the part the old price charged for twice is now written down once.
 
-## What a client used to pay for twice
+## What the old price charged for twice
 
 An audit has two halves. One half is measuring a surface: run the scanner, read what it says, check by hand whether the number is telling the truth. That half is real work and it stays.
 
-The other half was me deciding, again, what a passing row actually looks like. Twenty-two checks, each one an open specification that moved in the last year, and for each one the question was the same: what does a correct implementation of this look like, what does the scanner accept, and what is the concrete change that flips it. I answered those questions from scratch every time, and the client paid for the answering as well as the measuring.
+The other half was me deciding, again, what a passing row actually looks like. Twenty-two checks, each one an open specification that moved in the last year, and for each one the question was the same: what does a correct implementation of this look like, what does the scanner accept, and what is the concrete change that flips it. I answered those questions from scratch every time, and the old price charged for the answering as well as the measuring.
 
 That is the half that is now a file. The checklist has 42 rows. Every row names the pass condition, points at a working implementation of that row on a live surface, and links the fix recipe. There are 25 recipes behind it, one per check or close group.
 
@@ -597,6 +603,8 @@ Two weeks from the agreed written kickoff. It was two to three weeks, and the sh
 **How do you know the accuracy held?**
 
 Writing the checklist out immediately found a scored check, ard, that was missing from my own fix recipe index and from my own gate. That is the kind of hole the list exists to catch, and it caught it on me first.
+
+Corrected 2026-09-03. Three sentences in this post read as if a client had already paid the old price. None had: the audit had not sold at €6,500. They now say what the old price charged for. Nothing else in the post changed.
 
 ## Related
 
@@ -1178,6 +1186,7 @@ To check where a site stands, the free llms.txt validator is at turva.dev/llms-t
 - [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
 - [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
 - [What an agent pays to read your site](/blog/cheaper-pages-for-agents)
+- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites)
 `,
   "/blog/honesty-and-the-checker": `# When honesty and the checker disagree
 
@@ -1451,7 +1460,7 @@ Three tools this site publishes for anyone to use: an llms.txt validator, an emb
 
 ## llms.txt validator
 
-Checks a site's /llms.txt structure against the format and reports each check as pass, warn or fail, plus two v2 link relation checks reported as information. Nothing is stored. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header.
+Checks a site's /llms.txt structure against the format and reports each check as pass, warn or fail, plus two v2 link relation checks that read pass or info and never move the summary. Nothing is stored. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header.
 
 Open it at [turva.dev/llms-txt-validator](/llms-txt-validator), or [run it against this site's own file](/llms-txt-validator?url=turva.dev) without typing anything.
 
@@ -1784,7 +1793,7 @@ The catalog is a new file and a new route. It does not change a single existing 
 
 ## Discovery, not ranking
 
-An ai-catalog.json is easy to misread as another search file. It is not. It indexes the agentic resources a site exposes so an agent can find them and call each one through its own protocol. Google has said publicly that llms.txt does not affect its search results, and the same holds here. Agent-readiness and search ranking remain different things, and neither should be sold as the other.
+An ai-catalog.json is easy to misread as another search file. It is not. It indexes the agentic resources a site exposes so an agent can find them and call each one through its own protocol. Google [has said publicly](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) that llms.txt does not affect its search results, and the same holds here. Agent-readiness and search ranking remain different things, and neither should be sold as the other.
 
 ## Honest about adoption
 
@@ -1931,7 +1940,7 @@ The measurable core is agent-readiness, scored by an independent scanner and pro
 
 Both diagnoses are bought at a fixed price against a written scope. Neither one requires the other.
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. One live Shopify store, read across the three agent surfaces this check covers, delivered in 48 hours.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. One live Shopify store, read across the three agent surfaces this check covers, delivered within 48 hours of the agreed written kickoff.
 - [Agent-readiness audit](/services). €4,300. A whole site or API, measured by an independent scanner, delivered in two weeks.
 
 What follows a diagnosis is scoped separately, and that work is listed on the [services page](/services).
@@ -1988,7 +1997,7 @@ The result is checkable, not asserted. For agent-readiness that is the scanner n
 
 ## Services
 
-- Shopify agent storefront check. €999. Fixed scope. What an AI shopper receives from one live Shopify store, across browser WebMCP, remote MCP and Agentic channels. Four written deliverables in 48 hours, and a retest within 14 days.
+- Shopify agent storefront check. €999. Fixed scope. What an AI shopper receives from one live Shopify store, across browser WebMCP, remote MCP and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days.
 - Audit. Fixed scope. Two weeks. An independent scanner runs against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
 - Advisory. Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.
 - Implementation. €1,500 per day. Changes at the edge, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.
@@ -2326,7 +2335,7 @@ An agent readiness audit measures how well AI agents can discover, read, and act
 
 **What does an agent readiness audit cost?**
 
-The Shopify agent storefront check is €999, fixed scope, delivered in 48 hours. The audit is €4,300, fixed scope, delivered in two weeks. Ongoing advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. Implementing exactly what a diagnosis lists is a fixed €499, bought together with that diagnosis. All prices exclude VAT. Agent operations and MCP server design engagements are priced on request.
+The Shopify agent storefront check is €999, fixed scope, delivered within 48 hours of the agreed written kickoff. The audit is €4,300, fixed scope, delivered in two weeks. Ongoing advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. Implementing exactly what a diagnosis lists is a fixed €499, bought together with that diagnosis. All prices exclude VAT. Agent operations and MCP server design engagements are priced on request.
 
 **How is the audit delivered?**
 
@@ -3029,7 +3038,7 @@ The checkout, not the capability. An agent can find a product and compare option
 
 Response headers are the metadata a server sends with every page, and the right ones let an AI agent work without parsing the full HTML. They are the cheapest place to make a site more legible to automated clients, because an agent reads them before it reads the body.
 
-A Link header can point an agent straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the agent finds them without crawling. A Vary header that includes Accept tells caches and agents that the site can return different formats for the same URL, which is what makes markdown content negotiation reliable. RateLimit and RateLimit-Policy headers let a well-behaved agent throttle itself instead of guessing, though as of July 2026 their [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/), revision 11 from May 2026, remains active without yet becoming a standard. Content-Language and a clean content type remove ambiguity about what the agent is reading.
+A Link header can point an agent straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the agent finds them without crawling. A Vary header that includes Accept tells caches and agents that the site can return different formats for the same URL, which is what makes markdown content negotiation reliable. RateLimit-Policy states the quota a server enforces, and RateLimit adds the remaining allowance per client where the server tracks one, so a well-behaved agent can throttle itself instead of guessing. This site sends the policy header on every response and enforces it, and it keeps no per-client counter, so it sends no RateLimit header. As of July 2026 their [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/), revision 11 from May 2026, remains active without yet becoming a standard. Content-Language and a clean content type remove ambiguity about what the agent is reading.
 
 The reason headers matter is order. An agent fetches the response, reads the status and headers first, and decides what to do next from them. If the headers already say where the structured data is and what formats are available, the agent can skip the expensive step of parsing a page built for human display.
 
@@ -3041,7 +3050,7 @@ For an audit of a site's response and discovery surface, contact info@turva.dev.
 
 **Which response headers help AI agents?**
 
-A Link header points an agent at machine-readable resources such as an API catalog or a markdown version of the page. A Vary header that includes Accept makes markdown content negotiation reliable. RateLimit headers let a well-behaved agent throttle itself, and Content-Language with a clean content type removes ambiguity.
+A Link header points an agent at machine-readable resources such as an API catalog or a markdown version of the page. A Vary header that includes Accept makes markdown content negotiation reliable. A RateLimit-Policy header, and a RateLimit header where the server tracks a per-client allowance, let a well-behaved agent throttle itself, and Content-Language with a clean content type removes ambiguity.
 
 **Why do response headers matter to agents?**
 
@@ -3171,7 +3180,7 @@ ARD is a discovery layer, not a transport. It helps an agent find the right reso
 
 ## How it relates to llms.txt
 
-An ai-catalog.json is not a ranking trick and it is not a content map. llms.txt tells an agent where a site's content lives. An ai-catalog tells an agent which agentic resources the site exposes and how to reach them. The two are complementary, and neither is about search ranking. Google has said publicly that llms.txt does not affect its search results, which is the same point agent-readiness has always made. These files are for agents that read and act.
+An ai-catalog.json is not a ranking trick and it is not a content map. llms.txt tells an agent where a site's content lives. An ai-catalog tells an agent which agentic resources the site exposes and how to reach them. The two are complementary, and neither is about search ranking. Google [has said publicly](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) that llms.txt does not affect its search results, which is the same point agent-readiness has always made. These files are for agents that read and act.
 
 ## Why it matters
 
@@ -3187,7 +3196,7 @@ An ai-catalog.json is a static JSON manifest at /.well-known/ai-catalog.json tha
 
 **Does Agentic Resource Discovery affect search ranking?**
 
-No. ARD is a discovery layer for AI agents, not a search file. It indexes the resources an agent can call through their own protocols. Google has said publicly that llms.txt does not affect its search results, and the same applies to an ai-catalog.
+No. ARD is a discovery layer for AI agents, not a search file. It indexes the resources an agent can call through their own protocols. Google [has said publicly](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) that llms.txt does not affect its search results, and the same applies to an ai-catalog.
 
 **Where does an ai-catalog.json live?**
 
@@ -3369,7 +3378,7 @@ The markup, scripts and layout it does not need. That cost is counted in tokens,
 
   "/guides/agent-readiness-gaps": `# Common agent-readiness gaps on marketing sites
 
-Marketing sites are often strong for people and weak for agents, and the gaps are predictable. The evidence here is one documented scan of Finnish company sites, a small and non-random sample, so read it as what recurred in the sites reviewed rather than as a count of the whole web. A readiness review tends to find the same handful of misses, each of which quietly removes the site from an agent's view.
+Marketing sites are often strong for people and weak for agents, and the gaps are predictable. The evidence here is [one documented scan of Finnish company sites](/blog/agent-readiness-finnish-b2b), a small and non-random sample, so read it as what recurred in the sites reviewed rather than as a count of the whole web. A readiness review tends to find the same handful of misses, each of which quietly removes the site from an agent's view.
 
 The first is rendering. A site that builds its content with JavaScript returns an empty shell to any agent that does not run a browser, so for those clients the content never arrives in the first response. The second is discovery. No llms.txt and a thin or missing sitemap, so an agent has nothing to read but rendered pages. The third is cost. Only HTML is offered, with no markdown form, so an agent spends its budget on markup and truncates the page.
 
@@ -3891,7 +3900,10 @@ var AGENT_AUTH_BLOCK = {
 var API_CATALOG = JSON.stringify({
   "linkset": [{
     "anchor": "https://turva.dev/",
-    "service-desc": [{ "href": "https://turva.dev/openapi.json", "type": "application/json" }],
+    "service-desc": [
+      { "href": "https://turva.dev/openapi.json", "type": "application/json" },
+      { "href": "https://turva.dev/api/v1", "type": "application/json", "title": "Agent endpoint index" }
+    ],
     "service-doc": [
       { "href": "https://turva.dev/llms.txt", "type": "text/plain" },
       { "href": "https://turva.dev/llms-full.txt", "type": "text/plain" },
@@ -3921,8 +3933,8 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.114.1",
-    "description": "Read-only metadata + payable endpoints for AI agents. MPP + x402 + ACP enabled on /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots.",
+    "version": "3.115.0",
+    "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
   },
@@ -4003,7 +4015,12 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/acp": { "get": { "summary": "ACP manifest", "operationId": "getAcp", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/x402": { "get": { "summary": "x402 discovery manifest", "operationId": "getX402", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok" } } } }
+    "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok" } } } },
+    "/api/v1": { "get": { "summary": "Agent endpoint index", "operationId": "getApiIndex", "description": "Free JSON index of every agent surface this site serves. No payment, no authentication.", "responses": { "200": { "description": "ok" } } } },
+    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id }] } with id one of audit, advisory, implementation, shopify. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session" }, "400": { "description": "unknown item id" }, "405": { "description": "POST only" } } } },
+    "/api/acp/checkout_sessions/{session_id}": { "get": { "summary": "Retrieve an ACP checkout session", "operationId": "acpGetCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "session" }, "404": { "description": "unknown session id" }, "405": { "description": "GET only" } } } },
+    "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Always answers intervention_required: scope is agreed in writing before payment, no API completes it.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "intervention_required" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } },
+    "/api/acp/checkout_sessions/{session_id}/cancel": { "post": { "summary": "Cancel an ACP checkout session", "operationId": "acpCancelCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "canceled" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } }
   }
 }, null, 2);
 
@@ -4023,7 +4040,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"795bMSleZa8Z6BvaBmpuFXfxLtmu-5Jvwn5wFztmzLPt8e86ejiXjgQNuI2Igmk8gsTrhh3DqyFfjrUPxz-qBA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KJOxTNVf9uVOMqBMpXg5tV4QZJRnbKSwCco65xxLN1C2eTvXcf5_08hfDtuuodglDRHAqa7z2jxq8LTfVAceDg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KJOxTNVf9uVOMqBMpXg5tV4QZJRnbKSwCco65xxLN1C2eTvXcf5_08hfDtuuodglDRHAqa7z2jxq8LTfVAceDg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -4038,7 +4055,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "turva.dev/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.3.10",
+  "version": "1.3.11",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -4047,7 +4064,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.3.10",
+    "version": "1.3.11",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -4182,7 +4199,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.114.1",
+  "version": "3.115.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4595,7 +4612,7 @@ description: List the service offerings of turva.dev, with fixed prices in EUR f
 Use this skill to learn which services turva.dev offers, and which of them carry a fixed price.
 
 ## Services (fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation, VAT not included; the last two are quoted on request)
-- **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Agentic channels. Four written deliverables in 48 hours, and a retest within 14 days.
+- **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days.
 - **Audit.** €4,300. Fixed scope, two weeks. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, minimum 3 months. Async-only. Ongoing review, score tracking and a monthly AI-visibility delta across several AI platforms.
 - **Implementation.** €1,500 / day. Scoped per task. Edge workers, MCP servers, well-known manifests, JSON-LD.
@@ -4865,10 +4882,11 @@ var META_BY_PATH = {
   },
   "/blog/cheating-to-keep-the-old-price": {
     title: "It would be cheating to keep the old price · turva.dev",
-    description: "The audit drops to 4,300 euros and two weeks. The part a client paid for twice is now a written checklist.",
+    description: "The audit drops to 4,300 euros and two weeks. The part the old price charged for twice is now a written checklist.",
     date: "2026-08-21",
+    modified: "2026-09-03",
     image: "/og-cheating-to-keep-the-old-price.jpg",
-    imageAlt: "turva.dev blog card: The audit drops to 4,300 euros and two weeks. The part a client paid for twice is now a written checklist.",
+    imageAlt: "turva.dev blog card: The audit drops to 4,300 euros and two weeks. The part the old price charged for twice is now a written checklist.",
   },
   "/blog/i-thought-it-was-a-small-job": {
     title: "I thought it was a small job · turva.dev",
@@ -4922,7 +4940,7 @@ var META_BY_PATH = {
   },
   "/blog/measuring-the-ai-patch-surge": {
     title: "Measuring the AI patch surge: Microsoft's July package · turva.dev",
-    description: "Microsoft said customers would see a higher volume of security updates and gave no number. Twelve months of MSRC CVRF data: the July package is 3,0 times the baseline, and the median CVE got more severe.",
+    description: "Microsoft said customers would see more security updates and gave no number. Twelve months of MSRC CVRF data: the July package is 3,0 times the baseline.",
     date: "2026-07-15",
     modified: "2026-07-17",
     image: "/og-measuring-the-ai-patch-surge.jpg",
@@ -4930,14 +4948,14 @@ var META_BY_PATH = {
   },
   "/blog/agent-secret-hygiene": {
     title: "Secret hygiene when an agent works in your repo · turva.dev",
-    description: "Coding agents run with your shell, so plaintext secrets on disk are exposed to them. Move git auth to a credential manager and the rest into an OS-encrypted vault.",
+    description: "Coding agents run with your shell, so plaintext secrets on disk are exposed to them. Move git auth to a credential manager and the rest to an encrypted vault.",
     date: "2026-07-12",
     image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
   },
   "/blog/agent-readiness-finnish-b2b": {
     title: "Agent-readiness of Finnish B2B sites · turva.dev",
-    description: "I ran an independent scanner over sixteen Finnish B2B sites. Almost every one landed at isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere.",
+    description: "An independent scanner over sixteen Finnish B2B sites: almost every one read isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere.",
     date: "2026-07-07",
     modified: "2026-07-17",
     image: "/og-agent-readiness-finnish-b2b.jpg",
@@ -5028,7 +5046,7 @@ var META_BY_PATH = {
   },
   "/blog/moving-off-prerender": {
     title: "Moving turva.dev off prerender.io · turva.dev",
-    description: "The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop. Verified 100/100 Level 5 by an independent scanner.",
+    description: "The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, no prerender.io hop. Verified 100/100 Level 5 by an independent scanner.",
     date: "2026-06-20",
     image: "/og-moving-off-prerender.jpg",
     imageAlt: "turva.dev blog card: The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop."
@@ -5343,6 +5361,19 @@ function appendAgentLinks(headers) {
 
 var FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"/><path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
+// 405 for a method the route does not serve. Round 16 (S1-1, C1-2, C5-20, C7-2, measured
+// 2026-09-03): until v3.115.0 every GET route answered POST, PUT, DELETE and PATCH with the
+// same 200 body as GET, while the OpenAPI document declares one get operation for those
+// paths and the CORS preflight promised only GET, POST and OPTIONS. The Allow header names
+// what the route serves; HEAD is always in it because worker_default turns HEAD into GET.
+function serve405(allow, pathLower) {
+  const agent = AGENT_API_PATH_RE.test(pathLower);
+  const headers = new Headers({ "content-type": "text/plain; charset=utf-8", "allow": allow, "cache-control": "no-store" });
+  if (agent) headers.set("access-control-allow-origin", "*");
+  applySecurityHeaders(headers, agent ? "agent-api" : "default");
+  return new Response("405 Method Not Allowed. Allow: " + allow + "\n", { status: 405, headers });
+}
+
 function serve404(pathname) {
   const body = `<!doctype html>
 <html lang="en">
@@ -5640,6 +5671,22 @@ function escapeHtml(s) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
+// Cut a string to at most n UTF-16 code units without leaving a lone high surrogate at the
+// end. String.prototype.slice counts code units, so a cut that lands inside a surrogate pair
+// leaves half of it, and workerd serialises that half as three bytes that are not valid
+// UTF-8 under a charset=utf-8 header (round 16 S3-1, measured 2026-09-03 with a 300 character
+// url= parameter whose 300th unit opened an emoji). Mirrored in the npm package.
+function cut(s, n) {
+  s = String(s).slice(0, n);
+  return /[\uD800-\uDBFF]$/.test(s) ? s.slice(0, -1) : s;
+}
+
+// Unicode bidi controls (U+202A to U+202E, U+2066 to U+2069) have no place inside an href:
+// the right-to-left override is the classic way to make a link read as a different address
+// than the one it opens (round 16, verifier C, 2026-09-03). Stripped from every href this
+// renderer writes; the visible text keeps them because escapeHtml already neutralises markup.
+var BIDI_CONTROLS = /[\u202A-\u202E\u2066-\u2069]/g;
+
 function renderInline(text) {
   let out = escapeHtml(text);
   out = out.replace(/&lt;mailto:(.+?)&gt;/g, '<a href="mailto:$1">$1</a>');
@@ -5651,7 +5698,7 @@ function renderInline(text) {
     // hazard removed rather than a bug observed. The autolinkers above already do not
     // re-escape. The "/" branch also has to refuse "//host", which is protocol-relative
     // and external, not root-relative.
-    return /^(https?:\/\/|mailto:|\/(?!\/)|#)/i.test(href.trim()) ? `<a href="${href}">${label}</a>` : escapeHtml(label);
+    return /^(https?:\/\/|mailto:|\/(?!\/)|#)/i.test(href.trim()) ? `<a href="${href.replace(BIDI_CONTROLS, "")}">${label}</a>` : escapeHtml(label);
   });
   out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   out = out.replace(/(^|[\s(])(info@turva\.dev)/g, '$1<a href="mailto:info@turva.dev">$2</a>');
@@ -5659,13 +5706,13 @@ function renderInline(text) {
     var tm = url.match(/[.,;:!?]+$/);
     var tail = "";
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
-    return pre + '<a href="' + url + '">' + url + '</a>' + tail;
+    return pre + '<a href="' + url.replace(BIDI_CONTROLS, "") + '">' + url + '</a>' + tail;
   });
   out = out.replace(/(^|[\s(])((?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/[^\s<)"]*)/gi, function(m, pre, url) {
     var tm = url.match(/[.,;:!?]+$/);
     var tail = "";
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
-    return pre + '<a href="https://' + url + '">' + url + '</a>' + tail;
+    return pre + '<a href="https://' + url.replace(BIDI_CONTROLS, "") + '">' + url + '</a>' + tail;
   });
   return out;
 }
@@ -6895,7 +6942,8 @@ function briefRoute(pathname) {
 // joten osoitteesta tekee linkin vastaanottajan oma postiohjelma. Osa niista ottaa
 // virkkeen lopettavan pisteen mukaan linkkiin, ja silloin lukija saa 404:n tasan siita
 // osoitteesta jonka koko viestin oli maara toimittaa. Mitattu 2026-08-31:
-// /brief/eduhouse-2rtx74kykmy6l vastasi 200:lla ja sama osoite pisteen kanssa 404:lla
+// /brief/<tunnus> vastasi 200:lla ja sama osoite pisteen kanssa 404:lla (tunnus on tassa
+// paikanpitaja: elava osoite ei kuulu julkiseen repoon, kierros 16 S4-1)
 // kolmessa ajossa kolmesta.
 //
 // SIIVOUS EI VOI SYODA OIKEAA TUNNUSTA, koska BRIEF_ID sallii vain merkit [a-z0-9-] eika
@@ -6953,7 +7001,7 @@ function briefHtmlPage(rec, canonicalUrl) {
   // OG JA TWITTER, lisatty 2026-09-01. Ilman og:description LinkedInin raaputtaja ei
   // putoa meta name="description" -tagiin vaan raapii sivun nakyvaa tekstia ylhaalta,
   // ja sivun ensimmainen nakyva teksti on saavutettavuuslinkki "Skip to content".
-  // Mitattu Lecklen briefista 2026-09-01: esikatselu luki "Skip to content turva . dev".
+  // Mitattu eraan briefista 2026-09-01: esikatselu luki "Skip to content turva . dev".
   // Kuvaus tulee samasta kuvaus-muuttujasta kuin meta description, jottei kaksi
   // samaa tarkoittavaa merkkijonoa ajaudu erilleen.
   var someOtsikko = rec.otsikko || rec.yritys || "agent readiness brief";
@@ -7241,13 +7289,13 @@ async function fetchLlmsTxt(host, path, accept) {
     if (res.status >= 300 && res.status < 400) {
       const loc = res.headers.get("location") || "";
       if (!loc) return { redirect: true, reason: "no-location", status: res.status, location: "" };
-      if (hop >= 4) return { redirect: true, reason: "too-many", status: res.status, location: loc.slice(0, 120) };
+      if (hop >= 4) return { redirect: true, reason: "too-many", status: res.status, location: cut(loc, 120) };
       let next;
-      try { next = new URL(loc, url); } catch { return { redirect: true, reason: "bad-location", status: res.status, location: loc.slice(0, 120) }; }
+      try { next = new URL(loc, url); } catch { return { redirect: true, reason: "bad-location", status: res.status, location: cut(loc, 120) }; }
       const safeTarget = next.protocol === "https:" && !next.port && !next.username && !next.password && isValidPublicHost(next.hostname);
       const twin = (next.hostname.startsWith("www.") ? next.hostname.slice(4) : next.hostname) === reqApex;
-      if (!safeTarget) return { redirect: true, reason: "unsafe-target", status: res.status, location: next.href.slice(0, 120) };
-      if (!twin) return { redirect: true, reason: "off-host", status: res.status, location: next.href.slice(0, 120) };
+      if (!safeTarget) return { redirect: true, reason: "unsafe-target", status: res.status, location: cut(next.href, 120) };
+      if (!twin) return { redirect: true, reason: "off-host", status: res.status, location: cut(next.href, 120) };
       if (!redirectedFrom) redirectedFrom = url;
       url = next.href;
       continue;
@@ -7386,13 +7434,13 @@ function validateLlmsTxt(f) {
   // indented code block rather than a heading, and trimming erased that difference, so
   // "    # Site" passed as the H1 until 2026-08-29. CommonMark allows three spaces.
   if (/^ {0,3}# \S/.test(firstRaw)) {
-    add("h1-title", "pass", "Starts with an H1 title", JSON.stringify(first.slice(0, 80)));
+    add("h1-title", "pass", "Starts with an H1 title", JSON.stringify(cut(first, 80)));
   } else {
     add("h1-title", "fail", "Starts with an H1 title", "the first non-empty line should be a markdown H1 (# Site name)");
   }
   const afterH1 = lines.slice(firstIdx + 1).find((l) => l.trim() !== "") || "";
   if (afterH1.trim().startsWith("> ")) {
-    add("summary", "pass", "Blockquote summary after the title", JSON.stringify(afterH1.trim().slice(0, 80)));
+    add("summary", "pass", "Blockquote summary after the title", JSON.stringify(cut(afterH1.trim(), 80)));
   } else {
     add("summary", "warn", "Blockquote summary after the title", "recommended by the format (> one-line summary), not required");
   }
@@ -7724,9 +7772,9 @@ function validateV2Discovery(found, unreadReason) {
     return checks;
   }
   add("v2-describedby", found.describedby ? "pass" : "info", "Home page points to its llms.txt (v2)",
-    found.describedby ? 'rel="describedby" to ' + found.describedby.slice(0, 120) : 'no rel="describedby" in the head or the Link header; v2 recommends it so an agent finds the file without guessing');
+    found.describedby ? 'rel="describedby" to ' + cut(found.describedby, 120) : 'no rel="describedby" in the head or the Link header; v2 recommends it so an agent finds the file without guessing');
   add("v2-markdown-alternate", found.markdown ? "pass" : "info", "Home page points to a markdown version (v2)",
-    found.markdown ? 'rel="alternate" type="text/markdown" to ' + found.markdown.slice(0, 120) : 'no rel="alternate" type="text/markdown" in the head or the Link header; v2 recommends it so an agent finds the markdown form without guessing');
+    found.markdown ? 'rel="alternate" type="text/markdown" to ' + cut(found.markdown, 120) : 'no rel="alternate" type="text/markdown" in the head or the Link header; v2 recommends it so an agent finds the markdown form without guessing');
   return checks;
 }
 
@@ -7738,7 +7786,7 @@ function summarizeChecks(checks) {
 
 async function serveLlmsValidatorHtml(request, canonicalUrl) {
   const reqUrl = new URL(request.url);
-  const raw = (reqUrl.searchParams.get("url") || "").slice(0, 300);
+  const raw = cut(reqUrl.searchParams.get("url") || "", 300);
   let result = null;
   let error = null;
   if (raw) {
@@ -8157,7 +8205,7 @@ var worker_default = {
             // /llms-txt-validator is one path with two policies: the JSON branch is an agent
             // API that sets CORS deliberately, the HTML branch is a page. A path regex cannot
             // tell them apart, so the accepted request decides, which is what this comment asks.
-            const rlAgent = /^\/(api|v1|x402|openapi\.json|llms(-full)?\.txt|\.well-known|agent\/auth|auth\.md|robots\.txt|sitemap\.xml|security\.txt|ai\.txt|api-catalog|blog\/feed\.xml|oauth\/(authorize|token)|favicon\.(ico|svg)|[0-9a-f]{32}\.txt)(\/|$)/.test(rlPath)
+            const rlAgent = AGENT_API_PATH_RE.test(rlPath)
               || (rlPath === "/llms-txt-validator" && wantsJson(request));
             applySecurityHeaders(rlHeaders, rlAgent ? "agent-api" : "default");
             if (rlAgent) rlHeaders.set("access-control-allow-origin", "*");
@@ -8251,14 +8299,38 @@ async function handleRequest(request, env) {
   // agent-api JSON and text surface now answers 204. The fediverse aliases stay out because
   // they redirect to social.turva.dev, and /v1/message:send keeps its own POST-only preflight.
   const fediPath = pathLower === "/.well-known/host-meta" || pathLower === "/.well-known/webfinger" || pathLower === "/.well-known/nodeinfo";
-  const preflightPath = pathLower === "/x402" || pathLower === "/x402/" || pathLower === "/api" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/") || pathLower === "/openapi.json" || pathLower === "/llms.txt" || pathLower === "/llms-full.txt" || pathLower === "/auth.md" || pathLower === "/robots.txt" || pathLower === "/sitemap.xml" || (pathLower.startsWith("/.well-known/") && !fediPath);
-  if (request.method === "OPTIONS" && preflightPath) {
+  const preflightPath = pathLower === "/x402" || pathLower === "/x402/" || pathLower === "/api" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token" || pathLower === "/openapi.json" || pathLower === "/llms.txt" || pathLower === "/llms-full.txt" || pathLower === "/auth.md" || pathLower === "/robots.txt" || pathLower === "/sitemap.xml" || (pathLower.startsWith("/.well-known/") && !fediPath);
+  // METHOD GATE, round 16 (S1-1 to S1-4, C1-2, C5-20, C7-2, measured 2026-09-03). GET and
+  // OPTIONS are allowed everywhere; HEAD arrives here as GET (worker_default). POST is
+  // allowed only where a handler or the OpenAPI document knows it: the A2A transport, the
+  // x402 challenge roots and payable routes, the agent-auth instruction documents and the
+  // two OAuth endpoints. The ACP checkout family keeps its own per-path 405 logic. Every
+  // other method on every other path answers 405 with an Allow header instead of the GET
+  // body, and the preflight advertises the same set it will honour.
+  const acpFamily = pathLower === "/api/acp/checkout_sessions" || pathLower.startsWith("/api/acp/checkout_sessions/");
+  const postAllowed = pathLower === "/v1/message:send" || pathLower === "/v1/message:send/"
+    || pathLower === "/api" || pathLower === "/api/" || pathLower === "/x402" || pathLower === "/x402/"
+    || !!X402_ROUTES[pathLower] || !!X402_ROUTES[pathLower.replace(/\/$/, "")]
+    || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token";
+  if (!acpFamily && request.method !== "GET" && request.method !== "OPTIONS" && !(request.method === "POST" && postAllowed)) {
+    return serve405(postAllowed ? "GET, HEAD, POST, OPTIONS" : "GET, HEAD, OPTIONS", pathLower);
+  }
+  if (request.method === "OPTIONS" && preflightPath && pathLower !== "/v1/message:send" && pathLower !== "/v1/message:send/") {
     const headers = new Headers({
       "access-control-allow-origin": "*",
-      "access-control-allow-methods": "GET, POST, OPTIONS",
+      "access-control-allow-methods": (acpFamily || postAllowed) ? "GET, POST, OPTIONS" : "GET, OPTIONS",
       "access-control-allow-headers": "Content-Type, Accept, X-PAYMENT",
       "access-control-max-age": "86400"
     });
+    applySecurityHeaders(headers, "agent-api");
+    return new Response(null, { status: 204, headers });
+  }
+  if (request.method === "OPTIONS" && pathLower !== "/v1/message:send" && pathLower !== "/v1/message:send/" && !fediPath && !LEGACY_REDIRECTS[pathname]) {
+    // A page or an unknown path: answer the method question and nothing else. Until v3.115.0
+    // OPTIONS / fell through to serveHomeHtml and returned the whole page. The fediverse
+    // aliases and the legacy paths keep redirecting on OPTIONS, as they do on GET.
+    const headers = new Headers({ "allow": "GET, HEAD, OPTIONS" });
+    applySecurityHeaders(headers, "default");
     return new Response(null, { status: 204, headers });
   }
 
