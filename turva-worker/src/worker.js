@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.116.0 - the privacy section of /legal says what a brief is, where it lives, that it is removed on request and that it expires on its own no later than 400 days after it was last published, because round 16 (S4-3, C1-4) found the page promising deletion for client data while saying nothing about the one surface that carries third-party data; the same release dates the privacy section. v3.115.1 was: hotfix after the 3.115.0 ship: the agentic-resource-discovery FAQ answer no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer as written while the page renders it, and the live gate read the two as different texts; the link stays in the guide body. verify.mjs --live now expects the honest preflight set, GET, OPTIONS on a GET-only surface and GET, POST, OPTIONS only where POST is served. v3.115.0 was: round 16 read the code and every served surface as a hostile reader, and this release carries its worker.js fixes: a method gate answers 405 with an Allow header where a GET route used to serve its body to POST, PUT, DELETE and PATCH, the CORS preflight advertises only the methods it honours and carries the security headers, OPTIONS on a page answers 204 instead of the page, the validator cuts its details on code point boundaries so a truncated emoji cannot turn into invalid UTF-8, the markdown renderer strips bidi controls from every href, the OpenAPI document describes ACP at its real path and lists /api/v1 and the four checkout operations, the API catalog names /api/v1, the home and services prose date the 48 hour promise from the agreed written kickoff as the JSON-LD already did, two guides link the claims they make, the response-headers guide says which rate limit header this site sends and why, two data posts point forward to the 567-sites post, the price post no longer reads as if a client had paid the old price, signatures.json says which bytes a signature covers, and a live brief address and a prospect name are gone from the code comments. The MCP server card moves to 1.3.11 because mcp.turva.dev now answers 405 to methods its CORS header never offered on the discovery documents. v3.114.2 was: four blog meta descriptions cut to the 160 the recipe allows; v3.114.1 was: the 567-sites post carries a Frequently asked section (FAQPage); v3.114.0 was: new blog post /blog/website-agent-readiness-567-sites (567 sites, one scanner, ten weeks); v3.113.0 was: every page title ends in " · turva.dev": the six card pages have since 2026-06-24 and the 46 guides, posts and hubs used a pipe, so one rule now covers all 52 and the three places that strip the suffix for the feed, the blog index and the blog JSON-LD accept either separator. The services page carries the same Service node, AggregateOffer and OfferCatalog the home page has carried since v3.75.0, read from one constant so the two cannot drift, because an agent landing on the price page from search got prices in prose and FAQ answers only. The primary navigation carries aria-label="Main" on every page, so a screen reader landmark list names it. v3.112.8 - round 15 read the served public surface and this release carries its two worker.js fixes: the agent-commerce-discovery guide no longer hyperlinks the AP2 extension URI, which is an identifier that answers 404 as an address, and OPTIONS answers 204 with preflight headers on every agent-api surface instead of only /x402, /api/* and /agent/auth/*. v3.112.7 - hotfix: the footer year is read per request, because Workers freeze the global-scope clock at the epoch and v3.112.6 served "1970" live for the minutes it was up. v3.112.6 - round 14 read the four repos byte by byte and this release carries its worker.js fixes: article:modified_time and the sitemap lastmod read the modified date the JSON-LD already read, the x402 merchant block carries legal_name and business_id like its three siblings, AP2 and MPP name the same quote channels, the OpenAPI description names every x402 challenge root, the footer year is computed, robots.txt is generated from one list, the CORS preflight runs after the host redirects, the IndexNow key file keeps its agent-api profile under rate limiting, the home Services tags fail closed, the badge alt text matches the SVG, the hosted validator carries the npm package's contentType guard, auth.md names the six year retention period, the TRACE post carries a Related section, and the ARD, SEP-2127, AP2, IETF and CyberGym claims carry their sources. The MCP server card moves to 1.3.10 because its get_security_evidence description now names the Internet.nl mail scan, so the card bytes and their signature move together. v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
+// turva.dev worker v3.118.0 - two new posts from data already on disk: /blog/thirty-days-after-the-brief reads the first 210 thirty-day rescans as one set (201 comparable, 197 unchanged, three up, one down, none of the three that improved had replied, one scanner-side denominator change), and /blog/what-ai-assistants-call-an-agent-readiness-audit reads the 3 September AI-visibility run for how four assistants interpret the term (18 of 41 open answers describe an organisation, 13 the website, 7 of 7 the website when the question names it). Both carry a Frequently asked section, their own OG card and a line in llms.txt, which is re-signed. v3.117.0 was: round 17 read every public surface as a buyer, an agent and a Finnish recipient and asked what is weak rather than what is wrong, and this release carries its worker.js changes: the Finnish brief page gets a Finnish frame (skip link, footer, the machine-readable line with its umlauts restored, and one line naming the reply channel in Finnish), the home page puts the two fixed-scope products and their prices right after the scan board and moves the curl demo down beside the evidence, the home and services FAQ say that an agent-readiness audit reads the website and its APIs and not the organisation, twenty guides link the choosing guide from their Related lists, the gaps and sitemaps guides cite the 567-site scan instead of the July sixteen, the JSON-LD guide covers data that is valid and wrong, the commerce discovery guide covers UCP as the fourth surface, llms.txt carries a Contact section and moves pricing, business details and the engagement model ahead of the guide and blog lists (re-signed), llms-full.txt orders the primary pages first, the guides second and the blog last, the blog index opens with a Start here card, /contact says correspondence runs in English or Finnish and the schema and get_contact carry both languages, and the audit section names a synthetic sample report available on request. v3.116.0 was: the privacy section of /legal says what a brief is, where it lives, that it is removed on request and that it expires on its own no later than 400 days after it was last published, because round 16 (S4-3, C1-4) found the page promising deletion for client data while saying nothing about the one surface that carries third-party data; the same release dates the privacy section. v3.115.1 was: hotfix after the 3.115.0 ship: the agentic-resource-discovery FAQ answer no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer as written while the page renders it, and the live gate read the two as different texts; the link stays in the guide body. verify.mjs --live now expects the honest preflight set, GET, OPTIONS on a GET-only surface and GET, POST, OPTIONS only where POST is served. v3.115.0 was: round 16 read the code and every served surface as a hostile reader, and this release carries its worker.js fixes: a method gate answers 405 with an Allow header where a GET route used to serve its body to POST, PUT, DELETE and PATCH, the CORS preflight advertises only the methods it honours and carries the security headers, OPTIONS on a page answers 204 instead of the page, the validator cuts its details on code point boundaries so a truncated emoji cannot turn into invalid UTF-8, the markdown renderer strips bidi controls from every href, the OpenAPI document describes ACP at its real path and lists /api/v1 and the four checkout operations, the API catalog names /api/v1, the home and services prose date the 48 hour promise from the agreed written kickoff as the JSON-LD already did, two guides link the claims they make, the response-headers guide says which rate limit header this site sends and why, two data posts point forward to the 567-sites post, the price post no longer reads as if a client had paid the old price, signatures.json says which bytes a signature covers, and a live brief address and a prospect name are gone from the code comments. The MCP server card moves to 1.3.11 because mcp.turva.dev now answers 405 to methods its CORS header never offered on the discovery documents. v3.114.2 was: four blog meta descriptions cut to the 160 the recipe allows; v3.114.1 was: the 567-sites post carries a Frequently asked section (FAQPage); v3.114.0 was: new blog post /blog/website-agent-readiness-567-sites (567 sites, one scanner, ten weeks); v3.113.0 was: every page title ends in " · turva.dev": the six card pages have since 2026-06-24 and the 46 guides, posts and hubs used a pipe, so one rule now covers all 52 and the three places that strip the suffix for the feed, the blog index and the blog JSON-LD accept either separator. The services page carries the same Service node, AggregateOffer and OfferCatalog the home page has carried since v3.75.0, read from one constant so the two cannot drift, because an agent landing on the price page from search got prices in prose and FAQ answers only. The primary navigation carries aria-label="Main" on every page, so a screen reader landmark list names it. v3.112.8 - round 15 read the served public surface and this release carries its two worker.js fixes: the agent-commerce-discovery guide no longer hyperlinks the AP2 extension URI, which is an identifier that answers 404 as an address, and OPTIONS answers 204 with preflight headers on every agent-api surface instead of only /x402, /api/* and /agent/auth/*. v3.112.7 - hotfix: the footer year is read per request, because Workers freeze the global-scope clock at the epoch and v3.112.6 served "1970" live for the minutes it was up. v3.112.6 - round 14 read the four repos byte by byte and this release carries its worker.js fixes: article:modified_time and the sitemap lastmod read the modified date the JSON-LD already read, the x402 merchant block carries legal_name and business_id like its three siblings, AP2 and MPP name the same quote channels, the OpenAPI description names every x402 challenge root, the footer year is computed, robots.txt is generated from one list, the CORS preflight runs after the host redirects, the IndexNow key file keeps its agent-api profile under rate limiting, the home Services tags fail closed, the badge alt text matches the SVG, the hosted validator carries the npm package's contentType guard, auth.md names the six year retention period, the TRACE post carries a Related section, and the ARD, SEP-2127, AP2, IETF and CyberGym claims carry their sources. The MCP server card moves to 1.3.10 because its get_security_evidence description now names the Internet.nl mail scan, so the card bytes and their signature move together. v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -49,7 +49,7 @@ max_age: 604800
 
 var CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-pGbodl2eY0Pb3PeKlpc5ALUOuVsrGIoVdBnto6PJYC0='",
+  "script-src 'self' 'sha256-aa/XgWAsbnyIjrazJucWqYec3ki7mwuHIGaUjjTaPOM='",
   "style-src 'self' 'unsafe-inline' https: data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
@@ -114,8 +114,10 @@ var LLMS_TXT = `# turva.dev
 > Agent-readiness audits and advisory for product teams.
 > Independent measurement of how readable a site or API is by AI agents,
 > with a prioritized fix list and implementation support.
+> An agent-readiness audit reads the website and its APIs, not an
+> organisation's readiness to adopt agents.
 > Based in Tampere, Finland. Async-only engagement.
-> Language: English.
+> Language: English. Correspondence in English or Finnish.
 
 ## Services
 - [Services](https://turva.dev/services.md)
@@ -123,6 +125,36 @@ var LLMS_TXT = `# turva.dev
 - [Company](https://turva.dev/company.md)
 - [Contact](https://turva.dev/contact.md)
 - [Legal](https://turva.dev/legal.md)
+
+## Pricing (EUR, VAT not included)
+- Shopify agent storefront check: €999 (fixed scope, 48 hours)
+- Audit: €4,300 (fixed scope, two weeks)
+- Advisory: €3,000 / month (monthly retainer, minimum 3 months)
+- Implementation: €1,500 / day (scoped per task)
+- Audit fix implementation: €499 (fixed, sold only together with the audit)
+- Shopify correction implementation: €499 (fixed, sold only together with the Shopify agent storefront check)
+
+Final price is confirmed in writing after scope is agreed.
+
+## Business details
+- Name: turva.dev
+- Business ID (Finland): 3600281-7
+- Location: Tampere, Finland
+- YTJ: https://tietopalvelu.ytj.fi/yritys/3600281-7
+- LinkedIn: https://www.linkedin.com/in/erikrekola/
+
+## Engagement model
+- Async-only. No calls, no calendar links.
+- First reply in writing within one business day.
+- Email for longer messages, Signal for short questions.
+- Production credentials are not requested.
+- Write access to repositories is scoped per task.
+
+## Contact
+- Email: info@turva.dev
+- Signal: https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK
+- Written contact only, first reply within one business day.
+- [Contact page](https://turva.dev/contact.md)
 
 ## Guides
 - [Agent-readiness guides](https://turva.dev/guides.md)
@@ -153,6 +185,8 @@ var LLMS_TXT = `# turva.dev
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Thirty days after the brief: 210 sites rescanned, four moved](https://turva.dev/blog/thirty-days-after-the-brief.md)
+- [What four AI assistants call an agent readiness audit](https://turva.dev/blog/what-ai-assistants-call-an-agent-readiness-audit.md)
 - [Website agent readiness, measured on 567 company sites](https://turva.dev/blog/website-agent-readiness-567-sites.md)
 - [TRACE signs how an agent ran, not what it was allowed to reach](https://turva.dev/blog/trace-runtime-attestation.md)
 - [I scanned fourteen code hosts. Not one served an MCP server card.](https://turva.dev/blog/agent-readiness-code-hosts.md)
@@ -185,30 +219,6 @@ var LLMS_TXT = `# turva.dev
 - [Free tools for agent-readiness](https://turva.dev/tools.md)
 - [llms.txt validator](https://turva.dev/llms-txt-validator.md)
 - [The agent-ready badge](https://turva.dev/badge.md)
-
-## Pricing (EUR, VAT not included)
-- Shopify agent storefront check: €999 (fixed scope, 48 hours)
-- Audit: €4,300 (fixed scope, two weeks)
-- Advisory: €3,000 / month (monthly retainer, minimum 3 months)
-- Implementation: €1,500 / day (scoped per task)
-- Audit fix implementation: €499 (fixed, sold only together with the audit)
-- Shopify correction implementation: €499 (fixed, sold only together with the Shopify agent storefront check)
-
-Final price is confirmed in writing after scope is agreed.
-
-## Business details
-- Name: turva.dev
-- Business ID (Finland): 3600281-7
-- Location: Tampere, Finland
-- YTJ: https://tietopalvelu.ytj.fi/yritys/3600281-7
-- LinkedIn: https://www.linkedin.com/in/erikrekola/
-
-## Engagement model
-- Async-only. No calls, no calendar links.
-- First reply in writing within one business day.
-- Email for longer messages, Signal for short questions.
-- Production credentials are not requested.
-- Write access to repositories is scoped per task.
 
 ## Agent endpoints
 - Agent registration: https://turva.dev/auth.md
@@ -325,6 +335,104 @@ six years for invoice records under Finnish accounting law.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/thirty-days-after-the-brief": `# Thirty days after the brief: 210 sites rescanned, four moved
+
+2026-09-03
+
+Every brief I send carries the same promise. Thirty days later I run the same scanner on the same site again and send back what changed, whether or not anyone answered. Between 19 August and 3 September that promise came due for 210 sites, first measured between 13 July and 6 August, and this is the first time the rescans are read as one set.
+
+## What was measured
+
+The scanner is isitagentready.com, run against the same host with the same default profile as the first time, twice per site, and a pair that disagrees is run again until the reading settles or is recorded as unstable. A site counts as moved when its level changed. A check that started passing while the level held is recorded in the file but not counted here, because the level is what the recipient was told in July and what the rescan message reports.
+
+- 210 sites rescanned. 201 gave a reading that can be compared with the first one.
+- Nine could not be compared. Two hosts answer the scanner with 403 while answering a browser with 200, one answered 500 both times, one was too slow for the scanner to finish, and the rest had a first reading that was never clean enough to compare against.
+- 197 of the 201 read the same level as in July. Three moved up and one moved down, 2,0 percent.
+- Seven of the 210 had replied to the brief by the time of the rescan, 3,3 percent.
+
+## The four that moved
+
+Three went up. A site whose sitemap answered 404 in July answers 200 now, and reads Level 1 instead of Level 0. A site whose robots.txt redirected to itself and whose sitemap returned 500 has both working, Level 0 to Level 1. A site that now declares Content Signals in its robots.txt reads Level 2 instead of Level 1. One went down: its sitemap answered in July and answers 404 now, Level 1 to Level 0, confirmed with a request outside the scanner so that a scanner artefact is ruled out.
+
+None of the three that moved up had replied to the brief. So the brief cannot claim them, and I am not going to. The likelier explanation is ordinary maintenance, a CMS update or a plugin that started generating a sitemap, and that is worth writing down because a rescan series is the exact place where a consultant is tempted to count every improvement as an effect.
+
+## The scanner moved too
+
+During the series the scanner added a check named ard to its API group. The twelve sites in the last batch were measured against a larger check set than in July without their sites changing. A rescan therefore compares the denominator first and the passes second, and the message the recipient gets names the checks rather than a percentage, because a percentage over a moving denominator says nothing.
+
+## What this says and what it does not
+
+The sample is my own prospecting list, sites I chose to write to, not a random draw. So 2,0 percent is a fact about these 210 sites and not a rate for the web. Zero movement in thirty days is also the expected result when nobody has decided to act. The fixes are small, a sitemap line, a robots.txt group, a header, but they need a person who owns the website to schedule them, and one unsolicited email rarely does that inside a month.
+
+What the series does show is narrower and still useful. The promise can be kept at this volume. The scanner is stable enough to compare across a month for 201 of 210 sites, and where it is not, the reason is on the host side and can be named. And the one site that went down is a reminder that agent readiness is not a state a site reaches once: a sitemap that disappears in an update takes the level with it, and nobody notices until something reads the site as a machine.
+
+292 promises are still open, the next of them due on 9 September. When the set is larger the same reading will be repeated.
+
+## Frequently asked
+
+**What does the 30 day rescan promise mean?**
+
+Every brief turva.dev sends says that the same scanner will be run on the same site thirty days later and the result sent back, whether or not the recipient answered. The rescan message names the checks that changed rather than a percentage, because the scanner's check set can change in between.
+
+**Did the briefs change anything in thirty days?**
+
+Four of 201 comparable sites changed level, three up and one down, and none of the three that moved up had replied to the brief, so the change cannot be attributed to it. Ordinary maintenance is the likelier cause.
+
+**Why could nine sites not be compared?**
+
+Two hosts answer the scanner with 403 while a browser gets 200, one answered 500 on both days, one was too slow for the scanner to finish, and the rest never had a clean first reading. A rescan compares two readings, and where one of them is missing there is nothing to compare.
+
+## Related
+
+- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites)
+- [Sitemaps, robots.txt and agent access](/guides/sitemaps-and-robots-for-agents)
+- [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)`,
+
+  "/blog/what-ai-assistants-call-an-agent-readiness-audit": `# What four AI assistants call an agent readiness audit
+
+2026-09-03
+
+On 3 September 2026 fifty buyer questions were put to ChatGPT, Gemini, Perplexity and Google AI Mode from an anonymous browser session, one run per question, 193 answers in all. The questions are the ones a buyer types: what an agent readiness audit is, what it costs, who does it in Finland, how it differs from SEO. Claude was not measured, because its answers sit behind a login and the instrument runs logged out.
+
+## Two products share the words
+
+Eleven of the fifty questions use the words agent readiness, or agenttivalmius in Finnish, without saying whether they mean a website or a company. Those eleven got 41 answers. Eighteen of the 41 described the readiness of an organisation to deploy AI agents: its data, its governance, whether its teams are prepared. Thirteen described what this site means by the words, whether a website and its APIs can be read and acted on by an agent. Six described both, and four could not be placed.
+
+The split is not even across assistants. Gemini gave the organisational reading in eight of its eleven answers and Google AI Mode in six of nine. Perplexity was the only one that leaned the other way, five of eleven for the website reading, and it was the only one that named this site more than once. ChatGPT split evenly, three answers for each reading and three for both, with one unclear.
+
+## The words are the problem, not the assistants
+
+Two Finnish questions in the set name the website outright or avoid the word agenttivalmius. All seven answers to those two read the question as being about the website. The assistants have no trouble with the concept once the question carries it. What drifts is the bare term, and it drifts toward the consultancies, because that is who has been using the words longer and in more places.
+
+That shows in who gets named. Thirty-five of the 41 answers named at least one provider, 112 different names between them, and almost none repeated. The organisational answers named large consultancies. The website answers named a long tail of small consultancies and scanners with agent readiness in the brand, most of them once, and a few Finnish agencies in the Finnish questions. Across all 193 answers this site was named in 27, and 23 of those carried a link to it.
+
+## What follows from it
+
+For a buyer, one question settles it: ask the provider what the report reads. If the answer is the organisation, its data and its teams, that is a strategy engagement. If the answer is the website and the API, the files an agent fetches and the data it gets back, that is the audit this site sells, and the report should name the checks. Both are real work. They are not the same work, and a proposal that does not say which one it is has not said much.
+
+For this site, the same finding turned into one sentence. The FAQ on the services page and the home page now says that the audit reads the website and its APIs and not the organisation's readiness to adopt agents, and llms.txt says the same in its summary, so an assistant that reads either gets the distinction in the first lines. Whether that moves the answers is what the next run of the same fifty questions will show, and it will be reported the same way.
+
+## Frequently asked
+
+**Is an agent readiness audit about the company or the website?**
+
+Both services exist under the same words. The audit on this site reads the website and its APIs with an independent scanner and reports per check. An organisational agent readiness assessment reads a company's data and governance and how prepared its teams are. Ask a provider which report they deliver.
+
+**Why do AI assistants describe the organisational version more often?**
+
+In a measurement of 41 answers on 3 September 2026, 18 described the organisational reading and 13 the website reading. The bare term has been used longer by consultancies, and the assistants follow the usage they have read. When a question names the website, all seven answers in the control set read it that way.
+
+**How was this measured?**
+
+Fifty buyer questions, four assistants, one anonymous run per question on 3 September 2026, 193 answers. Each answer was read for how it interpreted the term, whom it named and whether it named this site. Claude was not measured because it requires a login.
+
+## Related
+
+- [What an agent-readiness audit is](/guides/agent-readiness-audit)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
+- [Agent-readiness, AEO and GEO: how they relate](/guides/agent-readiness-aeo-geo)
+- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites)`,
+
   "/blog/website-agent-readiness-567-sites": `# Website agent readiness, measured on 567 company sites
 
 2026-09-03
@@ -1527,6 +1635,16 @@ All free tools on this site are collected on [the tools page](/tools).
 
 The work here is letting an agent read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against an independent scanner rather than asserted.
 
+## Start here
+
+- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites): one scanner over 567 company sites in ten weeks, and what the Level 0 and Level 1 notes say.
+- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b): the July snapshot the larger scan grew out of.
+- [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts): the same measurement on the platforms developers use every day.
+
+## All posts
+
+- [Thirty days after the brief: 210 sites rescanned, four moved](/blog/thirty-days-after-the-brief). 2026-09-03.
+- [What four AI assistants call an agent readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit). 2026-09-03.
 - [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites). 2026-09-03.
 - [TRACE signs how an agent ran, not what it was allowed to reach](/blog/trace-runtime-attestation). 2026-08-30.
 - [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts). 2026-08-22.
@@ -1839,7 +1957,7 @@ Written contact only. Email info@turva.dev, Signal @turva.19. First reply within
 `,
   "/guides/agent-commerce-discovery": `# Agent commerce discovery: A2A, AP2, and ACP
 
-Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Three machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration, and an ACP discovery document. Each answers a different question, and an agent reads them before it sends a single commerce request.
+Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Three machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration, and an ACP discovery document. Each answers a different question, and an agent reads them before it sends a single commerce request. A fourth, the UCP profile, joined them in 2026 and has its own section below.
 
 ## The A2A Agent Card
 
@@ -1867,11 +1985,17 @@ A discovery check usually reads only the document, not the checkout endpoint beh
 
 A checkout endpoint does not have to support instant payment to be real. The ACP checkout session carries a status field, and one of its values is not_ready_for_payment. A site that sells through a written quote can create a genuine session, return it in that state, and attach a message that the engagement is confirmed in writing first. The agent receives a well-formed session that reflects how the business actually works, and the discovery claim holds because the endpoint behind it answers.
 
+## UCP, the fourth surface
+
+The Universal Commerce Protocol adds a profile at /.well-known/ucp. The profile names the merchant, lists the services it offers under namespaced keys, each with a version, a transport and an endpoint, and carries two blocks, capabilities and payment_handlers, that state what an agent may do through the profile and how it may pay. The same rule holds as for the three surfaces above: a capability the profile declares has to answer at the endpoint behind it, and an empty block is more honest than a declared one nothing serves. A storefront that runs UCP over MCP carries a checkout state called requires_escalation, which means the agent has reached the edge of what it may finish alone, a verification or a regulatory step for example, and a person completes that step before the session continues. It is a pause in a checkout and not a substitute for one, so a business that sells on a written quote states that through the ACP session state above rather than through this one.
+
+turva.dev publishes a UCP profile with empty capabilities and payment_handlers blocks on purpose, because the code behind it settles nothing automatically, and the Shopify agent storefront check reads a store's UCP surface as one of the three agent surfaces it measures.
+
 ## Publish what is true
 
 These surfaces exist so an agent can act without guessing, which only holds when every claim resolves to something real. A card whose skills lead nowhere breaks the same way a checkout that never responds does, because the agent follows the signal and finds nothing. Publish what is true, and back each declaration with a surface that answers.
 
-turva.dev publishes an A2A Agent Card, an AP2 merchant declaration, and an ACP discovery document, and an independent scanner verifies that those documents are published. The checkout endpoint behind the discovery document answers as well, which is the part the scanner does not read. For an audit of a site's agent commerce surface, contact info@turva.dev.
+turva.dev publishes an A2A Agent Card, an AP2 merchant declaration, an ACP discovery document and a UCP profile, and an independent scanner verifies that all four are published. The checkout endpoint behind the discovery document answers as well, which is the part the scanner does not read. For an audit of a site's agent commerce surface, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -1887,10 +2011,16 @@ AP2 support is declared as an extension inside the A2A Agent Card, using the URI
 
 Usually the case of the extension URI. Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject. The accepted form is lowercase and v0.1.
 
+**What does a UCP profile declare?**
+
+A UCP profile at /.well-known/ucp names the merchant, the services it offers with a transport and an endpoint each, and two blocks for capabilities and payment handlers. A block left empty says the site settles nothing through the profile, which is the truthful state for a business that sells on a written quote.
+
 ## Related
 
 - [x402 and agent payments](/guides/x402-agent-payments)
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [Agentic commerce readiness: selling to AI shopping agents](/guides/agentic-commerce-readiness)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
   "/blog/owning-your-fediverse-identity": `# Owning your fediverse identity
 
@@ -1928,13 +2058,7 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 
 Agent-readiness is the measurable starting point, scored by an independent scanner. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.
 
-100/100 and Level 5, Agent-Native, on isitagentready.com, Cloudflare's agent-readiness scanner. Business ID 3600281-7, registered in Finland.
-
-## Audits, advisory, and implementation for product teams
-
-An AI agent does not browse a site the way a person does. It reads machine-readable surfaces and acts on the parts it can reach, once it trusts what it found. I measure how a site, an API or a product holds up to that, fix what the measurement names, and stay on as the product changes.
-
-The measurable core is agent-readiness, scored by an independent scanner and provable on the next scan. The wider work begins where readability ends. The data an agent acts on has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set. The first makes an agent able to read you. The second makes it safe to let one act.
+100/100 and Level 5, Agent-Native, on isitagentready.com, Cloudflare's agent-readiness scanner. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
 
 ## Two fixed-scope ways to start
 
@@ -1944,6 +2068,12 @@ Both diagnoses are bought at a fixed price against a written scope. Neither one 
 - [Agent-readiness audit](/services). €4,300. A whole site or API, measured by an independent scanner, delivered in two weeks.
 
 What follows a diagnosis is scoped separately, and that work is listed on the [services page](/services).
+
+## Audits, advisory, and implementation for product teams
+
+An AI agent does not browse a site the way a person does. It reads machine-readable surfaces and acts on the parts it can reach, once it trusts what it found. I measure how a site, an API or a product holds up to that, fix what the measurement names, and stay on as the product changes.
+
+The measurable core is agent-readiness, scored by an independent scanner and provable on the next scan. The wider work begins where readability ends. The data an agent acts on has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set. The first makes an agent able to read you. The second makes it safe to let one act.
 
 ## Independent agent-readiness scan of turva.dev
 
@@ -2022,7 +2152,7 @@ Written contact only. Email for longer messages, Signal for short questions. The
 
 **What does agent-readiness mean?**
 
-Agent-readiness is a measurable property of a site, an API, or a product surface. It describes how well AI agents can discover, read, and operate it.
+Agent-readiness is a measurable property of a site, an API, or a product surface. It describes how well AI agents can discover, read, and operate it. It is a property of the product and not of the organisation behind it: an organisation's readiness to adopt AI agents is a different question that often goes by the same name.
 
 **How much does it cost?**
 
@@ -2191,6 +2321,8 @@ That is the whole list at a fixed price instead of the €1,500 day rate.
 Anything outside the list the report names is scoped separately at the
 day rate.
 
+A synthetic sample report is available on request. It uses an invented site, shows the format of the findings, the per-check scanner readings and the prioritized fix list, and it is not a report on a real client.
+
 Suited for teams that want a clear picture of where they stand
 before deciding what to do about it.
 
@@ -2331,7 +2463,7 @@ Criteria and embed code: https://turva.dev/badge
 
 **What is an agent readiness audit?**
 
-An agent readiness audit measures how well AI agents can discover, read, and act on your website or API. turva.dev runs an independent scanner, isitagentready.com, reviews the agent-facing surfaces manually, checks how AI assistants currently retrieve and answer about the site, and delivers a written report with fixes ranked by score impact and implementation cost.
+An agent readiness audit measures how well AI agents can discover, read, and act on your website or API. It reads the website and its APIs, not the organisation's readiness to adopt AI agents, which many consultancies describe with the same words. turva.dev runs an independent scanner, isitagentready.com, reviews the agent-facing surfaces manually, checks how AI assistants currently retrieve and answer about the site, and delivers a written report with fixes ranked by score impact and implementation cost.
 
 **What does an agent readiness audit cost?**
 
@@ -2598,6 +2730,10 @@ it.
 - Email and Signal: within one business day
 - Weekends: no guaranteed response time
 
+## Languages
+
+Correspondence in English or Finnish, your choice. A brief I send unasked arrives in the language of the company it is about, and reports are written in English unless a Finnish report is agreed in the written scope.
+
 ## What to include in a first message
 
 A useful first message includes:
@@ -2786,6 +2922,7 @@ No. An llms.txt and a markdown surface make the pages in front of the site reada
 - [llms.txt explained](/guides/llms-txt)
 - [Serving markdown to agents](/guides/markdown-for-agents)
 - [Letting agents act on data: the decision envelope](/guides/letting-agents-act-on-data)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
   "/guides": `# Agent-readiness guides
 
@@ -2940,6 +3077,7 @@ The file format did not change. v2 added two standard link relations so an agent
 - [Serving markdown to agents](/guides/markdown-for-agents)
 - [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
 - [Agent-readiness, AEO and GEO: how they relate](/guides/agent-readiness-aeo-geo)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/mcp-server-card": `# MCP server cards explained
@@ -2973,6 +3111,7 @@ Deployed cards commonly sit at /.well-known/mcp/server-card.json, and turva.dev 
 - [What agents.json is](/guides/agents-json)
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
 - [How agents authenticate](/guides/agent-authentication)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/agents-json": `# What agents.json is
@@ -3008,6 +3147,7 @@ No. llms.txt tells an agent what the site contains and agents.json describes the
 - [MCP server cards explained](/guides/mcp-server-card)
 - [How agents authenticate](/guides/agent-authentication)
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/x402-agent-payments": `# x402 and agent payments
@@ -3040,6 +3180,7 @@ The checkout, not the capability. An agent can find a product and compare option
 
 - [Agent commerce discovery: A2A, AP2, and ACP](/guides/agent-commerce-discovery)
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/response-headers-for-agents": `# Response headers that help agents
@@ -3073,6 +3214,7 @@ A Vary header that includes Accept. It is what keeps the negotiation reliable wh
 - [Serving markdown to agents](/guides/markdown-for-agents)
 - [Prerendering and why agents see empty pages](/guides/prerendering-for-agents)
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/seo-vs-agent-readiness": `# SEO and agent-readiness are not the same
@@ -3106,6 +3248,7 @@ Yes. Ranking is scored on keywords and backlinks, while an agent needs to read t
 - [Agent-readiness, AEO and GEO: how they relate](/guides/agent-readiness-aeo-geo)
 - [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
 - [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/json-ld-structured-data": `# JSON-LD and structured data for agents
@@ -3117,6 +3260,8 @@ A human reads a price from a layout and a currency symbol. An agent reading raw 
 Structured data also connects a page to the wider graph an agent builds. Declared types such as Organization, Service, FAQPage, and Article let an agent place a page in context. They do not make a claim true and they oblige nobody to cite it. What they remove is parsing ambiguity, and trust and citation stay decisions of the system that reads the page.
 
 The cost of getting it wrong is silent. An agent does not report that it failed to parse a price, it just acts on a worse guess. Clean JSON-LD is one of the cheapest ways to make a page legible, and it sits in the same family as the response headers and well-known manifests an agent reads first.
+
+The opposite failure is data that parses and is wrong. A product page that publishes a price of 0 and an availability of InStock on every item is structurally valid, and an agent that trusts it will offer a customer a free product that is in stock. An Organization node whose email field holds a first name validates just as well. Wrong data is worse than missing data, because missing data makes an agent guess and wrong data makes it confident. The check is the one a buyer would make: read the JSON-LD next to the page and ask whether the two say the same thing.
 
 turva.dev declares JSON-LD for its organization, the person behind it, its services, and its guides, and the next scan reads the structured data as present. For an audit of a site's structured data, contact info@turva.dev.
 
@@ -3134,11 +3279,16 @@ An agent reading raw HTML has to guess which number is a price and which is a sh
 
 What the page is about, who runs it, what it sells and at what price, as data rather than sentences. An Offer with a price and a currency removes the guess an agent would otherwise make.
 
+**Can structured data be valid and still wrong?**
+
+Yes. A price of 0 with an availability of InStock on every product passes every syntax check and tells an agent the whole catalog is free, and a contact field holding the wrong kind of value validates the same way. A syntax validator reads the shape, so a person has to compare the data with the page it describes.
+
 ## Related
 
 - [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
 - [llms.txt explained](/guides/llms-txt)
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/well-known-for-agents": `# The /.well-known directory for agents
@@ -3172,6 +3322,7 @@ Because it turns discovery into a lookup rather than a search. An agent fetches 
 - [MCP server cards explained](/guides/mcp-server-card)
 - [How agents authenticate](/guides/agent-authentication)
 - [Sitemaps, robots.txt and agent access](/guides/sitemaps-and-robots-for-agents)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/agentic-resource-discovery": `# Agentic Resource Discovery and ai-catalog.json
@@ -3215,6 +3366,7 @@ At /.well-known/ai-catalog.json, as a static JSON manifest. Agents and registrie
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
 - [MCP server cards explained](/guides/mcp-server-card)
 - [Agent commerce discovery: A2A, AP2, and ACP](/guides/agent-commerce-discovery)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/agent-authentication": `# How agents authenticate
@@ -3249,6 +3401,7 @@ Where to request access and what scopes exist. OAuth discovery at a well-known p
 - [MCP server cards explained](/guides/mcp-server-card)
 - [What agents.json is](/guides/agents-json)
 - [Letting agents act on data: the decision envelope](/guides/letting-agents-act-on-data)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/measurement-led-agent-readiness": `# Why agent-readiness should be measured, not asserted
@@ -3316,6 +3469,7 @@ No. Serving a markdown version of the page on request also works, and it skips r
 - [Serving markdown to agents](/guides/markdown-for-agents)
 - [Response headers that help agents](/guides/response-headers-for-agents)
 - [Common agent-readiness gaps on marketing sites](/guides/agent-readiness-gaps)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/sitemaps-and-robots-for-agents": `# Sitemaps, robots.txt and agent access
@@ -3326,7 +3480,7 @@ robots.txt does two jobs for agents. It sets crawl rules, and it can name AI cra
 
 The sitemap answers the other question, which is what exists. A complete sitemap lists every canonical URL, so an agent can find the real pages without inferring them from navigation. A last-modified date is optional in the sitemaps protocol and still worth publishing, because it tells a returning client what changed. The sitemap is a hint to the client rather than a guarantee that anything gets fetched. A page that is not in it is still a page an agent may never reach.
 
-Getting these wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident removes a site from that assistant's answers. A stale sitemap hides new pages. The files are small and the fix is fast, which is why they are the first thing a readiness review checks.
+Getting these wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident removes a site from that assistant's answers. A stale sitemap hides new pages. The files are small and the fix is fast, which is why they are the first thing a readiness review checks. In [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) finished in September 2026, robots.txt and the sitemap were the two most frequent first-fix subjects among the 74 sites that read Level 0: 45 and 38 of 68 notes, and 29 named both, usually a robots.txt the CMS shipped by default and a sitemap that was missing or never announced in it.
 
 turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a complete sitemap. For an audit of a site's crawl and access surface, contact info@turva.dev.
 
@@ -3349,6 +3503,8 @@ Yes. robots.txt can name AI crawlers explicitly rather than treating every clien
 - [The /.well-known directory for agents](/guides/well-known-for-agents)
 - [Response headers that help agents](/guides/response-headers-for-agents)
 - [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
+- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/markdown-for-agents": `# Serving markdown to agents
@@ -3382,13 +3538,16 @@ The markup, scripts and layout it does not need. That cost is counted in tokens,
 - [llms.txt explained](/guides/llms-txt)
 - [Response headers that help agents](/guides/response-headers-for-agents)
 - [Prerendering and why agents see empty pages](/guides/prerendering-for-agents)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
   "/guides/agent-readiness-gaps": `# Common agent-readiness gaps on marketing sites
 
-Marketing sites are often strong for people and weak for agents, and the gaps are predictable. The evidence here is [one documented scan of Finnish company sites](/blog/agent-readiness-finnish-b2b), a small and non-random sample, so read it as what recurred in the sites reviewed rather than as a count of the whole web. A readiness review tends to find the same handful of misses, each of which quietly removes the site from an agent's view.
+Marketing sites are often strong for people and weak for agents, and the gaps are predictable. The evidence here is [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) with one independent scanner between 28 June and 3 September 2026, which grew out of [an earlier write-up of sixteen Finnish sites](/blog/agent-readiness-finnish-b2b). The sample is a prospecting list and not a random draw, so read it as what recurred in the sites reviewed rather than as a count of the whole web. Of the 567 sites, 485 read Level 1 of 5, the floor an ordinary CMS reaches, and 74 read Level 0, below it. A readiness review tends to find the same handful of misses, each of which quietly removes the site from an agent's view.
 
 The first is rendering. A site that builds its content with JavaScript returns an empty shell to any agent that does not run a browser, so for those clients the content never arrives in the first response. The second is discovery. No llms.txt and a thin or missing sitemap, so an agent has nothing to read but rendered pages. The third is cost. Only HTML is offered, with no markdown form, so an agent spends its budget on markup and truncates the page.
+
+The scan puts numbers on the order. Among the 74 Level 0 sites, 68 have a first-fix note, and robots.txt appears in 45 of those notes and the sitemap in 38, with 29 naming both: a robots.txt the CMS shipped by default and a sitemap that is missing or never announced in it. Among the 439 Level 1 sites with a note, the sitemap appears in 102, llms.txt in 99, robots.txt in 72, structured data in 49 and an MCP server in 35. Level 1 is where the site can be found and the rest is missing.
 
 Beyond those, capability is usually undeclared. The site may have an API or a useful action, but with no server card or OAuth discovery, an agent cannot find or use it. Structured data is often missing too, so prices and facts are left for the agent to infer from layout.
 
@@ -3506,6 +3665,7 @@ Measure first, because the three overlap and the same fix should not be paid for
 - [SEO and agent-readiness are not the same](/guides/seo-vs-agent-readiness)
 - [How to get your site cited by AI assistants](/guides/get-cited-by-ai-assistants)
 - [llms.txt explained](/guides/llms-txt)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
   "/guides/agentic-commerce-readiness": `# Agentic commerce readiness: selling to AI shopping agents
 
@@ -3551,7 +3711,9 @@ Because the agent does not complain. A price that lives only in rendered HTML, a
 
 - [Agent commerce discovery: A2A, AP2, and ACP](/guides/agent-commerce-discovery)
 - [x402 and agent payments](/guides/x402-agent-payments)
-- [The /.well-known directory for agents](/guides/well-known-for-agents)`,
+- [The /.well-known directory for agents](/guides/well-known-for-agents)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
+`,
   "/guides/letting-agents-act-on-data": `# Letting agents act on data: the decision envelope
 
 Reading a site is the first step. The harder one is letting an agent act on a system that matters, where a wrong move has a cost. That depends on two things the model does not provide on its own. The data the agent works from has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set.
@@ -3597,7 +3759,9 @@ A log of what it decided and why, an envelope that is explicit rather than impli
 - [How agents authenticate](/guides/agent-authentication)
 - [Agentic commerce readiness](/guides/agentic-commerce-readiness)
 - [Why agent-readiness should be measured, not asserted](/guides/measurement-led-agent-readiness)
-- [AI agent use cases](/guides/ai-agent-use-cases)`,
+- [AI agent use cases](/guides/ai-agent-use-cases)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
+`,
   "/guides/ai-agent-use-cases": `# AI agent use cases
 
 An AI agent is useful wherever data moves and a decision follows. It reads a machine-readable surface, decides inside the limits it was given, and acts on what it finds. The cases below are grouped by what the agent does, not by industry, because the same pattern repeats across all of them.
@@ -3650,7 +3814,9 @@ Operations over a link that drops. The agent has to hold its last safe state and
 
 - [Agentic commerce readiness](/guides/agentic-commerce-readiness)
 - [Letting agents act on data: the decision envelope](/guides/letting-agents-act-on-data)
-- [What an agent-readiness audit is](/guides/agent-readiness-audit)`,
+- [What an agent-readiness audit is](/guides/agent-readiness-audit)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
+`,
   "/guides/get-cited-by-ai-assistants": `# How to get your site cited by AI assistants
 
 When a person asks ChatGPT, Perplexity, Claude, or Gemini a question, the assistant answers from sources it can read and trust. Getting cited means being one of those sources. A site is cited when the assistant can reach its content, read it cheaply, confirm the facts, and find corroboration elsewhere. This guide covers what that takes.
@@ -3696,18 +3862,37 @@ Facts stated as data rather than prose, and the same fact visible in more than o
 - [Agent-readiness, AEO and GEO: how they relate](/guides/agent-readiness-aeo-geo)
 - [SEO and agent-readiness are not the same](/guides/seo-vs-agent-readiness)
 - [llms.txt explained](/guides/llms-txt)
+- [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `
 };
 
 function buildLlmsFullTxt() {
   const header = `# Full content (llms-full.txt)
 
-> Concatenated markdown of all primary pages. For LLMs that prefer a
-> single document over per-page fetches. Sources are canonical URLs
-> on https://turva.dev/.
+> Concatenated markdown of every page: the primary pages first, then
+> the guides, then the blog with the newest post first. For LLMs that
+> prefer a single document over per-page fetches. Sources are canonical
+> URLs on https://turva.dev/.
 
 `;
-  const sections = Object.entries(PAGE_MARKDOWN).map(([path, content]) => {
+  // Order, since 2026-09-03 (round 17, item I): the primary pages first, then the guides,
+  // then the blog newest first. Before this the file followed PAGE_MARKDOWN insertion order,
+  // which put 22 blog posts and 20 000 characters before the first price and the home page
+  // at line 1 824, exactly the reader that "prefers a single document" never reached.
+  const primary = ["/", "/services", "/shopify-agent-storefront-check", "/company", "/contact", "/legal", "/tools", "/llms-txt-validator", "/badge"];
+  const rank = (path) => {
+    const i = primary.indexOf(path);
+    if (i !== -1) return { group: 0, sub: i, date: "" };
+    if (path === "/guides") return { group: 1, sub: 0, date: "" };
+    if (path.startsWith("/guides/")) return { group: 1, sub: 1, date: "" };
+    if (path === "/blog") return { group: 2, sub: 0, date: "" };
+    if (path.startsWith("/blog/")) return { group: 2, sub: 1, date: (META_BY_PATH[path] || {}).date || "" };
+    return { group: 3, sub: 0, date: "" };
+  };
+  const ordered = Object.entries(PAGE_MARKDOWN)
+    .map(([path, content], idx) => ({ path, content, idx, r: rank(path) }))
+    .sort((a, b) => a.r.group - b.r.group || a.r.sub - b.r.sub || b.r.date.localeCompare(a.r.date) || a.idx - b.idx);
+  const sections = ordered.map(({ path, content }) => {
     const canonical = "https://turva.dev" + path;
     return `<!-- ============================================================
  Source: ${canonical}
@@ -3941,7 +4126,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.116.0",
+    "version": "3.118.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -4048,7 +4233,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KJOxTNVf9uVOMqBMpXg5tV4QZJRnbKSwCco65xxLN1C2eTvXcf5_08hfDtuuodglDRHAqa7z2jxq8LTfVAceDg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"meE4fiiAgT21K276D61sMUmfRv38XDZf3vbfSTHZp0BQM7N39aTPOPs_0ovlrYhgS2V_p8CTGRG4tihcJNtpBA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -4207,7 +4392,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.116.0",
+  "version": "3.118.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4701,7 +4886,7 @@ var WEBMCP_SCRIPT = `<script>
  description: 'Return official contact channels for turva.dev. Async-only engagement.',
  inputSchema: { type: 'object', properties: {} },
  execute: async function() {
- return { email: 'info@turva.dev', signal: '@turva.19', signalUrl: 'https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK', linkedin: 'https://www.linkedin.com/in/erikrekola/', businessId: '3600281-7', language: 'en', engagement: 'async-only' };
+ return { email: 'info@turva.dev', signal: '@turva.19', signalUrl: 'https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK', linkedin: 'https://www.linkedin.com/in/erikrekola/', businessId: '3600281-7', language: 'en', correspondenceLanguages: ['en', 'fi'], engagement: 'async-only' };
  }
  },
  {
@@ -4762,6 +4947,8 @@ var SITEMAP_ENTRIES = [
   ["/guides/agent-commerce-discovery", "monthly", "0.7"],
   ["/guides/open-knowledge-format", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/thirty-days-after-the-brief", "monthly", "0.6"],
+  ["/blog/what-ai-assistants-call-an-agent-readiness-audit", "monthly", "0.6"],
   ["/blog/website-agent-readiness-567-sites", "monthly", "0.6"],
   ["/blog/trace-runtime-attestation", "monthly", "0.6"],
   ["/blog/measuring-the-ai-patch-surge", "monthly", "0.6"],
@@ -4857,7 +5044,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -4867,6 +5054,20 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/thirty-days-after-the-brief": {
+    title: "Thirty days after the brief: 210 sites rescanned, four moved · turva.dev",
+    description: "210 sites rescanned thirty days after an unsolicited brief: 197 unchanged, three up, one down, and none of the three that improved had replied.",
+    date: "2026-09-03",
+    image: "/og-thirty-days-after-the-brief.jpg",
+    imageAlt: "turva.dev blog card: 210 sites rescanned thirty days after an unsolicited brief: 197 unchanged, three up, one down, and none of the three that improved had replied.",
+  },
+  "/blog/what-ai-assistants-call-an-agent-readiness-audit": {
+    title: "What four AI assistants call an agent readiness audit · turva.dev",
+    description: "Fifty buyer questions to four AI assistants: 18 of 41 open answers describe an organisation's readiness and 13 the website. Two services share one name.",
+    date: "2026-09-03",
+    image: "/og-what-ai-assistants-call-an-agent-readiness-audit.jpg",
+    imageAlt: "turva.dev blog card: Fifty buyer questions to four AI assistants: 18 of 41 open answers describe an organisation's readiness and 13 the website. Two services share one name.",
+  },
   "/blog/website-agent-readiness-567-sites": {
     title: "Website agent readiness, measured on 567 company sites · turva.dev",
     description: "567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, Finnish and foreign sites alike.",
@@ -5317,7 +5518,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 // The Service node with its AggregateOffer and OfferCatalog is one constant because two
 // pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
 // second copy would be a second price list, and verify.mjs reads this one against facts.json.
-var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
+var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
 {"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
 {"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
@@ -5326,7 +5527,7 @@ var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","nam
 
 var SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
+{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
 {"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 ${SCHEMA_SERVICE},
@@ -6079,6 +6280,8 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/thirty-days-after-the-brief": mdFaqBlocks("/blog/thirty-days-after-the-brief", "Frequently asked").pairs,
+  "/blog/what-ai-assistants-call-an-agent-readiness-audit": mdFaqBlocks("/blog/what-ai-assistants-call-an-agent-readiness-audit", "Frequently asked").pairs,
   "/blog/website-agent-readiness-567-sites": mdFaqBlocks("/blog/website-agent-readiness-567-sites", "Frequently asked").pairs,
   "/services": mdFaqBlocks("/services", "Frequently asked").pairs,
   "/shopify-agent-storefront-check": mdFaqBlocks("/shopify-agent-storefront-check", "Frequently asked").pairs,
@@ -6146,7 +6349,7 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
     "provider": { "@id": "https://turva.dev/#business" },
     "areaServed": { "@type": "Place", "name": "Worldwide" },
     "description": "A fixed-scope check of what an AI shopper receives from one live Shopify store, across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Shopify Agentic channels. Four written deliverables as one package within 48 hours of the agreed written kickoff, and a fifth, the retest of up to two corrected items, within 14 days.",
-    "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en"] },
+    "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
     "offers": {
       "@type": "Offer",
       "url": url,
@@ -6233,7 +6436,7 @@ var FAQ_CSS = `.faq .q{color:#F2F4F3;font-weight:700;font-size:1rem;margin:1.15r
 // A function, not a constant: on Workers the clock in global scope reads the epoch, so a
 // year computed while the module loads served "1970" live (2026-09-02). Read the clock per
 // request, where it is real.
-function footerHtml() { return `<footer class="tv-foot">
+function footerHtml(kieli) { const fi = kieli === "fi"; return `<footer class="tv-foot">
   <div class="foot-brand">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle><path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
     <span class="nv-word">turva<b>·</b>dev</span>
@@ -6246,7 +6449,7 @@ function footerHtml() { return `<footer class="tv-foot">
     <a class="ft-row" rel="me" href="https://gravatar.com/erekola"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18.5c1-2.4 3-3.8 5.5-3.8s4.5 1.4 5.5 3.8"/></svg><span>Gravatar</span></a>
     <a class="ft-row" href="https://github.com/erekola"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span>GitHub</span></a>
   </div>
-  <div class="foot-meta">Tampere, Finland · <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">Business ID 3600281-7</a> · © ${new Date().getUTCFullYear()} turva.dev</div>
+  <div class="foot-meta">${fi ? "Tampere, Suomi" : "Tampere, Finland"} · <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">${fi ? "Y-tunnus" : "Business ID"} 3600281-7</a> · © ${new Date().getUTCFullYear()} turva.dev</div>
 </footer>`; }
 
 function serveGuideHtml(pathname, canonicalUrl) {
@@ -6564,23 +6767,13 @@ ${FOOTER_CSS}
     <div class="board-sum"><span>verified</span> <b>100/100</b> <span class="pill">Level 5</span> <span class="pill">Agent-Native</span></div>
   </section>
   <section class="sec">
-    <h2>What an agent sees on this page</h2>
-    <p>Every page on this site is also served as plain markdown to any agent that asks for it, at the same URL, at a fraction of the token cost of the HTML. The block below is the opening of that markdown, generated from the same string an agent receives.</p>
-    <div class="aview">
-      <p class="aview-cmd">curl -H "Accept: text/markdown" https://turva.dev/</p>
-      <pre><code>${escapeHtml(HOME_MARKDOWN.split("\n").slice(0, 7).join("\n") + "\n[Truncated. The full document continues in markdown.]")}</code></pre>
-    </div>
-    <p><a href="/guides/markdown-for-agents">How markdown content negotiation works.</a></p>
+    <h2>Two fixed-scope ways to start</h2>
+    ${mdBodyHtml("/", "Two fixed-scope ways to start")}
   </section>
 
   <section class="sec">
     <h2>Audits, advisory, and implementation for product teams</h2>
     ${mdBodyHtml("/", "Audits, advisory, and implementation for product teams")}
-  </section>
-
-  <section class="sec">
-    <h2>Two fixed-scope ways to start</h2>
-    ${mdBodyHtml("/", "Two fixed-scope ways to start")}
   </section>
 
   <section class="sec">
@@ -6606,6 +6799,16 @@ ${FOOTER_CSS}
     </ul>
     <p>${ev[4]}</p>
     <p>${ev[5]}</p>
+  </section>
+
+  <section class="sec">
+    <h2>What an agent sees on this page</h2>
+    <p>Every page on this site is also served as plain markdown to any agent that asks for it, at the same URL, at a fraction of the token cost of the HTML. The block below is the opening of that markdown, generated from the same string an agent receives.</p>
+    <div class="aview">
+      <p class="aview-cmd">curl -H "Accept: text/markdown" https://turva.dev/</p>
+      <pre><code>${escapeHtml(HOME_MARKDOWN.split("\n").slice(0, 7).join("\n") + "\n[Truncated. The full document continues in markdown.]")}</code></pre>
+    </div>
+    <p><a href="/guides/markdown-for-agents">How markdown content negotiation works.</a></p>
   </section>
 
   <section class="sec">
@@ -7014,8 +7217,14 @@ function briefHtmlPage(rec, canonicalUrl) {
   // samaa tarkoittavaa merkkijonoa ajaudu erilleen.
   var someOtsikko = rec.otsikko || rec.yritys || "agent readiness brief";
   var vaihtoehdot = kieli === "fi"
-    ? "Sama sisalto koneluettavana: <a href=\"" + canonicalUrl + ".md\">markdown</a> ja <a href=\"" + canonicalUrl + ".json\">JSON</a>."
+    ? "Sama sisältö koneluettavana: <a href=\"" + canonicalUrl + ".md\">markdown</a> ja <a href=\"" + canonicalUrl + ".json\">JSON</a>."
     : "The same content, machine readable: <a href=\"" + canonicalUrl + ".md\">markdown</a> and <a href=\"" + canonicalUrl + ".json\">JSON</a>.";
+  // KEHYS SUOMEKSI, lisatty 2026-09-03 (kierros 17, kohta A). Suomenkielisen briefin runko oli
+  // suomea mutta ohituslinkki, alatunniste ja tama rivi olivat englantia, ja "sisalto" oli
+  // ilman aakkosia. Nav pysyy englanniksi, koska se vie englanninkielisille sivuille.
+  var yhteys = kieli === "fi"
+    ? "Kysymykset suomeksi tai englanniksi: <a href=\"mailto:info@turva.dev\">info@turva.dev</a>. Vastaan kirjallisesti yhden arkipäivän kuluessa."
+    : "Questions in English or Finnish: <a href=\"mailto:info@turva.dev\">info@turva.dev</a>. I reply in writing within one business day.";
   return `<!doctype html>
 <html lang="${kieli}">
 <head>
@@ -7052,13 +7261,14 @@ ${BRIEF_CSS}
 </style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="#main">${kieli === "fi" ? "Siirry sisältöön" : "Skip to content"}</a>
 ${cardPageNav("")}
 <main id="main">
 ${markdownToHtml(briefUnescape(rec.md))}
 <p class="date">${vaihtoehdot}</p>
+<p class="date">${yhteys}</p>
 </main>
-${footerHtml()}
+${footerHtml(kieli)}
 </body>
 </html>`;
 }
@@ -7137,6 +7347,7 @@ ${cardPageNav("/contact")}
   ${mdKvsCard("/contact", "Channels", contactSignalQr())}
   ${mdCard("/contact", "Encrypted email")}
   ${mdCard("/contact", "Response times")}
+  ${mdCard("/contact", "Languages")}
   ${mdCard("/contact", "What to include in a first message")}
   ${mdCard("/contact", "Confidentiality")}
   ${mdCard("/contact", "Geographic service area")}
@@ -7926,6 +8137,8 @@ ${cardPageNav("/blog")}
 <main id="main">
   ${mdPageStart("/blog")}
   <p class="feed"><a href="/blog/feed.xml">RSS feed</a></p>
+  ${mdLinksCard("/blog", "Start here")}
+  <h2>All posts</h2>
 ${blogPostLinks()}
 </main>
 ${footerHtml()}

@@ -778,7 +778,7 @@ const twConverted = {
   '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: ['Contact', 'Independent agent-readiness scan of turva.dev'],
     prose: ['Every page on this site is also served as plain markdown',
             'Seeing where your site, API or product stands with AI agents starts'] },
-  '/blog':    { fn: 'serveBlogHtml',    mdOnly: [] },
+  '/blog':    { fn: 'serveBlogHtml',    mdOnly: [], hand: ['All posts'] }, // All posts is the dated list, rendered by blogPostLinks() from META_BY_PATH (2026-09-03)
   '/llms-txt-validator': { fn: 'serveLlmsValidatorHtml', mdOnly: ['Related'], hand: ['How to use it'] },
   '/services': { fn: 'serveServicesHtml', mdOnly: [], hand: [] },
   '/tools':   { fn: 'serveToolsHtml',   mdOnly: ['Related'] },
