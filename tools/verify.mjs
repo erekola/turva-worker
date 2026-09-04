@@ -1242,6 +1242,78 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       `every /blog index date matches META_BY_PATH${wrong.length ? ' :: ' + wrong.map((m) => m[1] + ' says ' + m[2]).join(', ') : ''}`);
   }
 
+  console.log('\nOne site order (2026-09-04, Tek-336)');
+  // Round 17 found the blog ahead of the home page in llms-full.txt, the pricing on line 78
+  // of llms.txt and five guide lists in five different orders. The order now has one home,
+  // PRIMARY_PATHS + AUX_PATHS + the /guides twin + META_BY_PATH dates in worker.js
+  // (siteRank), and this block reads every hand-written list against it. What the code
+  // computes (sitemap.xml, llms-full.txt) is checked at runtime in test/routes.test.mjs.
+  {
+    const primary = [...(region('var PRIMARY_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
+    const aux = [...(region('var AUX_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
+    check(primary.length >= 8 && primary[0] === '/' && primary.indexOf('/tools') < primary.indexOf('/company') && aux.length >= 2,
+      `PRIMARY_PATHS parsed from worker.js (${primary.length}: ${primary.join(' ')}) and AUX_PATHS (${aux.join(' ')})`);
+    const seqSame = (label, found, want) => {
+      let firstDiff = -1;
+      for (let i = 0; i < Math.max(found.length, want.length); i++) { if (found[i] !== want[i]) { firstDiff = i; break; } }
+      check(want.length > 0 && firstDiff === -1,
+        `${label} follows the one site order (${want.length})${firstDiff === -1 ? '' : ' :: first difference at ' + (firstDiff + 1) + ': saw ' + (found[firstDiff] || '(end)') + ', want ' + (want[firstDiff] || '(end)')}`);
+    };
+    const links = (text, re) => [...text.matchAll(re)].map((m) => m[1]);
+    const section = (text, head) => { const i = text.indexOf('\n## ' + head + '\n'); if (i < 0) return ''; const j = text.indexOf('\n## ', i + 4); return text.slice(i, j < 0 ? undefined : j); };
+    const llms = region('var LLMS_TXT', '\nvar ').replace(/\r\n/g, '\n');
+    // 1. the guides: the /guides twin is the source, read in link order
+    const guidesTwin = (twMdTwin('/guides') || '').replace(/\r\n/g, '\n');
+    const guideWant = links(guidesTwin, /\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g);
+    check(guideWant.length >= 20 && guideWant[0] === '/guides/agent-readiness-audit' && guideWant[1] === '/guides/choosing-an-agent-readiness-audit',
+      `/guides twin lists ${guideWant.length} guides, the two buyer guides first`);
+    seqSame('LLMS_TXT Guides section', links(section(llms, 'Guides'), /\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\.md\)/g), guideWant);
+    seqSame('home twin Guides section', links(section((twMdTwin('/') || '').replace(/\r\n/g, '\n'), 'Guides'), /\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g), guideWant);
+    // 2. the primary pages in llms.txt: one Services block, tools before company, badge last, no Tools section after the blog
+    seqSame('LLMS_TXT Services section', links(section(llms, 'Services'), /\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/[a-z0-9-]+)\.md\)/g), primary.slice(1).concat(['/badge']));
+    check(!llms.includes('\n## Tools\n'), 'LLMS_TXT has no Tools section behind the blog (the tool pages sit in the Services block)');
+    // 3. the blog, newest first everywhere: META_BY_PATH keys, PAGE_MARKDOWN keys, LLMS_TXT, the /blog twin, SITEMAP_ENTRIES
+    const metaKeys = [...w.slice(w.indexOf('var META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)].map((m) => m[1]);
+    const dateOf = (p) => (region(`  "${p}": {`, '\n  },').match(/date: "(\d{4}-\d{2}-\d{2})"/) || [])[1] || '';
+    const pmKeys = [...w.slice(w.indexOf('var PAGE_MARKDOWN'), w.indexOf('var META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": `/g)].map((m) => m[1]);
+    const blogWant = pmKeys.map((p, i) => ({ p, i, d: dateOf(p) })).sort((a, b) => b.d.localeCompare(a.d) || a.i - b.i).map((x) => x.p);
+    check(blogWant.length > 20 && blogWant.every((p) => dateOf(p)), `blog order derived from PAGE_MARKDOWN keys and META_BY_PATH dates (${blogWant.length}, newest ${blogWant[0]})`);
+    seqSame('PAGE_MARKDOWN blog keys', pmKeys, blogWant);
+    seqSame('META_BY_PATH blog keys', metaKeys, blogWant);
+    seqSame('LLMS_TXT Blog section', links(section(llms, 'Blog'), /\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/blog\/[a-z0-9-]+)\.md\)/g), blogWant);
+    seqSame('/blog twin All posts', links((twMdTwin('/blog') || '').replace(/\r\n/g, '\n'), /\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\. \d{4}-\d{2}-\d{2}\./g), blogWant);
+    const smRows = [...region('var SITEMAP_ENTRIES = [', '\n];').matchAll(/\["([^"]+)"/g)].map((m) => m[1]);
+    seqSame('SITEMAP_ENTRIES blog rows (the literal; sitemap.xml sorts by siteRank at runtime and is checked in routes.test.mjs)', smRows.filter((p) => p.startsWith('/blog/')), blogWant);
+    seqSame('SITEMAP_ENTRIES guide rows (the literal)', smRows.filter((p) => p.startsWith('/guides/')), guideWant);
+    seqSame('SITEMAP_ENTRIES primary and auxiliary rows (the literal)', smRows.filter((p) => primary.includes(p) || aux.includes(p)), primary.concat(aux));
+    // 4. the service lists: facts.json services is the order, shopify first, and the two ACP homes and the two skills homes agree
+    const priced = (facts.services || []).filter((s) => s.priceKey).map((s) => s.id);
+    seqSame('ACP_SERVICES keys', [...region('var ACP_SERVICES = {', '\n};').matchAll(/\n  ([a-z-]+): \{ item:/g)].map((m) => m[1]), priced);
+    seqSame('ACP_INDEX_JSON items', [...((region('var ACP_INDEX_JSON', '\n}, null, 2);').match(/"items": \[([^\]]*)\]/) || ['', ''])[1].matchAll(/"([a-z-]+)"/g))].map((m) => m[1]), priced);
+    const a2aSkills = [...region('var A2A_AGENT_CARD', '\n}, null, 2);').matchAll(/\n      "id": "([a-z-]+)"/g)].map((m) => m[1]);
+    seqSame('SKILLS (agent-skills index) vs the A2A card skills', [...region('var SKILLS = [', '\n];').matchAll(/name: "([a-z-]+)"/g)].map((m) => m[1]), a2aSkills);
+    check(a2aSkills[0] === 'services', `the first skill on the A2A card is services (saw ${a2aSkills[0]})`);
+    // 5. every converted page renders its sections in the twin's order. Read from the card
+    // calls (md*Card render their own h2) and the literal <h2> tags; mdLists and mdParas
+    // are data helpers called before the markup and say nothing about order (the class of defect
+    // round 17 found on the home page: FAQ before Contact in HTML, Contact before FAQ in the twin)
+    const H2_ALIAS = { 'Contact me': 'Contact' };
+    for (const [path, cfg] of Object.entries(twConverted)) {
+      const body = twFnBody(cfg.fn), md = twMdTwin(path);
+      if (!body || !md) continue;
+      const heads = [...md.matchAll(/^## (.+)$/gm)].map((h) => h[1].trim());
+      const seen = [];
+      for (const m of body.matchAll(/\bmd\w*[Cc]ard\("([^"]+)", "([^"]+)"\)|<h2(?:\s[^>]*)?>([^<{]+)<\/h2>/g)) {
+        const h = m[2] && m[1] === path ? m[2] : m[3] ? H2_ALIAS[m[3].trim()] || m[3].trim() : null;
+        if (h && heads.includes(h) && !seen.includes(h)) seen.push(h);
+      }
+      const idx = seen.map((h) => heads.indexOf(h));
+      const bad3 = idx.findIndex((v, i) => i > 0 && v < idx[i - 1]);
+      check(seen.length > 0 && bad3 === -1,
+        `${path}: HTML section order follows the twin (${seen.length} sections)${bad3 === -1 ? '' : ' :: ' + seen[bad3] + ' is rendered before ' + seen[bad3 - 1] + ' should be'}`);
+    }
+  }
+
   console.log('\nBlog modification dates (B1-11)');
   // dateModified was datePublished for every post, including one whose own body reads
   // "Corrected 2026-08-02": structured data telling a reader the page had not been

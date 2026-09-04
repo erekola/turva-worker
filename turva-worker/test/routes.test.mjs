@@ -975,3 +975,41 @@ test("R16 S4-1: no live brief address and no prospect name sits in the source", 
   assert.ok(!/\/brief\/[a-z0-9]+-[a-z0-9]{13}\b/.test(src), "a real brief address (name-13 random chars) must not appear in the source");
   assert.ok(!/Lecklen|Eduhouse/i.test(src), "prospect names stay out of the public source");
 });
+
+// One site order (2026-09-04, Tek-336). Round 17 found llms-full.txt opening with 22 blog
+// posts and the home page at line 1 824, and sitemap.xml with the tool pages behind every
+// post. The order is computed in siteRank() now; this test reads the served files and
+// derives the expectation from the same sources a reader would use: the /guides twin for the
+// guide order and the posts' dates for the blog, with the primary pages written out.
+test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guides in /guides order, blog newest first", async () => {
+  const primary = ["/", "/services", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/company", "/contact", "/legal"];
+  const guidesMd = await (await get("/guides.md")).text();
+  const guides = [...guidesMd.matchAll(/\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g)].map((m) => m[1]);
+  assert.ok(guides.length >= 20, "the /guides twin lists the guides");
+  assert.equal(guides[0], "/guides/agent-readiness-audit");
+  assert.equal(guides[1], "/guides/choosing-an-agent-readiness-audit");
+  const src = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  const meta = src.slice(src.indexOf("var META_BY_PATH"));
+  const posts = [...meta.matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{[\s\S]*?date: "(\d{4}-\d{2}-\d{2})"/g)].map((m, i) => ({ p: m[1], d: m[2], i }));
+  const blog = posts.sort((a, b) => b.d.localeCompare(a.d) || a.i - b.i).map((x) => x.p);
+  assert.ok(blog.length > 20, "META_BY_PATH lists the posts");
+
+  const xml = await (await get("/sitemap.xml")).text();
+  const sm = [...xml.matchAll(/<loc>https:\/\/turva\.dev(\/[^<]*)?<\/loc>/g)].map((m) => m[1] || "/");
+  assert.deepEqual(sm, [...primary, "/badge", "/auth.md", "/guides", ...guides, "/blog", ...blog], "sitemap.xml order");
+
+  const full = await (await get("/llms-full.txt")).text();
+  const sources = [...full.matchAll(/ Source: https:\/\/turva\.dev(\/\S*)?\n/g)].map((m) => m[1] || "/");
+  assert.deepEqual(sources, [...primary, "/badge", "/guides", ...guides, "/blog", ...blog, "/auth.md"], "llms-full.txt order");
+  assert.ok(full.indexOf("Source: https://turva.dev/\n") < full.indexOf("Source: https://turva.dev/blog"), "the home page comes before the blog");
+
+  // The services, shopify first, the same in every home that lists them.
+  const priced = facts.services.filter((s) => s.priceKey).map((s) => s.id);
+  assert.equal(priced[0], "shopify");
+  const acp = JSON.parse(await (await get("/api/acp")).text());
+  assert.deepEqual(acp.items, priced, "ACP index items");
+  const skills = JSON.parse(await (await get("/.well-known/agent-skills/index.json")).text()).skills.map((s) => s.name);
+  const card = JSON.parse(await (await get("/.well-known/agent-card.json")).text()).skills.map((s) => s.id);
+  assert.deepEqual(skills, card, "agent-skills index and the A2A card list the skills in one order");
+  assert.equal(skills[0], "services");
+});
