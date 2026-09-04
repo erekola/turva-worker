@@ -1,0 +1,380 @@
+{
+  "og-agent-access-is-now-a-setting.jpg": {
+    "green": "is now a setting",
+    "kicker": "Blog",
+    "subhead": "Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration.",
+    "white": "Agent access"
+  },
+  "og-agent-readiness-code-hosts.jpg": {
+    "green": "Not one served an MCP server card.",
+    "kicker": "Blog",
+    "subhead": "Highest reading was Level 1 of 5. The discovery group passed twice in 124 runs.",
+    "white": "I scanned fourteen code hosts."
+  },
+  "og-agent-readiness-finnish-b2b.jpg": {
+    "green": "Finnish B2B sites",
+    "kicker": "Blog",
+    "subhead": "Almost every one landed at Level 1 of 5, and the same three gaps showed up almost everywhere.",
+    "white": "I scanned sixteen"
+  },
+  "og-agent-secret-hygiene.jpg": {
+    "green": "Keep secrets out of plaintext.",
+    "kicker": "Blog",
+    "subhead": "Git auth through a credential manager, everything else in an OS-encrypted vault.",
+    "white": "Coding agents run with your shell."
+  },
+  "og-badge.jpg": {
+    "green": "a claim anyone can re-check",
+    "kicker": "Badge",
+    "subhead": "For sites that completed an audit or score 100/100 on a public agent-readiness scanner.",
+    "white": "The agent-ready badge,"
+  },
+  "og-blog.jpg": {
+    "green": "and the work of letting them act",
+    "kicker": "Blog",
+    "subhead": "Dated entries, with anything measurable checked against an independent scanner.",
+    "white": "Notes on AI agents,"
+  },
+  "og-cheaper-pages-for-agents.jpg": {
+    "green": "to read your site",
+    "kicker": "Blog",
+    "subhead": "An HTML-only page is expensive in tokens. Markdown content negotiation cuts the cost.",
+    "white": "What an agent pays"
+  },
+  "og-cheaper-pages-revisited.jpg": {
+    "green": "the agent bill did not",
+    "kicker": "Blog",
+    "subhead": "An 83% token saving that widened on its own",
+    "white": "The page grew,"
+  },
+  "og-cheating-to-keep-the-old-price.jpg": {
+    "green": "to keep the old price",
+    "kicker": "Blog",
+    "subhead": "The audit drops to 4,300 euros and two weeks. The part the old price charged for twice is now a written checklist.",
+    "white": "It would be cheating"
+  },
+  "og-checks-that-pass-for-the-wrong-reason.jpg": {
+    "green": "for the wrong reason",
+    "kicker": "Blog",
+    "subhead": "Links that resolve and gates that pass can both stop being true without anything going red.",
+    "white": "The checks that pass"
+  },
+  "og-company.jpg": {
+    "green": "measured by an independent scanner",
+    "kicker": "Company",
+    "subhead": "Operated by Erik Rekola in Tampere, Finland. Business ID 3600281-7.",
+    "white": "A one-person audit practice,"
+  },
+  "og-contact.jpg": {
+    "green": "response within one business day",
+    "kicker": "Contact",
+    "subhead": "Email, Signal or LinkedIn. No calls and no meetings required.",
+    "white": "Async only,"
+  },
+  "og-enforcing-the-rate-limit-i-advertised.jpg": {
+    "green": "Nothing enforced it.",
+    "kicker": "Blog",
+    "subhead": "The fix, the measurement that proved nothing, and the draft archaeology behind the header.",
+    "white": "Every response promised a rate limit."
+  },
+  "og-finishing-the-optional-commerce-checks.jpg": {
+    "green": "commerce checks",
+    "kicker": "Blog",
+    "subhead": "x402 and MPP to green on isitagentready, without faking settlement.",
+    "white": "Finishing the optional"
+  },
+  "og-free-llms-txt-validator.jpg": {
+    "green": "for people and for agents",
+    "kicker": "Blog",
+    "subhead": "Structure checks against the format, JSON output for agents, nothing stored.",
+    "white": "A free llms.txt validator,"
+  },
+  "og-guide-agent-authentication.jpg": {
+    "green": "authenticate",
+    "kicker": "Guide",
+    "subhead": "Scoped access without a human login. OAuth discovery, protected resources and API keys.",
+    "white": "How agents"
+  },
+  "og-guide-agent-commerce-discovery.jpg": {
+    "green": "A2A, AP2, and ACP",
+    "kicker": "Guide",
+    "subhead": "What each agent commerce discovery surface is and where it lives.",
+    "white": "Agent commerce discovery:"
+  },
+  "og-guide-agent-readiness-aeo-geo.jpg": {
+    "green": "how they relate",
+    "kicker": "Guide",
+    "subhead": "What each one optimizes for, and where they overlap.",
+    "white": "Agent-readiness, AEO and GEO:"
+  },
+  "og-guide-agent-readiness-audit.jpg": {
+    "green": "audit is",
+    "kicker": "Guide",
+    "subhead": "How well AI agents can discover, read, and act on a website or API, scored by an independent scanner.",
+    "white": "What an agent-readiness"
+  },
+  "og-guide-agent-readiness-gaps.jpg": {
+    "green": "on marketing sites",
+    "kicker": "Guide",
+    "subhead": "Strong for people, weak for agents. The predictable gaps in rendering and discovery.",
+    "white": "Common agent-readiness gaps"
+  },
+  "og-guide-agentic-commerce-readiness.jpg": {
+    "green": "selling to AI shopping agents",
+    "kicker": "Guide",
+    "subhead": "What a shopping agent needs to discover an offer, drive a checkout, and complete a purchase.",
+    "white": "Agentic commerce readiness:"
+  },
+  "og-guide-agentic-resource-discovery.jpg": {
+    "green": "and ai-catalog.json",
+    "kicker": "Guide",
+    "subhead": "The envelope and entries of an ai-catalog.json, and how it differs from other surfaces.",
+    "white": "Agentic Resource Discovery"
+  },
+  "og-guide-agents-json.jpg": {
+    "green": "declares",
+    "kicker": "Guide",
+    "subhead": "The actions and endpoints an AI agent can use on a site.",
+    "white": "What agents.json"
+  },
+  "og-guide-ai-agent-use-cases.jpg": {
+    "green": "where agents read data and make decisions",
+    "kicker": "Guide",
+    "subhead": "Commerce, monitoring, field support, remote operations, back-office data work and autonomy at the edge.",
+    "white": "AI agent use cases:"
+  },
+  "og-guide-choosing-an-agent-readiness-audit.jpg": {
+    "green": "agent-readiness audit",
+    "kicker": "Guide",
+    "subhead": "Who provides them, what they cost, how long they take, and what you get.",
+    "white": "Choosing an"
+  },
+  "og-guide-get-cited-by-ai-assistants.jpg": {
+    "green": "by AI assistants",
+    "kicker": "Guide",
+    "subhead": "Readable content, structured data, and corroboration across sources.",
+    "white": "How to get your site cited"
+  },
+  "og-guide-json-ld-structured-data.jpg": {
+    "green": "for agents",
+    "kicker": "Guide",
+    "subhead": "A page's facts as data an agent can read without parsing prose.",
+    "white": "JSON-LD and structured data"
+  },
+  "og-guide-letting-agents-act-on-data.jpg": {
+    "green": "the decision envelope",
+    "kicker": "Guide",
+    "subhead": "Data that arrives intact and a decision envelope that bounds what the agent may do.",
+    "white": "Letting agents act on data:"
+  },
+  "og-guide-llms-txt.jpg": {
+    "green": "explained",
+    "kicker": "Guide",
+    "subhead": "A plain text guide that tells AI agents what a site contains and where its key content lives.",
+    "white": "llms.txt"
+  },
+  "og-guide-markdown-for-agents.jpg": {
+    "green": "to agents",
+    "kicker": "Guide",
+    "subhead": "The content without the markup, at a fraction of the tokens.",
+    "white": "Serving markdown"
+  },
+  "og-guide-mcp-server-card.jpg": {
+    "green": "explained",
+    "kicker": "Guide",
+    "subhead": "The JSON file that lets an agent discover a site's MCP server and connect to it.",
+    "white": "MCP server cards"
+  },
+  "og-guide-measurement-led-agent-readiness.jpg": {
+    "green": "not asserted",
+    "kicker": "Guide",
+    "subhead": "A checklist records intentions. An independent scanner records what an agent actually finds.",
+    "white": "Agent-readiness should be measured,"
+  },
+  "og-guide-open-knowledge-format.jpg": {
+    "green": "explained",
+    "kicker": "Guide",
+    "subhead": "Google Cloud's open markdown spec for giving AI agents context.",
+    "white": "Open Knowledge Format"
+  },
+  "og-guide-prerendering-for-agents.jpg": {
+    "green": "empty pages",
+    "kicker": "Guide",
+    "subhead": "JavaScript-rendered sites return an empty shell to agents, so the content never arrives.",
+    "white": "Prerendering, and why agents see"
+  },
+  "og-guide-response-headers-for-agents.jpg": {
+    "green": "that help agents",
+    "kicker": "Guide",
+    "subhead": "Link, Vary, RateLimit and content negotiation let agents work without parsing full HTML.",
+    "white": "Response headers"
+  },
+  "og-guide-seo-vs-agent-readiness.jpg": {
+    "green": "are not the same",
+    "kicker": "Guide",
+    "subhead": "SEO makes a site rank for people. Agent-readiness makes it legible and usable by AI agents.",
+    "white": "SEO and agent-readiness"
+  },
+  "og-guide-sitemaps-and-robots-for-agents.jpg": {
+    "green": "and agent access",
+    "kicker": "Guide",
+    "subhead": "Whether an agent is allowed in and what it can find.",
+    "white": "Sitemaps, robots.txt"
+  },
+  "og-guide-well-known-for-agents.jpg": {
+    "green": "for agents",
+    "kicker": "Guide",
+    "subhead": "Where agents look for a site's machine-readable manifests.",
+    "white": "The /.well-known directory"
+  },
+  "og-guide-x402-agent-payments.jpg": {
+    "green": "and agent payments",
+    "kicker": "Guide",
+    "subhead": "HTTP 402 lets agents discover a price, pay, and continue without a human checkout.",
+    "white": "x402"
+  },
+  "og-guides.jpg": {
+    "green": "one surface at a time",
+    "kicker": "Guides",
+    "subhead": "Short, focused guides on the surfaces that make a website or API readable and usable by AI agents.",
+    "white": "Agent-readiness guides,"
+  },
+  "og-honesty-and-the-checker.jpg": {
+    "green": "disagree",
+    "kicker": "Blog",
+    "subhead": "Making auth.md cleaner made the scanner fail. The honest form was the precise one.",
+    "white": "When honesty and the checker"
+  },
+  "og-i-thought-it-was-a-small-job.jpg": {
+    "green": "a small job",
+    "kicker": "Blog",
+    "subhead": "Seven days, 367 findings across 2 307 text files, nothing billable.",
+    "white": "I thought it was"
+  },
+  "og-legal.jpg": {
+    "green": "in plain language",
+    "kicker": "Legal",
+    "subhead": "Finnish law applies. No tracking, no cookies, no analytics.",
+    "white": "Terms, privacy and GDPR"
+  },
+  "og-llms-txt-validator.jpg": {
+    "green": "free and instant",
+    "kicker": "Free Tool",
+    "subhead": "Fetches a site's /llms.txt and checks the structure against the format. JSON output for agents.",
+    "white": "llms.txt validator,"
+  },
+  "og-measuring-the-ai-patch-surge.jpg": {
+    "green": "I measured how much bigger.",
+    "kicker": "Blog",
+    "subhead": "Twelve months of MSRC data: the July package is 3,0 times the baseline, and the median CVE got more severe.",
+    "white": "Microsoft said the patches would get bigger."
+  },
+  "og-moving-off-prerender.jpg": {
+    "green": "off prerender.io",
+    "kicker": "Blog",
+    "subhead": "Finished HTML from a Cloudflare Worker at the edge, with no prerender hop.",
+    "white": "Moving turva.dev"
+  },
+  "og-moving-source-to-codeberg.jpg": {
+    "green": "from GitHub to Codeberg",
+    "kicker": "Blog",
+    "subhead": "Two weeks of silent 404s that only a logged-out visitor could see.",
+    "white": "Moving the source"
+  },
+  "og-my-gate-could-not-see-a-sixth.jpg": {
+    "green": "a sixth",
+    "kicker": "Blog",
+    "subhead": "A check that asks whether these five are present is not a check of the set.",
+    "white": "My gate could not see"
+  },
+  "og-open-knowledge-format.jpg": {
+    "green": "and what it is not",
+    "kicker": "Blog",
+    "subhead": "Google Cloud's markdown spec for AI agents, and how it relates to an agent-readiness audit.",
+    "white": "What the Open Knowledge Format is,"
+  },
+  "og-owning-your-fediverse-identity.jpg": {
+    "green": "fediverse identity",
+    "kicker": "Blog",
+    "subhead": "A single-user instance, a domain split, and rel=me verification on your own domain.",
+    "white": "Owning your"
+  },
+  "og-publishing-an-ai-catalog.jpg": {
+    "green": "for agentic discovery",
+    "kicker": "Blog",
+    "subhead": "Indexing the MCP server, A2A agent, API and skills, additive and independently verified.",
+    "white": "Publishing an ai-catalog.json"
+  },
+  "og-re-checking-the-guides.jpg": {
+    "green": "re-checked the guides",
+    "kicker": "Blog",
+    "subhead": "Specifications move under prose. Claims now carry their date.",
+    "white": "Four AI agents"
+  },
+  "og-red-reading-that-measured-my-own-client.jpg": {
+    "green": "measured my own client",
+    "kicker": "Blog",
+    "subhead": "The compatibility lane answered politely, and the reading was about my own request.",
+    "white": "A red reading that"
+  },
+  "og-reliable-agent-decisions.jpg": {
+    "green": "reliable",
+    "kicker": "Blog",
+    "subhead": "Data that arrives intact, and an envelope of settings that defines what the agent may do.",
+    "white": "What makes an agent's decisions"
+  },
+  "og-services.jpg": {
+    "green": "prices in the open",
+    "kicker": "Services",
+    "subhead": "Shopify agent storefront check 999 euros. Audit 4,300. Advisory 3,000 per month, implementation 1,500 per day. Two more on request.",
+    "white": "Two fixed-scope diagnoses,"
+  },
+  "og-shopify-agent-storefront-check.jpg": {
+    "green": "actually receives",
+    "kicker": "Service",
+    "subhead": "One live Shopify store, three agent surfaces, four written deliverables in 48 hours. €999.",
+    "white": "What an AI shopper"
+  },
+  "og-the-twin-is-the-page.jpg": {
+    "green": "Now the twin is the page.",
+    "kicker": "Blog",
+    "subhead": "Every sentence lives once. The card pages render their prose from the markdown twin.",
+    "white": "Ten pages had two homes."
+  },
+  "og-thirty-days-after-the-brief.jpg": {
+    "green": "four of 201 sites moved",
+    "kicker": "Blog",
+    "subhead": "197 unchanged, three up, one down, and none of the three that improved had replied.",
+    "white": "Thirty days after the brief,"
+  },
+  "og-tools.jpg": {
+    "green": "Validator, badge, MCP server.",
+    "kicker": "Tools",
+    "subhead": "Each one works for a person in a browser and for an agent over HTTP.",
+    "white": "Free agent-readiness tools."
+  },
+  "og-trace-runtime-attestation.jpg": {
+    "green": "not what it was allowed to reach",
+    "kicker": "Blog",
+    "subhead": "Three trust levels, and the one below hardware proves nothing against a privileged operator.",
+    "white": "TRACE signs how an agent ran,"
+  },
+  "og-verifiable-agent-identity.jpg": {
+    "green": "it is Claude",
+    "kicker": "Blog",
+    "subhead": "Web Bot Auth gives an AI agent a verifiable, signed identity a site can check.",
+    "white": "When an agent can prove"
+  },
+  "og-website-agent-readiness-567-sites.jpg": {
+    "green": "measured on 567 company sites",
+    "kicker": "Blog",
+    "subhead": "85,5 percent of company sites read Level 1 of 5, and the floor is the same in Finland and elsewhere.",
+    "white": "Website agent readiness,"
+  },
+  "og-what-ai-assistants-call-an-agent-readiness-audit.jpg": {
+    "green": "and assistants mostly pick the other",
+    "kicker": "Blog",
+    "subhead": "Fifty buyer questions to four AI assistants: 18 of 41 open answers read the organisation, 13 the website.",
+    "white": "Two services share one name,"
+  }
+}
