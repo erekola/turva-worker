@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.119.0 - one site order for every list (primary pages, tools, company, contact, legal, then guides in the /guides twin order, then the blog newest first): sitemap.xml and llms-full.txt compute it, llms.txt follows it by hand and verify.mjs reads the order; home Contact before FAQ, Shopify twin price first, ACP and skills lists shopify and services first.
+// turva.dev worker v3.120.0 - auth.md gains a Discovery walkthrough, a Scopes section, a measured endpoint-response list and a section naming the WorkOS auth.md protocol and what this site does not implement of it; the intro names the resource server and the authorization server by role and the two OAuth links move out of Related discovery into Discovery, so each fact is stated once. No agent_auth field is renamed: the block keeps register_uri, claim_uri and revocation_uri, which is what the isitagentready authMd recipe names, and a rename would drop the check. One new post, /blog/two-auth-md-dialects, reads the scanner recipe and the WorkOS file format against each other, both fetched 2026-09-04, and reports that they agree on the path, the file name and the discovery order and disagree on three field names. The post carries a Frequently asked section, its own OG card and a line in llms.txt, which is re-signed. v3.119.0 was: one site order for every list (primary pages, tools, company, contact, legal, then guides in the /guides twin order, then the blog newest first): sitemap.xml and llms-full.txt compute it, llms.txt follows it by hand and verify.mjs reads the order; home Contact before FAQ, Shopify twin price first, ACP and skills lists shopify and services first.
 // v3.118.1 - hotfix: the two posts of v3.118.0 went live at 21:04Z from a working tree that had not yet received the independent checker's corrections (earliest first measurement 18 July, not 13; nine unreadable sites broken down as measured; "kept for these 210 sites" instead of "at this volume"; Perplexity named this site most often rather than alone; the drift of the term is stated as unmeasured), so both posts carry the corrected text and a Corrected 2026-09-04 note, and META_BY_PATH carries the modified date. v3.118.0 was: two new posts from data already on disk: /blog/thirty-days-after-the-brief reads the first 210 thirty-day rescans as one set (201 comparable, 197 unchanged, three up, one down, none of the three that improved had replied, one scanner-side denominator change), and /blog/what-ai-assistants-call-an-agent-readiness-audit reads the 3 September AI-visibility run for how four assistants interpret the term (18 of 41 open answers describe an organisation, 13 the website, 7 of 7 the website when the question names it). Both carry a Frequently asked section, their own OG card and a line in llms.txt, which is re-signed. v3.117.0 was: round 17 read every public surface as a buyer, an agent and a Finnish recipient and asked what is weak rather than what is wrong, and this release carries its worker.js changes: the Finnish brief page gets a Finnish frame (skip link, footer, the machine-readable line with its umlauts restored, and one line naming the reply channel in Finnish), the home page puts the two fixed-scope products and their prices right after the scan board and moves the curl demo down beside the evidence, the home and services FAQ say that an agent-readiness audit reads the website and its APIs and not the organisation, twenty guides link the choosing guide from their Related lists, the gaps and sitemaps guides cite the 567-site scan instead of the July sixteen, the JSON-LD guide covers data that is valid and wrong, the commerce discovery guide covers UCP as the fourth surface, llms.txt carries a Contact section and moves pricing, business details and the engagement model ahead of the guide and blog lists (re-signed), llms-full.txt orders the primary pages first, the guides second and the blog last, the blog index opens with a Start here card, /contact says correspondence runs in English or Finnish and the schema and get_contact carry both languages, and the audit section names a synthetic sample report available on request. v3.116.0 was: the privacy section of /legal says what a brief is, where it lives, that it is removed on request and that it expires on its own no later than 400 days after it was last published, because round 16 (S4-3, C1-4) found the page promising deletion for client data while saying nothing about the one surface that carries third-party data; the same release dates the privacy section. v3.115.1 was: hotfix after the 3.115.0 ship: the agentic-resource-discovery FAQ answer no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer as written while the page renders it, and the live gate read the two as different texts; the link stays in the guide body. verify.mjs --live now expects the honest preflight set, GET, OPTIONS on a GET-only surface and GET, POST, OPTIONS only where POST is served. v3.115.0 was: round 16 read the code and every served surface as a hostile reader, and this release carries its worker.js fixes: a method gate answers 405 with an Allow header where a GET route used to serve its body to POST, PUT, DELETE and PATCH, the CORS preflight advertises only the methods it honours and carries the security headers, OPTIONS on a page answers 204 instead of the page, the validator cuts its details on code point boundaries so a truncated emoji cannot turn into invalid UTF-8, the markdown renderer strips bidi controls from every href, the OpenAPI document describes ACP at its real path and lists /api/v1 and the four checkout operations, the API catalog names /api/v1, the home and services prose date the 48 hour promise from the agreed written kickoff as the JSON-LD already did, two guides link the claims they make, the response-headers guide says which rate limit header this site sends and why, two data posts point forward to the 567-sites post, the price post no longer reads as if a client had paid the old price, signatures.json says which bytes a signature covers, and a live brief address and a prospect name are gone from the code comments. The MCP server card moves to 1.3.11 because mcp.turva.dev now answers 405 to methods its CORS header never offered on the discovery documents. v3.114.2 was: four blog meta descriptions cut to the 160 the recipe allows; v3.114.1 was: the 567-sites post carries a Frequently asked section (FAQPage); v3.114.0 was: new blog post /blog/website-agent-readiness-567-sites (567 sites, one scanner, ten weeks); v3.113.0 was: every page title ends in " · turva.dev": the six card pages have since 2026-06-24 and the 46 guides, posts and hubs used a pipe, so one rule now covers all 52 and the three places that strip the suffix for the feed, the blog index and the blog JSON-LD accept either separator. The services page carries the same Service node, AggregateOffer and OfferCatalog the home page has carried since v3.75.0, read from one constant so the two cannot drift, because an agent landing on the price page from search got prices in prose and FAQ answers only. The primary navigation carries aria-label="Main" on every page, so a screen reader landmark list names it. v3.112.8 - round 15 read the served public surface and this release carries its two worker.js fixes: the agent-commerce-discovery guide no longer hyperlinks the AP2 extension URI, which is an identifier that answers 404 as an address, and OPTIONS answers 204 with preflight headers on every agent-api surface instead of only /x402, /api/* and /agent/auth/*. v3.112.7 - hotfix: the footer year is read per request, because Workers freeze the global-scope clock at the epoch and v3.112.6 served "1970" live for the minutes it was up. v3.112.6 - round 14 read the four repos byte by byte and this release carries its worker.js fixes: article:modified_time and the sitemap lastmod read the modified date the JSON-LD already read, the x402 merchant block carries legal_name and business_id like its three siblings, AP2 and MPP name the same quote channels, the OpenAPI description names every x402 challenge root, the footer year is computed, robots.txt is generated from one list, the CORS preflight runs after the host redirects, the IndexNow key file keeps its agent-api profile under rate limiting, the home Services tags fail closed, the badge alt text matches the SVG, the hosted validator carries the npm package's contentType guard, auth.md names the six year retention period, the TRACE post carries a Related section, and the ARD, SEP-2127, AP2, IETF and CyberGym claims carry their sources. The MCP server card moves to 1.3.10 because its get_security_evidence description now names the Internet.nl mail scan, so the card bytes and their signature move together. v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
@@ -189,6 +189,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Two files called auth.md, and they disagree on the field names](https://turva.dev/blog/two-auth-md-dialects.md)
 - [Thirty days after the brief: 210 sites rescanned, four moved](https://turva.dev/blog/thirty-days-after-the-brief.md)
 - [What four AI assistants call an agent readiness audit](https://turva.dev/blog/what-ai-assistants-call-an-agent-readiness-audit.md)
 - [Website agent readiness, measured on 567 company sites](https://turva.dev/blog/website-agent-readiness-567-sites.md)
@@ -252,20 +253,44 @@ var AUTH_MD = `# Auth.md
 
 turva.dev publishes public read-only metadata for AI agents.
 No endpoint requires a credential and there are no user accounts.
-This domain does publish OAuth protected resource metadata at
-/.well-known/oauth-protected-resource, which names an
-authorization server, three scope names and bearer tokens in the
-Authorization header. Read that document as discovery, not as
-protection: every declared resource answers an anonymous request
-exactly as it answers one carrying a token, and no scope grants
-access that anonymous does not already have. It is published so
-an OAuth-aware agent can discover the identity surface without
-guessing, not because a 401 is waiting. The only credential this
-domain issues is an optional api_key, provided out-of-band on
-request; it attributes correspondence and grants no additional
-access. This document describes how an operator can
-register an agent identity, request metadata corrections, and
-revoke prior correspondence.
+The only credential this domain issues is an optional api_key,
+provided out-of-band on request; it attributes correspondence and
+grants no additional access. This document describes how an
+operator can register an agent identity, request metadata
+corrections, and revoke prior correspondence.
+
+Both roles live on one host. The resource server is
+https://turva.dev and the authorization server is
+https://turva.dev.
+
+## Discovery
+
+Read these two documents in this order. The protected resource
+metadata names an authorization server, three scope names and
+bearer tokens in the Authorization header.
+
+- Fetch https://turva.dev/.well-known/oauth-protected-resource and
+  read resource, resource_name, authorization_servers,
+  scopes_supported and bearer_methods_supported.
+- Fetch https://turva.dev/.well-known/oauth-authorization-server and
+  read the agent_auth block: skill, register_uri, claim_uri,
+  revocation_uri, identity_types_supported and
+  identity_assertion.assertion_types_supported.
+
+There is no WWW-Authenticate hop here. Nothing on this domain
+answers 401, so there is no challenge to bootstrap from. The
+protected resource metadata is published so an OAuth-aware agent
+can find the identity surface without guessing, not because a 401
+is waiting. Read it as discovery and not as protection: every
+declared resource answers an anonymous request exactly as it
+answers one carrying a token.
+
+## Scopes
+
+The three names are read:services, read:principles and
+read:scan-evidence. They name areas of this site. No scope grants
+access that anonymous does not already have, because every
+resource is already public.
 
 ## Identity
 
@@ -317,6 +342,38 @@ Records held to meet Finnish accounting obligations (invoices)
 cannot be deleted until the statutory retention period ends,
 six years for invoice records under Finnish accounting law.
 
+## Endpoint responses
+
+Measured on this domain 2026-09-04.
+
+- GET and POST to the registration, claim and revocation endpoints
+  answer 200 with application/json describing the email pathway.
+- OPTIONS answers 204.
+- Any other method answers 405 with the header
+  Allow: GET, HEAD, POST, OPTIONS.
+- https://turva.dev/oauth/authorize and https://turva.dev/oauth/token
+  answer 400, never 401.
+
+## Relation to the auth.md protocol
+
+WorkOS publishes an open protocol also called auth.md, documented
+at https://workos.com/auth-md and https://github.com/workos/auth.md.
+This file is not an implementation of it. Its two ceremonies, agent
+verified and user claimed, are absent here because there are no user
+accounts to register into and nothing answers 401.
+
+The word claim above means something else than it does there. Here
+it means proving control of an identifier you have already
+corresponded under. There it means a device-code ceremony in which
+the agent shows the user a code to confirm. The two are not the
+same mechanism.
+
+The agent_auth field names on this domain follow the convention the
+isitagentready.com scanner documents, which names register_uri,
+claim_uri and revocation_uri. The WorkOS file format names the same
+positions identity_endpoint, claim_endpoint and events_endpoint.
+Both documents were read on 2026-09-04.
+
 ## Engagement principles
 
 - Async-only. No calls, no calendar links.
@@ -326,14 +383,66 @@ six years for invoice records under Finnish accounting law.
 
 ## Related discovery
 
-- OAuth Authorization Server: https://turva.dev/.well-known/oauth-authorization-server
-- OAuth Protected Resource: https://turva.dev/.well-known/oauth-protected-resource
+The two OAuth documents are named in Discovery above.
+
 - API catalog: https://turva.dev/.well-known/api-catalog
 - Security contact: https://turva.dev/.well-known/security.txt
 - Legal: https://turva.dev/legal
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/two-auth-md-dialects": `# Two files called auth.md, and they disagree on the field names
+
+2026-09-04
+
+WorkOS shipped Agent Auth for AuthKit on 2 September, a way to give the agents you build into your own product short-lived scoped tokens instead of a long-lived API key. Next to it in the same product menu sits something else with a wider blast radius, and it is a month older: an open protocol called auth.md, shipped into AuthKit on 4 August, in which a service publishes a markdown file at its own root telling outside agents how to register on behalf of a user. This site has served a file at that same address since June. The two are not the same document, I read both on 4 September to find out how far apart they are.
+
+## What each document asks for
+
+The scanner this site is measured by publishes its own recipe for the check it calls authMd, at https://isitagentready.com/.well-known/agent-skills/auth-md/SKILL.md, which answered 200 with 2 112 bytes. It asks for a markdown file at the service root with an H1 containing auth.md, protected resource metadata carrying resource, authorization_servers, scopes_supported and bearer_methods_supported, and an agent_auth block in the authorization server metadata. It names that block's fields: skill, register_uri, claim_uri, revocation_uri, identity_types_supported, identity_assertion.assertion_types_supported and anonymous.credential_types_supported.
+
+The WorkOS file format at https://workos.com/auth-md/docs/auth-md asks for the same two-hop discovery walk and the same agent_auth block. It names the block's fields identity_endpoint, claim_endpoint and events_endpoint.
+
+So the two documents agree on the path, the file name, the H1 and the discovery order, and they nearly agree on the protected resource metadata: the scanner asks for four fields in it and WorkOS for those four plus resource_name. They disagree on what to call the registration endpoint, the claim endpoint and the revocation surface inside the block both of them require.
+
+## Why that is worth knowing before you implement
+
+A site built from the scanner recipe and a site built from the WorkOS specification both serve a file called auth.md at the root, both publish an agent_auth block, and both can be described as having implemented auth.md. An agent that fetches one and looks for the other's field names finds nothing where it expects an endpoint. Nothing in either document warns you, because each is internally complete and neither cites the other.
+
+The gap is easy to walk into in one direction in particular. If you build against the specification and then test with the scanner, the check reports the file as missing rather than as differently named, and the natural reading of that result is that the file is not being served.
+
+## What this site does
+
+This site follows the scanner's naming, because that is what was measurable when the file was written and because a rename would drop a check this site's own score rests on. The file is at https://turva.dev/auth.md, served as text/markdown, and the protected resource metadata carries all five fields the WorkOS discovery step names.
+
+What this site does not implement is both of the WorkOS ceremonies. Agent verified needs an identity provider to vouch for a user, and user claimed needs a device-code confirmation. Neither exists here for the same reason: there are no user accounts, every resource is public and read only, and nothing on the domain answers 401, so there is no challenge for an agent to bootstrap from. The file now says that in its own words rather than describing a flow that is not there, and it names the protocol so a reader can see the difference for themselves.
+
+The word claim is its own trap. On this site it means proving control of an identifier you already corresponded under. In the protocol it means a ceremony where the agent shows the user a code to confirm in a browser. Same word, two mechanisms, and the file now separates them.
+
+## What I am not claiming
+
+I have no view on which naming should win, and this is not a prediction that either one becomes a standard. I did not measure how many sites serve an auth.md of either kind, so nothing here says which is more common. What I read is two published documents on one day, and what I can show is that they name the same three positions differently. Anyone implementing from one and verifying against the other will find that out the hard way, and it seemed worth writing down before more sites are built either way.
+
+## Frequently asked
+
+**Is auth.md a standard?**
+
+No. It is a convention published by two parties who do not agree on the field names inside it. The underlying pieces it composes are standards, OAuth protected resource metadata in RFC 9728 and authorization server metadata in RFC 8414, and those two are the parts an agent can rely on today.
+
+**Which field names should I use?**
+
+That depends on what will read your site. If a scanner grades you, use the names its recipe publishes and verify with the scanner. If a specific agent platform will consume the file, use the names its specification publishes. There is no third answer that satisfies both, and the honest thing is to say in the file which one you followed.
+
+**Does a site need an auth.md at all?**
+
+Only if an agent could ever need permission to do something there. A site that is entirely public and issues no credentials can publish one to say exactly that, which is what this site does, but there is nothing dishonest about not having the file when there is nothing to authenticate.
+
+## Related
+
+- [Agent authentication and authorisation](/guides/agent-authentication)
+- [Well-known files for agents](/guides/well-known-for-agents)
+- [When honesty and the checker disagree](/blog/honesty-and-the-checker)`,
+
   "/blog/thirty-days-after-the-brief": `# Thirty days after the brief: 210 sites rescanned, four moved
 
 2026-09-03
@@ -1646,6 +1755,7 @@ The work here is letting an agent read a site and act on a system safely. Each e
 
 ## All posts
 
+- [Two files called auth.md, and they disagree on the field names](/blog/two-auth-md-dialects). 2026-09-04.
 - [Thirty days after the brief: 210 sites rescanned, four moved](/blog/thirty-days-after-the-brief). 2026-09-03.
 - [What four AI assistants call an agent readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit). 2026-09-03.
 - [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites). 2026-09-03.
@@ -3380,7 +3490,7 @@ The pattern follows existing standards. OAuth discovery at a well-known path tel
 
 The reason this matters is trust and blast radius. A site that exposes capability without scoped, discoverable auth either stays closed to agents or invites unsafe workarounds. Proper discovery lets an agent request the least access it needs, and lets the site grant capability without handing over a password the agent should never see.
 
-A short auth description, sometimes published as an auth.md, gives an agent a human-readable entry point to the same flow. It is a site convention rather than a standard. The OAuth metadata documents define the machine-readable discovery and say nothing about a written page or a registration route, so an agent follows only the endpoints a site advertises for itself. Together with OAuth discovery it answers the agent's first question about any action, which is how do I get permission to do this safely.
+A short auth description, sometimes published as an auth.md, gives an agent a human-readable entry point to the same flow. It is a convention rather than a standard, and as of September 2026 it is two conventions: the recipe the isitagentready.com scanner publishes and the open protocol WorkOS publishes name three of the same fields differently, which is read in full in the post linked below. The OAuth metadata documents define the machine-readable discovery and say nothing about a written page or a registration route, so an agent follows only the endpoints a site advertises for itself. Together with OAuth discovery it answers the agent's first question about any action, which is how do I get permission to do this safely.
 
 turva.dev publishes OAuth discovery, a protected resource description, and an agent registration entry point, and it never requests production credentials in an engagement. For an audit of a site's authentication surface, contact info@turva.dev.
 
@@ -3404,6 +3514,7 @@ Where to request access and what scopes exist. OAuth discovery at a well-known p
 - [MCP server cards explained](/guides/mcp-server-card)
 - [What agents.json is](/guides/agents-json)
 - [Letting agents act on data: the decision envelope](/guides/letting-agents-act-on-data)
+- [Two files called auth.md, and they disagree on the field names](/blog/two-auth-md-dialects)
 - [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
 
@@ -4158,7 +4269,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.119.0",
+    "version": "3.120.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -4265,7 +4376,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Wtq44aQ5h1GNt3PR1cPKD_hDUmhremVzISi6L08ptoFLEjKirY8-9ctON__u58lBBcKSB1nhvSrrdKgSHQcTCw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-RvkNYk_FxCuix-0O6UI7jDhh1fUJDoAGOh9GbIJDVVzpaDZsLeADoj3CZ4Fm3kfZ4tO8VCkLnFuvyX24DdRAw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -4424,7 +4535,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.119.0",
+  "version": "3.120.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -4982,6 +5093,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/measurement-led-agent-readiness", "monthly", "0.7"],
   ["/guides/agent-readiness-gaps", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/two-auth-md-dialects", "monthly", "0.6"],
   ["/blog/thirty-days-after-the-brief", "monthly", "0.6"],
   ["/blog/what-ai-assistants-call-an-agent-readiness-audit", "monthly", "0.6"],
   ["/blog/website-agent-readiness-567-sites", "monthly", "0.6"],
@@ -5079,7 +5191,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -5089,6 +5201,13 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/two-auth-md-dialects": {
+    title: "Two files called auth.md, and they disagree on the field names · turva.dev",
+    description: "WorkOS publishes an open auth.md protocol and the isitagentready scanner publishes another. Both live at the same path and name three fields differently.",
+    date: "2026-09-04",
+    image: "/og-two-auth-md-dialects.jpg",
+    imageAlt: "turva.dev blog card: WorkOS publishes an open auth.md protocol and the isitagentready scanner publishes another. Both live at the same path and name three fields differently.",
+  },
   "/blog/thirty-days-after-the-brief": {
     title: "Thirty days after the brief: 210 sites rescanned, four moved · turva.dev",
     description: "210 sites rescanned thirty days after an unsolicited brief: 197 unchanged, three up, one down, and none of the three that improved had replied.",
@@ -6317,6 +6436,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/two-auth-md-dialects": mdFaqBlocks("/blog/two-auth-md-dialects", "Frequently asked").pairs,
   "/blog/thirty-days-after-the-brief": mdFaqBlocks("/blog/thirty-days-after-the-brief", "Frequently asked").pairs,
   "/blog/what-ai-assistants-call-an-agent-readiness-audit": mdFaqBlocks("/blog/what-ai-assistants-call-an-agent-readiness-audit", "Frequently asked").pairs,
   "/blog/website-agent-readiness-567-sites": mdFaqBlocks("/blog/website-agent-readiness-567-sites", "Frequently asked").pairs,

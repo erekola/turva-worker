@@ -359,6 +359,12 @@
     "subhead": "Three trust levels, and the one below hardware proves nothing against a privileged operator.",
     "white": "TRACE signs how an agent ran,"
   },
+  "og-two-auth-md-dialects.jpg": {
+    "green": "and they disagree",
+    "kicker": "Blog",
+    "subhead": "One path, one file name, three field names that do not match. Both documents read on 4 September 2026.",
+    "white": "Two files called auth.md,"
+  },
   "og-verifiable-agent-identity.jpg": {
     "green": "it is Claude",
     "kicker": "Blog",

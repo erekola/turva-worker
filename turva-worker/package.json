@@ -1,6 +1,6 @@
 {
   "name": "turva-worker",
-  "version": "3.119.0",
+  "version": "3.120.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,7 +10,7 @@
     "start": "wrangler dev"
   },
   "devDependencies": {
-    "wrangler": "^4.127.0"
+    "wrangler": "^4.129.0"
   },
   "overrides": {
     "esbuild": "0.28.1"
