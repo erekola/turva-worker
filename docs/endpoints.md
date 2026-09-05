@@ -48,5 +48,6 @@ Every route this Worker serves, copied from the repository README so the README 
 | Aliases | `/ai.txt`, `/security.txt`, `/.well-known/mcp.json`, `/.well-known/openid-configuration`, `/.well-known/openapi.json`, favicons, and fediverse redirects (`host-meta`, `webfinger`, `nodeinfo`) |
 | `/llms-txt-validator` | llms.txt structure checker (HTML form, JSON for agents) |
 | `/badge` and `/badge.svg` | Agent-ready badge criteria and embeddable SVG |
+| `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Public synthetic sample reports for the two fixed-scope diagnoses, invented sites, markdown twins at `.md` |
 
 Back to the [README](../README.md).

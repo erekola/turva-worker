@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.121.0 - Astra patch list 2026-09-05 (Tek-342): the two Shopify-page lists render as lists, the two €499 add-ons state their prerequisites (edge runtime and deploy access for the audit fixes, collaborator access for the Shopify corrections) on /services and the Shopify page, and the email CTAs carry a prefilled subject and body with a "Start a request by email" card on /contact.
+// turva.dev worker v3.122.0 - two public synthetic sample reports (Tek-342, Astra 04): /samples/audit-report and /samples/shopify-agent-storefront-check as markdown twins rendered by serveGuideHtml, linked from the home page, /services, the Shopify page and llms.txt; the "available on request" sentences replaced.
 // v3.118.1 - hotfix: the two posts of v3.118.0 went live at 21:04Z from a working tree that had not yet received the independent checker's corrections (earliest first measurement 18 July, not 13; nine unreadable sites broken down as measured; "kept for these 210 sites" instead of "at this volume"; Perplexity named this site most often rather than alone; the drift of the term is stated as unmeasured), so both posts carry the corrected text and a Corrected 2026-09-04 note, and META_BY_PATH carries the modified date. v3.118.0 was: two new posts from data already on disk: /blog/thirty-days-after-the-brief reads the first 210 thirty-day rescans as one set (201 comparable, 197 unchanged, three up, one down, none of the three that improved had replied, one scanner-side denominator change), and /blog/what-ai-assistants-call-an-agent-readiness-audit reads the 3 September AI-visibility run for how four assistants interpret the term (18 of 41 open answers describe an organisation, 13 the website, 7 of 7 the website when the question names it). Both carry a Frequently asked section, their own OG card and a line in llms.txt, which is re-signed. v3.117.0 was: round 17 read every public surface as a buyer, an agent and a Finnish recipient and asked what is weak rather than what is wrong, and this release carries its worker.js changes: the Finnish brief page gets a Finnish frame (skip link, footer, the machine-readable line with its umlauts restored, and one line naming the reply channel in Finnish), the home page puts the two fixed-scope products and their prices right after the scan board and moves the curl demo down beside the evidence, the home and services FAQ say that an agent-readiness audit reads the website and its APIs and not the organisation, twenty guides link the choosing guide from their Related lists, the gaps and sitemaps guides cite the 567-site scan instead of the July sixteen, the JSON-LD guide covers data that is valid and wrong, the commerce discovery guide covers UCP as the fourth surface, llms.txt carries a Contact section and moves pricing, business details and the engagement model ahead of the guide and blog lists (re-signed), llms-full.txt orders the primary pages first, the guides second and the blog last, the blog index opens with a Start here card, /contact says correspondence runs in English or Finnish and the schema and get_contact carry both languages, and the audit section names a synthetic sample report available on request. v3.116.0 was: the privacy section of /legal says what a brief is, where it lives, that it is removed on request and that it expires on its own no later than 400 days after it was last published, because round 16 (S4-3, C1-4) found the page promising deletion for client data while saying nothing about the one surface that carries third-party data; the same release dates the privacy section. v3.115.1 was: hotfix after the 3.115.0 ship: the agentic-resource-discovery FAQ answer no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer as written while the page renders it, and the live gate read the two as different texts; the link stays in the guide body. verify.mjs --live now expects the honest preflight set, GET, OPTIONS on a GET-only surface and GET, POST, OPTIONS only where POST is served. v3.115.0 was: round 16 read the code and every served surface as a hostile reader, and this release carries its worker.js fixes: a method gate answers 405 with an Allow header where a GET route used to serve its body to POST, PUT, DELETE and PATCH, the CORS preflight advertises only the methods it honours and carries the security headers, OPTIONS on a page answers 204 instead of the page, the validator cuts its details on code point boundaries so a truncated emoji cannot turn into invalid UTF-8, the markdown renderer strips bidi controls from every href, the OpenAPI document describes ACP at its real path and lists /api/v1 and the four checkout operations, the API catalog names /api/v1, the home and services prose date the 48 hour promise from the agreed written kickoff as the JSON-LD already did, two guides link the claims they make, the response-headers guide says which rate limit header this site sends and why, two data posts point forward to the 567-sites post, the price post no longer reads as if a client had paid the old price, signatures.json says which bytes a signature covers, and a live brief address and a prospect name are gone from the code comments. The MCP server card moves to 1.3.11 because mcp.turva.dev now answers 405 to methods its CORS header never offered on the discovery documents. v3.114.2 was: four blog meta descriptions cut to the 160 the recipe allows; v3.114.1 was: the 567-sites post carries a Frequently asked section (FAQPage); v3.114.0 was: new blog post /blog/website-agent-readiness-567-sites (567 sites, one scanner, ten weeks); v3.113.0 was: every page title ends in " · turva.dev": the six card pages have since 2026-06-24 and the 46 guides, posts and hubs used a pipe, so one rule now covers all 52 and the three places that strip the suffix for the feed, the blog index and the blog JSON-LD accept either separator. The services page carries the same Service node, AggregateOffer and OfferCatalog the home page has carried since v3.75.0, read from one constant so the two cannot drift, because an agent landing on the price page from search got prices in prose and FAQ answers only. The primary navigation carries aria-label="Main" on every page, so a screen reader landmark list names it. v3.112.8 - round 15 read the served public surface and this release carries its two worker.js fixes: the agent-commerce-discovery guide no longer hyperlinks the AP2 extension URI, which is an identifier that answers 404 as an address, and OPTIONS answers 204 with preflight headers on every agent-api surface instead of only /x402, /api/* and /agent/auth/*. v3.112.7 - hotfix: the footer year is read per request, because Workers freeze the global-scope clock at the epoch and v3.112.6 served "1970" live for the minutes it was up. v3.112.6 - round 14 read the four repos byte by byte and this release carries its worker.js fixes: article:modified_time and the sitemap lastmod read the modified date the JSON-LD already read, the x402 merchant block carries legal_name and business_id like its three siblings, AP2 and MPP name the same quote channels, the OpenAPI description names every x402 challenge root, the footer year is computed, robots.txt is generated from one list, the CORS preflight runs after the host redirects, the IndexNow key file keeps its agent-api profile under rate limiting, the home Services tags fail closed, the badge alt text matches the SVG, the hosted validator carries the npm package's contentType guard, auth.md names the six year retention period, the TRACE post carries a Related section, and the ARD, SEP-2127, AP2, IETF and CyberGym claims carry their sources. The MCP server card moves to 1.3.10 because its get_security_evidence description now names the Internet.nl mail scan, so the card bytes and their signature move together. v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
@@ -139,6 +139,10 @@ var LLMS_TXT = `# turva.dev
 - Shopify correction implementation: €499 (fixed, sold only together with the Shopify agent storefront check)
 
 Final price is confirmed in writing after scope is agreed.
+
+## Sample reports (synthetic, invented sites)
+- [Sample audit report](https://turva.dev/samples/audit-report.md)
+- [Sample Shopify agent storefront check report](https://turva.dev/samples/shopify-agent-storefront-check.md)
 
 ## Business details
 - Name: turva.dev
@@ -2070,6 +2074,423 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 - [How agents authenticate](/guides/agent-authentication)
 - [What agents.json is](/guides/agents-json)
 `,
+  "/samples/audit-report": `# Sample audit report: Northwind Fasteners Oy
+
+2026-09-08
+
+This is a synthetic sample of the agent-readiness audit report. The company, the domain northwind-fasteners.example, every reading and every date are invented to show the format, the depth and the wording a paying client receives. Nothing on this page describes a real client, and no figure here has been measured on a real site. A real report carries the raw scanner output and the request logs as an appendix, which this sample leaves out.
+
+## Engagement record
+
+| Field | Value |
+| --- | --- |
+| Client | Northwind Fasteners Oy, industrial fastener wholesaler, invented |
+| Surface audited | The public site northwind-fasteners.example and its REST API at /wp-json/ |
+| Kickoff, scope agreed in writing | 2026-08-25 |
+| Scanner run | 2026-09-03, isitagentready.com, default profile, three serial runs, all three identical |
+| Manual review | 2026-09-03 and 2026-09-04 |
+| AI visibility run | 2026-09-04, 15 questions to four assistants, one anonymous run per question |
+| Report delivered | 2026-09-08, fourteen days after the kickoff |
+| Written follow-up round | Open until 2026-09-22 |
+| Access used | Public surfaces only. No login, no credentials, no code repository |
+
+## Summary
+
+The site reads Level 1 of 5 on isitagentready.com, with 2 of the 21 scored checks passing. The two that pass are robots.txt and sitemap.xml, and both exist because the content management system ships them. Everything an agent would use on purpose is missing: no markdown form of any page, no llms.txt, no Link relations, no discovery file for the REST API that already runs, and no named rules for AI crawlers.
+
+The most expensive finding scores no points at all. Every one of the 138 product pages publishes structured data with a price of 0,00 EUR and an availability of InStock, while the visible page shows a real price and, for 41 products, a six week lead time. An agent that trusts the data tells a buyer the whole catalog is free and in stock. This is fixed first, before anything that moves the score.
+
+The eight findings below flip six scored checks and correct two findings outside the scored set. Seven of the eight are edge or configuration work of about one working day in total. The eighth is a decision to leave the five commerce checks red on purpose, because a commerce declaration that points at a checkout an agent cannot complete would be a false claim.
+
+The report names the checks it moves, not a level it promises. The level moves with the check set the scanner runs on the day, and 22 checks were in the set on 2026-09-03.
+
+## Scope and method
+
+What was measured, in this order.
+
+- The independent scanner. isitagentready.com was run three times in series against the origin with the default profile, and the three runs agreed. The denominator on the day was 22 checks, 21 scored and one informational, webBotAuth. Every check is recorded below individually rather than as one headline number.
+- A manual review of what the scanner does not score. JSON-LD on the home page, one category page and five product pages. Head metadata and Open Graph on the same seven pages. HTTP response headers on the home page and one product page. The /.well-known/ directory. robots.txt, sitemap.xml, ai.txt and llms.txt against the current norms. The first response of each page fetched as a bot, to see whether the content arrives or a script shell does.
+- AI visibility today. A fixed set of 15 questions, 12 that describe the category without naming the company and 3 that name it, put once to four AI assistants in anonymous sessions on 2026-09-04. Recorded per answer: whether the company is named, whether the answer is correct where it names it and which sources the assistant cites.
+- Published security scans. internet.nl website and mail tests and Hardenize, run on 2026-09-04, so the report rests on measurements the client can re-run without turva.dev.
+
+What was not measured. No code was read, no credentials were used, no penetration test was run and no traffic analytics were seen. The REST API was read through its public routes only. Rankings on any AI platform were not measured and are not promised anywhere in this report.
+
+## Scanner readings, check by check
+
+isitagentready.com on 2026-09-03. PASS and FAIL are the scanner's words. INFO marks the one check the scanner reports without scoring. The fix column points at the finding that moves the check, or says why the check stays as it is.
+
+| Category | Check | Reading | What the scanner saw | Fix |
+| --- | --- | --- | --- | --- |
+| Discoverability | robotsTxt | PASS | /robots.txt exists and parses. One wildcard group. | F5 changes its content, the check stays green |
+| Discoverability | sitemap | PASS | /sitemap.xml exists and parses, 14 URLs. | F4, a manual finding, the check stays green |
+| Discoverability | linkHeaders | FAIL | No Link header on any response. | F3 |
+| Discoverability | dnsAid | FAIL | No _index._agents record under the domain, DNSSEC not enabled. | F7 |
+| Content | markdownNegotiation | FAIL | Accept: text/markdown returns text/html, 212 kB on the home page. | F2 |
+| Bot access control | robotsTxtAiRules | FAIL | No AI crawler named in robots.txt. | F5 |
+| Bot access control | contentSignals | FAIL | No Content-Signal line in robots.txt. | F5 |
+| Bot access control | webBotAuth | INFO | No Web Bot Auth directory. Informational, not scored. | None. The company operates no bots that would sign requests |
+| API, auth, MCP and A2A | apiCatalog | FAIL | /.well-known/api-catalog returns the HTML 404 page. | F6 |
+| API, auth, MCP and A2A | oauthDiscovery | FAIL | No /.well-known/oauth-authorization-server or openid-configuration. | Waits, see F6 |
+| API, auth, MCP and A2A | oauthProtectedResource | FAIL | No /.well-known/oauth-protected-resource. | Waits, see F6 |
+| API, auth, MCP and A2A | authMd | FAIL | No /auth.md and no agent_auth metadata. | Waits, see F6 |
+| API, auth, MCP and A2A | mcpServerCard | FAIL | No /.well-known/mcp/server-card.json. | Waits, see F6 |
+| API, auth, MCP and A2A | a2aAgentCard | FAIL | No /.well-known/agent-card.json. | Waits, see F6 |
+| API, auth, MCP and A2A | agentSkills | FAIL | No /.well-known/agent-skills/index.json. | Waits, see F6 |
+| API, auth, MCP and A2A | webMcp | FAIL | No navigator.modelContext tools on the home page. | Waits, see F6 |
+| API, auth, MCP and A2A | ard | FAIL | No capability manifest at the well-known path. | Waits, see F6 |
+| Commerce | x402 | FAIL | No 402 challenge on any route. | Stays red on purpose, F8 |
+| Commerce | mpp | FAIL | No payment discovery document. | Stays red on purpose, F8 |
+| Commerce | ucp | FAIL | No /.well-known/ucp. | Stays red on purpose, F8 |
+| Commerce | acp | FAIL | No ACP discovery document. | Stays red on purpose, F8 |
+| Commerce | ap2 | FAIL | No AP2 declaration. | Stays red on purpose, F8 |
+
+Category totals: Discoverability 2 of 4, Content 0 of 1, Bot access control 0 of 2, API, auth, MCP and A2A 0 of 9, Commerce 0 of 5. Overall 2 of 21 scored checks, Level 1 of 5.
+
+After the seven fixes below: Discoverability 4 of 4, Content 1 of 1, Bot access control 2 of 2, API, auth, MCP and A2A 1 of 9, Commerce 0 of 5. Overall 8 of 21, and the report does not translate that into a level, because the level on the retest day depends on the check set the scanner runs that day.
+
+## Manual review
+
+The surfaces the scanner does not score, read by hand on 2026-09-03 and 2026-09-04.
+
+| Surface | Reading | Finding |
+| --- | --- | --- |
+| First response as a bot | Every page returns its full HTML on the first response. No script shell, no prerender. | No finding. The content is there, it is only expensive to read. |
+| JSON-LD, product pages | Product node on all 138 pages: price 0.00, priceCurrency EUR, availability InStock. | F1 |
+| JSON-LD, home and category pages | Organization node with name and logo, no address, no taxID, no sameAs. WebSite node present. No BreadcrumbList. | Recorded, no fix in this round. Completeness, not correctness. |
+| Head metadata and Open Graph | Title and description present on all seven pages read. og:image missing on the five product pages. | Recorded, no fix in this round. |
+| HTTP response headers | Content-Type correct. No Link, no RateLimit-Policy, no security headers except HSTS. | F3 adds the Link relations. Security headers are in the internet.nl reading below. |
+| /.well-known/ | Empty. Every path under it returns the HTML 404 page with status 200. | F3, F6 and F7 populate it. The soft 404 is F6's first line. |
+| robots.txt | The CMS default. One wildcard group, Disallow: /wp-admin/, no Sitemap line, no AI crawler, no Content-Signal. | F5 |
+| sitemap.xml | 14 URLs. The front page, eleven content pages and two template pages titled Sample Page and Privacy Policy Draft. No product page. | F4 |
+| ai.txt and llms.txt | Neither exists. | F3 publishes llms.txt. ai.txt is not published: the norm it followed has merged into robots.txt Content Signals. |
+| REST API | /wp-json/wc/store/v1/products answers publicly with the catalog, price fields empty, purchasable true. | F1 corrects the data, F6 declares the API. |
+
+## AI visibility today
+
+Fifteen questions, four assistants, one anonymous run per question on 2026-09-04, 60 answers in all. The question set is fixed so that the same run can be repeated after the fixes and the two runs compared.
+
+| Question group | Questions | Answers | Northwind named | Correct where named | What the assistants did instead |
+| --- | --- | --- | --- | --- | --- |
+| Category, no company name. "Where can a Finnish workshop buy DIN 933 bolts in bulk online" and eleven like it | 12 | 48 | 0 | Not applicable | Named three national distributors and two marketplaces. Two answers cited a competitor's price list page as markdown. |
+| Company by name. "What does Northwind Fasteners sell" and two like it | 3 | 12 | 12 | 9 | Two answers gave a Tampere address the company left in 2023. One answer said the catalog is free, citing the structured data F1 corrects. |
+
+What this measures. Whether an assistant names the company when a buyer describes the need, and whether it gets the facts right when it does. It does not measure ranking, and nothing in this report predicts how the run reads after the fixes. The same 15 questions are run again at the retest, and the two tables are printed side by side.
+
+## Published security scans
+
+Run on 2026-09-04, recorded so that the client can re-run them without turva.dev.
+
+| Scan | Reading | What it means for agents |
+| --- | --- | --- |
+| internet.nl website test | 64 of 100. IPv6 absent, DNSSEC absent, HTTPS configuration passes, security headers partial. | DNSSEC is a prerequisite of the dnsAid check, so F7 moves this reading too. |
+| internet.nl mail test | 55 of 100. SPF present, DKIM present, DMARC policy none. | Not an agent surface. Recorded because a buyer checks it. |
+| Hardenize | 17 of 24 categories passed. CAA, DNSSEC, HSTS preload, CSP, Referrer-Policy, security.txt and cookies did not. | security.txt is a five line file the same edge worker serves. It is listed under F3 as a same-day addition. |
+
+## Findings, in fix order
+
+Eight findings. Each carries the evidence as read, what it costs the company, the change, who does it and roughly how long, and the test that proves it done. The order is by impact on a buyer first and on the score second, and the effort figures are estimates scoped to these findings, not a quote.
+
+## F1. Every product page publishes a price of 0 and an availability of InStock
+
+**Category.** Structured data. Manual review, not scored.
+
+**Evidence.** GET /products/din-933-m12x40-a2/ on 2026-09-03 returns a JSON-LD Product node with "price": "0.00", "priceCurrency": "EUR" and "availability": "https://schema.org/InStock". The visible page shows 0,42 EUR per piece and a lead time of six weeks. The same node shape appears on all 138 product pages, checked by fetching every product URL from the REST API and reading the price field of each. The API itself, /wp-json/wc/store/v1/products, returns "price": "" and "is_purchasable": true for the same products.
+
+**Impact.** No scanner points, and the highest impact in this report. An agent that trusts the structured data tells a buyer the whole catalog is free and in stock, and one of the 12 by-name answers on 2026-09-04 already did. Wrong data is worse than missing data: missing data makes an agent guess, wrong data makes it confident.
+
+**Change.** Feed the Product node from the same price and stock fields the page renders, and map the six week lead time to a PreOrder or BackOrder availability instead of InStock. This is a data mapping in the catalog plugin, not new markup. Until it is fixed, removing the price and availability fields is the safer state, and that removal is a one line template change the company can make the same day.
+
+**Owner and effort.** The company's web agency, which owns the catalog plugin configuration. About two hours. If turva.dev implements the list, this item is done from the edge as an override of the two fields until the plugin mapping is corrected, and the report says so where the override sits.
+
+**Acceptance test.** Read the JSON-LD of any product page next to the page. The price and the availability match what the page shows. Repeat for three products with a lead time. No scanner check flips, and the manual review closes.
+
+**Guide.** [JSON-LD and structured data for agents](/guides/json-ld-structured-data).
+
+## F2. Serve markdown next to HTML
+
+**Category.** Content accessibility. Scored check markdownNegotiation.
+
+**Evidence.** GET / with Accept: text/markdown on 2026-09-03 returns Content-Type text/html and a 212 kB body. The same request to /products/ and to a product page returns HTML of 340 kB and 188 kB. No .md address exists for any page.
+
+**Impact.** One scored check, and the largest token saving on the site. The home page is 212 kB as HTML and about 9 kB as markdown, so an agent that reads it as HTML spends its budget on markup and truncates the page before the catalog link.
+
+**Change.** Put an edge worker in front of the origin that answers a text/markdown request with the markdown form of the page at the same address, and publishes each page at its .md address as well. The origin is not touched. The worker converts the rendered HTML on the way through and caches the result per URL.
+
+**Owner and effort.** turva.dev or the company's developer, at the edge. About three hours including the cache rules. This is the worker every other edge finding in this report also lives in, so its cost is paid once.
+
+**Acceptance test.** curl -H "Accept: text/markdown" https://northwind-fasteners.example/ returns Content-Type: text/markdown and a body that starts with the page title as a heading. markdownNegotiation reads PASS on the next scan.
+
+**Guide.** [Serving markdown to agents](/guides/markdown-for-agents).
+
+## F3. Publish llms.txt and announce it in the Link header
+
+**Category.** Discoverability. Scored check linkHeaders.
+
+**Evidence.** GET /llms.txt on 2026-09-03 returns the HTML 404 page with status 200. No response on the site carries a Link header. GET /.well-known/security.txt returns the same soft 404.
+
+**Impact.** One scored check, and the file agents fetch first when they want to know what a site is about. Without it an agent has the navigation menu and nothing else, and the navigation menu does not mention the catalog API or the delivery terms.
+
+**Change.** Write /llms.txt by hand: the company name, a four line summary, and the pages that matter grouped as products, delivery terms, technical documents and contact, each as an absolute link to the page's markdown form from F2. Announce it with Link: rel="describedby" on every response and add rel="alternate" type="text/markdown" pointing at the page's own .md twin. Serve /.well-known/security.txt from the same worker with a contact address and an expiry date, which closes one Hardenize category the same day.
+
+**Owner and effort.** turva.dev or the company's developer, at the edge. About 90 minutes. The content of llms.txt is reviewed by the company before it goes live, because it is the company's own description of itself.
+
+**Acceptance test.** linkHeaders reads PASS on the next scan. The free validator at [turva.dev/llms-txt-validator](/llms-txt-validator) reads the file as valid with every link resolving. GET /.well-known/security.txt returns text/plain with status 200.
+
+**Guides.** [llms.txt explained](/guides/llms-txt) and [Response headers that help agents](/guides/response-headers-for-agents).
+
+## F4. The sitemap lists two template pages and misses the catalog
+
+**Category.** Discoverability. Manual review, not scored. The sitemap check passes and stays green.
+
+**Evidence.** GET /sitemap.xml on 2026-09-03 lists 14 URLs: the front page, eleven content pages and two CMS template pages titled Sample Page and Privacy Policy Draft. None of the 138 product URLs is in it. robots.txt carries no Sitemap line, so an agent that starts from robots.txt does not find the sitemap at all.
+
+**Impact.** No scanner points. An agent that follows the rules gets a list of 14 pages to read and never learns that the catalog exists. The two template pages are also indexed by search engines today.
+
+**Change.** Let the catalog plugin generate a product sitemap, reference it from a sitemap index, remove the two template pages from the site or from the sitemap, and add one Sitemap line to robots.txt. Four settings, no code.
+
+**Owner and effort.** The company's web agency. About half an hour.
+
+**Acceptance test.** The sitemap index references a product sitemap that lists every product URL, no template page appears, and robots.txt names the index. The scored check stays green either way, which is why this is a manual finding.
+
+**Guide.** [Sitemaps, robots.txt and agents](/guides/sitemaps-and-robots-for-agents).
+
+## F5. Name the AI crawlers and declare Content Signals in robots.txt
+
+**Category.** Bot access control. Scored checks robotsTxtAiRules and contentSignals.
+
+**Evidence.** /robots.txt on 2026-09-03 is the CMS default: User-agent: *, Disallow: /wp-admin/, Allow: /wp-admin/admin-ajax.php. No AI crawler is named and no Content-Signal line exists.
+
+**Impact.** Two scored checks. Today the file says nothing about AI agents, so every assistant guesses, and the guess is not always in the site's favour: one assistant on 2026-09-04 declined to cite the site at all and cited a distributor's copy of the same product data instead.
+
+**Change.** Add named groups for the crawlers the company wants to allow, and one Content-Signal line that states search yes, ai-input yes, ai-train no, or whichever preference the company holds. The line is a stated preference and not an enforcement mechanism, and the report says so where it appears. The company decides the preference, the report only records what the file says today.
+
+**Owner and effort.** The company decides, the edge worker serves the file. About half an hour once the preference is decided.
+
+**Acceptance test.** robotsTxtAiRules and contentSignals read PASS on the next scan, and the file names the crawlers the company chose.
+
+**Guide.** [Sitemaps, robots.txt and agents](/guides/sitemaps-and-robots-for-agents).
+
+## F6. Tell agents that the REST API exists
+
+**Category.** API, auth, MCP and A2A. Scored check apiCatalog.
+
+**Evidence.** The site runs a public read-only REST API at /wp-json/ with the product catalog behind it at /wp-json/wc/store/v1/products, and no discovery file names it. GET /.well-known/api-catalog on 2026-09-03 returns the HTML 404 page with status 200, as does every path under /.well-known/. The scanner reads apiCatalog as failing along with the eight other checks in the category.
+
+**Impact.** One scored check now, and the cheapest step in the category. An agent that finds the API reads the catalog as data instead of scraping HTML. The soft 404 under /.well-known/ has a cost of its own: an agent that probes for a manifest receives a 200 with an HTML body and has to parse it to learn there is nothing there.
+
+**Change.** Publish /.well-known/api-catalog, one JSON linkset that names the /wp-json/ base URL and its description, with the content type application/linkset+json. Make every other path under /.well-known/ return a real 404. The other eight checks in the category need an authentication story or an MCP server and are not worth declaring until one exists: a server card that points at no server is a false claim, and this report does not recommend one.
+
+**Owner and effort.** turva.dev or the company's developer, at the edge. About half an hour.
+
+**Acceptance test.** apiCatalog reads PASS on the next scan. The category reads 1 of 9, and the retest report says which eight are left and why they wait. GET /.well-known/nothing returns 404.
+
+**Guide.** [The /.well-known directory for agents](/guides/well-known-for-agents).
+
+## F7. Publish a DNS-AID record once the discovery files exist
+
+**Category.** Discoverability. Scored check dnsAid.
+
+**Evidence.** No _index._agents HTTPS record exists under northwind-fasteners.example, and DNSSEC is not enabled at the registrar, which internet.nl also reports.
+
+**Impact.** One scored check. This is the check that needs the company's DNS rather than the edge worker, which is why it is last among the scored fixes. DNSSEC also moves the internet.nl website reading.
+
+**Change.** After the files above are live, add the _index._agents HTTPS record pointing at the site and enable DNSSEC at the registrar. Both are DNS changes the company's own IT does, and the report carries the exact record in its appendix.
+
+**Owner and effort.** The company's IT, at the registrar. About half an hour, plus the DNSSEC propagation wait.
+
+**Acceptance test.** dnsAid reads PASS on the next scan, once DNSSEC validates. internet.nl website test shows DNSSEC as passing.
+
+**Guide.** [The /.well-known directory for agents](/guides/well-known-for-agents), which covers the discovery index the record points at.
+
+## F8. Declare no agent commerce surface until a checkout can back it
+
+**Category.** Commerce. Scored checks x402, mpp, ucp, acp and ap2.
+
+**Evidence.** The store checks out through a browser form with a card payment page. None of the five agent commerce surfaces the scanner reads is declared: an x402 payment challenge, an MPP payment discovery document, a UCP profile, an ACP discovery document or an AP2 declaration. All five commerce checks read FAIL.
+
+**Impact.** Five scored checks, and none of them is worth flipping this quarter. A commerce declaration that points at a checkout an agent cannot complete is a false claim, and the scanner cannot tell the difference between a declaration and a working checkout.
+
+**Change.** No change now. When the company decides that agents may buy, the first honest step is an ACP discovery document whose checkout session returns not_ready_for_payment with a message, which is real and scores. Everything else follows a payment decision, not a readiness one.
+
+**Owner and effort.** The company's management, as a decision. No hours in this round.
+
+**Acceptance test.** The five checks stay red on the next scan, on purpose, and the retest report repeats this entry so that nobody reads the red as an oversight.
+
+**Guides.** [Agent commerce discovery](/guides/agent-commerce-discovery) and [Agentic commerce readiness](/guides/agentic-commerce-readiness).
+
+## Fix order and effort
+
+| Order | Finding | Checks moved | Owner | Effort estimate |
+| --- | --- | --- | --- | --- |
+| 1 | F1 structured data | None, manual | Web agency, or the edge as an override | 2 hours |
+| 2 | F2 markdown | markdownNegotiation | Edge | 3 hours |
+| 3 | F3 llms.txt, Link header, security.txt | linkHeaders | Edge, content reviewed by the company | 90 minutes |
+| 4 | F4 sitemap content | None, manual | Web agency | Half an hour |
+| 5 | F5 robots.txt | robotsTxtAiRules, contentSignals | Company decides, edge serves | Half an hour |
+| 6 | F6 api-catalog and real 404s | apiCatalog | Edge | Half an hour |
+| 7 | F7 DNS-AID and DNSSEC | dnsAid | Company IT | Half an hour plus propagation |
+| 8 | F8 commerce | None, on purpose | Management decision | 0 |
+
+Total for F1 to F7: about eight and a half hours, which is the one implementation day the services page describes. The figure is an estimate scoped to these findings.
+
+## What happens next
+
+Three routes, and the report is written so that any of them works.
+
+- The company's team does the work from this report. Every finding carries its change and its acceptance test, and the guides linked above carry the patterns.
+- turva.dev implements exactly the fixes this report lists for the fixed price on the services page, bought together with the audit. That price needs an edge runtime in front of the origin where the fixes are applied and the access to deploy there, both arranged in writing before the work starts. F1, F4 and F7 sit with the web agency and the company's IT in either case, and the report names them as such.
+- Nothing is done, and the report stands as a dated record of where the site was on 2026-09-03.
+
+In every case the retest is the same: the scanner is run again with the same profile, the 15 questions are put to the same four assistants, and the two readings are printed next to the ones above. One round of written follow-up questions is open until 2026-09-22.
+
+## What this report is not
+
+It is not a penetration test, a certification, an SEO audit or a promise of ranking on any AI platform. It reads what the site publishes and records what four assistants said on one day. It does not read the organisation's readiness to adopt agents, which is a different question that often goes by the same name.
+
+## About this sample
+
+Every figure on this page is invented. The check names, the categories and the statuses are the scanner's real vocabulary as it stood on 2026-09-03, so that the sample shows how a real report reads, and the site, the readings, the assistants' answers and the security scores are fiction. A real report carries the raw scanner output, the request and response logs and the 60 AI answers as an appendix.
+
+The audit is described on the [services page](/services). To start one, [email info@turva.dev](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) with the site or API URL and what the audit should answer. The Shopify agent storefront check has its own [sample report](/samples/shopify-agent-storefront-check).
+`,
+
+  "/samples/shopify-agent-storefront-check": `# Sample report: Shopify agent storefront check, Northstar Outdoor
+
+2026-09-08
+
+This is a synthetic sample of the Shopify agent storefront check report. The store Northstar Outdoor, its .myshopify.com domain, the three products, every price and every observation are invented to show the format and the depth a paying merchant receives. Nothing on this page describes a real store, and no figure here has been measured on a real storefront. A real report carries the tool call log and the redacted settings evidence as an appendix, which this sample leaves out.
+
+## Engagement record
+
+| Field | Value |
+| --- | --- |
+| Merchant | Northstar Outdoor, invented D2C outdoor equipment store on Shopify |
+| Storefront | northstar-outdoor.example, the .myshopify.com domain redacted in this sample |
+| Market, language, currency | Finland, fi-FI, EUR |
+| Products in scope | Trail Bottle 750 ml, blue. Merino Base Layer, size M. Camp Mug, green |
+| Buyer searches in scope | Five, listed under the buyer journey |
+| Preflight | 2026-09-04, public read-only. An observable agent commerce surface was found, so the check was sold |
+| Written kickoff | 2026-09-05 at 09:00 EEST, after preflight, payment and settings evidence |
+| Test session | 2026-09-05, one clean supported Chromium session, one anonymous shopper |
+| Package delivered | 2026-09-06 at 15:40 EEST, 30 hours and 40 minutes after the kickoff |
+| Retest window | Until 2026-09-20, up to two corrected items |
+| Access used | Public storefront surfaces and redacted settings screenshots from the merchant. No Admin login, no credentials, no customer data |
+
+## Decision
+
+Correct two data mismatches before sending more agent traffic to the store. The three agent surfaces were all observable, the browser cart worked in the agreed anonymous session and the checkout handoff landed in the right store. Two of the three tested products showed a difference between surfaces: one price two euros higher on the remote catalog than on the storefront, and one variant marked unavailable on the Agentic preview while the storefront sells it. A documented match is what the merchant is paying to be able to show, and two of three products do not have one yet.
+
+Nothing was paid, ordered or signed in. No customer detail was entered.
+
+## Three-surface map
+
+What is present, restricted, unavailable or not tested on each of the three surfaces, in the same session and against the same three products. PRESENT means the surface answered and was exercised within scope. RESTRICTED means it answered but refused part of the scope. UNAVAILABLE means it did not answer. NOT TESTED means the scope stopped before it.
+
+| Surface | Status | What was verified | What was not |
+| --- | --- | --- | --- |
+| Browser WebMCP, in the shopper's live storefront tab | PRESENT | Ten tools registered on navigator.modelContext: browse_store, search_catalog, get_product, show_variant, update_cart, get_cart, cancel_cart, proceed_to_checkout, search_shop_policies_and_faqs and manage_orders. Eight were called within scope. One anonymous cart built and emptied. | manage_orders and browse_store were not called, and proceed_to_checkout was called once for the permitted navigation only. No customer account was opened. |
+| Shopify-hosted Storefront MCP and UCP MCP | PRESENT | Catalog search and product read answered at protocol level. One remote UCP cart was created with the blue Trail Bottle and cancelled without a buyer identity. | Checkout MCP was not reached, by scope. |
+| Shopify Catalog and Agentic storefront channels | PRESENT | Catalog access on, auto-enrolment of new products on, one channel active, read from the merchant's redacted settings evidence. Catalog search preview run for the three products. | Channel ranking or sales were not measured. Settings were not changed. |
+
+Finding a surface is a fact about availability. It is not a certification, an endorsement or a security claim.
+
+## Product truth matrix
+
+The tested title, variant, price, currency, availability and policy facts on each surface, read in the same market, language, currency and hour. A MISMATCH was reproduced once before it was recorded.
+
+| Product and variant | Storefront page | Browser WebMCP | Storefront and UCP MCP | Agentic Catalog preview | Result |
+| --- | --- | --- | --- | --- | --- |
+| Trail Bottle 750 ml, blue | 29,90 EUR, in stock | 29,90 EUR, in stock | 31,90 EUR, in stock | 29,90 EUR, in stock | MISMATCH, remote price |
+| Merino Base Layer, M | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, unavailable | MISMATCH, variant eligibility |
+| Camp Mug, green | 18,50 EUR, in stock | 18,50 EUR, in stock | 18,50 EUR, in stock | 18,50 EUR, in stock | ALIGNED |
+
+Policy facts. The return window of 30 days, free shipping above 80 EUR and the delivery estimate of two to four working days matched on the storefront page, in the WebMCP policy tool and in the Storefront MCP policy read. The Agentic Catalog preview carries no policy fields, which is the surface's shape and not a mismatch.
+
+The price difference was reproduced at 11:20 and 14:05 EEST in the same market, language and currency before MISMATCH was recorded. The availability difference was confirmed against the merchant's redacted Catalog settings screenshot, where the M variant is marked not eligible. No setting was changed during the test.
+
+## Buyer-journey evidence
+
+The five buyer searches and the cart lifecycle, each with the tool, the input, the observed result and the cart state. The session stopped before payment or order creation, and the exact stop is recorded.
+
+| Step | Tool and input | Observed result | Cart state | Status |
+| --- | --- | --- | --- | --- |
+| Search 1, "light bottle for a day hike" | WebMCP search_catalog, fi-FI | Trail Bottle 750 ml returned first, blue variant listed with price and stock | Empty | ALIGNED |
+| Search 2, "merino base layer size M" | WebMCP search_catalog | Merino Base Layer returned, M variant listed as in stock | Empty | ALIGNED |
+| Search 3, "camp mug green" | WebMCP search_catalog | Camp Mug returned, green variant listed | Empty | ALIGNED |
+| Search 4, "waterproof jacket" | WebMCP search_catalog | Two jackets returned, both outside the scope, no claim recorded | Empty | OBSERVED |
+| Search 5, "return policy" | WebMCP search_shop_policies_and_faqs | 30 day return window returned, matches the storefront policy page | Empty | ALIGNED |
+| Product detail | WebMCP get_product and show_variant, Trail Bottle blue | Material, volume, price 29,90 EUR and stock matched the storefront page | Empty | ALIGNED |
+| Add to cart | WebMCP update_cart, one blue Trail Bottle | Cart line created, quantity 1, line price 29,90 EUR | One line, 29,90 EUR | ALIGNED |
+| Cart read | WebMCP get_cart | One line, 29,90 EUR, matches the visible storefront cart drawer | One line, 29,90 EUR | ALIGNED |
+| Checkout handoff | WebMCP proceed_to_checkout, the one permitted navigation | Landed on the store's own checkout page, correct store, correct line | One line, 29,90 EUR | OBSERVED |
+| Payment and order | None | No form filled, no payment method entered, no order created. This is the stop | One line, 29,90 EUR | NOT TESTED |
+| Remote UCP cart | Storefront MCP cart create, one blue Trail Bottle | Remote cart created with 31,90 EUR line price, the remote price of the matrix above | Separate remote cart, one line | MISMATCH, same cause as the matrix |
+| Cleanup | WebMCP cancel_cart. UCP cart cancelled | Browser cart empty, storefront drawer empty, remote cart cancelled | Empty | ALIGNED |
+
+The checkout handoff means one navigation to the checkout page. It does not mean that payment or an order was completed, and neither was.
+
+## Correction plan
+
+Up to five specific changes, each with its owner and an acceptance check the merchant can run without turva.dev. This plan carries three, because the check found three things to change. The order is by effect on a buyer.
+
+## C1. Publish the Finnish price list to the remote catalog surface
+
+**What a buyer sees today.** An agent that reads the store through the Storefront or UCP MCP quotes the blue Trail Bottle at 31,90 EUR, two euros above the storefront and the browser tools, and a remote cart is built at that price.
+
+**Owner.** Shopify Markets and product data, on the merchant's side.
+
+**Change.** Verify that the Finland market price list is published to the remote catalog and republish it. If the remote surface reads a default price list instead of the market list, the market assignment is the fix, not the product price.
+
+**Acceptance check.** The same variant returns 29,90 EUR on the storefront page, in the WebMCP product read and in the Storefront MCP catalog read within one hour, in the fi-FI Finland EUR context.
+
+## C2. Make the M variant eligible in the Agentic Catalog
+
+**What a buyer sees today.** The M size of the Merino Base Layer is in stock and sellable on every surface except the Agentic Catalog preview, so an AI channel that reads the catalog can leave the sellable size out.
+
+**Owner.** Agentic storefront settings and catalog mapping, on the merchant's side.
+
+**Change.** Set the variant's eligibility in the Catalog settings and republish the mapping.
+
+**Acceptance check.** The M variant shows as available in the Catalog preview and in a public agent answer after the propagation time the settings page states.
+
+## C3. Run a three-surface acceptance test after every catalog or market publish
+
+**What a buyer sees today.** Nothing yet. This change keeps C1 and C2 from coming back, because the same difference returns with the next price list, market or theme change.
+
+**Owner.** E-commerce operations, on the merchant's side.
+
+**Change.** Keep the three products of this check as fixtures and read them on all three surfaces after every relevant publish. The tool calls in the buyer-journey table are the script.
+
+**Acceptance check.** For each fixture product the identity, the variant, the price in minor units, the currency and the availability match on every surface that carries them.
+
+## Configuration changes the check does not recommend
+
+No theme, app or product data change beyond C1 to C3 was found necessary for the three products in scope. The ten tool inventory on WebMCP is the platform's own and matched the documented set, so no tool was missing and none needed a change.
+
+## Limits and what stays unresolved
+
+- Ranking or sales on any external AI channel were not measured and are not promised.
+- No customer account, order history or order management tool was opened.
+- No payment, order or address was entered.
+- Shopify Admin was not logged into and no setting was changed. Settings evidence came from the merchant as redacted screenshots.
+- The result covers the three named products, the Finland market, EUR, the three surfaces and the test window of 2026-09-05. Other products, markets and hours are outside it.
+- Search 4 returned products outside the scope. They were not read and no claim is made about them.
+
+## Retest
+
+Up to two corrected items are verified once within 14 days of this package, by 2026-09-20. C1 and C2 are the two items. Each gets the status ALIGNED, MISMATCH or UNKNOWN on direct evidence from the same tools in the same market, language and currency. A surface that cannot be read at the retest reads UNKNOWN, not ALIGNED. The retest table is printed next to the product truth matrix above.
+
+## What this report is not
+
+It is not a Shopify certification, an endorsement by Shopify, a penetration test or a promise of sales through any AI channel. A browser observation is not a remote MCP surface, and a navigation to the checkout page is not a payment or an order. The check reads what an AI shopper receives from one store in one session and records it.
+
+## About this sample
+
+Every figure on this page is invented. The surface names, the statuses and the shape of the tables are the real deliverables of the check, so that the sample shows how a real report reads, and the store, the products, the prices and the observations are fiction. A real report carries the tool call log with timestamps and the merchant's redacted settings evidence as an appendix.
+
+The check is described on its [product page](/shopify-agent-storefront-check). To start one, [email info@turva.dev](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A) with the storefront URL, the .myshopify.com domain, the primary market and up to three priority products. The agent-readiness audit has its own [sample report](/samples/audit-report).
+`,
+
   "/guides/agent-commerce-discovery": `# Agent commerce discovery: A2A, AP2, and ACP
 
 Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Three machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration, and an ACP discovery document. Each answers a different question, and an agent reads them before it sends a single commerce request. A fourth, the UCP profile, joined them in 2026 and has its own section below.
@@ -2179,6 +2600,8 @@ Both diagnoses are bought at a fixed price against a written scope. Neither one 
 
 - [Shopify agent storefront check](/shopify-agent-storefront-check). €999. One live Shopify store, read across the three agent surfaces this check covers, delivered within 48 hours of the agreed written kickoff.
 - [Agent-readiness audit](/services). €4,300. A whole site or API, measured by an independent scanner, delivered in two weeks.
+
+Both come with a public sample report on an invented site, so the format is readable before anything is bought: the [sample audit report](/samples/audit-report) and the [sample Shopify check report](/samples/shopify-agent-storefront-check).
 
 What follows a diagnosis is scoped separately, and that work is listed on the [services page](/services).
 
@@ -2447,7 +2870,7 @@ starts. With those in place, every fix on the list is implemented for
 the €499, whatever the count. If they cannot be arranged, the add-on is
 not sold, and the report still carries the instructions for your team.
 
-A synthetic sample report is available on request. It uses an invented site, shows the format of the findings, the per-check scanner readings and the prioritized fix list, and it is not a report on a real client.
+A synthetic [sample report](/samples/audit-report) is public. It uses an invented site, shows the per-check scanner readings, the manual review, the AI visibility run and eight findings with their acceptance tests, and it is not a report on a real client.
 
 Suited for teams that want a clear picture of where they stand
 before deciding what to do about it.
@@ -2725,7 +3148,7 @@ What that measurement does not establish, and the reason the paid check exists:
 
 ## Sample report
 
-A synthetic sample report is available on request. It uses invented store data. It shows the format of the three-surface map, the product truth matrix and the correction plan, and it is not a report on a real merchant.
+A synthetic [sample report](/samples/shopify-agent-storefront-check) is public. It uses invented store data. It shows the three-surface map, the product truth matrix, the buyer-journey evidence, the correction plan and the retest, and it is not a report on a real merchant.
 
 ## Frequently asked
 
@@ -4016,7 +4439,7 @@ Facts stated as data rather than prose, and the same fact visible in more than o
 // page in llms-full.txt and the pricing on line 78 of llms.txt; the order lived in five hand
 // lists that had drifted apart. It lives here now.
 var PRIMARY_PATHS = ["/", "/services", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/company", "/contact", "/legal"];
-var AUX_PATHS = ["/badge", "/auth.md"];
+var AUX_PATHS = ["/badge", "/auth.md", "/samples/audit-report", "/samples/shopify-agent-storefront-check"];
 var _guideOrderCache = null;
 function guideOrder() {
   if (_guideOrderCache === null) {
@@ -4295,7 +4718,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.121.0",
+    "version": "3.122.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -4402,7 +4825,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-RvkNYk_FxCuix-0O6UI7jDhh1fUJDoAGOh9GbIJDVVzpaDZsLeADoj3CZ4Fm3kfZ4tO8VCkLnFuvyX24DdRAw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pY3tWwCehm-lQ6-L4Tgfu0rBUvrbkihQQtICBgZPZgyD_bBNS8QKgYPeidaTfi-tscqalzX2uhkoWeKVO6n5CA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -4561,7 +4984,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.121.0",
+  "version": "3.122.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -5093,6 +5516,8 @@ var SITEMAP_ENTRIES = [
   ["/legal", "yearly", "0.3"],
   ["/badge", "monthly", "0.5"],
   ["/auth.md", "yearly", "0.4"],
+  ["/samples/audit-report", "monthly", "0.6"],
+  ["/samples/shopify-agent-storefront-check", "monthly", "0.6"],
   ["/guides", "monthly", "0.8"],
   ["/guides/agent-readiness-audit", "monthly", "0.7"],
   ["/guides/choosing-an-agent-readiness-audit", "monthly", "0.8"],
@@ -5217,7 +5642,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -5504,6 +5929,18 @@ var META_BY_PATH = {
     description: "What an AI shopper receives from one live Shopify store, tested across browser WebMCP, remote MCP and Agentic channels. €999, fixed scope, 48 hours.",
     image: "/og-shopify-agent-storefront-check.jpg",
     imageAlt: "turva.dev product card: the Shopify agent storefront check, €999, four written deliverables within 48 hours, across three agent surfaces."
+  },
+  "/samples/audit-report": {
+    title: "Sample audit report, synthetic · turva.dev",
+    description: "A synthetic agent-readiness audit report: 22 scanner checks recorded one by one, the manual review, the AI visibility run, eight findings with evidence, owner, effort and acceptance test. Invented site.",
+    image: "/og-samples-audit-report.jpg",
+    imageAlt: "turva.dev sample card: the synthetic agent-readiness audit report for an invented company, every check, finding and acceptance test in the format a client receives."
+  },
+  "/samples/shopify-agent-storefront-check": {
+    title: "Sample Shopify storefront check report · turva.dev",
+    description: "A synthetic Shopify agent storefront check report: the three-surface map, the product truth matrix, the buyer-journey evidence, the correction plan and the retest. Invented store.",
+    image: "/og-samples-shopify-agent-storefront-check.jpg",
+    imageAlt: "turva.dev sample card: the synthetic Shopify agent storefront check report for an invented store, the five deliverables in the format a merchant receives."
   },
   "/company": {
     title: "Company: Erik Rekola, Tampere, Finland · turva.dev",
@@ -8905,7 +9342,7 @@ async function handleRequest(request, env) {
   if (pathname === "/tools") {
     return serveToolsHtml("https://turva.dev/tools");
   }
-  if ((pathname.startsWith("/guides/") || pathname.startsWith("/blog/")) && PAGE_MARKDOWN[pathname]) {
+  if ((pathname.startsWith("/guides/") || pathname.startsWith("/blog/") || pathname.startsWith("/samples/")) && PAGE_MARKDOWN[pathname]) {
     return serveGuideHtml(pathname, "https://turva.dev" + pathname);
   }
 

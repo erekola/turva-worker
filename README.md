@@ -76,6 +76,7 @@ Because the site has no CMS or plugins, nothing can drift between what humans se
 | `/.well-known/signatures.json`, `/.well-known/jwks.json` | Ed25519 signatures and keys |
 | `/x402`, `/api/agent/*` | Payment-required and payable service routes |
 | `/llms-txt-validator` | llms.txt structure checker |
+| `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Public synthetic sample reports, invented sites |
 
 Full inventory of all 44 routes: [docs/endpoints.md](docs/endpoints.md).
 

@@ -996,11 +996,12 @@ test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guid
 
   const xml = await (await get("/sitemap.xml")).text();
   const sm = [...xml.matchAll(/<loc>https:\/\/turva\.dev(\/[^<]*)?<\/loc>/g)].map((m) => m[1] || "/");
-  assert.deepEqual(sm, [...primary, "/badge", "/auth.md", "/guides", ...guides, "/blog", ...blog], "sitemap.xml order");
+  const samples = ["/samples/audit-report", "/samples/shopify-agent-storefront-check"]; // AUX_PATHS after /auth.md since v3.122.0 (Tek-342)
+  assert.deepEqual(sm, [...primary, "/badge", "/auth.md", ...samples, "/guides", ...guides, "/blog", ...blog], "sitemap.xml order");
 
   const full = await (await get("/llms-full.txt")).text();
   const sources = [...full.matchAll(/ Source: https:\/\/turva\.dev(\/\S*)?\n/g)].map((m) => m[1] || "/");
-  assert.deepEqual(sources, [...primary, "/badge", "/guides", ...guides, "/blog", ...blog, "/auth.md"], "llms-full.txt order");
+  assert.deepEqual(sources, [...primary, "/badge", ...samples, "/guides", ...guides, "/blog", ...blog, "/auth.md"], "llms-full.txt order");
   assert.ok(full.indexOf("Source: https://turva.dev/\n") < full.indexOf("Source: https://turva.dev/blog"), "the home page comes before the blog");
 
   // The services, shopify first, the same in every home that lists them.

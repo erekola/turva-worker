@@ -323,6 +323,18 @@
     "subhead": "Data that arrives intact, and an envelope of settings that defines what the agent may do.",
     "white": "What makes an agent's decisions"
   },
+  "og-samples-audit-report.jpg": {
+    "green": "on an invented site",
+    "kicker": "Sample report",
+    "subhead": "Every scanner check, eight findings with evidence and acceptance tests. Synthetic.",
+    "white": "What an audit report looks like,"
+  },
+  "og-samples-shopify-agent-storefront-check.jpg": {
+    "green": "on an invented store",
+    "kicker": "Sample report",
+    "subhead": "Three-surface map, product truth matrix, buyer journey, correction plan. Synthetic.",
+    "white": "What a Shopify check report looks like,"
+  },
   "og-services.jpg": {
     "green": "prices in the open",
     "kicker": "Services",
