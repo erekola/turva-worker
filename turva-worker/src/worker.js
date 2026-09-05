@@ -3632,7 +3632,7 @@ An agent-readiness audit measures how well an AI agent can discover, read, and a
 
 **Do I need llms.txt on my site?**
 
-If you want models and agents to read your real content rather than guess from a cached snippet, llms.txt gives them a curated map of what matters. It does not replace robots.txt or a sitemap, it complements them.
+llms.txt gives a curated map of what matters to the clients that fetch it, and no assistant is obliged to be one of them. It does not replace robots.txt or a sitemap, it complements them.
 
 **How do I get my site cited by AI assistants?**
 
@@ -3701,7 +3701,7 @@ The reason it matters is cost and clarity. A normal HTML page carries navigation
 
 llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt. A sitemap lists every URL for crawlers. robots.txt sets crawl rules. llms.txt is a curated, human-written map of what matters, aimed at models. The three work together.
 
-Whether a site needs one depends on whether it wants to be legible to agents. If buyers, researchers, or assistants will ever ask a model about what the site does, a clear llms.txt raises the odds that the model reads the real content rather than guessing from a cached snippet.
+Whether a site needs one depends on whether it wants to be legible to agents. A clear llms.txt serves the clients that read it, and no assistant is obliged to be one of them. Google states that Search, including its generative features, ignores the file, so publish it for the clients that fetch it rather than as a route into Google.
 
 Check any site's llms.txt structure with the free validator at https://turva.dev/llms-txt-validator.
 
@@ -3715,7 +3715,7 @@ llms.txt is a plain text file that tells AI agents and language models what a si
 
 **Does llms.txt help with search ranking?**
 
-No. llms.txt is not a ranking trick. It gives models a curated map of the content so they read the real page rather than guessing from a cached snippet.
+No. It is not a ranking trick. Google states that the file neither harms nor helps visibility or rankings in Search, because Search ignores it. What llms.txt gives is a curated map of the content to those clients that do fetch it.
 
 **What does an llms.txt file contain?**
 
