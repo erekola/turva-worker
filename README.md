@@ -1,109 +1,153 @@
 # turva-worker
 
-Cloudflare Worker that renders every page of [turva.dev](https://turva.dev) at the edge, with a deterministic head and matching `/.well-known/` manifests. AI agents and scanners read the same payload as humans, straight from the Worker.
+The Cloudflare Worker behind [turva.dev](https://turva.dev): a website with HTML for people, Markdown for automated clients, and discovery metadata for agents and APIs.
 
-This repository is the open-source reference implementation behind turva.dev, which scores 100/100 at Level 5 Agent-Native on isitagentready.com, Cloudflare's agent-readiness scanner. turva.dev sells agent-readiness audits and advisory, and the wider work of making the data agents act on and the decisions they make reliable. What you buy is expertise and implementation, not access to a tool. The Worker is public on purpose: the scoring is done by a third-party scanner, and a buyer can read every line before deciding anything.
+This is turva.dev's open-source reference implementation. Explore the running site, inspect the code, or adapt the implementation for your own domain.
+
+[Live site](https://turva.dev) · [Markdown entry point](https://turva.dev/index.md) · [Endpoint inventory](docs/endpoints.md) · [Agent-readiness reference](docs/agent-readiness.md)
+
+## Start here
+
+| You want to | Start with |
+| --- | --- |
+| Understand the implementation | [Worker source](turva-worker/src/worker.js) |
+| See the discovery and protocol routes | [Endpoint inventory](docs/endpoints.md) |
+| Understand what each surface is for | [Technical reference](docs/agent-readiness.md) and [plain-language guides](https://turva.dev/guides) |
+| Inspect the published measurements | [Scanner results](#scanner-results), [web security](#web-security) and [verification](#verify) |
+| Try the llms.txt checker | [Hosted validator](https://turva.dev/llms-txt-validator) or [standalone CLI and Node package](https://github.com/erekola/llms-txt-validator) |
+| Connect to turva.dev's MCP tools | [The separate turva-mcp repository](https://github.com/erekola/turva-mcp#connect) |
 
 ## What it does
 
-* Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `<head>` (meta, OpenGraph, JSON-LD, canonical).
-* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ard.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `ucp`, and OAuth discovery (`oauth-authorization-server`), among others. The full inventory is in [docs/endpoints.md](docs/endpoints.md).
-* Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
+- Renders public pages from Markdown, with shared page metadata, canonical URLs, Open Graph tags and JSON-LD.
+- Serves Markdown representations through `Accept: text/markdown` and direct `.md` URLs.
+- Publishes `llms.txt`, `llms-full.txt`, `robots.txt`, `sitemap.xml` and agent-discovery manifests.
+- Exposes API, authentication, agent and commerce routes, with their capabilities and limits declared in the corresponding metadata.
+- Serves the hosted llms.txt validator and public sample audit reports.
+- Publishes an Ed25519 public key and signatures for four discovery resources so readers can verify the response bytes.
 
-A consolidated reference to every surface agents read, with a short definition of each and a link to its full guide, is in [docs/agent-readiness.md](docs/agent-readiness.md). Plain-language guides to every surface this Worker implements: [turva.dev/guides](https://turva.dev/guides). Measurement notes and scan write-ups: [turva.dev/blog](https://turva.dev/blog).
+## How it works
+
+Page prose is maintained in the Worker's `PAGE_MARKDOWN` data and rendered into HTML at the edge. Layout, metadata and interactive elements are implemented in code. Markdown responses offer a text representation of the content, and the home page's Markdown is intentionally more concise than its HTML presentation.
+
+The public site runs without a separate CMS or origin server. Static assets are served through Cloudflare Workers Assets. Sharing content sources reduces the opportunities for HTML and Markdown to diverge, while the repository's checks test for inconsistencies.
+
+The main files are [the Worker](turva-worker/src/worker.js), [deployment configuration](turva-worker/wrangler.jsonc), [verification script](tools/verify.mjs) and [recorded facts](tools/facts.json). The MCP server runs separately, and this repository publishes its discovery card and links to it.
+
+## Endpoints
+
+| Path | Purpose |
+| --- | --- |
+| `/` and the public page routes | HTML rendered by the Worker |
+| `/index.md`, `/<page>.md` | Direct Markdown representations |
+| `/llms.txt`, `/llms-full.txt` | Site guide and consolidated text |
+| `/robots.txt`, `/sitemap.xml` | Crawler directives and URL inventory |
+| `/openapi.json`, `/api/v1` | API description and endpoint index |
+| `/.well-known/*` | Agent, API, authentication and commerce discovery, see the full inventory |
+| `/.well-known/mcp/server-card.json` | Discovery card for the separate MCP server |
+| `/.well-known/signatures.json`, `/.well-known/jwks.json` | Detached signatures and public verification keys |
+| `/api`, `/x402`, `/api/agent/*` | Payment-required responses and quote-on-request service routes |
+| `/llms-txt-validator` | Structure checker with HTML and JSON responses |
+| `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Public sample reports using invented sites |
+
+See [docs/endpoints.md](docs/endpoints.md) for the complete route inventory, including A2A, checkout, OAuth and mail-related endpoints.
 
 ## Scanner results
 
-Measured on `https://turva.dev` on 2026-09-01: 100/100, Level 5 (Agent-Native) on isitagentready.com, Cloudflare's agent-readiness scanner.
+Measured on **https://turva.dev** on **2026-09-01**: **100/100, Level 5 (Agent-Native)** on [isitagentready.com](https://isitagentready.com/), Cloudflare's agent-readiness scanner.
+
+These measurements describe the published turva.dev reference build. They are a dated snapshot and do not automatically carry over to a fork or another domain.
 
 ### isitagentready.com category breakdown
 
-isitagentready.com groups its checks into five categories. turva.dev passes every check in all five.
+isitagentready.com groups its checks into five categories. turva.dev passes every check in all five in the recorded snapshot.
 
 | Category | Result |
-|---|---|
+| --- | --- |
 | Discoverability | 100/100 |
 | Content | 100/100 |
 | Bot Access Control | 100/100 |
 | API, Auth, MCP & A2A Discovery | 100/100 |
 | Commerce | 100/100 |
 
-Commerce is optional in the isitagentready model, and turva.dev passes it. The named checks are not listed here, because the scanner reports a different commerce set through its MCP tool than through its public page, and a figure a reader cannot reproduce on the page he opens does not belong in a claim. The payment surface is real rather than declared. A request to /api answers with an x402 402 challenge naming a wallet on Base, and the payable operations carry live Stripe payment links. Settlement is still quote-on-request, confirmed out of band instead of executed automatically, so the site claims no rail it does not have.
+Commerce is optional in the scanner's model and is included in this result. Category scores are shown without individual check counts because the scanner's public page and MCP interface report different check sets.
+
+The payment routes return x402 challenges and publish Stripe payment links. x402 settlement is quote-on-request and confirmed out of band. This Worker does not verify an incoming x402 payment and automatically release a paid service. Scope is agreed in writing before payment.
 
 ## Web security
 
-Agent-readiness is one axis. The domain's own web security is another. turva.dev publishes its own scan results so a buyer can see the same house is in order, not just claimed. Measured on `turva.dev` on 2026-09-01.
+Separate web-security measurements for **turva.dev**, recorded on **2026-09-01**:
 
 | Scanner | Result |
-|---|---|
-| Hardenize | All 24 categories passed |
-| Internet.nl website test | 98/100 |
-| Internet.nl email test | 95/100 |
+| --- | --- |
+| [Hardenize](https://www.hardenize.com/report/turva.dev) | All 24 categories passed |
+| [Internet.nl website test](https://internet.nl/site/turva.dev/) | 98/100 |
+| [Internet.nl email test](https://internet.nl/mail/turva.dev/) | 95/100 |
 
-On the Internet.nl website test, IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. On the email test, IPv6, DNSSEC, DMARC with DKIM and SPF, and RPKI pass in full, and the deduction is in the cipher configuration of the receiving mail servers, which the mail provider operates. Both results are documented, not hidden.
+The website test passed IPv6, DNSSEC and RPKI in full. Its deduction was one HTTPS sub-test concerning the key-exchange hash function. The email test passed IPv6, DNSSEC, DMARC with DKIM and SPF, and RPKI in full, and its deduction concerned the receiving mail servers' cipher configuration, which is operated by the mail provider.
+
+Use the linked reports to check current results. The recorded measurement dates and values are maintained in [tools/facts.json](tools/facts.json).
 
 ## Verify
 
-Every claim above is publicly auditable. Run the scanners yourself or open the company record.
+The repository includes the consistency checks used for the reference build. [tools/verify.mjs](tools/verify.mjs) compares source and documentation with [tools/facts.json](tools/facts.json), including versions, prices, measurement dates, category scores, file integrity and the use of Markdown content sources.
 
-* isitagentready scanner: https://isitagentready.com/
-* Hardenize report: https://www.hardenize.com/report/turva.dev
-* Internet.nl website report: https://internet.nl/site/turva.dev/
-* Internet.nl email report: https://internet.nl/mail/turva.dev/
-* Company (Finnish Business Information System): https://tietopalvelu.ytj.fi/yritys/3600281-7
+Run the static check from the **repository root** with Node.js:
 
-The repo also carries the deploy gate the site runs on itself: [tools/verify.mjs](tools/verify.mjs) checks the source against [tools/facts.json](tools/facts.json), the single home for the volatile facts: versions, prices, scanner results and measured dates. The static run checks file integrity, pricing, versions, measured-date anchors and the twin gate that fails the run if hand-written prose appears outside the markdown twins. The live run also fetches every declared surface and verifies the Ed25519 signatures of the four signed manifests against the published JWKS.
-
-```
+```sh
 node tools/verify.mjs
+```
+
+The live variant also contacts the declared surfaces and the separate MCP server, and verifies the four signed manifests against the published JWKS:
+
+```sh
 node tools/verify.mjs --live
 ```
 
-## How it works
+These checks are tailored to turva.dev's content and published claims. A fork needs corresponding facts and checks for its own site. The live checks use the configured public endpoints, and they do not deploy changes.
 
-The Worker renders the whole site at the edge. Every page is built from a single source-of-truth object in the Worker: page content as markdown, plus a shared canonical `<head>` and JSON-LD. There is no separate CMS or origin to proxy. Agent routes (`/.well-known/*`, `robots.txt`, `sitemap.xml`, `/x402`) are served from the same Worker, and static assets such as images come from Workers Assets.
+The Worker's local test suites are in [turva-worker/test](turva-worker/test). From the repository root, run:
 
-Because the site has no CMS or plugins, nothing can drift between what humans see and what agents and scanners see.
-
-## Endpoints
-
-| Path | Purpose |
-|---|---|
-| `/` and all HTML routes | Rendered by the Worker from markdown |
-| `/llms.txt`, `/llms-full.txt` | LLM consumption guide, whole site as text |
-| `/<page>.md` | Markdown twin of any page at its own address (llms.txt v2) |
-| `/.well-known/mcp/server-card.json` | MCP server card |
-| `/.well-known/signatures.json`, `/.well-known/jwks.json` | Ed25519 signatures and keys |
-| `/x402`, `/api/agent/*` | Payment-required and payable service routes |
-| `/llms-txt-validator` | llms.txt structure checker |
-| `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Public synthetic sample reports, invented sites |
-
-Full inventory of all 44 routes: [docs/endpoints.md](docs/endpoints.md).
-
-## Deploy
-
-Requires a Cloudflare account and the `wrangler` CLI. No runtime secret is needed. The Worker renders the whole site itself. The Worker project lives in a subdirectory of the same name, so the repeated path below is not a typo.
-
-```
-cd turva-worker/turva-worker
-npm install
-npx wrangler deploy
+```sh
+npm --prefix turva-worker test
 ```
 
-Route the Worker to your domain under **Workers & Pages, your-worker, Settings, Domains & Routes**.
+For independent verification, use the [agent-readiness scanner](https://isitagentready.com/), the web-security reports above and the [Finnish Business Information System record](https://tietopalvelu.ytj.fi/yritys/3600281-7).
 
-## Use it for your own site
+## Adapt and deploy your own site
 
-MIT licensed. Fork it, replace the source-of-truth object with your own data, then deploy.
+Requires Node.js, npm and a Cloudflare account. Wrangler is included as a development dependency in the nested [turva-worker/package.json](turva-worker/package.json).
 
-If you want an audit of your domain against the same scanners this repository is measured by, isitagentready for agent-readiness plus the published Hardenize and Internet.nl security scans, and a tailored configuration, see [turva.dev](https://turva.dev) or [Erik Rekola on LinkedIn](https://www.linkedin.com/in/erikrekola).
+The repository contains turva.dev's production configuration. Before deploying a fork:
+
+1. Replace the page content, business identity, canonical URLs, service data, payment links and discovery metadata in [the Worker source](turva-worker/src/worker.js) with your own.
+2. Set your Worker name, domain routes and `zone_name` in [wrangler.jsonc](turva-worker/wrangler.jsonc). Both `workers_dev` and preview URLs are disabled, so configure routes and proxied DNS for the hostnames you intend to serve.
+3. Use your own `RATE_LIMITER` namespace and `BRIEFIT` KV namespace. The latter stores separately managed client briefs, and those records are not included in this repository. Remove the corresponding functionality if your site does not need it.
+4. Replace the IndexNow key and scheduled submission configuration, or remove the scheduled task if you do not use it.
+5. Publish your own verification key and regenerate the detached signatures for your response bytes. The bundled signatures belong to turva.dev's content and will not validate modified manifests. Keep the private signing key outside the repository and publish only the public key and signatures.
+
+The current Worker does not require a runtime signing secret: its signatures are prepared ahead of deployment and stored with the public content. This does not replace the need for your own Cloudflare bindings and deployment credentials.
+
+After adapting the configuration and passing the relevant checks, start in the **repository root** and deploy the nested Worker project:
+
+```sh
+cd turva-worker
+npm ci
+npm run deploy
+```
+
+The single `cd turva-worker` enters the directory that contains `package.json` and `wrangler.jsonc`. It assumes you are already in the cloned repository's root.
+
+## Guides and services
+
+[turva.dev/guides](https://turva.dev/guides) explains the discovery, content and protocol surfaces implemented here. [turva.dev/blog](https://turva.dev/blog) contains measurement notes and research.
+
+For agent-readiness audits, Shopify storefront checks, advisory and implementation, see [turva.dev](https://turva.dev). Work is scoped in writing and handled asynchronously. Contact [info@turva.dev](mailto:info@turva.dev) or find [Erik Rekola on LinkedIn](https://www.linkedin.com/in/erikrekola).
 
 ## Security
 
-Responsible disclosure: see [SECURITY.md](SECURITY.md). Contact: [info@turva.dev](mailto:info@turva.dev)
+For supported versions and private vulnerability reporting, see [SECURITY.md](SECURITY.md).
 
 ## License
 
-The Worker source is MIT. The live turva.dev Agent API and its data are proprietary (see [/legal](https://turva.dev/legal)).
-
-[MIT](LICENSE)
+The Worker source is [MIT licensed](LICENSE). The live turva.dev Agent API and its data are proprietary, see the [service terms](https://turva.dev/legal).
