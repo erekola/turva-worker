@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.120.0 - auth.md gains a Discovery walkthrough, a Scopes section, a measured endpoint-response list and a section naming the WorkOS auth.md protocol and what this site does not implement of it; the intro names the resource server and the authorization server by role and the two OAuth links move out of Related discovery into Discovery, so each fact is stated once. No agent_auth field is renamed: the block keeps register_uri, claim_uri and revocation_uri, which is what the isitagentready authMd recipe names, and a rename would drop the check. One new post, /blog/two-auth-md-dialects, reads the scanner recipe and the WorkOS file format against each other, both fetched 2026-09-04, and reports that they agree on the path, the file name and the discovery order and disagree on three field names. The post carries a Frequently asked section, its own OG card and a line in llms.txt, which is re-signed. v3.119.0 was: one site order for every list (primary pages, tools, company, contact, legal, then guides in the /guides twin order, then the blog newest first): sitemap.xml and llms-full.txt compute it, llms.txt follows it by hand and verify.mjs reads the order; home Contact before FAQ, Shopify twin price first, ACP and skills lists shopify and services first.
+// turva.dev worker v3.121.0 - Astra patch list 2026-09-05 (Tek-342): the two Shopify-page lists render as lists, the two €499 add-ons state their prerequisites (edge runtime and deploy access for the audit fixes, collaborator access for the Shopify corrections) on /services and the Shopify page, and the email CTAs carry a prefilled subject and body with a "Start a request by email" card on /contact.
 // v3.118.1 - hotfix: the two posts of v3.118.0 went live at 21:04Z from a working tree that had not yet received the independent checker's corrections (earliest first measurement 18 July, not 13; nine unreadable sites broken down as measured; "kept for these 210 sites" instead of "at this volume"; Perplexity named this site most often rather than alone; the drift of the term is stated as unmeasured), so both posts carry the corrected text and a Corrected 2026-09-04 note, and META_BY_PATH carries the modified date. v3.118.0 was: two new posts from data already on disk: /blog/thirty-days-after-the-brief reads the first 210 thirty-day rescans as one set (201 comparable, 197 unchanged, three up, one down, none of the three that improved had replied, one scanner-side denominator change), and /blog/what-ai-assistants-call-an-agent-readiness-audit reads the 3 September AI-visibility run for how four assistants interpret the term (18 of 41 open answers describe an organisation, 13 the website, 7 of 7 the website when the question names it). Both carry a Frequently asked section, their own OG card and a line in llms.txt, which is re-signed. v3.117.0 was: round 17 read every public surface as a buyer, an agent and a Finnish recipient and asked what is weak rather than what is wrong, and this release carries its worker.js changes: the Finnish brief page gets a Finnish frame (skip link, footer, the machine-readable line with its umlauts restored, and one line naming the reply channel in Finnish), the home page puts the two fixed-scope products and their prices right after the scan board and moves the curl demo down beside the evidence, the home and services FAQ say that an agent-readiness audit reads the website and its APIs and not the organisation, twenty guides link the choosing guide from their Related lists, the gaps and sitemaps guides cite the 567-site scan instead of the July sixteen, the JSON-LD guide covers data that is valid and wrong, the commerce discovery guide covers UCP as the fourth surface, llms.txt carries a Contact section and moves pricing, business details and the engagement model ahead of the guide and blog lists (re-signed), llms-full.txt orders the primary pages first, the guides second and the blog last, the blog index opens with a Start here card, /contact says correspondence runs in English or Finnish and the schema and get_contact carry both languages, and the audit section names a synthetic sample report available on request. v3.116.0 was: the privacy section of /legal says what a brief is, where it lives, that it is removed on request and that it expires on its own no later than 400 days after it was last published, because round 16 (S4-3, C1-4) found the page promising deletion for client data while saying nothing about the one surface that carries third-party data; the same release dates the privacy section. v3.115.1 was: hotfix after the 3.115.0 ship: the agentic-resource-discovery FAQ answer no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer as written while the page renders it, and the live gate read the two as different texts; the link stays in the guide body. verify.mjs --live now expects the honest preflight set, GET, OPTIONS on a GET-only surface and GET, POST, OPTIONS only where POST is served. v3.115.0 was: round 16 read the code and every served surface as a hostile reader, and this release carries its worker.js fixes: a method gate answers 405 with an Allow header where a GET route used to serve its body to POST, PUT, DELETE and PATCH, the CORS preflight advertises only the methods it honours and carries the security headers, OPTIONS on a page answers 204 instead of the page, the validator cuts its details on code point boundaries so a truncated emoji cannot turn into invalid UTF-8, the markdown renderer strips bidi controls from every href, the OpenAPI document describes ACP at its real path and lists /api/v1 and the four checkout operations, the API catalog names /api/v1, the home and services prose date the 48 hour promise from the agreed written kickoff as the JSON-LD already did, two guides link the claims they make, the response-headers guide says which rate limit header this site sends and why, two data posts point forward to the 567-sites post, the price post no longer reads as if a client had paid the old price, signatures.json says which bytes a signature covers, and a live brief address and a prospect name are gone from the code comments. The MCP server card moves to 1.3.11 because mcp.turva.dev now answers 405 to methods its CORS header never offered on the discovery documents. v3.114.2 was: four blog meta descriptions cut to the 160 the recipe allows; v3.114.1 was: the 567-sites post carries a Frequently asked section (FAQPage); v3.114.0 was: new blog post /blog/website-agent-readiness-567-sites (567 sites, one scanner, ten weeks); v3.113.0 was: every page title ends in " · turva.dev": the six card pages have since 2026-06-24 and the 46 guides, posts and hubs used a pipe, so one rule now covers all 52 and the three places that strip the suffix for the feed, the blog index and the blog JSON-LD accept either separator. The services page carries the same Service node, AggregateOffer and OfferCatalog the home page has carried since v3.75.0, read from one constant so the two cannot drift, because an agent landing on the price page from search got prices in prose and FAQ answers only. The primary navigation carries aria-label="Main" on every page, so a screen reader landmark list names it. v3.112.8 - round 15 read the served public surface and this release carries its two worker.js fixes: the agent-commerce-discovery guide no longer hyperlinks the AP2 extension URI, which is an identifier that answers 404 as an address, and OPTIONS answers 204 with preflight headers on every agent-api surface instead of only /x402, /api/* and /agent/auth/*. v3.112.7 - hotfix: the footer year is read per request, because Workers freeze the global-scope clock at the epoch and v3.112.6 served "1970" live for the minutes it was up. v3.112.6 - round 14 read the four repos byte by byte and this release carries its worker.js fixes: article:modified_time and the sitemap lastmod read the modified date the JSON-LD already read, the x402 merchant block carries legal_name and business_id like its three siblings, AP2 and MPP name the same quote channels, the OpenAPI description names every x402 challenge root, the footer year is computed, robots.txt is generated from one list, the CORS preflight runs after the host redirects, the IndexNow key file keeps its agent-api profile under rate limiting, the home Services tags fail closed, the badge alt text matches the SVG, the hosted validator carries the npm package's contentType guard, auth.md names the six year retention period, the TRACE post carries a Related section, and the ARD, SEP-2127, AP2, IETF and CyberGym claims carry their sources. The MCP server card moves to 1.3.10 because its get_security_evidence description now names the Internet.nl mail scan, so the card bytes and their signature move together. v3.112.5 - the MCP server card carries version 1.3.9, because the MCP server itself changed: its runtime dependency zod moved from 4.4.3 to 4.5.4, so the bytes the server deploys are not the bytes 1.3.8 published. No tool, field, capability or price changed, and nothing the card says about the server is different apart from the number. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. v3.112.4 - the brief page carries Open Graph and Twitter card metadata, so a link preview reads the brief's own title and description instead of the page's first visible words. A scraper that finds no og:description does not fall back to the meta description tag; it reads the visible text from the top, and the first visible text on every page of this site is the Skip to content accessibility link. Measured on LinkedIn on 1 September, where a brief shared into a message previewed as Skip to content turva dev. The description string is the same one the meta description tag already used, so the two cannot drift apart, and its two missing Finnish umlauts are corrected in the same pass. The page stays noindex and nofollow: these tags tell a scraper what to display and they do not affect indexing. v3.112.3 - the MCP server card carries version 1.3.8, because the MCP server itself changed: both dates it publishes moved today, agent-readiness to 1 September and web security to 1 September, while the server was still declaring 1.3.7. The card is a signed surface, so its bytes and its signature move together, and the signature is regenerated in the same release. No tool, field or capability changed. v3.112.2 - the web security measurement date moves from 28 August to 1 September on every surface that publishes it. All three readings are unchanged: Hardenize passes all 24 categories, the Internet.nl website test reads 98 and the mail test reads 95, and both deductions are the same ones the text already names. Only the date moves, and it moves because the scans were run again, not because a number did. v3.112.1 - the agent-readiness measurement date moves from 30 August to 1 September on every surface that publishes it. The reading itself does not move: a scan run on 1 September read Level 5 with every category full, discoverability 4/4, content accessibility 1/1, bot access control 2/2, API/auth/MCP/A2A 9/9 and commerce 5/5, which is a new measurement rather than a confirmation of the old one, exactly as the site's own text says a later scan should be read. v3.112.0 - a brief address that arrives with a sentence's punctuation still attached now redirects to the address itself instead of answering 404. The outreach mail is a single text/plain part, so the recipient's mail client is what turns the address into a link, and some of them take the closing full stop with it; measured 31 August, the address answered 200 and the same address with a trailing dot answered 404 three times out of three. The redirect is 301 and carries noindex, the cleanup can never eat a real identifier because the identifier grammar has no punctuation in it, and tools/laheta.mjs refuses to send a body that writes punctuation against the address in the first place. v3.111.2 - the MCP server card carries version 1.3.7, because the MCP server itself changed: the agent-readiness note now names the scanner and attributes the reading to it instead of asserting that two products are the same scanner. The card is a signed surface, so its bytes and its signature move together. v3.111.1 - the signatures of the three manifests that carry the price block are regenerated, so the signed bytes match the ones the site serves. Content is unchanged from the release before this one. v3.111.0 - the Shopify agent storefront check is 999 euros, down from 1,900, and implementing exactly what a diagnosis lists is a flat 499 euros with either diagnosis. The scope of the check does not move: same three agent surfaces, same four deliverables in 48 hours, same retest. v3.110.0 - the services page renders again, and the two implementation add-ons stop being read as services. A price block that wrapped onto three lines is not a price block to the parser that builds the page, so /services answered 500 to a browser while every static gate stayed green, and the two add-ons written as service bullets in the agent skills index made that file claim eight services where facts.json names six. v3.109.2 - the agent-readiness measurement date moves from 20 to 30 August on every surface that publishes it. The reading itself does not move: three independent scans on 30 August all read Level 5 with every category full, which is what the site's own text asks for when it says a later scan is a new measurement rather than a re-confirmation of the old one. v3.109.1 - the /llms.txt signature is regenerated so that the signed manifest matches the file the new post changed. The content is the same as in the release before this one, only the signature moves. v3.109.0 - a new post reads the TRACE specification's own documentation instead of the announcement about it, and separates what a Trust Record proves at each of its three levels from what the level below cannot. v3.108.5 - the security evidence block is re-measured and the Hardenize category count is corrected: the report names 24 categories and every one reads good, while the surfaces had said 13 since the report had a different shape on 1 August. Internet.nl was re-run the same morning and both numbers are unchanged, 98 for the website test and 95 for the mail test, so only the date and the category count move. v3.108.4 - the brief page keeps only the space under its title; the section heading spacing added in 3.108.2 is removed and the shared card page rhythm stands. v3.108.3 - the brief page title gets air under it: a two line brief heading sat on its own standfirst at the shared card page spacing. Scoped to /brief/. v3.108.2 - the brief page gives its section headings room: a brief carries six of them and the shared card page spacing is measured for short pages, so the rule is scoped to /brief/ and the public card pages are untouched. v3.108.1 - the brief address answers content negotiation as the rest of the site does, so an agent that asks for text/markdown or application/json at the page's own address gets it instead of HTML. Measured live on the deployed 3.108.0, which answered HTML to an Accept header it should have honoured. v3.108.0 - a brief now answers at its own address in three forms, HTML for a person and markdown and JSON for a machine, all three read from KV so that a client's brief never enters this public repository. The address is unlisted, it carries noindex and it is not in the sitemap, and an unknown identifier answers exactly as any unknown path does. v3.107.3 - the two v2 link relation checks now read strictly the head a real HTML parser builds, so a link element that a parser moves into the body is no longer counted; 200 000 fuzz inputs on two seeds agree with parse5 exactly, 0 differences. v3.107.2 - the link relation parser finds tags by index instead of by a regex whose character class could scan the whole document from every unclosed tag, which CodeQL reports as js/polynomial-redos; 256 KB of unclosed tags measured 42 ms where the old form was quadratic. v3.107.1 - the link relation parser strips an unterminated HTML comment too, which a real parser treats as commenting out the rest of the document; CodeQL alert #7 named the same gap. v3.107.0 - llms.txt v2, second half: the file's own 59 page links now point at the markdown twin of each page, which is what v2 asks its links to do, and the validator FAQ no longer says llms.txt lives only at the root. v3.106.0 - Every page now answers at its own .md address as well as by content negotiation, the head link and the Link header point at that address instead of at the page itself, and the validator reports the two v2 link relations from the target's home page as information that never moves the summary.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
@@ -2289,7 +2289,7 @@ The audit is fixed scope, two weeks.
 
 **Can our engineering team implement the fixes?**
 
-Yes, and the report is written for that. Every finding carries a fix instruction, and a link to the guide on this site for that surface where there is one. Either your team does the work from the report or I do. If you want me to, implementing exactly the fixes the report lists is €499 when it is bought together with the audit.
+Yes, and the report is written for that. Every finding carries a fix instruction, and a link to the guide on this site for that surface where there is one. Either your team does the work from the report or I do. If you want me to, implementing exactly the fixes the report lists is €499 when it is bought together with the audit. The fixed price needs an edge runtime in front of your origin where the fixes are applied and the access to deploy there, both arranged in writing before the work starts. With those in place, every fix on the list is implemented for the €499, whatever the count. If they cannot be arranged, the add-on is not sold, and the report still carries the instructions for your team.
 
 **How is the result verified?**
 
@@ -2376,6 +2376,12 @@ the check. That is the whole correction plan at a fixed price instead of
 the €1,500 day rate. Anything outside the plan is scoped separately at the
 day rate.
 
+The fixed price needs collaborator access to the store, arranged in
+writing before the work starts. With it in place, every correction on
+the plan is implemented for the €499, whatever the count. If access
+cannot be arranged, the add-on is not sold, and the plan still carries
+the instructions for your team.
+
 The audit is not a prerequisite. The full scope, the exclusions and the preflight are on the
 [product page](/shopify-agent-storefront-check).
 
@@ -2433,6 +2439,13 @@ this audit lists is €499 when it is bought together with the audit.
 That is the whole list at a fixed price instead of the €1,500 day rate.
 Anything outside the list the report names is scoped separately at the
 day rate.
+
+The fixed price needs the same two things as an implementation day: an
+edge runtime in front of your origin where the fixes are applied, and
+the access to deploy there, both arranged in writing before the work
+starts. With those in place, every fix on the list is implemented for
+the €499, whatever the count. If they cannot be arranged, the add-on is
+not sold, and the report still carries the instructions for your team.
 
 A synthetic sample report is available on request. It uses an invented site, shows the format of the findings, the per-check scanner readings and the prioritized fix list, and it is not a report on a real client.
 
@@ -2596,7 +2609,7 @@ No. The two are separate fixed-scope diagnoses and either can be bought on its o
 
 **How much work are the fixes after the audit?**
 
-In most cases, once the audit is complete, the fixes it lists are about a day of implementation work. That figure is an estimate scoped to the findings the report lists, not a fixed quote. Your team can do them with the report as the spec, or turva.dev implements them as a scoped engagement.
+In most cases, once the audit is complete, the fixes it lists are about a day of implementation work. That figure is an estimate scoped to the findings the report lists, not a fixed quote. Your team can do them with the report as the spec, or turva.dev implements them as a scoped engagement. Implementing exactly the fixes the report lists is €499 when it is bought together with the audit. That fixed price needs an edge runtime in front of your origin where the fixes are applied and the access to deploy there, both arranged in writing before the work starts, and with those in place every fix on the list is implemented, whatever the count.
 
 **Will you sign an NDA, and how is our material handled?**
 
@@ -2661,6 +2674,7 @@ Within 48 hours you receive an evidence-backed status for each of the following,
 The scope is fixed before the clock starts, and it does not move during delivery.
 
 The check covers:
+
 - One Shopify store.
 - One market, language and currency.
 - Up to three named product and variant pairs.
@@ -2686,7 +2700,7 @@ Five written deliverables. The first four are sent as one package within 48 hour
 - Prioritised correction plan. Up to five specific changes, their owner and a ready acceptance check.
 - Retest. One verification of up to two corrected items within 14 days.
 
-Implementation of the corrections is not included in the €999. Your team can act on the plan directly, or implementing exactly the corrections this check lists is €499 when it is bought together with the check. Work outside the plan is scoped separately at the €1,500 implementation day rate.
+Implementation of the corrections is not included in the €999. Your team can act on the plan directly, or implementing exactly the corrections this check lists is €499 when it is bought together with the check. Work outside the plan is scoped separately at the €1,500 implementation day rate. The fixed price needs collaborator access to the store, arranged in writing before the work starts. With it in place, every correction on the plan is implemented for the €499, whatever the count. If access cannot be arranged, the add-on is not sold, and the plan still carries the instructions for your team.
 
 ## What this is not
 
@@ -2701,6 +2715,7 @@ This is an independent service, not affiliated with or endorsed by Shopify.
 Before this check was offered, 26 Shopify storefronts were read with a public read-only preflight on 2026-08-09. All 26 advertised the same ten-tool WebMCP inventory that Shopify documents as its platform-supplied surface.
 
 What that measurement does not establish, and the reason the paid check exists:
+
 - No tool was called on any of the 26 stores.
 - Cart, checkout, payment and order creation were not tested.
 - Remote MCP behaviour and Agentic Admin settings were not read.
@@ -2721,6 +2736,10 @@ No. The Shopify agent storefront check is a separate fixed-scope diagnosis with 
 **What does it cost, and what is the delivery time?**
 
 €999 plus VAT, fixed scope. Four written deliverables arrive as one package within 48 elapsed hours of the agreed written kickoff. The fifth is a retest of up to two corrected items, within 14 days. Implementing exactly the corrections this check lists is a further €499, bought together with the check.
+
+**What does the €499 correction implementation need from me?**
+
+Collaborator access to the store, arranged in writing before the work starts. The check itself needs none, this add-on does. With access in place, every correction on the plan is implemented for the €499, whatever the count. If access cannot be arranged, the add-on is not sold, and the plan still carries the instructions for your team.
 
 **Do you need access to my Shopify Admin?**
 
@@ -2819,6 +2838,13 @@ no calendar links at any stage of the engagement.
 Scan the code with a phone to open a Signal chat. The code image is at /signal-qr.png. Short questions go here, longer documents by email.
 
 Signal is end-to-end encrypted. Scanning shares no account of yours.
+
+## Start a request by email
+
+Each link opens a message to info@turva.dev with the subject set and the fields the first reply needs. Nothing is sent until you send it, and the same fields typed into a plain email work just as well.
+
+- [Shopify agent storefront check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A): storefront URL, .myshopify.com domain, primary market, up to three priority products.
+- [Agent-readiness audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A): the site or API URL and what the audit should answer.
 
 ## Encrypted email
 
@@ -4269,7 +4295,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.120.0",
+    "version": "3.121.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -4535,7 +4561,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.120.0",
+  "version": "3.121.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -5055,7 +5081,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-04";
+var SITEMAP_LASTMOD = "2026-09-05";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -6892,7 +6918,7 @@ ${FOOTER_CSS}
           </span>
         </div>
         <div class="cta">
-          <a class="btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a>
+          <a class="btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A">Request an audit</a>
           <a class="btn-ghost" href="https://github.com/erekola/turva-worker">Read the source</a>
         </div>
         <p class="bizline">Business ID 3600281-7 &middot; registered in Finland</p>
@@ -7014,7 +7040,7 @@ ${FOOTER_CSS}
       <a class="ch" href="https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg><span>Signal @turva.19</span></a>
       <a class="ch" href="https://www.linkedin.com/in/erikrekola/"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.4 8.9h3.1V21H3.4zM9.2 8.9h2.97v1.65h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V21h-3.1v-5.35c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9.2z"/></svg><span>LinkedIn</span></a>
     </div>
-    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a></div>
+    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A">Request an audit</a></div>
   </section>
 
   <section class="sec">
@@ -7022,7 +7048,7 @@ ${FOOTER_CSS}
     <div class="faq">
 ${mdFaqRows("/", "Frequently asked")}
     </div>
-    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a></div>
+    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A">Request an audit</a></div>
   </section>
 </main>
 ${footerHtml()}
@@ -7146,7 +7172,7 @@ ${FOOTER_CSS}
     <h2>How to start</h2>
     <p>${start[0]}</p>
     <p>${start[1]}</p>
-    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit">Request an audit</a></div>
+    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A">Request an audit</a></div>
     <p class="fine">${start[2]}</p>
   </div>
 </main>
@@ -7503,6 +7529,7 @@ ${cardPageNav("/contact")}
 <main id="main">
   ${mdPageStart("/contact")}
   ${mdKvsCard("/contact", "Channels", contactSignalQr())}
+  ${mdCard("/contact", "Start a request by email")}
   ${mdCard("/contact", "Encrypted email")}
   ${mdCard("/contact", "Response times")}
   ${mdCard("/contact", "Languages")}
@@ -7544,7 +7571,7 @@ function serveShopifyHtml(canonicalUrl) {
       buildGuidePageFaqJsonLd("/shopify-agent-storefront-check", canonicalUrl),
     canonicalUrl);
   const start = mdParas("/shopify-agent-storefront-check", "How to start", 3);
-  const cta = `<div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check">Request a check by email</a></div>`;
+  const cta = `<div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&amp;body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A">Request a check by email</a></div>`;
   const body = `${head}
 ${cardPageNav("/shopify-agent-storefront-check")}
 <main id="main">
