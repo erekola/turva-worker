@@ -18,7 +18,7 @@ test("renderInline keeps safe https links", () => {
 });
 
 test("markdownToHtml renders headings and lists", () => {
-  assert.equal(markdownToHtml("## Title"), "<h2>Title</h2>");
+  assert.equal(markdownToHtml("## Title"), "<h2 id=\"title\">Title</h2>");
   assert.equal(markdownToHtml("- one\n- two"), "<ul><li>one</li><li>two</li></ul>");
 });
 
