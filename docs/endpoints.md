@@ -13,7 +13,8 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/.well-known/ai-plugin.json` | ai-plugin manifest, byte-identical to `agent.json` and signed with it (round 15 P3-1 added the row; the route existed and was verified all along) |
 | `/.well-known/mcp/server-card.json` | MCP server card |
 | `/.well-known/agent-card.json` | A2A agent card |
-| `/.well-known/ai-catalog.json` | Agentic Resource Discovery catalog |
+| `/.well-known/ard.json` | Agentic Resource Discovery manifest, ARD v0.91 path (same entries as ai-catalog.json) |
+| `/.well-known/ai-catalog.json` | Agentic Resource Discovery catalog, predecessor path kept for clients and scanners that read it |
 | `/.well-known/agent-skills/index.json` | Agent skills index |
 | `/openapi.json` | OpenAPI description |
 | `/.well-known/api-catalog` | API catalog linkset (RFC 9727) |

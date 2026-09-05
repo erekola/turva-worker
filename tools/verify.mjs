@@ -1633,7 +1633,7 @@ if (LIVE) {
   console.log('\nLive (URLs + signatures)');
   const base = 'https://turva.dev';
   const paths = ['/','/robots.txt','/sitemap.xml','/llms.txt','/llms-full.txt','/openapi.json',
-    '/.well-known/api-catalog','/.well-known/ai-catalog.json','/.well-known/mcp/server-card.json',
+    '/.well-known/api-catalog','/.well-known/ard.json','/.well-known/ai-catalog.json','/.well-known/mcp/server-card.json',
     '/.well-known/agent-card.json','/.well-known/agent-skills/index.json',
     '/.well-known/oauth-authorization-server','/.well-known/oauth-protected-resource',
     '/.well-known/ap2','/.well-known/acp','/.well-known/security.txt','/auth.md'];

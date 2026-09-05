@@ -1,6 +1,6 @@
 // src/worker.js
-// turva.dev worker v3.125.0 - the old-price post carries a dated correction and its FAQ answer names the 2026-08-31 Shopify price change; the home first paragraph names websites and APIs; the home Evidence block and the /services lead link the three published measurements (567 sites, four assistants, thirty days); /services title reads "Agent-readiness audits for websites, APIs and Shopify stores" (Codex SEO/AEO audit 2026-09-05, session koonti items 2, 4 and 5). Prices, promises and LLMS_TXT unchanged.
-// v3.124.0 was: the 499 EUR audit fix implementation names every access a listed fix needs (DNS zone for example) in its prerequisite sentence on /services, the home FAQ and the sample report (Astra round 3, Tek-342).
+// turva.dev worker v3.126.0 - guides re-read against their primary sources (Astra 2026-09-05, Tek-349): ARD v0.91 named /.well-known/ard.json and rel="ard", so the site now serves /.well-known/ard.json (same entries, v0.91 MCP media type), announces it with a Link header and a <link rel="ard"> in every page head, and keeps ai-catalog.json for the scanner and the MCP Server Card discovery document; the ARD, MCP card, well-known, robots and commerce guides say the current state (MCP card default location, robots.txt effect per bot, AP2 v0.1 extension scoped to v0.1). LLMS_TXT gained one line (re-sign).
+// v3.125.0 was: the old-price post carries a dated correction and its FAQ answer names the 2026-08-31 Shopify price change; the home first paragraph names websites and APIs; the home Evidence block and the /services lead link the three published measurements (567 sites, four assistants, thirty days); /services title reads "Agent-readiness audits for websites, APIs and Shopify stores" (Codex SEO/AEO audit 2026-09-05, session koonti items 2, 4 and 5). Prices, promises and LLMS_TXT unchanged.
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -228,7 +228,8 @@ Final price is confirmed in writing after scope is agreed.
 ## Agent endpoints
 - Agent registration: https://turva.dev/auth.md
 - API catalog: https://turva.dev/.well-known/api-catalog
-- AI catalog (ARD): https://turva.dev/.well-known/ai-catalog.json
+- ARD manifest (v0.91): https://turva.dev/.well-known/ard.json
+- AI catalog (ARD predecessor path): https://turva.dev/.well-known/ai-catalog.json
 - OpenAPI: https://turva.dev/openapi.json
 - MCP Server Card: https://turva.dev/.well-known/mcp/server-card.json
 - MCP Endpoint: https://mcp.turva.dev/mcp
@@ -2592,7 +2593,7 @@ The card is most useful when its skills mirror surfaces an agent can already rea
 
 ## AP2 and the version that matters
 
-AP2 is the Agent Payments Protocol. Under the v0.1 specification, which is what deployed sites and scanners still validate against, a merchant declares support not as a separate file but as an extension entry inside the A2A Agent Card. The entry carries the extension URI, a role such as merchant, and a flag saying whether an agent has to understand the extension.
+AP2 is the Agent Payments Protocol. Under the v0.1 specification, which is what deployed sites and scanners still validate against, a merchant declares support as an extension entry inside the A2A Agent Card rather than in a separate file. The entry carries the extension URI, a role such as merchant, and a flag saying whether an agent has to understand the extension.
 
 The detail that trips people up is the URI. Some helper guides write it as "github.com/google-agentic-commerce/AP2/tree/v0.1.0", with an uppercase name and a three-part version. The v0.1 specification uses "github.com/google-agentic-commerce/ap2/tree/v0.1", lowercase, version v0.1. A scanner that validates against that specification rejects the uppercase form even when everything else is correct. Copy the URI from the spec, not from a fix message. The URI is an identifier, not an address: the repository is named AP2 and its tag is v0.1.0, so the lowercase form answers 404 in a browser, and a validator compares the string instead of fetching it.
 
@@ -2630,11 +2631,11 @@ An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that 
 
 **What is the correct AP2 extension URI?**
 
-AP2 support is declared as an extension inside the A2A Agent Card, using the URI "https://github.com/google-agentic-commerce/ap2/tree/v0.1" (lowercase, version v0.1). Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject.
+For the AP2 v0.1 Agent Card extension, the URI is "https://github.com/google-agentic-commerce/ap2/tree/v0.1" (lowercase, version v0.1), exactly as that version specifies. This is a compatibility declaration for clients and scanners that implement v0.1, not a requirement of the current AP2 v0.2, which has no Agent Card extension. The isitagentready scanner reads the v0.1 form as of 2026-09-05. Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject.
 
 **Why does an AP2 declaration fail validation?**
 
-Usually the case of the extension URI. Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject. The accepted form is lowercase and v0.1.
+Usually the case of the extension URI. Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject. The accepted form for the v0.1 extension is lowercase and v0.1. A validator built for AP2 v0.2 looks for checkout and payment mandates instead and does not read the Agent Card extension at all, so name the version the validator implements before reading its result.
 
 **What does a UCP profile declare?**
 
@@ -3741,7 +3742,7 @@ The file format did not change. v2 added two standard link relations so an agent
 
   "/guides/mcp-server-card": `# MCP server cards explained
 
-An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. Deployed cards, turva.dev's among them, commonly sit at /.well-known/mcp/server-card.json. [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), the open proposal behind the card, now develops it as an [experimental MCP extension](https://github.com/modelcontextprotocol/experimental-ext-server-card). As of September 2026 its draft reserves a different default, the MCP endpoint URL followed by /server-card, and it does not recommend a /.well-known path for the card itself. Site-level discovery sits in the Agentic Resource Discovery catalog at /.well-known/ai-catalog.json instead, so the convention is still moving. An agent reads the card, finds the endpoint, and can then connect without a human wiring up the connection first.
+An MCP server card is a small JSON file that describes a site's Model Context Protocol server so an agent can find it and learn what it offers. Deployed cards, turva.dev's among them, commonly sit at /.well-known/mcp/server-card.json. [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), the open proposal behind the card, now develops it as an [experimental MCP extension](https://github.com/modelcontextprotocol/experimental-ext-server-card). As of September 2026 its draft reserves a different default, the MCP endpoint URL followed by /server-card, and it does not recommend a /.well-known path for the card itself. Site-level discovery sits in a catalog instead: the experimental Server Card document keeps an AI Catalog at /.well-known/ai-catalog.json, while ARD v0.91 names /.well-known/ard.json, so the convention is still moving. An agent reads the card, finds the endpoint, and can then connect without a human wiring up the connection first.
 
 The Model Context Protocol is a standard way for agents to use external tools and data. A server implements the protocol and exposes a set of tools, and the card is how that server announces itself. Without a card or a registry listing, an agent has no reliable way to discover that the server exists or what it can do, so the capability stays hidden even when it is live.
 
@@ -3954,7 +3955,7 @@ Yes. A price of 0 with an availability of InStock on every product passes every 
 
 The /.well-known directory is a standard place at the root of a site where agents look for machine-readable descriptions of what the site offers. Instead of crawling pages and guessing, an agent fetches a predictable path and reads a manifest that points it to everything else.
 
-The idea comes from a long-standing web convention and now carries the files agents care about. An API catalog at a well-known path, defined by RFC 9727, lets an agent enumerate a site's public APIs from a single URL. A server card describes an MCP server and how to reach it. OAuth metadata describes how to authenticate. Payment and agent-payment manifests describe how to transact. security.txt says where to report a problem.
+The idea comes from a long-standing web convention and now carries the files agents care about. An API catalog at a well-known path, defined by RFC 9727, lets an agent enumerate a site's public APIs from a single URL. A server card describes an MCP server and how to reach it. Deployed cards, turva.dev's among them, sit at /.well-known/mcp/server-card.json. The experimental Server Card specification reserves the MCP endpoint URL followed by /server-card as its default and expects a client to follow the URL the site's catalog gives. OAuth metadata describes how to authenticate. Payment and agent-payment manifests describe how to transact. security.txt says where to report a problem.
 
 The value is that discovery becomes a lookup rather than a search. An agent that knows the convention can ask one predictable question and get a map, which is faster and far more reliable than inferring structure from rendered HTML. A site that publishes a complete well-known surface is announcing its capabilities in the language agents already speak.
 
@@ -3970,7 +3971,7 @@ The /.well-known directory is a standard place at the root of a site where agent
 
 **What files do agents look for under /.well-known?**
 
-An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment and agent-payment manifests, and a security contact. Each one turns discovery into a lookup rather than a search.
+An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment and agent-payment manifests, and a security contact. Each one turns discovery into a lookup rather than a search. The MCP card is the one whose home is still moving: deployed cards use /.well-known/mcp/server-card.json, the experimental specification defaults to the MCP endpoint URL plus /server-card and does not recommend a well-known path for the card itself.
 
 **Why do agents use the well-known directory instead of crawling pages?**
 
@@ -3990,7 +3991,7 @@ Agentic Resource Discovery, or ARD, is an open specification for telling AI agen
 
 ## What it is
 
-A site advertises its agentic resources by serving a static JSON manifest at /.well-known/ai-catalog.json. The manifest is a small envelope with a specVersion, a host block that names the operator, and an entries array. Each entry describes one resource with a stable identifier, a display name, a type, a url, and a short description. A resource can be an MCP server, an A2A agent, an API, or a skill set. The work is early: the repository that carries it calls itself a temporary working repo and its field names are still being argued in pull requests, so validate a manifest against the draft the client you care about actually reads. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
+A site advertises its agentic resources by serving a static JSON manifest under /.well-known. ARD v0.91, published 26 August 2026, names the file /.well-known/ard.json and the link relation ard, and a conformant client MUST read those. The predecessor path /.well-known/ai-catalog.json and the relation ai-catalog are optional for a client, so a site that serves only the old path may not be found by a client that follows the current revision. The manifest is a small envelope with a specVersion, a host block that names the operator, and an entries array. Each entry describes one resource with a stable identifier, a display name, a type, a url, and a short description. A resource can be an MCP server, an A2A agent, an API, or a skill set. The work is early: the repository that carries it calls itself a temporary working repo and its field names are still being argued in pull requests, so validate a manifest against the draft the client you care about actually reads. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
 
 ## Where it sits
 
@@ -4004,13 +4005,13 @@ An ai-catalog.json is not a ranking trick and it is not a content map. llms.txt 
 
 Adoption is early. In a June 2026 check I ran against their public well-known paths, none of the launch partners the [announcement](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/) shows yet served a discoverable ai-catalog.json, so publishing one now is a forward move rather than table stakes. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
 
-turva.dev serves an ai-catalog.json at /.well-known/ai-catalog.json that indexes its MCP server, its A2A agent, its API, and its agent skills, each of which already resolves on its own. For an audit of a site's discovery surface, contact info@turva.dev.
+turva.dev serves the same entries at both paths: /.well-known/ard.json with the v0.91 media types and rel="ard" in every page head, and /.well-known/ai-catalog.json for clients and scanners that still read the predecessor. Both index its MCP server, its A2A agent, its API, and its agent skills, each of which already resolves on its own. The separate experimental MCP Server Card discovery document keeps its own convention, an AI Catalog at /.well-known/ai-catalog.json, so the two profiles are described apart and not merged. For an audit of a site's discovery surface, contact info@turva.dev.
 
 ## Frequently asked
 
 **What is an ai-catalog.json?**
 
-An ai-catalog.json is a static JSON manifest at /.well-known/ai-catalog.json that lists the agentic resources a site offers, such as its MCP server, A2A agent, and API, each with an identifier, type, url, and description, so agents and registries can discover them from one file.
+An ai-catalog.json is a static JSON manifest at /.well-known/ai-catalog.json that lists the agentic resources a site offers, such as its MCP server, A2A agent, and API, each with an identifier, type, url, and description, so agents and registries can discover them from one file. Since ARD v0.91 the same manifest shape is published as /.well-known/ard.json, and ai-catalog.json is the predecessor path that a client may still consult.
 
 **Does Agentic Resource Discovery affect search ranking?**
 
@@ -4018,7 +4019,7 @@ No. ARD is a discovery layer for AI agents, not a search file. It indexes the re
 
 **Where does an ai-catalog.json live?**
 
-At /.well-known/ai-catalog.json, as a static JSON manifest. Agents and registries read the resources a site offers from that one path instead of inferring them from its pages.
+Under ARD v0.91 at /.well-known/ard.json, announced with a link rel="ard" in the page head. A client MUST read that path and MAY also consult the predecessor /.well-known/ai-catalog.json. Serve ard.json, and keep ai-catalog.json while clients and scanners still read it. Agents and registries read the resources a site offers from that path instead of inferring them from its pages.
 
 ## Related
 
@@ -4140,7 +4141,7 @@ robots.txt does two jobs for agents. It sets crawl rules, and it can name AI cra
 
 The sitemap answers the other question, which is what exists. A complete sitemap lists every canonical URL, so an agent can find the real pages without inferring them from navigation. A last-modified date is optional in the sitemaps protocol and still worth publishing, because it tells a returning client what changed. The sitemap is a hint to the client rather than a guarantee that anything gets fetched. A page that is not in it is still a page an agent may never reach.
 
-Getting these wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident removes a site from that assistant's answers. A stale sitemap hides new pages. The files are small and the fix is fast, which is why they are the first thing a readiness review checks. In [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) finished in September 2026, robots.txt and the sitemap were the two most frequent first-fix subjects among the 74 sites that read Level 0: 45 and 38 of 68 notes, and 29 named both, usually a robots.txt the CMS shipped by default and a sitemap that was missing or never announced in it.
+Getting these wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident stops that crawler from fetching the pages and can keep the content out of what it feeds. It does not by itself remove the site from an assistant's answers, because OpenAI separates OAI-SearchBot for search from GPTBot for training and an answer can still name a page through another source. A stale sitemap hides new pages. The files are small and the fix is fast, which is why they are the first thing a readiness review checks. In [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) finished in September 2026, robots.txt and the sitemap were the two most frequent first-fix subjects among the 74 sites that read Level 0: 45 and 38 of 68 notes, and 29 named both, usually a robots.txt the CMS shipped by default and a sitemap that was missing or never announced in it.
 
 turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a complete sitemap. For an audit of a site's crawl and access surface, contact info@turva.dev.
 
@@ -4622,6 +4623,7 @@ Llms-Full: https://turva.dev/llms-full.txt
 Sitemap: https://turva.dev/sitemap.xml
 Auth: https://turva.dev/auth.md
 Api-catalog: https://turva.dev/.well-known/api-catalog
+Ard: https://turva.dev/.well-known/ard.json
 Ai-catalog: https://turva.dev/.well-known/ai-catalog.json
 Mcp-server-card: https://turva.dev/.well-known/mcp/server-card.json
 Mcp-endpoint: https://mcp.turva.dev/mcp
@@ -4793,7 +4795,8 @@ var API_CATALOG = JSON.stringify({
       { "href": "https://turva.dev/", "type": "text/html" }
     ],
     "service-meta": [
-      { "href": "https://turva.dev/.well-known/ai-catalog.json", "type": "application/json", "title": "AI catalog (ARD)" },
+      { "href": "https://turva.dev/.well-known/ard.json", "type": "application/json", "title": "ARD manifest (v0.91)" },
+      { "href": "https://turva.dev/.well-known/ai-catalog.json", "type": "application/json", "title": "AI catalog (ARD predecessor path)" },
       { "href": "https://turva.dev/.well-known/mcp/server-card.json", "type": "application/json", "title": "MCP Server Card" },
       { "href": "https://turva.dev/.well-known/agent-card.json", "type": "application/json", "title": "A2A Agent Card" },
       { "href": "https://turva.dev/.well-known/agent-skills/index.json", "type": "application/json", "title": "Agent Skills Index" },
@@ -4815,7 +4818,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.125.0",
+    "version": "3.126.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -4887,6 +4890,7 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/mcp/server-card.json": { "get": { "summary": "MCP Server Card", "operationId": "getMcpCard", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/agent-skills/index.json": { "get": { "summary": "Agent Skills index", "operationId": "getSkillsIndex", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/api-catalog": { "get": { "summary": "API catalog", "operationId": "getApiCatalog", "responses": { "200": { "description": "ok" } } } },
+    "/.well-known/ard.json": { "get": { "summary": "ARD manifest (v0.91)", "operationId": "getArdManifest", "responses": { "200": { "description": "Agentic Resource Discovery manifest, same entries as ai-catalog.json with the v0.91 media types", "content": { "application/json": {} } } } } },
     "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok" } } } },
     "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "responses": { "200": { "description": "ok" }, "400": { "description": "invalid params" }, "405": { "description": "POST only" } } } },
     "/.well-known/agent-card.json": { "get": { "summary": "A2A Agent Card", "operationId": "getAgentCard", "responses": { "200": { "description": "ok" } } } },
@@ -4922,7 +4926,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"ArhpzkROJeJciYxE_Uc56DePREJ_RGjSAQtba9-nHd7w-TUdvk84YbDu0YL2NalOgPpRZNM4uHz6F36Llb2YDw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"smp74-VdR5zy7dbQWesARGFFz-gDMOA7inVRARkMZmVlom1jnSoPoVZOrrC5u6xXVNHPtiTpafQudqEPmF2XDA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -5081,7 +5085,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.125.0",
+  "version": "3.126.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -5203,6 +5207,16 @@ var AI_CATALOG = JSON.stringify({
     }
   ]
 }, null, 2);
+
+// ARD v0.91 (ards-project/ard-spec, 2026-08-26) renamed the well-known file to ard.json and the
+// link relation to ard, and made those the ones a client MUST read; ai-catalog.json is the
+// predecessor a client MAY consult. Same entries, v0.91 media type for the MCP card. AI_CATALOG
+// stays as it is because the isitagentready ard check and the experimental MCP Server Card
+// discovery document still read /.well-known/ai-catalog.json (Tek-349, 2026-09-05).
+var ARD_MANIFEST = JSON.stringify(Object.assign({}, JSON.parse(AI_CATALOG), {
+  "entries": JSON.parse(AI_CATALOG).entries.map((e) => Object.assign({}, e,
+    e.type === "application/mcp-server+json" ? { "type": "application/mcp-server-card+json" } : {}))
+}), null, 2);
 
 // A conformant x402 client reads the challenge body and acts on it. It never reads
 // the source comment six lines into the route handler, so the fact that nothing here
@@ -6263,6 +6277,7 @@ ${mdFaqBlocks("/", "Frequently asked").pairs.map((p) => `{"@type":"Question","na
 
 function appendAgentLinks(headers) {
   headers.append("Link", '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"');
+  headers.append("Link", '</.well-known/ard.json>; rel="ard"; type="application/json"');
   headers.append("Link", '</.well-known/ai-catalog.json>; rel="ai-catalog"; type="application/json"');
   headers.append("Link", '</openapi.json>; rel="service-desc"; type="application/json"');
   headers.append("Link", '</llms.txt>; rel="service-doc"; type="text/plain"');
@@ -7216,6 +7231,7 @@ ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
+<link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
 html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
@@ -7329,6 +7345,7 @@ ${metaBlock}
 ${SCHEMA_HOME}
 ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
+<link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
 html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
@@ -7639,6 +7656,7 @@ ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
+<link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
 html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
@@ -7807,6 +7825,7 @@ ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
 <link rel="canonical" href="${canonicalUrl}" />
+<link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
 ${CARDPAGE_CSS}
@@ -9475,6 +9494,9 @@ async function handleRequest(request, env) {
   }
   if (pathLower === "/.well-known/mcp/server-card.json" || pathLower === "/.well-known/mcp.json") {
     return serveStatic(MCP_SERVER_CARD, "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/ard.json") {
+    return serveStatic(ARD_MANIFEST, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/ai-catalog.json" || pathLower === "/.well-known/ai-catalog") {
     return serveStatic(AI_CATALOG, "application/json; charset=utf-8", "agent-api");

@@ -758,6 +758,7 @@ const DOCUMENTED_ROUTES = [
   ["/agent/auth/revoke", 200, /application\/json/],
   ["/.well-known/ai.txt", 200, /text\/plain/],
   ["/.well-known/agent.json", 200, /application\/json/],
+  ["/.well-known/ard.json", 200, /application\/json/],
   ["/.well-known/ai-catalog.json", 200, /application\/json/],
   ["/.well-known/agent-skills/index.json", 200, /application\/json/],
   // SKILLS names services with skill.md content, src/worker.js:4572-4576.

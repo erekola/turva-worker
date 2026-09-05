@@ -7,7 +7,7 @@ This repository is the open-source reference implementation behind turva.dev, wh
 ## What it does
 
 * Renders every page (home, guides, blog, services, company, legal, contact) from markdown held in the Worker, each with a canonical `<head>` (meta, OpenGraph, JSON-LD, canonical).
-* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `ucp`, and OAuth discovery (`oauth-authorization-server`), among others. The full inventory is in [docs/endpoints.md](docs/endpoints.md).
+* Serves the manifests agents look for: `/llms.txt`, plus these `/.well-known/` files: `ai.txt`, `agent.json`, `mcp/server-card.json`, `agent-card.json`, `ard.json`, `ai-catalog.json`, `ap2`, `acp`, `x402`, `ucp`, and OAuth discovery (`oauth-authorization-server`), among others. The full inventory is in [docs/endpoints.md](docs/endpoints.md).
 * Maintains `robots.txt` and `sitemap.xml` aligned with the same source of truth.
 
 A consolidated reference to every surface agents read, with a short definition of each and a link to its full guide, is in [docs/agent-readiness.md](docs/agent-readiness.md). Plain-language guides to every surface this Worker implements: [turva.dev/guides](https://turva.dev/guides). Measurement notes and scan write-ups: [turva.dev/blog](https://turva.dev/blog).
