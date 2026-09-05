@@ -78,9 +78,23 @@ const unmet = (m) => { unmeasured++; console.log('  SKIP  ' + m); };
 // Codes that mean "this machine could not ask", never "the answer was wrong". ENOTFOUND and
 // ENODATA are absent on purpose: they are answers, and a missing MTA-STS record is a finding.
 const TRANSIENT = new Set(['ETIMEOUT', 'ETIMEDOUT', 'ESERVFAIL', 'EAI_AGAIN', 'ECONNRESET',
-  'ENETUNREACH', 'EHOSTUNREACH', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT']);
-const transientCode = (e) => (e && (TRANSIENT.has(e.code) || TRANSIENT.has((e.cause || {}).code)))
-  ? (e.code || (e.cause || {}).code) : null;
+  'ENETUNREACH', 'EHOSTUNREACH', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'EDOHRCODE']);
+// This file's own timeouts (the fetch wrapper above and the 6 s DoH signal) reject with a
+// DOMException whose name is TimeoutError and whose code is the NUMBER 23, not a string, so
+// the set above never matched them and a timed-out read was booked as a FAIL against the domain.
+// Found by an outside read-only review 2026-09-05 (Astra, työt/astra-repokierros-2026-09-05);
+// the name is the stable part of that exception, so it is what is matched.
+const timeoutName = (e) => (e && (e.name === 'TimeoutError' || (e.cause || {}).name === 'TimeoutError'))
+  ? 'ETIMEDOUT' : null;
+// An error's own string code wins over its cause: ENODATA wrapped around a timed-out inner call
+// is still an answer. Only an error without a code of its own is read through its cause.
+const transientCode = (e) => {
+  if (!e) return null;
+  if (typeof e.code === 'string') return TRANSIENT.has(e.code) ? e.code : null;
+  const inner = (e.cause || {}).code;
+  if (TRANSIENT.has(inner)) return inner;
+  return timeoutName(e);
+};
 // The system resolver is not the only path to a public record, and on one machine here it is not
 // a working one: every query that machine makes goes out over DNS-over-HTTPS, while node's
 // dns.resolve* speaks plain UDP through c-ares to whatever server the adapter names, and those
@@ -104,6 +118,12 @@ const dohQuery = async (name, type) => {
   // NXDOMAIN and NODATA are ANSWERS. They keep their own error codes so the caller treats them
   // as findings, exactly as the system resolver's ENOTFOUND and ENODATA are treated.
   if (j.Status === 3) { const e = new Error(`DoH ${type} ${name} -> NXDOMAIN`); e.code = 'ENOTFOUND'; throw e; }
+  // Every other non-zero rcode is the RESOLVER talking, not the zone: 2 SERVFAIL is the same
+  // condition the system path reports as ESERVFAIL, and 5 REFUSED, 1 FORMERR or 4 NOTIMP say the
+  // question was not answered at all. Before 2026-09-05 these fell through the empty Answer
+  // below and were booked as ENODATA, a finding, with no fallback to the second resolver.
+  if (j.Status === 2) { const e = new Error(`DoH ${type} ${name} -> SERVFAIL`); e.code = 'ESERVFAIL'; throw e; }
+  if (j.Status !== 0) { const e = new Error(`DoH ${type} ${name} -> rcode ${j.Status}`); e.code = 'EDOHRCODE'; throw e; }
   const ans = (j.Answer || []).filter((a) => a.type === (type === 'MX' ? 15 : 16));
   if (!ans.length) { const e = new Error(`DoH ${type} ${name} -> no ${type} record`); e.code = 'ENODATA'; throw e; }
   dohUsed = true;
@@ -2635,8 +2655,11 @@ if (LIVE) {
       `facts.json mtaSts.txtId == the id served in DNS (facts ${JSON.stringify(ms.txtId)}, DNS ${JSON.stringify(liveId)})`);
   } catch (e) {
     const t = transientCode(e);
-    if (t) unmet('MTA-STS not measured from this machine: ' + t + '. The DNS or HTTPS call timed out '
-      + 'after three attempts, which says nothing about the record. Run this again on a network that '
+    if (t) unmet('MTA-STS not measured from this machine: ' + t + '. '
+      + (t === 'ESERVFAIL' || t === 'EDOHRCODE'
+        ? 'A resolver answered with an error code instead of the record, and the retries did not change that, '
+        : 'The DNS or HTTPS call timed out after three attempts, ')
+      + 'which says nothing about the record. Run this again on a network that '
       + 'resolves, and read mds/decisions.md Tek-299 before treating it as a finding.');
     else bad('MTA-STS: ' + (e.code || e.message));
   }
