@@ -54,7 +54,7 @@ See [docs/endpoints.md](docs/endpoints.md) for the complete route inventory, inc
 
 ## Scanner results
 
-Measured on **https://turva.dev** on **2026-09-01**: **100/100, Level 5 (Agent-Native)** on [isitagentready.com](https://isitagentready.com/), Cloudflare's agent-readiness scanner.
+Measured on **https://turva.dev** on **2026-09-06**: **100/100, Level 5 (Agent-Native)** on [isitagentready.com](https://isitagentready.com/), Cloudflare's agent-readiness scanner.
 
 These measurements describe the published turva.dev reference build. They are a dated snapshot and do not automatically carry over to a fork or another domain.
 
@@ -76,7 +76,7 @@ The payment routes return x402 challenges and publish Stripe payment links. x402
 
 ## Web security
 
-Separate web-security measurements for **turva.dev**, recorded on **2026-09-01**:
+Separate web-security measurements for **turva.dev**, recorded on **2026-09-06**:
 
 | Scanner | Result |
 | --- | --- |
