@@ -1,5 +1,6 @@
 // src/worker.js
-// turva.dev worker v3.133.0 - one page template for the site (2026-09-06, Tek-358): every card page and article shares the home page frame (68rem, 24 px edge, 20 px at 320), prose reads in a 65ch column while headings, dividers, card groups and tables keep the frame, H1 is white and green is reserved for links and actions; sections are open (h2 plus body) and cards are used only for offers, tools and results; markdown tables carry data-label cells inside a bounded scroll box and stack into named cards below 640 px when they have up to four columns; ### headings render; articles get a byline from META_BY_PATH, a generated contents list above four sections and one next step; /services, /shopify-agent-storefront-check, /company, /contact, /legal, /tools, /badge, /llms-txt-validator, /guides and /blog rewritten to the 2026-09-06 page instruction with their twins, titles and descriptions; blog index cards carry kind and description.
+// turva.dev worker v3.134.0 - the two sample reports on the report reading template (2026-09-06, Tek-360): a Synthetic sample report eyebrow above a new H1, the page instruction's introduction with the illustrative report date as text rather than a date line, two actions after the introduction (SAMPLE_HEAD), Summary and Decision moved ahead of the contents list and the engagement record, F1 to F9 and C1 to C3 as h3 under their sections with the same anchor ids, Shopify status labels in the instruction's form (Present, Restricted, Unavailable, Not tested, Aligned, Mismatch), and every table wider than four columns offered a second time as a list of named cards from the same cells under a details element beside its scroll box.
+// v3.133.0 was: one page template for the site (2026-09-06, Tek-358): every card page and article shares the home page frame (68rem, 24 px edge, 20 px at 320), prose reads in a 65ch column while headings, dividers, card groups and tables keep the frame, H1 is white and green is reserved for links and actions; sections are open (h2 plus body) and cards are used only for offers, tools and results; markdown tables carry data-label cells inside a bounded scroll box and stack into named cards below 640 px when they have up to four columns; ### headings render; articles get a byline from META_BY_PATH, a generated contents list above four sections and one next step; /services, /shopify-agent-storefront-check, /company, /contact, /legal, /tools, /badge, /llms-txt-validator, /guides and /blog rewritten to the 2026-09-06 page instruction with their twins, titles and descriptions; blog index cards carry kind and description.
 // v3.132.1 was: hotfix (2026-09-06, Tek-357): the FAQ answer on implementation no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer text raw and the live gate read the link syntax as a difference between the published answer and the page (mds/gotchas.md 2026-09-03 (jatko 9)); the link stands after the FAQ as its own line.
 // v3.132.0 was: home content rewritten to Erik's brief (2026-09-06, Tek-357): eleven sections in the twin and the same order in HTML, two starting points as cards read from the twin list, what the client gets, the process in writing, work you can inspect with the scan board and the dated security scans, support beyond the first report, who does the work, a five-question FAQ and the contact section; the curl demo, the x402 prose and every "higher on the next scan" promise left the home page; title, meta description and the ProfessionalService description say the same thing as the page. Prices, scope and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.131.0 was: one outer frame for every home section (2026-09-06, Tek-356): .page now shares the hero and offer width, so headings, dividers, card grids, the scan board and the process steps align on the same edges, and the text runs the same width, which Erik chose over a narrower reading column. Prices and promises unchanged, llms.txt unchanged (no re-sign).
@@ -2141,11 +2142,21 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 - [How agents authenticate](/guides/agent-authentication)
 - [What agents.json is](/guides/agents-json)
 `,
-  "/samples/audit-report": `# Sample audit report: Northwind Fasteners Oy
+  "/samples/audit-report": `# A website and API audit, from evidence to fixes
 
-2026-09-08
+An invented company, Northwind Fasteners Oy, shows how the report connects technical findings, observed AI answers and a prioritised correction plan. All companies, readings and report dates in this sample are fictional.
 
-This is a synthetic sample of the agent-readiness audit report. The company, the domain northwind-fasteners.example, every reading and every date are invented to show the format, the depth and the wording a paying client receives. Nothing on this page describes a real client, and no figure here has been measured on a real site. A real report carries the raw scanner output, the request logs and the full AI answer set as appendices, which this sample shortens to three evidence chains and the question list.
+Illustrative report date: 8 September 2026. This is a synthetic sample of the agent-readiness audit report: the company, the domain northwind-fasteners.example, every reading and every date are invented to show the format, the depth and the wording a paying client receives. Nothing on this page describes a real client, and no figure here has been measured on a real site. A real report carries the raw scanner output, the request logs and the full AI answer set as appendices, which this sample shortens to three evidence chains and the question list.
+
+## Summary
+
+The site reads Level 1 of 5 on isitagentready.com, with 2 of the 21 scored checks passing. The two that pass are robots.txt and sitemap.xml, and both exist because the content management system ships them. Everything an agent would use on purpose is missing: no markdown form of any page, no llms.txt, no Link relations, no discovery file for the REST API that already runs, and no named rules for AI crawlers.
+
+The most expensive finding scores no points. Every one of the 138 product pages publishes structured data with a price of 0,00 EUR and an availability of InStock, and the API publishes an empty price with the product marked purchasable, while the visible page shows a real price and, for 41 products, a six week lead time. One of the twelve by-name answers in the AI run already told a buyer the catalog is free. This is fixed first, across the whole catalog and on all three surfaces the company publishes, before anything that moves the score.
+
+Nine findings. Five of them, F2, F3, F5, F6 and F7, flip six scored checks. Two, F1 and F4, correct data the scanner does not score. F8 is a decision to leave the five commerce checks red on purpose, because a commerce declaration that points at a checkout an agent cannot complete would be a false claim. F9 is the old address that two assistants quoted, which is not an agent-readiness check at all and is in the report because the company asked for correct answers.
+
+The edge work in F1 to F7 is about eleven and a half hours. The services page says the list is typically about a day, and this one runs over because the catalog has variants and two price bases, so every product row is tested and not sampled. The fixed price for implementing the list covers it whatever the count. The report names the checks it moves, not a level it promises: the level moves with the check set the scanner runs on the day, and 22 checks were in the set on 2026-09-03.
 
 ## Contents
 
@@ -2180,16 +2191,6 @@ This is a synthetic sample of the agent-readiness audit report. The company, the
 | Written follow-up round | Open until 2026-09-22 |
 | Re-scan | One, included, within 30 days of the report, by 2026-10-08, on the day the company names |
 | Access used | Public surfaces only. No login, no credentials, no code repository |
-
-## Summary
-
-The site reads Level 1 of 5 on isitagentready.com, with 2 of the 21 scored checks passing. The two that pass are robots.txt and sitemap.xml, and both exist because the content management system ships them. Everything an agent would use on purpose is missing: no markdown form of any page, no llms.txt, no Link relations, no discovery file for the REST API that already runs, and no named rules for AI crawlers.
-
-The most expensive finding scores no points. Every one of the 138 product pages publishes structured data with a price of 0,00 EUR and an availability of InStock, and the API publishes an empty price with the product marked purchasable, while the visible page shows a real price and, for 41 products, a six week lead time. One of the twelve by-name answers in the AI run already told a buyer the catalog is free. This is fixed first, across the whole catalog and on all three surfaces the company publishes, before anything that moves the score.
-
-Nine findings. Five of them, F2, F3, F5, F6 and F7, flip six scored checks. Two, F1 and F4, correct data the scanner does not score. F8 is a decision to leave the five commerce checks red on purpose, because a commerce declaration that points at a checkout an agent cannot complete would be a false claim. F9 is the old address that two assistants quoted, which is not an agent-readiness check at all and is in the report because the company asked for correct answers.
-
-The edge work in F1 to F7 is about eleven and a half hours. The services page says the list is typically about a day, and this one runs over because the catalog has variants and two price bases, so every product row is tested and not sampled. The fixed price for implementing the list covers it whatever the count. The report names the checks it moves, not a level it promises: the level moves with the check set the scanner runs on the day, and 22 checks were in the set on 2026-09-03.
 
 ## Decisions the company makes
 
@@ -2336,7 +2337,7 @@ Run on 2026-09-04, recorded so that the client can re-run them without turva.dev
 
 Nine findings. Each carries the evidence as read, what it costs the company, the change, who does it and roughly how long, and the test that proves it done. Where a finding names an effect on agents, it says whether the effect was observed in this run, is possible, or was shown to follow from the cause. The order is by impact on a buyer first and on the score second.
 
-## F1. Every product publishes a price of 0 and an availability of InStock, on all three surfaces
+### F1. Every product publishes a price of 0 and an availability of InStock, on all three surfaces
 
 **Category.** Structured data. Manual review, not scored.
 
@@ -2359,7 +2360,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Guide.** [JSON-LD and structured data for agents](/guides/json-ld-structured-data).
 
-## F2. Serve markdown next to HTML
+### F2. Serve markdown next to HTML
 
 **Category.** Content accessibility. Scored check markdownNegotiation.
 
@@ -2383,7 +2384,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Guide.** [Serving markdown to agents](/guides/markdown-for-agents).
 
-## F3. Publish llms.txt and announce it in the Link header
+### F3. Publish llms.txt and announce it in the Link header
 
 **Category.** Discoverability. Scored check linkHeaders.
 
@@ -2399,7 +2400,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Guides.** [llms.txt explained](/guides/llms-txt) and [Response headers that help agents](/guides/response-headers-for-agents).
 
-## F4. The sitemap lists two template pages and misses the catalog
+### F4. The sitemap lists two template pages and misses the catalog
 
 **Category.** Discoverability. Manual review, not scored. The sitemap check passes and stays green.
 
@@ -2415,7 +2416,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Guide.** [Sitemaps, robots.txt and agents](/guides/sitemaps-and-robots-for-agents).
 
-## F5. Name the AI crawlers and declare Content Signals in robots.txt
+### F5. Name the AI crawlers and declare Content Signals in robots.txt
 
 **Category.** Bot access control. Scored checks robotsTxtAiRules and contentSignals.
 
@@ -2431,7 +2432,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Guide.** [Sitemaps, robots.txt and agents](/guides/sitemaps-and-robots-for-agents).
 
-## F6. Tell agents that the REST API exists
+### F6. Tell agents that the REST API exists
 
 **Category.** API, auth, MCP and A2A. Scored check apiCatalog.
 
@@ -2447,7 +2448,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Guide.** [The /.well-known directory for agents](/guides/well-known-for-agents).
 
-## F7. Publish a DNS-AID record once the discovery files exist
+### F7. Publish a DNS-AID record once the discovery files exist
 
 **Category.** Discoverability. Scored check dnsAid.
 
@@ -2465,7 +2466,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Guide.** [The /.well-known directory for agents](/guides/well-known-for-agents), which covers the discovery index the record points at.
 
-## F8. Declare no agent commerce surface until a checkout can back it
+### F8. Declare no agent commerce surface until a checkout can back it
 
 **Category.** Commerce. Scored checks x402, mpp, ucp, acp and ap2.
 
@@ -2481,7 +2482,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Guides.** [Agent commerce discovery](/guides/agent-commerce-discovery) and [Agentic commerce readiness](/guides/agentic-commerce-readiness).
 
-## F9. The old address is still published in two places and the current one in none an agent reads
+### F9. The old address is still published in two places and the current one in none an agent reads
 
 **Category.** Correctness of published facts. Manual review, not scored, raised by the AI run.
 
@@ -2579,11 +2580,17 @@ Every figure on this page is invented. The check names, the categories and the s
 The audit is described on the [services page](/services). To start one, [email info@turva.dev](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) with the site or API URL and what the audit should answer. The Shopify agent storefront check has its own [sample report](/samples/shopify-agent-storefront-check).
 `,
 
-  "/samples/shopify-agent-storefront-check": `# Sample report: Shopify agent storefront check, Northstar Outdoor
+  "/samples/shopify-agent-storefront-check": `# A Shopify check, from product data to corrections
 
-2026-09-08
+Northstar Outdoor is an invented store used to demonstrate the report. See the three-surface map, product comparisons, buyer-journey evidence and correction plan. All store data, observations and report dates are fictional.
 
-This is a synthetic sample of the Shopify agent storefront check report. The store Northstar Outdoor, its .myshopify.com domain, the three products, every price and every observation are invented to show the format and the depth a paying merchant receives. Nothing on this page describes a real store, and no figure here has been measured on a real storefront. A real report carries the tool call log and the redacted settings evidence as an appendix, which this sample leaves out.
+Illustrative report date: 8 September 2026. This is a synthetic sample of the Shopify agent storefront check report: the store Northstar Outdoor, its .myshopify.com domain, the three products, every price and every observation are invented to show the format and the depth a paying merchant receives. Nothing on this page describes a real store, and no figure here has been measured on a real storefront. A real report carries the tool call log and the redacted settings evidence as an appendix, which this sample leaves out.
+
+## Decision
+
+Correct two data mismatches before sending more agent traffic to the store. The three agent surfaces were all observable, the browser cart worked in the agreed anonymous session and the checkout handoff landed in the right store. Two of the three tested products showed a difference between surfaces: one price two euros higher on the remote catalog than on the storefront, and one variant marked unavailable on the Agentic preview while the storefront sells it. A documented match is what the merchant is paying to be able to show, and two of three products do not have one yet.
+
+Nothing was paid, ordered or signed in. No customer detail was entered.
 
 ## Contents
 
@@ -2613,37 +2620,31 @@ This is a synthetic sample of the Shopify agent storefront check report. The sto
 | Retest window | Until 2026-09-20, up to two corrected items |
 | Access used | Public storefront surfaces and redacted settings screenshots from the merchant. No Admin login, no credentials, no customer data |
 
-## Decision
-
-Correct two data mismatches before sending more agent traffic to the store. The three agent surfaces were all observable, the browser cart worked in the agreed anonymous session and the checkout handoff landed in the right store. Two of the three tested products showed a difference between surfaces: one price two euros higher on the remote catalog than on the storefront, and one variant marked unavailable on the Agentic preview while the storefront sells it. A documented match is what the merchant is paying to be able to show, and two of three products do not have one yet.
-
-Nothing was paid, ordered or signed in. No customer detail was entered.
-
 ## Three-surface map
 
-What is present, restricted, unavailable or not tested on each of the three surfaces, in the same session and against the same three products. PRESENT means the surface answered and was exercised within scope. RESTRICTED means it answered but refused part of the scope. UNAVAILABLE means it did not answer. NOT TESTED means the scope stopped before it.
+What is present, restricted, unavailable or not tested on each of the three surfaces, in the same session and against the same three products. Present means the surface answered and was exercised within scope. Restricted means it answered but refused part of the scope. Unavailable means it did not answer. Not tested means the scope stopped before it.
 
 | Surface | Status | What was verified | What was not |
 | --- | --- | --- | --- |
-| Browser WebMCP, in the shopper's live storefront tab | PRESENT | Ten tools registered on navigator.modelContext: browse_store, search_catalog, get_product, show_variant, update_cart, get_cart, cancel_cart, proceed_to_checkout, search_shop_policies_and_faqs and manage_orders. Eight were called within scope. One anonymous cart built and emptied. | manage_orders and browse_store were not called, and proceed_to_checkout was called once for the permitted navigation only. No customer account was opened. |
-| Shopify-hosted Storefront MCP and UCP MCP | PRESENT | Catalog search and product read answered at protocol level. One remote UCP cart was created with the blue Trail Bottle and cancelled without a buyer identity. | Checkout MCP was not reached, by scope. |
-| Shopify Catalog and Agentic storefront channels | PRESENT | Catalog access on, auto-enrolment of new products on, one channel active, read from the merchant's redacted settings evidence. Catalog search preview run for the three products. | Channel ranking or sales were not measured. Settings were not changed. |
+| Browser WebMCP, in the shopper's live storefront tab | Present | Ten tools registered on navigator.modelContext: browse_store, search_catalog, get_product, show_variant, update_cart, get_cart, cancel_cart, proceed_to_checkout, search_shop_policies_and_faqs and manage_orders. Eight were called within scope. One anonymous cart built and emptied. | manage_orders and browse_store were not called, and proceed_to_checkout was called once for the permitted navigation only. No customer account was opened. |
+| Shopify-hosted Storefront MCP and UCP MCP | Present | Catalog search and product read answered at protocol level. One remote UCP cart was created with the blue Trail Bottle and cancelled without a buyer identity. | Checkout MCP was not reached, by scope. |
+| Shopify Catalog and Agentic storefront channels | Present | Catalog access on, auto-enrolment of new products on, one channel active, read from the merchant's redacted settings evidence. Catalog search preview run for the three products. | Channel ranking or sales were not measured. Settings were not changed. |
 
 Finding a surface is a fact about availability. It is not a certification, an endorsement or a security claim.
 
 ## Product truth matrix
 
-The tested title, variant, price, currency, availability and policy facts on each surface, read in the same market, language, currency and hour. A MISMATCH was reproduced once before it was recorded.
+The tested title, variant, price, currency, availability and policy facts on each surface, read in the same market, language, currency and hour. A Mismatch was reproduced once before it was recorded.
 
 | Product and variant | Storefront page | Browser WebMCP | Storefront and UCP MCP | Agentic Catalog preview | Result |
 | --- | --- | --- | --- | --- | --- |
-| Trail Bottle 750 ml, blue | 29,90 EUR, in stock | 29,90 EUR, in stock | 31,90 EUR, in stock | 29,90 EUR, in stock | MISMATCH, remote price |
-| Merino Base Layer, M | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, unavailable | MISMATCH, variant eligibility |
-| Camp Mug, green | 18,50 EUR, in stock | 18,50 EUR, in stock | 18,50 EUR, in stock | 18,50 EUR, in stock | ALIGNED |
+| Trail Bottle 750 ml, blue | 29,90 EUR, in stock | 29,90 EUR, in stock | 31,90 EUR, in stock | 29,90 EUR, in stock | Mismatch, remote price |
+| Merino Base Layer, M | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, unavailable | Mismatch, variant eligibility |
+| Camp Mug, green | 18,50 EUR, in stock | 18,50 EUR, in stock | 18,50 EUR, in stock | 18,50 EUR, in stock | Aligned |
 
 Policy facts. The return window of 30 days, free shipping above 80 EUR and the delivery estimate of two to four working days matched on the storefront page, in the WebMCP policy tool and in the Storefront MCP policy read. The Agentic Catalog preview carries no policy fields, which is the surface's shape and not a mismatch.
 
-The price difference was reproduced at 11:20 and 14:05 EEST in the same market, language and currency before MISMATCH was recorded. The availability difference was confirmed against the merchant's redacted Catalog settings screenshot, where the M variant is marked not eligible. No setting was changed during the test.
+The price difference was reproduced at 11:20 and 14:05 EEST in the same market, language and currency before Mismatch was recorded. The availability difference was confirmed against the merchant's redacted Catalog settings screenshot, where the M variant is marked not eligible. No setting was changed during the test.
 
 ## Buyer-journey evidence
 
@@ -2651,18 +2652,18 @@ The five buyer searches and the cart lifecycle, each with the tool, the input, t
 
 | Step | Tool and input | Observed result | Cart state | Status |
 | --- | --- | --- | --- | --- |
-| Search 1, "light bottle for a day hike" | WebMCP search_catalog, fi-FI | Trail Bottle 750 ml returned first, blue variant listed with price and stock | Empty | ALIGNED |
-| Search 2, "merino base layer size M" | WebMCP search_catalog | Merino Base Layer returned, M variant listed as in stock | Empty | ALIGNED |
-| Search 3, "camp mug green" | WebMCP search_catalog | Camp Mug returned, green variant listed | Empty | ALIGNED |
-| Search 4, "waterproof jacket" | WebMCP search_catalog | Two jackets returned, both outside the scope, no claim recorded | Empty | OBSERVED |
-| Search 5, "return policy" | WebMCP search_shop_policies_and_faqs | 30 day return window returned, matches the storefront policy page | Empty | ALIGNED |
-| Product detail | WebMCP get_product and show_variant, Trail Bottle blue | Material, volume, price 29,90 EUR and stock matched the storefront page | Empty | ALIGNED |
-| Add to cart | WebMCP update_cart, one blue Trail Bottle | Cart line created, quantity 1, line price 29,90 EUR | One line, 29,90 EUR | ALIGNED |
-| Cart read | WebMCP get_cart | One line, 29,90 EUR, matches the visible storefront cart drawer | One line, 29,90 EUR | ALIGNED |
-| Checkout handoff | WebMCP proceed_to_checkout, the one permitted navigation | Landed on the store's own checkout page, correct store, correct line | One line, 29,90 EUR | OBSERVED |
-| Payment and order | None | No form filled, no payment method entered, no order created. This is the stop | One line, 29,90 EUR | NOT TESTED |
-| Remote UCP cart | Storefront MCP cart create, one blue Trail Bottle | Remote cart created with 31,90 EUR line price, the remote price of the matrix above | Separate remote cart, one line | MISMATCH, same cause as the matrix |
-| Cleanup | WebMCP cancel_cart. UCP cart cancelled | Browser cart empty, storefront drawer empty, remote cart cancelled | Empty | ALIGNED |
+| Search 1, "light bottle for a day hike" | WebMCP search_catalog, fi-FI | Trail Bottle 750 ml returned first, blue variant listed with price and stock | Empty | Aligned |
+| Search 2, "merino base layer size M" | WebMCP search_catalog | Merino Base Layer returned, M variant listed as in stock | Empty | Aligned |
+| Search 3, "camp mug green" | WebMCP search_catalog | Camp Mug returned, green variant listed | Empty | Aligned |
+| Search 4, "waterproof jacket" | WebMCP search_catalog | Two jackets returned, both outside the scope, no claim recorded | Empty | Observed |
+| Search 5, "return policy" | WebMCP search_shop_policies_and_faqs | 30 day return window returned, matches the storefront policy page | Empty | Aligned |
+| Product detail | WebMCP get_product and show_variant, Trail Bottle blue | Material, volume, price 29,90 EUR and stock matched the storefront page | Empty | Aligned |
+| Add to cart | WebMCP update_cart, one blue Trail Bottle | Cart line created, quantity 1, line price 29,90 EUR | One line, 29,90 EUR | Aligned |
+| Cart read | WebMCP get_cart | One line, 29,90 EUR, matches the visible storefront cart drawer | One line, 29,90 EUR | Aligned |
+| Checkout handoff | WebMCP proceed_to_checkout, the one permitted navigation | Landed on the store's own checkout page, correct store, correct line | One line, 29,90 EUR | Observed |
+| Payment and order | None | No form filled, no payment method entered, no order created. This is the stop | One line, 29,90 EUR | Not tested |
+| Remote UCP cart | Storefront MCP cart create, one blue Trail Bottle | Remote cart created with 31,90 EUR line price, the remote price of the matrix above | Separate remote cart, one line | Mismatch, same cause as the matrix |
+| Cleanup | WebMCP cancel_cart. UCP cart cancelled | Browser cart empty, storefront drawer empty, remote cart cancelled | Empty | Aligned |
 
 The checkout handoff means one navigation to the checkout page. It does not mean that payment or an order was completed, and neither was.
 
@@ -2670,7 +2671,7 @@ The checkout handoff means one navigation to the checkout page. It does not mean
 
 Up to five specific changes, each with its owner and an acceptance check the merchant can run without turva.dev. This plan carries three, because the check found three things to change. The order is by effect on a buyer.
 
-## C1. Publish the Finnish price list to the remote catalog surface
+### C1. Publish the Finnish price list to the remote catalog surface
 
 **What a buyer sees today.** An agent that reads the store through the Storefront or UCP MCP quotes the blue Trail Bottle at 31,90 EUR, two euros above the storefront and the browser tools, and a remote cart is built at that price.
 
@@ -2680,7 +2681,7 @@ Up to five specific changes, each with its owner and an acceptance check the mer
 
 **Acceptance check.** The same variant returns 29,90 EUR on the storefront page, in the WebMCP product read and in the Storefront MCP catalog read within one hour, in the fi-FI Finland EUR context.
 
-## C2. Make the M variant eligible in the Agentic Catalog
+### C2. Make the M variant eligible in the Agentic Catalog
 
 **What a buyer sees today.** The M size of the Merino Base Layer is in stock and sellable on every surface except the Agentic Catalog preview, so an AI channel that reads the catalog can leave the sellable size out.
 
@@ -2690,7 +2691,7 @@ Up to five specific changes, each with its owner and an acceptance check the mer
 
 **Acceptance check.** The M variant shows as available in the Catalog preview and in a public agent answer after the propagation time the settings page states.
 
-## C3. Run a three-surface acceptance test after every catalog or market publish
+### C3. Run a three-surface acceptance test after every catalog or market publish
 
 **What a buyer sees today.** Nothing yet. This change keeps C1 and C2 from coming back, because the same difference returns with the next price list, market or theme change.
 
@@ -2715,7 +2716,7 @@ No theme, app or product data change beyond C1 to C3 was found necessary for the
 
 ## Retest
 
-Up to two corrected items are verified once within 14 days of this package, by 2026-09-20. C1 and C2 are the two items. Each gets the status ALIGNED, MISMATCH or UNKNOWN on direct evidence from the same tools in the same market, language and currency. A surface that cannot be read at the retest reads UNKNOWN, not ALIGNED. The retest table is printed next to the product truth matrix above.
+Up to two corrected items are verified once within 14 days of this package, by 2026-09-20. C1 and C2 are the two items. Each gets the status Aligned, Mismatch or Unknown on direct evidence from the same tools in the same market, language and currency. A surface that cannot be read at the retest reads Unknown, not Aligned. The retest table is printed next to the product truth matrix above.
 
 ## What this report is not
 
@@ -4796,7 +4797,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.133.0",
+    "version": "3.134.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5063,7 +5064,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.133.0",
+  "version": "3.134.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6060,13 +6061,13 @@ var META_BY_PATH = {
   },
   "/samples/audit-report": {
     title: "Sample audit report, synthetic · turva.dev",
-    description: "A synthetic agent-readiness audit report: 22 scanner checks recorded one by one, the manual review, the AI visibility run, nine findings with evidence, owner, effort and acceptance test, and five decisions for the company. Invented site.",
+    description: "Explore a synthetic website and API audit report with evidence, technical findings, observed AI answers, priorities and acceptance checks.",
     image: "/og-samples-audit-report.jpg",
     imageAlt: "turva.dev sample card: the synthetic agent-readiness audit report for an invented company, every check, finding and acceptance test in the format a client receives."
   },
   "/samples/shopify-agent-storefront-check": {
     title: "Sample Shopify storefront check report · turva.dev",
-    description: "A synthetic Shopify agent storefront check report: the three-surface map, the product truth matrix, the buyer-journey evidence, the correction plan and the retest. Invented store.",
+    description: "Read a synthetic Shopify check with product comparisons across three agent surfaces, buyer-journey evidence and a prioritised correction plan.",
     image: "/og-samples-shopify-agent-storefront-check.jpg",
     imageAlt: "turva.dev sample card: the synthetic Shopify agent storefront check report for an invented store, the five deliverables in the format a merchant receives."
   },
@@ -6657,14 +6658,19 @@ function renderInline(text) {
     return /^(https?:\/\/|mailto:|\/(?!\/)|#)/i.test(href.trim()) ? `<a href="${href.replace(BIDI_CONTROLS, "")}">${label}</a>` : escapeHtml(label);
   });
   out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  out = out.replace(/(^|[\s(])(info@turva\.dev)/g, '$1<a href="mailto:info@turva.dev">$2</a>');
-  out = out.replace(/(^|[\s(])(https?:\/\/[^\s<)"]+)/g, function(m, pre, url) {
+  // The three autolinkers below run only OUTSIDE anchors already built above. Before
+  // v3.134.0 (Tek-360) a label such as "email info@turva.dev" inside a [label](mailto:)
+  // link got a second <a> inside the first, which is invalid HTML and reached both sample
+  // reports live; a Sonnet checker found it on 2026-09-06.
+  const outside = (text, fn) => text.split(/(<a [^>]*>[\s\S]*?<\/a>)/).map((seg, i) => (i % 2 ? seg : fn(seg))).join("");
+  out = outside(out, (t) => t.replace(/(^|[\s(])(info@turva\.dev)/g, '$1<a href="mailto:info@turva.dev">$2</a>'));
+  out = outside(out, (t) => t.replace(/(^|[\s(])(https?:\/\/[^\s<)"]+)/g, function(m, pre, url) {
     var tm = url.match(/[.,;:!?]+$/);
     var tail = "";
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
     return pre + '<a href="' + url.replace(BIDI_CONTROLS, "") + '">' + url + '</a>' + tail;
-  });
-  out = out.replace(/(^|[\s(])((?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/[^\s<)"]*)/gi, function(m, pre, url) {
+  }));
+  out = outside(out, (t) => t.replace(/(^|[\s(])((?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/[^\s<)"]*)/gi, function(m, pre, url) {
     // Kierros 18 (2026-09-06, S5-1): this branch used to link ANY "label.label/path"
     // string, and a reverse-DNS identifier has exactly that shape, so two MCP metadata
     // keys in a blog post rendered as links to a host that does not resolve. The last
@@ -6680,7 +6686,7 @@ function renderInline(text) {
     var tail = "";
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
     return pre + '<a href="https://' + url.replace(BIDI_CONTROLS, "") + '">' + url + '</a>' + tail;
-  });
+  }));
   return out;
 }
 
@@ -6711,7 +6717,15 @@ function markdownToHtml(md) {
       const labels = headCells.map((c) => c.replace(/<[^>]+>/g, "").replace(/"/g, "&quot;"));
       const head = headCells.map((c) => `<th>${c}</th>`).join("");
       const rows = tl.slice(2).filter((l) => l.startsWith("|")).map((l) => `<tr>${cells(l).map((c, i) => `<td data-label="${labels[i] || ""}">${c}</td>`).join("")}</tr>`).join("");
-      html.push(`<div class="tbl" tabindex="0"><table class="cols-${headCells.length}${headCells.length <= 4 ? " stack" : ""}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
+      const tableHtml = (cls) => `<table class="cols-${headCells.length}${cls}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
+      if (headCells.length <= 4) {
+        html.push(`<div class="tbl" tabindex="0">${tableHtml(" stack")}</div>`);
+      } else {
+        // A wide table keeps its columns in the scroll box and is offered a second time as a
+        // list of named cards from the same cells (v3.134.0, Tek-360), so every value can be
+        // read vertically without hiding a column or shrinking the text.
+        html.push(`<div class="tbl" tabindex="0">${tableHtml("")}</div>\n<details class="tbl-list"><summary>Read this table as a list</summary>${tableHtml(" stacked")}</details>`);
+      }
     } else if (/^-{3,}$/.test(trimmed)) {
       // Vaakaviiva. Lisatty 2026-08-24 (Tek-269). Syntyi briefsivua varten, mutta brief
       // EI enaa tuota vaakaviivaa markdowniinsa: tyylipassin R6 luki sen irralliseksi
@@ -7323,6 +7337,10 @@ function footerHtml(kieli) { const fi = kieli === "fi"; return `<footer class="t
 // One restrained next step at the end of a guide (Tek-358). The default points at the
 // services page; a guide about a free tool or about Shopify points at that instead. Short
 // lines by design: the twin gate reads any paragraph over 80 characters as prose.
+var SAMPLE_HEAD = {
+  "/samples/audit-report": { eyebrow: "Synthetic sample report", primary: ["Jump to the findings", "#findings"], secondary: ["View audit scope and pricing", "/services#audit"] },
+  "/samples/shopify-agent-storefront-check": { eyebrow: "Synthetic sample report", primary: ["View the product comparison", "#product-truth-matrix"], secondary: ["View Shopify check scope", "/shopify-agent-storefront-check"] }
+};
 var GUIDE_NEXT = {
   default: 'Need a broader review? <a class="btn-ghost" href="/services">See the services</a>',
   "/guides/llms-txt": 'Check your own file: <a class="btn-ghost" href="/llms-txt-validator">Open the validator</a>',
@@ -7364,6 +7382,13 @@ function serveGuideHtml(pathname, canonicalUrl) {
     ? `<div class="toc"><p>On this page</p><ul>${h2s.map((h) => `<li><a href="#${h.id}">${h.text}</a></li>`).join("")}</ul></div>`
     : "";
   const withToc = toc ? bylined.replace(/(<\/p>\n)(?=<h2 )/, `$1${toc}\n`) : bylined;
+  // Sample reports (Tek-360): the synthetic label stands above the H1, and two actions follow
+  // the introduction. Both come from SAMPLE_HEAD; labels are short by design.
+  const sample = SAMPLE_HEAD[pathname];
+  const withSample = sample
+    ? withToc.replace(/^<h1>/, `<p class="eyebrow">${sample.eyebrow}</p>\n<h1>`)
+        .replace(/(<\/p>\n)(?=<h2 )/, `$1<div class="cta"><a class="btn" href="${sample.primary[1]}">${sample.primary[0]}</a><a class="btn-ghost" href="${sample.secondary[1]}">${sample.secondary[0]}</a></div>\n`)
+    : withToc;
   const next = navSection === "/guides"
     ? `<aside class="next"><p>${GUIDE_NEXT[pathname] || GUIDE_NEXT.default}</p></aside>`
     : "";
@@ -7390,19 +7415,19 @@ main{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(28px,4vw
 main *,main *::before,main *::after{box-sizing:border-box;}
 article h1{color:#F2F4F3;overflow-wrap:break-word;hyphens:manual;font-size:clamp(30px,3.4vw,46px);line-height:1.1;letter-spacing:-0.02em;margin:0 0 .9rem;font-weight:700;max-width:26ch;}
 article h1 + p,article h1 + p.date + p{font-size:clamp(17px,1.3vw,19px);color:#F2F4F3;}
-article h2{color:#F2F4F3;font-size:clamp(24px,2.2vw,28px);line-height:1.2;font-weight:700;letter-spacing:-0.015em;margin:clamp(36px,5vw,52px) 0 .9rem;padding-top:clamp(20px,3vw,28px);border-top:0.5px solid rgba(255,255,255,0.08);max-width:65ch;scroll-margin-top:1rem;}
-article h3{color:#F2F4F3;font-size:clamp(18px,1.6vw,20px);font-weight:700;margin:1.6rem 0 .55rem;max-width:65ch;scroll-margin-top:1rem;}
-article p{margin:0 0 1.05rem;color:#C9D1CE;font-size:17px;line-height:1.6;max-width:65ch;}
+article h2{color:#F2F4F3;font-size:clamp(24px,2.2vw,28px);line-height:1.2;font-weight:700;letter-spacing:-0.015em;margin:clamp(36px,5vw,52px) 0 .9rem;padding-top:clamp(20px,3vw,28px);border-top:0.5px solid rgba(255,255,255,0.08);scroll-margin-top:1rem;}
+article h3{color:#F2F4F3;font-size:clamp(18px,1.6vw,20px);font-weight:700;margin:1.6rem 0 .55rem;scroll-margin-top:1rem;}
+article p{margin:0 0 1.05rem;color:#C9D1CE;font-size:17px;line-height:1.6;}
 article a{color:#5DF18F;text-decoration:none;overflow-wrap:anywhere;}
 article a:hover{text-decoration:underline;}
-article ul{list-style:none;margin:0 0 1.1rem;padding:0;max-width:65ch;}
+article ul{list-style:none;margin:0 0 1.1rem;padding:0;}
 article li{position:relative;padding:0 0 0 1.45rem;margin:0 0 0.5rem;color:#C9D1CE;font-size:17px;line-height:1.6;}
 article li::before{content:"\\203A";position:absolute;left:0.45rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
 article strong{color:#F2F4F3;}
 article pre{max-width:100%;}
 article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:-.35rem 0 1.4rem;}
 article .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
-.toc{margin:0 0 1.6rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;max-width:65ch;}
+.toc{margin:0 0 1.6rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;}
 .toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
 .toc ul{list-style:none;margin:0;padding:0;columns:2;column-gap:1.4rem;}
 .toc li{margin:0 0 .3rem;padding:0;font-size:.95rem;break-inside:avoid;}
@@ -7410,11 +7435,23 @@ article .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-si
 .toc a{color:#C9D1CE;}
 .toc a:hover{color:#5DF18F;}
 @media (max-width:560px){.toc ul{columns:1;}}
-.next{margin:clamp(36px,5vw,56px) 0 0;padding:1.4rem 1.5rem;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;max-width:65ch;}
+.next{margin:clamp(36px,5vw,56px) 0 0;padding:1.4rem 1.5rem;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;}
 .next p{margin:0 0 .8rem;}
 .next p:last-child{margin:0;}
 .next .btn-ghost{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:.7rem 1.2rem;border-radius:7px;font-size:15px;font-weight:600;color:#F2F4F3;border:1px solid rgba(255,255,255,0.24);}
 .next .btn-ghost:hover{border-color:#5DF18F;color:#5DF18F;text-decoration:none;}
+.cta{display:flex;flex-wrap:wrap;gap:14px;margin:.4rem 0 1.6rem;}
+.btn,.btn-ghost{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:50px;padding:.75rem 1.35rem;border-radius:7px;font-size:15px;font-weight:700;max-width:100%;overflow-wrap:break-word;text-align:center;}
+.btn{background:#5DF18F;color:#06100F;}
+.btn:hover{background:#7df7a6;text-decoration:none;}
+.btn-ghost{color:#F2F4F3;font-weight:600;border:1px solid rgba(255,255,255,0.24);}
+.btn-ghost:hover{border-color:#5DF18F;color:#5DF18F;text-decoration:none;}
+@media (max-width:560px){.cta{flex-direction:column;}.btn,.btn-ghost{width:100%;}}
+.tbl-list{margin:-.4rem 0 1.2rem;}
+.tbl-list summary{cursor:pointer;color:#C9D1CE;font-size:.9rem;padding:.4rem 0;}
+.tbl-list summary:hover{color:#5DF18F;}
+.tbl-list[open] summary{margin-bottom:.6rem;}
+table.stacked{display:block;border:0;min-width:0;width:100%;}table.stacked thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stacked tbody,table.stacked tr{display:block;}table.stacked tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stacked td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stacked td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stacked td:first-child{color:#F2F4F3;font-weight:600;}
 .crumb{margin:0 0 1.2rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;}
 .crumb a{color:#9AA3A0;}
 .crumb a:hover{color:#5DF18F;text-decoration:none;}
@@ -7460,7 +7497,7 @@ ${navMenuHtml(`    <li><a href="/">home</a></li>
 </nav>
 <main id="main">
 ${crumb}<article>
-${withToc}
+${withSample}
 </article>
 ${next}
 </main>
@@ -7622,7 +7659,6 @@ main{max-width:none;margin:0;padding:0;}
 .board-sum b{color:#5DF18F;}
 .pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
 .sec{padding:1.9rem 0;border-top:0.5px solid rgba(255,255,255,0.07);}
-.sec>p,.sec .faq,.sec .evlist,.sec>ul,.sec>.muted{max-width:65ch;}
 ${FAQ_CSS}
 .exgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:.6rem;margin:0 0 1.1rem;}
 .ex{position:relative;background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:.7rem .8rem .7rem 1.7rem;font-size:.9rem;color:#C9D1CE;transition:border-color .15s ease,transform .15s ease;}
@@ -7863,8 +7899,8 @@ var CARDPAGE_CSS = `html,body{background-color:#0A1316;overflow-wrap:break-word;
 main{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(24px,5vw,72px) 3.5rem;}
 main *,main *::before,main *::after{box-sizing:border-box;}
 h1{color:#F2F4F3;overflow-wrap:break-word;font-size:clamp(30px,3.4vw,46px);line-height:1.1;letter-spacing:-0.02em;margin:0 0 .9rem;font-weight:700;max-width:24ch;}
-.intro{font-size:clamp(17px,1.3vw,19px);line-height:1.6;color:#C9D1CE;margin:0 0 1.1rem;max-width:65ch;}
-main>p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1.1rem;max-width:65ch;}
+.intro{font-size:clamp(17px,1.3vw,19px);line-height:1.6;color:#C9D1CE;margin:0 0 1.1rem;}
+main>p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1.1rem;}
 a{color:#5DF18F;text-decoration:none;}
 a:hover{text-decoration:underline;}
 a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
@@ -7893,8 +7929,8 @@ ${NAV_MOBILE_CSS}
 .sec>h2,.sec>h3{scroll-margin-top:1rem;}
 .sec h2{color:#F2F4F3;font-size:clamp(24px,2.2vw,28px);line-height:1.2;margin:0 0 1rem;font-weight:700;letter-spacing:-0.015em;}
 .sec h3{color:#F2F4F3;font-size:clamp(18px,1.6vw,20px);margin:1.5rem 0 .55rem;font-weight:700;}
-.sec p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1rem;max-width:65ch;}
-.sec ul{list-style:none;margin:0 0 1.1rem;padding:0;max-width:65ch;}
+.sec p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1rem;}
+.sec ul{list-style:none;margin:0 0 1.1rem;padding:0;}
 .sec li{position:relative;padding:0 0 0 1.45rem;margin:0 0 .5rem;color:#C9D1CE;font-size:17px;line-height:1.6;}
 .sec li::before{content:"\\203A";position:absolute;left:.45rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
 .sec strong{color:#F2F4F3;}
@@ -7903,7 +7939,7 @@ ${NAV_MOBILE_CSS}
 .sec ul.get li::before{content:"\\2713";left:0;}
 .sec ul.nope li{color:#9AA3A0;}
 .sec ul.nope li::before{content:"\\00B7";left:.4rem;top:-.05rem;color:#6F7A77;}
-.sec .fine,.fine{font-size:.9rem;color:#9AA3A0;margin:0 0 .6rem;max-width:65ch;}
+.sec .fine,.fine{font-size:.9rem;color:#9AA3A0;margin:0 0 .6rem;}
 .price-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;margin:-.4rem 0 1.1rem;}
 .price-line .price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.35rem;font-weight:700;color:#5DF18F;}
 .price-line .terms{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;}
@@ -7924,13 +7960,13 @@ a.card:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
 .card li::before{content:"\\203A";position:absolute;left:.4rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
 @media (max-width:640px){.card{padding:20px;}}
 ${SCARD_CSS}
-.kvs{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.55rem .9rem;align-items:baseline;max-width:65ch;}
+.kvs{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.55rem .9rem;align-items:baseline;}
 .kv{display:contents;}
 .kv .k{color:#9AA3A0;font-size:.9rem;}
 .kv .v{color:#F2F4F3;font-weight:600;word-break:break-word;}
 a.v{color:#5DF18F;}
 @media (max-width:420px){.kvs{grid-template-columns:minmax(0,1fr);gap:.15rem .9rem;}.kv .v{margin-bottom:.55rem;}}
-.sigqr{display:grid;grid-template-columns:1fr auto;gap:1.1rem 1.4rem;align-items:center;margin-top:1.1rem;padding-top:1.1rem;border-top:0.5px solid rgba(255,255,255,0.10);max-width:65ch;}
+.sigqr{display:grid;grid-template-columns:1fr auto;gap:1.1rem 1.4rem;align-items:center;margin-top:1.1rem;padding-top:1.1rem;border-top:0.5px solid rgba(255,255,255,0.10);}
 .sigqr-txt p{color:#C9D1CE;margin:0;font-size:.97rem;}
 .sigqr-txt .hint{color:#9AA3A0;font-size:.88rem;margin-top:.35rem;}
 .sigqr-plate{display:block;background:#F2F4F3;border-radius:10px;padding:9px;line-height:0;}
@@ -7940,13 +7976,13 @@ a.v{color:#5DF18F;}
 .gv{color:#5DF18F;font-weight:600;}
 .scard .sub{color:#9AA3A0;font-size:.95rem;margin:-.4rem 0 .9rem;}
 ${FAQ_CSS}
-.faq{max-width:65ch;}
+.faq{}
 .faq .q{font-size:1.05rem;}
 .faq p{font-size:1rem;line-height:1.6;}
-.dl{display:flex;flex-direction:column;gap:.85rem;max-width:65ch;}
+.dl{display:flex;flex-direction:column;gap:.85rem;}
 .dl p{margin:0;color:#C9D1CE;font-size:17px;line-height:1.6;}
 .dl .term{color:#F2F4F3;font-weight:700;}
-.toc{margin:0 0 1.4rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;max-width:65ch;}
+.toc{margin:0 0 1.4rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;}
 .toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
 .toc ul{list-style:none;margin:0;padding:0;columns:2;column-gap:1.4rem;}
 .toc li{margin:0 0 .3rem;padding:0;font-size:.95rem;break-inside:avoid;}
@@ -7959,27 +7995,27 @@ ${FAQ_CSS}
 .post .pt{display:block;color:#F2F4F3;font-weight:700;font-size:1.1rem;line-height:1.3;letter-spacing:-0.01em;}
 .post .pm{display:flex;flex-wrap:wrap;gap:.3rem .8rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}
 .post .pk{color:#5DF18F;}
-.post .ps{color:#C9D1CE;font-size:.95rem;line-height:1.5;max-width:65ch;}
+.post .ps{color:#C9D1CE;font-size:.95rem;line-height:1.5;}
 .feed{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;margin:-.6rem 0 1.4rem;}
 .feed a{color:#9AA3A0;}
 .feed a:hover{color:#5DF18F;text-decoration:none;}
 .start{border-top:0.5px solid rgba(255,255,255,0.1);margin-top:clamp(36px,5vw,56px);padding-top:clamp(24px,3vw,32px);}
 .start h2{color:#F2F4F3;font-size:clamp(24px,2.2vw,28px);font-weight:700;letter-spacing:-0.015em;margin:0 0 .9rem;}
-.start p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1rem;max-width:65ch;}
+.start p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1rem;}
 .cta-row{margin:1.1rem 0 1.3rem;}
 .cta-btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;background:#5DF18F;color:#06100F;font-weight:700;border-radius:7px;padding:.75rem 1.35rem;font-size:15px;}
 .cta-btn:hover{background:#7df7a6;text-decoration:none;}
 .mail-plain{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;color:#F2F4F3;overflow-wrap:anywhere;}
 .copy-btn{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;margin-left:10px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;background:transparent;color:#F2F4F3;font:600 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;}
 .copy-btn:hover{border-color:#5DF18F;color:#5DF18F;}
-.vform{display:flex;flex-wrap:wrap;gap:10px;margin:.6rem 0 .4rem;max-width:65ch;}
+.vform{display:flex;flex-wrap:wrap;gap:10px;margin:.6rem 0 .4rem;}
 .vform label{flex-basis:100%;font-size:.95rem;color:#F2F4F3;font-weight:600;}
 .vform input{flex:1 1 16rem;min-width:0;min-height:50px;background:#07110D;border:1px solid #2D3D3D;border-radius:7px;padding:10px 14px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:16px;}
 .vform button{min-height:50px;background:#5DF18F;color:#06100F;border:0;border-radius:7px;padding:10px 22px;font-weight:700;cursor:pointer;font-size:15px;}
 @media (max-width:560px){.vform input,.vform button{flex-basis:100%;width:100%;}.cta{flex-direction:column;}.btn,.btn-ghost,.cta-btn{width:100%;}}
 .result-sum{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin:0 0 1rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#C9D1CE;}
 .result-sum b{color:#F2F4F3;}
-.chk{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.15rem .7rem;align-items:baseline;margin:0 0 .9rem;padding:0 0 .9rem;border-bottom:0.5px solid rgba(255,255,255,0.08);max-width:65ch;}
+.chk{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.15rem .7rem;align-items:baseline;margin:0 0 .9rem;padding:0 0 .9rem;border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .chk .s{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;}
 .chk .l{color:#F2F4F3;font-weight:600;}
 .chk .d{grid-column:2;color:#C9D1CE;font-size:.95rem;line-height:1.5;}
@@ -7988,6 +8024,10 @@ ${FAQ_CSS}
 .tbl table{margin:0;min-width:100%;}
 .tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 @media (max-width:640px){table.stack{display:block;border:0;min-width:0;}table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stack tbody,table.stack tr{display:block;}table.stack tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stack td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stack td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stack td:first-child{color:#F2F4F3;font-weight:600;}}
+.tbl-list{margin:-.4rem 0 1.2rem;}
+.tbl-list summary{cursor:pointer;color:#C9D1CE;font-size:.9rem;padding:.4rem 0;}
+.tbl-list summary:hover{color:#5DF18F;}
+table.stacked{display:block;border:0;min-width:0;width:100%;}table.stacked thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stacked tbody,table.stacked tr{display:block;}table.stacked tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stacked td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stacked td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stacked td:first-child{color:#F2F4F3;font-weight:600;}
 @media (max-width:360px){main{padding-left:20px;padding-right:20px;}}`;
 
 function cardPageHead(metaBlock, jsonLd, canonicalUrl) {

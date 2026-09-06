@@ -1154,10 +1154,10 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   }
 
   console.log('\nMarkdown the renderer drops silently (B1-18)');
-  // markdownToHtml knows ##, paragraphs, "- " lists and four-space code. A ### heading,
-  // a numbered list, a fenced block or a wrapped list item renders as literal markup on
-  // a published page, and node --check, node --test and this file all stay green. The
-  // card pages use the md* helpers instead and are excluded by name, not by guess.
+  // markdownToHtml knows ##, ### (since v3.133.0, Tek-358), paragraphs, "- " lists, tables
+  // and four-space code. A numbered list, a fenced block or a wrapped list item renders as
+  // literal markup on a published page, and node --check, node --test and this file all stay
+  // green. The card pages use the md* helpers instead and are excluded by name, not by guess.
   {
     const cards = new Set(Object.keys(twConverted));
     const keys = [...w.slice(twPmStart).matchAll(/\n  "(\/[^"]*)": `/g)].map((m) => m[1]);
@@ -1165,7 +1165,6 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const probs = [];
     for (const k of keys.filter((k) => !cards.has(k))) {
       const md = (twMdTwin(k) || '').replace(/\r\n/g, '\n');
-      if (/^### /m.test(md)) probs.push(k + ': ### heading');
       if (/^\d+\. /m.test(md)) probs.push(k + ': numbered list');
       if (/^```/m.test(md)) probs.push(k + ': fenced code block');
       for (const block of md.split(/\n{2,}/)) {
