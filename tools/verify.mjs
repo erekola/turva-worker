@@ -799,7 +799,10 @@ const twConverted = {
   // board is rendered by hand INSIDE the twin's "Work you can inspect" section, the report
   // card and the measurement row are hero markup with no paragraph over 80 characters, and
   // the two prose exceptions (the curl demo intro and the contact lead) left with their text.
-  '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: [], prose: [] },
+  // h2: the home page renders two twin sections under their own display headings (Tek-357);
+  // the rendered-order check (5b) maps the display text back to the twin heading.
+  '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: [], prose: [],
+         h2: { 'Questions before you start': 'Frequently asked', 'Start with the URL and the question': 'Contact' } },
   '/blog':    { fn: 'serveBlogHtml',    mdOnly: [], hand: ['All posts'] }, // All posts is the dated list, rendered by blogPostLinks() from META_BY_PATH (2026-09-03)
   '/llms-txt-validator': { fn: 'serveLlmsValidatorHtml', mdOnly: [], hand: ['How to use it'], prose: ['The two v2 discovery checks are informational'] }, // the result note repeats the twin's own sentence under the check list (Tek-358)
   '/services': { fn: 'serveServicesHtml', mdOnly: [], hand: [] },
@@ -1343,6 +1346,34 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       const bad3 = idx.findIndex((v, i) => i > 0 && v < idx[i - 1]);
       check(seen.length > 0 && bad3 === -1,
         `${path}: HTML section order follows the twin (${seen.length} sections)${bad3 === -1 ? '' : ' :: ' + seen[bad3] + ' is rendered before ' + seen[bad3 - 1] + ' should be'}`);
+    }
+    // 5b. the same order read from the RENDERED page (kierros 4, 2026-09-06, worker-01). The
+    // call-site regex above knows renderers by name, so a heading list passed as an array
+    // (mdToolCards on /tools) or a local helper (terms() on /legal) was outside it: two
+    // wrong-order mutants passed 298/298. This block renders each converted page with the
+    // worker itself and compares every visible h2 with the twin: each twin heading that is
+    // not mdOnly/hand must be rendered, and the rendered ones must keep the twin's order.
+    // Extra rendered headings (index lists, hand sections) are ignored, not failed.
+    try {
+      const rendered = (await import('data:text/javascript;base64,' + Buffer.from(src.worker.text).toString('base64'))).default;
+      for (const [path, cfg] of Object.entries(twConverted)) {
+        const md = twMdTwin(path);
+        if (!md) continue;
+        const res = await rendered.fetch(new Request('https://turva.dev' + path, { headers: { accept: 'text/html' } }), {}, { waitUntil() {} });
+        const html = await res.text();
+        const heads = [...md.matchAll(/^## (.+)$/gm)].map((h) => h[1].trim());
+        const skip = [...cfg.mdOnly, ...(cfg.hand || [])];
+        const h2s = [...html.matchAll(/<h2(?:\s[^>]*)?>([\s\S]*?)<\/h2>/g)].map((m) => twHtml(m[1]));
+        const seenR = [];
+        for (const t of h2s) { const h = (cfg.h2 || {})[t] || H2_ALIAS[t] || t; if (heads.includes(h) && !seenR.includes(h)) seenR.push(h); }
+        const missing = heads.filter((h) => !skip.includes(h) && !seenR.includes(h));
+        const idxR = seenR.map((h) => heads.indexOf(h));
+        const badR = idxR.findIndex((v, i) => i > 0 && v < idxR[i - 1]);
+        check(res.status === 200 && seenR.length > 0 && missing.length === 0 && badR === -1,
+          `${path}: rendered h2 order follows the twin (${seenR.length} of ${heads.length - skip.length} headings)${missing.length ? ' :: not rendered: ' + missing.join(', ') : ''}${badR === -1 ? '' : ' :: ' + seenR[badR] + ' is rendered before ' + seenR[badR - 1]}`);
+      }
+    } catch (e) {
+      bad('rendered h2 order: the worker could not be imported or rendered :: ' + (e && e.message));
     }
   }
 

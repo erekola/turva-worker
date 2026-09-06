@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.139.0 - kierros 4 fixes (2026-09-06, Erik: "korjaa kaikki"): stripTags replaces the two tag regexes CodeQL #10 and #11 flagged, ten old guide anchors come back as alias spans (GUIDE_ANCHOR_ALIASES), the /contact Signal paragraph renders once, verify.mjs reads the rendered h2 order (5b), and 22 text findings from the Opus round: META descriptions under 160 characters and equal to the deck, two blog titles equal to their H1, the home title in the site form, hyphens, sample contents lists in page order, dated and sourced sentences.
 // turva.dev worker v3.138.0 - the brief shell on the page template (2026-09-06, Erik): BRIEF_CSS restates the open-section rules for the bare headings, lists and code a brief's markdown renders inside main, so every published brief, old or new, reads like the rest of the site the moment this is live; and /llms.txt re-signed, because v3.137.0 changed two blog titles in LLMS_TXT and shipped with the old signature.
 // v3.137.0 was: the 31 blog posts edited to the 2026-09-06 page instruction (Tek-364): each post carries its one-sentence deck under the date line and the same sentence as its META_BY_PATH description, so the index card and the page say the same thing; the named editorial corrections only (a new H1 for the thirty-day follow-up and the secret hygiene post, existing correction and status notes raised next to the title, links to the current guides and tools, dated limitations stated beside the numbers, absolute claims narrowed to their measured case), with the original text, data, examples, code, timeline and publication dates unchanged.
 // v3.136.0 was: the 24 guides rewritten to the 2026-09-06 page instruction (Tek-362): new H1s and opening paragraphs, three to five named H2 sections each, the rising-score promises and the unsupported generalisations removed, technical scan, manual review and observed AI answers kept apart, the guide index in four groups (audit and visibility, content and crawl access, discovery and authentication, commerce and agent operations) with the same order in LLMS_TXT, the home twin and SITEMAP_ENTRIES, guide titles and descriptions in META_BY_PATH, every cross-link label updated, and the navigation and footer one step larger at Erik's request.
@@ -469,7 +470,7 @@ If you are in this set and want your own reading, email me and I will send you t
 
 2026-09-04
 
-Two different auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.
+Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.
 
 WorkOS shipped Agent Auth for AuthKit on 2 September, a way to give the agents you build into your own product short-lived scoped tokens instead of a long-lived API key. Next to it in the same product menu sits something else with a wider blast radius, and it is a month older: an open protocol called auth.md, shipped into AuthKit on 4 August, in which a service publishes a markdown file at its own root telling outside agents how to register on behalf of a user. This site has served a file at that same address since June. The two are not the same document, I read both on 4 September to find out how far apart they are.
 
@@ -588,9 +589,9 @@ Corrected 2026-09-04. The version served for the first seven hours said the firs
 
 2026-09-03
 
-Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit terminology can refer to websites or organisational AI adoption.
+Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organisational AI adoption.
 
-On 3 September 2026 fifty buyer questions were put to ChatGPT, Gemini, Perplexity and Google AI Mode from an anonymous browser session, one run per question, 193 answers in all. The questions are the ones a buyer types: what an agent readiness audit is, what it costs, who does it in Finland, how it differs from SEO. Claude was not measured, because its answers sit behind a login and the instrument runs logged out.
+On 3 September 2026 fifty buyer questions were put to ChatGPT, Gemini, Perplexity and Google AI Mode from an anonymous browser session, one run per question, 193 answers in all. Seven of the 200 runs returned no answer: Google AI Mode was stopped by a reCAPTCHA four times, ChatGPT gave nothing twice and Gemini once, and those runs are counted as missing rather than as answers. The questions are the ones a buyer types: what an agent readiness audit is, what it costs, who does it in Finland, how it differs from SEO. Claude was not measured, because its answers sit behind a login and the instrument runs logged out.
 
 ## Two products share the words
 
@@ -638,7 +639,7 @@ Corrected 2026-09-04. The version served for the first seven hours said Perplexi
 
 2026-09-03
 
-One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, with the changing check set recorded as a limitation.
+One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.
 
 In July I wrote up sixteen Finnish B2B sites. Since then the same measurement has run over every company I have written to, and the sample is now 567 company sites, measured between 28 June and 3 September 2026. The scanner is the same one, isitagentready.com, which grades a site from Level 0 to Level 5. The sample is still my own prospecting list and not a random draw, so read it as a large snapshot rather than a census.
 
@@ -652,7 +653,7 @@ In July I wrote up sixteen Finnish B2B sites. Since then the same measurement ha
 
 ## What website agent readiness means
 
-The phrase agent readiness is used for two different things, and AI assistants currently answer the question with the other one. Ask an assistant what an agent readiness audit is and the answer describes an organisation: its data, its governance, whether its teams are ready to deploy AI agents. That is a real question, and it is a different one.
+The phrase agent readiness is used for two different things, and AI assistants currently answer the question with the other one. Ask an assistant what an agent-readiness audit is and the answer describes an organisation: its data, its governance, whether its teams are ready to deploy AI agents. That is a real question, and it is a different one.
 
 Website agent readiness is a property of a site or an API. It asks whether a machine reading on someone's behalf can find the site, read its pages without a browser, learn what the company sells, and act on that through a declared interface. An independent scanner can measure it, and the result is a number a third party can check. That is the measurement below.
 
@@ -678,7 +679,7 @@ Four levels separate the typical company site from a site an agent can read and 
 
 ## How to read your own site
 
-Run isitagentready.com on your domain and read the level, then read which checks failed. The free llms.txt validator at turva.dev/llms-txt-validator reads the llms.txt part in more detail. If you want the whole surface read and the fixes listed in priority order, the agent readiness audit is described at turva.dev/services, and the way to start is an email to info@turva.dev with the domain.
+Run isitagentready.com on your domain and read the level, then read which checks failed. The free llms.txt validator at turva.dev/llms-txt-validator reads the llms.txt part in more detail. If you want the whole surface read and the fixes listed in priority order, the agent-readiness audit is described at turva.dev/services, and the way to start is an email to info@turva.dev with the domain.
 
 ## Frequently asked
 
@@ -712,7 +713,7 @@ This article examines what a TRACE Trust Record attests to, and why runtime evid
 | At Level 1 and above, that the record was signed inside a verified TEE the operator cannot rewrite afterwards | Whether the tool it called should have been callable at all, or whether the decision boundary around it was written down anywhere |
 | At Level 2, that the record has not been altered since it was logged in a transparency log | The state of the machine that produced the report, even when the producer checked it |
 
-The Linux Foundation now governs TRACE, short for Trust, Runtime Attestation and Compliance Evidence. OPAQUE contributed the specification, announced on 25 August 2026, and developed it together with AMD, Intel, Microsoft and the Technology Innovation Institute. The idea is one signed artifact, called a Trust Record, that says which model ran, on what hardware, under which policy, against which class of data and which tools it called. The point of signing it inside a trusted execution environment is that the operator cannot write it afterwards. An ordinary audit log is written by the system being audited. This one is not.
+The Linux Foundation now governs TRACE, short for Trust, Runtime Attestation and Compliance Evidence. OPAQUE contributed the specification, announced on 25 August 2026, and developed it together with AMD, Intel, Microsoft and the Technology Innovation Institute. The idea is one signed artifact, called a Trust Record, that says which model ran, on what hardware, under which policy, against which class of data and which tools it called. The point of signing it inside a trusted execution environment is that, at Level 1 and above, the operator cannot rewrite it afterwards. An ordinary audit log is written by the system being audited. This one is not.
 
 That is a real distinction and it is the same distinction my own work rests on. A number someone reports about themselves is a claim. A number a third party can check is evidence. TRACE moves runtime logging from the first category toward the second.
 
@@ -910,7 +911,7 @@ The checklist has also not yet run against a client surface. It was built from 1
 
 Fixed scope, written before any payment. Async only, no calls and no calendar links. Read access is enough, production credentials are not requested, and write access is scoped per task only if implementation is bought separately. The report names 3 to 10 fixes in order of impact, and the next scan either reads higher in the categories the report named or the report explains which tradeoff was kept on purpose.
 
-The other prices did not move. The Shopify agent storefront check is €1,900 within 48 hours of a written kickoff, advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day. All prices exclude VAT.
+The other prices did not move at the time. When this was published the Shopify agent storefront check was €1,900 within 48 hours of a written kickoff, advisory was €3,000 per month with a three month minimum, and implementation was €1,500 per day. All prices exclude VAT.
 
 The scope is agreed in writing first. I reply by email within one business day.
 
@@ -944,7 +945,7 @@ Corrected 2026-09-03. Three sentences in this post read as if a client had alrea
 
 2026-08-16
 
-A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that internal work.
+A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that work.
 
 I set out to read my own workspace file by file. The idea was that it would take an evening. It took seven days, and it produced 367 findings across nine packages.
 
@@ -1008,7 +1009,7 @@ No. It proves that 367 specific things were read and classified, and that each w
 
 2026-08-04
 
-A passing validation gate missed elements it never expected to see. The investigation shows why checking for required members differs from checking the complete set.
+A passing validation gate missed elements it never expected. The investigation shows why checking required members differs from checking the complete set.
 
 In this post:
 
@@ -1020,7 +1021,7 @@ In this post:
 - About the hostile read
 - What these gates still do not read
 
-I built a gate that checks that the five agent readiness categories are declared the same way on six surfaces. It went green and it stayed green. 79 static checks with no failures, 212 checks against the live site with no failures, and 53 mutation cases across three runners that all reported no holes. Then I had a hostile reader go through the gate itself, and it came back with three holes. All three were one defect in three shapes.
+I built a gate that checks that the five agent-readiness categories are declared the same way on six surfaces. It went green and it stayed green. 79 static checks with no failures, 212 checks against the live site with no failures, and 53 mutation cases across three runners that all reported no holes. Then I had a hostile reader go through the gate itself, and it came back with three holes. All three were one defect in three shapes.
 
 The two posts before this one came at the same thing from other sides. The first was about a check that keeps passing after it has stopped measuring the right thing. The second was about a red reading that turned out to be about my own client rather than the server. This one is neither. The gate measured what it measured correctly, and it was blind by construction to everything it did not measure.
 
@@ -1088,7 +1089,7 @@ The gates watch what they watch. The category set is now compared across six sur
 
 2026-07-30
 
-An MCP request appeared to expose a server regression, but selected the wrong compatibility path. The article records how the request and response were distinguished.
+An MCP request seemed to expose a server regression but selected the wrong compatibility path. The article records how request and response were told apart.
 
 I posted yesterday about checks that keep passing after they have stopped measuring the right thing. The next reading I took was the same defect turned around. A request against my own MCP server came back red, and the red was about my request, sent from a test client I run myself rather than one of turva.dev's clients.
 
@@ -1191,7 +1192,7 @@ The lesson I took from reading three specs this way is narrower than I expected.
 
 2026-07-20
 
-A dated implementation note separates discoverable payment declarations from settlement. The scanner checks changed while the actual settlement boundary stayed in place.
+A dated implementation note separates discoverable payment declarations from settlement. The scanner checks changed, the settlement boundary did not.
 
 Corrected 2026-08-02. The section on the three card links used to present them as an invitation to pay before scope was agreed, which contradicted the terms and the description of the same three links in the OpenAPI spec. The measurements in this post are unchanged.
 
@@ -1236,7 +1237,7 @@ For an agent-readiness audit that reports measured results, contact info@turva.d
 
 2026-07-19
 
-Two separately maintained representations of the same content drifted apart. This build note explains the move towards shared content and the limits of the checks around it.
+Two separately maintained versions of the same content drifted apart. This build note explains the move to shared content and the limits of the checks on it.
 
 Every page of this site lives as a markdown string inside the Worker's source file. For the guides and the blog posts that has always been literal. The Worker renders those pages from the markdown at request time, and a client that asks for text/markdown gets the same string untouched, the same approach the [Serving Markdown to AI clients](/guides/markdown-for-agents) guide describes. Ten pages worked differently. The homepage, the services page, the validator and the other card-style pages were hand-written HTML, and the markdown lived beside them as a twin. Same content, two homes.
 
@@ -1279,7 +1280,7 @@ If you want to check any of this, request any guide or blog post with Accept: te
 
 2026-07-18
 
-A response header advertised a request limit that no code enforced. The investigation distinguishes a published policy, the implementation and what a probe can demonstrate.
+A response header advertised a request limit that no code enforced. The investigation separates a published policy, the code and what a probe can show.
 
 One function in this site's Worker attaches security headers to every response it renders. Until yesterday two of them were RateLimit-Limit: 100 and RateLimit-Policy: "default";q=100;w=60. They went out with the homepage, with all 24 guides, with every markdown twin and with every 404. This site also publishes a guide on response headers for agents, and that guide teaches the RateLimit family on the reasoning that a well-behaved agent reads the declared budget and throttles itself before anyone has to throttle it.
 
@@ -1343,7 +1344,7 @@ If you want your own agent-facing claims read the way a skeptic would read them,
 
 2026-07-15
 
-A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated explicitly.
+A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.
 
 On 9 July 2026 the head of Windows published a post about AI-powered vulnerability discovery. One line in it was a warning to customers: "As AI helps defenders discover more issues, customers will see a higher volume of security updates included in each security release."
 
@@ -1458,7 +1459,7 @@ Agent-readiness works the same way. A site can assert it is ready for AI agents.
 
 2026-07-12
 
-This article discusses ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.
+Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.
 
 Coding agents now run with your shell. They read your files and run your build. They push commits under your name. That is the point of them. It also means every plaintext secret on your disk is readable by the agent, and by every backup or synced folder that copies your working directory. A token in a text file was a small risk when only you could read it. It is a larger one the moment something else is holding the keyboard.
 
@@ -1476,7 +1477,7 @@ Move every secret into storage the operating system encrypts and scopes to your 
 
 Most people still authenticate git with a personal access token pasted into a credentials file. Drop that. Use a credential manager that speaks OAuth, so the token lives in the OS store, refreshes on its own, and never lands in a file you can commit or copy by accident.
 
-One trap to know if you are on Windows and your forge is not GitHub. The common advice is git-credential-oauth with the wincred store. That store writes to Windows Credential Manager, which caps a single entry at 2560 bytes. Some forges issue OAuth tokens well past that, and the write fails with a bare "CredWrite failed" while fetch still works, so nothing looks wrong until you notice every command re-authenticating. Git Credential Manager handles the large token by splitting it across entries and refreshes it silently. If a self-hosted GitLab, Gitea, or Forgejo keeps opening a browser prompt on push, this is usually why.
+One trap to know if you are on Windows and your forge is not GitHub. The common advice is git-credential-oauth with the wincred store. That store writes to Windows Credential Manager, which caps a single entry at 2560 bytes ([CRED_MAX_CREDENTIAL_BLOB_SIZE in the CREDENTIAL structure](https://learn.microsoft.com/en-us/windows/win32/api/wincred/ns-wincred-credentialw)). Some forges issue OAuth tokens well past that, and the write fails with a bare "CredWrite failed" while fetch still works, so nothing looks wrong until you notice every command re-authenticating. Git Credential Manager handles the large token by splitting it across entries and refreshes it silently. If a self-hosted GitLab, Gitea, or Forgejo keeps opening a browser prompt on push, this is usually why.
 
 ## A small vault for everything else
 
@@ -1517,7 +1518,7 @@ Windows Credential Manager caps a single entry at 2560 bytes and some forges iss
 
 2026-07-07
 
-A small, selected sample of sixteen Finnish B2B sites introduced the scan series. Read it as a historical snapshot and follow the later 567-site study for the larger sample.
+A small, selected sample of sixteen Finnish B2B sites introduced the scan series. Read it as a historical snapshot and follow the later 567-site study.
 
 Over the past weeks I ran an independent agent-readiness scanner over sixteen Finnish company websites, mostly industrial and B2B, a few in healthcare. The scanner was isitagentready.com, which grades on a Level 0 to 5 scale. This is a small, non-random sample. The sites came from my own prospecting, not a statistical draw, so read it as a snapshot, not a census. The pattern was consistent enough to be worth writing down.
 
@@ -1569,7 +1570,7 @@ To check where a site stands, the free llms.txt validator is at turva.dev/llms-t
 
 2026-07-06
 
-An optional credential was both declared and denied in the same metadata. The repair made the description consistent without claiming access the credential did not grant.
+An optional credential was both declared and denied in the same metadata. The repair made the description consistent without claiming access it did not grant.
 
 During the line-by-line pass that read every line of this site, one of the smallest surfaces turned into the sharpest question in the audit. This site serves an auth.md file, a plain description of how an agent authenticates here. It said two things that did not sit together. One line read no issued credentials. Another said an API key is issued out of band on request. Both were trying to be honest, and side by side they were a contradiction.
 
@@ -1609,7 +1610,7 @@ For an agent-readiness audit that reads your agent-facing claims the way a skept
 
 A dated review of the guides found that source specifications and local claims had moved. The article records corrections and the limits of automated checks.
 
-The guides on this site describe other people's specifications, and specifications move. A sentence that says "the specification says" is true the day it ships and starts aging the day after, and no scanner will tell you when it has gone stale. So the four AI agents that read this site line by line came back for a second pass, all running Claude Fable 5, each taking one family of standards: the agent commerce stack, MCP discovery, the discovery files from [agents.json](/guides/agents-json) to [llms.txt](/guides/llms-txt), and the plumbing of authentication and response headers.
+The guides on this site describe other people's specifications, and specifications move. A sentence that says "the specification says" is true the day it ships and starts aging the day after, and no scanner will tell you when it has gone stale. So the four AI agents that read this site line by line came back for a second pass, all running Claude Fable 5, each taking one family of standards: the agent commerce stack, MCP discovery, the discovery files from [agents.json](/guides/agents-json) to [llms.txt](/guides/llms-txt), and the plumbing of authentication and response headers. Their job was to re-read every specification claim in those guides against the primary source behind it.
 
 ## What had moved
 
@@ -1968,7 +1969,7 @@ On 1 July 2026 Cloudflare shipped its second Content Independence Day package: c
 
 ## The edge can undo everything the page does right
 
-A site can serve clean markdown, an llms.txt, structured data and signed manifests, and none of it counts if a network rule turns the crawler away before the request reaches the page. Cloudflare says more than 20% of the web sits behind its network, and the new controls ship with per-crawler block toggles and defaults that change over time. This site's own crawler list turned out to contain seven blocked entries, including the Internet Archive and an AI search engine that pays publishers. However they got there, nothing in the markup shows it. You find it in the dashboard, or when your content stops appearing in answers.
+A site can serve clean markdown, an llms.txt, structured data and signed manifests, and none of it counts if a network rule turns the crawler away before the request reaches the page. [Cloudflare states on its own site](https://www.cloudflare.com/what-is-cloudflare/) that about 20% of the web runs through its network, and the new controls ship with per-crawler block toggles and defaults that change over time. This site's own crawler list turned out, on 2 July 2026, to contain seven blocked entries, including the Internet Archive and an AI search engine that pays publishers. However they got there, nothing in the markup shows it. You find it in the dashboard, or when your content stops appearing in answers.
 
 An agent-readiness review therefore has to read the edge configuration next to the content. [robots.txt](/guides/sitemaps-and-robots-for-agents), the WAF and the AI crawler list must say the same thing the content strategy says, and they must keep saying it, because platform defaults move without a deploy.
 
@@ -1980,7 +1981,7 @@ The reading this is meant to price is already routine. Over the past seven days 
 
 ## Payment rails are becoming configuration
 
-The Monetization Gateway waitlist points the same direction: charge for any page, dataset, API or MCP tool behind Cloudflare, settled over the x402 protocol, with no payment stack of your own. Charging an agent moves from an engineering project to a setting. The honesty bar moves with it. An x402 surface that quotes terms no agent can complete gets found out by the first agent that tries, which is why the x402 endpoint on this site answers HTTP 402 with its real terms instead of a pretend checkout.
+The Monetization Gateway waitlist points the same direction: charge for any page, dataset, API or MCP tool behind Cloudflare, settled over the x402 protocol, with no payment stack of your own. Charging an agent moves from an engineering project to a setting. The honesty bar moves with it. An x402 surface that quotes terms no agent can complete gets found out by the first agent that tries, which is why the x402 endpoint on this site, as of 2 July 2026, answers HTTP 402 with its real terms instead of a pretend checkout.
 
 ## What to check this week
 
@@ -2124,7 +2125,7 @@ No. It is content negotiation. The site keeps serving HTML to browsers, and when
 
 2026-06-25
 
-Signed requests can provide evidence about a sender's identity. This dated article distinguishes that evidence from trusting a user-agent string or granting an action.
+Signed requests can give evidence of a sender's identity. This dated article separates that evidence from trusting a user-agent string or granting an action.
 
 This is a snapshot from 25 June 2026, written while Claude has not yet joined the signed list Cloudflare maintains. Read the title as a question about the mechanism, not a claim that Claude carries a verified identity today.
 
@@ -2178,13 +2179,13 @@ Yes. A site that switches on a rule that blocks AI bots can block a request that
 
 2026-06-22
 
-Usable inputs and explicit operating limits matter for agent decisions, alongside model uncertainty. This article explores where control and verification need to sit.
+Usable inputs and explicit operating limits matter for agent decisions, alongside model uncertainty. The article asks where control and verification belong.
 
 In the audits I have run, including this site's own, one thing keeps surfacing. An agent that is instructed well, and given the right settings and checks, can take in data and make the decision the rules call for, consistently. The capability is real, and it is wider than most of the conversation around it. The limits are not always the model. They also sit in two places that are easy to overlook.
 
 ## A decision is only as good as its inputs
 
-The decision an agent reaches is bounded by the data that reaches the agent. In a clean datacenter that is invisible, so it gets ignored. Move the same agent to where the work actually happens and it becomes the whole problem. A link drops as a crane passes over it. A satellite hop adds the better part of a second. Depending on the transport, one lost packet can stall every packet queued behind it, and the agent waits on stale input while the moment it needed to act goes by.
+The decision an agent reaches is bounded by the data that reaches the agent. In a clean datacenter that is invisible, so it gets ignored. Move the same agent to where the work actually happens and it becomes the whole problem. A link drops as a crane passes over it. A satellite hop adds the better part of a second. On a transport that delivers in order, one lost packet can stall every packet queued behind it, and whether it does depends on the transport and the application. The agent waits on stale input while the moment it needed to act goes by.
 
 The agent did not get worse. Its inputs did. Most of the reliability of an autonomous decision lives in the unglamorous layer below the model, where data either arrives in order and on time or it does not. A site or a system that wants an agent to act on live data has to earn that layer first.
 
@@ -2280,8 +2281,8 @@ The edge work in F1 to F7 is about eleven and a half hours. The services page sa
 
 ## Contents
 
-- [Engagement record](#engagement-record)
 - [Summary](#summary)
+- [Engagement record](#engagement-record)
 - [Decisions the company makes](#decisions-the-company-makes)
 - [Fix order and owners](#fix-order-and-owners)
 - [Who does what](#who-does-what)
@@ -2295,6 +2296,7 @@ The edge work in F1 to F7 is about eleven and a half hours. The services page sa
 - [What this report is not](#what-this-report-is-not)
 - [Appendix A. Evidence chains](#appendix-a-evidence-chains)
 - [Appendix B. The questions and the measurement conditions](#appendix-b-the-questions-and-the-measurement-conditions)
+- [About this sample](#about-this-sample)
 
 ## Engagement record
 
@@ -2459,7 +2461,7 @@ Nine findings. Each carries the evidence as read, what it costs the company, the
 
 ### F1. Every product publishes a price of 0 and an availability of InStock, on all three surfaces
 
-**Category.** Structured data. Manual review, not scored.
+**Category.** Structured data. Manual review, not scored. Invented reading for northwind-fasteners.example, like every figure in this sample.
 
 **Evidence.** GET /products/din-933-m12x40-a2/ on 2026-09-03 returns a JSON-LD Product node with "price": "0.00", "priceCurrency": "EUR" and "availability": "https://schema.org/InStock". The visible page shows 0,42 EUR per piece, VAT 0 %, and a lead time of six weeks. The same node shape appears on all 138 product pages, read by fetching both pages of /wp-json/wc/store/v1/products, following every product URL and reading the price field of each. The API returns prices.price as an empty string and is_purchasable true for every product, and its stock_status field is instock for 90 products, onbackorder for 41 and outofstock for 7. The 19 products that come in several thread lengths show a price per variant on the page and publish one Product node with one price for all of them. The 12 products sold by the box of 100 show the box price on the page and publish it in JSON-LD as if it were the price of one piece.
 
@@ -2482,7 +2484,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 ### F2. Serve markdown next to HTML
 
-**Category.** Content accessibility. Scored check markdownNegotiation.
+**Category.** Content accessibility. Scored check markdownNegotiation. Invented reading for northwind-fasteners.example, like every figure in this sample.
 
 **Evidence.** GET / with Accept: text/markdown on 2026-09-03 returns Content-Type text/html and a 212 kB body. The same request to /products/ and to a product page returns HTML of 340 kB and 188 kB. No .md address exists for any page. The markdown form of the home page, produced from the same HTML on 2026-09-03, is 9 kB.
 
@@ -2506,7 +2508,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 ### F3. Publish llms.txt and announce it in the Link header
 
-**Category.** Discoverability. Scored check linkHeaders.
+**Category.** Discoverability. Scored check linkHeaders. Invented reading for northwind-fasteners.example, like every figure in this sample.
 
 **Evidence.** GET /llms.txt on 2026-09-03 returns the HTML 404 page with status 200. No response on the site carries a Link header. GET /.well-known/security.txt returns the same soft 404.
 
@@ -2522,7 +2524,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 ### F4. The sitemap lists two template pages and misses the catalog
 
-**Category.** Discoverability. Manual review, not scored. The sitemap check passes and stays green.
+**Category.** Discoverability. Manual review, not scored. The sitemap check passes and stays green. Invented reading for northwind-fasteners.example, like every figure in this sample.
 
 **Evidence.** GET /sitemap.xml on 2026-09-03 lists 14 URLs: the front page, eleven content pages and two CMS template pages titled Sample Page and Privacy Policy Draft. None of the 138 product URLs is in it. robots.txt carries no Sitemap line.
 
@@ -2538,7 +2540,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 ### F5. Name the AI crawlers and declare Content Signals in robots.txt
 
-**Category.** Bot access control. Scored checks robotsTxtAiRules and contentSignals.
+**Category.** Bot access control. Scored checks robotsTxtAiRules and contentSignals. Invented reading for northwind-fasteners.example, like every figure in this sample.
 
 **Evidence.** /robots.txt on 2026-09-03 is the CMS default: User-agent: *, Disallow: /wp-admin/, Allow: /wp-admin/admin-ajax.php. No AI crawler is named and no Content-Signal line exists.
 
@@ -2554,7 +2556,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 ### F6. Tell agents that the REST API exists
 
-**Category.** API, auth, MCP and A2A. Scored check apiCatalog.
+**Category.** API, auth, MCP and A2A. Scored check apiCatalog. Invented reading for northwind-fasteners.example, like every figure in this sample.
 
 **Evidence.** The site runs a public read-only REST API at /wp-json/ with the product catalog behind it at /wp-json/wc/store/v1/products, and no discovery file names it. GET /.well-known/api-catalog on 2026-09-03 returns the HTML 404 page with status 200, as does every path under /.well-known/. The scanner reads apiCatalog as failing along with the eight other checks in the category. Appendix A, chain 3, carries the request and the response.
 
@@ -2570,7 +2572,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 ### F7. Publish a DNS-AID record once the discovery files exist
 
-**Category.** Discoverability. Scored check dnsAid.
+**Category.** Discoverability. Scored check dnsAid. Invented reading for northwind-fasteners.example, like every figure in this sample.
 
 **Evidence.** No _index._agents record exists under northwind-fasteners.example, and DNSSEC is not enabled at the registrar, which internet.nl also reports.
 
@@ -2588,7 +2590,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 ### F8. Declare no agent commerce surface until a checkout can back it
 
-**Category.** Commerce. Scored checks x402, mpp, ucp, acp and ap2.
+**Category.** Commerce. Scored checks x402, mpp, ucp, acp and ap2. Invented reading for northwind-fasteners.example, like every figure in this sample.
 
 **Evidence.** The store checks out through a browser form with a card payment page. None of the five agent commerce surfaces the scanner reads is declared: an x402 payment challenge, an MPP payment discovery document, a UCP profile, an ACP discovery document or an AP2 declaration. All five commerce checks read FAIL.
 
@@ -2604,7 +2606,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 ### F9. The old address is still published in two places and the current one in none an agent reads
 
-**Category.** Correctness of published facts. Manual review, not scored, raised by the AI run.
+**Category.** Correctness of published facts. Manual review, not scored, raised by the AI run. Invented reading for northwind-fasteners.example, like every figure in this sample.
 
 **Evidence.** Two of the twelve by-name answers on 2026-09-04 gave the Tampere address the company left in 2023. Assistant A cited a business directory listing that still carries it. Assistant C cited /wp-content/uploads/2022/hinnasto-2022.pdf, a 2022 price list on the company's own site with the old address on its cover, linked from no page and indexed by two search engines. The site's Organization node carries no address, and the current address appears only as text on the contact page.
 
@@ -2714,15 +2716,17 @@ Nothing was paid, ordered or signed in. No customer detail was entered.
 
 ## Contents
 
-- [Engagement record](#engagement-record)
 - [Decision](#decision)
+- [Engagement record](#engagement-record)
 - [Three-surface map](#three-surface-map)
 - [Product truth matrix](#product-truth-matrix)
 - [Buyer-journey evidence](#buyer-journey-evidence)
 - [Correction plan](#correction-plan), C1 to C3
+- [Configuration changes the check does not recommend](#configuration-changes-the-check-does-not-recommend)
 - [Limits and what stays unresolved](#limits-and-what-stays-unresolved)
 - [Retest](#retest)
 - [What this report is not](#what-this-report-is-not)
+- [About this sample](#about-this-sample)
 
 ## Engagement record
 
@@ -2795,7 +2799,7 @@ Up to five specific changes, each with its owner and an acceptance check the mer
 
 **What a buyer sees today.** An agent that reads the store through the Storefront or UCP MCP quotes the blue Trail Bottle at 31,90 EUR, two euros above the storefront and the browser tools, and a remote cart is built at that price.
 
-**Owner.** Shopify Markets and product data, on the merchant's side.
+**Owner.** Shopify Markets and product data, on the merchant's side. Invented finding for northstar-outdoor.example, like every figure in this sample.
 
 **Change.** Verify that the Finland market price list is published to the remote catalog and republish it. If the remote surface reads a default price list instead of the market list, the market assignment is the fix, not the product price.
 
@@ -2805,7 +2809,7 @@ Up to five specific changes, each with its owner and an acceptance check the mer
 
 **What a buyer sees today.** The M size of the Merino Base Layer is in stock and sellable on every surface except the Agentic Catalog preview, so an AI channel that reads the catalog can leave the sellable size out.
 
-**Owner.** Agentic storefront settings and catalog mapping, on the merchant's side.
+**Owner.** Agentic storefront settings and catalog mapping, on the merchant's side. Invented finding for northstar-outdoor.example, like every figure in this sample.
 
 **Change.** Set the variant's eligibility in the Catalog settings and republish the mapping.
 
@@ -2815,7 +2819,7 @@ Up to five specific changes, each with its owner and an acceptance check the mer
 
 **What a buyer sees today.** Nothing yet. This change keeps C1 and C2 from coming back, because the same difference returns with the next price list, market or theme change.
 
-**Owner.** E-commerce operations, on the merchant's side.
+**Owner.** E-commerce operations, on the merchant's side. Invented finding for northstar-outdoor.example, like every figure in this sample.
 
 **Change.** Keep the three products of this check as fixtures and read them on all three surfaces after every relevant publish. The tool calls in the buyer-journey table are the script.
 
@@ -2855,8 +2859,6 @@ Commerce discovery describes the interfaces and payment-related capabilities a s
 
 Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Four machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration, an ACP discovery document, and a UCP profile. Each answers a different question, and an agent reads them before it sends a single commerce request.
 
-## Protocol roles at a glance
-
 | Protocol | Where it lives | What it declares | Question it answers |
 | --- | --- | --- | --- |
 | A2A | /.well-known/agent-card.json | Agent interfaces and skills | Can I talk to this agent? |
@@ -2886,7 +2888,7 @@ The discovery document is small and strict. It states the protocol name acp and 
 
 A discovery check usually reads only the document, not the checkout endpoint behind it. That makes it tempting to declare a service the site does not implement, because the check passes either way. An agent that trusts the document and calls the checkout URL would then reach nothing.
 
-## A minimal honest checkout
+### A minimal honest checkout
 
 A checkout endpoint does not have to support instant payment to be real. The ACP checkout session carries a status field, and one of its values is not_ready_for_payment. A site that sells through a written quote can create a genuine session, return it in that state, and attach a message that the engagement is confirmed in writing first. The agent receives a well-formed session that reflects how the business actually works, and the discovery claim holds because the endpoint behind it answers.
 
@@ -3158,6 +3160,7 @@ What you get:
 - An independent scanner runs against the site or API, and every check it runs is recorded one by one rather than as one headline number
 - Manual review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers
 - Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms
+- Your published web security scans read alongside the agent checks, so the report rests on measurements you can re-run yourself
 - A documented question set put to several AI assistants, recording what they answer about the site or API today and whether they name it when asked about its category rather than by name
 - Written report with findings prioritised by their impact on users and agent behaviour, with implementation effort and scanner effects recorded separately
 - A fix instruction for every finding, and a link to the guide on this site for that surface where there is one, so your team can do the work without buying implementation
@@ -3294,11 +3297,11 @@ Sites that complete an audit, or score 100/100 on the named public agent-readine
 
 ## Frequently asked
 
-**What is an agent readiness audit?**
+**What is an agent-readiness audit?**
 
-An agent readiness audit measures how well AI agents can discover, read, and act on your website or API. It reads the website and its APIs, not the organisation's readiness to adopt AI agents, which many consultancies describe with the same words. turva.dev runs an independent scanner, isitagentready.com, reviews the agent-facing surfaces manually, records how AI assistants currently answer a documented question set about the site, and delivers a written report with findings prioritised by their impact on users and agent behaviour, with implementation effort and scanner effects recorded separately.
+An agent-readiness audit measures how well AI agents can discover, read, and act on your website or API. It reads the website and its APIs, not the organisation's readiness to adopt AI agents, which many consultancies describe with the same words. turva.dev runs an independent scanner, isitagentready.com, reviews the agent-facing surfaces manually, records how AI assistants currently answer a documented question set about the site, and delivers a written report with findings prioritised by their impact on users and agent behaviour, with implementation effort and scanner effects recorded separately.
 
-**What does an agent readiness audit cost?**
+**What does an agent-readiness audit cost?**
 
 The Shopify agent storefront check is €999, fixed scope, delivered within 48 hours of the agreed written kickoff. The audit is €4,300, fixed scope, delivered in two weeks. Ongoing advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. Implementing exactly what a diagnosis lists is a fixed €499, bought together with that diagnosis. All prices exclude VAT. Agent operations and MCP server design engagements are priced on request.
 
@@ -3898,7 +3901,7 @@ Finding a card is not the same as confirming the server works. A card can exist 
 
 ## How it fits with other discovery files
 
-A server card sits in the same family as other well known manifests a client looks for, such as an API catalog, an OpenAPI description and OAuth discovery. Each one removes a guess. The card answers what tools a server might expose, the API catalog answers what endpoints exist, and OAuth discovery answers how to authenticate. turva.dev publishes a server card that points to a read-only MCP server, which exposes the same agent-readiness data that the site shows to people, so a client can query the data directly rather than scraping a page.
+A server card sits in the same family as other well-known manifests a client looks for, such as an API catalog, an OpenAPI description and OAuth discovery. Each one removes a guess. The card answers what tools a server might expose, the API catalog answers what endpoints exist, and OAuth discovery answers how to authenticate. turva.dev publishes a server card that points to a read-only MCP server, which exposes the same agent-readiness data that the site shows to people, so a client can query the data directly rather than scraping a page.
 
 ## Practical steps
 
@@ -4060,6 +4063,8 @@ A Vary header that includes Accept. It is what keeps the negotiation reliable wh
 
 SEO, AI-answer visibility and technical agent access overlap, but they answer different questions. Use the measurement that matches the outcome you want to improve.
 
+## Two disciplines, two readers
+
 SEO is a wider discipline than keywords and backlinks. It covers indexing, crawlability, site structure and relevance to the query a person types, and ranking on a results page is the outcome that gets measured. Agent-readiness is built around a different set of surfaces: llms.txt, structured data, response headers and well-known manifests, where an agent is the reader and the page may never be seen by a person at all. A site can rank well on Google and still be opaque to an agent, and a site can be highly legible to agents while ranking modestly in classic search.
 
 ## Four outcomes, four measurements
@@ -4072,6 +4077,8 @@ The terms above blur together because people use one word, visibility, for four 
 | Search match | The page ranks for a query a person typed | Position on a results page |
 | Source citation | An AI answer names the page as its source | Whether an assistant's answer links back to it |
 | API action | An agent calls an endpoint to do something | Whether the call resolves and returns a usable result |
+
+## Where Google's AI features fit
 
 Indexing and search match are the classic SEO pair, and they are the input Google's own AI search features build on. Google states that its generative features in Search are rooted in the same core ranking and quality systems, so a page that indexes and ranks well feeds directly into AI Overviews and similar results inside Google Search. That connection does not extend to source citation from an assistant that retrieves outside a search index, which depends on whether the model can read the content cleanly and corroborate it elsewhere, and it does not extend to API action at all, which depends on machine-readable surfaces classic SEO never touched.
 
@@ -4121,7 +4128,7 @@ The opposite failure is data that parses and is wrong. A product page that publi
 
 ## Validation
 
-Three separate questions get asked here, and each has its own answer. Syntax validity asks whether the JSON-LD parses as the declared type with the required fields present, and a validator answers that from the markup alone. Semantic correctness asks whether the values in that valid structure match the page a person sees and the system that feeds it, and a validator cannot answer that, a person has to compare the two. AI source selection asks whether an assistant picks this page as the source for an answer at all, which depends on the assistant, the query and the moment, and neither syntax nor semantic correctness settles it on its own. A guide's own sample report shows a case where a price of 0 passed every syntax check and one assistant then cited it as the reason the whole catalog was free, in the [sample audit report, finding F1](/samples/audit-report).
+Three separate questions get asked here, and each has its own answer. Syntax validity asks whether the JSON-LD parses as the declared type with the required fields present, and a validator answers that from the markup alone. Semantic correctness asks whether the values in that valid structure match the page a person sees and the system that feeds it, and a validator cannot answer that, a person has to compare the two. AI source selection asks whether an assistant picks this page as the source for an answer at all, which depends on the assistant, the query and the moment, and neither syntax nor semantic correctness settles it on its own. A guide's own sample report shows a case where a price of 0 passed every syntax check and one assistant then cited it as the reason the whole catalog was free, in the [sample audit report, finding F1](/samples/audit-report#f1-every-product-publishes-a-price-of-0-and-an-availability-of-instock-on-all-three-surfaces).
 
 ## Limits
 
@@ -4166,22 +4173,23 @@ The /.well-known directory is a standard place at the root of a site where clien
 | /.well-known/oauth-authorization-server | Describes how a client authenticates | OAuth discovery, RFC 8414 |
 | /.well-known/security.txt | States where to report a security problem | RFC 9116 |
 | /.well-known/mcp/server-card.json | Describes an MCP server and how to reach it | Deployed convention, not yet standardised |
+| /.well-known/x402, /.well-known/mpp, /.well-known/ap2 | Payment and agent-payment manifests: how an agent is quoted and how it pays | x402, MPP and AP2, deployed conventions |
 
 ## What each file establishes
 
-An API catalog at a well known path, defined by RFC 9727, lets a client enumerate a site's public APIs from a single URL. OAuth metadata describes how to authenticate, under its own long established RFC. security.txt says where to report a problem, also under its own RFC. Each of these three has a fixed specification behind it, so a client that supports the standard can rely on the path staying put.
+An API catalog at a well-known path, defined by RFC 9727, lets a client enumerate a site's public APIs from a single URL. OAuth metadata describes how to authenticate, under its own long-established RFC. security.txt says where to report a problem, also under its own RFC. Each of these three has a fixed specification behind it, so a client that supports the standard can rely on the path staying put.
 
 ## Where MCP discovery still moves
 
-A server card describes an MCP server and how to reach it, but this one is not yet settled the way the three above are. Deployed cards, turva.dev's among them, sit at /.well-known/mcp/server-card.json. The experimental Server Card specification instead reserves the MCP endpoint URL followed by /server-card as its default, and expects a client to follow the URL a site's own catalog gives rather than assume a fixed well known path. Treat the MCP card path as a deployed convention, not as a ratified standard on the same footing as RFC 9727 or OAuth discovery.
+A server card describes an MCP server and how to reach it, but this one is not yet settled the way the three above are. Deployed cards, turva.dev's among them, sit at /.well-known/mcp/server-card.json. The experimental Server Card specification instead reserves the MCP endpoint URL followed by /server-card as its default, and expects a client to follow the URL a site's own catalog gives rather than assume a fixed well-known path. Treat the MCP card path as a deployed convention, not as a ratified standard on the same footing as RFC 9727 or OAuth discovery.
 
 ## Why lookup beats crawling
 
-The value of a well known path is that discovery becomes a lookup rather than a search. A client that knows the convention can ask one predictable question and get a map, which is faster and more reliable than inferring structure from rendered HTML. A site that publishes a well known surface is announcing its capabilities in a form clients already know how to parse.
+The value of a well-known path is that discovery becomes a lookup rather than a search. A client that knows the convention can ask one predictable question and get a map, which is faster and more reliable than inferring structure from rendered HTML. A site that publishes a well-known surface is announcing its capabilities in a form clients already know how to parse.
 
 ## What a missing directory means
 
-A missing or thin well known directory does not break a site for people, and it does not mean every client will abandon the site outright. It does mean a client that relies on lookup rather than crawling has to fall back to guessing or skip the site, so the practical effect depends on which clients the site cares about and how those clients behave when a lookup fails. turva.dev publishes an API catalog, a server card, OAuth metadata, payment manifests and a security contact under /.well-known.
+A missing or thin well-known directory does not break a site for people, and it does not mean every client will abandon the site outright. It does mean a client that relies on lookup rather than crawling has to fall back to guessing or skip the site, so the practical effect depends on which clients the site cares about and how those clients behave when a lookup fails. turva.dev publishes an API catalog, a server card, OAuth metadata, payment manifests and a security contact under /.well-known.
 
 ## Frequently asked
 
@@ -4191,7 +4199,7 @@ The /.well-known directory is a standard place at the root of a site where clien
 
 **What files do agents look for under /.well-known?**
 
-An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment and agent-payment manifests, and a security contact. The MCP card is the one whose home is still moving: deployed cards use /.well-known/mcp/server-card.json, while the experimental specification defaults to the MCP endpoint URL plus /server-card and does not recommend a well known path for the card itself.
+An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment and agent-payment manifests, and a security contact. The MCP card is the one whose home is still moving: deployed cards use /.well-known/mcp/server-card.json, while the experimental specification defaults to the MCP endpoint URL plus /server-card and does not recommend a well-known path for the card itself.
 
 **Why do clients use the well-known directory instead of crawling pages?**
 
@@ -4212,7 +4220,7 @@ Agentic Resource Discovery, or ARD, is an open specification for telling AI agen
 
 ## What the manifest contains
 
-A site advertises its agentic resources by serving a static JSON manifest under /.well-known. ARD v0.91, published 26 August 2026, names the file /.well-known/ard.json and the link relation ard, and a conformant client reads that path. The predecessor path /.well-known/ai-catalog.json and the relation ai-catalog are optional for a client, so a site that serves only the old path may not be found by a client that follows the current revision.
+A site advertises its agentic resources by serving a static JSON manifest under /.well-known. ARD v0.91, published 26 August 2026, names the file /.well-known/ard.json and the link relation ard, and says a conformant client MUST read that path. The predecessor path /.well-known/ai-catalog.json and the relation ai-catalog are ones a client MAY also consult, so a site that serves only the old path may not be found by a client that follows the current revision.
 
 The manifest itself is a small envelope with a specVersion, a host block that names the operator, and an entries array. Each entry describes one resource with a stable identifier, a display name, a type, a url and a short description. A resource can be an MCP server, an A2A agent, an API or a skill set. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
 
@@ -4246,7 +4254,7 @@ No. ARD is a discovery layer for AI agents, not a search file. It indexes the re
 
 **Where does an ai-catalog.json live?**
 
-Under ARD v0.91 at /.well-known/ard.json, announced with a link rel="ard" in the page head. A conformant client reads that path and may also consult the predecessor /.well-known/ai-catalog.json. Serve ard.json, and keep ai-catalog.json while clients and scanners still read it. Agents and registries read the resources a site offers from that path instead of inferring them from its pages.
+Under ARD v0.91 at /.well-known/ard.json, announced with a link rel="ard" in the page head. The draft says a conformant client MUST read that path and MAY also consult the predecessor /.well-known/ai-catalog.json. Serve ard.json, and keep ai-catalog.json while clients and scanners still read it. Agents and registries read the resources a site offers from that path instead of inferring them from its pages.
 
 ## Related
 
@@ -4440,7 +4448,7 @@ Yes. robots.txt can name AI crawlers explicitly rather than treating every clien
 
 A markdown representation can make published content easier for text-based clients to consume. Keep its facts and links aligned with the HTML page.
 
-An HTML page carries markup, scripts and layout that a browser needs and a text based client does not. A client that reads the raw HTML pays for all of that structure before it reaches the words. Serving a markdown form of the same page at the same address removes that overhead without changing what the page says. The words stay the same.
+An HTML page carries markup, scripts and layout that a browser needs and a text-based client does not. A client that reads the raw HTML pays for all of that structure before it reaches the words. Serving a markdown form of the same page at the same address removes that overhead without changing what the page says. The words stay the same.
 
 ## Negotiation
 
@@ -4552,7 +4560,7 @@ The two fixed-scope diagnoses on the [services page](/services) are the website 
 
 ## Follow-up checks
 
-The audit and the Shopify check both include a retest window. The Shopify check includes a retest of up to two corrected items within 14 days of delivery. Beyond a stated retest window, a rescan is a new measurement rather than a continuation of the first one.
+The audit and the Shopify check both include a retest window, and the windows differ. The audit includes one re-scan after the fixes, within 30 days of the report. The Shopify check includes a retest of up to two corrected items within 14 days of delivery. Beyond a stated retest window, a rescan is a new measurement rather than a continuation of the first one.
 
 ## Frequently asked
 
@@ -4758,17 +4766,17 @@ Input: an API, a feed or a system state read on a schedule or as events arrive. 
 
 Input: the same data an expert would use, made available to the agent in the moment. Action: the agent guides a person doing physical work and answers questions from that data. Limit: the agent extends the expert's reach rather than replacing the person at the far end, and a case outside its data returns to a human.
 
-## Operations under bad connectivity
+### Operations under bad connectivity
 
 Input: telemetry from a remote system over a link that drops intermittently. Action: the agent holds the last safe state and resumes operation when data returns. Limit: how long the agent may act on stale state before it must pause depends on the transport and on how the application treats data that has gone stale, and that limit has to be set by whoever builds the system, not inferred by the agent.
+
+### Autonomy at the edge
+
+Input: a local sensor or system reading, with no round trip to a person available in time. Action: the agent makes a time-critical call using rules agreed in advance. Limit: the rules are fixed before the fact, not decided by the agent in the moment, because there is no one available to ask.
 
 ## Back-office and data work
 
 Input: records read across two or more systems that should match. Action: the agent reconciles the records, flags what does not match, and routes the rest for processing. Limit: the agent does not resolve a mismatch on its own. Every flagged case goes to a person with a trail of what was compared.
-
-## Autonomy at the edge
-
-Input: a local sensor or system reading, with no round trip to a person available in time. Action: the agent makes a time-critical call using rules agreed in advance. Limit: the rules are fixed before the fact, not decided by the agent in the moment, because there is no one available to ask.
 
 ## The common thread
 
@@ -5138,7 +5146,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.138.0",
+    "version": "3.139.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5405,7 +5413,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.138.0",
+  "version": "3.139.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6094,7 +6102,7 @@ var META_BY_PATH = {
   },
   "/blog/two-auth-md-dialects": {
     title: "Two files called auth.md, and they disagree on the field names · turva.dev",
-    description: "Two different auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.",
+    description: "Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.",
     date: "2026-09-04",
     kind: "Protocol notes",
     image: "/og-two-auth-md-dialects.jpg",
@@ -6102,7 +6110,7 @@ var META_BY_PATH = {
   },
   "/blog/thirty-days-after-the-brief": {
     title: "Thirty-day follow-up: 201 comparable readings from 210 sites · turva.dev",
-    description: "A 210-site follow-up cohort produced 201 comparable readings. Four changed level. the observations do not establish an effect from the unsolicited briefs.",
+    description: "A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.",
     date: "2026-09-03",
     kind: "Research",
     modified: "2026-09-04",
@@ -6111,7 +6119,7 @@ var META_BY_PATH = {
   },
   "/blog/what-ai-assistants-call-an-agent-readiness-audit": {
     title: "What four AI assistants call an agent readiness audit · turva.dev",
-    description: "Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit terminology can refer to websites or organisational AI adoption.",
+    description: "Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organisational AI adoption.",
     date: "2026-09-03",
     kind: "Research",
     modified: "2026-09-04",
@@ -6120,7 +6128,7 @@ var META_BY_PATH = {
   },
   "/blog/website-agent-readiness-567-sites": {
     title: "Website agent readiness, measured on 567 company sites · turva.dev",
-    description: "One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, with the changing check set recorded as a limitation.",
+    description: "One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.",
     date: "2026-09-03",
     kind: "Research",
     image: "/og-website-agent-readiness-567-sites.jpg",
@@ -6153,7 +6161,7 @@ var META_BY_PATH = {
   },
   "/blog/i-thought-it-was-a-small-job": {
     title: "I thought it was a small job · turva.dev",
-    description: "A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that internal work.",
+    description: "A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that work.",
     date: "2026-08-16",
     kind: "Build notes",
     image: "/og-i-thought-it-was-a-small-job.jpg",
@@ -6161,7 +6169,7 @@ var META_BY_PATH = {
   },
   "/blog/my-gate-could-not-see-a-sixth": {
     title: "My gate could not see a sixth · turva.dev",
-    description: "A passing validation gate missed elements it never expected to see. The investigation shows why checking for required members differs from checking the complete set.",
+    description: "A passing validation gate missed elements it never expected. The investigation shows why checking required members differs from checking the complete set.",
     date: "2026-08-04",
     kind: "Build notes",
     image: "/og-my-gate-could-not-see-a-sixth.jpg",
@@ -6169,7 +6177,7 @@ var META_BY_PATH = {
   },
   "/blog/red-reading-that-measured-my-own-client": {
     title: "A red reading that measured my own client · turva.dev",
-    description: "An MCP request appeared to expose a server regression, but selected the wrong compatibility path. The article records how the request and response were distinguished.",
+    description: "An MCP request seemed to expose a server regression but selected the wrong compatibility path. The article records how request and response were told apart.",
     date: "2026-07-30",
     kind: "Build notes",
     image: "/og-red-reading-that-measured-my-own-client.jpg",
@@ -6185,7 +6193,7 @@ var META_BY_PATH = {
   },
   "/blog/finishing-the-optional-commerce-checks": {
     title: "Finishing the optional commerce checks · turva.dev",
-    description: "A dated implementation note separates discoverable payment declarations from settlement. The scanner checks changed while the actual settlement boundary stayed in place.",
+    description: "A dated implementation note separates discoverable payment declarations from settlement. The scanner checks changed, the settlement boundary did not.",
     date: "2026-07-20",
     kind: "Build notes",
     modified: "2026-08-02",
@@ -6194,7 +6202,7 @@ var META_BY_PATH = {
   },
   "/blog/the-twin-is-the-page": {
     title: "The twin is the page · turva.dev",
-    description: "Two separately maintained representations of the same content drifted apart. This build note explains the move towards shared content and the limits of the checks around it.",
+    description: "Two separately maintained versions of the same content drifted apart. This build note explains the move to shared content and the limits of the checks on it.",
     date: "2026-07-19",
     kind: "Build notes",
     image: "/og-the-twin-is-the-page.jpg",
@@ -6202,15 +6210,15 @@ var META_BY_PATH = {
   },
   "/blog/enforcing-the-rate-limit-i-advertised": {
     title: "Every response promised a rate limit · turva.dev",
-    description: "A response header advertised a request limit that no code enforced. The investigation distinguishes a published policy, the implementation and what a probe can demonstrate.",
+    description: "A response header advertised a request limit that no code enforced. The investigation separates a published policy, the code and what a probe can show.",
     date: "2026-07-18",
     kind: "Build notes",
     image: "/og-enforcing-the-rate-limit-i-advertised.jpg",
     imageAlt: "Every response promised a rate limit. Nothing enforced it."
   },
   "/blog/measuring-the-ai-patch-surge": {
-    title: "Measuring the AI patch surge: Microsoft's July package · turva.dev",
-    description: "A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated explicitly.",
+    title: "Microsoft said the patches would get bigger. I measured how much bigger. · turva.dev",
+    description: "A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.",
     date: "2026-07-15",
     kind: "Research",
     modified: "2026-07-17",
@@ -6219,15 +6227,15 @@ var META_BY_PATH = {
   },
   "/blog/agent-secret-hygiene": {
     title: "Reducing secret exposure in coding-agent workflows · turva.dev",
-    description: "This article discusses ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.",
+    description: "Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.",
     date: "2026-07-12",
     kind: "Build notes",
     image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
   },
   "/blog/agent-readiness-finnish-b2b": {
-    title: "Agent-readiness of Finnish B2B sites · turva.dev",
-    description: "A small, selected sample of sixteen Finnish B2B sites introduced the scan series. Read it as a historical snapshot and follow the later 567-site study for the larger sample.",
+    title: "How agent-ready are Finnish B2B sites? I scanned sixteen · turva.dev",
+    description: "A small, selected sample of sixteen Finnish B2B sites introduced the scan series. Read it as a historical snapshot and follow the later 567-site study.",
     date: "2026-07-07",
     kind: "Research",
     modified: "2026-07-17",
@@ -6236,7 +6244,7 @@ var META_BY_PATH = {
   },
   "/blog/honesty-and-the-checker": {
     title: "When honesty and the checker disagree · turva.dev",
-    description: "An optional credential was both declared and denied in the same metadata. The repair made the description consistent without claiming access the credential did not grant.",
+    description: "An optional credential was both declared and denied in the same metadata. The repair made the description consistent without claiming access it did not grant.",
     date: "2026-07-06",
     kind: "Build notes",
     image: "/og-honesty-and-the-checker.jpg",
@@ -6279,7 +6287,7 @@ var META_BY_PATH = {
   },
   "/tools": {
     title: "Free agent-readiness tools · turva.dev",
-    description: "Check an llms.txt file, read the public MCP server or use the agent-ready badge. Free, no signup, and each page says what its result does and does not establish.",
+    description: "Check an llms.txt file, read the public MCP server or use the agent-ready badge. Free, no signup. Each page says what its result does and does not establish.",
     image: "/og-tools.jpg",
     imageAlt: "turva.dev tools card: the free llms.txt validator, the agent-ready badge and the public MCP server, each usable by a person or by an agent."
   },
@@ -6291,7 +6299,7 @@ var META_BY_PATH = {
   },
   "/badge": {
     title: "Agent-ready badge: criteria and embed code · turva.dev",
-    description: "A self-declared badge for sites that meet public eligibility criteria: a turva.dev audit or 100/100 on the named public scanner. Not a certification. Criteria and embed code.",
+    description: "A self-declared badge for sites meeting public criteria: a turva.dev audit or 100/100 on the named public scanner. Not a certification. Criteria and embed code.",
     image: "/og-badge.jpg",
     imageAlt: "turva.dev badge card: the embeddable agent-ready badge, a self-declared claim against public criteria that anyone can re-check by running the same scanner."
   },
@@ -6341,7 +6349,7 @@ var META_BY_PATH = {
   },
   "/blog/verifiable-agent-identity": {
     title: "When an agent can prove it is Claude · turva.dev",
-    description: "Signed requests can provide evidence about a sender's identity. This dated article distinguishes that evidence from trusting a user-agent string or granting an action.",
+    description: "Signed requests can give evidence of a sender's identity. This dated article separates that evidence from trusting a user-agent string or granting an action.",
     date: "2026-06-25",
     kind: "Protocol notes",
     image: "/og-verifiable-agent-identity.jpg",
@@ -6361,7 +6369,7 @@ var META_BY_PATH = {
   },
   "/blog/reliable-agent-decisions": {
     title: "What makes an AI agent's decisions reliable · turva.dev",
-    description: "Usable inputs and explicit operating limits matter for agent decisions, alongside model uncertainty. This article explores where control and verification need to sit.",
+    description: "Usable inputs and explicit operating limits matter for agent decisions, alongside model uncertainty. The article asks where control and verification belong.",
     date: "2026-06-22",
     kind: "Protocol notes",
     image: "/og-reliable-agent-decisions.jpg",
@@ -6384,7 +6392,7 @@ var META_BY_PATH = {
     imageAlt: "turva.dev blog card: The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop."
   },
   "/": {
-    title: "Agent-readiness audits for websites, APIs & Shopify | turva.dev",
+    title: "Agent-readiness audits for websites, APIs and Shopify · turva.dev",
     description: "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.",
     imageAlt: "turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com"
   },
@@ -6426,7 +6434,7 @@ var META_BY_PATH = {
   },
   "/legal": {
     title: "Terms, privacy and data handling · turva.dev",
-    description: "The terms for working with turva.dev, how information is handled and where to send a privacy request. Finnish law applies. No tracking, no analytics, no third-party scripts.",
+    description: "Terms for working with turva.dev, how information is handled and where to send a privacy request. Finnish law applies. No tracking or third-party scripts.",
     image: "/og-legal.jpg",
     imageAlt: "turva.dev legal card: terms, privacy and GDPR in plain language, Finnish law, no tracking and no cookies."
   },
@@ -6965,6 +6973,22 @@ function serveMarkdown(body, canonicalUrl) {
   return new Response(body, { status: 200, headers });
 }
 
+function stripTags(s) {
+  // Drops every <...> run by index scan instead of a tag regex, so nothing that looks like
+  // a tag survives one pass (CodeQL js/incomplete-multi-character-sanitization, alerts #10
+  // and #11, 2026-09-06). Input is our own rendered HTML; an unterminated "<" drops the tail.
+  let out = "";
+  let i = 0;
+  while (i < s.length) {
+    const lt = s.indexOf("<", i);
+    if (lt < 0) { out += s.slice(i); break; }
+    out += s.slice(i, lt);
+    const gt = s.indexOf(">", lt + 1);
+    if (gt < 0) break;
+    i = gt + 1;
+  }
+  return out.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
 function escapeHtml(s) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
@@ -7055,7 +7079,7 @@ function markdownToHtml(md) {
       // columns stacks into one named card per row below 640 px, so no cell is hidden and
       // the document never scrolls sideways. Wider tables keep the scroll box.
       const headCells = cells(tl[0]);
-      const labels = headCells.map((c) => c.replace(/<[^>]+>/g, "").replace(/"/g, "&quot;"));
+      const labels = headCells.map((c) => stripTags(c).replace(/"/g, "&quot;"));
       const head = headCells.map((c) => `<th>${c}</th>`).join("");
       const rows = tl.slice(2).filter((l) => l.startsWith("|")).map((l) => `<tr>${cells(l).map((c, i) => `<td data-label="${labels[i] || ""}">${c}</td>`).join("")}</tr>`).join("");
       const tableHtml = (cls) => `<table class="cols-${headCells.length}${cls}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
@@ -7328,11 +7352,14 @@ function mdLists(path, heading) {
 function mdSlug(text) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
-function mdSecBodyHtml(path, heading) {
+function mdSecBodyHtml(path, heading, listOnly) {
   // Like mdPcard's body: an opening **price. meta.** block becomes the price line, a
   // "Label:" block followed by "- items" becomes a labelled checklist, and everything
   // else is markdown. Continuation lines of a list item (indented) join the item.
-  const blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.replace(/\s+$/, "")).filter(Boolean);
+  // listOnly: the paragraphs are rendered elsewhere in the same section (the /contact
+  // Signal block, kierros 4 E-01: the twin says it once, the HTML said it twice).
+  const blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.replace(/\s+$/, "")).filter(Boolean)
+    .filter((b) => !listOnly || b.trim().startsWith("- "));
   const parts = [];
   blocks.forEach((b, i) => {
     const lines = b.split("\n");
@@ -7362,9 +7389,9 @@ function mdSecBodyHtml(path, heading) {
   });
   return parts.join("\n    ");
 }
-function mdOpenSec(path, heading, id, extra) {
+function mdOpenSec(path, heading, id, extra, listOnly) {
   return `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
-    ${mdSecBodyHtml(path, heading)}${extra || ""}
+    ${mdSecBodyHtml(path, heading, listOnly)}${extra || ""}
   </section>`;
 }
 function mdFaqSec(path, heading, id) {
@@ -7682,6 +7709,37 @@ var SAMPLE_HEAD = {
   "/samples/audit-report": { eyebrow: "Synthetic sample report", primary: ["Jump to the findings", "#findings"], secondary: ["View audit scope and pricing", "/services#audit"] },
   "/samples/shopify-agent-storefront-check": { eyebrow: "Synthetic sample report", primary: ["View the product comparison", "#product-truth-matrix"], secondary: ["View Shopify check scope", "/shopify-agent-storefront-check"] }
 };
+// Kierros 4 (2026-09-06, worker-02): Tek-362 renamed headings in three guides and the id is
+// derived from the heading, so ten fragment addresses that had been served stopped resolving.
+// The implementation guide keeps existing anchors, so each old id is rendered as an empty
+// span before the heading that now carries the content. The twin does not change.
+var GUIDE_ANCHOR_ALIASES = {
+  "/guides/open-knowledge-format": {
+    "structure-versus-meaning": ["structural-interoperability-not-yet-semantic"]
+  },
+  "/guides/agentic-resource-discovery": {
+    "what-the-manifest-contains": ["what-it-is"],
+    "where-it-sits-and-how-it-differs-from-llms-txt": ["where-it-sits", "how-it-relates-to-llms-txt"],
+    "what-a-scan-checks-and-why-it-matters-now": ["why-it-matters"]
+  },
+  "/guides/letting-agents-act-on-data": {
+    "inputs": ["a-decision-is-only-as-good-as-its-inputs"],
+    "allowed-actions": ["the-envelope-is-the-real-control", "the-envelope-is-starting-to-appear-in-protocols"],
+    "human-handoff": ["keep-a-person-where-judgment-belongs"],
+    "verification": ["make-it-checkable"]
+  }
+};
+function withAnchorAliases(pathname, html) {
+  const aliases = GUIDE_ANCHOR_ALIASES[pathname];
+  if (!aliases) return html;
+  let out = html;
+  for (const [id, olds] of Object.entries(aliases)) {
+    const tag = `<h2 id="${id}">`;
+    if (!out.includes(tag)) throw new Error("anchor alias target missing: " + pathname + "#" + id);
+    out = out.replace(tag, olds.map((o) => `<span id="${o}"></span>`).join("") + tag);
+  }
+  return out;
+}
 var GUIDE_NEXT = {
   default: 'Need a broader review? <a class="btn-ghost" href="/services">See the services</a>',
   "/guides/llms-txt": 'Check your own file: <a class="btn-ghost" href="/llms-txt-validator">Open the validator</a>',
@@ -7707,6 +7765,7 @@ function serveGuideHtml(pathname, canonicalUrl) {
     mdFaqTailHtml(pathname, "Frequently asked"),
     faqEnd === -1 ? "" : markdownToHtml(md.slice(faqEnd))
   ].filter(Boolean).join("\n");
+  const aliased = withAnchorAliases(pathname, article);
   const navSection = pathname.startsWith("/blog/") ? "/blog" : (pathname.startsWith("/guides/") ? "/guides" : "");
   const crumb = navSection === "/blog" ? '<p class="crumb"><a href="/blog">&#8249; all posts</a></p>\n' : (navSection === "/guides" ? '<p class="crumb"><a href="/guides">&#8249; all guides</a></p>\n' : "");
   // Article template since v3.133.0 (Tek-358): the twin's bare date line becomes a byline
@@ -7715,9 +7774,9 @@ function serveGuideHtml(pathname, canonicalUrl) {
   // own, and a guide ends in one restrained next step. Nothing here adds prose over 80
   // characters; the article text is the twin.
   const meta = META_BY_PATH[pathname] || {};
-  const bylined = navSection === "" ? article : article.replace(/<p class="date">(\d{4}-\d{2}-\d{2})<\/p>/, (m, d) =>
+  const bylined = navSection === "" ? aliased : aliased.replace(/<p class="date">(\d{4}-\d{2}-\d{2})<\/p>/, (m, d) =>
     `<p class="date">Erik Rekola &middot; ${d}${meta.modified && meta.modified !== d ? ` &middot; updated ${meta.modified}` : ""}</p>`);
-  const h2s = [...bylined.matchAll(/<h2 id="([^"]+)">(.*?)<\/h2>/g)].map((m) => ({ id: m[1], text: m[2].replace(/<[^>]+>/g, "") }));
+  const h2s = [...bylined.matchAll(/<h2 id="([^"]+)">(.*?)<\/h2>/g)].map((m) => ({ id: m[1], text: stripTags(m[2]) }));
   const hasOwnContents = /<h2 id="contents">/.test(bylined) || /<h2 id="[^"]*">Contents<\/h2>/.test(bylined);
   const toc = h2s.length > 4 && !hasOwnContents
     ? `<div class="toc"><p>On this page</p><ul>${h2s.map((h) => `<li><a href="#${h.id}">${h.text}</a></li>`).join("")}</ul></div>`
@@ -8690,7 +8749,7 @@ ${cardPageNav("/contact")}
   ${mdPageStart("/contact")}
   <div class="cta"><a class="btn" href="mailto:info@turva.dev">Email info@turva.dev</a><a class="btn-ghost" href="https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK">Signal @turva.19</a><a class="btn-ghost" href="https://www.linkedin.com/in/erikrekola/">LinkedIn</a></div>
   ${mdOpenSec("/contact", "Email")}
-  ${mdOpenSec("/contact", "Other channels", "channels", contactSignalQr())}
+  ${mdOpenSec("/contact", "Other channels", "channels", contactSignalQr(), true)}
   ${mdOpenSec("/contact", "What to include")}
   ${mdOpenSec("/contact", "Response time and languages")}
   ${mdOpenSec("/contact", "Confidentiality")}
