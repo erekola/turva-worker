@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.131.0 - one outer frame for every home section (2026-09-06, Tek-356): .page now shares the hero and offer width, so headings, dividers, card grids, the scan board and the process steps align on the same edges, while paragraphs, lists, the FAQ, the markdown sample and the contact card keep a 66ch reading width aligned left. Prices and promises unchanged, llms.txt unchanged (no re-sign).
+// turva.dev worker v3.131.0 - one outer frame for every home section (2026-09-06, Tek-356): .page now shares the hero and offer width, so headings, dividers, card grids, the scan board and the process steps align on the same edges, and the text runs the same width, which Erik chose over a narrower reading column. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.130.0 was: three finishing touches after the hero (2026-09-06, Tek-355): a mobile navigation with a visible Menu button, CSS-only through <details> and shared by every nav via navMenuHtml so the five copies cannot drift; the two fixed-scope offers as cards at hero width, read from the twin list and failing closed; and a View the full sample link on the report card. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.129.0 was: home hero per the Fable layout guide v1.0 (2026-09-06, Tek-354): two columns with the copy at three fifths and a static synthetic report card at two fifths, one measurement row under them with the scanner and the measured date, the terminal, the result badge and the Business ID line removed from the hero (the ID stays in the footer), the five-category board moved into the Evidence section, primary CTA to /contact and the sample report as the second CTA, the twin title and first paragraph read "Know what AI agents see in your product" and the audit ingress. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 
@@ -7551,7 +7551,6 @@ ${NAV_MOBILE_CSS}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
 main{max-width:none;margin:0;padding:0;}
 .page{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:0 clamp(24px,5vw,72px) 3rem;}
-.page .sec > p,.page .sec > ul,.page .sec > ol,.page .sec .faq,.page .sec .aview,.page .sec .contact-card,.page .sec .cta-row,.offers > p{max-width:66ch;}
 .hero{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(48px,6vw,72px) clamp(24px,5vw,72px) 2.6rem;border-bottom:0.5px solid rgba(255,255,255,0.07);}
 .hero-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:clamp(40px,4vw,48px);align-items:center;}
 .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1.1rem;}
@@ -7585,7 +7584,6 @@ main{max-width:none;margin:0;padding:0;}
 .rc-more{display:inline-block;margin:16px 0 0;font-size:.9rem;font-weight:600;color:#5DF18F;border-bottom:1px solid rgba(93,241,143,0.4);padding:.1rem 0;}
 .rc-more:hover{border-color:#5DF18F;text-decoration:none;}
 .offers{max-width:68rem;margin:0 auto;padding:2.2rem clamp(24px,5vw,72px) 2rem;border-top:0;box-sizing:content-box;}
-.offers > p{max-width:66ch;}
 .offer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px);margin:.4rem 0 1.4rem;}
 .offer{display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:22px 24px;color:#C9D1CE;text-decoration:none;transition:border-color .15s ease;}
 .offer:hover{border-color:#5DF18F;text-decoration:none;}
