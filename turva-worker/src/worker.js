@@ -1,5 +1,6 @@
 // src/worker.js
-// turva.dev worker v3.137.0 - the 31 blog posts edited to the 2026-09-06 page instruction (Tek-364): each post carries its one-sentence deck under the date line and the same sentence as its META_BY_PATH description, so the index card and the page say the same thing; the named editorial corrections only (a new H1 for the thirty-day follow-up and the secret hygiene post, existing correction and status notes raised next to the title, links to the current guides and tools, dated limitations stated beside the numbers, absolute claims narrowed to their measured case), with the original text, data, examples, code, timeline and publication dates unchanged.
+// turva.dev worker v3.138.0 - the brief shell on the page template (2026-09-06, Erik): BRIEF_CSS restates the open-section rules for the bare headings, lists and code a brief's markdown renders inside main, so every published brief, old or new, reads like the rest of the site the moment this is live; and /llms.txt re-signed, because v3.137.0 changed two blog titles in LLMS_TXT and shipped with the old signature.
+// v3.137.0 was: the 31 blog posts edited to the 2026-09-06 page instruction (Tek-364): each post carries its one-sentence deck under the date line and the same sentence as its META_BY_PATH description, so the index card and the page say the same thing; the named editorial corrections only (a new H1 for the thirty-day follow-up and the secret hygiene post, existing correction and status notes raised next to the title, links to the current guides and tools, dated limitations stated beside the numbers, absolute claims narrowed to their measured case), with the original text, data, examples, code, timeline and publication dates unchanged.
 // v3.136.0 was: the 24 guides rewritten to the 2026-09-06 page instruction (Tek-362): new H1s and opening paragraphs, three to five named H2 sections each, the rising-score promises and the unsupported generalisations removed, technical scan, manual review and observed AI answers kept apart, the guide index in four groups (audit and visibility, content and crawl access, discovery and authentication, commerce and agent operations) with the same order in LLMS_TXT, the home twin and SITEMAP_ENTRIES, guide titles and descriptions in META_BY_PATH, every cross-link label updated, and the navigation and footer one step larger at Erik's request.
 // v3.135.0 was: navigation and footer sized to the page (2026-09-06, Erik): the nav and the footer follow the 68rem frame instead of the old 46rem column (--col-half 34rem by default), the brand mark, the word and the menu links grow to the body's scale (32 px mark, 19 px word, 17 px links, 20 px vertical padding), and the footer gets the same brand word style, 1.05rem links and a .95rem meta line.
 // v3.134.0 was: the two sample reports on the report reading template (2026-09-06, Tek-360): a Synthetic sample report eyebrow above a new H1, the page instruction's introduction with the illustrative report date as text rather than a date line, two actions after the introduction (SAMPLE_HEAD), Summary and Decision moved ahead of the contents list and the engagement record, F1 to F9 and C1 to C3 as h3 under their sections with the same anchor ids, Shopify status labels in the instruction's form (Present, Restricted, Unavailable, Not tested, Aligned, Mismatch), and every table wider than four columns offered a second time as a list of named cards from the same cells under a details element beside its scroll box.
@@ -5137,7 +5138,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.137.0",
+    "version": "3.138.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5245,7 +5246,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"CYwk3uzkngWEpUU7LKBcF-_DUrEvVQgXzlZXRlCspa_E0NKh9ONYfOPrWIIM-deabjFjHqKe2i-LMkwGTWYBDA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YSZat8nOYoo-uBDdONQvjAlATasQUyVn-ndw8Pl9_VgiEp-FgC1c4zQPWAvL_6WpJLxxLswwLZkWbuNDEdIBCQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -5404,7 +5405,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.137.0",
+  "version": "3.138.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8527,7 +8528,22 @@ function briefHeaders(kind, kieli) {
 // kaksiriviselle briefotsikolle. VALIOTSIKOITA EI VALJENNETA: 3.108.2 teki myos sen,
 // ja Erik poisti sen 2026-08-26. Tama koskee VAIN /brief/-sivua, koska sama
 // CARDPAGE_CSS servaa julkiset korttisivut eika niiden ladontaa muuteta tassa.
-var BRIEF_CSS = `main h1{margin-bottom:1.7rem;}`;
+// The brief body is plain markdown inside main, with no section wrappers, so the shared
+// page template's open-section rules are restated here for bare headings, lists and code.
+// Every brief, old or new, is rendered from KV through this shell at request time, so a
+// change here reaches every published brief at once (Erik 2026-09-06).
+var BRIEF_CSS = `main h1{margin-bottom:1.2rem;max-width:none;}
+main h1+p{font-size:clamp(17px,1.3vw,19px);color:#F2F4F3;}
+main h2{color:#F2F4F3;font-size:clamp(24px,2.2vw,28px);line-height:1.2;font-weight:700;letter-spacing:-0.015em;margin:clamp(36px,5vw,52px) 0 .9rem;padding-top:clamp(20px,3vw,28px);border-top:0.5px solid rgba(255,255,255,0.08);scroll-margin-top:1rem;}
+main h3{color:#F2F4F3;font-size:clamp(18px,1.6vw,20px);font-weight:700;margin:1.6rem 0 .55rem;}
+main p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1.05rem;}
+main p.date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;letter-spacing:.03em;color:#9AA3A0;margin:1.6rem 0 0;}
+main ul{list-style:none;margin:0 0 1.1rem;padding:0;}
+main li{position:relative;padding:0 0 0 1.45rem;margin:0 0 .5rem;color:#C9D1CE;font-size:17px;line-height:1.6;}
+main li::before{content:"\\203A";position:absolute;left:.45rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+main strong{color:#F2F4F3;}
+main pre{max-width:100%;}
+main a{overflow-wrap:anywhere;}`;
 
 function briefHtmlPage(rec, canonicalUrl) {
   var kieli = rec.kieli === "fi" ? "fi" : "en";
