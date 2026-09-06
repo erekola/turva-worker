@@ -1377,6 +1377,22 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     }
   }
 
+  console.log('\nGuide source-check dates (koko sivuston tarkistus 2026-09-06, kohta 6)');
+  // /guides promises that each guide's own check date is the one that counts, so every guide's
+  // META_BY_PATH entry carries `checked`, an ISO date of the last read against primary sources,
+  // and serveGuideHtml renders it under the H1. A guide without one would make the promise false.
+  {
+    const metaRegion = region('var META_BY_PATH = {', '\n};');
+    const guidePaths = [...src.worker.text.matchAll(/^  "(\/guides\/[a-z0-9-]+)": `/gm)].map((m) => m[1]);
+    let withDate = 0;
+    for (const gp of guidePaths) {
+      const blk = (metaRegion.match(new RegExp('  "' + gp.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + '": \\{[\\s\\S]*?\\n  \\}')) || [''])[0];
+      const cm = blk.match(/checked: "(\d{4}-\d{2}-\d{2})"/);
+      if (cm && cm[1] <= today) withDate++; else bad(`${gp}: META_BY_PATH.checked is an ISO date not in the future (saw ${cm ? cm[1] : 'absent'})`);
+    }
+    check(guidePaths.length > 0 && withDate === guidePaths.length, `every guide twin has a META_BY_PATH.checked date (${withDate} of ${guidePaths.length})`);
+  }
+
   console.log('\nBlog modification dates (B1-11)');
   // dateModified was datePublished for every post, including one whose own body reads
   // "Corrected 2026-08-02": structured data telling a reader the page had not been

@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.140.0 - koko sivuston tarkistus 2026-09-06 (Erik: kohdat 1 to 5 ja 6a): prose reads in a 65ch column again (READ_CSS, shared by every template; cards, tables and headings keep the frame), every guide carries the day it was last read against its sources (META_BY_PATH.checked, rendered under the H1, verify requires it), the vault sentence on /services and /legal says what the vault does and no more, the follow-up study is quoted with 201 comparable and 208 rescanned sites, the audit FAQ separates scanner-verified from test-verified fixes, the OfferCatalog audit and implementation descriptions match the visible services, the authentication guide limits the credentials claim to the audit, and the auth.md post names the optional api_key.
 // turva.dev worker v3.139.1 - measurement day (2026-09-06, Erik): turva.dev re-measured after the v3.139.0 ship, Level 5/5 on isitagentready, internet.nl 98 and 95, Hardenize all passed, every result unchanged, and the measured-at date moves from 2026-09-01 to 2026-09-06 on every surface that states it.
 // turva.dev worker v3.139.0 - kierros 4 fixes (2026-09-06, Erik: "korjaa kaikki"): stripTags replaces the two tag regexes CodeQL #10 and #11 flagged, ten old guide anchors come back as alias spans (GUIDE_ANCHOR_ALIASES), the /contact Signal paragraph renders once, verify.mjs reads the rendered h2 order (5b), and 22 text findings from the Opus round: META descriptions under 160 characters and equal to the deck, two blog titles equal to their H1, the home title in the site form, hyphens, sample contents lists in page order, dated and sourced sentences.
 // turva.dev worker v3.138.0 - the brief shell on the page template (2026-09-06, Erik): BRIEF_CSS restates the open-section rules for the bare headings, lists and code a brief's markdown renders inside main, so every published brief, old or new, reads like the rest of the site the moment this is live; and /llms.txt re-signed, because v3.137.0 changed two blog titles in LLMS_TXT and shipped with the old signature.
@@ -519,7 +520,9 @@ That depends on what will read your site. If a scanner grades you, use the names
 
 **Does a site need an auth.md at all?**
 
-Only if an agent could ever need permission to do something there. A site that is entirely public and issues no credentials can publish one to say exactly that, which is what this site does, but there is nothing dishonest about not having the file when there is nothing to authenticate.
+Only if an agent could ever need permission to do something there. A site that is entirely public and issues no credential that grants access can publish one to say exactly that, which is what this site does: its only credential is an optional api_key that attributes correspondence. There is nothing dishonest about not having the file when there is nothing to authenticate.
+
+Corrected 2026-09-06. The answer to the last question said this site issues no credentials. Its auth.md describes an optional api_key that attributes correspondence and grants no access, and the answer now says so.
 
 ## Related
 
@@ -557,9 +560,9 @@ During the series the scanner added a check named ard to its API group. The twel
 
 ## What this says and what it does not
 
-The sample is my own prospecting list, sites I chose to write to, not a random draw. So 2,0 percent is a fact about these 210 sites and not a rate for the web. Zero movement in thirty days is also the expected result when nobody has decided to act. The fixes are small, a sitemap line, a robots.txt group, a header, but they need a person who owns the website to schedule them, and one unsolicited email rarely does that inside a month.
+The sample is my own prospecting list, sites I chose to write to, not a random draw. So 2,0 percent is a fact about these 201 comparable sites and not a rate for the web. Zero movement in thirty days is also the expected result when nobody has decided to act. The fixes are small, a sitemap line, a robots.txt group, a header, but they need a person who owns the website to schedule them, and one unsolicited email rarely does that inside a month.
 
-What the series does show is narrower and still useful. The promise has been kept for these 210 sites. The scanner is stable enough to compare across a month for 201 of them, and where it is not, the reason can be named, on the host side for most of the nine and in my own records for the two that had no address. And the one site that went down is a reminder that agent readiness is not a state a site reaches once: a sitemap that disappears in an update takes the level with it, and nobody notices until something reads the site as a machine.
+What the series does show is narrower and still useful. The promise has been kept for 208 of these 210 sites, and the two exceptions are named above. The scanner is stable enough to compare across a month for 201 of them, and where it is not, the reason can be named, on the host side for most of the nine and in my own records for the two that had no address. And the one site that went down is a reminder that agent readiness is not a state a site reaches once: a sitemap that disappears in an update takes the level with it, and nobody notices until something reads the site as a machine.
 
 292 promises are still open, the next of them due on 9 September. When the set is larger the same reading will be repeated.
 
@@ -578,6 +581,8 @@ Four of 201 comparable sites changed level, three up and one down, and none of t
 Two hosts answered the scanner with 403 and one with 500, four runs did not settle into a reading, and two were not rescanned because the record had no address to send the result to. A rescan compares two readings, and where one of them is missing there is nothing to compare.
 
 Corrected 2026-09-04. The version served for the first seven hours said the first measurements began on 13 July, described the nine unreadable sites less precisely, and claimed the promise "can be kept at this volume". The earliest first measurement was 18 July, the nine are now broken down as measured, and the claim is limited to these 210 sites. The counts did not change.
+
+Corrected 2026-09-06. Two sentences said the promise was kept for 210 sites and that 2,0 percent was a fact about 210 sites. The first now excludes the two sites that were not rescanned, and the second names the 201 comparable sites the percentage is computed from. The counts did not change.
 
 ## Related
 
@@ -3292,7 +3297,7 @@ Suited for teams that want agents to read product data through a supported inter
 
 ## How the method is measured
 
-The method is measured in public before it is sold. [567 company websites](/blog/website-agent-readiness-567-sites) read by the same scanner, my own prospecting sample and not a random draw. [Fifty buyer questions put to four AI assistants](/blog/what-ai-assistants-call-an-agent-readiness-audit), 193 answers on one day. [210 sites rescanned thirty days after a brief](/blog/thirty-days-after-the-brief), 201 comparable readings, three moved up and one down, none of them because of the brief. Each post names its own limits, and none of them is a result a paying client achieved.
+The method is measured in public before it is sold. [567 company websites](/blog/website-agent-readiness-567-sites) read by the same scanner, my own prospecting sample and not a random draw. [Fifty buyer questions put to four AI assistants](/blog/what-ai-assistants-call-an-agent-readiness-audit), 193 answers on one day. [210 sites whose thirty-day rescan came due](/blog/thirty-days-after-the-brief), 201 comparable readings, three moved up and one down, and no effect from the brief established. Each post names its own limits, and none of them is a result a paying client achieved.
 
 Sites that complete an audit, or score 100/100 on the named public agent-readiness scanner, may display the [agent-ready badge](/badge). It is a self-declared badge with public criteria, not a certification.
 
@@ -3328,7 +3333,7 @@ Yes, your own NDA, signed as it stands before any material moves, at no charge. 
 
 **Do AI tools see our material?**
 
-I use AI tools in the work. They run on a local workspace holding the files a task needs, not against your systems. Those files are processed by the provider of the tool in use. No secret reaches a tool in the clear, because credentials are held in an encrypted vault that scripts read at runtime. Material you want kept out of AI tooling is named in the NDA and stays out.
+I use AI tools in the work. They run on a local workspace holding the files a task needs, not against your systems. Those files are processed by the provider of the tool in use. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. The vault controls storage, and what a tool may run and reach is scoped separately per task. Material you want kept out of AI tooling is named in the NDA and stays out.
 
 ## How to start
 
@@ -3627,7 +3632,7 @@ This site does not use analytics cookies, tracking pixels or third-party scripts
 
 **Briefs.** When turva.dev measures a company's public website and sends the reading as a brief, the brief lives at an unlisted address on turva.dev. It contains what the public site serves and how it was read, and nothing a person shared. The address is not indexed and not linked from anywhere. A brief is removed on request, and every brief expires on its own no later than 400 days after it was last published.
 
-**AI tools.** AI tools are used in the work, on a local workspace holding the files a task needs. Those files are processed by the provider of the tool in use. No secret reaches a tool in the clear, because credentials are held in an encrypted vault that scripts read at runtime, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
+**AI tools.** AI tools are used in the work, on a local workspace holding the files a task needs. Those files are processed by the provider of the tool in use. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. The vault controls storage, what a tool may run and reach is scoped separately per task, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
 No data is sold. Data reaches a third party only through the providers needed to deliver the work: hosting, email, encrypted backup storage and the AI tool in use.
 
@@ -3820,11 +3825,11 @@ An agent-readiness audit measures how well an AI agent can discover, read, and a
 
 **What does an agent-readiness audit check?**
 
-It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, and each failure comes with a concrete fix an independent scanner can verify before and after.
+It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, and each failure comes with a concrete fix, verified by the scanner where the check is scored and by a direct test where it is not.
 
 **What does an agent-readiness audit produce?**
 
-A pass or fail on each check, and a concrete fix instruction for every failure, with a link to the guide on this site for that surface where there is one. Your own team can do the work from the report. An independent scanner verifies the result before and after, and the scoring is against current standards rather than opinion.
+A pass or fail on each check, and a concrete fix instruction for every failure, with a link to the guide on this site for that surface where there is one. Your own team can do the work from the report. Scored checks are verified by the scanner before and after, manual-review fixes by a direct test, and the scoring is against current standards rather than opinion.
 
 ## Related
 
@@ -4284,7 +4289,7 @@ A short auth description, sometimes published as an auth.md, gives an agent a hu
 
 The reason this matters is trust and blast radius. A site that exposes capability without scoped, discoverable auth either stays closed to agents or invites unsafe workarounds. Proper discovery lets an agent request the least access it needs, and lets the site grant capability without handing over a password the agent should never see. Together with OAuth discovery it answers the agent's first question about any action, which is how to get permission to do it safely.
 
-turva.dev publishes OAuth discovery, a protected resource description and an agent registration entry point, and it never requests production credentials in an engagement. For an audit of a site's authentication surface, contact info@turva.dev.
+turva.dev publishes OAuth discovery, a protected resource description and an agent registration entry point, and the audit never requests production credentials, and access for purchased implementation is agreed separately and limited to the work. For an audit of a site's authentication surface, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -4555,7 +4560,7 @@ Every finding in the report rests on one of three kinds of evidence. A technical
 
 ## Deliverables
 
-A written report that lists each check, what was found, and a concrete fix for each gap, ordered by priority. The result is verifiable. An independent scanner reads the site before and after, and a rescan after a fix shows whether that fix passed.
+A written report that lists each check, what was found, and a concrete fix for each gap, ordered by priority. The result is verifiable. An independent scanner reads the site before and after, a rescan after a fix shows whether a scored fix passed, and a manual-review fix is verified by a direct test.
 
 The two fixed-scope diagnoses on the [services page](/services) are the website and API audit at €4,300 in two weeks and the Shopify agent storefront check at €999 within 48 hours of the agreed written kickoff. Implementing a diagnosis's own complete fix list is a €499 add-on when it is bought with that diagnosis and the required access is arranged in advance: collaborator access to the store for a Shopify check, and an edge runtime, deployment access and any other access the listed fixes need for an audit. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions.
 
@@ -4579,7 +4584,7 @@ A fixed-scope audit takes two weeks. The Shopify agent storefront check is deliv
 
 **What do you get from an agent-readiness audit?**
 
-A written report that lists each check, what the scanner found, and a concrete fix for each gap, ordered by priority. The result is verifiable. An independent scanner reads the site before and after, and a rescan shows whether each fix passed.
+A written report that lists each check, what the scanner found, and a concrete fix for each gap, ordered by priority. The result is verifiable. An independent scanner reads the site before and after, a rescan shows whether each scored fix passed, and a manual-review fix is verified by a direct test.
 
 **How do I make my site agent-ready?**
 
@@ -5147,7 +5152,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.139.1",
+    "version": "3.140.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5414,7 +5419,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.139.1",
+  "version": "3.140.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6105,6 +6110,7 @@ var META_BY_PATH = {
     title: "Two files called auth.md, and they disagree on the field names · turva.dev",
     description: "Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.",
     date: "2026-09-04",
+    modified: "2026-09-06",
     kind: "Protocol notes",
     image: "/og-two-auth-md-dialects.jpg",
     imageAlt: "turva.dev blog card: WorkOS publishes an open auth.md protocol and the isitagentready scanner publishes another. Both live at the same path and name three fields differently.",
@@ -6114,7 +6120,7 @@ var META_BY_PATH = {
     description: "A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-09-04",
+    modified: "2026-09-06",
     image: "/og-thirty-days-after-the-brief.jpg",
     imageAlt: "turva.dev blog card: 210 sites rescanned thirty days after an unsolicited brief: 197 unchanged, three up, one down, and none of the three that improved had replied.",
   },
@@ -6344,6 +6350,7 @@ var META_BY_PATH = {
   },
   "/guides/agent-commerce-discovery": {
     title: "Agent commerce discovery: A2A, AP2, ACP and UCP · turva.dev",
+    checked: "2026-09-05",
     description: "Commerce discovery describes the interfaces and payment-related capabilities a service supports.",
     image: "/og-guide-agent-commerce-discovery.jpg",
     imageAlt: "turva.dev guide card: A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint."
@@ -6358,12 +6365,14 @@ var META_BY_PATH = {
   },
   "/guides/agentic-resource-discovery": {
     title: "Agentic Resource Discovery and resource catalogs · turva.dev",
+    checked: "2026-09-05",
     description: "Resource catalogs describe the agent-facing interfaces a site exposes.",
     image: "/og-guide-agentic-resource-discovery.jpg",
     imageAlt: "turva.dev guide card: Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation."
   },
   "/guides/open-knowledge-format": {
     title: "Open Knowledge Format explained · turva.dev",
+    checked: "2026-09-05",
     description: "Open Knowledge Format describes knowledge as linked Markdown documents.",
     image: "/og-guide-open-knowledge-format.jpg",
     imageAlt: "turva.dev guide card: What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness."
@@ -6447,126 +6456,147 @@ var META_BY_PATH = {
   },
   "/guides/agent-readiness-audit": {
     title: "What a website and API agent-readiness audit covers · turva.dev",
+    checked: "2026-09-05",
     description: "A technical scan, manual review and observed AI answers reveal different problems.",
     image: "/og-guide-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored against current standards by an independent scanner."
   },
   "/guides/llms-txt": {
     title: "llms.txt explained · turva.dev",
+    checked: "2026-09-05",
     description: "An llms.txt file offers a curated map of a site for clients that choose to read it. Learn its structure, discovery links and limits.",
     image: "/og-guide-llms-txt.jpg",
     imageAlt: "turva.dev guide card: llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives, and how it differs from robots.txt and sitemaps."
   },
   "/guides/mcp-server-card": {
     title: "MCP server cards and discovery · turva.dev",
+    checked: "2026-09-05",
     description: "A server card describes an MCP endpoint for clients that support the relevant discovery convention.",
     image: "/og-guide-mcp-server-card.jpg",
     imageAlt: "turva.dev guide card: An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and connect to it."
   },
   "/guides/agents-json": {
     title: "What agents.json describes · turva.dev",
+    checked: "2026-09-05",
     description: "agents.json is one pattern for describing actions and endpoints for automated clients.",
     image: "/og-guide-agents-json.jpg",
     imageAlt: "turva.dev guide card: agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one."
   },
   "/guides/x402-agent-payments": {
     title: "x402 and HTTP payment flows · turva.dev",
+    checked: "2026-09-05",
     description: "x402 describes an HTTP-based payment flow. A payment declaration, an accepted payment and settlement are different states and should be documented separately.",
     image: "/og-guide-x402-agent-payments.jpg",
     imageAlt: "turva.dev guide card: x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout."
   },
   "/guides/response-headers-for-agents": {
     title: "Response headers for AI clients · turva.dev",
+    checked: "2026-09-05",
     description: "Response headers describe formats, discovery links and request policy. Check both what a header declares and whether the server behaves accordingly.",
     image: "/og-guide-response-headers-for-agents.jpg",
     imageAlt: "turva.dev guide card: The right HTTP response headers let AI agents work without parsing full HTML."
   },
   "/guides/seo-vs-agent-readiness": {
     title: "SEO and agent-readiness: overlap and differences · turva.dev",
+    checked: "2026-09-05",
     description: "SEO, AI-answer visibility and technical agent access overlap, but they answer different questions.",
     image: "/og-guide-seo-vs-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: SEO makes a site rank for people to click. Agent-readiness makes it legible and usable by AI agents."
   },
   "/guides/json-ld-structured-data": {
     title: "JSON-LD and structured data for AI clients · turva.dev",
+    checked: "2026-09-05",
     description: "Structured data makes page facts explicit, but those facts must agree with the visible page and underlying source.",
     image: "/og-guide-json-ld-structured-data.jpg",
     imageAlt: "turva.dev guide card: JSON-LD states a page's facts as data an AI agent can read without parsing prose."
   },
   "/guides/well-known-for-agents": {
     title: "The /.well-known directory for agent discovery · turva.dev",
+    checked: "2026-09-05",
     description: "Well-known URLs give clients predictable places to look for specific metadata.",
     image: "/og-guide-well-known-for-agents.jpg",
     imageAlt: "turva.dev guide card: The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata."
   },
   "/guides/agent-authentication": {
     title: "Authentication and authorisation for AI agents · turva.dev",
+    checked: "2026-09-05",
     description: "Authentication identifies a client, authorisation determines what it may access or do.",
     image: "/og-guide-agent-authentication.jpg",
     imageAlt: "turva.dev guide card: Agent authentication lets an automated client gain scoped access without a human login."
   },
   "/guides/measurement-led-agent-readiness": {
     title: "Measure agent-readiness with evidence · turva.dev",
+    checked: "2026-09-05",
     description: "A scan is one source of evidence. Combine it with direct technical checks and observed AI answers, and record the method and date behind every conclusion.",
     image: "/og-guide-measurement-led-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: A hand-filled checklist records intentions. An independent scanner records what an agent actually finds."
   },
   "/guides/prerendering-for-agents": {
     title: "When AI clients cannot read rendered pages · turva.dev",
+    checked: "2026-09-05",
     description: "Some clients read the initial HTTP response without running a browser.",
     image: "/og-guide-prerendering-for-agents.jpg",
     imageAlt: "turva.dev guide card: JavaScript-rendered sites return an empty shell to agents, so the content never arrives."
   },
   "/guides/sitemaps-and-robots-for-agents": {
     title: "Sitemaps, robots.txt and AI crawler access · turva.dev",
+    checked: "2026-09-05",
     description: "Sitemaps describe published URLs, while robots.txt communicates crawler rules. Neither file guarantees retrieval or replaces access control.",
     image: "/og-guide-sitemaps-and-robots-for-agents.jpg",
     imageAlt: "turva.dev guide card: robots.txt and the sitemap decide whether an agent is allowed in and what it can find."
   },
   "/guides/markdown-for-agents": {
     title: "Serving Markdown to AI clients · turva.dev",
+    checked: "2026-09-05",
     description: "A Markdown representation can make published content easier for text-based clients to consume. Keep its facts and links aligned with the HTML page.",
     image: "/og-guide-markdown-for-agents.jpg",
     imageAlt: "turva.dev guide card: Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens."
   },
   "/guides/agent-readiness-aeo-geo": {
     title: "Agent-readiness, AEO and GEO · turva.dev",
+    checked: "2026-09-05",
     description: "These labels describe overlapping work around discovery, answers and automated use.",
     image: "/og-guide-agent-readiness-aeo-geo.jpg",
     imageAlt: "turva.dev guide card: How AEO, GEO and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice."
   },
   "/guides/agentic-commerce-readiness": {
     title: "Agentic commerce readiness · turva.dev",
+    checked: "2026-09-05",
     description: "Agent commerce involves product information, permitted actions and a supported checkout path.",
     image: "/og-guide-agentic-commerce-readiness.jpg",
     imageAlt: "turva.dev guide card: What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase."
   },
   "/guides/letting-agents-act-on-data": {
     title: "Define what an agent may do with your data · turva.dev",
+    checked: "2026-09-05",
     description: "Reliable agent operations depend on usable inputs, explicit permissions and observable outcomes.",
     image: "/og-guide-letting-agents-act-on-data.jpg",
     imageAlt: "turva.dev guide card: Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds."
   },
   "/guides/ai-agent-use-cases": {
     title: "AI agent use cases and their operating limits · turva.dev",
+    checked: "2026-09-05",
     description: "Explore examples of agents reading data and taking permitted actions.",
     image: "/og-guide-ai-agent-use-cases.jpg",
     imageAlt: "turva.dev guide card: AI agent use cases across commerce, monitoring, field support, remote operations and back-office data work, and what makes each one reliable."
   },
   "/guides/get-cited-by-ai-assistants": {
     title: "Make your website easier for AI assistants to find and cite · turva.dev",
+    checked: "2026-09-05",
     description: "Clear, accessible content and consistent facts help retrieval systems understand a site.",
     image: "/og-guide-get-cited-by-ai-assistants.jpg",
     imageAlt: "turva.dev guide card: What it takes to be a source AI assistants cite: readable content, structured data, corroboration, indexing where assistants search, and measurement."
   },
   "/guides/choosing-an-agent-readiness-audit": {
     title: "How to choose an agent-readiness audit · turva.dev",
+    checked: "2026-09-05",
     description: "Compare an audit by its scope, evidence, deliverables and follow-up checks. See how the website and API audit differs from a focused Shopify check.",
     image: "/og-guide-choosing-an-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: Who provides agent-readiness audits, what they cost, how long they take, and what you get."
   },
   "/guides/agent-readiness-gaps": {
     title: "Common agent-readiness gaps in a measured sample · turva.dev",
+    checked: "2026-09-05",
     description: "A prospecting sample of 567 company sites revealed recurring technical gaps.",
     image: "/og-guide-agent-readiness-gaps.jpg",
     imageAlt: "turva.dev guide card: Marketing sites are often strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes."
@@ -6618,9 +6648,9 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 // second copy would be a second price list, and verify.mjs reads this one against facts.json.
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
 {"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
-{"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata, and a documented question set put to several AI assistants. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
-{"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, MCP servers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
+{"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. An MCP server is a separate engagement.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}}`;
 
 var SCHEMA_HOME = `<script type="application/ld+json">
@@ -7642,7 +7672,13 @@ function buildValidatorAppJsonLd(canonicalUrl) {
   return `<script type="application/ld+json">\n${json2}\n<\/script>`;
 }
 
-var FOOTER_CSS = `main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr{color:#F17F5D}
+// Reading column (2026-09-06, Erik, koko sivuston tarkistus kohta 1, reverses the width half of
+// Tek-360): long prose and the lists read with it sit in a 65ch column from the current left
+// edge, while headings, dividers, card groups, tables and code keep the frame. Only direct
+// children of an open section or an article are bounded, so card bodies, table cells and the
+// hero stay as they are. Shared by every template through FOOTER_CSS.
+var READ_CSS = `.sec>p,.sec>ul,.sec>ol,.sec>blockquote,.sec>.faq,article>p,article>ul,article>ol,article>blockquote,article>.toc,article>.scard,article>.faq,main>p,main>ul,main>ol,main>blockquote{max-width:65ch;}`;
+var FOOTER_CSS = `${READ_CSS}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:3rem clamp(24px,5vw,72px);display:flex;flex-direction:column;gap:1.5rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:10px;}.tv-foot .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}.tv-foot .nv-word b{color:#5DF18F;}
 .tv-foot .foot-brand svg{display:block;width:34px;height:34px;}
@@ -7777,12 +7813,20 @@ function serveGuideHtml(pathname, canonicalUrl) {
   const meta = META_BY_PATH[pathname] || {};
   const bylined = navSection === "" ? aliased : aliased.replace(/<p class="date">(\d{4}-\d{2}-\d{2})<\/p>/, (m, d) =>
     `<p class="date">Erik Rekola &middot; ${d}${meta.modified && meta.modified !== d ? ` &middot; updated ${meta.modified}` : ""}</p>`);
-  const h2s = [...bylined.matchAll(/<h2 id="([^"]+)">(.*?)<\/h2>/g)].map((m) => ({ id: m[1], text: stripTags(m[2]) }));
-  const hasOwnContents = /<h2 id="contents">/.test(bylined) || /<h2 id="[^"]*">Contents<\/h2>/.test(bylined);
+  // Guides carry no date line in the twin. Since 2026-09-06 (koko sivuston tarkistus, kohta 6)
+  // META_BY_PATH.checked is the day the guide was last read against its primary sources, and
+  // /guides says that date is the one that counts, so it is rendered under the H1. It is not a
+  // publication or modification date and is not written into the JSON-LD as one.
+  const checkedLine = navSection === "/guides" && meta.checked
+    ? `<p class="date">Sources checked ${meta.checked}</p>`
+    : "";
+  const withChecked = checkedLine ? bylined.replace(/<\/h1>\n?/, (m) => `${m}${checkedLine}\n`) : bylined;
+  const h2s = [...withChecked.matchAll(/<h2 id="([^"]+)">(.*?)<\/h2>/g)].map((m) => ({ id: m[1], text: stripTags(m[2]) }));
+  const hasOwnContents = /<h2 id="contents">/.test(withChecked) || /<h2 id="[^"]*">Contents<\/h2>/.test(withChecked);
   const toc = h2s.length > 4 && !hasOwnContents
     ? `<div class="toc"><p>On this page</p><ul>${h2s.map((h) => `<li><a href="#${h.id}">${h.text}</a></li>`).join("")}</ul></div>`
     : "";
-  const withToc = toc ? bylined.replace(/(<\/p>\n)(?=<h2 )/, `$1${toc}\n`) : bylined;
+  const withToc = toc ? withChecked.replace(/(<\/p>\n)(?=<h2 )/, `$1${toc}\n`) : withChecked;
   // Sample reports (Tek-360): the synthetic label stands above the H1, and two actions follow
   // the introduction. Both come from SAMPLE_HEAD; labels are short by design.
   const sample = SAMPLE_HEAD[pathname];
