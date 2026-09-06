@@ -1,7 +1,7 @@
 // src/worker.js
-// turva.dev worker v3.130.0 - three finishing touches after the hero (2026-09-06, Tek-355): a mobile navigation with a visible Menu button, CSS-only through <details> and shared by every nav via navMenuHtml so the five copies cannot drift; the two fixed-scope offers as cards at hero width, read from the twin list and failing closed; and a View the full sample link on the report card. Prices and promises unchanged, llms.txt unchanged (no re-sign).
+// turva.dev worker v3.131.0 - one outer frame for every home section (2026-09-06, Tek-356): .page now shares the hero and offer width, so headings, dividers, card grids, the scan board and the process steps align on the same edges, while paragraphs, lists, the FAQ, the markdown sample and the contact card keep a 66ch reading width aligned left. Prices and promises unchanged, llms.txt unchanged (no re-sign).
+// v3.130.0 was: three finishing touches after the hero (2026-09-06, Tek-355): a mobile navigation with a visible Menu button, CSS-only through <details> and shared by every nav via navMenuHtml so the five copies cannot drift; the two fixed-scope offers as cards at hero width, read from the twin list and failing closed; and a View the full sample link on the report card. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.129.0 was: home hero per the Fable layout guide v1.0 (2026-09-06, Tek-354): two columns with the copy at three fifths and a static synthetic report card at two fifths, one measurement row under them with the scanner and the measured date, the terminal, the result badge and the Business ID line removed from the hero (the ID stays in the footer), the five-category board moved into the Evidence section, primary CTA to /contact and the sample report as the second CTA, the twin title and first paragraph read "Know what AI agents see in your product" and the audit ingress. Prices and promises unchanged, llms.txt unchanged (no re-sign).
-// v3.128.0 was: the sample audit report as a decision document (2026-09-06, Tek-351): /samples/audit-report now tests F1 across the whole catalog on the page, the JSON-LD and the API with price basis, variants, pagination and listed exceptions, derives availability from the stock state and not from the lead time, separates the edge delivery from the source fix with its own acceptance condition, keeps observation, possible effect and shown causation apart in every finding, gives every AI-run error a source, owner and retest, versions the DNS-AID reading, drops the scanner-driven ACP hint from F8, and carries three evidence chains and the question set as appendices; /services and the page meta say nine findings. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -4968,7 +4968,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.130.0",
+    "version": "3.131.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5235,7 +5235,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.130.0",
+  "version": "3.131.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7550,8 +7550,9 @@ ${NAV_MOBILE_CSS}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
 main{max-width:none;margin:0;padding:0;}
-.page{max-width:46rem;margin:0 auto;padding:0 clamp(20px,5vw,72px) 3rem;}
-.hero{max-width:68rem;margin:0 auto;padding:clamp(48px,6vw,72px) clamp(24px,5vw,72px) 2.6rem;border-bottom:0.5px solid rgba(255,255,255,0.07);}
+.page{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:0 clamp(24px,5vw,72px) 3rem;}
+.page .sec > p,.page .sec > ul,.page .sec > ol,.page .sec .faq,.page .sec .aview,.page .sec .contact-card,.page .sec .cta-row,.offers > p{max-width:66ch;}
+.hero{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(48px,6vw,72px) clamp(24px,5vw,72px) 2.6rem;border-bottom:0.5px solid rgba(255,255,255,0.07);}
 .hero-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:clamp(40px,4vw,48px);align-items:center;}
 .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1.1rem;}
 .hero h1{color:#F2F4F3;font-size:clamp(34px,4.2vw,56px);line-height:1.08;letter-spacing:-0.02em;margin:0 0 24px;font-weight:700;hyphens:manual;}
@@ -7583,8 +7584,8 @@ main{max-width:none;margin:0;padding:0;}
 .hero-proof a:hover{color:#5DF18F;border-color:#5DF18F;text-decoration:none;}
 .rc-more{display:inline-block;margin:16px 0 0;font-size:.9rem;font-weight:600;color:#5DF18F;border-bottom:1px solid rgba(93,241,143,0.4);padding:.1rem 0;}
 .rc-more:hover{border-color:#5DF18F;text-decoration:none;}
-.offers{max-width:68rem;margin:0 auto;padding:2.2rem clamp(24px,5vw,72px) 2rem;border-top:0;}
-.offers > p{max-width:46rem;}
+.offers{max-width:68rem;margin:0 auto;padding:2.2rem clamp(24px,5vw,72px) 2rem;border-top:0;box-sizing:content-box;}
+.offers > p{max-width:66ch;}
 .offer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px);margin:.4rem 0 1.4rem;}
 .offer{display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:22px 24px;color:#C9D1CE;text-decoration:none;transition:border-color .15s ease;}
 .offer:hover{border-color:#5DF18F;text-decoration:none;}
@@ -7610,7 +7611,7 @@ main{max-width:none;margin:0;padding:0;}
 .pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
 .sec{padding:1.9rem 0;border-top:0.5px solid rgba(255,255,255,0.07);}
 ${FAQ_CSS}
-.exgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:.6rem;margin:0 0 1.1rem;}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:.6rem;margin:0 0 1.1rem;}
 .ex{position:relative;background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:.7rem .8rem .7rem 1.7rem;font-size:.9rem;color:#C9D1CE;transition:border-color .15s ease,transform .15s ease;}
 .ex:hover{border-color:rgba(93,241,143,0.38);transform:translateY(-1px);}
 .ex::before{content:"›";position:absolute;left:.75rem;top:.62rem;color:#5DF18F;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;}
