@@ -795,9 +795,11 @@ const twConverted = {
   // 'Independent agent-readiness scan of turva.dev' is hand-rendered as the scan board, not as prose.
   // It was previously 'covered' by a mdParas() call in serveHomeHtml whose result nothing interpolated,
   // so this gate read a no-op as proof the section was rendered (2026-08-01).
-  '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: ['Contact', 'Independent agent-readiness scan of turva.dev'],
-    prose: ['Every page on this site is also served as plain markdown',
-            'Seeing where your site, API or product stands with AI agents starts'] },
+  // Since Tek-357 (2026-09-06) every home section reads its prose from the twin: the scan
+  // board is rendered by hand INSIDE the twin's "Work you can inspect" section, the report
+  // card and the measurement row are hero markup with no paragraph over 80 characters, and
+  // the two prose exceptions (the curl demo intro and the contact lead) left with their text.
+  '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: [], prose: [] },
   '/blog':    { fn: 'serveBlogHtml',    mdOnly: [], hand: ['All posts'] }, // All posts is the dated list, rendered by blogPostLinks() from META_BY_PATH (2026-09-03)
   '/llms-txt-validator': { fn: 'serveLlmsValidatorHtml', mdOnly: ['Related'], hand: ['How to use it'] },
   '/services': { fn: 'serveServicesHtml', mdOnly: [], hand: [] },

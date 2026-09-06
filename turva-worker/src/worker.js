@@ -1,7 +1,7 @@
 // src/worker.js
-// turva.dev worker v3.131.0 - one outer frame for every home section (2026-09-06, Tek-356): .page now shares the hero and offer width, so headings, dividers, card grids, the scan board and the process steps align on the same edges, and the text runs the same width, which Erik chose over a narrower reading column. Prices and promises unchanged, llms.txt unchanged (no re-sign).
+// turva.dev worker v3.132.0 - home content rewritten to Erik's brief (2026-09-06, Tek-357): eleven sections in the twin and the same order in HTML, two starting points as cards read from the twin list, what the client gets, the process in writing, work you can inspect with the scan board and the dated security scans, support beyond the first report, who does the work, a five-question FAQ and the contact section; the curl demo, the x402 prose and every "higher on the next scan" promise left the home page; title, meta description and the ProfessionalService description say the same thing as the page. Prices, scope and promises unchanged, llms.txt unchanged (no re-sign).
+// v3.131.0 was: one outer frame for every home section (2026-09-06, Tek-356): .page now shares the hero and offer width, so headings, dividers, card grids, the scan board and the process steps align on the same edges, and the text runs the same width, which Erik chose over a narrower reading column. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.130.0 was: three finishing touches after the hero (2026-09-06, Tek-355): a mobile navigation with a visible Menu button, CSS-only through <details> and shared by every nav via navMenuHtml so the five copies cannot drift; the two fixed-scope offers as cards at hero width, read from the twin list and failing closed; and a View the full sample link on the report card. Prices and promises unchanged, llms.txt unchanged (no re-sign).
-// v3.129.0 was: home hero per the Fable layout guide v1.0 (2026-09-06, Tek-354): two columns with the copy at three fifths and a static synthetic report card at two fifths, one measurement row under them with the scanner and the measured date, the terminal, the result badge and the Business ID line removed from the hero (the ID stays in the footer), the five-category board moved into the Evidence section, primary CTA to /contact and the sample report as the second CTA, the twin title and first paragraph read "Know what AI agents see in your product" and the audit ingress. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -2824,143 +2824,106 @@ Written contact only. Email info@turva.dev, Signal @turva.19. First reply within
 `,
   "/": `# Know what AI agents see in your product
 
-Independent audits of your website and API. A measured baseline, a prioritised fix list, and implementation when you need it.
+Technical audits and AI visibility checks for websites and APIs. Focused checks for Shopify stores. You get documented findings and a prioritised plan your team can act on.
 
-Async-only, first reply within one business day. [Scope and pricing](/services).
+Async-only. First reply within one business day. [Scope and pricing](/services).
 
-Agent-readiness is the measurable starting point: whether AI agents can find and use your website or API, scored by an independent scanner. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.
+Technical agent-readiness of turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-01. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
 
-100/100 and Level 5, Agent-Native, on isitagentready.com, Cloudflare's agent-readiness scanner. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
+## Choose the right starting point
 
-## Two fixed-scope ways to start
+Choose a focused Shopify check or a broader website and API audit. Each has a fixed scope and can be bought on its own.
 
-Both diagnoses are bought at a fixed price against a written scope. Neither one requires the other.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. A focused check of what agent-shopping surfaces return for selected products in your Shopify store. It compares product information and documents the buyer journey before payment. Up to three product variants in one market, with a prioritised correction plan. Delivered within 48 hours of the agreed written kickoff.
+- [Website and API agent-readiness audit](/services). €4,300. A third-party technical scan, manual review and a documented question set tested across selected AI assistants. You receive written findings, prioritised fixes and one included re-scan. Delivered in two weeks.
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. One live Shopify store, read across the three agent surfaces this check covers, delivered within 48 hours of the agreed written kickoff.
-- [Agent-readiness audit](/services). €4,300. A whole site or API, measured by an independent scanner, delivered in two weeks.
+Prices exclude VAT. Implementation is purchased separately.
 
-Both come with a public sample report on an invented site, so the format is readable before anything is bought: the [sample audit report](/samples/audit-report) and the [sample Shopify check report](/samples/shopify-agent-storefront-check).
+See what each report contains before you buy: the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check).
 
-What follows a diagnosis is scoped separately, and that work is listed on the [services page](/services).
+## From an observed problem to a checkable fix
 
-## Audits, advisory, and implementation for product teams
+The report connects each finding to evidence, its impact and the next action. Your team can use it without purchasing implementation.
 
-An AI agent does not browse a site the way a person does. It reads machine-readable surfaces and acts on the parts it can reach, once it trusts what it found. I measure how a site, an API or a product holds up to that, fix what the measurement names, and stay on as the product changes.
+Evidence. See what was tested, what was returned and where the issue appeared.
 
-The measurable core is agent-readiness, scored by an independent scanner and provable on the next scan. The wider work begins where readability ends. The data an agent acts on has to arrive intact, and the decisions it is allowed to make have to sit inside a boundary you set. The first makes an agent able to read you. The second makes it safe to let one act.
+Priorities. Understand which corrections deserve attention first and why.
 
-## Independent agent-readiness scan of turva.dev
+Acceptance checks. Know what a successful correction should look like and how to verify it.
+
+The website and API audit combines technical checks with observed AI answers. The Shopify check focuses on product information and the supported shopping journey. The detailed scope is listed with each service.
+
+## A clear process, in writing
+
+Agree the scope. Send the URL and the question you need answered. I confirm the service, required access, price and start date in writing.
+
+Receive the findings. I run the agreed checks and deliver the evidence, priorities and correction instructions in a written report.
+
+Make and verify the corrections. Your team can implement the plan, or you can purchase implementation. The included follow-up check is defined by the service: an audit re-scan within 30 days of the report, or a Shopify retest of up to two corrected items within 14 days.
+
+No calls or calendar bookings. Questions, decisions and findings stay in writing.
+
+## Work you can inspect
+
+Sample deliverables. Read the audit and Shopify sample reports to see the structure, evidence and correction plans. Both use invented businesses and are clearly labelled as synthetic examples. [Sample audit report](/samples/audit-report) and [sample Shopify report](/samples/shopify-agent-storefront-check).
+
+Public reference build. turva.dev is my own reference build. Its published technical checks have named sources and measurement dates, and the worker source is public. [Public scanner](https://isitagentready.com/) and [read the source](https://github.com/erekola/turva-worker).
+
+Published research. Read the methods and limitations behind the website measurements, AI-answer study and follow-up research. [Website agent-readiness study](/blog/website-agent-readiness-567-sites), [What AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit) and [Thirty days after the brief](/blog/thirty-days-after-the-brief).
 
 Scanner: isitagentready.com (third party, Cloudflare). Discoverability, Content Accessibility, Bot Access Control, and API, Auth, MCP and A2A Discovery: 100/100. Commerce: 100/100. Verified 100/100, Level 5, Agent-Native.
-
-## Where this applies
-
-The pattern is narrow, but where it fits is not. Anywhere data moves and a decision follows, an agent can be the thing that reads the data and makes the call, as long as the inputs are clean and the envelope is set. A few examples:
-
-- An agent reading a product catalog and completing a checkout for a buyer.
-- An agent watching an API and acting the moment a threshold is crossed, without waiting for a person.
-- An agent guiding a technician in the field, working from the same data the expert would.
-- An agent triaging incoming requests and resolving the routine ones on its own.
-- An agent operating a remote system over a link that drops, holding its last safe state until the data returns.
-
-These are examples. The same discipline carries from one case to the next, so the question is rarely whether an agent could do the work. It is whether the data reaching it and the limits set around it are good enough to trust.
-
-## Evidence
-
-turva.dev is my own reference build. It reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-01.
-
-- isitagentready.com: 100/100, Level 5 (Agent-Native). https://isitagentready.com/
-
-isitagentready.com is Cloudflare's agent-readiness scanner, and this site runs on Cloudflare Workers. Independent means independent of turva.dev: the scanner is not run or influenced by this business. Commerce here is quote-on-request. turva.dev declares its payable services in the 402 challenge, priced in USDC on Base via x402, and in the OpenAPI discovery, priced in euro as a card checkout link, and settlement is confirmed out of band rather than executed automatically, so the site serves a real payment surface and claims no capability it does not have.
-
-The agent-readiness scanner is public and can be run again at any time, by a person or by an agent. The scanner is the source. This page only reports what it returned. To check the number independently, run isitagentready.com against turva.dev.
 
 turva.dev publishes its own security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-09-01.
 
 - Hardenize: all 24 categories passed. https://www.hardenize.com/report/turva.dev
-- Internet.nl website test: 98/100. IPv6, DNSSEC and RPKI pass in full. The single deduction is one HTTPS sub-test, the hash function for key exchange. https://internet.nl/site/turva.dev/
-- Internet.nl email test: 95/100. IPv6, DNSSEC, and DMARC with DKIM and SPF pass in full, as does RPKI. The deduction is in the cipher configuration of the receiving mail servers, which my mail provider operates. https://internet.nl/mail/turva.dev/
+- Internet.nl website test: 98/100. https://internet.nl/site/turva.dev/
+- Internet.nl email test: 95/100. https://internet.nl/mail/turva.dev/
 
-The Cloudflare Worker that produces these results is open source: https://github.com/erekola/turva-worker. You can read every line before you hire me.
+## Support beyond the first report
 
-Three published measurements sit behind the method. [567 company websites](/blog/website-agent-readiness-567-sites) read by the same scanner, my own prospecting sample and not a random draw, 85,5 percent of them at Level 1. [Fifty buyer questions put to four AI assistants](/blog/what-ai-assistants-call-an-agent-readiness-audit), 193 answers read for what each one calls an agent readiness audit. [210 sites rescanned thirty days after a brief](/blog/thirty-days-after-the-brief), 201 of them comparable, three moved up and one down, and none of the three had replied, so the brief claims none of them.
+Implementation turns the agreed correction plan into working changes. Ongoing advisory records technical and AI-visibility measurements over time, reviews changes and helps your team choose the next priorities.
 
-Backed by a registered business, publicly verifiable: Business ID 3600281-7, registered in Finland. PRH/YTJ business register: https://tietopalvelu.ytj.fi/yritys/3600281-7
+Agent operations and MCP server design are available as separately scoped engagements around the systems, data and permissions involved.
 
-## The process has three stages and no surprises
+[Explore all services](/services).
 
-First, measurement. For agent-readiness, an independent scanner reads the current state of the site or API and produces a numeric baseline with a categorized list of what is missing. For the wider work, the data path and the decision envelope are tested the way an agent would hit them, so the starting point is a fact rather than an opinion.
+## Work directly with Erik Rekola
 
-Then a written report. Three to ten priority fixes in order of impact, with technical reasoning written so the reader does not need a background in any of this to follow it.
+I'm an independent consultant based in Tampere, Finland. I work on agent-readiness audits, technical reviews and implementation.
 
-Then the fixes. I implement them, or your engineering team does the work with the report as the spec. Both routes are supported and the choice is yours.
+You work directly with me throughout the engagement. Scope, findings and decisions are documented in writing.
 
-All communication runs async. No calls and no calendar links. Live meetings are not part of how this work is done. Short questions go through Signal, longer documents through email. Everything stays in writing, which means the work and the trail are auditable end-to-end.
-
-Production credentials are not requested. Write access to repositories is not taken by default. Read access is enough for the audit, and write access is scoped per task if implementation is purchased separately.
-
-The result is checkable, not asserted. For agent-readiness that is the scanner number, higher on the next scan in the categories and by the dates the report named. For the wider work it is the same test, the data path holding under load and the envelope doing exactly what it claims. Either the next measurement confirms it or it does not.
-
-## Services
-
-- Shopify agent storefront check. €999. Fixed scope. What an AI shopper receives from one live Shopify store, across browser WebMCP, remote MCP and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days.
-- Audit. Fixed scope. Two weeks. An independent scanner runs against the site or API. Written report with a prioritized fix list. You receive a measured baseline and a clear "do this first" plan.
-- Advisory. Monthly retainer, async-only. Ongoing review as the site, API or product evolves. Each scanner cycle reads higher than the last, or the report explains why a tradeoff was kept on purpose.
-- Implementation. €1,500 per day. Changes at the edge, well-known manifests, MCP server work, JSON-LD and Schema fixes. The improvement is verifiable against the audit baseline in the next scan.
-- Agent operations. On request. The work beyond readiness: the data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
-- MCP server design. On request. Read-only discovery tools and streamable HTTP transport. For public, non-sensitive data, no auth surface and no logging by default. Auth and an audit trail follow the data and the misuse model. The endpoint stays readable for agents and does not turn into an abuse vector.
-
-## Who I am
-
-The work is done by one person under a registered business. My background is engineering: measurement, testing, and reducing things to what actually matters. I have worked in international companies for years, and I keep only the tools and methods that hold up when the output is checked line by line.
-
-The work stays measurable on purpose. Agent-readiness is a property a scanner reads, higher next week than this week or not. The wider work holds to the same test. The data an agent acts on arrives intact or the test says where it broke, and the boundary you set holds to exactly what it claims.
-
-## Contact
-
-Written contact only. Email for longer messages, Signal for short questions. The first reply is in writing within one business day. No calls and no calendar links at any stage of the engagement.
-
-- Email: <mailto:info@turva.dev>
-- Signal: [@turva.19](https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK)
-- LinkedIn: https://www.linkedin.com/in/erikrekola/
+[About turva.dev](/company).
 
 ## Frequently asked
 
-**What does agent-readiness mean?**
+**What is agent-readiness?**
 
-Agent-readiness is a measurable property of a site, an API, or a product surface. It describes how well AI agents can discover, read, and operate it. It is a property of the product and not of the organisation behind it: an organisation's readiness to adopt AI agents is a different question that often goes by the same name.
+It is how well AI agents can discover, read and use the information and interfaces your product exposes. This audit examines websites and APIs. It is different from assessing an organisation's readiness to adopt AI.
 
-**How much does it cost?**
+**Is agent-readiness the same as AI visibility?**
 
-Prices (EUR, VAT not included): Shopify agent storefront check €999 fixed price, Audit €4,300 fixed price, Advisory €3,000/month (minimum 3 months), Implementation €1,500/day scoped per task, or a fixed €499 for implementing exactly the fixes an audit lists or the corrections a Shopify check lists, bought together with that diagnosis. Final price is confirmed in writing after scope is agreed.
+No. Technical readiness concerns access, information and interfaces. AI visibility concerns how assistants mention and describe your business in their answers. The website and API audit examines both, using separate technical checks and a documented question set.
 
-**Do I need to share production credentials?**
+**Do you guarantee AI mentions or a particular score?**
 
-No. Production credentials are not requested. Read access is enough for the audit.
+No. The audit records observed results, identifies issues and defines how corrections can be checked. AI answers and scanner results can change, so every measurement needs its date, scope and method.
 
-**Will you sign an NDA?**
+**Can our own team implement the findings?**
 
-Yes. Send your own and it is signed as it stands before any material moves, at no charge. Client material is deleted within thirty days of the engagement closing, unless retention is required by law.
+Yes. The report includes correction instructions and acceptance checks. A €499 implementation add-on covers the diagnosis's own fix list when bought with that diagnosis and when the required access is arranged in advance. Work outside that list is scoped separately at €1,500 per day. The services page sets out the prerequisites and scope: [implementation scope and access requirements](/services).
 
-**Are there calls or video meetings?**
+**What access is required?**
 
-No. Engagement is async-only. No calls and no calendar links at any stage.
+The audit does not require production credentials. If you purchase implementation, any required deployment, DNS, Shopify or repository permissions are agreed separately and limited to the work being carried out.
 
-**How long does the audit take?**
+## Contact
 
-The audit is fixed scope, two weeks.
+Send your website, API or Shopify store URL and tell me what you want to understand. I'll reply within one business day with the appropriate next step, scope and start date.
 
-**Can our engineering team implement the fixes?**
+[Request an audit](/contact). Email: <mailto:info@turva.dev>.
 
-Yes, and the report is written for that. Every finding carries a fix instruction, and a link to the guide on this site for that surface where there is one. Either your team does the work from the report or I do. If you want me to, implementing exactly the fixes the report lists is €499 when it is bought together with the audit. The fixed price needs an edge runtime in front of your origin where the fixes are applied and the access to deploy there, plus any other access a listed fix needs, the DNS zone for example, all arranged in writing before the work starts. With those in place, every fix on the list is implemented for the €499, whatever the count. If they cannot be arranged, the add-on is not sold, and the report still carries the instructions for your team.
-
-**How is the result verified?**
-
-The result shows up in scanner numbers. The next scan reads higher than the previous one in the categories the report named. That re-scan is part of the audit: one run within 30 days of the report, same scanner, same profile, same question set, with the readings printed next to the baseline.
-
-**How do I get in touch?**
-
-In writing: email info@turva.dev or Signal @turva.19. First reply within one business day.
+Everything is handled in writing. No calls or calendar bookings.
 
 ## Markdown views
 
@@ -4968,7 +4931,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.131.0",
+    "version": "3.132.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5235,7 +5198,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.131.0",
+  "version": "3.132.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6183,8 +6146,8 @@ var META_BY_PATH = {
     imageAlt: "turva.dev blog card: The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop."
   },
   "/": {
-    title: "Agent-readiness audits and advisory · turva.dev",
-    description: "Agent-readiness audits and advisory for product teams, and the wider work wherever AI agents read data and make decisions. Independent, measured, async-only.",
+    title: "Agent-readiness audits for websites, APIs & Shopify | turva.dev",
+    description: "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.",
     imageAlt: "turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com"
   },
   "/services": {
@@ -6415,7 +6378,7 @@ var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","nam
 
 var SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Independent agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
+{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
 {"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 ${SCHEMA_SERVICE},
@@ -6681,7 +6644,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Independent agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Beyond readiness, the same discipline covers the data agents act on and the decisions they are allowed to make.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 999, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-09-01" }, null, 2);
+var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 999, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-09-01" }, null, 2);
 var API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"
@@ -7480,39 +7443,42 @@ var HOME_MARKDOWN = (function () {
 function serveHomeHtml(canonicalUrl) {
   const metaBlock = buildMetaBlock("/", canonicalUrl);
   const lead = mdLead("/");
-  const apply = mdParas("/", "Where this applies", 2);
-  const exCells = mdLists("/", "Where this applies")[0].map((x) => `<div class="ex">${x}</div>`).join("\n      ");
-  const ev = mdParas("/", "Evidence", 7).map(mdTidyUrlText);
-  const evMeasured = (ev[0].match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
-  const hpMeasured = evMeasured ? ` &middot; measured ${evMeasured}` : "";
+  // The measured date comes from the twin's own agent-readiness sentence, so the hero row and
+  // the markdown agree by construction and the Measured-date gate in verify.mjs reads one copy.
+  const evMeasured = ((lead.paras[2] || "").match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
+  if (!evMeasured) throw new Error("home lead carries no Measured date for the scan row");
+  const hpMeasured = ` &middot; measured ${evMeasured}`;
   // The hero H1 is the twin's title. The words "AI agents" are the one green highlight the
   // layout guide (2026-09-06, Tek-354) allows in the heading; if the title stops carrying them,
   // the heading renders plain and nothing breaks.
   const heroH1 = renderInline(lead.title).replace("AI agents", '<span class="hl">AI agents</span>');
-  const evLists = mdLists("/", "Evidence").map((l) => l.map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      "));
-  const proc = mdParas("/", "The process has three stages and no surprises", 6);
-  const stepBody = (t) => t.slice(t.indexOf(". ") + 2);
-  const svcCards = mdLists("/", "Services")[0].map((it) => {
-    const svcName = it.split(". ")[0];
-    // Fail closed: every service line must carry one of the four pricing phrases. A
-    // phrase that drifts in the twin used to fall silently into "on request" (round 13
-    // R1f-3); now the home page render, which routes.test.mjs exercises, throws instead.
-    const tag = it.includes("Fixed scope") ? "fixed scope" : it.includes("Monthly retainer") ? "monthly" : it.includes("per day") ? "per day" : it.includes("On request") ? "on request" : null;
-    if (!tag) throw new Error("home Services line carries no pricing phrase: " + svcName);
-    return `<div class="svc"><div class="svc-h"><span class="svc-t">${svcName}</span><span class="svc-tag">${tag}</span></div><p>${it.slice(svcName.length + 2)}</p></div>`;
-  }).join("\n      ");
+  // "Title. Body." paragraphs become a titled card; the split is the first ". " and a paragraph
+  // without one throws, so a twin edit that drops the title cannot render an empty card.
+  const titled = (t, what) => { const k = t.indexOf(". "); if (k < 0) throw new Error("home " + what + " paragraph has no title: " + t.slice(0, 40)); return { t: t.slice(0, k), b: t.slice(k + 2) }; };
   // The two offers are read from the twin list, one card each: name, price, what it covers and
-  // when it is delivered. Fail closed like svcCards: a list line that stops matching the shape
-  // throws here instead of rendering a card with an empty price.
-  const offerParas = mdParas("/", "Two fixed-scope ways to start", 3);
-  const offerRaw = mdSection("/", "Two fixed-scope ways to start").split("\n").filter((l) => l.startsWith("- "));
-  if (offerRaw.length !== 2) throw new Error("home Two fixed-scope list does not carry exactly two offers: " + offerRaw.length);
+  // when it is delivered. Fail closed: a list line that stops matching the shape throws here
+  // instead of rendering a card with an empty price (Tek-355, Tek-357).
+  const offerParas = mdParas("/", "Choose the right starting point", 3);
+  const offerRaw = mdSection("/", "Choose the right starting point").split("\n").filter((l) => l.startsWith("- "));
+  if (offerRaw.length !== 2) throw new Error("home starting-point list does not carry exactly two offers: " + offerRaw.length);
+  const OFFER_LINK = { "/shopify-agent-storefront-check": "Explore the Shopify check", "/services": "Explore the audit" };
   const offerCards = offerRaw.map((line) => {
-    const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?), delivered (.+?)\.$/);
+    const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)$/);
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
     const [, name, href, price, covers, when] = m;
-    return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span><span class="offer-price">${escapeHtml(price)}</span></span><span class="offer-covers">${escapeHtml(covers)}.</span><span class="offer-when">Delivered ${escapeHtml(when)}.</span><span class="offer-link">Read the scope</span></a>`;
+    if (!OFFER_LINK[href]) throw new Error("home offer has no link label for " + href);
+    return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span><span class="offer-price">${escapeHtml(price)}</span></span><span class="offer-covers">${escapeHtml(covers)}</span><span class="offer-when">${escapeHtml(when)}</span><span class="offer-link">${OFFER_LINK[href]}</span></a>`;
   }).join("\n      ");
+  const gets = mdParas("/", "From an observed problem to a checkable fix", 5);
+  const getCards = gets.slice(1, 4).map((t) => titled(t, "deliverable")).map((c) => `<div class="step"><span class="step-t">${c.t}</span><p>${c.b}</p></div>`).join("\n      ");
+  const proc = mdParas("/", "A clear process, in writing", 4);
+  const procCards = proc.slice(0, 3).map((t, i) => titled(t, "process")).map((c, i) => `<div class="step"><span class="step-n">0${i + 1}</span><span class="step-t">${c.t}</span><p>${c.b}</p></div>`).join("\n      ");
+  const work = mdParas("/", "Work you can inspect", 5);
+  const workCards = work.slice(0, 3).map((t) => titled(t, "inspect")).map((c) => `<div class="svc"><div class="svc-h"><span class="svc-t">${c.t}</span></div><p>${c.b}</p></div>`).join("\n      ");
+  const secList = mdLists("/", "Work you can inspect")[0].map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      ");
+  const support = mdParas("/", "Support beyond the first report", 3);
+  const who = mdParas("/", "Work directly with Erik Rekola", 3);
+  const contact = mdParas("/", "Contact", 3);
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -7594,6 +7560,10 @@ main{max-width:none;margin:0;padding:0;}
 .offer-covers{font-size:.95rem;line-height:1.55;color:#C9D1CE;}
 .offer-when{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.03em;color:#9AA3A0;}
 .offer-link{margin-top:auto;padding-top:6px;font-size:.9rem;font-weight:600;color:#5DF18F;}
+.muted{font-size:.9rem;color:#9AA3A0;}
+.mail-link{display:inline-block;margin-left:14px;color:#F2F4F3;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.3);padding:.15rem 0;}
+.mail-link:hover{color:#5DF18F;border-color:#5DF18F;text-decoration:none;}
+.board{margin:1.2rem 0 1.4rem;}
 .board{margin:0 0 1rem;border:1px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.25rem;}
 .board-top{display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline;justify-content:space-between;margin:0 0 .9rem;}
 .board-head{font-size:.92rem;color:#F2F4F3;font-weight:600;}
@@ -7681,52 +7651,56 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
       </div>
       <div class="rcard" role="group" aria-label="What a report looks like, synthetic example">
         <div class="rc-top"><span>turva.dev / audit</span><span class="rc-tag">Synthetic example</span></div>
-        <p class="rc-title">A report you can put to work.</p>
+        <p class="rc-title">A report your team can act on.</p>
         <p class="rc-client">Northwind Fasteners Oy &middot; invented company</p>
         <ol class="rc-list">
-          <li><span class="rc-n">01</span><span>Correct the product data</span></li>
-          <li><span class="rc-n">02</span><span>Make the catalogue discoverable</span></li>
-          <li><span class="rc-n">03</span><span>Verify each change</span></li>
+          <li><span class="rc-n">01</span><span>Document the issue</span></li>
+          <li><span class="rc-n">02</span><span>Prioritise the correction</span></li>
+          <li><span class="rc-n">03</span><span>Define how to verify it</span></li>
         </ol>
-        <p class="rc-foot">Evidence &middot; Priorities &middot; Acceptance tests</p>
+        <p class="rc-foot">Evidence &middot; Priorities &middot; Acceptance checks</p>
         <a class="rc-more" href="/samples/audit-report">View the full sample</a>
       </div>
     </div>
     <div class="hero-proof">
       <span class="hp-score">100/100</span>
-      <span>turva.dev &middot; Level 5, Agent-Native</span>
+      <span>Technical agent-readiness of turva.dev &middot; Level 5, Agent-Native</span>
       <span class="hp-src">isitagentready.com${hpMeasured}</span>
       <a href="https://isitagentready.com/">Open the scanner</a>
     </div>
   </section>
   <section class="sec offers">
-    <h2>Two fixed-scope ways to start</h2>
+    <h2>Choose the right starting point</h2>
     <p>${offerParas[0]}</p>
     <div class="offer-grid">
       ${offerCards}
     </div>
-    <p>${offerParas[1]}</p>
+    <p class="muted">${offerParas[1]}</p>
     <p>${offerParas[2]}</p>
   </section>
   <div class="page">
-
   <section class="sec">
-    <h2>Audits, advisory, and implementation for product teams</h2>
-    ${mdBodyHtml("/", "Audits, advisory, and implementation for product teams")}
-  </section>
-
-  <section class="sec">
-    <h2>Where this applies</h2>
-    <p>${apply[0]}</p>
-    <div class="exgrid">
-      ${exCells}
+    <h2>From an observed problem to a checkable fix</h2>
+    <p>${gets[0]}</p>
+    <div class="steps">
+      ${getCards}
     </div>
-    <p>${apply[1]}</p>
+    <p>${gets[4]}</p>
   </section>
 
   <section class="sec">
-    <h2>Evidence</h2>
-    <p>${ev[0]}</p>
+    <h2>A clear process, in writing</h2>
+    <div class="steps">
+      ${procCards}
+    </div>
+    <p class="muted">${proc[3]}</p>
+  </section>
+
+  <section class="sec">
+    <h2>Work you can inspect</h2>
+    <div class="svcgrid">
+      ${workCards}
+    </div>
   <section class="board" aria-label="agent-readiness scan result">
     <div class="board-top">
       <span class="board-head">independent agent-readiness scan of turva.dev</span>
@@ -7741,85 +7715,38 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
     </div>
     <div class="board-sum"><span>verified</span> <b>100/100</b> <span class="pill">Level 5</span> <span class="pill">Agent-Native</span></div>
   </section>
+    <p>${work[4]}</p>
     <ul class="evlist">
-      ${evLists[0]}
-    </ul>
-    <p>${ev[1]}</p>
-    <p>${ev[2]}</p>
-    <p>${ev[3]}</p>
-    <ul class="evlist">
-      ${evLists[1]}
-    </ul>
-    <p>${ev[4]}</p>
-    <p>${ev[5]}</p>
-    <p>${ev[6]}</p>
-  </section>
-
-  <section class="sec">
-    <h2>What an agent sees on this page</h2>
-    <p>Every page on this site is also served as plain markdown to any agent that asks for it, at the same URL, at a fraction of the token cost of the HTML. The block below is the opening of that markdown, generated from the same string an agent receives.</p>
-    <div class="aview">
-      <p class="aview-cmd">curl -H "Accept: text/markdown" https://turva.dev/</p>
-      <pre><code>${escapeHtml(HOME_MARKDOWN.split("\n").slice(0, 7).join("\n") + "\n[Truncated. The full document continues in markdown.]")}</code></pre>
-    </div>
-    <p><a href="/guides/markdown-for-agents">How markdown content negotiation works.</a></p>
-  </section>
-
-  <section class="sec">
-    <h2>The process has three stages and no surprises</h2>
-    <div class="steps">
-      <div class="step">
-        <span class="step-n">01</span>
-        <span class="step-t">Measurement</span>
-        <p>${stepBody(proc[0])}</p>
-      </div>
-      <div class="step">
-        <span class="step-n">02</span>
-        <span class="step-t">A written report</span>
-        <p>${stepBody(proc[1])}</p>
-      </div>
-      <div class="step">
-        <span class="step-n">03</span>
-        <span class="step-t">The fixes</span>
-        <p>${stepBody(proc[2])}</p>
-      </div>
-    </div>
-    <ul class="notes">
-      <li>${proc[3]}</li>
-      <li>${proc[4]}</li>
-      <li>${proc[5]}</li>
+      ${secList}
     </ul>
   </section>
 
   <section class="sec">
-    <h2>Services</h2>
-    <div class="svcgrid">
-      ${svcCards}
-    </div>
+    <h2>Support beyond the first report</h2>
+    <p>${support[0]}</p>
+    <p>${support[1]}</p>
+    <p>${support[2]}</p>
   </section>
 
   <section class="sec">
-    <h2>Who I am</h2>
-    ${mdBodyHtml("/", "Who I am")}
-  </section>
-
-  <section class="sec contact">
-    <h2>Contact me</h2>
-    <p>Seeing where your site, API or product stands with AI agents starts with a measured baseline, a written report, and a prioritized list of what to fix first. For agent-readiness that baseline comes from an independent scanner. For the wider work it comes from testing the data path and the decision envelope directly. Async-only engagement. No calls and no calendar links. The first reply lands in writing within one business day.</p>
-    <div class="contact-card">
-      <a class="ch" href="mailto:info@turva.dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>info@turva.dev</span></a>
-      <a class="ch" href="https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg><span>Signal @turva.19</span></a>
-      <a class="ch" href="https://www.linkedin.com/in/erikrekola/"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.4 8.9h3.1V21H3.4zM9.2 8.9h2.97v1.65h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V21h-3.1v-5.35c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9.2z"/></svg><span>LinkedIn</span></a>
-    </div>
-    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A">Request an audit</a></div>
+    <h2>Work directly with Erik Rekola</h2>
+    <p>${who[0]}</p>
+    <p>${who[1]}</p>
+    <p>${who[2]}</p>
   </section>
 
   <section class="sec">
-    <h2>Frequently asked</h2>
+    <h2>Questions before you start</h2>
     <div class="faq">
 ${mdFaqRows("/", "Frequently asked")}
     </div>
-    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A">Request an audit</a></div>
+  </section>
+
+  <section class="sec contact">
+    <h2>Start with the URL and the question</h2>
+    <p>${contact[0]}</p>
+    <div class="cta-row"><a class="cta-btn" href="/contact">Request an audit</a> <a class="mail-link" href="mailto:info@turva.dev">info@turva.dev</a></div>
+    <p class="muted">${contact[2]}</p>
   </section>
   </div>
 </main>
