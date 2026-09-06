@@ -1629,6 +1629,87 @@ console.log('\nCurrency symbol matches facts.prices.currency (round 14, R2a-3)')
   }
 }
 
+console.log('\nAutolink: bare hosts in the served markdown (kierros 18, S5-1)');
+// renderInline() links protocol-less "label.label/path" strings. A reverse-DNS
+// identifier has that exact shape, and two MCP metadata keys in a blog post rendered
+// as links to a host that does not resolve. worker.js now requires the last label to
+// be in AUTOLINK_TLDS. That alone would fail SILENTLY on a new top-level domain: the
+// link would just stop being a link, and nothing would say so. This gate is the loud
+// half. Every autolink-shaped string in the served markdown must either end in a
+// declared top-level domain or be named in AUTOLINK_NOT_HOSTS, so adding a link with a
+// new top-level domain fails here instead of shipping as plain text.
+{
+  const setOf = (name) => {
+    const m = src.worker.text.match(new RegExp('var ' + name + ' = new Set\\(\\[([^\\]]*)\\]\\)'));
+    return m ? [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]) : null;
+  };
+  const tlds = setOf('AUTOLINK_TLDS');
+  const notHosts = setOf('AUTOLINK_NOT_HOSTS');
+  check(Array.isArray(tlds) && tlds.length > 0, `AUTOLINK_TLDS parsed from worker.js (${tlds ? tlds.length : 0} top-level domains)`);
+  check(Array.isArray(notHosts), `AUTOLINK_NOT_HOSTS parsed from worker.js (${notHosts ? notHosts.length : 0} declared non-hosts)`);
+  if (tlds && notHosts) {
+    const pmStart = src.worker.text.indexOf('var PAGE_MARKDOWN');
+    const pmEnd = src.worker.text.indexOf('var META_BY_PATH');
+    const markdown = src.worker.text.slice(pmStart, pmEnd);
+    check(pmStart > 0 && pmEnd > pmStart, 'PAGE_MARKDOWN block located for the autolink scan');
+    // The same shape renderInline matches, minus the leading-boundary group.
+    const shape = /(?:^|[\s(])((?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/[^\s<)"`\]]*)/gi;
+    const seen = new Map();
+    for (const m of markdown.matchAll(shape)) {
+      const raw = m[1].replace(/[.,;:!?]+$/, '');
+      const host = raw.split('/')[0];
+      const tld = host.slice(host.lastIndexOf('.') + 1).toLowerCase();
+      if (!tlds.includes(tld)) seen.set(raw, tld);
+    }
+    const undeclared = [...seen.keys()].filter((r) => !notHosts.includes(r));
+    check(undeclared.length === 0,
+      'every autolink-shaped string in PAGE_MARKDOWN ends in a declared top-level domain or is named in AUTOLINK_NOT_HOSTS'
+      + (undeclared.length ? ' :: undeclared ' + undeclared.slice(0, 5).join(', ') : ''));
+    const stale = notHosts.filter((r) => !markdown.includes(r));
+    check(stale.length === 0,
+      'every AUTOLINK_NOT_HOSTS entry still occurs in PAGE_MARKDOWN, so the list cannot outlive its reason'
+      + (stale.length ? ' :: gone ' + stale.join(', ') : ''));
+  }
+}
+
+console.log('\nx402 amounts derive from facts.json eurUsdc (kierros 18, S6-1)');
+// The three x402 offers carry a USDC amount that is the euro price times a rate. The
+// rate was baked into the number and named on no served surface, so it aged invisibly.
+// facts.json now owns it and this is its reader: each amount is recomputed here, so a
+// price change or a rate change that is not carried into X402_MANIFEST fails.
+{
+  const eu = facts.eurUsdc;
+  check(!!eu && typeof eu.rate === 'number' && eu.rate > 0, `facts.json eurUsdc.rate is a positive number (saw ${eu ? JSON.stringify(eu.rate) : 'absent'})`);
+  check(!!eu && /^\d{4}-\d{2}-\d{2}$/.test(String(eu.measuredAt)), `facts.json eurUsdc.measuredAt is an ISO date (saw ${eu ? JSON.stringify(eu.measuredAt) : 'absent'})`);
+  if (eu && eu.rate) {
+    for (const key of ['audit', 'advisory', 'implementation']) {
+      const eur = facts.prices[key];
+      const want = Math.round(eur * eu.rate);
+      const res = 'https://turva.dev/api/agent/' + key;
+      const m = src.worker.text.match(new RegExp('"amount": "(\\d+)",[\\s\\S]{0,120}?"resource": "' + res + '"'));
+      check(!!m, `X402_MANIFEST declares an amount for ${key}`);
+      if (m) {
+        const got = Number(m[1]) / 1e6;
+        check(got === want, `x402 ${key} amount ${got} USDC == round(${eur} EUR * ${eu.rate}) = ${want}`);
+        check(src.worker.text.includes(`(\u20ac${eur.toLocaleString('en-US')} / ${want} USDC)`),
+          `the ${key} offer description states \u20ac${eur.toLocaleString('en-US')} / ${want} USDC`);
+      }
+    }
+  }
+}
+
+console.log('\nSigning material is declared where an agent looks (kierros 18, S6-3)');
+// /.well-known/jwks.json and /.well-known/signatures.json are what a reader needs to
+// check the four signed manifests, they are live, and /api/v1 names them, but the API
+// catalog listed neither. A surface that nothing enumerates is a surface that can be
+// removed without anything noticing.
+{
+  const cat = src.worker.text.slice(src.worker.text.indexOf('var API_CATALOG'), src.worker.text.indexOf('var API_CATALOG') + 6000);
+  for (const href of ['https://turva.dev/.well-known/jwks.json', 'https://turva.dev/.well-known/signatures.json']) {
+    check(cat.includes(href), `API_CATALOG service-meta names ${href.replace('https://turva.dev', '')}`);
+  }
+}
+
 if (LIVE) {
   console.log('\nLive (URLs + signatures)');
   const base = 'https://turva.dev';
