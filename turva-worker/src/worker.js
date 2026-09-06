@@ -1,7 +1,7 @@
 // src/worker.js
-// turva.dev worker v3.128.0 - the sample audit report as a decision document (2026-09-06, Tek-351): /samples/audit-report now tests F1 across the whole catalog on the page, the JSON-LD and the API with price basis, variants, pagination and listed exceptions, derives availability from the stock state and not from the lead time, separates the edge delivery from the source fix with its own acceptance condition, keeps observation, possible effect and shown causation apart in every finding, gives every AI-run error a source, owner and retest, versions the DNS-AID reading, drops the scanner-driven ACP hint from F8, and carries three evidence chains and the question set as appendices; /services and the page meta say nine findings. Prices and promises unchanged, llms.txt unchanged (no re-sign).
+// turva.dev worker v3.129.0 - home hero per the Fable layout guide v1.0 (2026-09-06, Tek-354): two columns with the copy at three fifths and a static synthetic report card at two fifths, one measurement row under them with the scanner and the measured date, the terminal, the result badge and the Business ID line removed from the hero (the ID stays in the footer), the five-category board moved into the Evidence section, primary CTA to /contact and the sample report as the second CTA, the twin title and first paragraph read "Know what AI agents see in your product" and the audit ingress. Prices and promises unchanged, llms.txt unchanged (no re-sign).
+// v3.128.0 was: the sample audit report as a decision document (2026-09-06, Tek-351): /samples/audit-report now tests F1 across the whole catalog on the page, the JSON-LD and the API with price basis, variants, pagination and listed exceptions, derives availability from the stock state and not from the lead time, separates the edge delivery from the source fix with its own acceptance condition, keeps observation, possible effect and shown causation apart in every finding, gives every AI-run error a source, owner and retest, versions the DNS-AID reading, drops the scanner-driven ACP hint from F8, and carries three evidence chains and the question set as appendices; /services and the page meta say nine findings. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.127.0 was: kierros 18 (2026-09-06): the protocol-less autolinker now requires a declared top-level domain, so two MCP metadata keys in /blog/red-reading-that-measured-my-own-client stopped rendering as links to a host that does not resolve; the Codeberg post no longer carries the deleted mirror's address as a link and says so in a dated correction; the MCP server card guide links the renamed ext-server-card repository; the Shopify short form names the Catalog channel it had been dropping; the llms.txt validator page dates its own "two weeks old"; the API catalog declares jwks.json and signatures.json; and facts.json owns the EUR/USDC rate the three x402 amounts derive from. Prices and promises unchanged, llms.txt unchanged (no re-sign).
-// v3.126.0 was: guides re-read against their primary sources (Astra 2026-09-05, Tek-349): ARD v0.91 named /.well-known/ard.json and rel="ard", so the site now serves /.well-known/ard.json (same entries, v0.91 MCP media type), announces it with a Link header and a <link rel="ard"> in every page head, and keeps ai-catalog.json for the scanner and the MCP Server Card discovery document; the ARD, MCP card, well-known, robots and commerce guides say the current state (MCP card default location, robots.txt effect per bot, AP2 v0.1 extension scoped to v0.1). LLMS_TXT gained one line (re-sign).
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -2822,7 +2822,11 @@ Written contact only. Email info@turva.dev, Signal @turva.19. First reply within
 - [Serving markdown to agents](/guides/markdown-for-agents)
 - [What an agent-readiness audit is](/guides/agent-readiness-audit)
 `,
-  "/": `# Audits and advisory for products that AI agents read and act on
+  "/": `# Know what AI agents see in your product
+
+Independent audits of your website and API. A measured baseline, a prioritised fix list, and implementation when you need it.
+
+Async-only, first reply within one business day. [Scope and pricing](/services).
 
 Agent-readiness is the measurable starting point: whether AI agents can find and use your website or API, scored by an independent scanner. The wider work is the data those agents depend on and the decisions you let them make. Both are measured before they are promised.
 
@@ -4964,7 +4968,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.128.0",
+    "version": "3.129.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5231,7 +5235,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.128.0",
+  "version": "3.129.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7482,7 +7486,11 @@ function serveHomeHtml(canonicalUrl) {
   const exCells = mdLists("/", "Where this applies")[0].map((x) => `<div class="ex">${x}</div>`).join("\n      ");
   const ev = mdParas("/", "Evidence", 7).map(mdTidyUrlText);
   const evMeasured = (ev[0].match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
-  const hpMeasured = evMeasured ? `<span class="hp-seg">&middot; measured ${evMeasured}</span>` : "";
+  const hpMeasured = evMeasured ? ` &middot; measured ${evMeasured}` : "";
+  // The hero H1 is the twin's title. The words "AI agents" are the one green highlight the
+  // layout guide (2026-09-06, Tek-354) allows in the heading; if the title stops carrying them,
+  // the heading renders plain and nothing breaks.
+  const heroH1 = renderInline(lead.title).replace("AI agents", '<span class="hl">AI agents</span>');
   const evLists = mdLists("/", "Evidence").map((l) => l.map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      "));
   const proc = mdParas("/", "The process has three stages and no surprises", 6);
   const stepBody = (t) => t.slice(t.indexOf(". ") + 2);
@@ -7530,32 +7538,38 @@ strong{color:#F2F4F3;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
-.hero{padding:2.8rem 0 2rem;}
+main{max-width:none;margin:0;padding:0;}
+.page{max-width:46rem;margin:0 auto;padding:0 clamp(20px,5vw,72px) 3rem;}
+.hero{max-width:68rem;margin:0 auto;padding:clamp(48px,6vw,72px) clamp(24px,5vw,72px) 2.6rem;border-bottom:0.5px solid rgba(255,255,255,0.07);}
+.hero-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:clamp(40px,4vw,48px);align-items:center;}
 .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1.1rem;}
-.lede{font-size:1.16rem;line-height:1.55;color:#C9D1CE;margin:0;max-width:40rem;}
-.hero-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(258px,1fr);gap:1.6rem;align-items:center;margin:1.7rem 0 0;}
-.hero-proof{max-width:100%;overflow-wrap:anywhere;display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin:0 0 1.3rem;border:1px solid rgba(93,241,143,0.28);border-radius:14px;padding:13px 20px;background:rgba(93,241,143,0.04);color:#C9D1CE;font:400 14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;}
-.hero-proof .hp-claim{display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline;}
-.hero-proof .hp-src{display:flex;flex-wrap:wrap;gap:0 8px;font-size:12.5px;color:#9AA3A0;}
-.hero-proof .hp-score{color:#5DF18F;font-weight:600;}
-.hero-proof .hp-seg{white-space:normal;overflow-wrap:anywhere;}
-.cta{display:flex;flex-wrap:wrap;gap:.7rem;margin:0;}
-.btn{display:inline-block;max-width:100%;overflow-wrap:break-word;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.65rem 1.15rem;font-size:.92rem;transition:background-color .15s ease;}
+.hero h1{color:#F2F4F3;font-size:clamp(34px,4.2vw,56px);line-height:1.08;letter-spacing:-0.02em;margin:0 0 24px;font-weight:700;hyphens:manual;}
+.hero h1 .hl{color:#5DF18F;}
+.lede{font-size:clamp(17px,1.35vw,20px);line-height:1.6;color:#C9D1CE;margin:0 0 30px;max-width:36rem;}
+.cta{display:flex;flex-wrap:wrap;gap:14px;margin:0;}
+.btn,.btn-ghost{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:52px;padding:.8rem 1.35rem;border-radius:7px;font-size:15px;font-weight:700;max-width:100%;overflow-wrap:break-word;text-align:center;}
+.btn{background:#5DF18F;color:#06100F;transition:background-color .15s ease;}
 .btn:hover{background:#7df7a6;text-decoration:none;}
-.btn-ghost{display:inline-block;max-width:100%;overflow-wrap:break-word;color:#F2F4F3;font-weight:600;border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:.65rem 1.15rem;font-size:.92rem;transition:border-color .15s ease,color .15s ease;}
+.btn-ghost{color:#F2F4F3;font-weight:600;border:1px solid rgba(255,255,255,0.24);transition:border-color .15s ease,color .15s ease;}
 .btn-ghost:hover{border-color:#5DF18F;color:#5DF18F;text-decoration:none;}
-.terminal{min-width:0;max-width:100%;border:1px solid rgba(255,255,255,0.14);border-radius:12px;overflow:hidden;background:#06100F;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.84rem;}
-.tm-bar{display:flex;min-width:0;align-items:center;gap:.5rem;padding:.55rem .8rem;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.08);}
-.tm-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
-.tm-dot.r{background:#ff5f56;}.tm-dot.y{background:#ffbd2e;}.tm-dot.g{background:#27c93f;}
-.tm-title{min-width:0;flex:1 1 auto;margin-left:.45rem;color:#9AA3A0;font-size:.76rem;overflow-wrap:anywhere;}
-.tm-body{padding:.9rem .85rem 1.05rem;line-height:1.75;min-width:0;overflow-wrap:anywhere;}
-.tm-cmd{color:#F2F4F3;word-break:break-word;}
-.tm-cmd .pr{color:#5DF18F;margin-right:.5rem;}
-.tm-out{color:#9AA3A0;overflow-wrap:anywhere;}
-.tm-out b{color:#5DF18F;font-weight:600;}
-.cursor{display:inline-block;width:.5rem;height:1rem;vertical-align:-0.16rem;background:#5DF18F;margin-left:.2rem;animation:tvb 1.1s steps(1) infinite;}
-@keyframes tvb{50%{opacity:0;}}
+.btn:focus-visible,.btn-ghost:focus-visible,.hero a:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
+.svcnote{margin:18px 0 0;font-size:13px;color:#9AA3A0;letter-spacing:.01em;}
+.svcnote a{color:#C9D1CE;border-bottom:1px solid rgba(255,255,255,0.25);}
+.svcnote a:hover{color:#5DF18F;border-color:#5DF18F;text-decoration:none;}
+.rcard{box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:24px;color:#C9D1CE;box-shadow:0 18px 40px rgba(0,0,0,0.28);}
+.rc-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 12px;margin:0 0 14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
+.rc-tag{color:#5DF18F;border:1px solid rgba(93,241,143,0.35);border-radius:999px;padding:.1rem .55rem;text-transform:none;letter-spacing:.02em;}
+.rc-title{margin:0 0 4px;font-size:1.25rem;line-height:1.25;font-weight:700;color:#F2F4F3;}
+.rc-client{margin:0 0 16px;font-size:.9rem;color:#9AA3A0;}
+.rc-list{list-style:none;margin:0 0 16px;padding:0;border-top:1px solid #2D3D3D;}
+.rc-list li{display:flex;gap:14px;align-items:baseline;padding:10px 0;border-bottom:1px solid #2D3D3D;font-size:.95rem;color:#F2F4F3;}
+.rc-n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;color:#5DF18F;font-weight:700;flex:0 0 auto;}
+.rc-foot{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;letter-spacing:.05em;color:#9AA3A0;}
+.hero-proof{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin:clamp(32px,4vw,44px) 0 0;padding:14px 0 0;border-top:1px solid #2D3D3D;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;color:#C9D1CE;}
+.hero-proof .hp-score{color:#5DF18F;font-weight:700;font-size:1.15rem;}
+.hero-proof .hp-src{color:#9AA3A0;}
+.hero-proof a{margin-left:auto;color:#F2F4F3;border-bottom:1px solid rgba(255,255,255,0.3);padding:.15rem 0;}
+.hero-proof a:hover{color:#5DF18F;border-color:#5DF18F;text-decoration:none;}
 .board{margin:0 0 1rem;border:1px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.25rem;}
 .board-top{display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline;justify-content:space-between;margin:0 0 .9rem;}
 .board-head{font-size:.92rem;color:#F2F4F3;font-weight:600;}
@@ -7603,7 +7617,9 @@ ${FAQ_CSS}
 .cta-row{margin:1.25rem 0 0;}
 .cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;transition:background-color .15s ease;}
 .cta-btn:hover{background:#7df7a6;text-decoration:none;}
-@media (max-width:640px){.board-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.hero-row{grid-template-columns:minmax(0,1fr);}.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}.tm-body{padding:12px 10px 14px;}.tm-bar{padding:9px 12px;}.hero-proof{padding:12px 12px;}}
+@media (max-width:700px){.hero-grid{grid-template-columns:minmax(0,1fr);gap:32px;}.hero{padding-top:44px;}.hero h1{font-size:clamp(34px,9vw,38px);line-height:1.1;}.lede{font-size:clamp(16px,4.4vw,18px);}.hero-proof a{margin-left:0;}.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
+@media (max-width:640px){.board-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:430px){.cta{flex-direction:column;}.btn,.btn-ghost{width:100%;}.hero{padding-left:24px;padding-right:24px;}.rcard{padding:20px;}}
 ${FOOTER_CSS}
 </style>
 </head>
@@ -7630,55 +7646,37 @@ ${FOOTER_CSS}
 </nav>
 <main id="main">
   <section class="hero">
-    <p class="eyebrow">where data moves and decisions matter · independently verified</p>
-    <h1>${renderInline(lead.title)}</h1>
-    <p class="lede">${renderInline(lead.paras[0])}</p>
-    <div class="hero-row">
-      <div class="hero-left">
-        <div class="hero-proof">
-          <span class="hp-claim">
-            <span class="hp-score">100/100</span>
-            <span class="hp-seg">&middot; Level 5</span>
-            <span class="hp-seg">&middot; Agent-Native</span>
-          </span>
-          <span class="hp-src">
-            <span class="hp-seg">on isitagentready.com</span>
-            ${hpMeasured}
-          </span>
-        </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Independent agent-readiness audits</p>
+        <h1>${heroH1}</h1>
+        <p class="lede">${renderInline(lead.paras[0])}</p>
         <div class="cta">
-          <a class="btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A">Request an audit</a>
-          <a class="btn-ghost" href="https://github.com/erekola/turva-worker">Read the source</a>
+          <a class="btn" href="/contact">Request an audit</a>
           <a class="btn-ghost" href="/samples/audit-report">Read a sample report</a>
         </div>
-        <p class="bizline">Business ID 3600281-7 &middot; registered in Finland</p>
+        <p class="svcnote">${renderInline(lead.paras[1])}</p>
       </div>
-      <div class="hero-right">
-        <div class="terminal" role="group" aria-label="verification terminal">
-          <div class="tm-bar"><span class="tm-dot r"></span><span class="tm-dot y"></span><span class="tm-dot g"></span><span class="tm-title">turva@audit · verify</span></div>
-          <div class="tm-body">
-            <div class="tm-cmd"><span class="pr">&#8250;</span>scan turva.dev on isitagentready.com</div>
-            <div class="tm-out">&#10003; isitagentready.com &middot; <b>100/100</b> &middot; level 5 &middot; agent-native<span class="cursor"></span></div>
-          </div>
-        </div>
+      <div class="rcard" role="group" aria-label="What a report looks like, synthetic example">
+        <div class="rc-top"><span>turva.dev / audit</span><span class="rc-tag">Synthetic example</span></div>
+        <p class="rc-title">A report you can put to work.</p>
+        <p class="rc-client">Northwind Fasteners Oy &middot; invented company</p>
+        <ol class="rc-list">
+          <li><span class="rc-n">01</span><span>Correct the product data</span></li>
+          <li><span class="rc-n">02</span><span>Make the catalogue discoverable</span></li>
+          <li><span class="rc-n">03</span><span>Verify each change</span></li>
+        </ol>
+        <p class="rc-foot">Evidence &middot; Priorities &middot; Acceptance tests</p>
       </div>
+    </div>
+    <div class="hero-proof">
+      <span class="hp-score">100/100</span>
+      <span>turva.dev &middot; Level 5, Agent-Native</span>
+      <span class="hp-src">isitagentready.com${hpMeasured}</span>
+      <a href="https://isitagentready.com/">Open the scanner</a>
     </div>
   </section>
-
-  <section class="board" aria-label="agent-readiness scan result">
-    <div class="board-top">
-      <span class="board-head">independent agent-readiness scan of turva.dev</span>
-      <a class="board-src" href="https://isitagentready.com/">scanner: isitagentready.com &middot; 3rd-party &middot; Cloudflare</a>
-    </div>
-    <div class="board-grid">
-      <div class="cell"><span class="cat">discoverability</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">content</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">bot access control</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">api, auth, mcp &amp; a2a</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">commerce</span><span class="val">100/100</span></div>
-    </div>
-    <div class="board-sum"><span>verified</span> <b>100/100</b> <span class="pill">Level 5</span> <span class="pill">Agent-Native</span></div>
-  </section>
+  <div class="page">
   <section class="sec">
     <h2>Two fixed-scope ways to start</h2>
     ${mdBodyHtml("/", "Two fixed-scope ways to start")}
@@ -7701,6 +7699,20 @@ ${FOOTER_CSS}
   <section class="sec">
     <h2>Evidence</h2>
     <p>${ev[0]}</p>
+  <section class="board" aria-label="agent-readiness scan result">
+    <div class="board-top">
+      <span class="board-head">independent agent-readiness scan of turva.dev</span>
+      <a class="board-src" href="https://isitagentready.com/">scanner: isitagentready.com &middot; 3rd-party &middot; Cloudflare</a>
+    </div>
+    <div class="board-grid">
+      <div class="cell"><span class="cat">discoverability</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">content</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">bot access control</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">api, auth, mcp &amp; a2a</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">commerce</span><span class="val">100/100</span></div>
+    </div>
+    <div class="board-sum"><span>verified</span> <b>100/100</b> <span class="pill">Level 5</span> <span class="pill">Agent-Native</span></div>
+  </section>
     <ul class="evlist">
       ${evLists[0]}
     </ul>
@@ -7781,6 +7793,7 @@ ${mdFaqRows("/", "Frequently asked")}
     </div>
     <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A">Request an audit</a></div>
   </section>
+  </div>
 </main>
 ${footerHtml()}
 </body>
