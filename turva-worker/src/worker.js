@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.140.1 - reading column by viewport (2026-09-06, Erik): the 65ch prose column applies below 2000 CSS px, a 4K display reads the full frame.
 // turva.dev worker v3.140.0 - koko sivuston tarkistus 2026-09-06 (Erik: kohdat 1 to 5 ja 6a): prose reads in a 65ch column again (READ_CSS, shared by every template; cards, tables and headings keep the frame), every guide carries the day it was last read against its sources (META_BY_PATH.checked, rendered under the H1, verify requires it), the vault sentence on /services and /legal says what the vault does and no more, the follow-up study is quoted with 201 comparable and 208 rescanned sites, the audit FAQ separates scanner-verified from test-verified fixes, the OfferCatalog audit and implementation descriptions match the visible services, the authentication guide limits the credentials claim to the audit, and the auth.md post names the optional api_key.
 // turva.dev worker v3.139.1 - measurement day (2026-09-06, Erik): turva.dev re-measured after the v3.139.0 ship, Level 5/5 on isitagentready, internet.nl 98 and 95, Hardenize all passed, every result unchanged, and the measured-at date moves from 2026-09-01 to 2026-09-06 on every surface that states it.
 // turva.dev worker v3.139.0 - kierros 4 fixes (2026-09-06, Erik: "korjaa kaikki"): stripTags replaces the two tag regexes CodeQL #10 and #11 flagged, ten old guide anchors come back as alias spans (GUIDE_ANCHOR_ALIASES), the /contact Signal paragraph renders once, verify.mjs reads the rendered h2 order (5b), and 22 text findings from the Opus round: META descriptions under 160 characters and equal to the deck, two blog titles equal to their H1, the home title in the site form, hyphens, sample contents lists in page order, dated and sourced sentences.
@@ -5152,7 +5153,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.140.0",
+    "version": "3.140.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5419,7 +5420,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.140.0",
+  "version": "3.140.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7676,8 +7677,11 @@ function buildValidatorAppJsonLd(canonicalUrl) {
 // Tek-360): long prose and the lists read with it sit in a 65ch column from the current left
 // edge, while headings, dividers, card groups, tables and code keep the frame. Only direct
 // children of an open section or an article are bounded, so card bodies, table cells and the
-// hero stay as they are. Shared by every template through FOOTER_CSS.
-var READ_CSS = `.sec>p,.sec>ul,.sec>ol,.sec>blockquote,.sec>.faq,article>p,article>ul,article>ol,article>blockquote,article>.toc,article>.scard,article>.faq,main>p,main>ul,main>ol,main>blockquote{max-width:65ch;}`;
+// hero stay as they are. Shared by every template through FOOTER_CSS. Since v3.140.1 (Erik,
+// same evening) the column applies only below 2000 CSS px of viewport: on an ordinary laptop
+// or monitor the prose is narrow, on a 4K display (2560 px at 150 %, 3840 px at 100 %) it
+// reads the full 68rem frame again, because a 65ch column inside a 4K frame is too small.
+var READ_CSS = `@media (max-width:1999.98px){.sec>p,.sec>ul,.sec>ol,.sec>blockquote,.sec>.faq,article>p,article>ul,article>ol,article>blockquote,article>.toc,article>.scard,article>.faq,main>p,main>ul,main>ol,main>blockquote{max-width:65ch;}}`;
 var FOOTER_CSS = `${READ_CSS}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:3rem clamp(24px,5vw,72px);display:flex;flex-direction:column;gap:1.5rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:10px;}.tv-foot .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}.tv-foot .nv-word b{color:#5DF18F;}
