@@ -1,7 +1,7 @@
 // src/worker.js
-// turva.dev worker v3.129.0 - home hero per the Fable layout guide v1.0 (2026-09-06, Tek-354): two columns with the copy at three fifths and a static synthetic report card at two fifths, one measurement row under them with the scanner and the measured date, the terminal, the result badge and the Business ID line removed from the hero (the ID stays in the footer), the five-category board moved into the Evidence section, primary CTA to /contact and the sample report as the second CTA, the twin title and first paragraph read "Know what AI agents see in your product" and the audit ingress. Prices and promises unchanged, llms.txt unchanged (no re-sign).
+// turva.dev worker v3.130.0 - three finishing touches after the hero (2026-09-06, Tek-355): a mobile navigation with a visible Menu button, CSS-only through <details> and shared by every nav via navMenuHtml so the five copies cannot drift; the two fixed-scope offers as cards at hero width, read from the twin list and failing closed; and a View the full sample link on the report card. Prices and promises unchanged, llms.txt unchanged (no re-sign).
+// v3.129.0 was: home hero per the Fable layout guide v1.0 (2026-09-06, Tek-354): two columns with the copy at three fifths and a static synthetic report card at two fifths, one measurement row under them with the scanner and the measured date, the terminal, the result badge and the Business ID line removed from the hero (the ID stays in the footer), the five-category board moved into the Evidence section, primary CTA to /contact and the sample report as the second CTA, the twin title and first paragraph read "Know what AI agents see in your product" and the audit ingress. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.128.0 was: the sample audit report as a decision document (2026-09-06, Tek-351): /samples/audit-report now tests F1 across the whole catalog on the page, the JSON-LD and the API with price basis, variants, pagination and listed exceptions, derives availability from the stock state and not from the lead time, separates the edge delivery from the source fix with its own acceptance condition, keeps observation, possible effect and shown causation apart in every finding, gives every AI-run error a source, owner and retest, versions the DNS-AID reading, drops the scanner-driven ACP hint from F8, and carries three evidence chains and the question set as appendices; /services and the page meta say nine findings. Prices and promises unchanged, llms.txt unchanged (no re-sign).
-// v3.127.0 was: kierros 18 (2026-09-06): the protocol-less autolinker now requires a declared top-level domain, so two MCP metadata keys in /blog/red-reading-that-measured-my-own-client stopped rendering as links to a host that does not resolve; the Codeberg post no longer carries the deleted mirror's address as a link and says so in a dated correction; the MCP server card guide links the renamed ext-server-card repository; the Shopify short form names the Catalog channel it had been dropping; the llms.txt validator page dates its own "two weeks old"; the API catalog declares jwks.json and signatures.json; and facts.json owns the EUR/USDC rate the three x402 amounts derive from. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -4968,7 +4968,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.129.0",
+    "version": "3.130.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5235,7 +5235,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.129.0",
+  "version": "3.130.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6497,6 +6497,7 @@ a{color:#5DF18F;}
 .turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
 .turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
+${NAV_MOBILE_CSS}
 .turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
@@ -6514,16 +6515,14 @@ ${FOOTER_CSS}
     </svg>
     <span class="nv-word">turva<b>·</b>dev</span>
   </a>
-  <ul class="nv-menu">
-    <li><a href="/">home</a></li>
+${navMenuHtml(`    <li><a href="/">home</a></li>
     <li><a href="/services">services</a></li>
     <li><a href="/guides">guides</a></li>
     <li><a href="/blog">blog</a></li>
     <li><a href="/tools">tools</a></li>
     <li><a href="/company">company</a></li>
     <li><a href="/legal">legal</a></li>
-    <li><a href="/contact">contact</a></li>
-  </ul>
+    <li><a href="/contact">contact</a></li>`)}
 </nav>
 <main id="main">
 <h1>Page not found</h1>
@@ -7425,6 +7424,7 @@ article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size
 .turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
 .turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
+${NAV_MOBILE_CSS}
 .turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
@@ -7443,16 +7443,14 @@ ${faqAt === -1 ? "" : SCARD_CSS + "\n" + FAQ_CSS + "\n"}${FOOTER_CSS}
     </svg>
     <span class="nv-word">turva<b>·</b>dev</span>
   </a>
-  <ul class="nv-menu">
-    <li><a href="/">home</a></li>
+${navMenuHtml(`    <li><a href="/">home</a></li>
     <li><a href="/services">services</a></li>
     <li><a href="/guides"${navSection === "/guides" ? ' aria-current="true"' : ""}>guides</a></li>
     <li><a href="/blog"${navSection === "/blog" ? ' aria-current="true"' : ""}>blog</a></li>
     <li><a href="/tools">tools</a></li>
     <li><a href="/company">company</a></li>
     <li><a href="/legal">legal</a></li>
-    <li><a href="/contact">contact</a></li>
-  </ul>
+    <li><a href="/contact">contact</a></li>`)}
 </nav>
 <main id="main">
 ${crumb}<article>
@@ -7503,6 +7501,18 @@ function serveHomeHtml(canonicalUrl) {
     if (!tag) throw new Error("home Services line carries no pricing phrase: " + svcName);
     return `<div class="svc"><div class="svc-h"><span class="svc-t">${svcName}</span><span class="svc-tag">${tag}</span></div><p>${it.slice(svcName.length + 2)}</p></div>`;
   }).join("\n      ");
+  // The two offers are read from the twin list, one card each: name, price, what it covers and
+  // when it is delivered. Fail closed like svcCards: a list line that stops matching the shape
+  // throws here instead of rendering a card with an empty price.
+  const offerParas = mdParas("/", "Two fixed-scope ways to start", 3);
+  const offerRaw = mdSection("/", "Two fixed-scope ways to start").split("\n").filter((l) => l.startsWith("- "));
+  if (offerRaw.length !== 2) throw new Error("home Two fixed-scope list does not carry exactly two offers: " + offerRaw.length);
+  const offerCards = offerRaw.map((line) => {
+    const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?), delivered (.+?)\.$/);
+    if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
+    const [, name, href, price, covers, when] = m;
+    return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span><span class="offer-price">${escapeHtml(price)}</span></span><span class="offer-covers">${escapeHtml(covers)}.</span><span class="offer-when">Delivered ${escapeHtml(when)}.</span><span class="offer-link">Read the scope</span></a>`;
+  }).join("\n      ");
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -7534,6 +7544,7 @@ strong{color:#F2F4F3;}
 .turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
 .turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
+${NAV_MOBILE_CSS}
 .turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
@@ -7570,6 +7581,20 @@ main{max-width:none;margin:0;padding:0;}
 .hero-proof .hp-src{color:#9AA3A0;}
 .hero-proof a{margin-left:auto;color:#F2F4F3;border-bottom:1px solid rgba(255,255,255,0.3);padding:.15rem 0;}
 .hero-proof a:hover{color:#5DF18F;border-color:#5DF18F;text-decoration:none;}
+.rc-more{display:inline-block;margin:16px 0 0;font-size:.9rem;font-weight:600;color:#5DF18F;border-bottom:1px solid rgba(93,241,143,0.4);padding:.1rem 0;}
+.rc-more:hover{border-color:#5DF18F;text-decoration:none;}
+.offers{max-width:68rem;margin:0 auto;padding:2.2rem clamp(24px,5vw,72px) 2rem;border-top:0;}
+.offers > p{max-width:46rem;}
+.offer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px);margin:.4rem 0 1.4rem;}
+.offer{display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:22px 24px;color:#C9D1CE;text-decoration:none;transition:border-color .15s ease;}
+.offer:hover{border-color:#5DF18F;text-decoration:none;}
+.offer:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
+.offer-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px;}
+.offer-name{font-size:1.15rem;font-weight:700;color:#F2F4F3;}
+.offer-price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
+.offer-covers{font-size:.95rem;line-height:1.55;color:#C9D1CE;}
+.offer-when{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.03em;color:#9AA3A0;}
+.offer-link{margin-top:auto;padding-top:6px;font-size:.9rem;font-weight:600;color:#5DF18F;}
 .board{margin:0 0 1rem;border:1px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.25rem;}
 .board-top{display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline;justify-content:space-between;margin:0 0 .9rem;}
 .board-head{font-size:.92rem;color:#F2F4F3;font-weight:600;}
@@ -7617,7 +7642,7 @@ ${FAQ_CSS}
 .cta-row{margin:1.25rem 0 0;}
 .cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;transition:background-color .15s ease;}
 .cta-btn:hover{background:#7df7a6;text-decoration:none;}
-@media (max-width:700px){.hero-grid{grid-template-columns:minmax(0,1fr);gap:32px;}.hero{padding-top:44px;}.hero h1{font-size:clamp(34px,9vw,38px);line-height:1.1;}.lede{font-size:clamp(16px,4.4vw,18px);}.hero-proof a{margin-left:0;}.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
+@media (max-width:700px){.offer-grid{grid-template-columns:minmax(0,1fr);}.hero-grid{grid-template-columns:minmax(0,1fr);gap:32px;}.hero{padding-top:44px;}.hero h1{font-size:clamp(34px,9vw,38px);line-height:1.1;}.lede{font-size:clamp(16px,4.4vw,18px);}.hero-proof a{margin-left:0;}.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
 @media (max-width:640px){.board-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media (max-width:430px){.cta{flex-direction:column;}.btn,.btn-ghost{width:100%;}.hero{padding-left:24px;padding-right:24px;}.rcard{padding:20px;}}
 ${FOOTER_CSS}
@@ -7633,16 +7658,14 @@ ${FOOTER_CSS}
     </svg>
     <span class="nv-word">turva<b>·</b>dev</span>
   </a>
-  <ul class="nv-menu">
-    <li><a href="/" aria-current="page">home</a></li>
+${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
     <li><a href="/services">services</a></li>
     <li><a href="/guides">guides</a></li>
     <li><a href="/blog">blog</a></li>
     <li><a href="/tools">tools</a></li>
     <li><a href="/company">company</a></li>
     <li><a href="/legal">legal</a></li>
-    <li><a href="/contact">contact</a></li>
-  </ul>
+    <li><a href="/contact">contact</a></li>`)}
 </nav>
 <main id="main">
   <section class="hero">
@@ -7667,6 +7690,7 @@ ${FOOTER_CSS}
           <li><span class="rc-n">03</span><span>Verify each change</span></li>
         </ol>
         <p class="rc-foot">Evidence &middot; Priorities &middot; Acceptance tests</p>
+        <a class="rc-more" href="/samples/audit-report">View the full sample</a>
       </div>
     </div>
     <div class="hero-proof">
@@ -7676,11 +7700,16 @@ ${FOOTER_CSS}
       <a href="https://isitagentready.com/">Open the scanner</a>
     </div>
   </section>
-  <div class="page">
-  <section class="sec">
+  <section class="sec offers">
     <h2>Two fixed-scope ways to start</h2>
-    ${mdBodyHtml("/", "Two fixed-scope ways to start")}
+    <p>${offerParas[0]}</p>
+    <div class="offer-grid">
+      ${offerCards}
+    </div>
+    <p>${offerParas[1]}</p>
+    <p>${offerParas[2]}</p>
   </section>
+  <div class="page">
 
   <section class="sec">
     <h2>Audits, advisory, and implementation for product teams</h2>
@@ -7848,6 +7877,7 @@ a:hover{text-decoration:underline;}
 .turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
 .turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
+${NAV_MOBILE_CSS}
 .turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
@@ -7892,16 +7922,14 @@ ${FOOTER_CSS}
     </svg>
     <span class="nv-word">turva<b>·</b>dev</span>
   </a>
-  <ul class="nv-menu">
-    <li><a href="/">home</a></li>
+${navMenuHtml(`    <li><a href="/">home</a></li>
     <li><a href="/services" aria-current="page">services</a></li>
     <li><a href="/guides">guides</a></li>
     <li><a href="/blog">blog</a></li>
     <li><a href="/tools">tools</a></li>
     <li><a href="/company">company</a></li>
     <li><a href="/legal">legal</a></li>
-    <li><a href="/contact">contact</a></li>
-  </ul>
+    <li><a href="/contact">contact</a></li>`)}
 </nav>
 <main id="main">
   ${mdPageStart("/services")}
@@ -7936,6 +7964,9 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers });
 }
 
+// Defined before CARDPAGE_CSS on purpose: that constant is built at module load and reads this one.
+var NAV_MOBILE_CSS = `.turva-nav .nv-mobile{display:none;}
+@media (max-width:760px){.turva-nav{flex-wrap:nowrap;justify-content:space-between;position:relative;padding:10px clamp(16px,4vw,24px);}.turva-nav > ul.nv-menu{display:none;}.turva-nav .nv-mobile{display:block;flex:0 0 auto;}.turva-nav .nv-mobile summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;color:#F2F4F3;font-weight:600;font-size:14px;user-select:none;}.turva-nav .nv-mobile summary::-webkit-details-marker{display:none;}.turva-nav .nv-mobile summary::after{content:"+";font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;line-height:1;}.turva-nav .nv-mobile[open] summary::after{content:"\\2212";}.turva-nav .nv-mobile summary:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}.turva-nav .nv-mobile .nv-list{position:absolute;left:0;right:0;top:100%;z-index:10;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;background:#0A1316;border-bottom:0.5px solid rgba(255,255,255,0.14);padding:6px 0 10px;box-shadow:0 14px 30px rgba(0,0,0,0.35);}.turva-nav .nv-mobile .nv-list li{margin:0;}.turva-nav .nv-mobile .nv-list a{display:block;box-sizing:border-box;min-height:44px;padding:12px clamp(16px,4vw,24px);font-size:16px;color:#F2F4F3;}.turva-nav .nv-mobile .nv-list a[aria-current]{color:#5DF18F;}}`;
 var CARDPAGE_CSS = `html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:46rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
 h1{color:#5DF18F;overflow-wrap:break-word;hyphens:auto;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 0.6rem;font-weight:700;}
@@ -7948,6 +7979,7 @@ a:hover{text-decoration:underline;}
 .turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
 .turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
+${NAV_MOBILE_CSS}
 .turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
 .turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
@@ -8013,6 +8045,21 @@ ${FOOTER_CSS}
 <a class="skip" href="#main">Skip to content</a>`;
 }
 
+// Mobile navigation (2026-09-06, Tek-355): the same eight links twice, a plain <ul> for wide
+// screens and a <details> with a visible Menu button for narrow ones. CSS-only on purpose: the
+// site carries exactly one inline script under a hashed CSP, and a menu does not earn a second.
+// Every nav on the site is built through this helper so the two forms cannot drift.
+function navMenuHtml(lis) {
+  return `  <ul class="nv-menu">
+${lis}
+  </ul>
+  <details class="nv-mobile">
+    <summary>Menu</summary>
+    <ul class="nv-menu nv-list">
+${lis}
+    </ul>
+  </details>`;
+}
 function cardPageNav(current) {
   const items = [["/","home"],["/services","services"],["/guides","guides"],["/blog","blog"],["/tools","tools"],["/company","company"],["/legal","legal"],["/contact","contact"]];
   const lis = items.map(([href,label]) => `    <li><a href="${href}"${href === current ? ' aria-current="page"' : ''}>${label}</a></li>`).join("\n");
@@ -8024,9 +8071,7 @@ function cardPageNav(current) {
     </svg>
     <span class="nv-word">turva<b>·</b>dev</span>
   </a>
-  <ul class="nv-menu">
-${lis}
-  </ul>
+${navMenuHtml(lis)}
 </nav>`;
 }
 

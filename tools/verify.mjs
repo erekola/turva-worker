@@ -1081,13 +1081,20 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // with no menu linking it until v3.37.0 added it to all five by hand. Nothing compared
   // them. Order is part of the claim, so the sequences are compared, not the sets.
   {
-    const uls = [...w.matchAll(/<ul class="nv-menu">\r?\n([\s\S]*?)<\/ul>/g)]
+    // Since Tek-355 (2026-09-06) every nav goes through navMenuHtml(lis), which renders the
+    // list twice (a plain <ul> for wide screens and a <details> Menu for narrow ones). The
+    // five copies are now the five call sites: four inline template arguments and one that
+    // passes cardPageNav's generated `lis`. The invariant is unchanged, the anchor moved.
+    const uls = [...w.matchAll(/\$\{navMenuHtml\((`[\s\S]*?`|lis)\)\}/g)]
       .map((m) => [...m[1].matchAll(/<li><a href="([^"]+)"/g)].map((x) => x[1]));
     const itemsSrc = (w.match(/const items = (\[\[[\s\S]*?\]\]);/) || [])[1] || '[]';
     const generated = JSON.parse(itemsSrc).map((p) => p[0]);
     const inline = uls.filter((u) => u.length > 0);
-    check(uls.length === 5, `five nv-menu blocks in worker.js (saw ${uls.length})`);
-    check(uls.length - inline.length === 1, `exactly one nv-menu is generated from an items array (saw ${uls.length - inline.length})`);
+    check(uls.length === 5, `five navMenuHtml call sites in worker.js (saw ${uls.length})`);
+    check(uls.length - inline.length === 1, `exactly one nav is generated from an items array (saw ${uls.length - inline.length})`);
+    const helper = region('function navMenuHtml', '\nfunction ');
+    check((helper.match(/\$\{lis\}/g) || []).length === 2 && helper.includes('<details class="nv-mobile">') && helper.includes('<summary>Menu</summary>'),
+      'navMenuHtml renders the list twice, once plain and once inside the <details> Menu');
     check(generated.length === 8, `cardPageNav items array has 8 entries (saw ${generated.length})`);
     const want = generated.join(' ');
     for (let i = 0; i < inline.length; i++) {
