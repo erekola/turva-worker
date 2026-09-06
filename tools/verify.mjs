@@ -2187,8 +2187,12 @@ if (LIVE) {
       // were still somewhere on the page.
       const wmd = String(ws.markdown || '');
       check(wmd.length > 0, `WebMCP get_services returns the /services markdown (${wmd.length} bytes)`);
+      // Since v3.133.0 (Tek-358) the /services headings carry the page instruction's titles
+      // ("Website and API agent-readiness audit", "Ongoing advisory"), so the heading is
+      // matched by the service name as a whole word inside it, case-insensitively, and the
+      // price still has to open the block directly under that heading.
       for (const svc of PRICED) {
-        const re = new RegExp(`##\\s+${svc.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s+\\*\\*${euroOf(svc.priceKey).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+        const re = new RegExp(`##[^\\n]*\\b${svc.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b[^\\n]*\\s+\\*\\*${euroOf(svc.priceKey).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
         check(re.test(wmd), `WebMCP get_services markdown prices ${svc.name} at ${euroOf(svc.priceKey)} under its own heading`);
       }
       const wco = answers.get_company || {};
