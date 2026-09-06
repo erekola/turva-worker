@@ -1,7 +1,7 @@
 // src/worker.js
-// turva.dev worker v3.132.0 - home content rewritten to Erik's brief (2026-09-06, Tek-357): eleven sections in the twin and the same order in HTML, two starting points as cards read from the twin list, what the client gets, the process in writing, work you can inspect with the scan board and the dated security scans, support beyond the first report, who does the work, a five-question FAQ and the contact section; the curl demo, the x402 prose and every "higher on the next scan" promise left the home page; title, meta description and the ProfessionalService description say the same thing as the page. Prices, scope and promises unchanged, llms.txt unchanged (no re-sign).
+// turva.dev worker v3.132.1 - hotfix (2026-09-06, Tek-357): the FAQ answer on implementation no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer text raw and the live gate read the link syntax as a difference between the published answer and the page (mds/gotchas.md 2026-09-03 (jatko 9)); the link stands after the FAQ as its own line.
+// v3.132.0 was: home content rewritten to Erik's brief (2026-09-06, Tek-357): eleven sections in the twin and the same order in HTML, two starting points as cards read from the twin list, what the client gets, the process in writing, work you can inspect with the scan board and the dated security scans, support beyond the first report, who does the work, a five-question FAQ and the contact section; the curl demo, the x402 prose and every "higher on the next scan" promise left the home page; title, meta description and the ProfessionalService description say the same thing as the page. Prices, scope and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.131.0 was: one outer frame for every home section (2026-09-06, Tek-356): .page now shares the hero and offer width, so headings, dividers, card grids, the scan board and the process steps align on the same edges, and the text runs the same width, which Erik chose over a narrower reading column. Prices and promises unchanged, llms.txt unchanged (no re-sign).
-// v3.130.0 was: three finishing touches after the hero (2026-09-06, Tek-355): a mobile navigation with a visible Menu button, CSS-only through <details> and shared by every nav via navMenuHtml so the five copies cannot drift; the two fixed-scope offers as cards at hero width, read from the twin list and failing closed; and a View the full sample link on the report card. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -2911,11 +2911,13 @@ No. The audit records observed results, identifies issues and defines how correc
 
 **Can our own team implement the findings?**
 
-Yes. The report includes correction instructions and acceptance checks. A €499 implementation add-on covers the diagnosis's own fix list when bought with that diagnosis and when the required access is arranged in advance. Work outside that list is scoped separately at €1,500 per day. The services page sets out the prerequisites and scope: [implementation scope and access requirements](/services).
+Yes. The report includes correction instructions and acceptance checks. A €499 implementation add-on covers the diagnosis's own fix list when bought with that diagnosis and when the required access is arranged in advance. Work outside that list is scoped separately at €1,500 per day. The services page sets out the prerequisites and scope.
 
 **What access is required?**
 
 The audit does not require production credentials. If you purchase implementation, any required deployment, DNS, Shopify or repository permissions are agreed separately and limited to the work being carried out.
+
+[Implementation scope and access requirements](/services).
 
 ## Contact
 
@@ -4931,7 +4933,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.132.0",
+    "version": "3.132.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5198,7 +5200,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.132.0",
+  "version": "3.132.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7740,6 +7742,7 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
     <div class="faq">
 ${mdFaqRows("/", "Frequently asked")}
     </div>
+    ${mdFaqBlocks("/", "Frequently asked").tail.map((t) => `<p class="cta-row"><a href="/services">${renderInline(t).replace(/<\/?a[^>]*>/g, "")}</a></p>`).join("\n    ")}
   </section>
 
   <section class="sec contact">
