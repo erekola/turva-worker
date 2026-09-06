@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.141.0 - guide sources (2026-09-06, Erik: "tee viela linkit"): 22 of the 24 guides end in a Sources section that links the primary specification, standard or vendor document each guide describes, every address fetched 200 on the day; the two without a source (Open Knowledge Format, whose specification address is not published, and the use-case survey) carry none rather than an invented one.
 // turva.dev worker v3.140.3 - no reading column at all (2026-09-06, Erik: "pelkka full"): every viewport reads the full frame, READ_CSS is empty.
 // turva.dev worker v3.140.2 - reading column only below 1080p (2026-09-06, Erik): 1920 CSS px and wider read the full frame.
 // turva.dev worker v3.140.1 - reading column by viewport (2026-09-06, Erik): the 65ch prose column applies below 2000 CSS px, a 4K display reads the full frame.
@@ -2933,6 +2934,13 @@ Usually the case of the extension URI is the cause. Some fix texts show a V0.1.0
 
 A UCP profile at /.well-known/ucp names the merchant, the services it offers with a transport and an endpoint each, and two blocks for capabilities and payment handlers. A block left empty says the site settles nothing through the profile, which is the truthful state for a business that sells on a written quote.
 
+## Sources
+
+- [A2A protocol specification](https://a2a-protocol.org/latest/specification/)
+- [Agent Payments Protocol (AP2) repository](https://github.com/google-agentic-commerce/AP2)
+- [Agentic Commerce Protocol (ACP)](https://www.agenticcommerce.dev/)
+- [Universal Commerce Protocol (UCP)](https://ucp.dev/)
+
 ## Related
 
 - [Agentic commerce readiness](/guides/agentic-commerce-readiness)
@@ -3834,6 +3842,12 @@ It checks the surfaces an agent reaches first, covering discoverability, content
 
 A pass or fail on each check, and a concrete fix instruction for every failure, with a link to the guide on this site for that surface where there is one. Your own team can do the work from the report. Scored checks are verified by the scanner before and after, manual-review fixes by a direct test, and the scoring is against current standards rather than opinion.
 
+## Sources
+
+- [isitagentready.com, the scanner the audit reads](https://isitagentready.com/)
+- [Well-known URIs, RFC 8615](https://www.rfc-editor.org/rfc/rfc8615.html)
+- [API catalog, RFC 9727](https://www.rfc-editor.org/rfc/rfc9727.html)
+
 ## Related
 
 - [How to choose an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
@@ -3885,6 +3899,11 @@ The site name and a short summary, then the key pages and resources as markdown 
 
 The file format did not change. v2 added two standard link relations so an agent finds a page's markdown version and its llms.txt without guessing, accepted page.md alongside page.html.md as the address of a markdown version, defined what an llms.txt in a subpath covers, and dropped the context expansion tooling along with the mechanical meaning of the Optional section.
 
+## Sources
+
+- [llms.txt proposal](https://llmstxt.org/)
+- [Web linking, RFC 8288](https://www.rfc-editor.org/rfc/rfc8288.html)
+
 ## Related
 
 - [Serving Markdown to AI clients](/guides/markdown-for-agents)
@@ -3930,6 +3949,12 @@ Without a card or a registry listing, a client has no reliable way to discover t
 
 Deployed cards commonly sit at /.well-known/mcp/server-card.json, and turva.dev serves one there. The current experimental draft reserves a different default, the MCP endpoint URL followed by /server-card, so a client may need to check both locations until the convention settles.
 
+## Sources
+
+- [MCP Server Card extension repository](https://github.com/modelcontextprotocol/ext-server-card)
+- [Server Card discovery document](https://github.com/modelcontextprotocol/ext-server-card/blob/main/docs/discovery.md)
+- [SEP-2127, the proposal](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127)
+
 ## Related
 
 - [What agents.json describes](/guides/agents-json)
@@ -3972,6 +3997,11 @@ llms.txt tells an agent what the site contains. agents.json describes the action
 **Does agents.json replace llms.txt?**
 
 No. llms.txt tells an agent what the site contains and agents.json describes the actions an agent can take. Together they describe both what a site holds and what a client may do with it, though neither one performs the server side checks a call still needs.
+
+## Sources
+
+- [agents.json specification repository](https://github.com/wild-card-ai/agents-json)
+- [Well-known URIs, RFC 8615](https://www.rfc-editor.org/rfc/rfc8615.html)
 
 ## Related
 
@@ -4018,6 +4048,13 @@ Checkout is one of the places agent commerce stalls today. An agent can find a p
 
 Checkout is one common stopping point. An agent can find a product and compare options, then stall at a flow built for a person entering card details. A declared payment surface removes that particular stop, and other gaps in agent commerce stay separate problems with their own fixes.
 
+## Sources
+
+- [x402 protocol site](https://x402.org/)
+- [x402 repository](https://github.com/coinbase/x402)
+- [a2a-x402 extension](https://github.com/google-agentic-commerce/a2a-x402)
+- [Agent Payments Protocol (AP2) repository](https://github.com/google-agentic-commerce/AP2)
+
 ## Related
 
 - [Agent commerce discovery: A2A, AP2, ACP and UCP](/guides/agent-commerce-discovery)
@@ -4060,6 +4097,13 @@ An agent reads the status and headers before the body and decides what to do fro
 **Which header makes markdown content negotiation reliable?**
 
 A Vary header that includes Accept. It is what keeps the negotiation reliable when the same URL can return more than one representation of the page.
+
+## Sources
+
+- [Web linking, RFC 8288](https://www.rfc-editor.org/rfc/rfc8288.html)
+- [API catalog, RFC 9727](https://www.rfc-editor.org/rfc/rfc9727.html)
+- [RateLimit header fields, IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/)
+- [HTTP semantics, RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)
 
 ## Related
 
@@ -4110,6 +4154,11 @@ It depends on the product. Google states that its generative features in Search 
 **Can a site rank well and still be invisible to agents?**
 
 Yes. Search match is scored on relevance to a query and on ranking signals, while an agent needs to read the content cleanly and find the discovery surfaces. A page can win the search result and still be opaque to the client that reads it.
+
+## Sources
+
+- [Google Search Central, AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)
+- [isitagentready.com](https://isitagentready.com/)
 
 ## Related
 
@@ -4163,6 +4212,12 @@ What the page is about, who runs it, what it sells and at what price, as data ra
 
 Yes. A price of 0 with an availability of InStock on every product passes every syntax check and tells an agent the whole catalog is free, and a contact field holding the wrong kind of value validates the same way. A syntax validator reads the shape, so a person has to compare the data with the page it describes.
 
+## Sources
+
+- [JSON-LD 1.1, W3C recommendation](https://www.w3.org/TR/json-ld11/)
+- [schema.org vocabulary](https://schema.org/)
+- [Google Search Central, structured data introduction](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data)
+
 ## Related
 
 - [Make your website easier for AI assistants to find and cite](/guides/get-cited-by-ai-assistants)
@@ -4213,6 +4268,14 @@ An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment 
 **Why do clients use the well-known directory instead of crawling pages?**
 
 Because it turns discovery into a lookup rather than a search. A client fetches a predictable path and reads a manifest that points it to everything else, instead of inferring capabilities from navigation.
+
+## Sources
+
+- [Well-known URIs, RFC 8615](https://www.rfc-editor.org/rfc/rfc8615.html)
+- [API catalog, RFC 9727](https://www.rfc-editor.org/rfc/rfc9727.html)
+- [OAuth 2.0 authorization server metadata, RFC 8414](https://www.rfc-editor.org/rfc/rfc8414.html)
+- [security.txt, RFC 9116](https://www.rfc-editor.org/rfc/rfc9116.html)
+- [Server Card discovery document](https://github.com/modelcontextprotocol/ext-server-card/blob/main/docs/discovery.md)
 
 ## Related
 
@@ -4265,6 +4328,12 @@ No. ARD is a discovery layer for AI agents, not a search file. It indexes the re
 
 Under ARD v0.91 at /.well-known/ard.json, announced with a link rel="ard" in the page head. The draft says a conformant client MUST read that path and MAY also consult the predecessor /.well-known/ai-catalog.json. Serve ard.json, and keep ai-catalog.json while clients and scanners still read it. Agents and registries read the resources a site offers from that path instead of inferring them from its pages.
 
+## Sources
+
+- [ARD specification repository](https://github.com/ards-project/ard-spec)
+- [Google announcement of Agentic Resource Discovery](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/)
+- [Server Card discovery document, the AI Catalog side](https://github.com/modelcontextprotocol/ext-server-card/blob/main/docs/discovery.md)
+
 ## Related
 
 - [The /.well-known directory for agent discovery](/guides/well-known-for-agents)
@@ -4307,6 +4376,13 @@ A site that exposes capability without scoped auth either stays closed to agents
 **What does an agent need to discover before it can authenticate?**
 
 Where to request access and what scopes exist. OAuth discovery at a well-known path tells it both, so it can request a token tied to a specific permission rather than a blanket login.
+
+## Sources
+
+- [OAuth 2.0 protected resource metadata, RFC 9728](https://www.rfc-editor.org/rfc/rfc9728.html)
+- [OAuth 2.0 authorization server metadata, RFC 8414](https://www.rfc-editor.org/rfc/rfc8414.html)
+- [MCP authorization specification, 2026-07-28 revision](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization)
+- [Web Bot Auth, Cloudflare reference](https://developers.cloudflare.com/bots/reference/bot-verification/web-bot-auth/)
 
 ## Related
 
@@ -4355,6 +4431,12 @@ A scan runs a fixed set of checks and reports pass or fail against the live site
 
 Because a checklist filled in by hand records intentions and a scan records what a defined check actually finds. The two often disagree, especially after a deploy drops a header or changes a content type.
 
+## Sources
+
+- [isitagentready.com](https://isitagentready.com/)
+- [internet.nl](https://internet.nl/)
+- [Hardenize](https://www.hardenize.com/)
+
 ## Related
 
 - [What a website and API agent-readiness audit covers](/guides/agent-readiness-audit)
@@ -4401,6 +4483,12 @@ Serve the real content in the first response for clients that need it, either th
 
 No. Serving a Markdown version of the page on request also works, and it skips rendering and costs a fraction of the tokens. Either approach only helps once the finished content is actually present in the response the client receives.
 
+## Sources
+
+- [Google Search Central, JavaScript SEO basics](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics)
+- [OpenAI crawler and user-agent documentation](https://developers.openai.com/api/docs/bots)
+- [The text/markdown media type, RFC 7763](https://www.rfc-editor.org/rfc/rfc7763.html)
+
 ## Related
 
 - [Serving Markdown to AI clients](/guides/markdown-for-agents)
@@ -4446,6 +4534,14 @@ A Content-Signal directive declares how content may be used, separating ordinary
 
 Yes. robots.txt can name AI crawlers explicitly rather than treating every client the same, and a Content-Signal directive separates ordinary search from AI input and training. Both express a preference that a client can ignore.
 
+## Sources
+
+- [Robots Exclusion Protocol, RFC 9309](https://www.rfc-editor.org/rfc/rfc9309.html)
+- [Sitemaps protocol](https://www.sitemaps.org/protocol.html)
+- [Content Signals](https://contentsignals.org/)
+- [OpenAI crawler and user-agent documentation](https://developers.openai.com/api/docs/bots)
+- [DNS-AID, IETF draft](https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/)
+
 ## Related
 
 - [The /.well-known directory for agent discovery](/guides/well-known-for-agents)
@@ -4490,6 +4586,12 @@ Through content negotiation. An agent sends an Accept header asking for text/mar
 **What does an agent pay for when it reads an HTML page?**
 
 The markup, scripts and layout it does not need. That cost is counted in tokens, so a page built for a browser is expensive for a client that only wants the text.
+
+## Sources
+
+- [The text/markdown media type, RFC 7763](https://www.rfc-editor.org/rfc/rfc7763.html)
+- [HTTP semantics, content negotiation, RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)
+- [llms.txt proposal](https://llmstxt.org/)
 
 ## Related
 
@@ -4539,6 +4641,12 @@ Not usually. The work is mostly at the edge and in a few small files, and the re
 **Which gap costs a marketing site the most?**
 
 Client-side rendering that returns an empty shell to non-browser agents. Nothing else on the page can be read if the first response carries no content, and prices and facts are then left for the agent to infer.
+
+## Sources
+
+- [isitagentready.com](https://isitagentready.com/)
+- [Robots Exclusion Protocol, RFC 9309](https://www.rfc-editor.org/rfc/rfc9309.html)
+- [Sitemaps protocol](https://www.sitemaps.org/protocol.html)
 
 ## Related
 
@@ -4597,6 +4705,12 @@ Publish the surfaces agents read, then measure the result. That means llms.txt, 
 
 Async only. No calls, no calendar links, no discovery meetings. Replies within one business day. Fixed scope per engagement, written before payment, and an open-source reference implementation you can read before deciding.
 
+## Sources
+
+- [isitagentready.com](https://isitagentready.com/)
+- [internet.nl](https://internet.nl/)
+- [Hardenize](https://www.hardenize.com/)
+
 ## Related
 
 - [What a website and API agent-readiness audit covers](/guides/agent-readiness-audit)
@@ -4651,6 +4765,11 @@ AEO and GEO stop at being read and cited. Agent-readiness adds the surfaces an a
 
 Measure first, because the three overlap and the same fix should not be paid for twice. Page-level gaps are AEO and agent-readiness work and are fixable on the site. Trust gaps are GEO work, earned offsite over time.
 
+## Sources
+
+- [Google Search Central, AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)
+- [llms.txt proposal](https://llmstxt.org/)
+
 ## Related
 
 - [SEO and agent-readiness: overlap and differences](/guides/seo-vs-agent-readiness)
@@ -4700,6 +4819,13 @@ That programmatic execution is blocked by something like age verification or a r
 
 Because the agent does not complain. A price that lives only in rendered HTML, a CAPTCHA wall, or a discovery file that claims a capability the endpoint does not answer ends the purchase silently, and the agent moves to a competitor whose path resolves.
 
+## Sources
+
+- [Universal Commerce Protocol (UCP)](https://ucp.dev/)
+- [Agentic Commerce Protocol (ACP)](https://www.agenticcommerce.dev/)
+- [Agent Payments Protocol (AP2) repository](https://github.com/google-agentic-commerce/AP2)
+- [x402 protocol site](https://x402.org/)
+
 ## Related
 
 - [Agent commerce discovery: A2A, AP2, ACP and UCP](/guides/agent-commerce-discovery)
@@ -4748,6 +4874,11 @@ In commerce first. UCP carries a checkout state called requires_escalation, wher
 **What makes an acting agent auditable?**
 
 A log of what it decided and why, an envelope that is explicit rather than implied, and a check after the fact that it stayed inside the boundary. Guardrails have to be checkable to count.
+
+## Sources
+
+- [Model Context Protocol specification, 2026-07-28 revision](https://modelcontextprotocol.io/specification/2026-07-28)
+- [A2A protocol specification](https://a2a-protocol.org/latest/specification/)
 
 ## Related
 
@@ -4853,6 +4984,13 @@ An assistant is more likely to cite a claim it can confirm in more than one plac
 **What makes a claim easy for an assistant to confirm?**
 
 Facts stated as data rather than prose, and the same fact visible in more than one place. Open-source code, a public company record and genuine third-party mentions raise confidence, and consistency matters more than volume.
+
+## Sources
+
+- [Google Search Central, AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)
+- [OpenAI crawler and user-agent documentation](https://developers.openai.com/api/docs/bots)
+- [Content Signals](https://contentsignals.org/)
+- [llms.txt proposal](https://llmstxt.org/)
 
 ## Related
 
@@ -5155,7 +5293,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.140.3",
+    "version": "3.141.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5422,7 +5560,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.140.3",
+  "version": "3.141.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
