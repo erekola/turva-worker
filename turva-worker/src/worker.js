@@ -1,5 +1,6 @@
 // src/worker.js
-// turva.dev worker v3.134.0 - the two sample reports on the report reading template (2026-09-06, Tek-360): a Synthetic sample report eyebrow above a new H1, the page instruction's introduction with the illustrative report date as text rather than a date line, two actions after the introduction (SAMPLE_HEAD), Summary and Decision moved ahead of the contents list and the engagement record, F1 to F9 and C1 to C3 as h3 under their sections with the same anchor ids, Shopify status labels in the instruction's form (Present, Restricted, Unavailable, Not tested, Aligned, Mismatch), and every table wider than four columns offered a second time as a list of named cards from the same cells under a details element beside its scroll box.
+// turva.dev worker v3.135.0 - navigation and footer sized to the page (2026-09-06, Erik): the nav and the footer follow the 68rem frame instead of the old 46rem column (--col-half 34rem by default), the brand mark, the word and the menu links grow to the body's scale (32 px mark, 19 px word, 17 px links, 20 px vertical padding), and the footer gets the same brand word style, 1.05rem links and a .95rem meta line.
+// v3.134.0 was: the two sample reports on the report reading template (2026-09-06, Tek-360): a Synthetic sample report eyebrow above a new H1, the page instruction's introduction with the illustrative report date as text rather than a date line, two actions after the introduction (SAMPLE_HEAD), Summary and Decision moved ahead of the contents list and the engagement record, F1 to F9 and C1 to C3 as h3 under their sections with the same anchor ids, Shopify status labels in the instruction's form (Present, Restricted, Unavailable, Not tested, Aligned, Mismatch), and every table wider than four columns offered a second time as a list of named cards from the same cells under a details element beside its scroll box.
 // v3.133.0 was: one page template for the site (2026-09-06, Tek-358): every card page and article shares the home page frame (68rem, 24 px edge, 20 px at 320), prose reads in a 65ch column while headings, dividers, card groups and tables keep the frame, H1 is white and green is reserved for links and actions; sections are open (h2 plus body) and cards are used only for offers, tools and results; markdown tables carry data-label cells inside a bounded scroll box and stack into named cards below 640 px when they have up to four columns; ### headings render; articles get a byline from META_BY_PATH, a generated contents list above four sections and one next step; /services, /shopify-agent-storefront-check, /company, /contact, /legal, /tools, /badge, /llms-txt-validator, /guides and /blog rewritten to the 2026-09-06 page instruction with their twins, titles and descriptions; blog index cards carry kind and description.
 // v3.132.1 was: hotfix (2026-09-06, Tek-357): the FAQ answer on implementation no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer text raw and the live gate read the link syntax as a difference between the published answer and the page (mds/gotchas.md 2026-09-03 (jatko 9)); the link stands after the FAQ as its own line.
 // v3.132.0 was: home content rewritten to Erik's brief (2026-09-06, Tek-357): eleven sections in the twin and the same order in HTML, two starting points as cards read from the twin list, what the client gets, the process in writing, work you can inspect with the scan board and the dated security scans, support beyond the first report, who does the work, a five-question FAQ and the contact section; the curl demo, the x402 prose and every "higher on the next scan" promise left the home page; title, meta description and the ProfessionalService description say the same thing as the page. Prices, scope and promises unchanged, llms.txt unchanged (no re-sign).
@@ -4797,7 +4798,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.134.0",
+    "version": "3.135.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5064,7 +5065,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.134.0",
+  "version": "3.135.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6354,12 +6355,12 @@ a{color:#5DF18F;}
 .turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding:16px clamp(20px,5vw,72px);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
-.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
+.turva-nav .nv-brand svg{display:block;width:32px;height:32px;}
+.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:19px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
 ${NAV_MOBILE_CSS}
 .turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;}
-.turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
+.turva-nav .nv-menu a{font-size:17px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 @media (max-width:560px){.turva-nav .nv-menu{gap:16px;}.turva-nav .nv-menu a{font-size:14px;}}
 ${FOOTER_CSS}
@@ -7274,17 +7275,17 @@ function buildValidatorAppJsonLd(canonicalUrl) {
 }
 
 var FOOTER_CSS = `main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr{color:#F17F5D}
-.tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:1.9rem clamp(20px,5vw,72px);display:flex;flex-direction:column;gap:1rem;}
-.tv-foot .foot-brand{display:flex;align-items:center;gap:9px;}
-.tv-foot .foot-brand svg{display:block;width:22px;height:22px;}
-.tv-foot .foot-links{display:flex;flex-wrap:wrap;gap:0.6rem 1rem;}
-.tv-foot .ft-row{display:flex;align-items:center;gap:9px;color:#C9D1CE;font-size:0.9rem;text-decoration:none;}
+.tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:2.6rem clamp(24px,5vw,72px);display:flex;flex-direction:column;gap:1.3rem;}
+.tv-foot .foot-brand{display:flex;align-items:center;gap:10px;}.tv-foot .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:19px;letter-spacing:.02em;color:#F2F4F3;}.tv-foot .nv-word b{color:#5DF18F;}
+.tv-foot .foot-brand svg{display:block;width:30px;height:30px;}
+.tv-foot .foot-links{display:flex;flex-wrap:wrap;gap:0.8rem 1.6rem;}
+.tv-foot .ft-row{display:flex;align-items:center;gap:10px;color:#C9D1CE;font-size:1.05rem;text-decoration:none;}
 .tv-foot a.ft-row:hover{color:#5DF18F;}
-.tv-foot .ft-row svg{flex:0 0 auto;width:17px;height:17px;}
-.tv-foot .foot-meta{font-size:0.8rem;color:#9AA3A0;border-top:0.5px solid rgba(255,255,255,0.08);padding-top:0.9rem;}
+.tv-foot .ft-row svg{flex:0 0 auto;width:20px;height:20px;}
+.tv-foot .foot-meta{font-size:0.95rem;color:#9AA3A0;border-top:0.5px solid rgba(255,255,255,0.08);padding-top:1.1rem;}
 .tv-foot .foot-meta a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
 .tv-foot .foot-meta a:hover{color:#5DF18F;}
-.turva-nav,.tv-foot{padding-left:max(clamp(20px,5vw,72px),calc(50% - var(--col-half,23rem)));padding-right:max(clamp(20px,5vw,72px),calc(50% - var(--col-half,23rem)));}
+.turva-nav,.tv-foot{padding-left:max(clamp(24px,5vw,72px),calc(50% - var(--col-half,34rem)));padding-right:max(clamp(24px,5vw,72px),calc(50% - var(--col-half,34rem)));}
 a:focus-visible,button:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;border-radius:2px;}
 @media (prefers-reduced-motion:reduce){.cursor{animation:none;opacity:1;}}
 ::selection{background:#5DF18F;color:#06100F;}
@@ -7461,18 +7462,18 @@ a:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 .tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 @media (max-width:640px){table.stack{display:block;border:0;min-width:0;}table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stack tbody,table.stack tr{display:block;}table.stack tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stack td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stack td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stack td:first-child{color:#F2F4F3;font-weight:600;}}
 @media (max-width:360px){main{padding-left:20px;padding-right:20px;}}
-.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding:20px clamp(24px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
-.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
+.turva-nav .nv-brand svg{display:block;width:32px;height:32px;}
+.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:19px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
 ${NAV_MOBILE_CSS}
-.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
-.turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
+.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;flex:1;}
+.turva-nav .nv-menu a{font-size:17px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
-@media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
+@media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:15px;}}
 ${faqAt === -1 ? "" : SCARD_CSS + "\n" + FAQ_CSS + "\n"}${FOOTER_CSS}
 </style>
 </head>
@@ -7585,15 +7586,15 @@ p{margin:0 0 1.05rem;color:#C9D1CE;}
 a{color:#5DF18F;text-decoration:none;}
 a:hover{text-decoration:underline;}
 strong{color:#F2F4F3;}
-.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding:20px clamp(24px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
-.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
+.turva-nav .nv-brand svg{display:block;width:32px;height:32px;}
+.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:19px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
 ${NAV_MOBILE_CSS}
-.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
-.turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
+.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;flex:1;}
+.turva-nav .nv-menu a{font-size:17px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
 main{max-width:none;margin:0;padding:0;}
@@ -7906,18 +7907,18 @@ a:hover{text-decoration:underline;}
 a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
 .meta-line{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.03em;color:#9AA3A0;margin:0 0 1.4rem;overflow-wrap:anywhere;}
-.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding:20px clamp(24px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
-.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
+.turva-nav .nv-brand svg{display:block;width:32px;height:32px;}
+.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:19px;letter-spacing:.02em;color:#F2F4F3;}
 .turva-nav .nv-word b{color:#5DF18F;}
 ${NAV_MOBILE_CSS}
-.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
-.turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
+.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;flex:1;}
+.turva-nav .nv-menu a{font-size:17px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
-@media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
+@media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:15px;}}
 .cta{display:flex;flex-wrap:wrap;gap:14px;margin:1.4rem 0 .6rem;}
 .btn,.btn-ghost{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:50px;padding:.75rem 1.35rem;border-radius:7px;font-size:15px;font-weight:700;max-width:100%;overflow-wrap:break-word;text-align:center;}
 .btn{background:#5DF18F;color:#06100F;transition:background-color .15s ease;}
