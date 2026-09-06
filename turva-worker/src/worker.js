@@ -1,5 +1,6 @@
 // src/worker.js
-// turva.dev worker v3.132.1 - hotfix (2026-09-06, Tek-357): the FAQ answer on implementation no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer text raw and the live gate read the link syntax as a difference between the published answer and the page (mds/gotchas.md 2026-09-03 (jatko 9)); the link stands after the FAQ as its own line.
+// turva.dev worker v3.133.0 - one page template for the site (2026-09-06, Tek-358): every card page and article shares the home page frame (68rem, 24 px edge, 20 px at 320), prose reads in a 65ch column while headings, dividers, card groups and tables keep the frame, H1 is white and green is reserved for links and actions; sections are open (h2 plus body) and cards are used only for offers, tools and results; markdown tables carry data-label cells inside a bounded scroll box and stack into named cards below 640 px when they have up to four columns; ### headings render; articles get a byline from META_BY_PATH, a generated contents list above four sections and one next step; /services, /shopify-agent-storefront-check, /company, /contact, /legal, /tools, /badge, /llms-txt-validator, /guides and /blog rewritten to the 2026-09-06 page instruction with their twins, titles and descriptions; blog index cards carry kind and description.
+// v3.132.1 was: hotfix (2026-09-06, Tek-357): the FAQ answer on implementation no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer text raw and the live gate read the link syntax as a difference between the published answer and the page (mds/gotchas.md 2026-09-03 (jatko 9)); the link stands after the FAQ as its own line.
 // v3.132.0 was: home content rewritten to Erik's brief (2026-09-06, Tek-357): eleven sections in the twin and the same order in HTML, two starting points as cards read from the twin list, what the client gets, the process in writing, work you can inspect with the scan board and the dated security scans, support beyond the first report, who does the work, a five-question FAQ and the contact section; the curl demo, the x402 prose and every "higher on the next scan" promise left the home page; title, meta description and the ProfessionalService description say the same thing as the page. Prices, scope and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.131.0 was: one outer frame for every home section (2026-09-06, Tek-356): .page now shares the hero and offer width, so headings, dividers, card grids, the scan board and the process steps align on the same edges, and the text runs the same width, which Erik chose over a narrower reading column. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 
@@ -1662,11 +1663,9 @@ For an audit of the whole surface an agent sees, not just this one file, contact
 
   "/llms-txt-validator": `# Free llms.txt validator
 
-Enter a domain and this page fetches its /llms.txt and checks the
-structure: the first non-empty line is an H1 title, an optional blockquote
-summary, H2 sections with link lists. It also reads the site's home page for
-the two link relations v2 of the format recommends. Free, no signup, nothing
-stored.
+Check the structure of a site's llms.txt file and the discovery links on its home page. Free, no signup. This checks the published format. It is not an agent-readiness score.
+
+The validator requests the llms.txt file and home page. It does not crawl the rest of the site.
 
 ## How to use it
 
@@ -1676,7 +1675,9 @@ stored.
 
 Both views list the same checks below. The browser page and this markdown twin are kept in sync deliberately.
 
-## What it checks
+## What is checked
+
+Eight structural checks on the file:
 
 - The file exists at /llms.txt and returns HTTP 200
 - The response is plain text, not an HTML error page
@@ -1686,25 +1687,27 @@ Both views list the same checks below. The browser page and this markdown twin a
 - Markdown links parse and use absolute URLs
 - The file stays small enough to be cheap for an agent to read
 - No HTML markup in the file, since llms.txt should be plain markdown (HTML tags are flagged as a warning)
-- Whether the home page points at the llms.txt with rel="describedby", which v2 recommends
-- Whether the home page points at a markdown version with rel="alternate" type="text/markdown", which v2 recommends
 
-The last two report pass or information, never a warning and never a failure.
-They describe the site rather than the file, and v2 was two weeks old when this page
-was written in August 2026, so warning about them would turn valid files into files with warnings for
-following the version of the format they were written against.
+Two discovery checks on the home page, which v2 of the format recommends:
 
-## What it does not do
+- Whether the home page points at the llms.txt with rel="describedby"
+- Whether the home page points at a markdown version with rel="alternate" type="text/markdown"
 
-This is a structure check against the llms.txt format, not an
-agent-readiness score. A full audit measures discoverability, content accessibility,
-access control and more: see [services](/services),
-or start with [llms.txt explained](/guides/llms-txt).
+The two v2 discovery checks report pass or information, never a warning and never a failure. They describe the site rather than the file, and they do not change the structural result. The format reached v2 in August 2026, and the version history is in [llms.txt explained](/guides/llms-txt).
 
-Two documents are fetched from the target site, its /llms.txt and its home
-page, each following a redirect to the same host or its www twin when there is
-one. Nothing else is requested and the site is never crawled. Agents can call
-this with Accept: application/json.
+## What this result means
+
+The result is a structure check against the llms.txt format, not an agent-readiness score. Each check is reported with its name, its status as a word, what was observed and what to do next. There is no total, no percentage and no summary number, because eight structural checks can honestly report pass, warn or fail and a number stacked on top of them would look like a score without measuring one.
+
+A valid file does not guarantee that any assistant reads it, mentions the site or answers correctly. A full audit measures discoverability, content accessibility, access control and more: see [services](/services), or start with [llms.txt explained](/guides/llms-txt).
+
+Two documents are fetched from the target site, its /llms.txt and its home page, each following a redirect to the same host or its www twin when there is one. Nothing else is requested and the site is never crawled. What is fetched is checked and discarded, and the result page is served with a no-store header.
+
+## Use in an agent or CI
+
+An agent calls GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header and receives the same checks as JSON, with a no-store header.
+
+The same checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks. The two v2 checks never fail that build, since they are reported as information.
 
 All free tools on this site are collected on [the tools page](/tools).
 
@@ -1716,7 +1719,7 @@ llms.txt is a plain text file that tells AI agents what a site contains and wher
 
 **What does the validator check?**
 
-Eight structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with an H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, the file stays small enough to be cheap for an agent to read, and the file carries no inline HTML, since llms.txt should be plain markdown. Two further checks read the site's home page for the link relations v2 recommends, rel="describedby" to the llms.txt and rel="alternate" type="text/markdown" to a markdown version, and both are reported as information rather than as a warning.
+Eight structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with an H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, the file stays small enough to be cheap for an agent to read, and the file carries no inline HTML, since llms.txt should be plain markdown. Two further checks read the site's home page for the link relations v2 recommends, rel="describedby" to the llms.txt and rel="alternate" type="text/markdown" to a markdown version, and both report pass or information rather than a warning or a failure.
 
 **Why is there no score?**
 
@@ -1743,29 +1746,35 @@ Yes. The same checks are published as an open npm package, turva-llms-txt-valida
 
   "/tools": `# Free tools for agent-readiness
 
-Three tools this site publishes for anyone to use: an llms.txt validator, an embeddable agent-ready badge and a public read-only MCP server. All free, no signup, and each one works for an agent as well as for a person.
+Check an llms.txt file, inspect the public MCP interface or use a badge with published criteria. These tools address specific parts of agent-readiness, and each page explains what the result does and does not establish.
 
 ## llms.txt validator
 
-Checks a site's /llms.txt structure against the format and reports each check as pass, warn or fail, plus two v2 link relation checks that read pass or info and never move the summary. Nothing is stored. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header.
+Check file structure and discovery links. See the result for each check, without signing up.
 
-Open it at [turva.dev/llms-txt-validator](/llms-txt-validator), or [run it against this site's own file](/llms-txt-validator?url=turva.dev) without typing anything.
-
-The same checks run in CI as an open npm package, [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI and the same JSON shape. Source on [GitHub](https://github.com/erekola/llms-txt-validator).
-
-## The agent-ready badge
-
-A small SVG badge a site can embed to show it meets public agent-readiness criteria, linking back to the criteria page. It is a self-declared claim and checkable by design: anyone can run the same public scanner against the displaying site at any time.
-
-Criteria and embed instructions at [turva.dev/badge](/badge).
+[Open the validator](/llms-txt-validator)
 
 ## Public MCP server
 
-A read-only Model Context Protocol server at mcp.turva.dev/mcp over streamable HTTP. It exposes the service catalog and pricing, turva.dev's own agent-readiness score, the published web-security scan results and the engagement principles. No authentication, and its server card is published at /.well-known/mcp/server-card.json.
+Read turva.dev's service information, published scan results and engagement principles through a public MCP interface.
 
-## Where to go next
+[Read the MCP server guide](/guides/mcp-server-card)
 
-These tools cover the same surfaces an agent-readiness audit measures. The audit itself, with fixed prices, is on the services page. See [services](/services).
+## Agent-ready badge
+
+A self-declared badge with public eligibility criteria. It is not a certification.
+
+[Read the badge criteria](/badge)
+
+## Technical details
+
+- The validator reports each check as pass, warn or fail, plus two v2 link relation checks that read pass or information and never move the summary. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header. The same checks run in CI as an open npm package, [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI and the same JSON shape. Source on [GitHub](https://github.com/erekola/llms-txt-validator).
+- The MCP server is a read-only Model Context Protocol endpoint at https://mcp.turva.dev/mcp over streamable HTTP, for MCP clients rather than a browser. No authentication. Its server card is published at https://turva.dev/.well-known/mcp/server-card.json.
+- The badge is a small SVG served from turva.dev, linking back to the criteria page. Anyone can run the same public scanner against the displaying site at any time.
+
+## Need a broader review?
+
+These tools cover parts of what an agent-readiness audit measures. The audit itself, with fixed prices, is on the [services page](/services).
 
 ## Related
 
@@ -1776,26 +1785,22 @@ These tools cover the same surfaces an agent-readiness audit measures. The audit
 
   "/badge": `# The agent-ready badge
 
-A small SVG badge a site can embed to show it meets public
-agent-readiness criteria, linking back to this page. The badge is
-served from turva.dev, the criteria are listed below, and anyone can
-re-check the claim by running the same public scanner.
+A self-declared badge for sites that meet the published eligibility criteria below. It does not certify security, guarantee AI visibility or confirm that an agent can complete every task.
 
-## Who may display it
+## Eligibility
+
+A site may display the badge after completing a turva.dev agent-readiness audit, or after scoring 100/100 on the named public agent-readiness scanner. Completing an audit does not itself mean a 100/100 score.
 
 - Sites that have completed a turva.dev agent-readiness audit
 - Sites that score 100/100 on a public agent-readiness scanner (isitagentready.com)
 
 ## What it is, and what it is not
 
-The badge is a self-declared claim against public criteria, not a
-certification. turva.dev does not police its use. The value of the
-badge is that the claim is checkable: the scanner can be run
-against the displaying site by anyone, at any time.
+The badge is a self-declared claim against public criteria, not a certification. turva.dev does not police its use. The value of the badge is that the claim is checkable: the scanner can be run against the displaying site by anyone, at any time.
 
-## How to embed it
+## Use the badge
 
-Copy this HTML where you want the badge to appear:
+Read the criteria, inspect the preview and copy the complete embed code. Copy this HTML where you want the badge to appear:
 
     <a href="https://turva.dev/badge"><img src="https://turva.dev/badge.svg" alt="agent-ready. Criteria at turva.dev/badge" width="216" height="36" loading="lazy"></a>
 
@@ -1803,22 +1808,20 @@ The image is 216 by 36 pixels, dark background, under one kilobyte.
 
 ## If your site is not there yet
 
-An audit measures where you stand and lists what to fix first.
-Services and prices are on the [services page](/services). Email
-<mailto:info@turva.dev> and you get a reply within one business day.
+An audit measures where you stand and lists what to fix first. Services and prices are on the [services page](/services). Email <mailto:info@turva.dev> and you get a reply within one business day.
 
 All free tools on this site are collected on [the tools page](/tools).
 `,
 
-  "/blog": `# Notes on AI agents and agent-readiness
+  "/blog": `# Research and field notes
 
-The work here is letting an agent read a site and act on a system safely. Each entry is dated, and anything that can be measured is checked against an independent scanner rather than asserted.
+Dated studies, technical investigations and build notes from turva.dev. Each article explains what was observed, how it was checked and what the result does not establish.
 
-## Start here
+## Start with the research
 
-- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites): one scanner over 567 company sites in ten weeks, and what the Level 0 and Level 1 notes say.
-- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b): the July snapshot the larger scan grew out of.
-- [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts): the same measurement on the platforms developers use every day.
+- [Website agent-readiness across 567 company sites](/blog/website-agent-readiness-567-sites): one scanner over a selected prospecting sample of 567 company sites in ten weeks, with the changing check set recorded as a limitation.
+- [What four AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit): fifty buyer questions, 193 answers, one day's conditions.
+- [Thirty-day follow-up: 201 comparable site readings](/blog/thirty-days-after-the-brief): a 210-site cohort, 201 comparable readings, four changed level, and no effect from the briefs established.
 
 ## All posts
 
@@ -2971,20 +2974,24 @@ fraction of the token cost of the HTML.
 - [Common agent-readiness gaps on marketing sites](https://turva.dev/guides/agent-readiness-gaps)
 `,
 
-  "/services": `# Two fixed-scope diagnoses, and the work that follows
+  "/services": `# Agent-readiness services and pricing
 
-Async-only. One business day response. All prices exclude VAT.
+Choose a focused Shopify check or a broader website and API audit. Each has a fixed scope and can be bought on its own. You receive documented findings and a prioritised correction plan.
 
-Two of these are diagnoses you can buy on their own, each at a fixed price and a fixed scope. The Shopify agent storefront check reads one live Shopify store, the audit reads a whole site or API, and neither one requires the other. Everything after them is the work a diagnosis identifies, scoped separately.
+Async-only. First reply within one business day. Prices exclude VAT.
 
-The method is measured in public before it is sold. [567 company websites](/blog/website-agent-readiness-567-sites) read by the same scanner, my own prospecting sample and not a random draw. [Fifty buyer questions put to four AI assistants](/blog/what-ai-assistants-call-an-agent-readiness-audit), 193 answers. [210 sites rescanned thirty days after a brief](/blog/thirty-days-after-the-brief), three moved up and one down, none of them because of the brief. Each post names its own limits.
+## Choose a starting point
+
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Find out whether selected products, prices and availability agree across the agent-shopping surfaces your store exposes. One store, up to three product and variant pairs, one market, with buyer-journey evidence and a prioritised correction plan. Delivered within 48 hours of the agreed written kickoff.
+- [Website and API agent-readiness audit](/services#audit). €4,300. A third-party technical scan, manual review of your website and API surfaces, and a documented question set tested across selected AI assistants. Written findings, a prioritised correction plan and one included re-scan. Delivered in two weeks.
+
+See what each report contains before you buy: the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check).
 
 ## Shopify agent storefront check
 
 **€999. 48 hours. Fixed scope.**
 
-What an AI shopper actually receives from one live Shopify store, tested across the three agent
-surfaces this check covers and reported with the evidence attached.
+What an AI shopper actually receives from one live Shopify store, tested across the three agent surfaces this check covers and reported with the evidence attached.
 
 What you get:
 - A three-surface map of browser WebMCP, remote Storefront and UCP MCP, and Catalog and Agentic channels
@@ -2995,174 +3002,111 @@ What you get:
 
 What you do not get:
 - Calls or meetings
-- Implementation of the corrections, which is bought separately and
-  priced below
+- Implementation of the corrections, which is bought separately and described under Implementation below
 - A penetration test, or any Shopify, MCP, WebMCP or UCP certification
 - A test order, because the cart lifecycle stops before payment
 
-If you would rather not do the corrections yourself, implementing exactly
-the corrections this check lists is €499 when it is bought together with
-the check. That is the whole correction plan at a fixed price instead of
-the €1,500 day rate. Anything outside the plan is scoped separately at the
-day rate.
-
-The fixed price needs collaborator access to the store, arranged in
-writing before the work starts. With it in place, every correction on
-the plan is implemented for the €499, whatever the count. If access
-cannot be arranged, the add-on is not sold, and the plan still carries
-the instructions for your team.
-
-The audit is not a prerequisite. The full scope, the exclusions and the preflight are on the
-[product page](/shopify-agent-storefront-check).
+The audit is not a prerequisite. The full scope, the exclusions and the public preflight are on the [product page](/shopify-agent-storefront-check).
 
 Suited for D2C Shopify stores that want documented evidence of what an agent receives from them today.
 
-## Audit
+## Website and API agent-readiness audit
 
 **€4,300. Two weeks. Fixed scope.**
 
-A measurement of how agent-ready your site and APIs are today, with
-a prioritized list of what to fix first.
+A third-party technical scan, manual review of your website and API surfaces, and a documented question set tested across selected AI assistants. The report separates technical findings from observed AI answers and explains what to correct, why it matters and how to verify it.
 
 What you get:
-- An independent scanner runs against the site or API
-- Manual review of /.well-known/ manifests, JSON-LD, head metadata
-  and HTTP headers
-- Review of robots.txt, sitemap.xml, ai.txt and llms.txt against
-  current agent norms
-- A live check of how AI assistants and agents retrieve and answer
-  questions about the site or API today, across several AI platforms
-  (answer engine optimization, AEO)
-- Written report with findings ranked by score impact and
-  implementation cost
-- A fix instruction for every finding, and a link to the guide on this
-  site for that surface where there is one, so your team can do the work
-  without buying implementation
+- An independent scanner runs against the site or API, and every check it runs is recorded one by one rather than as one headline number
+- Manual review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers
+- Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms
+- A documented question set put to several AI assistants, recording what they answer about the site or API today and whether they name it when asked about its category rather than by name
+- Written report with findings prioritised by their impact on users and agent behaviour, with implementation effort and scanner effects recorded separately
+- A fix instruction for every finding, and a link to the guide on this site for that surface where there is one, so your team can do the work without buying implementation
 - One round of written follow-up questions
-- One re-scan after the fixes, within 30 days of the report and included
-  in the price: the same scanner with the same profile and the same
-  question set, the readings printed next to the baseline
-
-How it is measured:
-- Every agent-readiness check an independent scanner runs, recorded per
-  check rather than as one headline number
-- A fixed question set put to several answer engines, recording whether
-  they name your site when asked about your category rather than by name
-- Your published web security scans, so the report rests on measurements
-  you can re-run yourself
+- One re-scan after the fixes, within 30 days of the report and included in the price
 
 What you do not get:
 - Calls or meetings
-- Implementation of the fixes, which is bought separately and priced
-  below
-- Ongoing monitoring (separate engagement)
+- Implementation of the fixes, which is bought separately and described under Implementation below
+- Ongoing monitoring, which is the advisory engagement
 
-Levels move with the check set. The same site can read Level 1 on a full
-run and Level 2 on a narrower one, so the report names the checks that
-failed and what each one costs to fix, and leaves the headline number out
-of it.
+How the follow-up is verified:
+- Technical corrections are checked with the relevant scanner or a direct test of the surface
+- AI visibility is observed again with the same documented question set
+- The follow-up results are shown beside the baseline, with dates, scope and any change in the measurement method
 
-Large sites are covered in full. If a site is big enough that the
-live checks reach a tool quota, the quota is raised rather than the
-coverage reduced. Once the audit is complete, the fixes it lists are
-typically about a day of implementation work, whether your team does them or I do. That figure is an estimate scoped to the findings this audit lists, not a fixed quote, and the audit is what identifies that work and orders it by impact. The report carries the instructions for that work, so the implementation day is a choice rather than a condition.
+Levels move with the check set. The same site can read Level 1 on a full run and Level 2 on a narrower one, so the report names the checks that failed and what each one costs to fix, and leaves the headline number out of it.
 
-If you would rather not do it yourself, implementing exactly the fixes
-this audit lists is €499 when it is bought together with the audit.
-That is the whole list at a fixed price instead of the €1,500 day rate.
-Anything outside the list the report names is scoped separately at the
-day rate.
-
-The fixed price needs the same two things as an implementation day: an
-edge runtime in front of your origin where the fixes are applied, and
-the access to deploy there, plus any other access a listed fix needs,
-the DNS zone for example, all arranged in writing before the work
-starts. With those in place, every fix on the list is implemented for
-the €499, whatever the count. If they cannot be arranged, the add-on is
-not sold, and the report still carries the instructions for your team.
+Large sites are covered in full. If a site is big enough that the live checks reach a tool quota, the quota is raised rather than the coverage reduced. Once the audit is complete, the fixes it lists are typically about a day of implementation work, whether your team does them or I do. That figure is an estimate scoped to the findings this audit lists, not a fixed quote, and the audit is what identifies that work and orders it. The report carries the instructions for that work, so the implementation day is a choice rather than a condition.
 
 A synthetic [sample report](/samples/audit-report) is public. It uses an invented site, shows the per-check scanner readings, the manual review, the AI visibility run, nine findings with their owners and acceptance tests, and the decisions the company makes, and it is not a report on a real client.
 
-Suited for teams that want a clear picture of where they stand
-before deciding what to do about it.
+Suited for teams that want a clear picture of where they stand before deciding what to do about it.
 
-## Advisory
+## Implementation
 
-**€3,000 per month. Monthly retainer. Minimum three months.**
+**€1,500 per day. Scoped per task. €499 for a diagnosis's own fix list, bought with that diagnosis.**
 
-Ongoing input on agent-readiness as part of your product roadmap,
-with tracking of how the scores change over time.
+Your team can implement the report, or you can purchase implementation. A €499 add-on covers the diagnosis's own complete fix list when bought with that diagnosis and when the required access is arranged in advance. Work outside that list is scoped separately at €1,500 per day.
+
+For a Shopify check, the add-on requires collaborator access to the store. For an audit, it requires an edge runtime, deployment access and any other access the listed fixes need, such as DNS. If those prerequisites cannot be arranged, the add-on is not sold and your team still receives the correction instructions.
+
+With the access in place, every fix on the list is implemented for the €499, whatever the count. That is the whole list at a fixed price instead of the day rate.
+
+An implementation day is hands-on work on the fixes a website and API audit identified, or new agent-ready infrastructure built from scratch. That audit comes first for this work, because the day is spent building rather than diagnosing.
+
+Your traffic runs through an edge worker I deploy in front of your origin, and the access to do that exists before the day starts. Cloudflare Workers is the default, because that is what this site runs on. Any edge runtime that executes your code in front of the origin does the same job, Fastly Compute, Akamai EdgeWorkers, AWS Lambda@Edge and the edge functions on Netlify and Vercel included, so tell me which one you run when we scope the day. The worker adds agent surfaces beside your site, and it does not touch your application.
+
+Typical work on a day:
+- Head metadata and /.well-known/ files served at the edge
+- robots.txt with AI crawler rules and Content Signals, and a Web Bot Auth directory
+- Markdown content negotiation, so a request asking for text/markdown gets markdown while a browser still gets HTML
+- An agent skills index, auth.md and an API catalog
+- JSON-LD generators for product, organization and article schemas
+- ai.txt and llms.txt authoring
+- Signed content and agent authentication patterns
+- An MCP server card and an agent-to-agent card for a server that already runs, and the discovery paths that point at it
+
+What a separately scoped day does not cover:
+- DNS records for agent discovery, which need your DNS rather than an edge worker
+- Tool declarations inside your pages, which are application work
+- Agent commerce protocols, which need working payment flows behind them
+- Building the MCP server itself, which is its own engagement, so a card written on a day points at a server that already runs
+
+You check the work yourself. Run the scanner before the day and after it, so the result is a number you produced. I do not promise a readiness level, because the level moves depending on which checks are run.
+
+Scoped repository write access per task. No retainer.
+
+## Ongoing advisory
+
+**€3,000 per month. Minimum three months.**
+
+Monthly technical and AI-visibility measurements, written review of shipped changes, roadmap input and ongoing written support. Each review records what changed and what the evidence supports. No particular score or AI mention is guaranteed.
 
 What you get:
-- Monthly re-scan and score delta report
-- Monthly AI-visibility delta from the same question set re-run
-  across several AI platforms (answer engine optimization, AEO)
-- Written review of any agent-readiness related work your team
-  ships, within one business day
+- Monthly re-scan with the same scanner and the same profile, and the delta recorded beside the previous reading
+- Monthly AI-visibility delta from the same question set, re-run across the same AI assistants
+- Written review of any agent-readiness related work your team ships, within one business day
 - Roadmap input on what to ship next and why
-- Async channel for questions (email or shared doc)
+- Async channel for questions, email or a shared document
 - Quarterly summary of measurable progress
 
 What you do not get:
 - Calls or meetings
 - A promised score, because the check set changes when the standards do
 
-The monthly re-run uses the same measurement as the audit, so a delta
-means something. A number that moved for a reason nobody can name is not
-progress, and the review says which change moved it.
+The monthly re-run uses the same measurement as the audit, so a delta means something. A number that moved for a reason nobody can name is not progress, and the review says which change moved it.
 
-Suited for teams treating agent-readiness as an ongoing product
-responsibility rather than a one-off cleanup.
-
-## Implementation
-
-**€1,500 per day. Scoped per task. €499 for a diagnosis's own fix list, bought with that diagnosis.**
-
-Hands-on work on the fixes the audit identified, or new agent-ready
-infrastructure built from scratch. The audit comes first, because the day
-is spent building rather than diagnosing.
-
-Your traffic runs through an edge worker I deploy in front of your origin,
-and the access to do that exists before the day starts. Cloudflare Workers
-is the default, because that is what this site runs on. Any edge runtime
-that executes your code in front of the origin does the same job, Fastly
-Compute, Akamai EdgeWorkers, AWS Lambda@Edge and the edge functions on
-Netlify and Vercel included, so tell me which one you run when we scope
-the day. The worker adds agent surfaces beside your site, and it does not
-touch your application.
-
-Typical work:
-- Head metadata and /.well-known/ files served at the edge
-- robots.txt with AI crawler rules and Content Signals, and a Web Bot
-  Auth directory
-- Markdown content negotiation, so a request asking for text/markdown
-  gets markdown while a browser still gets HTML
-- An agent skills index, auth.md and an API catalog
-- JSON-LD generators for product, organization and article schemas
-- ai.txt and llms.txt authoring
-- Signed content and agent authentication patterns
-- An MCP server card and an agent-to-agent card for a server that
-  already runs, and the discovery paths that point at it
-
-What a day does not cover:
-- DNS records for agent discovery, which need your DNS rather than an
-  edge worker
-- Tool declarations inside your pages, which are application work
-- Agent commerce protocols, which need working payment flows behind them
-- Building the MCP server itself, which is its own engagement, so a card
-  written on a day points at a server that already runs
-
-You check the work yourself. Run the scanner before the day and after it,
-so the result is a number you produced. I do not promise a readiness
-level, because the level moves depending on which checks are run.
-
-Scoped repository write access per task. No retainer.
+Suited for teams treating agent-readiness as an ongoing product responsibility rather than a one-off cleanup.
 
 ## Agent operations
 
 **Price on request. Scoped per engagement.**
 
-The work beyond readiness, for teams moving from "an agent can read us" to "an agent can act on a system that matters." Two things decide whether an agent acts correctly. The data it works from has to arrive intact, even over links that drop or lag. And the decisions it is allowed to make have to sit inside an envelope of permissions and thresholds you set deliberately.
+Review the data, permissions, decision limits and human handoffs around an agent-operated system. Scope and price are agreed separately.
+
+Two things decide whether an agent acts correctly. The data it works from has to arrive intact, even over links that drop or lag. And the decisions it is allowed to make have to sit inside an envelope of permissions and thresholds you set deliberately.
 
 Typical work:
 - Review of the data path an agent depends on, and where it breaks under real network conditions
@@ -3171,17 +3115,13 @@ Typical work:
 - Guardrails and verification so an agent's decisions can be checked after the fact
 
 What decides the price:
-- How many systems the agent touches, and whether any of them can move
-  money or delete data
-- Whether a decision boundary exists already or has to be written from
-  scratch
-- Whether the work ends at a written envelope or continues into building
-  the guardrails
+- How many systems the agent touches, and whether any of them can move money or delete data
+- Whether a decision boundary exists already or has to be written from scratch
+- Whether the work ends at a written envelope or continues into building the guardrails
 
 What you do not get:
 - Calls or meetings
-- An agent built for you, because this is the envelope around one rather
-  than the thing itself
+- An agent built for you, because this is the envelope around one rather than the thing itself
 - Sign-off that your agent is safe, because a review cannot promise that
 
 Suited for teams letting agents act on data and decisions that matter, rather than only reading a marketing site.
@@ -3190,7 +3130,9 @@ Suited for teams letting agents act on data and decisions that matter, rather th
 
 **Price on request. Scoped per engagement.**
 
-An MCP server built for your product, exposing read-only data to agents over streamable HTTP transport. For public, non-sensitive data, no auth surface and no logging by default. Auth and an audit trail follow the data and the misuse model.
+Design and build a supported interface for agents to read your product data. Tools, data sources, authentication and any write capabilities are scoped explicitly.
+
+The default is a read-only server over streamable HTTP transport. For public, non-sensitive data, no auth surface and no logging by default. Auth and an audit trail follow the data and the misuse model.
 
 Typical work:
 - Read-only discovery tools over your product data
@@ -3198,32 +3140,25 @@ Typical work:
 - Registry publication so the server is findable in MCP directories
 
 What decides the price:
-- How many tools the server exposes, and whether they read one system or
-  several
-- Whether your data is already reachable through an API, or the read path
-  has to be built first
-- Whether read-only is enough, which is the default here, or the server
-  has to accept writes
+- How many tools the server exposes, and whether they read one system or several
+- Whether your data is already reachable through an API, or the read path has to be built first
+- Whether read-only is enough, which is the default here, or the server has to accept writes
 
-Write tools are not included by default. A read-only server cannot modify
-the source through that interface. That is the property worth keeping. It
-does not settle exposure, bulk extraction or availability. Those are
-decided per tool.
+Write tools are not included by default. A read-only server cannot modify the source through that interface. That is the property worth keeping. It does not settle exposure, bulk extraction or availability. Those are decided per tool.
 
 Suited for teams that want agents to read product data through a supported interface rather than scraping HTML.
 
-## The agent-ready badge
+## How the method is measured
 
-Sites that complete an audit, or score 100/100 on a public
-agent-readiness scanner, may display the [agent-ready badge](/badge).
+The method is measured in public before it is sold. [567 company websites](/blog/website-agent-readiness-567-sites) read by the same scanner, my own prospecting sample and not a random draw. [Fifty buyer questions put to four AI assistants](/blog/what-ai-assistants-call-an-agent-readiness-audit), 193 answers on one day. [210 sites rescanned thirty days after a brief](/blog/thirty-days-after-the-brief), 201 comparable readings, three moved up and one down, none of them because of the brief. Each post names its own limits, and none of them is a result a paying client achieved.
 
-Criteria and embed code: https://turva.dev/badge
+Sites that complete an audit, or score 100/100 on the named public agent-readiness scanner, may display the [agent-ready badge](/badge). It is a self-declared badge with public criteria, not a certification.
 
 ## Frequently asked
 
 **What is an agent readiness audit?**
 
-An agent readiness audit measures how well AI agents can discover, read, and act on your website or API. It reads the website and its APIs, not the organisation's readiness to adopt AI agents, which many consultancies describe with the same words. turva.dev runs an independent scanner, isitagentready.com, reviews the agent-facing surfaces manually, checks how AI assistants currently retrieve and answer about the site, and delivers a written report with fixes ranked by score impact and implementation cost.
+An agent readiness audit measures how well AI agents can discover, read, and act on your website or API. It reads the website and its APIs, not the organisation's readiness to adopt AI agents, which many consultancies describe with the same words. turva.dev runs an independent scanner, isitagentready.com, reviews the agent-facing surfaces manually, records how AI assistants currently answer a documented question set about the site, and delivers a written report with findings prioritised by their impact on users and agent behaviour, with implementation effort and scanner effects recorded separately.
 
 **What does an agent readiness audit cost?**
 
@@ -3233,9 +3168,9 @@ The Shopify agent storefront check is €999, fixed scope, delivered within 48 h
 
 Everything is async. There are no calls or meetings, findings and answers move in writing, and questions get a response within one business day. The audit ends in a written report your team can act on directly, with one round of written follow-up questions included.
 
-**How is agent readiness measured?**
+**How is agent readiness measured, and how are fixes verified?**
 
-With an independent public scanner rather than self-assessment. isitagentready.com grades sites on a Level 0 to 5 scale and scores agent readiness out of 100. The audit runs it against your site, so the result is reproducible and the same scan can verify every fix afterwards.
+With an independent public scanner, a manual review and observed AI answers, kept separate in the report. isitagentready.com grades sites on a Level 0 to 5 scale and scores agent readiness out of 100, and that score describes the named scanner's result rather than the whole of an agent's behaviour. Technical corrections are checked with the relevant scanner or direct test. AI visibility is observed with a documented question set. Follow-up results are shown beside the baseline, with dates, scope and changes in the measurement method.
 
 **Do I need the audit before the Shopify agent storefront check?**
 
@@ -3247,7 +3182,7 @@ In most cases, once the audit is complete, the fixes it lists are about a day of
 
 **Will you sign an NDA, and how is our material handled?**
 
-Yes, your own NDA, signed as it stands before any material moves, at no charge. Production credentials are not requested at any stage, and repository write access is scoped per task and only if implementation is purchased. The workstation is encrypted at disk level, and credentials are held in an encrypted vault instead of in files. Backups are encrypted on the machine before they are uploaded anywhere. Client material is deleted within thirty days of the engagement closing, unless retention is required by law.
+Yes, your own NDA, signed as it stands before any material moves, at no charge. The audit does not require production credentials. Any deployment, DNS, Shopify or repository access needed for purchased implementation is agreed separately and limited to the work. The workstation is encrypted at disk level, and credentials are held in an encrypted vault instead of in files. Backups are encrypted on the machine before they are uploaded anywhere. Client material is deleted within thirty days of the engagement closing, unless retention is required by law.
 
 **Do AI tools see our material?**
 
@@ -3255,46 +3190,24 @@ I use AI tools in the work. They run on a local workspace holding the files a ta
 
 ## How to start
 
-Email <mailto:info@turva.dev> with the site or API you want audited. I
-respond within one business day with a fixed quote and a start date.
+Email <mailto:info@turva.dev> with the site, API or store you want examined and the question the work should answer. I respond within one business day with a fixed quote and a start date.
 
 No calls or calendar links, and no discovery sessions.
 
-All prices exclude VAT. 25,5% for Finnish customers, reverse charge
-for EU B2B, 0% for non-EU.
+All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
 `,
 
   "/shopify-agent-storefront-check": `# Shopify agent storefront check
 
-For D2C Shopify stores that want evidence of what an AI shopper actually receives. €999 plus VAT, fixed scope, delivered in 48 hours from a written kickoff.
+Find out whether selected products, prices and availability agree across the agent-shopping surfaces your store exposes. Receive documented buyer-journey evidence and a prioritised correction plan.
 
-Shopify stores now meet shopping agents through three separate interfaces. They are related, and an agent does not always get the same answer from each. This check tests one live store across all of them and reports what an agent receives on each, with the evidence attached.
+€999 plus VAT. Fixed scope. Four written deliverables within 48 hours of the agreed written kickoff, followed by the included retest. One store, up to three product and variant pairs, one market.
 
-A general agent-readiness audit is not a prerequisite. This check stands on its own, and it is not a step inside the audit.
+A general agent-readiness audit is not a prerequisite. This check stands on its own, and it is not a step inside the audit. It is an independent service, not affiliated with or endorsed by Shopify.
 
-## Price and timing
+## What you will learn
 
-**€999 plus VAT. Fixed scope. 48 hours.**
-
-The 48-hour clock starts at the agreed written kickoff, once the preflight, payment and merchant evidence are complete. No response is required from you during the delivery window.
-
-If the public preflight cannot establish an observable agent-commerce surface suitable for controlled testing, the engagement is not sold and nothing is invoiced.
-
-If the 48-hour package of four deliverables is not sent within 48 elapsed hours, the fee is refunded. The retest is the fifth deliverable. It runs on its own 14-day window.
-
-All work is asynchronous and delivered in writing.
-
-## The three surfaces
-
-Every one of these is tested in the same session, against the same products, so a difference between them is visible rather than inferred.
-
-- Browser WebMCP tools inside the shopper's live storefront tab.
-- Shopify-hosted Storefront and UCP MCP endpoints.
-- Shopify Catalog and Agentic storefront channels.
-
-## What the check answers
-
-Within 48 hours you receive an evidence-backed status for each of the following, including anything restricted, unavailable or not testable.
+Shopify stores meet shopping agents through three separate interfaces. They are related, and an agent does not always get the same answer from each. Within 48 hours you receive an evidence-backed status for each of the following, including anything restricted, unavailable or not testable.
 
 - Which agent tools were observed and functional in the tested session.
 - Whether product, variant, price, currency and availability data agree across the tested surfaces.
@@ -3302,6 +3215,16 @@ Within 48 hours you receive an evidence-backed status for each of the following,
 - Where the buyer is handed off to checkout.
 - Whether your Shopify Agentic channel settings match what your team intended.
 - Which product-data, theme, app or configuration changes should be made first.
+
+## What you receive
+
+Five written deliverables. The first four are sent as one package within 48 hours. The fifth is the retest, and it follows within 14 days.
+
+- Three-surface map. What is present, restricted, unavailable or not tested on browser WebMCP, remote MCP and Catalog and Agentic channels.
+- Product truth matrix. The tested title, variant, price, currency, availability and policy facts across surfaces.
+- Buyer-journey evidence. The tool, the input, the observed result, the cart state and the exact stop before payment or order creation.
+- Prioritised correction plan. Up to five specific changes, their owner and a ready acceptance check.
+- Retest. One verification of up to two corrected items within 14 days.
 
 ## Fixed scope
 
@@ -3324,19 +3247,33 @@ No Shopify Admin password is requested. The check uses public storefront surface
 
 No customer details are entered. No payment is submitted and no order is placed.
 
-## What you receive
+## The three surfaces
 
-Five written deliverables. The first four are sent as one package within 48 hours. The fifth is the retest, and it follows within 14 days.
+Every one of these is tested in the same session, against the same products, so a difference between them is visible rather than inferred.
 
-- Three-surface map. What is present, restricted, unavailable or not tested on browser WebMCP, remote MCP and Catalog and Agentic channels.
-- Product truth matrix. The tested title, variant, price, currency, availability and policy facts across surfaces.
-- Buyer-journey evidence. The tool, the input, the observed result, the cart state and the exact stop before payment or order creation.
-- Prioritised correction plan. Up to five specific changes, their owner and a ready acceptance check.
-- Retest. One verification of up to two corrected items within 14 days.
+- Browser WebMCP tools inside the shopper's live storefront tab.
+- Shopify-hosted Storefront and UCP MCP endpoints.
+- Shopify Catalog and Agentic storefront channels.
 
-Implementation of the corrections is not included in the €999. Your team can act on the plan directly, or implementing exactly the corrections this check lists is €499 when it is bought together with the check. Work outside the plan is scoped separately at the €1,500 implementation day rate. The fixed price needs collaborator access to the store, arranged in writing before the work starts. With it in place, every correction on the plan is implemented for the €499, whatever the count. If access cannot be arranged, the add-on is not sold, and the plan still carries the instructions for your team.
+## Price, kickoff and delivery
 
-## What this is not
+**€999 plus VAT. Fixed scope. 48 hours.**
+
+The 48-hour clock starts at the agreed written kickoff, once the preflight, payment and merchant evidence are complete. No response is required from you during the delivery window.
+
+If the public preflight cannot establish an observable agent-commerce surface suitable for controlled testing, the engagement is not sold and nothing is invoiced.
+
+If the 48-hour package of four deliverables is not sent within 48 elapsed hours, the fee is refunded. The retest is the fifth deliverable. It runs on its own 14-day window and is not part of the first package's delivery time.
+
+All work is asynchronous and delivered in writing.
+
+## Optional implementation
+
+Implementation of the corrections is not included in the €999. Your team can act on the plan directly, or implementing exactly the corrections this check lists is €499 when it is bought together with the check. Work outside the plan is scoped separately at the €1,500 implementation day rate.
+
+The fixed price needs collaborator access to the store, arranged in writing before the work starts. With it in place, every correction on the plan is implemented for the €499, whatever the count. If access cannot be arranged, the add-on is not sold, and the plan still carries the instructions for your team.
+
+## Limits and exclusions
 
 This is an operational storefront check. It is not a penetration test. It is not a Shopify, MCP, WebMCP or UCP certification either.
 
@@ -3344,9 +3281,13 @@ A documented Shopify tool or public endpoint is not treated as a vulnerability. 
 
 This is an independent service, not affiliated with or endorsed by Shopify.
 
-## What the public preflight measured
+## Sample report
 
-Before this check was offered, 26 Shopify storefronts were read with a public read-only preflight on 2026-08-09. All 26 advertised the same ten-tool WebMCP inventory that Shopify documents as its platform-supplied surface.
+A synthetic [sample report](/samples/shopify-agent-storefront-check) is public. It uses invented store data. It shows the three-surface map, the product truth matrix, the buyer-journey evidence, the correction plan and the retest, and it is not a report on a real merchant.
+
+## Public preflight evidence
+
+Before this check was offered, 26 Shopify storefronts were read with a public read-only preflight on 2026-08-09. All 26 advertised the same ten-tool WebMCP inventory that Shopify documents as its platform-supplied surface. That is a reading of 26 public storefronts, not a result from 26 paying clients.
 
 What that measurement does not establish, and the reason the paid check exists:
 
@@ -3356,10 +3297,6 @@ What that measurement does not establish, and the reason the paid check exists:
 - The identical inventory is Shopify's platform surface rather than 26 separate merchant implementations, so it says nothing about any one store's product data.
 - Five of the 26 needed a repeat run before the scanner finished, so the reading is the latest available observation rather than one clean pass.
 - The 26 of 26 figure describes those stores at that hour under that scanner version, and it is not generalised to Shopify stores.
-
-## Sample report
-
-A synthetic [sample report](/samples/shopify-agent-storefront-check) is public. It uses invented store data. It shows the three-surface map, the product truth matrix, the buyer-journey evidence, the correction plan and the retest, and it is not a report on a real merchant.
 
 ## Frequently asked
 
@@ -3396,256 +3333,178 @@ No calls, no calendar links, and no discovery sessions.
 All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
 `,
 
-  "/company": `# A one-person audit practice, registered in Finland
+  "/company": `# Work directly with Erik Rekola
 
-turva.dev is operated by Erik Rekola.
+I'm an independent consultant based in Tampere, Finland. I work on agent-readiness audits, technical reviews and implementation for websites, APIs and Shopify stores. You work directly with me, and scope, findings and decisions stay in writing.
+
+## My background
+
+From 2015 to 2021, I worked in hands-on machine roles involving paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyser at Thermo Fisher Scientific and semiconductor production equipment at ASM International. The common thread was reliable machine data and interventions within defined limits.
+
+After a career break from 2021 to early 2026, I built turva.dev around technical measurement, review and implementation. My current work is available to inspect through [public source code](https://github.com/erekola), [dated research](/blog) and clearly labelled [sample reports](/samples/audit-report).
+
+## Why this work matters
+
+A product can look clear to a person while exposing incomplete or conflicting information to automated clients. My work documents what those clients can reach, what they receive and which corrections deserve attention. Technical readiness and observed AI answers are measured separately.
+
+## How I work
+
+- Async-only engagement. No calls, no calendar links.
+- All work delivered remotely. No on-site engagements.
+- The audit does not require production credentials. Access needed for purchased implementation is agreed separately and limited to the work being carried out.
+- Write access scoped per task and only if implementation is purchased.
+- Public readiness claims are verifiable by re-running the scanner. Engagement findings are tied to recorded inputs and observed results.
 
 ## Business details
 
 - **Trade name:** turva.dev
-- **Business ID:** 3600281-7
-- **Country of registration:** Finland
+- **Operator:** Erik Rekola
 - **Form:** Sole proprietorship
-
-## About the operator
-
-Erik spent six years, 2015 to 2021, in hands-on machine roles: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyzer at Thermo Fisher Scientific, and semiconductor production equipment at ASM International. The common thread was machine data that had to be trusted and interventions that had to stay inside strict limits.
-
-There was then a career break, from 2021 to early 2026. turva.dev was built when AI agents turned that same discipline into a web problem: data that has to arrive intact, and decisions that have to stay inside a boundary someone set on purpose.
-
-The proof of current skill is public rather than asserted. The site and its MCP server are open source, and every score published here comes from third-party scanners anyone can re-run.
-
-## Location
-
-Tampere, Pirkanmaa, Finland.
-All work is delivered remotely. No on-site engagements.
-
-## Why this service exists
-
-Agent-readiness is a measurable property of a site, an API, or a
-product surface. This service answers one question: whether an
-independent scanner reads it higher next week than this week.
-
-Most websites and APIs were built before AI agents were a meaningful
-class of clients. The protocols (MCP, well-known manifests,
-structured discovery, JSON-LD) exist, but few sites implement them
-correctly. The result is a measurable gap between what an agent can
-read and what a human can read.
-
-This service closes that gap on a per-project basis, with an
-independent scanner as the referee.
-
-## Operating principles
-
-- Async-only engagement. No calls, no calendar links.
-- All work delivered remotely.
-- Production credentials are not requested.
-- Write access scoped per task and only if implementation is purchased.
-- Public readiness claims are verifiable by re-running the scanner. Engagement findings are tied to recorded inputs and observed results.
-
-## Contact
-
-- **Email:** <mailto:info@turva.dev>
-- **Signal:** [@turva.19](https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK)
-- **LinkedIn:** https://www.linkedin.com/in/erikrekola/
+- **Country of registration:** Finland
+- **Business ID:** 3600281-7
+- **VAT ID:** FI36002817
+- **Location:** Tampere, Pirkanmaa, Finland
+- **Register:** https://tietopalvelu.ytj.fi/yritys/3600281-7
+- **Source code:** https://github.com/erekola
 
 ## Invoicing
 
-Payment terms are fourteen days net unless agreed otherwise in
-writing.
+Payment terms are fourteen days net unless agreed otherwise in writing.
 
-VAT is added to invoices according to Finnish law. Reverse charge
-applies to EU B2B customers with a valid VAT ID. Non-EU customers
-are invoiced without VAT. turva.dev's own VAT ID is FI36002817.`,
+VAT is added to invoices according to Finnish law. Reverse charge applies to EU B2B customers with a valid VAT ID. Non-EU customers are invoiced without VAT. turva.dev's own VAT ID is FI36002817.
 
-  "/contact": `# Written contact only, first reply within one business day
+## Discuss a project
 
-Email for longer messages, Signal for short questions. No calls and
-no calendar links at any stage of the engagement.
+Send the URL and the question you want answered. Everything is handled in writing, and the first reply arrives within one business day. Email <mailto:info@turva.dev> or use the [contact page](/contact).
+`,
 
-## Channels
+  "/contact": `# Start with the URL and the question
+
+Send your website, API or Shopify store URL and tell me what you want to understand. I'll reply within one business day with the next step, proposed scope and start date.
+
+Everything is handled in writing. No calls or calendar bookings.
+
+## Email
 
 - **Email:** <mailto:info@turva.dev>
+
+For project requests, URLs and longer messages. Each link below opens a message to info@turva.dev with the subject set and the fields the first reply needs. Nothing is sent until you send it, and the same fields typed into a plain email work just as well.
+
+- [Ask about a website or API audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A): include the URL and the question the audit should answer.
+- [Ask about a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A): include your storefront URL, .myshopify.com domain, primary market and up to three priority products.
+
+Not sure which service fits? Send the URL and the question. Existing scanner results are welcome, but you do not need them to get started.
+
+## Other channels
+
 - **Signal:** [@turva.19](https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK)
 - **LinkedIn:** https://www.linkedin.com/in/erikrekola/
 
-Scan the code with a phone to open a Signal chat. The code image is at /signal-qr.png. Short questions go here, longer documents by email.
+Short questions go to Signal, longer documents by email. Open Signal directly, or scan the code with your phone.
 
 Signal is end-to-end encrypted. Scanning shares no account of yours.
 
-## Start a request by email
+## What to include
 
-Each link opens a message to info@turva.dev with the subject set and the fields the first reply needs. Nothing is sent until you send it, and the same fields typed into a plain email work just as well.
+A useful first message includes:
 
-- [Shopify agent storefront check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A): storefront URL, .myshopify.com domain, primary market, up to three priority products.
-- [Agent-readiness audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A): the site or API URL and what the audit should answer.
+- The website, API or store to be examined (URL)
+- The question you want answered, or the scope you have in mind (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design)
+- Any current scanner results, if you have run them
 
-## Encrypted email
+If you do not have scanner results yet, that is fine. The work starts with running them.
 
-Mail to erik@turva.dev can be OpenPGP encrypted. Encryption is
-optional, and an unencrypted message gets the same reply time.
+## Response time and languages
 
-The public key is at https://turva.dev/pgp-key.asc, and it is also
-published for automatic discovery, so a mail client that supports Web
-Key Directory finds it from the address alone. RSA 4096, valid until
-27 July 2036.
+- Email and Signal: within one business day
+- Weekends: no guaranteed response time
+
+Correspondence in English or Finnish, your choice. A brief I send unasked arrives in the language of the company it is about, and reports are written in English unless a Finnish report is agreed in the written scope.
+
+## Confidentiality
+
+An NDA is signed before any material moves. Send your own and it is signed as it stands, at no charge. The audit does not require production credentials. Any deployment, DNS, Shopify or repository access needed for purchased implementation is agreed separately and limited to the work.
+
+## Optional encrypted email
+
+Mail to erik@turva.dev can be OpenPGP encrypted. Encryption is optional, and an unencrypted message gets the same reply time.
+
+The public key is at https://turva.dev/pgp-key.asc, and it is also published for automatic discovery, so a mail client that supports Web Key Directory finds it from the address alone. RSA 4096, valid until 27 July 2036.
 
 Fingerprint:
 
 7D66 37F2 A37B A45F 56D6 9D3A 95D8 AE0F CEDF EE35
 
-Compare the fingerprint against the key before you use it, because a
-key served over the web is only as trustworthy as the page that served
-it.
-
-## Response times
-
-- Email and Signal: within one business day
-- Weekends: no guaranteed response time
-
-## Languages
-
-Correspondence in English or Finnish, your choice. A brief I send unasked arrives in the language of the company it is about, and reports are written in English unless a Finnish report is agreed in the written scope.
-
-## What to include in a first message
-
-A useful first message includes:
-
-- The site or API to be audited (URL)
-- Any current scanner results, if you have run them
-- The scope you have in mind (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design)
-
-If you do not have scanner results yet, that is fine. The audit
-starts with running them.
-
-## Confidentiality
-
-An NDA is signed before any material moves. Send your own and it is
-signed as it stands, at no charge. Production credentials are not
-requested at any stage, and repository write access is scoped per
-task and only if implementation is purchased.
-
-## Geographic service area
-
-Based in Tampere, Finland. Service delivered remotely worldwide.
-All work is asynchronous and written.
+Compare the fingerprint against the key before you use it, because a key served over the web is only as trustworthy as the page that served it.
 
 ## Business details
 
-- Business ID: 3600281-7
-- Register: https://tietopalvelu.ytj.fi/yritys/3600281-7
-- Agent registration: https://turva.dev/auth.md
+- **Business ID:** 3600281-7
+- **Register:** https://tietopalvelu.ytj.fi/yritys/3600281-7
+- **Location:** Tampere, Finland. Service delivered remotely worldwide.
+- **Agent registration:** https://turva.dev/auth.md
 `,
 
-  "/legal": `# Terms of engagement, and how data is handled
+  "/legal": `# Terms, privacy and data handling
 
-This page covers the terms under which turva.dev operates, the
-privacy practices of the site, and the default terms for engagements.
+The terms for working with turva.dev, how information is handled and where to send a privacy request. Service-specific scope and delivery conditions are described on the relevant service page and confirmed in writing.
 
 ## Operator
 
-turva.dev is operated by Erik Rekola, Business ID 3600281-7,
-registered in Finland as a sole proprietorship.
-VAT-registered, VAT ID FI36002817.
+turva.dev is operated by Erik Rekola, Business ID 3600281-7, registered in Finland as a sole proprietorship. VAT-registered, VAT ID FI36002817.
 
 Contact: <mailto:info@turva.dev>
 
-## Terms of engagement
+## Engagement terms
 
-The following terms apply to all engagements (Shopify agent
-storefront check, audit, advisory,
-implementation, agent operations and MCP server design) unless
-replaced by a written agreement.
+The following terms apply to all engagements (Shopify agent storefront check, audit, advisory, implementation, agent operations and MCP server design) unless replaced by a written agreement.
 
-**Scope.** Each engagement has a defined scope agreed in writing
-before work starts. Scope changes require a new written agreement
-and may affect price and timeline.
+**Scope.** Each engagement has a defined scope agreed in writing before work starts. Scope changes require a new written agreement and may affect price and timeline.
 
-**Deliverables.** Audit deliverables are a written report.
-Advisory deliverables are written reviews and a monthly summary.
-Implementation deliverables are source code committed to the
-agreed repository.
+**Deliverables.** Audit deliverables are a written report. Shopify agent storefront check deliverables are the five written documents described on the [service page](/shopify-agent-storefront-check). Advisory deliverables are written reviews and a monthly summary. Implementation deliverables are source code committed to the agreed repository.
 
-**Payment.** Payment terms are fourteen days net unless agreed
-otherwise in writing. Late payment interest follows Finnish law.
+**Payment.** Payment terms are fourteen days net unless agreed otherwise in writing. The Shopify agent storefront check is paid before the agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late payment interest follows Finnish law.
 
-**Confidentiality.** Information shared during an engagement is
-treated as confidential. Your own non-disclosure agreement is signed
-as it stands before any material moves, at no charge. Production
-credentials are not requested at any stage.
+**Confidentiality.** Information shared during an engagement is treated as confidential. Your own non-disclosure agreement is signed as it stands before any material moves, at no charge. The audit does not require production credentials. Access needed for purchased implementation is agreed separately and limited to the work being carried out.
 
-**Liability.** Liability is limited to the value of the engagement.
-turva.dev is not liable for indirect or consequential damages.
+**Liability.** Liability is limited to the value of the engagement. turva.dev is not liable for indirect or consequential damages.
 
-**Intellectual property.** The client owns the deliverables produced
-for them. Generic methods, templates and reusable code remain with
-turva.dev.
+**Intellectual property.** The client owns the deliverables produced for them. Generic methods, templates and reusable code remain with turva.dev.
 
-**Governing law.** Finnish law applies. Disputes are resolved in
-the District Court of Pirkanmaa, Finland.
+**Governing law.** Finnish law applies. Disputes are resolved in the District Court of Pirkanmaa, Finland.
 
 ## Privacy
 
-This site does not use analytics cookies, tracking pixels or
-third-party scripts.
+This site does not use analytics cookies, tracking pixels or third-party scripts.
 
-**Server logs.** The hosting provider (Cloudflare) records standard
-request logs including IP address, user agent and requested path.
-Logs are retained according to Cloudflare's standard retention policy.
+**Server logs.** The hosting provider (Cloudflare) records standard request logs including IP address, user agent and requested path. Logs are retained according to Cloudflare's standard retention policy.
 
-**Email.** Email communication is stored in standard email
-infrastructure for as long as needed to deliver the work and meet
-accounting obligations under Finnish law (six years for invoice
-records).
+**Email.** Email communication is stored in standard email infrastructure for as long as needed to deliver the work and meet accounting obligations under Finnish law (six years for invoice records).
 
-**Client data.** Data shared by a client during an engagement is
-stored only on systems necessary to deliver the work, and deleted
-within thirty days of engagement closure unless retention is
-required by law. The workstation holding it uses full disk
-encryption, credentials are held in an encrypted vault rather than in
-files, and backups are encrypted on the machine before they are
-uploaded anywhere.
+**Client data.** Data shared by a client during an engagement is stored only on systems necessary to deliver the work, and deleted within thirty days of engagement closure unless retention is required by law. The workstation holding it uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
-**Briefs.** When turva.dev measures a company's public website and
-sends the reading as a brief, the brief lives at an unlisted address
-on turva.dev. It contains what the public site serves and how it was
-read, and nothing a person shared. The address is not indexed and
-not linked from anywhere. A brief is removed on request, and every
-brief expires on its own no later than 400 days after it was last
-published.
+**Briefs.** When turva.dev measures a company's public website and sends the reading as a brief, the brief lives at an unlisted address on turva.dev. It contains what the public site serves and how it was read, and nothing a person shared. The address is not indexed and not linked from anywhere. A brief is removed on request, and every brief expires on its own no later than 400 days after it was last published.
 
-**AI tools.** AI tools are used in the work, on a local workspace
-holding the files a task needs. Those files are processed by the
-provider of the tool in use. No secret reaches a tool in the clear,
-because credentials are held in an encrypted vault that scripts read
-at runtime, and the tools have no access to client systems. Material
-a client wants excluded from AI tooling is named in the
-non-disclosure agreement and excluded.
+**AI tools.** AI tools are used in the work, on a local workspace holding the files a task needs. Those files are processed by the provider of the tool in use. No secret reaches a tool in the clear, because credentials are held in an encrypted vault that scripts read at runtime, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
-No data is sold. Data reaches a third party only through the
-providers needed to deliver the work: hosting, email, encrypted
-backup storage and the AI tool in use.
+No data is sold. Data reaches a third party only through the providers needed to deliver the work: hosting, email, encrypted backup storage and the AI tool in use.
 
-## Rights under GDPR
+## Data rights
 
-You have the right to access, correct or request deletion of personal
-data held about you. Send the request to <mailto:info@turva.dev>.
+You have the right to access, correct or request deletion of personal data held about you. Send the request to <mailto:info@turva.dev>.
 
-The supervisory authority in Finland is the Data Protection
-Ombudsman (tietosuojavaltuutettu.fi).
+The supervisory authority in Finland is the Data Protection Ombudsman (tietosuojavaltuutettu.fi).
 
 ## Cookies
 
-This site sets no cookies of its own. Cloudflare may set cookies
-required for bot management and security. These are technical
-cookies and do not require consent under EU law.
+This site sets no cookies of its own. Cloudflare may set cookies required for bot management and security. These are technical cookies and do not require consent under EU law.
 
 ## Updates
 
-This page is updated when the terms change. The current version
-applies to engagements started after the date below.
+This page is updated when the terms change. The current version applies to engagements started after the date below.
 
-Terms last updated: 2026-08-11. Privacy section last updated: 2026-09-03.
+- **Terms last updated:** 2026-09-06
+- **Privacy last updated:** 2026-09-03
 `,
 
   "/guides/open-knowledge-format": `# Open Knowledge Format (OKF) explained
@@ -3697,13 +3556,17 @@ No. An llms.txt and a markdown surface make the pages in front of the site reada
 - [Letting agents act on data: the decision envelope](/guides/letting-agents-act-on-data)
 - [Choosing an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
-  "/guides": `# Agent-readiness guides
+  "/guides": `# Practical guides to agent-readiness
 
-These short guides explain, in plain language, what makes a website or an API easy for AI agents to read and use. Each one covers a single topic and takes a few minutes to read. They are free, and they cover the same surfaces an [agent-readiness audit](/services) measures.
+Understand what AI clients can discover, read and use on a website or API. Start with the buying decision, improve a technical surface or explore how AI visibility is measured.
 
-Every guide here is re-read against its primary sources at least once a month, and the two families that move fastest, agent commerce and MCP discovery, more often than that. Specifications move, and a sentence that was true the day it shipped can stop being true without anything on this site changing.
+Every guide here is re-read against its primary sources at least once a month, and the two families that move fastest, agent commerce and MCP discovery, more often than that. Specifications move, and a sentence that was true the day it shipped can stop being true without anything on this site changing. A layout change is not a technical re-check, so each guide's own check date is the one that counts.
 
-The first guide explains what an agent-readiness audit is.
+## Start here
+
+- [What an agent-readiness audit covers](/guides/agent-readiness-audit)
+- [How to choose an audit](/guides/choosing-an-agent-readiness-audit)
+- [How technical readiness differs from AI visibility](/guides/agent-readiness-aeo-geo)
 
 ## Discovery and content
 
@@ -3748,7 +3611,7 @@ Paying agents, how this differs from SEO, and how to choose and measure an audit
 
 **What is an agent-readiness audit?**
 
-An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API, scored against current standards by an independent scanner rather than a self-assessment.
+An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API. It combines an independent scanner's per-check readings, a manual review of the agent-facing surfaces and observed answers from AI assistants to a documented question set, rather than a self-assessment.
 
 **Do I need llms.txt on my site?**
 
@@ -3756,7 +3619,7 @@ llms.txt gives a curated map of what matters to the clients that fetch it, and n
 
 **How do I get my site cited by AI assistants?**
 
-A model cites content it can read cleanly and corroborate. That means machine-readable surfaces such as llms.txt and structured data, a markdown form that does not exhaust the token budget, and being indexed where the assistant searches.
+A model cites content it can read cleanly and corroborate. That means machine-readable surfaces such as llms.txt and structured data, a markdown form that does not exhaust the token budget, and being indexed where the assistant searches. None of that guarantees a citation.
 
 **What is an MCP server card?**
 
@@ -3768,7 +3631,7 @@ No. SEO makes a site rank for a person to click. Agent-readiness makes a site le
 
 **How is agent-readiness measured?**
 
-By an independent scanner that reads the live site and reports a score with a category breakdown. The categories that get fixed read higher on the next scan, so the claim is the number rather than an assertion.
+By an independent scanner that reads the live site and reports its checks one by one, beside a manual review and observed AI answers. A follow-up repeats the relevant checks and records the result beside the baseline, with the date and any change in the measurement method. No particular score or AI mention is guaranteed.
 
 For an audit, contact info@turva.dev.
 `,
@@ -4933,7 +4796,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.132.1",
+    "version": "3.133.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5200,7 +5063,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.132.1",
+  "version": "3.133.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -5883,6 +5746,7 @@ var META_BY_PATH = {
     title: "What 19 identity vendors publish for agents · turva.dev",
     description: "I scanned 19 digital identity and trust vendors with one scanner. Every one of them scored zero of nine on agent, API and MCP discovery.",
     date: "2026-09-05",
+    kind: "Research",
     image: "/og-agent-readiness-identity-vendors.jpg",
     imageAlt: "turva.dev blog card: 19 digital identity and trust vendors scanned, every one scored zero of nine on agent, API and MCP discovery.",
   },
@@ -5890,6 +5754,7 @@ var META_BY_PATH = {
     title: "Two files called auth.md, and they disagree on the field names · turva.dev",
     description: "WorkOS publishes an open auth.md protocol and the isitagentready scanner publishes another. Both live at the same path and name three fields differently.",
     date: "2026-09-04",
+    kind: "Protocol notes",
     image: "/og-two-auth-md-dialects.jpg",
     imageAlt: "turva.dev blog card: WorkOS publishes an open auth.md protocol and the isitagentready scanner publishes another. Both live at the same path and name three fields differently.",
   },
@@ -5897,6 +5762,7 @@ var META_BY_PATH = {
     title: "Thirty days after the brief: 210 sites rescanned, four moved · turva.dev",
     description: "210 sites rescanned thirty days after an unsolicited brief: 197 unchanged, three up, one down, and none of the three that improved had replied.",
     date: "2026-09-03",
+    kind: "Research",
     modified: "2026-09-04",
     image: "/og-thirty-days-after-the-brief.jpg",
     imageAlt: "turva.dev blog card: 210 sites rescanned thirty days after an unsolicited brief: 197 unchanged, three up, one down, and none of the three that improved had replied.",
@@ -5905,6 +5771,7 @@ var META_BY_PATH = {
     title: "What four AI assistants call an agent readiness audit · turva.dev",
     description: "Fifty buyer questions to four AI assistants: 18 of 41 open answers describe an organisation's readiness and 13 the website. Two services share one name.",
     date: "2026-09-03",
+    kind: "Research",
     modified: "2026-09-04",
     image: "/og-what-ai-assistants-call-an-agent-readiness-audit.jpg",
     imageAlt: "turva.dev blog card: Fifty buyer questions to four AI assistants: 18 of 41 open answers describe an organisation's readiness and 13 the website. Two services share one name.",
@@ -5913,6 +5780,7 @@ var META_BY_PATH = {
     title: "Website agent readiness, measured on 567 company sites · turva.dev",
     description: "567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, Finnish and foreign sites alike.",
     date: "2026-09-03",
+    kind: "Research",
     image: "/og-website-agent-readiness-567-sites.jpg",
     imageAlt: "turva.dev blog card: 567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, Finnish and foreign sites alike.",
   },
@@ -5920,6 +5788,7 @@ var META_BY_PATH = {
     title: "TRACE signs how an agent ran, not what it was allowed to reach · turva.dev",
     description: "The Linux Foundation now governs TRACE. Its own documentation is where the limits are: three trust levels, and Level 0 records a privileged operator can forge.",
     date: "2026-08-30",
+    kind: "Protocol notes",
     image: "/og-trace-runtime-attestation.jpg",
     imageAlt: "turva.dev blog card: The Linux Foundation now governs TRACE. Its own documentation is where the limits are: three trust levels, and Level 0 records a privileged operator can forge.",
   },
@@ -5927,6 +5796,7 @@ var META_BY_PATH = {
     title: "I scanned fourteen code hosts. Not one served an MCP server card. · turva.dev",
     description: "Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
     date: "2026-08-22",
+    kind: "Research",
     image: "/og-agent-readiness-code-hosts.jpg",
     imageAlt: "turva.dev blog card: Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
   },
@@ -5934,6 +5804,7 @@ var META_BY_PATH = {
     title: "It would be cheating to keep the old price · turva.dev",
     description: "The audit drops to 4,300 euros and two weeks. The part the old price charged for twice is now a written checklist.",
     date: "2026-08-21",
+    kind: "Build notes",
     modified: "2026-09-05",
     image: "/og-cheating-to-keep-the-old-price.jpg",
     imageAlt: "turva.dev blog card: The audit drops to 4,300 euros and two weeks. The part the old price charged for twice is now a written checklist.",
@@ -5942,6 +5813,7 @@ var META_BY_PATH = {
     title: "I thought it was a small job · turva.dev",
     description: "I read my own workspace file by file. Seven days, 367 findings across 2 307 text files, and nothing billable shipped that week.",
     date: "2026-08-16",
+    kind: "Build notes",
     image: "/og-i-thought-it-was-a-small-job.jpg",
     imageAlt: "turva.dev blog card: I read my own workspace file by file. Seven days, 367 findings across 2 307 text files, and nothing billable shipped that week.",
   },
@@ -5949,6 +5821,7 @@ var META_BY_PATH = {
     title: "My gate could not see a sixth · turva.dev",
     description: "My gate checked five categories on six surfaces and passed a sixth on three of them. A check that asks whether these five are there is not a check of the set.",
     date: "2026-08-04",
+    kind: "Build notes",
     image: "/og-my-gate-could-not-see-a-sixth.jpg",
     imageAlt: "turva.dev blog card: My gate checked five categories on six surfaces and passed a sixth on three of them. A check that asks whether these five are there is not a check of the set.",
   },
@@ -5956,6 +5829,7 @@ var META_BY_PATH = {
     title: "A red reading that measured my own client · turva.dev",
     description: "My MCP server answered Method not found to the request its new revision requires, and the fault was in my request. What a compatibility lane hides.",
     date: "2026-07-30",
+    kind: "Build notes",
     image: "/og-red-reading-that-measured-my-own-client.jpg",
     imageAlt: "turva.dev blog card: My MCP server answered Method not found to the request its new revision requires, and the fault was in my request. What a compatibility lane hides."
   },
@@ -5963,6 +5837,7 @@ var META_BY_PATH = {
     title: "The checks that pass for the wrong reason · turva.dev",
     description: "A spec release left thirteen links pointing at the living draft, and my own gate kept passing while measuring the wrong lane. The same defect twice.",
     date: "2026-07-29",
+    kind: "Build notes",
     image: "/og-checks-that-pass-for-the-wrong-reason.jpg",
     imageAlt: "turva.dev blog card: A spec release left thirteen links pointing at the living draft, and my own gate kept passing while measuring the wrong lane. The same defect twice."
   },
@@ -5970,6 +5845,7 @@ var META_BY_PATH = {
     title: "Finishing the optional commerce checks · turva.dev",
     description: "Taking the last two optional commerce checks, x402 and MPP, to green on isitagentready without faking settlement, and what the scanner actually probes.",
     date: "2026-07-20",
+    kind: "Build notes",
     modified: "2026-08-02",
     image: "/og-finishing-the-optional-commerce-checks.jpg",
     imageAlt: "turva.dev blog card: Taking the last two optional commerce checks, x402 and MPP, to green on isitagentready without faking settlement, and what the scanner actually probes."
@@ -5978,6 +5854,7 @@ var META_BY_PATH = {
     title: "The twin is the page · turva.dev",
     description: "Ten card pages now render their prose from the markdown twin. What the parity gate caught before it retired and the check that replaced it.",
     date: "2026-07-19",
+    kind: "Build notes",
     image: "/og-the-twin-is-the-page.jpg",
     imageAlt: "turva.dev blog card: Ten card pages now render their prose from the markdown twin. What the parity gate caught before it retired and the check that replaced it."
   },
@@ -5985,6 +5862,7 @@ var META_BY_PATH = {
     title: "Every response promised a rate limit · turva.dev",
     description: "A site sent rate limit headers no code enforced. The fix, the measurement that proved nothing, and the draft archaeology behind the header.",
     date: "2026-07-18",
+    kind: "Build notes",
     image: "/og-enforcing-the-rate-limit-i-advertised.jpg",
     imageAlt: "Every response promised a rate limit. Nothing enforced it."
   },
@@ -5992,6 +5870,7 @@ var META_BY_PATH = {
     title: "Measuring the AI patch surge: Microsoft's July package · turva.dev",
     description: "Microsoft said customers would see more security updates and gave no number. Twelve months of MSRC CVRF data: the July package is 3,0 times the baseline.",
     date: "2026-07-15",
+    kind: "Research",
     modified: "2026-07-17",
     image: "/og-measuring-the-ai-patch-surge.jpg",
     imageAlt: "Measuring the AI patch surge from MSRC data"
@@ -6000,6 +5879,7 @@ var META_BY_PATH = {
     title: "Secret hygiene when an agent works in your repo · turva.dev",
     description: "Coding agents run with your shell, so plaintext secrets on disk are exposed to them. Move git auth to a credential manager and the rest to an encrypted vault.",
     date: "2026-07-12",
+    kind: "Build notes",
     image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
   },
@@ -6007,6 +5887,7 @@ var META_BY_PATH = {
     title: "Agent-readiness of Finnish B2B sites · turva.dev",
     description: "An independent scanner over sixteen Finnish B2B sites: almost every one read isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere.",
     date: "2026-07-07",
+    kind: "Research",
     modified: "2026-07-17",
     image: "/og-agent-readiness-finnish-b2b.jpg",
     imageAlt: "turva.dev blog card: I ran an independent scanner over sixteen Finnish B2B sites. Almost every one landed at isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere."
@@ -6015,6 +5896,7 @@ var META_BY_PATH = {
     title: "When honesty and the checker disagree · turva.dev",
     description: "Making this site's auth.md cleaner made the scanner fail. The honest form was the precise one, neither gutted nor padded to please the check.",
     date: "2026-07-06",
+    kind: "Build notes",
     image: "/og-honesty-and-the-checker.jpg",
     imageAlt: "turva.dev blog card: Making this site's auth.md cleaner made the scanner fail. The honest form was the precise one, neither gutted nor padded to please the check."
   },
@@ -6022,6 +5904,7 @@ var META_BY_PATH = {
     title: "Four AI agents re-checked the guides · turva.dev",
     description: "Four AI agents re-read the guides against the specifications behind them. One high finding, one expired draft, six small fixes. The scanners never noticed.",
     date: "2026-07-04",
+    kind: "Build notes",
     modified: "2026-07-16",
     image: "/og-re-checking-the-guides.jpg",
     imageAlt: "turva.dev blog card: Four AI agents re-read the guides against the specifications behind them."
@@ -6030,6 +5913,7 @@ var META_BY_PATH = {
     title: "The page grew, the agent bill did not · turva.dev",
     description: "The site kept growing after June's token-cost post. The 4 July scan reports an 83% token saving between the HTML and markdown forms.",
     date: "2026-07-04",
+    kind: "Build notes",
     image: "/og-cheaper-pages-revisited.jpg",
     imageAlt: "turva.dev blog card: The site kept growing after June's token-cost post. The 4 July scan reports an 83% token saving between the HTML and markdown forms."
   },
@@ -6038,6 +5922,7 @@ var META_BY_PATH = {
     title: "Moving the source from GitHub to Codeberg · turva.dev",
     description: "GitHub's spam filter silently hid this site's source from everyone but its owner for two weeks. The log of the 404s, the fix, and the move to Codeberg.",
     date: "2026-07-04",
+    kind: "Build notes",
     modified: "2026-07-26",
     image: "/og-moving-source-to-codeberg.jpg",
     imageAlt: "turva.dev blog card: GitHub's spam filter silently hid this site's source from everyone but its owner for two weeks."
@@ -6046,30 +5931,31 @@ var META_BY_PATH = {
     title: "A free llms.txt validator · turva.dev",
     description: "turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored.",
     date: "2026-07-02",
+    kind: "Build notes",
     image: "/og-free-llms-txt-validator.jpg",
     imageAlt: "turva.dev blog card: turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored."
   },
   "/tools": {
     title: "Free agent-readiness tools · turva.dev",
-    description: "Three free tools: an llms.txt validator with JSON output, an embeddable agent-ready badge, and a public read-only MCP server. No signup, agent-friendly.",
+    description: "Check an llms.txt file, read the public MCP server or use the agent-ready badge. Free, no signup, and each page says what its result does and does not establish.",
     image: "/og-tools.jpg",
     imageAlt: "turva.dev tools card: the free llms.txt validator, the agent-ready badge and the public MCP server, each usable by a person or by an agent."
   },
   "/llms-txt-validator": {
-    title: "Free llms.txt validator with JSON output · turva.dev",
-    description: "Free llms.txt validator. Fetches a site's /llms.txt and checks the structure: H1 title, blockquote summary, H2 link sections. JSON output for agents.",
+    title: "Free llms.txt validator · turva.dev",
+    description: "Check llms.txt structure and home-page discovery links. Free, no signup. Per-check results for browsers, agents and CI.",
     image: "/og-llms-txt-validator.jpg",
     imageAlt: "llms.txt validator"
   },
   "/badge": {
-    title: "The agent-ready badge: criteria and embed code · turva.dev",
-    description: "An embeddable SVG badge for sites that meet public agent-readiness criteria: a turva.dev audit or 100/100 on a public scanner. Criteria and embed code.",
+    title: "Agent-ready badge: criteria and embed code · turva.dev",
+    description: "A self-declared badge for sites that meet public eligibility criteria: a turva.dev audit or 100/100 on the named public scanner. Not a certification. Criteria and embed code.",
     image: "/og-badge.jpg",
     imageAlt: "turva.dev badge card: the embeddable agent-ready badge, a self-declared claim against public criteria that anyone can re-check by running the same scanner."
   },
   "/blog": {
-    title: "Blog: notes on AI agents and agent-readiness · turva.dev",
-    description: "Notes on AI agents and the work of letting them read a site and act on a system safely. Dated entries, checked against an independent scanner.",
+    title: "Agent-readiness research and field notes · turva.dev",
+    description: "Dated studies and technical notes on website agent-readiness, AI answers and implementation. Read the methods, observations and limitations.",
     image: "/og-blog.jpg",
     imageAlt: "turva.dev blog card: dated notes on AI agents and the work of letting them act."
   },
@@ -6077,6 +5963,7 @@ var META_BY_PATH = {
     title: "Agent access is now a setting · turva.dev",
     description: "Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration. What that changes for agent readiness.",
     date: "2026-07-02",
+    kind: "Protocol notes",
     image: "/og-agent-access-is-now-a-setting.jpg",
     imageAlt: "turva.dev blog card: Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration."
   },
@@ -6084,6 +5971,7 @@ var META_BY_PATH = {
     title: "Publishing an ai-catalog.json for agentic discovery · turva.dev",
     description: "Google and a Linux Foundation group published Agentic Resource Discovery in 2026. turva.dev now serves an ai-catalog.json indexing its agent surfaces.",
     date: "2026-06-29",
+    kind: "Build notes",
     image: "/og-publishing-an-ai-catalog.jpg",
     imageAlt: "turva.dev blog card: Google and a Linux Foundation group published Agentic Resource Discovery in 2026."
   },
@@ -6091,6 +5979,7 @@ var META_BY_PATH = {
     title: "What the Open Knowledge Format is, and what it is not · turva.dev",
     description: "Google Cloud shipped the Open Knowledge Format. What it is, what it is not yet, and how it relates to an agent-readiness audit.",
     date: "2026-06-27",
+    kind: "Protocol notes",
     image: "/og-open-knowledge-format.jpg",
     imageAlt: "turva.dev blog card: Google Cloud shipped the Open Knowledge Format. What it is, what it is not yet, and how it relates to an agent-readiness audit."
   },
@@ -6098,6 +5987,7 @@ var META_BY_PATH = {
     title: "What an agent pays to read your site · turva.dev",
     description: "An agent pays to read your site in tokens, and an HTML-only page is expensive. How markdown content negotiation cuts that cost.",
     date: "2026-06-26",
+    kind: "Build notes",
     image: "/og-cheaper-pages-for-agents.jpg",
     imageAlt: "turva.dev blog card: An agent pays to read your site in tokens, and an HTML-only page is expensive."
   },
@@ -6111,6 +6001,7 @@ var META_BY_PATH = {
     title: "When an agent can prove it is Claude · turva.dev",
     description: "Web Bot Auth gives an AI agent a verifiable, signed identity a site can check. What the tag is, where Claude stands today, and how agent-readiness uses it.",
     date: "2026-06-25",
+    kind: "Protocol notes",
     image: "/og-verifiable-agent-identity.jpg",
     imageAlt: "turva.dev blog card: Web Bot Auth gives an AI agent a verifiable, signed identity a site can check."
   },
@@ -6130,6 +6021,7 @@ var META_BY_PATH = {
     title: "What makes an AI agent's decisions reliable · turva.dev",
     description: "What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do.",
     date: "2026-06-22",
+    kind: "Protocol notes",
     image: "/og-reliable-agent-decisions.jpg",
     imageAlt: "turva.dev blog card: What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do."
   },
@@ -6137,6 +6029,7 @@ var META_BY_PATH = {
     title: "Owning your fediverse identity · turva.dev",
     description: "Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker.",
     date: "2026-06-21",
+    kind: "Build notes",
     image: "/og-owning-your-fediverse-identity.jpg",
     imageAlt: "turva.dev blog card: Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker."
   },
@@ -6144,6 +6037,7 @@ var META_BY_PATH = {
     title: "Moving turva.dev off prerender.io · turva.dev",
     description: "The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, no prerender.io hop. Verified 100/100 Level 5 by an independent scanner.",
     date: "2026-06-20",
+    kind: "Build notes",
     image: "/og-moving-off-prerender.jpg",
     imageAlt: "turva.dev blog card: The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop."
   },
@@ -6153,14 +6047,14 @@ var META_BY_PATH = {
     imageAlt: "turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com"
   },
   "/services": {
-    title: "Agent-readiness audits for websites, APIs and Shopify stores · turva.dev",
-    description: "Shopify agent storefront check €999 in 48 hours. Agent-readiness audit €4,300. Advisory €3,000/month, implementation €1,500/day. Two more on request.",
+    title: "Agent-readiness services and pricing · turva.dev",
+    description: "Fixed-scope website and API audits and Shopify checks. Compare prices, deliverables, follow-up checks and optional implementation.",
     image: "/og-services.jpg",
     imageAlt: "turva.dev services card: the Shopify agent storefront check €999, the audit €4,300, advisory €3,000 per month, implementation €1,500 per day, and two more on request."
   },
   "/shopify-agent-storefront-check": {
     title: "Shopify agent storefront check, €999 · turva.dev",
-    description: "What an AI shopper receives from one live Shopify store, tested across browser WebMCP, remote MCP and Catalog and Agentic channels. €999, fixed scope, 48 hours.",
+    description: "Check selected Shopify products across three agent-shopping surfaces. Written evidence and a correction plan within 48 hours of the agreed kickoff.",
     image: "/og-shopify-agent-storefront-check.jpg",
     imageAlt: "turva.dev product card: the Shopify agent storefront check, €999, four written deliverables within 48 hours, across three agent surfaces."
   },
@@ -6177,26 +6071,26 @@ var META_BY_PATH = {
     imageAlt: "turva.dev sample card: the synthetic Shopify agent storefront check report for an invented store, the five deliverables in the format a merchant receives."
   },
   "/company": {
-    title: "Company: Erik Rekola, Tampere, Finland · turva.dev",
-    description: "turva.dev is operated by Erik Rekola as a Finnish sole proprietorship. Business ID 3600281-7, based in Tampere. Six years in engineering, 2015 to 2021.",
+    title: "Erik Rekola, independent agent-readiness consultant · turva.dev",
+    description: "Work directly with Erik Rekola in Tampere, Finland. Independent technical audits, documented findings and implementation, handled entirely in writing.",
     image: "/og-company.jpg",
     imageAlt: "turva.dev company card: a one-person audit practice measured by an independent scanner, operated by Erik Rekola in Tampere, Finland."
   },
   "/contact": {
-    title: "Contact: email, Signal or LinkedIn, async-only · turva.dev",
-    description: "Contact turva.dev via email, Signal or LinkedIn. Async-only engagement. Response within one business day. No calls, no calendar links.",
+    title: "Contact Erik Rekola · turva.dev",
+    description: "Send a website, API or Shopify URL and the question you need answered. First reply within one business day. All communication stays in writing.",
     image: "/og-contact.jpg",
     imageAlt: "turva.dev contact card: async only by email, Signal or LinkedIn, first response within one business day."
   },
   "/legal": {
-    title: "Legal: terms of engagement, privacy and GDPR · turva.dev",
-    description: "Terms of engagement, privacy practices and GDPR information for turva.dev. Finnish law applies. No tracking, no analytics, no third-party scripts.",
+    title: "Terms, privacy and data handling · turva.dev",
+    description: "The terms for working with turva.dev, how information is handled and where to send a privacy request. Finnish law applies. No tracking, no analytics, no third-party scripts.",
     image: "/og-legal.jpg",
     imageAlt: "turva.dev legal card: terms, privacy and GDPR in plain language, Finnish law, no tracking and no cookies."
   },
   "/guides": {
-    title: "Agent-readiness guides · turva.dev",
-    description: "Short, focused guides on the surfaces that make a website or API readable and usable by AI agents. Audits, llms.txt, MCP, structured data, payments and more.",
+    title: "Practical agent-readiness guides · turva.dev",
+    description: "Guides to technical audits, AI visibility, website content, discovery, authentication and agent commerce. Choose a topic and see what to check.",
     image: "/og-guides.jpg",
     imageAlt: "turva.dev guides card: short guides on the surfaces that make a site or API readable and usable by AI agents, one surface at a time."
   },
@@ -6809,9 +6703,15 @@ function markdownToHtml(md) {
       html.push(`<pre><code>${escapeHtml(rawLines.map((l) => l.slice(4)).join("\n"))}</code></pre>`);
     } else if (tl.length >= 2 && tl[0].startsWith("|") && /^\|[\s:|-]+\|$/.test(tl[1])) {
       const cells = (l) => l.replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => renderInline(c.trim()));
-      const head = cells(tl[0]).map((c) => `<th>${c}</th>`).join("");
-      const rows = tl.slice(2).filter((l) => l.startsWith("|")).map((l) => `<tr>${cells(l).map((c) => `<td>${c}</td>`).join("")}</tr>`).join("");
-      html.push(`<table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`);
+      // Since v3.133.0 (Tek-358) every cell carries its column name as data-label, the
+      // table sits in a bounded, keyboard-focusable scroll box, and a table of up to four
+      // columns stacks into one named card per row below 640 px, so no cell is hidden and
+      // the document never scrolls sideways. Wider tables keep the scroll box.
+      const headCells = cells(tl[0]);
+      const labels = headCells.map((c) => c.replace(/<[^>]+>/g, "").replace(/"/g, "&quot;"));
+      const head = headCells.map((c) => `<th>${c}</th>`).join("");
+      const rows = tl.slice(2).filter((l) => l.startsWith("|")).map((l) => `<tr>${cells(l).map((c, i) => `<td data-label="${labels[i] || ""}">${c}</td>`).join("")}</tr>`).join("");
+      html.push(`<div class="tbl" tabindex="0"><table class="cols-${headCells.length}${headCells.length <= 4 ? " stack" : ""}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`);
     } else if (/^-{3,}$/.test(trimmed)) {
       // Vaakaviiva. Lisatty 2026-08-24 (Tek-269). Syntyi briefsivua varten, mutta brief
       // EI enaa tuota vaakaviivaa markdowniinsa: tyylipassin R6 luki sen irralliseksi
@@ -6828,6 +6728,12 @@ function markdownToHtml(md) {
       const h2 = trimmed.slice(3).trim();
       const h2Id = h2.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
       html.push(`<h2${h2Id ? ` id="${h2Id}"` : ""}>${renderInline(h2)}</h2>`);
+    } else if (trimmed.startsWith("### ")) {
+      // H3 since v3.133.0 (Tek-358): the same slug rule as H2, so a finding or a term can be
+      // linked from a contents list without promoting it to a section.
+      const h3 = trimmed.slice(4).trim();
+      const h3Id = h3.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      html.push(`<h3${h3Id ? ` id="${h3Id}"` : ""}>${renderInline(h3)}</h3>`);
     } else if (trimmed.startsWith("# ")) {
       html.push(`<h1>${renderInline(trimmed.slice(2).trim())}</h1>`);
     } else if (/^- /.test(trimmed)) {
@@ -6915,7 +6821,7 @@ function contactSignalQr() {
   // once and this function adds structure only. The plate is light on purpose:
   // an inverted code is closer to the site's palette but some readers refuse
   // to decode one.
-  const paras = mdSection("/contact", "Channels").split("\n\n").map((b) => b.trim()).filter((b) => b && !b.startsWith("- "));
+  const paras = mdSection("/contact", "Other channels").split("\n\n").map((b) => b.trim()).filter((b) => b && !b.startsWith("- "));
   return `
     <div class="sigqr">
       <div class="sigqr-txt">
@@ -7057,6 +6963,90 @@ function mdLists(path, heading) {
     lists.push(items.map((it) => renderInline(it)));
   }
   return lists;
+}
+// ---- Open sections and card groups (v3.133.0, Tek-358) ----
+// The shared page template of 2026-09-06: a section is an h2 with its body open on the
+// page rather than boxed, and a card is used only where the reader compares things
+// (offers, tools, results). Every sentence still comes from the twin; these helpers add
+// structure and never prose. The section id is the same slug rule as markdownToHtml's
+// h2 ids, so an anchor written by hand and one generated here agree.
+function mdSlug(text) {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+function mdSecBodyHtml(path, heading) {
+  // Like mdPcard's body: an opening **price. meta.** block becomes the price line, a
+  // "Label:" block followed by "- items" becomes a labelled checklist, and everything
+  // else is markdown. Continuation lines of a list item (indented) join the item.
+  const blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.replace(/\s+$/, "")).filter(Boolean);
+  const parts = [];
+  blocks.forEach((b, i) => {
+    const lines = b.split("\n");
+    const head = i === 0 ? b.trim().match(/^\*\*(.+)\*\*$/) : null;
+    if (head) {
+      const segs = head[1].replace(/\.$/, "").split(". ");
+      let price = segs[0];
+      let meta = segs.slice(1);
+      const pm = price.match(/^(€[\d,]+)\s+(.+)$/);
+      if (pm) { price = pm[1]; meta = [pm[2], ...meta]; }
+      parts.push(`<p class="price-line"><span class="price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span><span class="terms">${meta.map((m) => escapeHtml(m)).join(" &middot; ")}</span></p>`);
+    } else if (/:$/.test(lines[0].trim()) && lines.slice(1).some((l) => l.startsWith("- "))) {
+      const label = lines[0].trim().replace(/:$/, "");
+      const items = [];
+      for (const l of lines.slice(1)) {
+        if (l.startsWith("- ")) items.push(l.slice(2).trim());
+        else if (items.length) items[items.length - 1] += " " + l.trim();
+      }
+      const cls = /\bnot\b/.test(label) ? "nope" : "get";
+      parts.push(`<h3 class="lbl">${renderInline(label)}</h3>`);
+      parts.push(`<ul class="${cls}">
+      ${items.map((it) => `<li>${renderInline(it)}</li>`).join("\n      ")}
+    </ul>`);
+    } else {
+      parts.push(markdownToHtml(b).replace(/href="https:\/\/turva\.dev\//g, 'href="/'));
+    }
+  });
+  return parts.join("\n    ");
+}
+function mdOpenSec(path, heading, id, extra) {
+  return `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
+    ${mdSecBodyHtml(path, heading)}${extra || ""}
+  </section>`;
+}
+function mdFaqSec(path, heading, id) {
+  return `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2><div class="faq">
+${mdFaqRows(path, heading)}
+  </div>
+  ${mdFaqTailHtml(path, heading)}
+  </section>`;
+}
+function mdKvsSec(path, heading, extra) {
+  const grid = mdKvsCard(path, heading).replace(/^<div class="scard"><h2>.*?<\/h2>/, "").replace(/<\/div>$/, "");
+  return `<section class="sec" id="${mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
+    ${grid}${extra || ""}
+  </section>`;
+}
+function mdOfferCards(path, heading, linkLabel) {
+  // The same row shape as the home page offers: "- [name](href). €price. covers Delivered ...".
+  const rows = mdSection(path, heading).split("\n").filter((l) => l.startsWith("- "));
+  if (!rows.length) throw new Error("mdOfferCards: no offer rows under " + heading + " in " + path);
+  return rows.map((line) => {
+    const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)$/);
+    if (!m) throw new Error("offer line does not parse: " + line.slice(0, 60));
+    const [, name, href, price, covers, when] = m;
+    const label = linkLabel[href];
+    if (!label) throw new Error("offer has no link label for " + href);
+    return `<a class="card" href="${href}"><span class="card-top"><span class="name">${escapeHtml(name)}</span><span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span><span class="go">${label}</span></a>`;
+  }).join("\n      ");
+}
+function mdToolCards(path, headings) {
+  // One card per section: the section's paragraphs, then its last "[label](href)" line as the action.
+  return headings.map((h) => {
+    const blocks = mdSection(path, h).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+    const last = blocks[blocks.length - 1].match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (!last) throw new Error("mdToolCards: " + h + " does not end in a link line");
+    const paras = blocks.slice(0, -1).map((b) => `<p>${renderInline(b.replace(/\s*\n\s*/g, " "))}</p>`).join("");
+    return `<div class="card"><h2>${renderInline(h)}</h2>${paras}<a class="go" href="${last[2]}">${escapeHtml(last[1])}</a></div>`;
+  }).join("\n      ");
 }
 function mdTidyUrlText(html) {
   // Autolinked bare URLs keep the full URL as their visible text; strip the
@@ -7269,7 +7259,7 @@ function buildValidatorAppJsonLd(canonicalUrl) {
   return `<script type="application/ld+json">\n${json2}\n<\/script>`;
 }
 
-var FOOTER_CSS = `main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#5DF18F;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-x:auto;white-space:nowrap}.vform{display:flex;gap:10px;margin:6px 0}.vform input{flex:1;min-width:0;background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:10px 12px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:14px}.vform button{background:#5DF18F;color:#06100F;border:0;border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer;font-size:14px}.chk{display:flex;gap:10px;margin:8px 0;align-items:baseline;flex-wrap:wrap}.chk .s{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700}.chk.pass .s{color:#5DF18F}.chk.warn .s{color:#E8C15A}.chk.fail .s{color:#F17F5D}.chk.info .s{color:#7FB2D9}.chk .d{color:#96A79C;font-size:14px}.verr{color:#F17F5D}
+var FOOTER_CSS = `main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:1.9rem clamp(20px,5vw,72px);display:flex;flex-direction:column;gap:1rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:9px;}
 .tv-foot .foot-brand svg{display:block;width:22px;height:22px;}
@@ -7330,6 +7320,17 @@ function footerHtml(kieli) { const fi = kieli === "fi"; return `<footer class="t
   <div class="foot-meta">${fi ? "Tampere, Suomi" : "Tampere, Finland"} · <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">${fi ? "Y-tunnus" : "Business ID"} 3600281-7</a> · © ${new Date().getUTCFullYear()} turva.dev</div>
 </footer>`; }
 
+// One restrained next step at the end of a guide (Tek-358). The default points at the
+// services page; a guide about a free tool or about Shopify points at that instead. Short
+// lines by design: the twin gate reads any paragraph over 80 characters as prose.
+var GUIDE_NEXT = {
+  default: 'Need a broader review? <a class="btn-ghost" href="/services">See the services</a>',
+  "/guides/llms-txt": 'Check your own file: <a class="btn-ghost" href="/llms-txt-validator">Open the validator</a>',
+  "/guides/agentic-commerce-readiness": 'Selling on Shopify? <a class="btn-ghost" href="/shopify-agent-storefront-check">See the Shopify check</a>',
+  "/guides/agent-commerce-discovery": 'Selling on Shopify? <a class="btn-ghost" href="/shopify-agent-storefront-check">See the Shopify check</a>',
+  "/guides/mcp-server-card": 'Read this site\'s card: <a class="btn-ghost" href="/tools">See the free tools</a>'
+};
+
 function serveGuideHtml(pathname, canonicalUrl) {
   const md = mdTwin(pathname);
   const metaBlock = buildMetaBlock(pathname, canonicalUrl);
@@ -7349,6 +7350,23 @@ function serveGuideHtml(pathname, canonicalUrl) {
   ].filter(Boolean).join("\n");
   const navSection = pathname.startsWith("/blog/") ? "/blog" : (pathname.startsWith("/guides/") ? "/guides" : "");
   const crumb = navSection === "/blog" ? '<p class="crumb"><a href="/blog">&#8249; all posts</a></p>\n' : (navSection === "/guides" ? '<p class="crumb"><a href="/guides">&#8249; all guides</a></p>\n' : "");
+  // Article template since v3.133.0 (Tek-358): the twin's bare date line becomes a byline
+  // with the author and the real dates from META_BY_PATH, a contents list is generated from
+  // the H2 ids when an article carries more than four sections and no contents list of its
+  // own, and a guide ends in one restrained next step. Nothing here adds prose over 80
+  // characters; the article text is the twin.
+  const meta = META_BY_PATH[pathname] || {};
+  const bylined = navSection === "" ? article : article.replace(/<p class="date">(\d{4}-\d{2}-\d{2})<\/p>/, (m, d) =>
+    `<p class="date">Erik Rekola &middot; ${d}${meta.modified && meta.modified !== d ? ` &middot; updated ${meta.modified}` : ""}</p>`);
+  const h2s = [...bylined.matchAll(/<h2 id="([^"]+)">(.*?)<\/h2>/g)].map((m) => ({ id: m[1], text: m[2].replace(/<[^>]+>/g, "") }));
+  const hasOwnContents = /<h2 id="contents">/.test(bylined) || /<h2 id="[^"]*">Contents<\/h2>/.test(bylined);
+  const toc = h2s.length > 4 && !hasOwnContents
+    ? `<div class="toc"><p>On this page</p><ul>${h2s.map((h) => `<li><a href="#${h.id}">${h.text}</a></li>`).join("")}</ul></div>`
+    : "";
+  const withToc = toc ? bylined.replace(/(<\/p>\n)(?=<h2 )/, `$1${toc}\n`) : bylined;
+  const next = navSection === "/guides"
+    ? `<aside class="next"><p>${GUIDE_NEXT[pathname] || GUIDE_NEXT.default}</p></aside>`
+    : "";
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -7366,23 +7384,46 @@ ${WEBMCP_SCRIPT}
 <link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
-html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
-body{--col-half:22rem;}
-main{max-width:44rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
-article h1{color:#5DF18F;overflow-wrap:break-word;hyphens:auto;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 1rem;font-weight:700;}
-article h1 + p{font-size:1.12rem;color:#F2F4F3;}
-article h2{color:#5DF18F;font-size:1.4rem;font-weight:700;letter-spacing:-0.015em;margin:2.1rem 0 0.85rem;padding-top:1.6rem;border-top:0.5px solid rgba(255,255,255,0.08);}
-article p{margin:0 0 1.05rem;color:#C9D1CE;}
-article a{color:#5DF18F;text-decoration:none;}
+html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;color-scheme:dark;}
+body{--col-half:34rem;}
+main{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(24px,5vw,72px) 3.5rem;}
+main *,main *::before,main *::after{box-sizing:border-box;}
+article h1{color:#F2F4F3;overflow-wrap:break-word;hyphens:manual;font-size:clamp(30px,3.4vw,46px);line-height:1.1;letter-spacing:-0.02em;margin:0 0 .9rem;font-weight:700;max-width:26ch;}
+article h1 + p,article h1 + p.date + p{font-size:clamp(17px,1.3vw,19px);color:#F2F4F3;}
+article h2{color:#F2F4F3;font-size:clamp(24px,2.2vw,28px);line-height:1.2;font-weight:700;letter-spacing:-0.015em;margin:clamp(36px,5vw,52px) 0 .9rem;padding-top:clamp(20px,3vw,28px);border-top:0.5px solid rgba(255,255,255,0.08);max-width:65ch;scroll-margin-top:1rem;}
+article h3{color:#F2F4F3;font-size:clamp(18px,1.6vw,20px);font-weight:700;margin:1.6rem 0 .55rem;max-width:65ch;scroll-margin-top:1rem;}
+article p{margin:0 0 1.05rem;color:#C9D1CE;font-size:17px;line-height:1.6;max-width:65ch;}
+article a{color:#5DF18F;text-decoration:none;overflow-wrap:anywhere;}
 article a:hover{text-decoration:underline;}
-article ul{list-style:none;margin:0 0 1.1rem;padding:0;}
-article li{position:relative;padding:0 0 0 1.45rem;margin:0 0 0.5rem;color:#C9D1CE;}
-article li::before{content:"›";position:absolute;left:0.45rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+article ul{list-style:none;margin:0 0 1.1rem;padding:0;max-width:65ch;}
+article li{position:relative;padding:0 0 0 1.45rem;margin:0 0 0.5rem;color:#C9D1CE;font-size:17px;line-height:1.6;}
+article li::before{content:"\\203A";position:absolute;left:0.45rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
 article strong{color:#F2F4F3;}
-article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.05em;color:#9AA3A0;margin:-.35rem 0 1.5rem;}
-.crumb{margin:0 0 1.05rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;}
+article pre{max-width:100%;}
+article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:-.35rem 0 1.4rem;}
+article .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
+.toc{margin:0 0 1.6rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;max-width:65ch;}
+.toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
+.toc ul{list-style:none;margin:0;padding:0;columns:2;column-gap:1.4rem;}
+.toc li{margin:0 0 .3rem;padding:0;font-size:.95rem;break-inside:avoid;}
+.toc li::before{content:none;}
+.toc a{color:#C9D1CE;}
+.toc a:hover{color:#5DF18F;}
+@media (max-width:560px){.toc ul{columns:1;}}
+.next{margin:clamp(36px,5vw,56px) 0 0;padding:1.4rem 1.5rem;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;max-width:65ch;}
+.next p{margin:0 0 .8rem;}
+.next p:last-child{margin:0;}
+.next .btn-ghost{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:.7rem 1.2rem;border-radius:7px;font-size:15px;font-weight:600;color:#F2F4F3;border:1px solid rgba(255,255,255,0.24);}
+.next .btn-ghost:hover{border-color:#5DF18F;color:#5DF18F;text-decoration:none;}
+.crumb{margin:0 0 1.2rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;}
 .crumb a{color:#9AA3A0;}
 .crumb a:hover{color:#5DF18F;text-decoration:none;}
+a:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
+.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
+.tbl table{margin:0;min-width:100%;}
+.tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
+@media (max-width:640px){table.stack{display:block;border:0;min-width:0;}table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stack tbody,table.stack tr{display:block;}table.stack tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stack td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stack td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stack td:first-child{color:#F2F4F3;font-weight:600;}}
+@media (max-width:360px){main{padding-left:20px;padding-right:20px;}}
 .turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
@@ -7419,8 +7460,9 @@ ${navMenuHtml(`    <li><a href="/">home</a></li>
 </nav>
 <main id="main">
 ${crumb}<article>
-${article}
+${withToc}
 </article>
+${next}
 </main>
 ${footerHtml()}
 </body>
@@ -7580,6 +7622,7 @@ main{max-width:none;margin:0;padding:0;}
 .board-sum b{color:#5DF18F;}
 .pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
 .sec{padding:1.9rem 0;border-top:0.5px solid rgba(255,255,255,0.07);}
+.sec>p,.sec .faq,.sec .evlist,.sec>ul,.sec>.muted{max-width:65ch;}
 ${FAQ_CSS}
 .exgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:.6rem;margin:0 0 1.1rem;}
 .ex{position:relative;background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:.7rem .8rem .7rem 1.7rem;font-size:.9rem;color:#C9D1CE;transition:border-color .15s ease,transform .15s ease;}
@@ -7776,101 +7819,30 @@ function serveServicesHtml(canonicalUrl) {
     // home page, so both documents resolve to one graph and an agent that lands here from
     // search reads machine-readable prices instead of prose and FAQ answers only.
     `\n<script type="application/ld+json">\n{"@context":"https://schema.org","@graph":[\n${SCHEMA_SERVICE}\n]}\n<\/script>`;
+  const head = cardPageHead(metaBlock, jsonLd, canonicalUrl);
   const start = mdParas("/services", "How to start", 3);
-  const body = `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#0A1316" />
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><circle cx='16' cy='16' r='13' stroke='%235DF18F' stroke-width='2.4'/><path d='M10.5 16.4l3.6 3.6 7.2-7.6' stroke='%235DF18F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
-<link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
-<link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
-<link rel="alternate" type="application/rss+xml" title="turva.dev blog" href="https://turva.dev/blog/feed.xml" />
-${metaBlock}
-${jsonLd}
-${WEBMCP_SCRIPT}
-<link rel="canonical" href="${canonicalUrl}" />
-<link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
-<link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
-<style>
-html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
-main{max-width:46rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
-h1{color:#5DF18F;overflow-wrap:break-word;hyphens:auto;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 0.6rem;font-weight:700;}
-.intro{font-size:1.12rem;color:#C9D1CE;margin:0 0 1.8rem;}
-a{color:#5DF18F;text-decoration:none;}
-a:hover{text-decoration:underline;}
-.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
-.turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
-.turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.turva-nav .nv-brand svg{display:block;width:26px;height:26px;}
-.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:16px;letter-spacing:.02em;color:#F2F4F3;}
-.turva-nav .nv-word b{color:#5DF18F;}
-${NAV_MOBILE_CSS}
-.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(14px,2vw,30px);list-style:none;margin:0;padding:0;flex:1;}
-.turva-nav .nv-menu a{font-size:15px;font-weight:500;color:#9AA3A0;text-decoration:none;}
-.turva-nav .nv-menu a:hover{color:#F2F4F3;}
-.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
-@media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
-.pcard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.5rem 1.5rem 1.3rem;margin:0 0 1.1rem;transition:border-color .15s ease;}
-.pcard:hover{border-color:rgba(93,241,143,0.35);}
-.pcard-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;border-bottom:0.5px solid rgba(255,255,255,0.08);padding-bottom:.85rem;margin-bottom:1rem;}
-.pcard-t{font-size:1.3rem;font-weight:700;color:#5DF18F;letter-spacing:-0.01em;margin:0 auto 0 0;}
-.pcard-price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.45rem;font-weight:700;color:#F2F4F3;}
-.pcard-meta{flex-basis:100%;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;}
-.pcard p{color:#C9D1CE;margin:0 0 .9rem;font-size:.97rem;}
-.pcard .lbl{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;margin:1.1rem 0 .5rem;}
-.pcard ul{list-style:none;margin:0 0 .3rem;padding:0;}
-.pcard li{position:relative;padding:0 0 0 1.55rem;margin:0 0 .45rem;color:#C9D1CE;font-size:.95rem;line-height:1.5;}
-.pcard ul.get li::before{content:"✓";position:absolute;left:0;top:0;color:#5DF18F;font-weight:700;}
-.pcard ul.nope li{color:#9AA3A0;}
-.pcard ul.nope li::before{content:"·";position:absolute;left:.4rem;top:-.05rem;color:#6F7A77;font-weight:700;}
-.pcard .suited{margin:1rem 0 0;color:#9AA3A0;font-size:.92rem;}
-.start{border-top:0.5px solid rgba(255,255,255,0.1);margin-top:1.6rem;padding-top:1.8rem;}
-.start h2{color:#F2F4F3;font-size:1.4rem;font-weight:700;letter-spacing:-0.015em;margin:0 0 .85rem;}
-.start p{color:#C9D1CE;margin:0 0 1rem;}
-.cta-row{margin:1.1rem 0 1.3rem;}
-.cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;}
-.cta-btn:hover{background:#7df7a6;text-decoration:none;}
-.fine{font-size:.85rem;color:#9AA3A0;margin:0;}
-.scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.4rem 1.5rem 1.2rem;margin:1.6rem 0 0;}
-.scard h2{color:#5DF18F;font-size:1.2rem;font-weight:700;letter-spacing:-0.01em;margin:0 0 .85rem;}
-.scard p{color:#C9D1CE;margin:0;font-size:.97rem;}
-.scard p+p{margin-top:.6rem;}
-${FAQ_CSS}
-${FOOTER_CSS}
-</style>
-</head>
-<body>
-<a class="skip" href="#main">Skip to content</a>
-<nav class="turva-nav" aria-label="Main">
-  <a class="nv-brand" href="/">
-    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle>
-      <path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
-    </svg>
-    <span class="nv-word">turva<b>·</b>dev</span>
-  </a>
-${navMenuHtml(`    <li><a href="/">home</a></li>
-    <li><a href="/services" aria-current="page">services</a></li>
-    <li><a href="/guides">guides</a></li>
-    <li><a href="/blog">blog</a></li>
-    <li><a href="/tools">tools</a></li>
-    <li><a href="/company">company</a></li>
-    <li><a href="/legal">legal</a></li>
-    <li><a href="/contact">contact</a></li>`)}
-</nav>
+  const offers = mdOfferCards("/services", "Choose a starting point", { "/shopify-agent-storefront-check": "Explore the Shopify check", "/services#audit": "Explore the audit" });
+  const offerParas = mdParas("/services", "Choose a starting point", 1);
+  const body = `${head}
+${cardPageNav("/services")}
 <main id="main">
   ${mdPageStart("/services")}
-  ${mdPcard("/services", "Shopify agent storefront check")}
-  ${mdPcard("/services", "Audit")}
-  ${mdPcard("/services", "Advisory")}
-  ${mdPcard("/services", "Implementation")}
-  ${mdPcard("/services", "Agent operations")}
-  ${mdPcard("/services", "MCP server design")}
-  ${mdCard("/services", "The agent-ready badge")}
-  ${mdFaqCard("/services", "Frequently asked")}
-  <div class="start">
+  <div class="cta"><a class="btn" href="#start">Choose a starting point</a><a class="btn-ghost" href="/samples/audit-report">Read a sample audit report</a></div>
+  <section class="sec" id="start"><h2>Choose a starting point</h2>
+    <div class="cards">
+      ${offers}
+    </div>
+    <p>${offerParas[0]}</p>
+  </section>
+  ${mdOpenSec("/services", "Shopify agent storefront check", "shopify")}
+  ${mdOpenSec("/services", "Website and API agent-readiness audit", "audit")}
+  ${mdOpenSec("/services", "Implementation")}
+  ${mdOpenSec("/services", "Ongoing advisory", "advisory")}
+  ${mdOpenSec("/services", "Agent operations")}
+  ${mdOpenSec("/services", "MCP server design")}
+  ${mdOpenSec("/services", "How the method is measured")}
+  ${mdFaqSec("/services", "Frequently asked", "questions")}
+  <div class="start" id="how-to-start">
     <h2>How to start</h2>
     <p>${start[0]}</p>
     <p>${start[1]}</p>
@@ -7881,27 +7853,23 @@ ${navMenuHtml(`    <li><a href="/">home</a></li>
 ${footerHtml()}
 </body>
 </html>`;
-  const headers = new Headers({
-    "content-type": "text/html; charset=utf-8",
-    "cache-control": "public, max-age=3600",
-    "vary": "Accept",
-    "content-language": "en"
-  });
-  appendAgentLinks(headers);
-  applySecurityHeaders(headers, "html");
-  headers.append("Link", `<${markdownUrlFor(canonicalUrl)}>; rel="alternate"; type="text/markdown"`);
-  return new Response(body, { status: 200, headers });
+  return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
 }
 
 // Defined before CARDPAGE_CSS on purpose: that constant is built at module load and reads this one.
 var NAV_MOBILE_CSS = `.turva-nav .nv-mobile{display:none;}
 @media (max-width:760px){.turva-nav{flex-wrap:nowrap;justify-content:space-between;position:relative;padding:10px clamp(16px,4vw,24px);}.turva-nav > ul.nv-menu{display:none;}.turva-nav .nv-mobile{display:block;flex:0 0 auto;}.turva-nav .nv-mobile summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;color:#F2F4F3;font-weight:600;font-size:14px;user-select:none;}.turva-nav .nv-mobile summary::-webkit-details-marker{display:none;}.turva-nav .nv-mobile summary::after{content:"+";font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;line-height:1;}.turva-nav .nv-mobile[open] summary::after{content:"\\2212";}.turva-nav .nv-mobile summary:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}.turva-nav .nv-mobile .nv-list{position:absolute;left:0;right:0;top:100%;z-index:10;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;background:#0A1316;border-bottom:0.5px solid rgba(255,255,255,0.14);padding:6px 0 10px;box-shadow:0 14px 30px rgba(0,0,0,0.35);}.turva-nav .nv-mobile .nv-list li{margin:0;}.turva-nav .nv-mobile .nv-list a{display:block;box-sizing:border-box;min-height:44px;padding:12px clamp(16px,4vw,24px);font-size:16px;color:#F2F4F3;}.turva-nav .nv-mobile .nv-list a[aria-current]{color:#5DF18F;}}`;
-var CARDPAGE_CSS = `html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
-main{max-width:46rem;margin:0 auto;padding:2.4rem clamp(20px,5vw,72px) 3rem;}
-h1{color:#5DF18F;overflow-wrap:break-word;hyphens:auto;font-size:2.2rem;line-height:1.12;letter-spacing:-0.02em;margin:0 0 0.6rem;font-weight:700;}
-.intro{font-size:1.12rem;color:#C9D1CE;margin:0 0 1.8rem;}
+var CARDPAGE_CSS = `html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;color-scheme:dark;}
+main{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(24px,5vw,72px) 3.5rem;}
+main *,main *::before,main *::after{box-sizing:border-box;}
+h1{color:#F2F4F3;overflow-wrap:break-word;font-size:clamp(30px,3.4vw,46px);line-height:1.1;letter-spacing:-0.02em;margin:0 0 .9rem;font-weight:700;max-width:24ch;}
+.intro{font-size:clamp(17px,1.3vw,19px);line-height:1.6;color:#C9D1CE;margin:0 0 1.1rem;max-width:65ch;}
+main>p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1.1rem;max-width:65ch;}
 a{color:#5DF18F;text-decoration:none;}
 a:hover{text-decoration:underline;}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
+.eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
+.meta-line{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.03em;color:#9AA3A0;margin:0 0 1.4rem;overflow-wrap:anywhere;}
 .turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px clamp(20px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
@@ -7914,39 +7882,113 @@ ${NAV_MOBILE_CSS}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
 @media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
+.cta{display:flex;flex-wrap:wrap;gap:14px;margin:1.4rem 0 .6rem;}
+.btn,.btn-ghost{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:50px;padding:.75rem 1.35rem;border-radius:7px;font-size:15px;font-weight:700;max-width:100%;overflow-wrap:break-word;text-align:center;}
+.btn{background:#5DF18F;color:#06100F;transition:background-color .15s ease;}
+.btn:hover{background:#7df7a6;text-decoration:none;}
+.btn-ghost{color:#F2F4F3;font-weight:600;border:1px solid rgba(255,255,255,0.24);transition:border-color .15s ease,color .15s ease;}
+.btn-ghost:hover{border-color:#5DF18F;color:#5DF18F;text-decoration:none;}
+.btn:focus-visible,.btn-ghost:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
+.sec{margin:clamp(36px,5vw,56px) 0 0;padding-top:clamp(24px,3vw,32px);border-top:0.5px solid rgba(255,255,255,0.08);}
+.sec>h2,.sec>h3{scroll-margin-top:1rem;}
+.sec h2{color:#F2F4F3;font-size:clamp(24px,2.2vw,28px);line-height:1.2;margin:0 0 1rem;font-weight:700;letter-spacing:-0.015em;}
+.sec h3{color:#F2F4F3;font-size:clamp(18px,1.6vw,20px);margin:1.5rem 0 .55rem;font-weight:700;}
+.sec p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1rem;max-width:65ch;}
+.sec ul{list-style:none;margin:0 0 1.1rem;padding:0;max-width:65ch;}
+.sec li{position:relative;padding:0 0 0 1.45rem;margin:0 0 .5rem;color:#C9D1CE;font-size:17px;line-height:1.6;}
+.sec li::before{content:"\\203A";position:absolute;left:.45rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+.sec strong{color:#F2F4F3;}
+.sec pre{max-width:100%;}
+.sec .lbl{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;margin:1.3rem 0 .5rem;}
+.sec ul.get li::before{content:"\\2713";left:0;}
+.sec ul.nope li{color:#9AA3A0;}
+.sec ul.nope li::before{content:"\\00B7";left:.4rem;top:-.05rem;color:#6F7A77;}
+.sec .fine,.fine{font-size:.9rem;color:#9AA3A0;margin:0 0 .6rem;max-width:65ch;}
+.price-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;margin:-.4rem 0 1.1rem;}
+.price-line .price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.35rem;font-weight:700;color:#5DF18F;}
+.price-line .terms{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px);margin:.6rem 0 1.2rem;}
+.cards.three{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media (max-width:767px){.cards,.cards.three{grid-template-columns:minmax(0,1fr);}}
+.card{display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:24px;color:#C9D1CE;text-decoration:none;transition:border-color .15s ease;}
+a.card:hover{border-color:#5DF18F;text-decoration:none;}
+a.card:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
+.card-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px;}
+.card h2,.card h3,.card .name{font-size:1.15rem;line-height:1.3;font-weight:700;color:#F2F4F3;margin:0;}
+.card .price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
+.card p{font-size:.97rem;line-height:1.55;color:#C9D1CE;margin:0;}
+.card .when{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.03em;color:#9AA3A0;}
+.card .go{margin-top:auto;padding-top:6px;font-size:.92rem;font-weight:600;color:#5DF18F;}
+.card ul{list-style:none;margin:0;padding:0;}
+.card li{position:relative;padding:0 0 0 1.4rem;margin:0 0 .4rem;font-size:.95rem;line-height:1.5;color:#C9D1CE;}
+.card li::before{content:"\\203A";position:absolute;left:.4rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+@media (max-width:640px){.card{padding:20px;}}
 ${SCARD_CSS}
-.kvs{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.55rem .7rem;align-items:baseline;}
+.kvs{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.55rem .9rem;align-items:baseline;max-width:65ch;}
 .kv{display:contents;}
-.kv .k{color:#9AA3A0;font-size:.88rem;}
-.kv .v{color:#5DF18F;font-weight:600;word-break:break-word;}
-.sigqr{display:grid;grid-template-columns:1fr auto;gap:1.1rem 1.4rem;align-items:center;margin-top:1.1rem;padding-top:1.1rem;border-top:0.5px solid rgba(255,255,255,0.10);}
-.sigqr-txt p{color:#C9D1CE;margin:0;font-size:.94rem;}
-.sigqr-txt .hint{color:#9AA3A0;font-size:.85rem;margin-top:.35rem;}
+.kv .k{color:#9AA3A0;font-size:.9rem;}
+.kv .v{color:#F2F4F3;font-weight:600;word-break:break-word;}
+a.v{color:#5DF18F;}
+@media (max-width:420px){.kvs{grid-template-columns:minmax(0,1fr);gap:.15rem .9rem;}.kv .v{margin-bottom:.55rem;}}
+.sigqr{display:grid;grid-template-columns:1fr auto;gap:1.1rem 1.4rem;align-items:center;margin-top:1.1rem;padding-top:1.1rem;border-top:0.5px solid rgba(255,255,255,0.10);max-width:65ch;}
+.sigqr-txt p{color:#C9D1CE;margin:0;font-size:.97rem;}
+.sigqr-txt .hint{color:#9AA3A0;font-size:.88rem;margin-top:.35rem;}
 .sigqr-plate{display:block;background:#F2F4F3;border-radius:10px;padding:9px;line-height:0;}
 .sigqr-plate img{display:block;width:147px;height:147px;}
 .sigqr-user{display:block;margin-top:.45rem;text-align:center;font:600 .8rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#9AA3A0;letter-spacing:.01em;}
 @media (max-width:560px){.sigqr{grid-template-columns:1fr;justify-items:start;}}
-main>p{color:#C9D1CE;margin:0 0 1.3rem;}
 .gv{color:#5DF18F;font-weight:600;}
 .scard .sub{color:#9AA3A0;font-size:.95rem;margin:-.4rem 0 .9rem;}
 ${FAQ_CSS}
-.dl{display:flex;flex-direction:column;gap:.75rem;}
-.dl p{margin:0;color:#C9D1CE;font-size:.95rem;line-height:1.55;}
-.dl .term{color:#5DF18F;font-weight:700;}
-.post{display:block;border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.05rem 1.35rem;margin:0 0 .75rem;text-decoration:none;transition:border-color .15s ease;}
-.post:hover{border-color:rgba(93,241,143,0.4);}
-.post .pt{display:block;color:#5DF18F;font-weight:700;font-size:1.1rem;letter-spacing:-0.01em;margin:0 0 .28rem;}
-.post .pd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}
-.feed{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;margin:-1.2rem 0 1.6rem;}
+.faq{max-width:65ch;}
+.faq .q{font-size:1.05rem;}
+.faq p{font-size:1rem;line-height:1.6;}
+.dl{display:flex;flex-direction:column;gap:.85rem;max-width:65ch;}
+.dl p{margin:0;color:#C9D1CE;font-size:17px;line-height:1.6;}
+.dl .term{color:#F2F4F3;font-weight:700;}
+.toc{margin:0 0 1.4rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;max-width:65ch;}
+.toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
+.toc ul{list-style:none;margin:0;padding:0;columns:2;column-gap:1.4rem;}
+.toc li{margin:0 0 .3rem;padding:0;font-size:.95rem;break-inside:avoid;}
+.toc li::before{content:none;}
+.toc a{color:#C9D1CE;}
+.toc a:hover{color:#5DF18F;}
+@media (max-width:560px){.toc ul{columns:1;}}
+.post{display:flex;flex-direction:column;gap:6px;box-sizing:border-box;min-width:0;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;padding:18px 22px;margin:0 0 .75rem;text-decoration:none;transition:border-color .15s ease;}
+.post:hover{border-color:#5DF18F;text-decoration:none;}
+.post .pt{display:block;color:#F2F4F3;font-weight:700;font-size:1.1rem;line-height:1.3;letter-spacing:-0.01em;}
+.post .pm{display:flex;flex-wrap:wrap;gap:.3rem .8rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}
+.post .pk{color:#5DF18F;}
+.post .ps{color:#C9D1CE;font-size:.95rem;line-height:1.5;max-width:65ch;}
+.feed{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;margin:-.6rem 0 1.4rem;}
 .feed a{color:#9AA3A0;}
 .feed a:hover{color:#5DF18F;text-decoration:none;}
-.start{border-top:0.5px solid rgba(255,255,255,0.1);margin-top:1.6rem;padding-top:1.8rem;}
-.start h2{color:#F2F4F3;font-size:1.4rem;font-weight:700;letter-spacing:-0.015em;margin:0 0 .85rem;}
-.start p{color:#C9D1CE;margin:0 0 1rem;}
+.start{border-top:0.5px solid rgba(255,255,255,0.1);margin-top:clamp(36px,5vw,56px);padding-top:clamp(24px,3vw,32px);}
+.start h2{color:#F2F4F3;font-size:clamp(24px,2.2vw,28px);font-weight:700;letter-spacing:-0.015em;margin:0 0 .9rem;}
+.start p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1rem;max-width:65ch;}
 .cta-row{margin:1.1rem 0 1.3rem;}
-.cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;}
+.cta-btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;background:#5DF18F;color:#06100F;font-weight:700;border-radius:7px;padding:.75rem 1.35rem;font-size:15px;}
 .cta-btn:hover{background:#7df7a6;text-decoration:none;}
-.fine{font-size:.85rem;color:#9AA3A0;margin:0;}`;
+.mail-plain{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;color:#F2F4F3;overflow-wrap:anywhere;}
+.copy-btn{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;margin-left:10px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;background:transparent;color:#F2F4F3;font:600 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;}
+.copy-btn:hover{border-color:#5DF18F;color:#5DF18F;}
+.vform{display:flex;flex-wrap:wrap;gap:10px;margin:.6rem 0 .4rem;max-width:65ch;}
+.vform label{flex-basis:100%;font-size:.95rem;color:#F2F4F3;font-weight:600;}
+.vform input{flex:1 1 16rem;min-width:0;min-height:50px;background:#07110D;border:1px solid #2D3D3D;border-radius:7px;padding:10px 14px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:16px;}
+.vform button{min-height:50px;background:#5DF18F;color:#06100F;border:0;border-radius:7px;padding:10px 22px;font-weight:700;cursor:pointer;font-size:15px;}
+@media (max-width:560px){.vform input,.vform button{flex-basis:100%;width:100%;}.cta{flex-direction:column;}.btn,.btn-ghost,.cta-btn{width:100%;}}
+.result-sum{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin:0 0 1rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#C9D1CE;}
+.result-sum b{color:#F2F4F3;}
+.chk{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.15rem .7rem;align-items:baseline;margin:0 0 .9rem;padding:0 0 .9rem;border-bottom:0.5px solid rgba(255,255,255,0.08);max-width:65ch;}
+.chk .s{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;}
+.chk .l{color:#F2F4F3;font-weight:600;}
+.chk .d{grid-column:2;color:#C9D1CE;font-size:.95rem;line-height:1.5;}
+.chk.pass .s{color:#5DF18F;}.chk.warn .s{color:#E8C15A;}.chk.fail .s{color:#F17F5D;}.chk.info .s{color:#7FB2D9;}
+.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
+.tbl table{margin:0;min-width:100%;}
+.tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
+@media (max-width:640px){table.stack{display:block;border:0;min-width:0;}table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stack tbody,table.stack tr{display:block;}table.stack tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stack td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stack td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stack td:first-child{color:#F2F4F3;font-weight:600;}}
+@media (max-width:360px){main{padding-left:20px;padding-right:20px;}}`;
 
 function cardPageHead(metaBlock, jsonLd, canonicalUrl) {
   return `<!doctype html>
@@ -8228,13 +8270,12 @@ function serveCompanyHtml(canonicalUrl) {
 ${cardPageNav("/company")}
 <main id="main">
   ${mdPageStart("/company")}
-  ${mdKvsCard("/company", "Business details")}
-  ${mdCard("/company", "About the operator")}
-  ${mdCard("/company", "Location")}
-  ${mdCard("/company", "Why this service exists")}
-  ${mdCard("/company", "Operating principles")}
-  ${mdKvsCard("/company", "Contact")}
-  ${mdCard("/company", "Invoicing")}
+  ${mdOpenSec("/company", "My background")}
+  ${mdOpenSec("/company", "Why this work matters")}
+  ${mdOpenSec("/company", "How I work")}
+  ${mdKvsSec("/company", "Business details")}
+  ${mdOpenSec("/company", "Invoicing")}
+  ${mdOpenSec("/company", "Discuss a project", "discuss", '\n    <div class="cta"><a class="btn" href="/contact">Discuss a project</a></div>')}
 </main>
 ${footerHtml()}
 </body>
@@ -8244,19 +8285,21 @@ ${footerHtml()}
 
 function serveContactHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/contact", canonicalUrl), buildGuideJsonLd("/contact", canonicalUrl), canonicalUrl);
+  // The email address is the primary action and also stands as plain text, so it can be
+  // copied without opening a mail client; the two prefilled mailto links stay complete in
+  // the twin and open a draft only. The QR code is an extra route for Signal, not a step.
   const body = `${head}
 ${cardPageNav("/contact")}
 <main id="main">
   ${mdPageStart("/contact")}
-  ${mdKvsCard("/contact", "Channels", contactSignalQr())}
-  ${mdCard("/contact", "Start a request by email")}
-  ${mdCard("/contact", "Encrypted email")}
-  ${mdCard("/contact", "Response times")}
-  ${mdCard("/contact", "Languages")}
-  ${mdCard("/contact", "What to include in a first message")}
-  ${mdCard("/contact", "Confidentiality")}
-  ${mdCard("/contact", "Geographic service area")}
-  ${mdKvsCard("/contact", "Business details")}
+  <div class="cta"><a class="btn" href="mailto:info@turva.dev">Email info@turva.dev</a><a class="btn-ghost" href="https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK">Signal @turva.19</a><a class="btn-ghost" href="https://www.linkedin.com/in/erikrekola/">LinkedIn</a></div>
+  ${mdOpenSec("/contact", "Email")}
+  ${mdOpenSec("/contact", "Other channels", "channels", contactSignalQr())}
+  ${mdOpenSec("/contact", "What to include")}
+  ${mdOpenSec("/contact", "Response time and languages")}
+  ${mdOpenSec("/contact", "Confidentiality")}
+  ${mdOpenSec("/contact", "Optional encrypted email", "encrypted-email")}
+  ${mdKvsSec("/contact", "Business details")}
 </main>
 ${footerHtml()}
 </body>
@@ -8266,16 +8309,22 @@ ${footerHtml()}
 
 function serveLegalHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/legal", canonicalUrl), buildGuideJsonLd("/legal", canonicalUrl), canonicalUrl);
+  const secs = ["Operator", "Engagement terms", "Privacy", "Data rights", "Cookies", "Updates"];
+  const toc = `<div class="toc"><p>On this page</p><ul>${secs.map((h) => `<li><a href="#${mdSlug(h)}">${h}</a></li>`).join("")}</ul></div>`;
+  const terms = (h) => `<section class="sec" id="${mdSlug(h)}"><h2>${h}</h2>
+    ${mdTermsHtml("/legal", h)}
+  </section>`;
   const body = `${head}
 ${cardPageNav("/legal")}
 <main id="main">
   ${mdPageStart("/legal")}
-  ${mdCard("/legal", "Operator")}
-  ${mdTermsCard("/legal", "Terms of engagement")}
-  ${mdTermsCard("/legal", "Privacy")}
-  ${mdCard("/legal", "Rights under GDPR")}
-  ${mdCard("/legal", "Cookies")}
-  ${mdCard("/legal", "Updates")}
+  ${toc}
+  ${mdOpenSec("/legal", "Operator")}
+  ${terms("Engagement terms")}
+  ${terms("Privacy")}
+  ${mdOpenSec("/legal", "Data rights")}
+  ${mdOpenSec("/legal", "Cookies")}
+  ${mdOpenSec("/legal", "Updates")}
 </main>
 ${footerHtml()}
 </body>
@@ -8291,26 +8340,27 @@ function serveShopifyHtml(canonicalUrl) {
       buildGuidePageFaqJsonLd("/shopify-agent-storefront-check", canonicalUrl),
     canonicalUrl);
   const start = mdParas("/shopify-agent-storefront-check", "How to start", 3);
-  const cta = `<div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&amp;body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A">Request a check by email</a></div>`;
+  const mailto = "mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&amp;body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A";
   const body = `${head}
 ${cardPageNav("/shopify-agent-storefront-check")}
 <main id="main">
   ${mdPageStart("/shopify-agent-storefront-check")}
-  ${cta}
-  ${mdCard("/shopify-agent-storefront-check", "Price and timing")}
-  ${mdCard("/shopify-agent-storefront-check", "The three surfaces")}
-  ${mdCard("/shopify-agent-storefront-check", "What the check answers")}
-  ${mdCard("/shopify-agent-storefront-check", "Fixed scope")}
-  ${mdCard("/shopify-agent-storefront-check", "What you receive")}
-  ${mdCard("/shopify-agent-storefront-check", "What this is not")}
-  ${mdCard("/shopify-agent-storefront-check", "What the public preflight measured")}
-  ${mdCard("/shopify-agent-storefront-check", "Sample report")}
-  ${mdFaqCard("/shopify-agent-storefront-check", "Frequently asked")}
-  <div class="start">
+  <div class="cta"><a class="btn" href="${mailto}">Request a Shopify check</a><a class="btn-ghost" href="/samples/shopify-agent-storefront-check">Read the sample report</a></div>
+  ${mdOpenSec("/shopify-agent-storefront-check", "What you will learn")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "What you receive")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "Fixed scope")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "The three surfaces")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "Price, kickoff and delivery", "price")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "Optional implementation")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "Limits and exclusions")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "Sample report")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "Public preflight evidence")}
+  ${mdFaqSec("/shopify-agent-storefront-check", "Frequently asked", "questions")}
+  <div class="start" id="how-to-start">
     <h2>How to start</h2>
     <p>${start[0]}</p>
     <p>${start[1]}</p>
-    ${cta}
+    <div class="cta-row"><a class="cta-btn" href="${mailto}">Request a Shopify check</a></div>
     <p class="fine">${start[2]}</p>
   </div>
 </main>
@@ -8326,14 +8376,13 @@ function serveBadgeHtml(canonicalUrl) {
 ${cardPageNav("/badge")}
 <main id="main">
   ${mdPageStart("/badge")}
-  ${mdCard("/badge", "Who may display it")}
-  ${mdCard("/badge", "What it is, and what it is not")}
-  <div class="scard"><h2>How to embed it</h2>
-    <p>The badge looks like this:</p>
+  ${mdOpenSec("/badge", "Eligibility")}
+  ${mdOpenSec("/badge", "What it is, and what it is not", "not-a-certification")}
+  <section class="sec" id="use-the-badge"><h2>Use the badge</h2>
     <p><img src="/badge.svg" alt="agent-ready. Criteria at turva.dev/badge" width="216" height="36"></p>
-    ${mdBodyHtml("/badge", "How to embed it")}
-  </div>
-  ${mdCard("/badge", "If your site is not there yet")}
+    ${mdSecBodyHtml("/badge", "Use the badge")}
+  </section>
+  ${mdOpenSec("/badge", "If your site is not there yet")}
 </main>
 ${footerHtml()}
 </body>
@@ -8347,10 +8396,11 @@ function serveToolsHtml(canonicalUrl) {
 ${cardPageNav("/tools")}
 <main id="main">
   ${mdPageStart("/tools")}
-  ${mdCard("/tools", "llms.txt validator")}
-  ${mdCard("/tools", "The agent-ready badge")}
-  ${mdCard("/tools", "Public MCP server")}
-  ${mdCard("/tools", "Where to go next")}
+  <div class="cards three">
+      ${mdToolCards("/tools", ["llms.txt validator", "Public MCP server", "Agent-ready badge"])}
+  </div>
+  ${mdOpenSec("/tools", "Technical details")}
+  ${mdOpenSec("/tools", "Need a broader review?", "services")}
 </main>
 ${footerHtml()}
 </body>
@@ -8964,39 +9014,49 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
     return new Response(JSON.stringify(payload, null, 2), { status: payload.error ? 400 : 200, headers });
   }
   const head = cardPageHead(buildMetaBlock("/llms-txt-validator", canonicalUrl), buildGuideJsonLd("/llms-txt-validator", canonicalUrl) + "\n" + buildGuidePageFaqJsonLd("/llms-txt-validator", canonicalUrl) + "\n" + buildValidatorAppJsonLd(canonicalUrl), canonicalUrl);
-  const mark = { pass: "\u2713", warn: "!", fail: "\u2717", info: "i" };
+  // The result names each check with its status as a word (colour only accompanies it), and
+  // opens with the target and the counts. No total and no percentage on purpose: the twin
+  // says why. Error wording is the shared form from the 2026-09-06 page instruction, with
+  // the measured reason appended so nothing is hidden.
+  const word = { pass: "Pass", warn: "Warning", fail: "Fail", info: "Information" };
   let resultHtml = "";
   if (error) {
-    resultHtml = `<div class="scard"><h2>Result</h2><p class="verr">${escapeHtml(error)}</p></div>`;
+    const invalid = error.startsWith("That does not look like");
+    resultHtml = `<section class="sec" id="result"><h2>Result</h2><p class="verr">${invalid ? "Enter a domain or a website URL." : "The check could not be completed. Review the reported error and try again."} ${escapeHtml(error)}</p></section>`;
   } else if (result) {
+    const counts = ["pass", "warn", "fail", "info"].map((k) => `<span><b>${word[k]}</b> ${result.checks.filter((c) => c.status === k).length}</span>`).join("");
     const rows = result.checks.map((c) =>
-      `<div class="chk ${c.status}"><span class="s">${mark[c.status]}</span><span class="l">${escapeHtml(c.label)}</span><span class="d">${escapeHtml(c.detail)}</span></div>`
+      `<div class="chk ${c.status}"><span class="s">${word[c.status] || escapeHtml(c.status)}</span><span class="l">${escapeHtml(c.label)}</span><span class="d">${escapeHtml(c.detail)}</span></div>`
     ).join("\n    ");
-    resultHtml = `<div class="scard"><h2>Result: ${escapeHtml(summarizeChecks(result.checks))}</h2>
+    resultHtml = `<section class="sec" id="result"><h2>Result: ${escapeHtml(summarizeChecks(result.checks))}</h2>
     <p class="aview-cmd">${escapeHtml(result.target)}</p>
+    <p class="result-sum">${counts}</p>
     ${rows}
-    <p class="note">A structure check against the llms.txt format, not an agent-readiness score.</p>
-  </div>`;
+    <p class="fine">The two v2 discovery checks are informational and do not change the structural result.</p>
+    <p class="fine">A structure check against the llms.txt format, not an agent-readiness score.</p>
+  </section>`;
   }
   const body = `${head}
 ${cardPageNav("/llms-txt-validator")}
 <main id="main">
   ${mdPageStart("/llms-txt-validator")}
-  <div class="scard">
-    <form class="vform" method="get" action="/llms-txt-validator">
-      <input type="text" name="url" placeholder="example.com" value="${escapeHtml(raw)}" aria-label="Domain to check" required>
-      <button type="submit">Check</button>
-    </form>
-  </div>
+  <form class="vform" method="get" action="/llms-txt-validator">
+    <label for="vurl">Domain to check</label>
+    <input type="text" id="vurl" name="url" placeholder="example.com" value="${escapeHtml(raw)}" aria-label="Domain to check" required>
+    <button type="submit">Check llms.txt</button>
+  </form>
+  <p class="fine"><a href="/llms-txt-validator?url=turva.dev">Try it with turva.dev</a></p>
   ${resultHtml}
-  <div class="scard"><h2>How to use it</h2><ul>
+  <section class="sec" id="how-to-use-it"><h2>How to use it</h2><ul>
     <li>In a browser: enter a domain in the field above.</li>
     <li>Without typing anything: <a href="/llms-txt-validator?url=turva.dev">run the checks against this site's own file</a>.</li>
     <li>As an agent: <code>GET https://turva.dev/llms-txt-validator?url=example.com</code> with <code>Accept: application/json</code>.</li>
-  </ul></div>
-  ${mdCard("/llms-txt-validator", "What it checks")}
-  ${mdCard("/llms-txt-validator", "What it does not do")}
-  ${mdFaqCard("/llms-txt-validator", "Frequently asked")}
+  </ul></section>
+  ${mdOpenSec("/llms-txt-validator", "What is checked")}
+  ${mdOpenSec("/llms-txt-validator", "What this result means")}
+  ${mdOpenSec("/llms-txt-validator", "Use in an agent or CI")}
+  ${mdFaqSec("/llms-txt-validator", "Frequently asked", "questions")}
+  ${mdOpenSec("/llms-txt-validator", "Related", "related-guides")}
 </main>
 ${footerHtml()}
 </body>
@@ -9006,17 +9066,35 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers });
 }
 
+function mdGuideGroupSec(path, h) {
+  const blocks = mdSection(path, h).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+  const lead = blocks.filter((b) => !b.startsWith("- ")).map((b) => `<p>${renderInline(b)}</p>`).join("");
+  // One card per guide: the title from the twin's link, the one-sentence description
+  // from META_BY_PATH, so the index says what the guide's own head says.
+  const items = mdLists(path, h)[0].map((x) => {
+    const m = x.match(/^<a href="(?:https:\/\/turva\.dev)?(\/guides\/[a-z0-9-]+)">(.+?)<\/a>$/);
+    if (!m) throw new Error("guide list item does not parse: " + x.slice(0, 60));
+    const d = (META_BY_PATH[m[1]] || {}).description || "";
+    return `<a class="card" href="${m[1]}"><span class="name">${m[2]}</span>${d ? `<p>${escapeHtml(d)}</p>` : ""}</a>`;
+  }).join("\n      ");
+  return `<section class="sec" id="${mdSlug(h)}"><h2>${renderInline(h)}</h2>${lead}
+  <div class="cards">
+    ${items}
+  </div>
+</section>`;
+}
+
 function serveGuidesHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/guides", canonicalUrl), buildGuideJsonLd("/guides", canonicalUrl) + "\n" + buildGuidesFaqJsonLd(), canonicalUrl);
   const body = `${head}
 ${cardPageNav("/guides")}
 <main id="main">
   ${mdPageStart("/guides")}
-  ${mdLinksCard("/guides", "Discovery and content")}
-  ${mdLinksCard("/guides", "Capability and trust")}
-  ${mdLinksCard("/guides", "Commerce and strategy")}
-  ${mdFaqCard("/guides", "Frequently asked")}
-  ${mdFaqTailHtml("/guides", "Frequently asked")}
+  ${mdGuideGroupSec("/guides", "Start here")}
+  ${mdGuideGroupSec("/guides", "Discovery and content")}
+  ${mdGuideGroupSec("/guides", "Capability and trust")}
+  ${mdGuideGroupSec("/guides", "Commerce and strategy")}
+  ${mdFaqSec("/guides", "Frequently asked", "questions")}
 </main>
 ${footerHtml()}
 </body>
@@ -9030,8 +9108,10 @@ function blogPostLinks() {
     .map((k) => ({ path: k, meta: META_BY_PATH[k] || {} }))
     .filter((p) => p.meta.date)
     .sort((a, b) => b.meta.date.localeCompare(a.meta.date));
+  // Since v3.133.0 (Tek-358) each card shows the title, the date, the kind of article and
+  // its one-sentence description, all from META_BY_PATH, so the index and the page agree.
   return posts.map(({ path, meta }) =>
-    `  <a class="post" href="${path}"><span class="pt">${escapeHtml((meta.title || "").replace(/ [|\u00B7] turva\.dev$/, ""))}</span><span class="pd">${meta.date}</span></a>`
+    `  <a class="post" href="${path}"><span class="pt">${escapeHtml((meta.title || "").replace(/ [|\u00B7] turva\.dev$/, ""))}</span><span class="pm"><span class="pd">${meta.date}</span>${meta.kind ? `<span class="pk">${escapeHtml(meta.kind)}</span>` : ""}</span>${meta.description ? `<span class="ps">${escapeHtml(meta.description)}</span>` : ""}</a>`
   ).join("\n");
 }
 
@@ -9042,9 +9122,11 @@ ${cardPageNav("/blog")}
 <main id="main">
   ${mdPageStart("/blog")}
   <p class="feed"><a href="/blog/feed.xml">RSS feed</a></p>
-  ${mdLinksCard("/blog", "Start here")}
-  <h2>All posts</h2>
+  ${mdOpenSec("/blog", "Start with the research", "research")}
+  <section class="sec" id="all-posts"><h2>Browse all articles</h2>
+    <p class="fine">Research &middot; Protocol notes &middot; Build notes</p>
 ${blogPostLinks()}
+  </section>
 </main>
 ${footerHtml()}
 </body>

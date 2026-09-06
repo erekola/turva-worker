@@ -801,7 +801,7 @@ const twConverted = {
   // the two prose exceptions (the curl demo intro and the contact lead) left with their text.
   '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: [], prose: [] },
   '/blog':    { fn: 'serveBlogHtml',    mdOnly: [], hand: ['All posts'] }, // All posts is the dated list, rendered by blogPostLinks() from META_BY_PATH (2026-09-03)
-  '/llms-txt-validator': { fn: 'serveLlmsValidatorHtml', mdOnly: ['Related'], hand: ['How to use it'] },
+  '/llms-txt-validator': { fn: 'serveLlmsValidatorHtml', mdOnly: [], hand: ['How to use it'], prose: ['The two v2 discovery checks are informational'] }, // the result note repeats the twin's own sentence under the check list (Tek-358)
   '/services': { fn: 'serveServicesHtml', mdOnly: [], hand: [] },
   '/tools':   { fn: 'serveToolsHtml',   mdOnly: ['Related'] },
   '/badge':   { fn: 'serveBadgeHtml',   mdOnly: [] },
@@ -1085,14 +1085,15 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   {
     // Since Tek-355 (2026-09-06) every nav goes through navMenuHtml(lis), which renders the
     // list twice (a plain <ul> for wide screens and a <details> Menu for narrow ones). The
-    // five copies are now the five call sites: four inline template arguments and one that
+    // copies are now the call sites: three inline template arguments and one that
     // passes cardPageNav's generated `lis`. The invariant is unchanged, the anchor moved.
     const uls = [...w.matchAll(/\$\{navMenuHtml\((`[\s\S]*?`|lis)\)\}/g)]
       .map((m) => [...m[1].matchAll(/<li><a href="([^"]+)"/g)].map((x) => x[1]));
     const itemsSrc = (w.match(/const items = (\[\[[\s\S]*?\]\]);/) || [])[1] || '[]';
     const generated = JSON.parse(itemsSrc).map((p) => p[0]);
     const inline = uls.filter((u) => u.length > 0);
-    check(uls.length === 5, `five navMenuHtml call sites in worker.js (saw ${uls.length})`);
+    // Four since v3.133.0 (Tek-358): /services moved onto cardPageNav with the other card pages.
+    check(uls.length === 4, `four navMenuHtml call sites in worker.js (saw ${uls.length})`);
     check(uls.length - inline.length === 1, `exactly one nav is generated from an items array (saw ${uls.length - inline.length})`);
     const helper = region('function navMenuHtml', '\nfunction ');
     check((helper.match(/\$\{lis\}/g) || []).length === 2 && helper.includes('<details class="nv-mobile">') && helper.includes('<summary>Menu</summary>'),
@@ -1224,7 +1225,9 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // A card page builds its FAQ by name. Every other twin carrying a section is a guide,
     // rendered by the one generic path in serveGuideHtml, so the two lists together are
     // every page that can publish one.
-    const byName = [...new Set([...w.matchAll(/\bmdFaq(?:Card|Rows)\("([^"]+)", "Frequently asked"\)/g)].map((m) => m[1]))];
+    // mdFaqSec is the open-section form of the card since v3.133.0 (Tek-358); it reads the
+    // same mdFaqRows and is counted the same way.
+    const byName = [...new Set([...w.matchAll(/\bmdFaq(?:Card|Rows|Sec)\("([^"]+)", "Frequently asked"(?:, [^)]*)?\)/g)].map((m) => m[1]))];
     setSame('FAQ rendered by name vs card pages carrying a section', byName, Object.keys(twConverted).filter(hasFaq));
     setSame('twins with a Frequently asked section vs pages publishing a FAQPage',
       faqTwins, [...new Set([...rows.map((m) => m[1]), ...byName])]);
@@ -1332,7 +1335,8 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       if (!body || !md) continue;
       const heads = [...md.matchAll(/^## (.+)$/gm)].map((h) => h[1].trim());
       const seen = [];
-      for (const m of body.matchAll(/\bmd\w*[Cc]ard\("([^"]+)", "([^"]+)"\)|<h2(?:\s[^>]*)?>([^<{]+)<\/h2>/g)) {
+      // md*Sec are the open sections of the 2026-09-06 template (Tek-358): each renders its own h2.
+      for (const m of body.matchAll(/\bmd\w*(?:[Cc]ard|Sec)\("([^"]+)", "([^"]+)"(?:, [^)]*)?\)|<h2(?:\s[^>]*)?>([^<{]+)<\/h2>/g)) {
         const h = m[2] && m[1] === path ? m[2] : m[3] ? H2_ALIAS[m[3].trim()] || m[3].trim() : null;
         if (h && heads.includes(h) && !seen.includes(h)) seen.push(h);
       }
