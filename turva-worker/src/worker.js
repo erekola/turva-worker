@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.143.0 - nav and footer full bleed (2026-09-07, Erik): the nav and the footer span the whole viewport instead of aligning to the 68rem text column, so FOOTER_CSS sets a plain clamp(24px,5vw,72px) horizontal padding and the --col-half variable is gone.
+// turva.dev worker v3.143.0 - nav and footer spread across the content width (2026-09-07, Erik: yhtalevea kuin sisaltoalue ja keskella): the nav and the footer keep the 68rem centred frame and their contents now fill it, the menu links distributed edge to edge with space-between and the footer icon links the same; the redundant body --col-half declaration is gone, the rule's own 34rem fallback carries it.
 // turva.dev worker v3.142.0 - blog post i-rebuilt-turva-dev-around-the-report (2026-09-07): the site rewrite and the report template written up for buyers, with the two synthetic sample reports as the thing to inspect before buying; six surfaces (PAGE_MARKDOWN, the /blog twin, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and the signed LLMS_TXT) plus the OG card.
 // turva.dev worker v3.140.3 - no reading column at all (2026-09-06, Erik: "pelkka full"): every viewport reads the full frame, READ_CSS is empty.
 // turva.dev worker v3.140.2 - reading column only below 1080p (2026-09-06, Erik): 1920 CSS px and wider read the full frame.
@@ -7933,7 +7933,7 @@ var FOOTER_CSS = `${READ_CSS}main table{border-collapse:collapse;margin:1.1rem 0
 .tv-foot .foot-meta{font-size:1.02rem;color:#9AA3A0;border-top:0.5px solid rgba(255,255,255,0.08);padding-top:1.1rem;}
 .tv-foot .foot-meta a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
 .tv-foot .foot-meta a:hover{color:#5DF18F;}
-.turva-nav,.tv-foot{padding-left:clamp(24px,5vw,72px);padding-right:clamp(24px,5vw,72px);}
+.turva-nav,.tv-foot{padding-left:max(clamp(24px,5vw,72px),calc(50% - var(--col-half,34rem)));padding-right:max(clamp(24px,5vw,72px),calc(50% - var(--col-half,34rem)));}.turva-nav > ul.nv-menu{flex:1;justify-content:space-between;}.tv-foot .foot-links{justify-content:space-between;}
 a:focus-visible,button:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;border-radius:2px;}
 @media (prefers-reduced-motion:reduce){.cursor{animation:none;opacity:1;}}
 ::selection{background:#5DF18F;color:#06100F;}
