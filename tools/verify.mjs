@@ -1740,9 +1740,24 @@ console.log('\nx402 amounts derive from facts.json eurUsdc (kierros 18, S6-1)');
   const eu = facts.eurUsdc;
   check(!!eu && typeof eu.rate === 'number' && eu.rate > 0, `facts.json eurUsdc.rate is a positive number (saw ${eu ? JSON.stringify(eu.rate) : 'absent'})`);
   check(!!eu && /^\d{4}-\d{2}-\d{2}$/.test(String(eu.measuredAt)), `facts.json eurUsdc.measuredAt is an ISO date (saw ${eu ? JSON.stringify(eu.measuredAt) : 'absent'})`);
+  // Avainjoukkoa EI nimeta tassa. Kolmen avaimen literaali korjattiin kerran jo
+  // (loydos B4-19) ja kasvoi takaisin tahan lohkoon, eli neljas hinnoiteltu palvelu tai
+  // neljas maksullinen reitti olisi jaanyt kokonaan tarkistamatta. Joukko luetaan
+  // X402_ROUTES-reittitaulusta, joka on se mita Worker oikeasti tarjoilee, ja manifesti
+  // luetaan sita vasten: uusi reitti ilman manifestitarjousta kaataa ajon itsestaan.
+  const routeBlock = (() => {
+    const i = src.worker.text.indexOf('var X402_ROUTES');
+    if (i < 0) return '';
+    const j = src.worker.text.indexOf('\n};', i);
+    return j < 0 ? '' : src.worker.text.slice(i, j);
+  })();
+  const agentKeys = [...new Set([...routeBlock.matchAll(/"\/api\/agent\/([a-z0-9-]+)"/g)].map(m => m[1]))];
+  check(agentKeys.length > 0, `X402_ROUTES declares at least one payable /api/agent route (saw ${agentKeys.length})`);
   if (eu && eu.rate) {
-    for (const key of ['audit', 'advisory', 'implementation']) {
+    for (const key of agentKeys) {
       const eur = facts.prices[key];
+      check(typeof eur === 'number', `facts.json prices carries a EUR price for the payable route ${key} (saw ${JSON.stringify(eur)})`);
+      if (typeof eur !== 'number') continue;
       const want = Math.round(eur * eu.rate);
       const res = 'https://turva.dev/api/agent/' + key;
       const m = src.worker.text.match(new RegExp('"amount": "(\\d+)",[\\s\\S]{0,120}?"resource": "' + res + '"'));
