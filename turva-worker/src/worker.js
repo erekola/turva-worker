@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.143.0 - nav and footer full bleed (2026-09-07, Erik): the nav and the footer span the whole viewport instead of aligning to the 68rem text column, so FOOTER_CSS sets a plain clamp(24px,5vw,72px) horizontal padding and the --col-half variable is gone.
 // turva.dev worker v3.142.0 - blog post i-rebuilt-turva-dev-around-the-report (2026-09-07): the site rewrite and the report template written up for buyers, with the two synthetic sample reports as the thing to inspect before buying; six surfaces (PAGE_MARKDOWN, the /blog twin, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and the signed LLMS_TXT) plus the OG card.
 // turva.dev worker v3.140.3 - no reading column at all (2026-09-06, Erik: "pelkka full"): every viewport reads the full frame, READ_CSS is empty.
 // turva.dev worker v3.140.2 - reading column only below 1080p (2026-09-06, Erik): 1920 CSS px and wider read the full frame.
@@ -5386,7 +5387,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.142.0",
+    "version": "3.143.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5653,7 +5654,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.142.0",
+  "version": "3.143.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7932,7 +7933,7 @@ var FOOTER_CSS = `${READ_CSS}main table{border-collapse:collapse;margin:1.1rem 0
 .tv-foot .foot-meta{font-size:1.02rem;color:#9AA3A0;border-top:0.5px solid rgba(255,255,255,0.08);padding-top:1.1rem;}
 .tv-foot .foot-meta a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
 .tv-foot .foot-meta a:hover{color:#5DF18F;}
-.turva-nav,.tv-foot{padding-left:max(clamp(24px,5vw,72px),calc(50% - var(--col-half,34rem)));padding-right:max(clamp(24px,5vw,72px),calc(50% - var(--col-half,34rem)));}
+.turva-nav,.tv-foot{padding-left:clamp(24px,5vw,72px);padding-right:clamp(24px,5vw,72px);}
 a:focus-visible,button:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;border-radius:2px;}
 @media (prefers-reduced-motion:reduce){.cursor{animation:none;opacity:1;}}
 ::selection{background:#5DF18F;color:#06100F;}
@@ -8098,7 +8099,6 @@ ${WEBMCP_SCRIPT}
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
 html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;color-scheme:dark;}
-body{--col-half:34rem;}
 main{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(24px,5vw,72px) 3.5rem;}
 main *,main *::before,main *::after{box-sizing:border-box;}
 article h1{color:#F2F4F3;overflow-wrap:break-word;hyphens:manual;font-size:clamp(30px,3.4vw,46px);line-height:1.1;letter-spacing:-0.02em;margin:0 0 .9rem;font-weight:700;max-width:26ch;}
