@@ -431,12 +431,17 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   // the wanted string was still in there further along. Measured 2026-08-01.
   {
     const A = span(src.worker.text, SW.evidenceTwin.spanFrom, SW.evidenceTwin.spanTo, 'evidence twin');
-    // B2-10 (round 12, batch E16). The line below indexes sp[4] directly, so a facts.json
-    // that lost a category threw a TypeError out of the whole static run instead of naming
-    // the missing set and failing on it. Two places in this file promise the opposite
-    // behaviour in prose. The live twin already guards the same string with CATS.length === 5;
-    // this is that guard on the static side, and it is a guard on the CONSTRUCTION, because
-    // the throw happens while `want` is built rather than when it is compared.
+    // B2-10 (round 12, batch E16). The construction below reads one spelling per category
+    // BY POSITION, so a facts.json that lost a category threw a TypeError out of the whole
+    // static run instead of naming the missing set and failing on it. Two places in this
+    // file promise the opposite behaviour in prose. The live twin already guards the same
+    // string with CATS.length === 5; this is that guard on the static side, and it is a
+    // guard on the CONSTRUCTION, because the throw happens while `want` is built rather
+    // than when it is compared. Wording corrected 2026-09-07: this said "the line below
+    // indexes sp[4] directly", which was true until Tek-225 moved the positions into
+    // facts.json (surfaceWording.evidenceTwin.spellingIndex) and the literal index became
+    // `sp[i][ix]`. The gate that watches this guard, tools/e16portti.mjs E4, had been
+    // anchored to the same literal and stopped seeing the static side altogether.
     if (CATS.length !== 5) bad(`evidence twin: facts.json names ${CATS.length} categories, the twin sentence is written for 5`);
     else if (A) {
       const sp = CATS.map(spellings);

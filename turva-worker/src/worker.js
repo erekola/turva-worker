@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.141.0 - guide sources (2026-09-06, Erik: "tee viela linkit"): 22 of the 24 guides end in a Sources section that links the primary specification, standard or vendor document each guide describes, every address fetched 200 on the day; the two without a source (Open Knowledge Format, whose specification address is not published, and the use-case survey) carry none rather than an invented one.
+// turva.dev worker v3.142.0 - blog post i-rebuilt-turva-dev-around-the-report (2026-09-07): the site rewrite and the report template written up for buyers, with the two synthetic sample reports as the thing to inspect before buying; six surfaces (PAGE_MARKDOWN, the /blog twin, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and the signed LLMS_TXT) plus the OG card.
 // turva.dev worker v3.140.3 - no reading column at all (2026-09-06, Erik: "pelkka full"): every viewport reads the full frame, READ_CSS is empty.
 // turva.dev worker v3.140.2 - reading column only below 1080p (2026-09-06, Erik): 1920 CSS px and wider read the full frame.
 // turva.dev worker v3.140.1 - reading column by viewport (2026-09-06, Erik): the 65ch prose column applies below 2000 CSS px, a 4K display reads the full frame.
@@ -207,6 +207,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [I rebuilt turva.dev around the report](https://turva.dev/blog/i-rebuilt-turva-dev-around-the-report.md)
 - [What 19 identity vendors publish for agents](https://turva.dev/blog/agent-readiness-identity-vendors.md)
 - [Two files called auth.md, and they disagree on the field names](https://turva.dev/blog/two-auth-md-dialects.md)
 - [Thirty-day follow-up: 201 comparable readings from 210 sites](https://turva.dev/blog/thirty-days-after-the-brief.md)
@@ -411,6 +412,97 @@ The two OAuth documents are named in Discovery above.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/i-rebuilt-turva-dev-around-the-report": `# I rebuilt turva.dev around the report
+
+2026-09-07
+
+The updated site puts sample reports beside the services they describe, with evidence, correction owners and acceptance checks visible before purchase.
+
+I have rewritten turva.dev and rebuilt the pages around the work a buyer receives. The home page now leads into two services and their sample reports. Each report shows how an observation becomes a finding, a correction and a check that the correction worked.
+
+That is the part I want someone to be able to inspect before buying an audit.
+
+## What changed on the site
+
+The [home page](/) separates the focused Shopify storefront check from the broader website and API audit. Each has its own scope and a public example of the deliverable. The process is written out too: agree the question and scope, receive the findings, then make and verify the corrections.
+
+The pages share a common layout. Headings, navigation and report sections follow the same structure across the site. The reports put the summary or decision before the contents and engagement details. Someone opening a long report can see the recommended action first, then follow the evidence behind it.
+
+The [guides](/guides) are grouped by what a reader is trying to do:
+
+- Audit, visibility and priorities.
+- Content and crawl access.
+- Discovery and authentication.
+- Commerce and agent operations.
+
+Their source-check dates are separate from the layout update. A redesigned page does not, by itself, establish that its technical advice is current.
+
+This rewrite changed the pages, not the service scopes or the prices.
+
+## What the report template has to carry
+
+The useful unit in the template is a finding with enough information for someone else to act on it:
+
+- What was checked, under which conditions, and what came back.
+- Why the result matters to the business question agreed at the start.
+- Which correction comes first and who owns the work.
+- What must be available before that work can begin.
+- How to check the result afterwards, including anything still unresolved.
+
+The website and API report keeps scanner readings, manual observations and answers from AI assistants identifiable as separate sources of evidence. They answer different questions. A reachable interface can return incorrect data. An assistant can repeat an old address even when the current page is accessible.
+
+The report also names the boundary of a correction. Changing a response at the edge can correct what a client receives while leaving the underlying source unchanged. The person responsible for the source needs to know that, and the acceptance check needs to cover the surfaces that matter.
+
+## The finding that changes no scanner points
+
+The [sample website and API audit](/samples/audit-report) uses an invented fastener wholesaler. Every company detail, reading and date in it is fictional.
+
+In that example, the visible product pages show real prices, while the structured data says the products cost zero and are in stock. The API provides another inconsistent representation. Correcting those facts comes before the fixes that improve the scanner result.
+
+That ordering is deliberate. The company's question concerns what a buyer's assistant will read about its products. The report has to follow that question through the evidence and the correction plan, even where the scanner awards no points for the fix.
+
+The sample shows the format and reasoning. It provides no evidence of a result achieved for a real client.
+
+## A smaller report for a Shopify question
+
+The [Shopify sample report](/samples/shopify-agent-storefront-check) uses a second invented business. It compares selected product variants across the storefront and the agent-shopping surfaces available in the example.
+
+One fictional product has different prices in the storefront and the remote catalog. Another has conflicting availability. The report records the market, variant and session conditions, then gives each mismatch a correction and a retest condition.
+
+It also records where the buyer journey stops. Reaching a checkout handoff does not establish that payment or order creation succeeded. The sample describes no paid order.
+
+This is a narrower deliverable than the website and API audit. Its structure follows the merchant's immediate question: whether the tested interfaces agree about the products, and what the supported journey actually permits.
+
+## What I can claim about the update
+
+The site now makes the report structure, service boundaries and next steps explicit. The two samples let a reader inspect the evidence format and correction instructions before contacting me.
+
+I have not measured whether the redesign improves sales or AI citations. Those would need their own observations. Both sample reports remain synthetic, and neither is a certification of a real business.
+
+For someone considering the work, the most useful place to start is the sample for their situation. It shows what I mean by an audit more precisely than a list of protocol names can.
+
+## Frequently asked
+
+**What should an agent-readiness audit report include beyond a scanner score?**
+
+The agreed scope, dated evidence, manual findings, priorities, correction owners and acceptance checks. If AI answers are included, the questions and measurement conditions should be documented separately from the technical scan.
+
+**Are the public sample reports real client work?**
+
+No. Both use invented businesses and observations to demonstrate the deliverable. They do not show measured client outcomes.
+
+**Can a team use the report without buying implementation?**
+
+Yes. The correction instructions and acceptance checks are part of the report. Implementation is a separate purchase, with access requirements and responsibilities agreed for that work.
+
+## Related
+
+- [How to choose an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
+- [Sample website and API audit report](/samples/audit-report)
+- [Sample Shopify storefront check report](/samples/shopify-agent-storefront-check)
+- [Audit scope and pricing](/services)
+`,
+
   "/blog/agent-readiness-identity-vendors": `# What 19 identity vendors publish for agents
 
 2026-09-05
@@ -1937,6 +2029,7 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## All posts
 
+- [I rebuilt turva.dev around the report](/blog/i-rebuilt-turva-dev-around-the-report). 2026-09-07.
 - [What 19 identity vendors publish for agents](/blog/agent-readiness-identity-vendors). 2026-09-05.
 - [Two files called auth.md, and they disagree on the field names](/blog/two-auth-md-dialects). 2026-09-04.
 - [Thirty-day follow-up: 201 comparable readings from 210 sites](/blog/thirty-days-after-the-brief). 2026-09-03.
@@ -5293,7 +5386,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.141.0",
+    "version": "3.142.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5401,7 +5494,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YSZat8nOYoo-uBDdONQvjAlATasQUyVn-ndw8Pl9_VgiEp-FgC1c4zQPWAvL_6WpJLxxLswwLZkWbuNDEdIBCQ\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dBBlH4oRS8Nqc4LoxG0Z7WMdi3UeDJq8hcIpbfNjs1qp41RlZrR8JRNxR1JbJva5Hd14uB7fA_ZBPPuriVY6Bw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -5560,7 +5653,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.141.0",
+  "version": "3.142.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6090,7 +6183,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-06";
+var SITEMAP_LASTMOD = "2026-09-07";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -6130,6 +6223,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/i-rebuilt-turva-dev-around-the-report", "monthly", "0.6"],
   ["/blog/agent-readiness-identity-vendors", "monthly", "0.6"],
   ["/blog/two-auth-md-dialects", "monthly", "0.6"],
   ["/blog/thirty-days-after-the-brief", "monthly", "0.6"],
@@ -6229,7 +6323,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -6239,6 +6333,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/i-rebuilt-turva-dev-around-the-report": {
+    title: "I rebuilt turva.dev around the report · turva.dev",
+    description: "The updated site puts sample reports beside the services they describe, with evidence, correction owners and acceptance checks visible before purchase.",
+    date: "2026-09-07",
+    kind: "Build notes",
+    image: "/og-i-rebuilt-turva-dev-around-the-report.jpg",
+    imageAlt: "turva.dev blog card: the site rebuilt around the report, with two public sample reports showing evidence, correction owners and acceptance checks.",
+  },
   "/blog/agent-readiness-identity-vendors": {
     title: "What 19 identity vendors publish for agents · turva.dev",
     description: "A dated scan of 19 identity vendors examines what their public sites expose for agents, and what the results cannot say about the products behind them.",
@@ -7700,6 +7802,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/i-rebuilt-turva-dev-around-the-report": mdFaqBlocks("/blog/i-rebuilt-turva-dev-around-the-report", "Frequently asked").pairs,
   "/blog/agent-readiness-identity-vendors": mdFaqBlocks("/blog/agent-readiness-identity-vendors", "Frequently asked").pairs,
   "/blog/two-auth-md-dialects": mdFaqBlocks("/blog/two-auth-md-dialects", "Frequently asked").pairs,
   "/blog/thirty-days-after-the-brief": mdFaqBlocks("/blog/thirty-days-after-the-brief", "Frequently asked").pairs,
