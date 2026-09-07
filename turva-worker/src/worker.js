@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.144.0 - MTA-STS policy names both mail hosts during the mailbox.org to Proton move (2026-09-07): the enforce policy listed only the four mxext hosts, so a sending MTA that had cached it would refuse delivery to the new MX the moment it changed; mail.protonmail.ch and mailsec.protonmail.ch now stand alongside them and the mxext hosts stay until the move is done.
 // turva.dev worker v3.143.0 - nav and footer spread across the content width (2026-09-07, Erik: yhtalevea kuin sisaltoalue ja keskella): the nav and the footer keep the 68rem centred frame and their contents now fill it, the menu links distributed edge to edge with space-between and the footer icon links the same; the redundant body --col-half declaration is gone, the rule's own 34rem fallback carries it.
 // turva.dev worker v3.142.0 - blog post i-rebuilt-turva-dev-around-the-report (2026-09-07): the site rewrite and the report template written up for buyers, with the two synthetic sample reports as the thing to inspect before buying; six surfaces (PAGE_MARKDOWN, the /blog twin, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and the signed LLMS_TXT) plus the OG card.
 // turva.dev worker v3.140.3 - no reading column at all (2026-09-06, Erik: "pelkka full"): every viewport reads the full frame, READ_CSS is empty.
@@ -56,6 +57,8 @@ var LEGACY_REDIRECTS = {
 
 var MTA_STS_POLICY = `version: STSv1
 mode: enforce
+mx: mail.protonmail.ch
+mx: mailsec.protonmail.ch
 mx: mxext1.mailbox.org
 mx: mxext2.mailbox.org
 mx: mxext3.mailbox.org
@@ -5387,7 +5390,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.143.0",
+    "version": "3.144.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5654,7 +5657,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.143.0",
+  "version": "3.144.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
