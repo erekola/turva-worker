@@ -85,7 +85,7 @@ test("/services carries the same priced Service node as the home page, and both 
 });
 
 test("the primary navigation is a named landmark on every page", async () => {
-  for (const p of ["/", "/services", "/contact", "/legal", "/company", "/blog", "/guides", "/tools", "/nonexistent-path"]) {
+  for (const p of ["/", "/services", "/agent-readiness-audit", "/contact", "/legal", "/company", "/blog", "/guides", "/tools", "/nonexistent-path"]) {
     const html = await (await get(p)).text();
     const navs = html.match(/<nav\b[^>]*>/g) || [];
     assert.equal(navs.length, 1, p + " has one nav");
@@ -94,7 +94,7 @@ test("the primary navigation is a named landmark on every page", async () => {
 });
 
 test("a trailing slash redirects to the canonical path for every served page", async () => {
-  for (const p of ["/services", "/company", "/contact", "/legal", "/guides", "/blog", "/tools", "/badge",
+  for (const p of ["/services", "/agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/blog", "/tools", "/badge",
                    "/llms-txt-validator", "/guides/llms-txt", "/blog/reliable-agent-decisions"]) {
     const r = await get(p + "/");
     assert.equal(r.status, 301, p + "/ must redirect");
@@ -983,7 +983,7 @@ test("R16 S4-1: no live brief address and no prospect name sits in the source", 
 // derives the expectation from the same sources a reader would use: the /guides twin for the
 // guide order and the posts' dates for the blog, with the primary pages written out.
 test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guides in /guides order, blog newest first", async () => {
-  const primary = ["/", "/services", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/company", "/contact", "/legal"];
+  const primary = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/company", "/contact", "/legal"];
   const guidesMd = await (await get("/guides.md")).text();
   const guides = [...guidesMd.matchAll(/\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g)].map((m) => m[1]);
   assert.ok(guides.length >= 20, "the /guides twin lists the guides");

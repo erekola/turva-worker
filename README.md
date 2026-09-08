@@ -48,7 +48,9 @@ The main files are [the Worker](turva-worker/src/worker.js), [deployment configu
 | `/.well-known/signatures.json`, `/.well-known/jwks.json` | Detached signatures and public verification keys |
 | `/api`, `/x402`, `/api/agent/*` | Payment-required responses and quote-on-request service routes |
 | `/llms-txt-validator` | Structure checker with HTML and JSON responses |
+| `/agent-readiness-audit`, `/shopify-agent-storefront-check` | Product pages of the two fixed-scope diagnoses; `/services` compares every service |
 | `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Public sample reports using invented sites |
+| `/blog-filter.js` | The one same-origin script, the search and kind filter of the blog index; the index lists every post without it |
 
 See [docs/endpoints.md](docs/endpoints.md) for the complete route inventory, including A2A, checkout, OAuth and mail-related endpoints.
 

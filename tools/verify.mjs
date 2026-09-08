@@ -817,6 +817,10 @@ const twConverted = {
   '/company': { fn: 'serveCompanyHtml', mdOnly: [] },
   '/legal':   { fn: 'serveLegalHtml',   mdOnly: [] },
   '/shopify-agent-storefront-check': { fn: 'serveShopifyHtml', mdOnly: [] },
+  // The audit product page (2026-09-08): the FAQ and the start block render under buyer-facing
+  // headings, the same two aliases the home page uses.
+  '/agent-readiness-audit': { fn: 'serveAuditHtml', mdOnly: [],
+         h2: { 'Questions before you start': 'Frequently asked', 'Start with the URL and the question': 'How to start' } },
   '/guides':  { fn: 'serveGuidesHtml',  mdOnly: [] },
 };
 let twcPages = 0;

@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.147.0 - buying and content improvements from the 2026-09-08 brief: the home hero shows one finding from the synthetic sample report (F1, three sources, three answers) instead of the generic three-step card, the audit gets its own product page at /agent-readiness-audit (primary path, llms.txt Services row, sitemap, OfferCatalog url, own Service node, FAQPage) while /services keeps every anchor and shortens the two diagnoses to summaries, the home page runs hero, starting point, work you can inspect with the one reference-build board, process, questions, contact, both sample reports open with a one-line synthetic scope, the illustrative date and a "The first decision" summary with two follow-on actions (#f1 alias on the audit sample), /contact opens with the two prepared mailto cards, and /blog gains a search and kind filter served as /blog-filter.js under script-src self with the full list still in the HTML.
 // turva.dev worker v3.146.0 - the MCP server gained a fifth tool, get_contact, and every tool description now names the sibling to use instead and says the data updates only on deploy; the previous line: the published OpenPGP key is now the pair Proton holds (2026-09-07): mail moved to Proton in v3.144.0, so the RSA 4096 key the site served could no longer be decrypted; PGP_PUBLIC_KEY now carries two keys in one armored block, an Ed25519 v4 key first for clients that read only that, and a post-quantum ML-DSA-65 v6 key after it, and /contact prints both fingerprints.
 // turva.dev worker v3.144.0 - MTA-STS policy names both mail hosts during the mailbox.org to Proton move (2026-09-07): the enforce policy listed only the four mxext hosts, so a sending MTA that had cached it would refuse delivery to the new MX the moment it changed; mail.protonmail.ch and mailsec.protonmail.ch now stand alongside them and the mxext hosts stay until the move is done.
 // turva.dev worker v3.143.0 - nav and footer spread across the content width (2026-09-07, Erik: yhtalevea kuin sisaltoalue ja keskella): the nav and the footer keep the 68rem centred frame and their contents now fill it, the menu links distributed edge to edge with space-between and the footer icon links the same; the redundant body --col-half declaration is gone, the rule's own 34rem fallback carries it.
@@ -141,6 +142,7 @@ var LLMS_TXT = `# turva.dev
 
 ## Services
 - [Services](https://turva.dev/services.md)
+- [Website and API agent-readiness audit](https://turva.dev/agent-readiness-audit.md)
 - [Shopify agent storefront check](https://turva.dev/shopify-agent-storefront-check.md)
 - [Free tools for agent-readiness](https://turva.dev/tools.md)
 - [llms.txt validator](https://turva.dev/llms-txt-validator.md)
@@ -2373,9 +2375,18 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 `,
   "/samples/audit-report": `# A website and API audit, from evidence to fixes
 
-An invented company, Northwind Fasteners Oy, shows how the report connects technical findings, observed AI answers and a prioritised correction plan. All companies, readings and report dates in this sample are fictional.
+Northwind Fasteners Oy and all readings in this report are fictional. This sample shows the format, evidence and correction instructions a client receives.
 
-Illustrative report date: 8 September 2026. This is a synthetic sample of the agent-readiness audit report: the company, the domain northwind-fasteners.example, every reading and every date are invented to show the format, the depth and the wording a paying client receives. Nothing on this page describes a real client, and no figure here has been measured on a real site. A real report carries the raw scanner output, the request logs and the full AI answer set as appendices, which this sample shortens to three evidence chains and the question list.
+Illustrative report date: 8 September 2026.
+
+## The first decision
+
+- **Priority:** Correct the product facts before improving scanner coverage.
+- **Evidence:** Product pages show a real price and lead time. Structured data reports €0.00 and InStock. The API leaves the price empty and marks the product purchasable.
+- **Why it matters:** An assistant may give a buyer the wrong price or availability.
+- **Owner:** Implementation owner agreed with the client, and the source-data responsibilities remain explicit.
+- **Acceptance:** Compare the corrected page, structured data and API against the same product record across the catalog.
+- **Scanner effect:** This finding does not change the sample's scanner score.
 
 ## Summary
 
@@ -2389,6 +2400,7 @@ The edge work in F1 to F7 is about eleven and a half hours. The services page sa
 
 ## Contents
 
+- [The first decision](#the-first-decision)
 - [Summary](#summary)
 - [Engagement record](#engagement-record)
 - [Decisions the company makes](#decisions-the-company-makes)
@@ -2812,11 +2824,18 @@ The audit is described on the [services page](/services). To start one, [email i
 
   "/samples/shopify-agent-storefront-check": `# A Shopify check, from product data to corrections
 
-Northstar Outdoor is an invented store used to demonstrate the report. See the three-surface map, product comparisons, buyer-journey evidence and correction plan. All store data, observations and report dates are fictional.
+Northstar Outdoor and all observations in this report are fictional. This sample shows the format, evidence and correction plan a merchant receives.
 
-Illustrative report date: 8 September 2026. This is a synthetic sample of the Shopify agent storefront check report: the store Northstar Outdoor, its .myshopify.com domain, the three products, every price and every observation are invented to show the format and the depth a paying merchant receives. Nothing on this page describes a real store, and no figure here has been measured on a real storefront. A real report carries the tool call log and the redacted settings evidence as an appendix, which this sample leaves out.
+Illustrative report date: 8 September 2026.
 
-## Decision
+## The first decision
+
+- **Priority:** Correct two product-data mismatches before sending more agent traffic to the store.
+- **Evidence:** The remote catalog quotes the blue Trail Bottle at 31,90 EUR against 29,90 EUR on the storefront, and the M size of the Merino Base Layer is sellable on every surface except the Agentic Catalog preview.
+- **Why it matters:** An agent may quote the wrong price or leave the sellable size out.
+- **Owner:** Shopify Markets, product data and Agentic storefront settings, on the merchant's side.
+- **Acceptance:** The same variant returns the same price, currency and availability on the storefront, in the WebMCP read and in the Storefront MCP catalog read, and the M variant shows as available in the Catalog preview.
+- **Test limits:** Three products, one market, one anonymous session on 2026-09-05. Nothing was paid, ordered or signed in, and no customer detail was entered.
 
 Correct two data mismatches before sending more agent traffic to the store. The three agent surfaces were all observable, the browser cart worked in the agreed anonymous session and the checkout handoff landed in the right store. Two of the three tested products showed a difference between surfaces: one price two euros higher on the remote catalog than on the storefront, and one variant marked unavailable on the Agentic preview while the storefront sells it. A documented match is what the merchant is paying to be able to show, and two of three products do not have one yet.
 
@@ -2824,7 +2843,7 @@ Nothing was paid, ordered or signed in. No customer detail was entered.
 
 ## Contents
 
-- [Decision](#decision)
+- [The first decision](#the-first-decision)
 - [Engagement record](#engagement-record)
 - [Three-surface map](#three-surface-map)
 - [Product truth matrix](#product-truth-matrix)
@@ -3088,28 +3107,50 @@ Async-only. First reply within one business day. [Scope and pricing](/services).
 
 Technical agent-readiness of turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-06. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
 
+## One product. Conflicting answers.
+
+Synthetic example from the sample audit report, product data. One product, three published sources, and they disagree.
+
+- Visible product page: A real price and lead time
+- Structured product data: €0.00 · InStock
+- Product API: Empty price · Marked purchasable
+
+An assistant may quote the wrong price or availability.
+
+First fix: make the published product facts agree.
+
+Acceptance check: compare the corrected page, structured data and API against the same product record.
+
+Fictional company and readings. This issue is not scored by the sample's scanner.
+
+[Inspect the finding](/samples/audit-report#f1)
+
 ## Choose the right starting point
 
 Choose a focused Shopify check or a broader website and API audit. Each has a fixed scope and can be bought on its own.
 
 - [Shopify agent storefront check](/shopify-agent-storefront-check). €999. A focused check of what agent-shopping surfaces return for selected products in your Shopify store. It compares product information and documents the buyer journey before payment. Up to three product variants in one market, with a prioritised correction plan. Delivered within 48 hours of the agreed written kickoff.
-- [Website and API agent-readiness audit](/services). €4,300. A third-party technical scan, manual review and a documented question set tested across selected AI assistants. You receive written findings, prioritised fixes and one included re-scan. Delivered in two weeks.
+- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. A third-party technical scan, manual review and a documented question set tested across selected AI assistants. You receive written findings, prioritised fixes and one included re-scan. Delivered in two weeks.
 
 Prices exclude VAT. Implementation is purchased separately.
 
-See what each report contains before you buy: the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check).
+Implementation, ongoing advisory, agent operations and MCP server design are scoped separately. [Compare all services](/services).
 
-## From an observed problem to a checkable fix
+## Work you can inspect
 
-The report connects each finding to evidence, its impact and the next action. Your team can use it without purchasing implementation.
+Sample deliverables. Read the audit and Shopify sample reports to see the structure, evidence and correction plans. Both use invented businesses and are clearly labelled as synthetic examples. [Sample audit report](/samples/audit-report) and [sample Shopify report](/samples/shopify-agent-storefront-check).
 
-Evidence. See what was tested, what was returned and where the issue appeared.
+Published research. Read the methods and limitations behind the website measurements, AI-answer study and follow-up research. None of them is a result a paying client achieved. [Website agent-readiness study](/blog/website-agent-readiness-567-sites), [What AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit) and [Thirty days after the brief](/blog/thirty-days-after-the-brief).
 
-Priorities. Understand which corrections deserve attention first and why.
+Public reference build. turva.dev is my own reference build, measured by the same independent scanner. Its published technical checks have named sources and measurement dates, and the worker source is public. [Public scanner](https://isitagentready.com/) and [read the source](https://github.com/erekola/turva-worker).
 
-Acceptance checks. Know what a successful correction should look like and how to verify it.
+Scanner: isitagentready.com (third party, Cloudflare). Discoverability, Content Accessibility, Bot Access Control, and API, Auth, MCP and A2A Discovery: 100/100. Commerce: 100/100. Verified 100/100, Level 5, Agent-Native.
 
-The website and API audit combines technical checks with observed AI answers. The Shopify check focuses on product information and the supported shopping journey. The detailed scope is listed with each service.
+turva.dev publishes its own security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-09-06. They are separate measurements, not the same score.
+
+- Hardenize: all 24 categories passed. https://www.hardenize.com/report/turva.dev
+- Internet.nl website test: 98/100. https://internet.nl/site/turva.dev/
+- Internet.nl email test: 95/100. https://internet.nl/mail/turva.dev/
 
 ## A clear process, in writing
 
@@ -3119,39 +3160,7 @@ Receive the findings. I run the agreed checks and deliver the evidence, prioriti
 
 Make and verify the corrections. Your team can implement the plan, or you can purchase implementation. The included follow-up check is defined by the service: an audit re-scan within 30 days of the report, or a Shopify retest of up to two corrected items within 14 days.
 
-No calls or calendar bookings. Questions, decisions and findings stay in writing.
-
-## Work you can inspect
-
-Sample deliverables. Read the audit and Shopify sample reports to see the structure, evidence and correction plans. Both use invented businesses and are clearly labelled as synthetic examples. [Sample audit report](/samples/audit-report) and [sample Shopify report](/samples/shopify-agent-storefront-check).
-
-Public reference build. turva.dev is my own reference build. Its published technical checks have named sources and measurement dates, and the worker source is public. [Public scanner](https://isitagentready.com/) and [read the source](https://github.com/erekola/turva-worker).
-
-Published research. Read the methods and limitations behind the website measurements, AI-answer study and follow-up research. [Website agent-readiness study](/blog/website-agent-readiness-567-sites), [What AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit) and [Thirty days after the brief](/blog/thirty-days-after-the-brief).
-
-Scanner: isitagentready.com (third party, Cloudflare). Discoverability, Content Accessibility, Bot Access Control, and API, Auth, MCP and A2A Discovery: 100/100. Commerce: 100/100. Verified 100/100, Level 5, Agent-Native.
-
-turva.dev publishes its own security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-09-06.
-
-- Hardenize: all 24 categories passed. https://www.hardenize.com/report/turva.dev
-- Internet.nl website test: 98/100. https://internet.nl/site/turva.dev/
-- Internet.nl email test: 95/100. https://internet.nl/mail/turva.dev/
-
-## Support beyond the first report
-
-Implementation turns the agreed correction plan into working changes. Ongoing advisory records technical and AI-visibility measurements over time, reviews changes and helps your team choose the next priorities.
-
-Agent operations and MCP server design are available as separately scoped engagements around the systems, data and permissions involved.
-
-[Explore all services](/services).
-
-## Work directly with Erik Rekola
-
-I'm an independent consultant based in Tampere, Finland. I work on agent-readiness audits, technical reviews and implementation.
-
-You work directly with me throughout the engagement. Scope, findings and decisions are documented in writing.
-
-[About turva.dev](/company).
+You work directly with Erik Rekola, an independent consultant in Tampere, Finland. Scope, findings and decisions stay in writing, with no calls or calendar bookings. [About turva.dev](/company).
 
 ## Frequently asked
 
@@ -3169,13 +3178,13 @@ No. The audit records observed results, identifies issues and defines how correc
 
 **Can our own team implement the findings?**
 
-Yes. The report includes correction instructions and acceptance checks. A €499 implementation add-on covers the diagnosis's own fix list when bought with that diagnosis and when the required access is arranged in advance. Work outside that list is scoped separately at €1,500 per day. The services page sets out the prerequisites and scope.
+Yes. The report includes correction instructions and acceptance checks. A €499 implementation add-on covers the diagnosis's own fix list when bought with that diagnosis and when the required access is arranged in advance. Work outside that list is scoped separately at €1,500 per day. Each service page sets out the prerequisites and scope.
 
 **What access is required?**
 
 The audit does not require production credentials. If you purchase implementation, any required deployment, DNS, Shopify or repository permissions are agreed separately and limited to the work being carried out.
 
-[Implementation scope and access requirements](/services).
+Details for each service: [website and API audit](/agent-readiness-audit) and [Shopify agent storefront check](/shopify-agent-storefront-check).
 
 ## Contact
 
@@ -3238,7 +3247,7 @@ Async-only. First reply within one business day. Prices exclude VAT.
 ## Choose a starting point
 
 - [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Find out whether selected products, prices and availability agree across the agent-shopping surfaces your store exposes. One store, up to three product and variant pairs, one market, with buyer-journey evidence and a prioritised correction plan. Delivered within 48 hours of the agreed written kickoff.
-- [Website and API agent-readiness audit](/services#audit). €4,300. A third-party technical scan, manual review of your website and API surfaces, and a documented question set tested across selected AI assistants. Written findings, a prioritised correction plan and one included re-scan. Delivered in two weeks.
+- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. A third-party technical scan, manual review of your website and API surfaces, and a documented question set tested across selected AI assistants. Written findings, a prioritised correction plan and one included re-scan. Delivered in two weeks.
 
 See what each report contains before you buy: the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check).
 
@@ -3246,22 +3255,11 @@ See what each report contains before you buy: the [sample audit report](/samples
 
 **€999. 48 hours. Fixed scope.**
 
-What an AI shopper actually receives from one live Shopify store, tested across the three agent surfaces this check covers and reported with the evidence attached.
+What an AI shopper actually receives from one live Shopify store, tested across the three agent surfaces this check covers and reported with the evidence attached. One store, one market, up to three product and variant pairs.
 
-What you get:
-- A three-surface map of browser WebMCP, remote Storefront and UCP MCP, and Catalog and Agentic channels
-- A product truth matrix comparing what each surface says about the tested products
-- Buyer-journey evidence with the tool, the input, the observed result and the exact stop before payment
-- A prioritised correction plan of up to five changes, each with an owner and an acceptance check
-- One retest of up to two corrected items within 14 days
+Five written deliverables: a three-surface map, a product truth matrix, buyer-journey evidence with the exact stop before payment, a prioritised correction plan of up to five changes with owners and acceptance checks, and one retest of up to two corrected items within 14 days.
 
-What you do not get:
-- Calls or meetings
-- Implementation of the corrections, which is bought separately and described under Implementation below
-- A penetration test, or any Shopify, MCP, WebMCP or UCP certification
-- A test order, because the cart lifecycle stops before payment
-
-The audit is not a prerequisite. The full scope, the exclusions and the public preflight are on the [product page](/shopify-agent-storefront-check).
+No calls, no test order and no implementation of the corrections, which is bought separately and described under Implementation below. The audit is not a prerequisite. The full scope, the exclusions, the preflight and the refund terms are on the [product page](/shopify-agent-storefront-check).
 
 Suited for D2C Shopify stores that want documented evidence of what an agent receives from them today.
 
@@ -3271,32 +3269,9 @@ Suited for D2C Shopify stores that want documented evidence of what an agent rec
 
 A third-party technical scan, manual review of your website and API surfaces, and a documented question set tested across selected AI assistants. The report separates technical findings from observed AI answers and explains what to correct, why it matters and how to verify it.
 
-What you get:
-- An independent scanner runs against the site or API, and every check it runs is recorded one by one rather than as one headline number
-- Manual review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers
-- Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms
-- Your published web security scans read alongside the agent checks, so the report rests on measurements you can re-run yourself
-- A documented question set put to several AI assistants, recording what they answer about the site or API today and whether they name it when asked about its category rather than by name
-- Written report with findings prioritised by their impact on users and agent behaviour, with implementation effort and scanner effects recorded separately
-- A fix instruction for every finding, and a link to the guide on this site for that surface where there is one, so your team can do the work without buying implementation
-- One round of written follow-up questions
-- One re-scan after the fixes, within 30 days of the report and included in the price
+You receive the recorded checks and manual findings with their evidence, the question set and the observed answers, a correction plan ordered by impact with instructions and acceptance checks, one round of written follow-up questions and one included re-scan within 30 days of the report. Large sites are covered in full.
 
-What you do not get:
-- Calls or meetings
-- Implementation of the fixes, which is bought separately and described under Implementation below
-- Ongoing monitoring, which is the advisory engagement
-
-How the follow-up is verified:
-- Technical corrections are checked with the relevant scanner or a direct test of the surface
-- AI visibility is observed again with the same documented question set
-- The follow-up results are shown beside the baseline, with dates, scope and any change in the measurement method
-
-Levels move with the check set. The same site can read Level 1 on a full run and Level 2 on a narrower one, so the report names the checks that failed and what each one costs to fix, and leaves the headline number out of it.
-
-Large sites are covered in full. If a site is big enough that the live checks reach a tool quota, the quota is raised rather than the coverage reduced. Once the audit is complete, the fixes it lists are typically about a day of implementation work, whether your team does them or I do. That figure is an estimate scoped to the findings this audit lists, not a fixed quote, and the audit is what identifies that work and orders it. The report carries the instructions for that work, so the implementation day is a choice rather than a condition.
-
-A synthetic [sample report](/samples/audit-report) is public. It uses an invented site, shows the per-check scanner readings, the manual review, the AI visibility run, nine findings with their owners and acceptance tests, and the decisions the company makes, and it is not a report on a real client.
+No calls, no ongoing monitoring, which is the advisory engagement below, and no implementation of the fixes, which is bought separately. The full scope, the deliverables and the questions before you start are on the [product page](/agent-readiness-audit).
 
 Suited for teams that want a clear picture of where they stand before deciding what to do about it.
 
@@ -3305,6 +3280,8 @@ Suited for teams that want a clear picture of where they stand before deciding w
 **€1,500 per day. Scoped per task. €499 for a diagnosis's own fix list, bought with that diagnosis.**
 
 Your team can implement the report, or you can purchase implementation. A €499 add-on covers the diagnosis's own complete fix list when bought with that diagnosis and when the required access is arranged in advance. Work outside that list is scoped separately at €1,500 per day.
+
+Once an audit is complete, the fixes it lists are typically about a day of implementation work, whether your team does them or I do. That figure is an estimate scoped to the findings the audit lists, not a fixed quote, and the audit is what identifies that work and orders it. The report carries the instructions for that work, so the implementation day is a choice rather than a condition.
 
 For a Shopify check, the add-on requires collaborator access to the store. For an audit, it requires an edge runtime, deployment access and any other access the listed fixes need, such as DNS. If those prerequisites cannot be arranged, the add-on is not sold and your team still receives the correction instructions.
 
@@ -3447,6 +3424,115 @@ I use AI tools in the work. They run on a local workspace holding the files a ta
 ## How to start
 
 Email <mailto:info@turva.dev> with the site, API or store you want examined and the question the work should answer. I respond within one business day with a fixed quote and a start date.
+
+No calls or calendar links, and no discovery sessions.
+
+All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
+`,
+
+  "/agent-readiness-audit": `# Website and API agent-readiness audit
+
+Find out what automated clients can read, where your published facts disagree and what AI assistants currently say about your product. Receive documented findings, priorities and correction instructions your team can use.
+
+€4,300 plus VAT. Two weeks. Fixed scope.
+
+All work is handled in writing. First reply within one business day.
+
+## When this audit is useful
+
+The audit fits when one of these questions is open. It records what is there today and assumes nothing about your site in advance.
+
+- Your published product facts may disagree. A page, its structured data and an API can each say something different, and an assistant reads all three.
+- An automated client cannot find or read content or an API that matters to you, and you want the evidence of what it receives today.
+- You need a documented baseline of what AI assistants answer about your product before deciding what to change.
+
+## A finding that changes the fix order
+
+In the synthetic sample report, the invented company Northwind Fasteners Oy publishes one product three ways.
+
+- Visible product page: A real price and lead time
+- Structured product data: €0.00 · InStock
+- Product API: Empty price · Marked purchasable
+
+The scanner scores none of this, and it is still the first fix in the report. An assistant that reads wrong data quotes it with confidence, while a missing file only makes it guess. The scored gaps, markdown, llms.txt, headers and discovery files, follow in the same plan with their own acceptance tests. Fictional company and readings.
+
+[Inspect the finding in the sample report](/samples/audit-report#f1)
+
+## What the audit covers
+
+Three kinds of evidence, kept apart in the report because they fail differently.
+
+### Technical scan
+
+An independent scanner, isitagentready.com, runs against the site or API on its default profile, and every check it runs is recorded one by one rather than as one headline number. The level moves with the check set the scanner runs on the day, so the report names the checks that failed and what each one costs to fix, and leaves the headline number out of it.
+
+### Manual review
+
+Review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers. Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms. Whether a page, its structured data and its API publish the same facts, which no scanner scores. Your published web security scans are read alongside the agent checks, so the report rests on measurements you can re-run yourself.
+
+### Observed AI answers
+
+A documented question set put to several AI assistants, recording what they answer about the site or API today and whether they name it when asked about its category rather than by name. The questions, the assistants and the conditions are written down so the run can be repeated.
+
+Large sites are covered in full. If a site is big enough that the live checks reach a tool quota, the quota is raised rather than the coverage reduced.
+
+## What you receive
+
+- Recorded technical checks and manual findings, with the evidence behind each issue.
+- A documented question set and the answers observed across selected AI assistants.
+- A correction plan ordered by impact, with instructions and acceptance checks.
+- One round of written follow-up questions and one included re-scan within 30 days of the report.
+
+Findings are prioritised by their impact on users and agent behaviour, with implementation effort and scanner effects recorded separately. Every finding carries a fix instruction and, where this site has a guide for that surface, a link to it, so your team can do the work without buying implementation.
+
+What you do not get:
+- Calls or meetings
+- Implementation of the fixes, which is optional and described below
+- Ongoing monitoring, which is the advisory engagement on the services page
+
+A synthetic [sample report](/samples/audit-report) shows the format: the per-check scanner readings, the manual review, the AI visibility run, nine findings with their owners and acceptance tests, and the decisions the company makes. It is not a report on a real client.
+
+## How the two weeks work
+
+Agree the scope in writing. Send the URL and the question the audit should answer. I confirm the scope, price and start date in writing, and no production credentials are needed.
+
+Run the checks and document the findings. The scanner run, the manual review and the AI answer run happen inside the two weeks, each dated and recorded.
+
+Deliver the report and the correction plan. Findings, evidence, priorities, instructions and acceptance checks arrive in writing, with one round of written follow-up questions.
+
+The included re-scan is separate from the two weeks: one re-scan within 30 days of the report, on the day you name, after the corrections have been made.
+
+## Implementation is optional
+
+Your team can implement the report. A €499 add-on covers the diagnosis's complete fix list when bought with the diagnosis and when the required access is arranged in advance. If those prerequisites cannot be arranged, the add-on is not sold and your team still receives the correction instructions. Work outside that list is scoped separately at €1,500 per day.
+
+For an audit, the add-on requires an edge runtime in front of your origin, deployment access and any other access the listed fixes need, such as DNS. The access is arranged in writing before the work starts and limited to the work. [Implementation scope and access requirements](/services#implementation).
+
+## Frequently asked
+
+**What access does the audit need?**
+
+None beyond public surfaces. The audit does not require production credentials, a login or a code repository. Only purchased implementation needs deployment, DNS or repository access, agreed separately and limited to the work.
+
+**Is the whole site covered?**
+
+Yes. Large sites are covered in full. If the live checks reach a tool quota, the quota is raised rather than the coverage reduced.
+
+**Can our own team implement the findings?**
+
+Yes. Every finding carries a fix instruction and an acceptance check, and the report is written so your team can do the work. Implementation is a separate purchase, not a condition.
+
+**How are corrections verified?**
+
+Technical corrections are checked with the relevant scanner or a direct test of the surface. AI visibility is observed again with the same documented question set. Follow-up results are shown beside the baseline, with dates, scope and any change in the measurement method.
+
+**Is everything handled in writing?**
+
+Yes. There are no calls or meetings. Scope, findings and answers move in writing, and questions get a response within one business day.
+
+## How to start
+
+Email <mailto:info@turva.dev> with the site or API URL and the question the audit should answer. I respond within one business day with a fixed quote and a start date.
 
 No calls or calendar links, and no discovery sessions.
 
@@ -3636,20 +3722,27 @@ Send the URL and the question you want answered. Everything is handled in writin
 
   "/contact": `# Start with the URL and the question
 
-Send your website, API or Shopify store URL and tell me what you want to understand. I'll reply within one business day with the next step, proposed scope and start date.
+Send your website, API or Shopify store URL and the question you need answered. I'll reply within one business day with the next step, proposed scope and start date. Everything is handled in writing.
 
-Everything is handled in writing. No calls or calendar bookings.
+## Website or API audit
+
+Include the URL and the question the audit should answer.
+
+[Ask about a website or API audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
+
+## Shopify check
+
+Include your store URL, primary market and up to three priority products.
+
+[Ask about a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A)
 
 ## Email
 
+Not sure which fits? Email info@turva.dev with the URL and the question.
+
 - **Email:** <mailto:info@turva.dev>
 
-For project requests, URLs and longer messages. Each link below opens a message to info@turva.dev with the subject set and the fields the first reply needs. Nothing is sent until you send it, and the same fields typed into a plain email work just as well.
-
-- [Ask about a website or API audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A): include the URL and the question the audit should answer.
-- [Ask about a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A): include your storefront URL, .myshopify.com domain, primary market and up to three priority products.
-
-Not sure which service fits? Send the URL and the question. Existing scanner results are welcome, but you do not need them to get started.
+Each link above opens a message to info@turva.dev with the subject set and the fields the first reply needs. Nothing is sent until you send it, and the same fields typed into a plain email work just as well. Existing scanner results are welcome, but you do not need them to get started.
 
 ## Other channels
 
@@ -3659,16 +3752,6 @@ Not sure which service fits? Send the URL and the question. Existing scanner res
 Short questions go to Signal, longer documents by email. Open Signal directly, or scan the code with your phone.
 
 Signal is end-to-end encrypted. Scanning shares no account of yours.
-
-## What to include
-
-A useful first message includes:
-
-- The website, API or store to be examined (URL)
-- The question you want answered, or the scope you have in mind (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design)
-- Any current scanner results, if you have run them
-
-If you do not have scanner results yet, that is fine. The work starts with running them.
 
 ## Response time and languages
 
@@ -4905,7 +4988,7 @@ Most catalogs lose the agent before checkout. A price that lives only in rendere
 
 Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built and verified its own agent commerce surface this way, across A2A, AP2, ACP and x402, checked by an independent scanner.
 
-For a Shopify store, the [Shopify agent storefront check](/shopify-agent-storefront-check) reads selected products across the browser WebMCP tools, the Storefront and UCP MCP and the Agentic Catalog, records the buyer journey up to the stop before payment, and delivers a correction plan. For a website or API, the [audit](/services#audit) covers the commerce surfaces among the rest.
+For a Shopify store, the [Shopify agent storefront check](/shopify-agent-storefront-check) reads selected products across the browser WebMCP tools, the Storefront and UCP MCP and the Agentic Catalog, records the buyer journey up to the stop before payment, and delivers a correction plan. For a website or API, the [audit](/agent-readiness-audit) covers the commerce surfaces among the rest.
 
 ## Frequently asked
 
@@ -5111,7 +5194,7 @@ Facts stated as data rather than prose, and the same fact visible in more than o
 // reads all three against this order. Round 17 (2026-09-03) found the blog ahead of the home
 // page in llms-full.txt and the pricing on line 78 of llms.txt; the order lived in five hand
 // lists that had drifted apart. It lives here now.
-var PRIMARY_PATHS = ["/", "/services", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/company", "/contact", "/legal"];
+var PRIMARY_PATHS = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/company", "/contact", "/legal"];
 var AUX_PATHS = ["/badge", "/auth.md", "/samples/audit-report", "/samples/shopify-agent-storefront-check"];
 var _guideOrderCache = null;
 function guideOrder() {
@@ -5646,7 +5729,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.146.0",
+    "version": "3.147.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5754,7 +5837,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"tE9ZXZnem3TrAM8mXRn0E1wxYAP_kfNkrE03Cq_HXLNNpvPMKv0YI3YBJMp5gG4JQhDvEaBTY8G6WCZfmi4bDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dBBlH4oRS8Nqc4LoxG0Z7WMdi3UeDJq8hcIpbfNjs1qp41RlZrR8JRNxR1JbJva5Hd14uB7fA_ZBPPuriVY6Bw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"tE9ZXZnem3TrAM8mXRn0E1wxYAP_kfNkrE03Cq_HXLNNpvPMKv0YI3YBJMp5gG4JQhDvEaBTY8G6WCZfmi4bDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LiiUERAbOQt9bjHZniXcJUD44jnhmLxbw_C3Rj6tiBoejEIErz622qf6Z35LBx_XWxBF6XuSTdMDIByxRJSpDg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -5914,7 +5997,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.146.0",
+  "version": "3.147.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6444,10 +6527,11 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-07";
+var SITEMAP_LASTMOD = "2026-09-08";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
+  ["/agent-readiness-audit", "monthly", "0.9"],
   ["/shopify-agent-storefront-check", "monthly", "0.9"],
   ["/tools", "monthly", "0.6"],
   ["/llms-txt-validator", "monthly", "0.6"],
@@ -6584,7 +6668,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -6916,6 +7000,12 @@ var META_BY_PATH = {
     image: "/og-services.jpg",
     imageAlt: "turva.dev services card: the Shopify agent storefront check €999, the audit €4,300, advisory €3,000 per month, implementation €1,500 per day, and two more on request."
   },
+  "/agent-readiness-audit": {
+    title: "Website and API agent-readiness audit, €4,300 · turva.dev",
+    description: "Fixed-scope audit of what automated clients read, where published facts disagree and what AI assistants say. Findings, priorities and fixes in two weeks.",
+    image: "/og-agent-readiness-audit.jpg",
+    imageAlt: "turva.dev service card: the website and API agent-readiness audit, €4,300 fixed scope, two weeks, technical scan, manual review and observed AI answers with a correction plan."
+  },
   "/shopify-agent-storefront-check": {
     title: "Shopify agent storefront check, €999 · turva.dev",
     description: "Check selected Shopify products across three agent-shopping surfaces. Written evidence and a correction plan within 48 hours of the agreed kickoff.",
@@ -7152,7 +7242,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 // second copy would be a second price list, and verify.mjs reads this one against facts.json.
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
 {"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
-{"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API, plus manual review of /.well-known/ manifests, JSON-LD and head metadata, and a documented question set put to several AI assistants. Written report with prioritized fix list.","url":"https://turva.dev/services","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. An MCP server is a separate engagement.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}}`;
@@ -7955,6 +8045,18 @@ function mdOfferCards(path, heading, linkLabel) {
     return `<a class="card" href="${href}"><span class="card-top"><span class="name">${escapeHtml(name)}</span><span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span><span class="go">${label}</span></a>`;
   }).join("\n      ");
 }
+function mdActionCards(path, headings) {
+  // /contact (2026-09-08): one card per prepared message, the section's paragraphs and
+  // its last "[label](href)" line as a button-sized action. The href is the twin's, so the
+  // prefilled mailto stays in one place.
+  return headings.map((h) => {
+    const blocks = mdSection(path, h).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+    const last = blocks[blocks.length - 1].match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (!last) throw new Error("mdActionCards: " + h + " does not end in a link line");
+    const paras = blocks.slice(0, -1).map((b) => `<p>${renderInline(b.replace(/\s*\n\s*/g, " "))}</p>`).join("");
+    return `<div class="card"><h2>${renderInline(h)}</h2>${paras}<a class="btn" href="${escapeHtml(last[2])}">${escapeHtml(last[1])}</a></div>`;
+  }).join("\n      ");
+}
 function mdToolCards(path, headings) {
   // One card per section: the section's paragraphs, then its last "[label](href)" line as the action.
   return headings.map((h) => {
@@ -8070,6 +8172,7 @@ var GUIDE_PAGE_FAQ = {
   "/blog/what-ai-assistants-call-an-agent-readiness-audit": mdFaqBlocks("/blog/what-ai-assistants-call-an-agent-readiness-audit", "Frequently asked").pairs,
   "/blog/website-agent-readiness-567-sites": mdFaqBlocks("/blog/website-agent-readiness-567-sites", "Frequently asked").pairs,
   "/services": mdFaqBlocks("/services", "Frequently asked").pairs,
+  "/agent-readiness-audit": mdFaqBlocks("/agent-readiness-audit", "Frequently asked").pairs,
   "/shopify-agent-storefront-check": mdFaqBlocks("/shopify-agent-storefront-check", "Frequently asked").pairs,
   "/llms-txt-validator": mdFaqBlocks("/llms-txt-validator", "Frequently asked").pairs,
   "/guides/agentic-resource-discovery": mdFaqBlocks("/guides/agentic-resource-discovery", "Frequently asked").pairs,
@@ -8150,6 +8253,41 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
         "priceCurrency": "EUR",
         "valueAddedTaxIncluded": false,
         "description": "\u20ac999 fixed price, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days. VAT (25,5%) added per Finnish law."
+      }
+    }
+  };
+  const json = JSON.stringify(svc).replace(/<\/script/gi, "<\\/script");
+  return `<script type="application/ld+json">\n${json}\n<\/script>`;
+}
+
+function buildAuditServiceJsonLd(canonicalUrl) {
+  // The same audit as the OfferCatalog row in SCHEMA_SERVICE: one product, its own page URL,
+  // the price from facts.json through the same literal the catalog uses.
+  const url = canonicalUrl || "https://turva.dev/agent-readiness-audit";
+  const svc = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": url + "#service",
+    "name": "Website and API agent-readiness audit",
+    "serviceType": "Agent-readiness audit",
+    "provider": { "@id": "https://turva.dev/#business" },
+    "areaServed": { "@type": "Place", "name": "Worldwide" },
+    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report. Delivered in two weeks.",
+    "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
+    "offers": {
+      "@type": "Offer",
+      "url": url,
+      "price": "4300",
+      "priceCurrency": "EUR",
+      "priceValidUntil": PRICE_VALID_UNTIL,
+      "availability": "https://schema.org/InStock",
+      "businessFunction": "https://schema.org/Sell",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "price": "4300",
+        "priceCurrency": "EUR",
+        "valueAddedTaxIncluded": false,
+        "description": "\u20ac4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."
       }
     }
   };
@@ -8247,14 +8385,22 @@ function footerHtml(kieli) { const fi = kieli === "fi"; return `<footer class="t
 // services page; a guide about a free tool or about Shopify points at that instead. Short
 // lines by design: the twin gate reads any paragraph over 80 characters as prose.
 var SAMPLE_HEAD = {
-  "/samples/audit-report": { eyebrow: "Synthetic sample report", primary: ["Jump to the findings", "#findings"], secondary: ["View audit scope and pricing", "/services#audit"] },
-  "/samples/shopify-agent-storefront-check": { eyebrow: "Synthetic sample report", primary: ["View the product comparison", "#product-truth-matrix"], secondary: ["View Shopify check scope", "/shopify-agent-storefront-check"] }
+  "/samples/audit-report": { eyebrow: "Synthetic sample report", after: "the-first-decision", primary: ["Read the evidence", "#f1"], secondary: ["View audit scope and pricing", "/agent-readiness-audit#scope"] },
+  "/samples/shopify-agent-storefront-check": { eyebrow: "Synthetic sample report", after: "the-first-decision", primary: ["View the product comparison", "#product-truth-matrix"], secondary: ["View Shopify check scope", "/shopify-agent-storefront-check"] }
 };
 // Kierros 4 (2026-09-06, worker-02): Tek-362 renamed headings in three guides and the id is
 // derived from the heading, so ten fragment addresses that had been served stopped resolving.
 // The implementation guide keeps existing anchors, so each old id is rendered as an empty
 // span before the heading that now carries the content. The twin does not change.
 var GUIDE_ANCHOR_ALIASES = {
+  // Sample reports (2026-09-08): a short permanent anchor for the first finding, and the old
+  // Decision id of the Shopify sample after its heading became The first decision.
+  "/samples/audit-report": {
+    "f1-every-product-publishes-a-price-of-0-and-an-availability-of-instock-on-all-three-surfaces": ["f1"]
+  },
+  "/samples/shopify-agent-storefront-check": {
+    "the-first-decision": ["decision"]
+  },
   "/guides/open-knowledge-format": {
     "structure-versus-meaning": ["structural-interoperability-not-yet-semantic"]
   },
@@ -8275,14 +8421,17 @@ function withAnchorAliases(pathname, html) {
   if (!aliases) return html;
   let out = html;
   for (const [id, olds] of Object.entries(aliases)) {
-    const tag = `<h2 id="${id}">`;
-    if (!out.includes(tag)) throw new Error("anchor alias target missing: " + pathname + "#" + id);
+    // A target can be an h2 or, since 2026-09-08, an h3 (a finding inside a sample report).
+    const tag = [`<h2 id="${id}">`, `<h3 id="${id}">`].find((x) => out.includes(x));
+    if (!tag) throw new Error("anchor alias target missing: " + pathname + "#" + id);
     out = out.replace(tag, olds.map((o) => `<span id="${o}"></span>`).join("") + tag);
   }
   return out;
 }
 var GUIDE_NEXT = {
   default: 'Need a broader review? <a class="btn-ghost" href="/services">See the services</a>',
+  "/guides/agent-readiness-audit": 'Need the audit itself? <a class="btn-ghost" href="/agent-readiness-audit">See the website and API audit</a>',
+  "/guides/choosing-an-agent-readiness-audit": 'Need the audit itself? <a class="btn-ghost" href="/agent-readiness-audit">See the website and API audit</a>',
   "/guides/llms-txt": 'Check your own file: <a class="btn-ghost" href="/llms-txt-validator">Open the validator</a>',
   "/guides/agentic-commerce-readiness": 'Selling on Shopify? <a class="btn-ghost" href="/shopify-agent-storefront-check">See the Shopify check</a>',
   "/guides/agent-commerce-discovery": 'Selling on Shopify? <a class="btn-ghost" href="/shopify-agent-storefront-check">See the Shopify check</a>',
@@ -8333,11 +8482,24 @@ function serveGuideHtml(pathname, canonicalUrl) {
   const withToc = toc ? withChecked.replace(/(<\/p>\n)(?=<h2 )/, `$1${toc}\n`) : withChecked;
   // Sample reports (Tek-360): the synthetic label stands above the H1, and two actions follow
   // the introduction. Both come from SAMPLE_HEAD; labels are short by design.
+  // Since 2026-09-08 the two actions follow the section SAMPLE_HEAD.after names (The first
+  // decision), and the twin's "Illustrative report date" line renders as a date line. Both
+  // fail closed: a sample whose section or date line is missing does not render.
   const sample = SAMPLE_HEAD[pathname];
-  const withSample = sample
-    ? withToc.replace(/^<h1>/, `<p class="eyebrow">${sample.eyebrow}</p>\n<h1>`)
-        .replace(/(<\/p>\n)(?=<h2 )/, `$1<div class="cta"><a class="btn" href="${sample.primary[1]}">${sample.primary[0]}</a><a class="btn-ghost" href="${sample.secondary[1]}">${sample.secondary[0]}</a></div>\n`)
-    : withToc;
+  let withSample = withToc;
+  if (sample) {
+    const afterTag = `<h2 id="${sample.after}">`;
+    const a0 = withToc.indexOf(afterTag);
+    if (a0 < 0) throw new Error("sample section missing: " + pathname + "#" + sample.after);
+    const a1 = withToc.indexOf("\n<h2 ", a0 + afterTag.length);
+    if (a1 < 0) throw new Error("sample section is the last section: " + pathname + "#" + sample.after);
+    const ctaHtml = `\n<div class="cta"><a class="btn" href="${sample.primary[1]}">${sample.primary[0]}</a><a class="btn-ghost" href="${sample.secondary[1]}">${sample.secondary[0]}</a></div>`;
+    withSample = withToc.slice(0, a1) + ctaHtml + withToc.slice(a1);
+    withSample = withSample.replace(/^<h1>/, `<p class="eyebrow">${sample.eyebrow}</p>\n<h1>`);
+    const dateRe = /<p>(Illustrative report date: [^<]+)<\/p>/;
+    if (!dateRe.test(withSample)) throw new Error("sample carries no illustrative report date line: " + pathname);
+    withSample = withSample.replace(dateRe, '<p class="date">$1</p>');
+  }
   const next = navSection === "/guides"
     ? `<aside class="next"><p>${GUIDE_NEXT[pathname] || GUIDE_NEXT.default}</p></aside>`
     : "";
@@ -8476,7 +8638,6 @@ function serveHomeHtml(canonicalUrl) {
   // the markdown agree by construction and the Measured-date gate in verify.mjs reads one copy.
   const evMeasured = ((lead.paras[2] || "").match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
   if (!evMeasured) throw new Error("home lead carries no Measured date for the scan row");
-  const hpMeasured = ` &middot; measured ${evMeasured}`;
   // The hero H1 is the twin's title. The words "AI agents" are the one green highlight the
   // layout guide (2026-09-06, Tek-354) allows in the heading; if the title stops carrying them,
   // the heading renders plain and nothing breaks.
@@ -8490,7 +8651,7 @@ function serveHomeHtml(canonicalUrl) {
   const offerParas = mdParas("/", "Choose the right starting point", 3);
   const offerRaw = mdSection("/", "Choose the right starting point").split("\n").filter((l) => l.startsWith("- "));
   if (offerRaw.length !== 2) throw new Error("home starting-point list does not carry exactly two offers: " + offerRaw.length);
-  const OFFER_LINK = { "/shopify-agent-storefront-check": "Explore the Shopify check", "/services": "Explore the audit" };
+  const OFFER_LINK = { "/shopify-agent-storefront-check": "Explore the Shopify check", "/agent-readiness-audit": "Explore the audit" };
   const offerCards = offerRaw.map((line) => {
     const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)$/);
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
@@ -8498,15 +8659,29 @@ function serveHomeHtml(canonicalUrl) {
     if (!OFFER_LINK[href]) throw new Error("home offer has no link label for " + href);
     return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span><span class="offer-price">${escapeHtml(price)}</span></span><span class="offer-covers">${escapeHtml(covers)}</span><span class="offer-when">${escapeHtml(when)}</span><span class="offer-link">${OFFER_LINK[href]}</span></a>`;
   }).join("\n      ");
-  const gets = mdParas("/", "From an observed problem to a checkable fix", 5);
-  const getCards = gets.slice(1, 4).map((t) => titled(t, "deliverable")).map((c) => `<div class="step"><span class="step-t">${c.t}</span><p>${c.b}</p></div>`).join("\n      ");
-  const proc = mdParas("/", "A clear process, in writing", 4);
-  const procCards = proc.slice(0, 3).map((t, i) => titled(t, "process")).map((c, i) => `<div class="step"><span class="step-n">0${i + 1}</span><span class="step-t">${c.t}</span><p>${c.b}</p></div>`).join("\n      ");
+  // The hero card is one finding from the synthetic sample report (2026-09-08 brief, point 1).
+  // Its text is the twin section "One product. Conflicting answers.": an intro, three "Source:
+  // reading" rows, four short paragraphs and the link line. Fail closed on the shape, so a twin
+  // edit cannot render an empty row or drop the link.
+  const findHead = "One product. Conflicting answers.";
+  const findParas = mdParas("/", findHead, 6);
+  const findRows = mdLists("/", findHead)[0] || [];
+  if (findRows.length !== 3) throw new Error("home finding card does not carry exactly three source rows: " + findRows.length);
+  const findRowHtml = findRows.map((r, k) => {
+    const c = r.indexOf(": ");
+    if (c < 0) throw new Error("home finding row has no label: " + r);
+    // The page is the reference reading; the other two disagree with it. The word carries the
+    // meaning and the colour only repeats it (brief: colour never carries meaning alone).
+    const flag = k === 0 ? "" : '<span class="rc-flag">conflict</span>';
+    return `<div class="rc-row${k === 0 ? "" : " rc-bad"}"><dt>${r.slice(0, c)}</dt><dd>${r.slice(c + 2)}${flag}</dd></div>`;
+  }).join("\n          ");
+  const findLink = findParas[5].match(/^<a href="([^"]+)">([^<]+)<\/a>$/);
+  if (!findLink) throw new Error("home finding card does not end in a link line");
   const work = mdParas("/", "Work you can inspect", 5);
   const workCards = work.slice(0, 3).map((t) => titled(t, "inspect")).map((c) => `<div class="svc"><div class="svc-h"><span class="svc-t">${c.t}</span></div><p>${c.b}</p></div>`).join("\n      ");
   const secList = mdLists("/", "Work you can inspect")[0].map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      ");
-  const support = mdParas("/", "Support beyond the first report", 3);
-  const who = mdParas("/", "Work directly with Erik Rekola", 3);
+  const proc = mdParas("/", "A clear process, in writing", 4);
+  const procCards = proc.slice(0, 3).map((t, i) => titled(t, "process")).map((c, i) => `<div class="step"><span class="step-n">0${i + 1}</span><span class="step-t">${c.t}</span><p>${c.b}</p></div>`).join("\n      ");
   const contact = mdParas("/", "Contact", 3);
   const body = `<!doctype html>
 <html lang="en">
@@ -8546,7 +8721,7 @@ ${NAV_MOBILE_CSS}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
 main{max-width:none;margin:0;padding:0;}
 .page{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:0 clamp(24px,5vw,72px) 3rem;}
-.hero{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(48px,6vw,72px) clamp(24px,5vw,72px) 2.6rem;border-bottom:0.5px solid rgba(255,255,255,0.07);}
+.hero{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(48px,6vw,72px) clamp(24px,5vw,72px) clamp(40px,5vw,56px);border-bottom:0.5px solid rgba(255,255,255,0.07);}
 .hero-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:clamp(40px,4vw,48px);align-items:center;}
 .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1.1rem;}
 .hero h1{color:#F2F4F3;font-size:clamp(34px,4.2vw,56px);line-height:1.08;letter-spacing:-0.02em;margin:0 0 24px;font-weight:700;hyphens:manual;}
@@ -8565,17 +8740,17 @@ main{max-width:none;margin:0;padding:0;}
 .rcard{box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:24px;color:#C9D1CE;box-shadow:0 18px 40px rgba(0,0,0,0.28);}
 .rc-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 12px;margin:0 0 14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
 .rc-tag{color:#5DF18F;border:1px solid rgba(93,241,143,0.35);border-radius:999px;padding:.1rem .55rem;text-transform:none;letter-spacing:.02em;}
-.rc-title{margin:0 0 4px;font-size:1.25rem;line-height:1.25;font-weight:700;color:#F2F4F3;}
-.rc-client{margin:0 0 16px;font-size:.9rem;color:#9AA3A0;}
-.rc-list{list-style:none;margin:0 0 16px;padding:0;border-top:1px solid #2D3D3D;}
-.rc-list li{display:flex;gap:14px;align-items:baseline;padding:10px 0;border-bottom:1px solid #2D3D3D;font-size:.95rem;color:#F2F4F3;}
-.rc-n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;color:#5DF18F;font-weight:700;flex:0 0 auto;}
-.rc-foot{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;letter-spacing:.05em;color:#9AA3A0;}
-.hero-proof{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin:clamp(32px,4vw,44px) 0 0;padding:14px 0 0;border-top:1px solid #2D3D3D;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;color:#C9D1CE;}
-.hero-proof .hp-score{color:#5DF18F;font-weight:700;font-size:1.15rem;}
-.hero-proof .hp-src{color:#9AA3A0;}
-.hero-proof a{margin-left:auto;color:#F2F4F3;border-bottom:1px solid rgba(255,255,255,0.3);padding:.15rem 0;}
-.hero-proof a:hover{color:#5DF18F;border-color:#5DF18F;text-decoration:none;}
+.rcard h2.rc-title{margin:0 0 14px;font-size:1.25rem;line-height:1.25;letter-spacing:-0.01em;font-weight:700;color:#F2F4F3;}
+.rc-cmp{margin:0 0 14px;border-top:1px solid #2D3D3D;}
+.rc-row{padding:8px 0;border-bottom:1px solid #2D3D3D;}
+.rc-row dt{margin:0 0 2px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;}
+.rc-row dd{margin:0;font-size:.95rem;line-height:1.4;color:#F2F4F3;overflow-wrap:anywhere;}
+.rc-bad dd{color:#F2F4F3;}
+.rc-flag{display:inline-block;margin-left:8px;vertical-align:baseline;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:#F1B27F;border:1px solid rgba(241,178,127,0.45);border-radius:999px;padding:.05rem .5rem;}
+.rc-impact{margin:0 0 10px;font-size:.98rem;line-height:1.45;color:#F2F4F3;font-weight:600;}
+.rc-fix{margin:0 0 8px;font-size:.88rem;line-height:1.5;color:#C9D1CE;}
+.rc-fix b{color:#5DF18F;font-weight:700;}
+.rc-foot{margin:12px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;letter-spacing:.03em;line-height:1.5;color:#9AA3A0;}
 .rc-more{display:inline-block;margin:16px 0 0;font-size:.9rem;font-weight:600;color:#5DF18F;border-bottom:1px solid rgba(93,241,143,0.4);padding:.1rem 0;}
 .rc-more:hover{border-color:#5DF18F;text-decoration:none;}
 .offers{max-width:68rem;margin:0 auto;padding:2.2rem clamp(24px,5vw,72px) 2rem;border-top:0;box-sizing:content-box;}
@@ -8596,6 +8771,7 @@ main{max-width:none;margin:0;padding:0;}
 .board{margin:0 0 1rem;border:1px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.25rem;}
 .board-top{display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline;justify-content:space-between;margin:0 0 .9rem;}
 .board-head{font-size:.92rem;color:#F2F4F3;font-weight:600;}
+.board-head .bh-date{color:#9AA3A0;font-weight:400;}
 .board-src{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;color:#9AA3A0;text-decoration:none;}
 .board-src:hover{color:#5DF18F;}
 .board-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:0 0 1rem;}
@@ -8640,7 +8816,7 @@ ${FAQ_CSS}
 .cta-row{margin:1.25rem 0 0;}
 .cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;transition:background-color .15s ease;}
 .cta-btn:hover{background:#7df7a6;text-decoration:none;}
-@media (max-width:700px){.offer-grid{grid-template-columns:minmax(0,1fr);}.hero-grid{grid-template-columns:minmax(0,1fr);gap:32px;}.hero{padding-top:44px;}.hero h1{font-size:clamp(34px,9vw,38px);line-height:1.1;}.lede{font-size:clamp(16px,4.4vw,18px);}.hero-proof a{margin-left:0;}.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
+@media (max-width:700px){.offer-grid{grid-template-columns:minmax(0,1fr);}.hero-grid{grid-template-columns:minmax(0,1fr);gap:32px;}.hero{padding-top:44px;}.hero h1{font-size:clamp(34px,9vw,38px);line-height:1.1;}.lede{font-size:clamp(16px,4.4vw,18px);}.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
 @media (max-width:640px){.board-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media (max-width:430px){.cta{flex-direction:column;}.btn,.btn-ghost{width:100%;}.hero{padding-left:24px;padding-right:24px;}.rcard{padding:20px;}}
 ${FOOTER_CSS}
@@ -8678,24 +8854,18 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
         </div>
         <p class="svcnote">${renderInline(lead.paras[1])}</p>
       </div>
-      <div class="rcard" role="group" aria-label="What a report looks like, synthetic example">
-        <div class="rc-top"><span>turva.dev / audit</span><span class="rc-tag">Synthetic example</span></div>
-        <p class="rc-title">A report your team can act on.</p>
-        <p class="rc-client">Northwind Fasteners Oy &middot; invented company</p>
-        <ol class="rc-list">
-          <li><span class="rc-n">01</span><span>Document the issue</span></li>
-          <li><span class="rc-n">02</span><span>Prioritise the correction</span></li>
-          <li><span class="rc-n">03</span><span>Define how to verify it</span></li>
-        </ol>
-        <p class="rc-foot">Evidence &middot; Priorities &middot; Acceptance checks</p>
-        <a class="rc-more" href="/samples/audit-report">View the full sample</a>
+      <div class="rcard" role="group" aria-label="One finding from the synthetic sample audit report">
+        <div class="rc-top"><span>Synthetic example &middot; Product data</span><span class="rc-tag">Finding F1</span></div>
+        <h2 class="rc-title">${renderInline(findHead)}</h2>
+        <dl class="rc-cmp">
+          ${findRowHtml}
+        </dl>
+        <p class="rc-impact">${findParas[1]}</p>
+        <p class="rc-fix">${findParas[2].replace(/^First fix:/, "<b>First fix:</b>")}</p>
+        <p class="rc-fix">${findParas[3].replace(/^Acceptance check:/, "<b>Acceptance check:</b>")}</p>
+        <p class="rc-foot">${findParas[4]}</p>
+        <a class="rc-more" href="${findLink[1]}">${findLink[2]}</a>
       </div>
-    </div>
-    <div class="hero-proof">
-      <span class="hp-score">100/100</span>
-      <span>Technical agent-readiness of turva.dev &middot; Level 5, Agent-Native</span>
-      <span class="hp-src">isitagentready.com${hpMeasured}</span>
-      <a href="https://isitagentready.com/">Open the scanner</a>
     </div>
   </section>
   <section class="sec offers">
@@ -8709,30 +8879,13 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
   </section>
   <div class="page">
   <section class="sec">
-    <h2>From an observed problem to a checkable fix</h2>
-    <p>${gets[0]}</p>
-    <div class="steps">
-      ${getCards}
-    </div>
-    <p>${gets[4]}</p>
-  </section>
-
-  <section class="sec">
-    <h2>A clear process, in writing</h2>
-    <div class="steps">
-      ${procCards}
-    </div>
-    <p class="muted">${proc[3]}</p>
-  </section>
-
-  <section class="sec">
     <h2>Work you can inspect</h2>
     <div class="svcgrid">
       ${workCards}
     </div>
   <section class="board" aria-label="agent-readiness scan result">
     <div class="board-top">
-      <span class="board-head">independent agent-readiness scan of turva.dev</span>
+      <span class="board-head">independent agent-readiness scan of turva.dev <span class="bh-date">&middot; measured ${evMeasured}</span></span>
       <a class="board-src" href="https://isitagentready.com/">scanner: isitagentready.com &middot; 3rd-party &middot; Cloudflare</a>
     </div>
     <div class="board-grid">
@@ -8751,17 +8904,11 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
   </section>
 
   <section class="sec">
-    <h2>Support beyond the first report</h2>
-    <p>${support[0]}</p>
-    <p>${support[1]}</p>
-    <p>${support[2]}</p>
-  </section>
-
-  <section class="sec">
-    <h2>Work directly with Erik Rekola</h2>
-    <p>${who[0]}</p>
-    <p>${who[1]}</p>
-    <p>${who[2]}</p>
+    <h2>A clear process, in writing</h2>
+    <div class="steps">
+      ${procCards}
+    </div>
+    <p class="muted">${proc[3]}</p>
   </section>
 
   <section class="sec">
@@ -8769,7 +8916,7 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
     <div class="faq">
 ${mdFaqRows("/", "Frequently asked")}
     </div>
-    ${mdFaqBlocks("/", "Frequently asked").tail.map((t) => `<p class="cta-row"><a href="/services">${renderInline(t).replace(/<\/?a[^>]*>/g, "")}</a></p>`).join("\n    ")}
+    ${mdFaqBlocks("/", "Frequently asked").tail.map((t) => `<p class="muted">${renderInline(t)}</p>`).join("\n    ")}
   </section>
 
   <section class="sec contact">
@@ -8805,7 +8952,7 @@ function serveServicesHtml(canonicalUrl) {
     `\n<script type="application/ld+json">\n{"@context":"https://schema.org","@graph":[\n${SCHEMA_SERVICE}\n]}\n<\/script>`;
   const head = cardPageHead(metaBlock, jsonLd, canonicalUrl);
   const start = mdParas("/services", "How to start", 3);
-  const offers = mdOfferCards("/services", "Choose a starting point", { "/shopify-agent-storefront-check": "Explore the Shopify check", "/services#audit": "Explore the audit" });
+  const offers = mdOfferCards("/services", "Choose a starting point", { "/shopify-agent-storefront-check": "Explore the Shopify check", "/agent-readiness-audit": "Explore the audit" });
   const offerParas = mdParas("/services", "Choose a starting point", 1);
   const body = `${head}
 ${cardPageNav("/services")}
@@ -8906,7 +9053,8 @@ a.card:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
 .card ul{list-style:none;margin:0;padding:0;}
 .card li{position:relative;padding:0 0 0 1.4rem;margin:0 0 .4rem;font-size:.95rem;line-height:1.5;color:#C9D1CE;}
 .card li::before{content:"\\203A";position:absolute;left:.4rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
-@media (max-width:640px){.card{padding:20px;}}
+.card .btn{margin-top:auto;align-self:flex-start;min-height:48px;}
+@media (max-width:640px){.card{padding:20px;}.card .btn{align-self:stretch;}}
 ${SCARD_CSS}
 .kvs{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.55rem .9rem;align-items:baseline;}
 .kv{display:contents;}
@@ -8944,6 +9092,18 @@ ${FAQ_CSS}
 .post .pm{display:flex;flex-wrap:wrap;gap:.3rem .8rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}
 .post .pk{color:#5DF18F;}
 .post .ps{color:#C9D1CE;font-size:.95rem;line-height:1.5;}
+.bfilter{margin:0 0 .9rem;}
+.blabel{display:block;font-size:.95rem;font-weight:600;color:#F2F4F3;margin:0 0 .45rem;}
+#bsearch{display:block;width:100%;max-width:34rem;box-sizing:border-box;min-height:48px;background:#07110D;border:1px solid #2D3D3D;border-radius:7px;padding:10px 14px;color:#F2F4F3;font:inherit;font-size:16px;margin:0 0 .8rem;}
+#bsearch::placeholder{color:#6F7A77;}
+.bkinds{display:flex;flex-wrap:wrap;gap:8px;}
+.bkind{min-height:44px;padding:0 16px;border:1px solid rgba(255,255,255,0.24);border-radius:999px;background:transparent;color:#C9D1CE;font:600 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;}
+.bkind:hover{border-color:#5DF18F;color:#F2F4F3;}
+.bkind[aria-pressed="true"]{background:#5DF18F;border-color:#5DF18F;color:#06100F;}
+.bcount{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:0 0 .9rem;}
+.bempty{color:#F2F4F3;font-size:17px;margin:0 0 .9rem;}
+.bclear{min-height:44px;padding:0 16px;margin:0 0 1rem;border:1px solid rgba(255,255,255,0.24);border-radius:7px;background:transparent;color:#F2F4F3;font:600 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;}
+.bclear:hover{border-color:#5DF18F;color:#5DF18F;}
 .feed{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;margin:-.6rem 0 1.4rem;}
 .feed a{color:#9AA3A0;}
 .feed a:hover{color:#5DF18F;text-decoration:none;}
@@ -8978,7 +9138,7 @@ ${FAQ_CSS}
 table.stacked{display:block;border:0;min-width:0;width:100%;}table.stacked thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stacked tbody,table.stacked tr{display:block;}table.stacked tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stacked td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stacked td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stacked td:first-child{color:#F2F4F3;font-weight:600;}
 @media (max-width:360px){main{padding-left:20px;padding-right:20px;}}`;
 
-function cardPageHead(metaBlock, jsonLd, canonicalUrl) {
+function cardPageHead(metaBlock, jsonLd, canonicalUrl, extraHead) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -8991,7 +9151,7 @@ function cardPageHead(metaBlock, jsonLd, canonicalUrl) {
 <link rel="alternate" type="application/rss+xml" title="turva.dev blog" href="https://turva.dev/blog/feed.xml" />
 ${metaBlock}
 ${jsonLd}
-${WEBMCP_SCRIPT}
+${WEBMCP_SCRIPT}${extraHead ? "\n" + extraHead : ""}
 <link rel="canonical" href="${canonicalUrl}" />
 <link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
@@ -9291,14 +9451,17 @@ function serveContactHtml(canonicalUrl) {
   // The email address is the primary action and also stands as plain text, so it can be
   // copied without opening a mail client; the two prefilled mailto links stay complete in
   // the twin and open a draft only. The QR code is an extra route for Signal, not a step.
+  // Since 2026-09-08 the two prepared messages open the page as cards, each with its own
+  // button, and the plain address follows for the reader who has not decided which fits.
   const body = `${head}
 ${cardPageNav("/contact")}
 <main id="main">
   ${mdPageStart("/contact")}
-  <div class="cta"><a class="btn" href="mailto:info@turva.dev">Email info@turva.dev</a><a class="btn-ghost" href="https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK">Signal @turva.19</a><a class="btn-ghost" href="https://www.linkedin.com/in/erikrekola/">LinkedIn</a></div>
+  <div class="cards">
+      ${mdActionCards("/contact", ["Website or API audit", "Shopify check"])}
+  </div>
   ${mdOpenSec("/contact", "Email")}
   ${mdOpenSec("/contact", "Other channels", "channels", contactSignalQr(), true)}
-  ${mdOpenSec("/contact", "What to include")}
   ${mdOpenSec("/contact", "Response time and languages")}
   ${mdOpenSec("/contact", "Confidentiality")}
   ${mdOpenSec("/contact", "Optional encrypted email", "encrypted-email")}
@@ -9364,6 +9527,51 @@ ${cardPageNav("/shopify-agent-storefront-check")}
     <p>${start[0]}</p>
     <p>${start[1]}</p>
     <div class="cta-row"><a class="cta-btn" href="${mailto}">Request a Shopify check</a></div>
+    <p class="fine">${start[2]}</p>
+  </div>
+</main>
+${footerHtml()}
+</body>
+</html>`;
+  return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
+}
+
+function serveAuditHtml(canonicalUrl) {
+  // The commercial page of the website and API audit (2026-09-08). The guide at
+  // /guides/agent-readiness-audit stays a guide. Same shape as the Shopify product page:
+  // twin first, open sections, the FAQ under its buyer-facing heading, one prepared mailto.
+  const head = cardPageHead(
+    buildMetaBlock("/agent-readiness-audit", canonicalUrl),
+    buildGuideJsonLd("/agent-readiness-audit", canonicalUrl) + "\n" +
+      buildAuditServiceJsonLd(canonicalUrl) + "\n" +
+      buildGuidePageFaqJsonLd("/agent-readiness-audit", canonicalUrl),
+    canonicalUrl);
+  const start = mdParas("/agent-readiness-audit", "How to start", 3);
+  const mailto = "mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A";
+  const request = `<div class="cta-row"><a class="cta-btn" href="${mailto}">Request an audit</a></div>`;
+  // The twin's price sentence renders as the price line the other sections use; fail closed
+  // if the sentence moves, so the page never shows a plain paragraph where the price belongs.
+  const priceRe = /<p>(€[\d,]+) plus VAT\. ([^.<]+)\. ([^.<]+)\.<\/p>/;
+  const pageStart = mdPageStart("/agent-readiness-audit");
+  if (!priceRe.test(pageStart)) throw new Error("audit page lead carries no price sentence");
+  const startHtml = pageStart.replace(priceRe, (m, price, a, b) => `<p class="price-line"><span class="price">${price.replace(/€/g, "&#8364;")}</span><span class="terms">plus VAT &middot; ${a} &middot; ${b}</span></p>`);
+  const body = `${head}
+${cardPageNav("/agent-readiness-audit")}
+<main id="main">
+  ${startHtml}
+  <div class="cta"><a class="btn" href="${mailto}">Request an audit</a><a class="btn-ghost" href="/samples/audit-report">Read the sample report</a></div>
+  ${mdOpenSec("/agent-readiness-audit", "When this audit is useful")}
+  ${mdOpenSec("/agent-readiness-audit", "A finding that changes the fix order")}
+  ${mdOpenSec("/agent-readiness-audit", "What the audit covers", "scope")}
+  ${mdOpenSec("/agent-readiness-audit", "What you receive", "deliverables", request)}
+  ${mdOpenSec("/agent-readiness-audit", "How the two weeks work")}
+  ${mdOpenSec("/agent-readiness-audit", "Implementation is optional", "implementation")}
+  ${mdFaqSec("/agent-readiness-audit", "Frequently asked", "questions").replace("<h2>Frequently asked</h2>", "<h2>Questions before you start</h2>")}
+  <div class="start" id="how-to-start">
+    <h2>Start with the URL and the question</h2>
+    <p>${start[0]}</p>
+    <p>${start[1]}</p>
+    <div class="cta-row"><a class="cta-btn" href="${mailto}">Request an audit</a> <a class="mail-plain" href="mailto:info@turva.dev">info@turva.dev</a></div>
     <p class="fine">${start[2]}</p>
   </div>
 </main>
@@ -10114,13 +10322,84 @@ function blogPostLinks() {
     .sort((a, b) => b.meta.date.localeCompare(a.meta.date));
   // Since v3.133.0 (Tek-358) each card shows the title, the date, the kind of article and
   // its one-sentence description, all from META_BY_PATH, so the index and the page agree.
-  return posts.map(({ path, meta }) =>
-    `  <a class="post" href="${path}"><span class="pt">${escapeHtml((meta.title || "").replace(/ [|\u00B7] turva\.dev$/, ""))}</span><span class="pm"><span class="pd">${meta.date}</span>${meta.kind ? `<span class="pk">${escapeHtml(meta.kind)}</span>` : ""}</span>${meta.description ? `<span class="ps">${escapeHtml(meta.description)}</span>` : ""}</a>`
-  ).join("\n");
+  // Since 2026-09-08 each card also carries the kind and a lowercased title-plus-summary in
+  // data attributes, which /blog-filter.js reads. The list itself is complete in the HTML
+  // and needs no script to read; the filter only hides cards.
+  return posts.map(({ path, meta }) => {
+    const title = (meta.title || "").replace(/ [|\u00B7] turva\.dev$/, "");
+    const search = (title + " " + (meta.description || "")).toLowerCase();
+    return `  <a class="post" href="${path}" data-kind="${escapeHtml(meta.kind || "")}" data-search="${escapeHtml(search)}"><span class="pt">${escapeHtml(title)}</span><span class="pm"><span class="pd">${meta.date}</span>${meta.kind ? `<span class="pk">${escapeHtml(meta.kind)}</span>` : ""}</span>${meta.description ? `<span class="ps">${escapeHtml(meta.description)}</span>` : ""}</a>`;
+  }).join("\n");
 }
+// The four filters of the blog index, in display order. Every post's kind has to be one of
+// the three named kinds, or the filter would silently hide a post from every filtered view.
+var BLOG_KINDS = ["Research", "Protocol notes", "Build notes"];
+function blogFilterHtml() {
+  const posts = Object.keys(PAGE_MARKDOWN).filter((k) => k.startsWith("/blog/")).map((k) => META_BY_PATH[k] || {}).filter((m) => m.date);
+  for (const m of posts) {
+    if (!BLOG_KINDS.includes(m.kind)) throw new Error("blog post kind is not one of the filters: " + JSON.stringify(m.kind) + " in " + m.title);
+  }
+  const n = posts.length;
+  const buttons = [["", "All"]].concat(BLOG_KINDS.map((k) => [k, k])).map(([k, label]) =>
+    `<button type="button" class="bkind" data-kind="${escapeHtml(k)}" aria-pressed="${k === "" ? "true" : "false"}">${escapeHtml(label)}</button>`).join("\n        ");
+  // The controls are hidden until the script runs: without it the page lists every article
+  // and shows the count, and offers no control that would do nothing.
+  return `<div class="bfilter" id="bfilter" hidden>
+      <label class="blabel" for="bsearch">Search articles</label>
+      <input id="bsearch" type="search" placeholder="Search titles and summaries" autocomplete="off" spellcheck="false" />
+      <div class="bkinds" role="group" aria-label="Filter by kind">
+        ${buttons}
+      </div>
+    </div>
+    <p class="bcount" id="bcount" role="status" aria-live="polite">${n === 1 ? "1 article" : n + " articles"}</p>
+    <p class="bempty" id="bempty" hidden>No articles match your search.</p>
+    <button type="button" class="bclear" id="bclear" hidden>Clear search and filters</button>`;
+}
+// Served at /blog-filter.js, allowed by script-src 'self'. No library, no CSP change, no
+// inline script (the CSP hash covers WEBMCP_SCRIPT alone). Backticks and ${ stay out of this
+// literal so the served bytes are the source bytes.
+var BLOG_FILTER_JS = `(function () {
+  var box = document.getElementById("bfilter");
+  var input = document.getElementById("bsearch");
+  var count = document.getElementById("bcount");
+  var empty = document.getElementById("bempty");
+  var clear = document.getElementById("bclear");
+  if (!box || !input || !count || !empty || !clear) return;
+  var kinds = Array.prototype.slice.call(box.querySelectorAll(".bkind"));
+  var posts = Array.prototype.slice.call(document.querySelectorAll("#all-posts .post"));
+  var kind = "";
+  function apply() {
+    var q = input.value.trim().toLowerCase();
+    var n = 0;
+    posts.forEach(function (p) {
+      var ok = (!kind || p.getAttribute("data-kind") === kind) && (!q || (p.getAttribute("data-search") || "").indexOf(q) !== -1);
+      p.hidden = !ok;
+      if (ok) n++;
+    });
+    count.textContent = n === 1 ? "1 article" : n + " articles";
+    empty.hidden = n !== 0;
+    clear.hidden = !(q || kind);
+  }
+  function press(active) {
+    kinds.forEach(function (b) { b.setAttribute("aria-pressed", b === active ? "true" : "false"); });
+  }
+  kinds.forEach(function (b) {
+    b.addEventListener("click", function () { kind = b.getAttribute("data-kind") || ""; press(b); apply(); });
+  });
+  input.addEventListener("input", apply);
+  clear.addEventListener("click", function () {
+    input.value = "";
+    kind = "";
+    press(kinds[0]);
+    apply();
+    input.focus();
+  });
+  box.hidden = false;
+})();
+`;
 
 function serveBlogHtml(canonicalUrl) {
-  const head = cardPageHead(buildMetaBlock("/blog", canonicalUrl), buildGuideJsonLd("/blog", canonicalUrl), canonicalUrl);
+  const head = cardPageHead(buildMetaBlock("/blog", canonicalUrl), buildGuideJsonLd("/blog", canonicalUrl), canonicalUrl, '<script src="/blog-filter.js" defer></script>');
   const body = `${head}
 ${cardPageNav("/blog")}
 <main id="main">
@@ -10128,8 +10407,10 @@ ${cardPageNav("/blog")}
   <p class="feed"><a href="/blog/feed.xml">RSS feed</a></p>
   ${mdOpenSec("/blog", "Start with the research", "research")}
   <section class="sec" id="all-posts"><h2>Browse all articles</h2>
-    <p class="fine">Research &middot; Protocol notes &middot; Build notes</p>
+    ${blogFilterHtml()}
+    <div class="posts">
 ${blogPostLinks()}
+    </div>
   </section>
 </main>
 ${footerHtml()}
@@ -10684,6 +10965,9 @@ async function handleRequest(request, env) {
   if (pathname === "/services") {
     return serveServicesHtml("https://turva.dev/services");
   }
+  if (pathname === "/agent-readiness-audit") {
+    return serveAuditHtml("https://turva.dev/agent-readiness-audit");
+  }
   if (pathname === "/shopify-agent-storefront-check") {
     return serveShopifyHtml("https://turva.dev/shopify-agent-storefront-check");
   }
@@ -10717,6 +11001,9 @@ async function handleRequest(request, env) {
 
   if (pathLower === "/auth.md") {
     return serveStatic(AUTH_MD, "text/markdown; charset=utf-8", "agent-api");
+  }
+  if (pathname === "/blog-filter.js") {
+    return serveStatic(BLOG_FILTER_JS, "text/javascript; charset=utf-8", "asset");
   }
 
   if (pathname === "/" + INDEXNOW_KEY + ".txt") {

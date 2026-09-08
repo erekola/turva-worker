@@ -5,6 +5,12 @@
     "subhead": "Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration.",
     "white": "Agent access"
   },
+  "og-agent-readiness-audit.jpg": {
+    "green": "and where your facts disagree",
+    "kicker": "Service",
+    "subhead": "Technical scan, manual review and observed AI answers. Written findings and fixes in two weeks. €4,300.",
+    "white": "What automated clients read,"
+  },
   "og-agent-readiness-code-hosts.jpg": {
     "green": "Not one served an MCP server card.",
     "kicker": "Blog",

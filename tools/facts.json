@@ -3,7 +3,7 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.146.0",
+    "site": "3.147.0",
     "mcp": "1.4.0"
   },
   "mtaSts": {
@@ -11,7 +11,7 @@
     "policySha256": "d5b67af4564176a2326f7a6f5284368381f54f5ccb28f7798e6944bacf553fa3"
   },
   "released": {
-    "site": "2026-09-07"
+    "site": "2026-09-08"
   },
   "prices": {
     "shopify": 999,
