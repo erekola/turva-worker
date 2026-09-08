@@ -55,7 +55,7 @@ test("MCP server card declares only the capabilities the server implements", asy
   assert.deepEqual(Object.keys(card.capabilities), ["tools"],
     "the live server registers tools only and answers -32601 to resources/list and prompts/list; " +
     "declaring more here puts a promise the code does not keep inside a signed manifest");
-  assert.equal(card.tools.length, 4);
+  assert.equal(card.tools.length, 5);
 });
 
 test("commerce surfaces never report an unpaid request as paid", async () => {

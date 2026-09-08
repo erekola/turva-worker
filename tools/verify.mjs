@@ -2713,6 +2713,22 @@ if (LIVE) {
         `get_principles states "Business ID ${facts.businessId}" as a claim, not as a URL fragment`);
     }
 
+    // get_contact carries the channels facts.json owns, so the gate compares them there
+    // rather than to a second copy. Only the three the tool actually returns are compared:
+    // the channels block also holds mastodon, gravatar and github, which are profiles and
+    // not ways to start an engagement, and comparing those would fail the tool for not
+    // repeating something it never claimed.
+    const con = await callTool('get_contact');
+    if (con) {
+      const conTxt = JSON.stringify(con);
+      for (const k of ['email', 'signal', 'linkedin']) {
+        check(conTxt.includes(facts.channels[k]),
+          `get_contact ${k} == facts.json channels.${k} (${facts.channels[k]})`);
+      }
+      check(conTxt.includes(facts.businessId),
+        `get_contact states business ID ${facts.businessId}`);
+    }
+
     // The name-agreement rule, proven rather than assumed. Without this a server that
     // ignored Mcp-Name would answer get_services to a header asking for get_principles,
     // and every check above would still pass because the body asked for the right tool.

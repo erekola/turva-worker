@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.145.0 - the published OpenPGP key is now the pair Proton holds (2026-09-07): mail moved to Proton in v3.144.0, so the RSA 4096 key the site served could no longer be decrypted; PGP_PUBLIC_KEY now carries two keys in one armored block, an Ed25519 v4 key first for clients that read only that, and a post-quantum ML-DSA-65 v6 key after it, and /contact prints both fingerprints.
+// turva.dev worker v3.146.0 - the MCP server gained a fifth tool, get_contact, and every tool description now names the sibling to use instead and says the data updates only on deploy; the previous line: the published OpenPGP key is now the pair Proton holds (2026-09-07): mail moved to Proton in v3.144.0, so the RSA 4096 key the site served could no longer be decrypted; PGP_PUBLIC_KEY now carries two keys in one armored block, an Ed25519 v4 key first for clients that read only that, and a post-quantum ML-DSA-65 v6 key after it, and /contact prints both fingerprints.
 // turva.dev worker v3.144.0 - MTA-STS policy names both mail hosts during the mailbox.org to Proton move (2026-09-07): the enforce policy listed only the four mxext hosts, so a sending MTA that had cached it would refuse delivery to the new MX the moment it changed; mail.protonmail.ch and mailsec.protonmail.ch now stand alongside them and the mxext hosts stay until the move is done.
 // turva.dev worker v3.143.0 - nav and footer spread across the content width (2026-09-07, Erik: yhtalevea kuin sisaltoalue ja keskella): the nav and the footer keep the 68rem centred frame and their contents now fill it, the menu links distributed edge to edge with space-between and the footer icon links the same; the redundant body --col-half declaration is gone, the rule's own 34rem fallback carries it.
 // turva.dev worker v3.142.0 - blog post i-rebuilt-turva-dev-around-the-report (2026-09-07): the site rewrite and the report template written up for buyers, with the two synthetic sample reports as the thing to inspect before buying; six surfaces (PAGE_MARKDOWN, the /blog twin, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and the signed LLMS_TXT) plus the OG card.
@@ -5646,7 +5646,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.145.0",
+    "version": "3.146.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5754,7 +5754,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-66bUJMC0OgGoX003rPI5CAkSAOUwtH6-OsjndVCX8V6IMrBPuAeRbATQlyjVUit04g5nUTGKGLcXO7cBQcWAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dBBlH4oRS8Nqc4LoxG0Z7WMdi3UeDJq8hcIpbfNjs1qp41RlZrR8JRNxR1JbJva5Hd14uB7fA_ZBPPuriVY6Bw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"tE9ZXZnem3TrAM8mXRn0E1wxYAP_kfNkrE03Cq_HXLNNpvPMKv0YI3YBJMp5gG4JQhDvEaBTY8G6WCZfmi4bDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dBBlH4oRS8Nqc4LoxG0Z7WMdi3UeDJq8hcIpbfNjs1qp41RlZrR8JRNxR1JbJva5Hd14uB7fA_ZBPPuriVY6Bw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -5769,7 +5769,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "turva.dev/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.3.11",
+  "version": "1.4.0",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -5778,7 +5778,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.3.11",
+    "version": "1.4.0",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -5786,7 +5786,7 @@ var MCP_SERVER_CARD = JSON.stringify({
     "endpoint": "https://mcp.turva.dev/mcp"
   },
   // Only the capabilities the server actually implements are declared. turva-mcp
-  // registers four tools and nothing else, so resources/list, prompts/list and
+  // registers five tools and nothing else, so resources/list, prompts/list and
   // resources/templates/list correctly answer -32601 Method not found. Declaring
   // resources or prompts here would put a promise the code does not keep inside a
   // signed manifest. Do not add them back, and do not add empty implementations to
@@ -5798,7 +5798,8 @@ var MCP_SERVER_CARD = JSON.stringify({
     { "name": "get_services", "description": "Service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
     { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, measurement date, and verification links." },
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl site and mail), with the scan date." },
-    { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." }
+    { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." },
+    { "name": "get_contact", "description": "Official contact channels, the first-reply time, and what access an audit needs." }
   ],
   "_meta": {
     "homepage": "https://turva.dev/",
@@ -5913,7 +5914,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.145.0",
+  "version": "3.146.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
