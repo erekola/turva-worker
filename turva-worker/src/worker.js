@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.148.0 - the blog filter hides cards for real (.post[hidden] beats .post{display:flex}; the artifact preview had masked it with its own [hidden] reset), three claims on /agent-readiness-audit narrowed to the sample and to what an assistant may do (source use, conflicting facts, scanner coverage), and the audit sample share card says nine findings.
 // turva.dev worker v3.147.0 - buying and content improvements from the 2026-09-08 brief: the home hero shows one finding from the synthetic sample report (F1, three sources, three answers) instead of the generic three-step card, the audit gets its own product page at /agent-readiness-audit (primary path, llms.txt Services row, sitemap, OfferCatalog url, own Service node, FAQPage) while /services keeps every anchor and shortens the two diagnoses to summaries, the home page runs hero, starting point, work you can inspect with the one reference-build board, process, questions, contact, both sample reports open with a one-line synthetic scope, the illustrative date and a "The first decision" summary with two follow-on actions (#f1 alias on the audit sample), /contact opens with the two prepared mailto cards, and /blog gains a search and kind filter served as /blog-filter.js under script-src self with the full list still in the HTML.
 // turva.dev worker v3.146.0 - the MCP server gained a fifth tool, get_contact, and every tool description now names the sibling to use instead and says the data updates only on deploy; the previous line: the published OpenPGP key is now the pair Proton holds (2026-09-07): mail moved to Proton in v3.144.0, so the RSA 4096 key the site served could no longer be decrypted; PGP_PUBLIC_KEY now carries two keys in one armored block, an Ed25519 v4 key first for clients that read only that, and a post-quantum ML-DSA-65 v6 key after it, and /contact prints both fingerprints.
 // turva.dev worker v3.144.0 - MTA-STS policy names both mail hosts during the mailbox.org to Proton move (2026-09-07): the enforce policy listed only the four mxext hosts, so a sending MTA that had cached it would refuse delivery to the new MX the moment it changed; mail.protonmail.ch and mailsec.protonmail.ch now stand alongside them and the mxext hosts stay until the move is done.
@@ -3442,7 +3443,7 @@ All work is handled in writing. First reply within one business day.
 
 The audit fits when one of these questions is open. It records what is there today and assumes nothing about your site in advance.
 
-- Your published product facts may disagree. A page, its structured data and an API can each say something different, and an assistant reads all three.
+- Your published product facts may disagree. A page, its structured data and an API can publish conflicting facts, and an assistant may encounter different answers depending on which source it uses.
 - An automated client cannot find or read content or an API that matters to you, and you want the evidence of what it receives today.
 - You need a documented baseline of what AI assistants answer about your product before deciding what to change.
 
@@ -3454,7 +3455,7 @@ In the synthetic sample report, the invented company Northwind Fasteners Oy publ
 - Structured product data: €0.00 · InStock
 - Product API: Empty price · Marked purchasable
 
-The scanner scores none of this, and it is still the first fix in the report. An assistant that reads wrong data quotes it with confidence, while a missing file only makes it guess. The scored gaps, markdown, llms.txt, headers and discovery files, follow in the same plan with their own acceptance tests. Fictional company and readings.
+In this sample, the scanner does not score the conflict between the product page, structured data and API, and it is still the first fix in the report. Conflicting product facts can lead an assistant to quote the wrong price or availability, so correcting those facts takes priority over improving scanner coverage. The scored gaps, markdown, llms.txt, headers and discovery files, follow in the same plan with their own acceptance tests. Fictional company and readings.
 
 [Inspect the finding in the sample report](/samples/audit-report#f1)
 
@@ -3468,7 +3469,7 @@ An independent scanner, isitagentready.com, runs against the site or API on its 
 
 ### Manual review
 
-Review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers. Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms. Whether a page, its structured data and its API publish the same facts, which no scanner scores. Your published web security scans are read alongside the agent checks, so the report rests on measurements you can re-run yourself.
+Review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers. Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms. Whether a page, its structured data and its API publish the same facts, a conflict the scanner in the sample report does not score. Your published web security scans are read alongside the agent checks, so the report rests on measurements you can re-run yourself.
 
 ### Observed AI answers
 
@@ -5729,7 +5730,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.147.0",
+    "version": "3.148.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5997,7 +5998,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.147.0",
+  "version": "3.148.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9088,6 +9089,7 @@ ${FAQ_CSS}
 @media (max-width:560px){.toc ul{columns:1;}}
 .post{display:flex;flex-direction:column;gap:6px;box-sizing:border-box;min-width:0;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;padding:18px 22px;margin:0 0 .75rem;text-decoration:none;transition:border-color .15s ease;}
 .post:hover{border-color:#5DF18F;text-decoration:none;}
+.post[hidden]{display:none;}
 .post .pt{display:block;color:#F2F4F3;font-weight:700;font-size:1.1rem;line-height:1.3;letter-spacing:-0.01em;}
 .post .pm{display:flex;flex-wrap:wrap;gap:.3rem .8rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}
 .post .pk{color:#5DF18F;}
