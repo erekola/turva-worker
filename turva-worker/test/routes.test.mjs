@@ -662,7 +662,10 @@ test("PGP: the fingerprint printed on the contact page is the fingerprint of the
 
 test("PGP: WKD serves the same key as bytes, at the hash of the address the page names", async () => {
   const page = await (await get("/contact")).text();
-  const local = (page.match(/([a-z0-9._-]+)@turva\.dev can be OpenPGP/) || [])[1];
+  // Anchored to the section rather than to one sentence: the wording of the encrypted-email
+  // paragraph is page copy and has moved once (2026-09-09), the section id is a gated anchor.
+  const sec = (page.split('id="encrypted-email"')[1] || "").split("</section>")[0];
+  const local = (sec.match(/([a-z0-9._-]+)@turva\.dev/) || [])[1];
   assert.ok(local, "the contact page must name the address encrypted mail goes to");
   // WKD hashes the local part with SHA-1 and z-base-32 by specification
   // (draft-koch-openpgp-webkey-service section 3.1), which is what makes the address
