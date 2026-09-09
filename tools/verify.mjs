@@ -2185,17 +2185,21 @@ if (LIVE) {
 
     if (identical) {
       const svcMdForTool = await (await fetch(base + '/services', { headers: { accept: 'text/markdown' } })).text();
+      const llmsForTool = await (await fetch(base + '/llms.txt')).text();
       // Object.create(null), not {}. createContext contextifies the object it is given,
       // and that object is made in THIS realm, so `this.constructor.constructor` inside
       // the context walks back out to the host Function and reaches process. Measured
       // both ways on 2026-08-01: createContext({}) leaks, createContext(Object.create(null))
       // does not, because a null-prototype object has no constructor to walk.
       const ctx = createContext(Object.create(null));
+      ctx.__URL = URL;
       runInContext(`
         globalThis.__md = ${JSON.stringify(svcMdForTool)};
+        globalThis.__llms = ${JSON.stringify(llmsForTool)};
         globalThis.__provided = null;
+        globalThis.URL = __URL;
         globalThis.navigator = { modelContext: { provideContext: function (a) { globalThis.__provided = a; } } };
-        globalThis.fetch = function () { return Promise.resolve({ ok: true, status: 200, text: function () { return Promise.resolve(globalThis.__md); } }); };
+        globalThis.fetch = function (u) { var s = String(u); var body = s.indexOf('llms.txt') !== -1 ? globalThis.__llms : globalThis.__md; return Promise.resolve({ ok: true, status: 200, text: function () { return Promise.resolve(body); } }); };
       `, ctx, { timeout: 5000 });
       runInContext(servedBody, ctx, { timeout: 5000 });
       const provided = ctx.__provided;
@@ -2268,6 +2272,61 @@ if (LIVE) {
       const wco = answers.get_company || {};
       check(!!byName.get_company && wco.businessId === facts.businessId,
         `WebMCP get_company Business ID == ${facts.businessId} (saw ${JSON.stringify(wco.businessId)})`);
+
+      // The three reading and navigation tools added in v3.148.0. Each one is called with
+      // an empty argument object by the loop above, so the checks here are about what they
+      // do with a REAL argument and, for open_page, about where they are allowed to send a
+      // person. A navigation tool that accepts a caller-supplied URL is an open redirect,
+      // and the agent's input can come from a page, so the surface is an enum and these
+      // checks are what hold it to that.
+      const wsc = answers.search_content || {};
+      check(!!byName.search_content, 'WebMCP registers search_content');
+      check(wsc && Array.isArray(wsc.results) && typeof wsc.error === 'string',
+        `WebMCP search_content with no query returns an error and no results (saw ${JSON.stringify(wsc.error)})`);
+      if (byName.search_content) {
+        const hit = await deadline(byName.search_content.execute({ query: 'llms' }), 10000, 'search_content');
+        check(hit && hit.count > 0 && Array.isArray(hit.results) && hit.results.length === hit.count,
+          `WebMCP search_content finds llms.txt rows in the published index (count ${hit && hit.count})`);
+        const badUrl = (hit && hit.results || []).find((r) => !/^https:\/\/turva\.dev\//.test(String(r.url || '')));
+        check(!badUrl, `WebMCP search_content returns only turva.dev URLs${badUrl ? ' :: ' + JSON.stringify(badUrl.url) : ''}`);
+        const capped = await deadline(byName.search_content.execute({ query: 'a', limit: 3 }), 10000, 'search_content limit');
+        check(capped && capped.results.length <= 3, `WebMCP search_content honours limit (asked 3, got ${capped && capped.results.length})`);
+      }
+
+      check(!!byName.get_page, 'WebMCP registers get_page');
+      if (byName.get_page) {
+        const good = await deadline(byName.get_page.execute({ path: '/services' }), 10000, 'get_page');
+        check(good && typeof good.markdown === 'string' && good.markdown.length > 0 && good.bytes === good.markdown.length,
+          `WebMCP get_page returns markdown for a site path (${good && good.bytes} bytes)`);
+        // An agent's argument can come from the page it is reading, so the three shapes that
+        // would leave this origin are refused rather than fetched.
+        for (const evil of ['//example.com/', 'https://example.com/', 'services', '/\\\\example.com/', '/\\\\/example.com/']) {
+          const r = await deadline(byName.get_page.execute({ path: evil }), 10000, 'get_page ' + evil);
+          check(r && typeof r.error === 'string' && r.markdown === undefined,
+            `WebMCP get_page refuses ${JSON.stringify(evil)} and fetches nothing`);
+        }
+      }
+
+      check(!!byName.open_page, 'WebMCP registers open_page');
+      if (byName.open_page) {
+        const miss = await deadline(byName.open_page.execute({ page: 'https://example.com/' }), 10000, 'open_page evil');
+        check(miss && typeof miss.error === 'string' && miss.path === undefined,
+          'WebMCP open_page refuses a URL and exposes only named pages');
+        const enumVals = ((byName.open_page.inputSchema || {}).properties || {}).page || {};
+        const names = Array.isArray(enumVals.enum) ? enumVals.enum : [];
+        check(names.length > 0, `WebMCP open_page declares its pages as an enum (${names.length})`);
+        // Every destination it offers has to be a real page of this site, or the tool sends
+        // a person to a 404 that no other gate would catch.
+        const cpMw = src.worker.text.match(/var CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
+        const cpForOpen = cpMw ? [...cpMw[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
+        check(cpForOpen.length > 2, `CANONICAL_PATHS parsed for the open_page check (${cpForOpen.length})`);
+        const missing = [];
+        for (const n of names) {
+          const r = await deadline(byName.open_page.execute({ page: n }), 10000, 'open_page ' + n);
+          if (!r || !r.path || !cpForOpen.includes(r.path)) missing.push(n + ' -> ' + JSON.stringify(r && r.path));
+        }
+        check(!missing.length, `every WebMCP open_page destination is in CANONICAL_PATHS${missing.length ? ' :: ' + missing.join(', ') : ''}`);
+      }
     }
   } catch (e) { bad('WebMCP tools: ' + (e.code || e.message)); }
 

@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.149.0 - the WebMCP surface grew from three tools to six: search_content reads the published llms.txt index, get_page returns any page of this site as markdown and refuses anything that would leave the origin, and open_page navigates the tab to one of ten named pages (an enum, never a caller-supplied URL, so the tool is not an open redirect); every tool now declares an outputSchema and get_company says which fields it returns.
 // turva.dev worker v3.148.0 - the blog filter hides cards for real (.post[hidden] beats .post{display:flex}; the artifact preview had masked it with its own [hidden] reset), three claims on /agent-readiness-audit narrowed to the sample and to what an assistant may do (source use, conflicting facts, scanner coverage), and the audit sample share card says nine findings.
 // turva.dev worker v3.147.0 - buying and content improvements from the 2026-09-08 brief: the home hero shows one finding from the synthetic sample report (F1, three sources, three answers) instead of the generic three-step card, the audit gets its own product page at /agent-readiness-audit (primary path, llms.txt Services row, sitemap, OfferCatalog url, own Service node, FAQPage) while /services keeps every anchor and shortens the two diagnoses to summaries, the home page runs hero, starting point, work you can inspect with the one reference-build board, process, questions, contact, both sample reports open with a one-line synthetic scope, the illustrative date and a "The first decision" summary with two follow-on actions (#f1 alias on the audit sample), /contact opens with the two prepared mailto cards, and /blog gains a search and kind filter served as /blog-filter.js under script-src self with the full list still in the HTML.
 // turva.dev worker v3.146.0 - the MCP server gained a fifth tool, get_contact, and every tool description now names the sibling to use instead and says the data updates only on deploy; the previous line: the published OpenPGP key is now the pair Proton holds (2026-09-07): mail moved to Proton in v3.144.0, so the RSA 4096 key the site served could no longer be decrypted; PGP_PUBLIC_KEY now carries two keys in one armored block, an Ed25519 v4 key first for clients that read only that, and a post-quantum ML-DSA-65 v6 key after it, and /contact prints both fingerprints.
@@ -71,7 +72,7 @@ max_age: 604800
 
 var CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-aa/XgWAsbnyIjrazJucWqYec3ki7mwuHIGaUjjTaPOM='",
+  "script-src 'self' 'sha256-pZEmSy9fbQsDjETh32XJfNoWwxQ2tn/k7Ub4DPMCnQ4='",
   "style-src 'self' 'unsafe-inline' https: data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
@@ -5730,7 +5731,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.148.0",
+    "version": "3.149.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5998,7 +5999,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.148.0",
+  "version": "3.149.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6495,20 +6496,50 @@ var WEBMCP_SCRIPT = `<script>
 (function(){
  if (!navigator.modelContext || typeof navigator.modelContext.provideContext !== 'function') return;
  try {
+ var NL = String.fromCharCode(10);
+ var PAGES = {
+  home: '/',
+  audit: '/agent-readiness-audit',
+  shopify: '/shopify-agent-storefront-check',
+  services: '/services',
+  guides: '/guides',
+  blog: '/blog',
+  tools: '/tools',
+  company: '/company',
+  contact: '/contact',
+  legal: '/legal'
+ };
+ var PAGE_KEYS = Object.keys(PAGES);
+ var ORIGIN = 'https://turva.dev';
+ function ownPath(p) {
+  var s = String(p || '');
+  if (s.charAt(0) !== '/') return '';
+  try {
+   var u = new URL(s, ORIGIN + '/');
+   if (u.origin !== ORIGIN) return '';
+   return u.pathname + u.search + u.hash;
+  } catch (e) { return ''; }
+ }
+ async function markdownOf(path) {
+  var r = await fetch(path, { headers: { Accept: 'text/markdown' } });
+  return await r.text();
+ }
  navigator.modelContext.provideContext({
  tools: [
  {
  name: 'get_contact',
- description: 'Return official contact channels for turva.dev. Async-only engagement.',
+ description: 'Return the official contact channels for turva.dev, including email, Signal and LinkedIn. Engagement is async only, so there is no phone number and no meeting booking.',
  inputSchema: { type: 'object', properties: {} },
+ outputSchema: { type: 'object', properties: { email: { type: 'string' }, signal: { type: 'string' }, signalUrl: { type: 'string' }, linkedin: { type: 'string' }, businessId: { type: 'string' }, language: { type: 'string' }, correspondenceLanguages: { type: 'array', items: { type: 'string' } }, engagement: { type: 'string' } }, required: ['email', 'signalUrl', 'linkedin', 'businessId', 'engagement'] },
  execute: async function() {
  return { email: 'info@turva.dev', signal: '@turva.19', signalUrl: 'https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK', linkedin: 'https://www.linkedin.com/in/erikrekola/', businessId: '3600281-7', language: 'en', correspondenceLanguages: ['en', 'fi'], engagement: 'async-only' };
  }
  },
  {
  name: 'get_services',
- description: 'Return the services offered by turva.dev (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design). Fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation.',
+ description: 'Return the services offered by turva.dev (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) as the full services page in markdown, together with fixed prices in EUR for the four priced services.',
  inputSchema: { type: 'object', properties: {} },
+ outputSchema: { type: 'object', properties: { markdown: { type: 'string' }, pricing: { type: 'object', properties: { currency: { type: 'string' }, vatIncluded: { type: 'boolean' } } }, bundledImplementation: { type: 'array', items: { type: 'object' } } }, required: ['markdown', 'pricing'] },
  execute: async function() {
  const r = await fetch('/services', { headers: { Accept: 'text/markdown' } });
  return { markdown: await r.text(), pricing: { currency: 'EUR', vatIncluded: false, shopify: { price: 999, unit: 'fixed' }, audit: { price: 4300, unit: 'fixed' }, advisory: { price: 3000, unit: 'month', minimumCommitmentMonths: 3 }, implementation: { price: 1500, unit: 'day' } }, bundledImplementation: [{ name: 'Audit fix implementation', price: 499, currency: 'EUR', unit: 'fixed', requires: 'audit', soldSeparately: false }, { name: 'Shopify correction implementation', price: 499, currency: 'EUR', unit: 'fixed', requires: 'shopify', soldSeparately: false }] };
@@ -6516,10 +6547,69 @@ var WEBMCP_SCRIPT = `<script>
  },
  {
  name: 'get_company',
- description: 'Return business details about turva.dev.',
+ description: 'Return the registered business details for turva.dev: trading name, the operator who does the work, the Finnish Business ID, the country and city of registration, and the LinkedIn profile.',
  inputSchema: { type: 'object', properties: {} },
+ outputSchema: { type: 'object', properties: { name: { type: 'string' }, operator: { type: 'string' }, businessId: { type: 'string' }, location: { type: 'string' }, linkedin: { type: 'string' } }, required: ['name', 'operator', 'businessId', 'location'] },
  execute: async function() {
  return { name: 'turva.dev', operator: 'Erik Rekola', businessId: '3600281-7', location: 'Tampere, Finland', linkedin: 'https://www.linkedin.com/in/erikrekola/' };
+ }
+ },
+ {
+ name: 'search_content',
+ description: 'Search the turva.dev page index for guides, blog posts and pages whose title matches a query, and return each match as a title with the page URL and the markdown URL of the same page. Read-only, and it reads the published llms.txt index rather than a separate search service.',
+ inputSchema: { type: 'object', properties: { query: { type: 'string', description: 'Words to look for, for example llms.txt, Shopify or pricing.' }, limit: { type: 'integer', description: 'Maximum number of results, 1 to 50. Defaults to 20.' } }, required: ['query'] },
+ outputSchema: { type: 'object', properties: { query: { type: 'string' }, count: { type: 'number' }, results: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, url: { type: 'string' }, markdownUrl: { type: 'string' } }, required: ['title', 'url', 'markdownUrl'] } }, error: { type: 'string' } }, required: ['query', 'count', 'results'] },
+ execute: async function(args) {
+ var raw = args && args.query ? String(args.query) : '';
+ var q = raw.toLowerCase();
+ if (!q) return { query: raw, count: 0, results: [], error: 'query is required' };
+ var max = args && args.limit ? Math.max(1, Math.min(50, Number(args.limit) || 20)) : 20;
+ var r = await fetch('/llms.txt', { headers: { Accept: 'text/plain' } });
+ var lines = (await r.text()).split(NL);
+ var out = [];
+ for (var i = 0; i < lines.length && out.length < max; i++) {
+  var line = lines[i];
+  if (line.indexOf('- [') !== 0) continue;
+  if (line.toLowerCase().indexOf(q) === -1) continue;
+  var t0 = line.indexOf('[') + 1;
+  var t1 = line.indexOf(']', t0);
+  var u0 = line.indexOf('(', t1) + 1;
+  var u1 = line.indexOf(')', u0);
+  if (t1 < 0 || u1 < 0) continue;
+  var mdU = line.slice(u0, u1);
+  var pageU = mdU;
+  if (pageU.slice(-9) === '/index.md') pageU = pageU.slice(0, -8);
+  else if (pageU.slice(-3) === '.md') pageU = pageU.slice(0, -3);
+  out.push({ title: line.slice(t0, t1), url: pageU, markdownUrl: mdU });
+ }
+ return { query: raw, count: out.length, results: out };
+ }
+ },
+ {
+ name: 'get_page',
+ description: 'Return the markdown source of one page on turva.dev, byte for byte the text a person reads on that page. Takes a path on this site, for example /guides/llms-txt or /agent-readiness-audit. Read-only. The path is resolved against this site and anything that resolves to another origin is refused, so the tool cannot be pointed elsewhere.',
+ inputSchema: { type: 'object', properties: { path: { type: 'string', description: 'A path on turva.dev beginning with a slash, for example /services. Use search_content to find one.' } }, required: ['path'] },
+ outputSchema: { type: 'object', properties: { path: { type: 'string' }, markdown: { type: 'string' }, bytes: { type: 'number' }, error: { type: 'string' } }, required: ['path'] },
+ execute: async function(args) {
+ var p = ownPath(args && args.path);
+ if (!p) return { path: String((args && args.path) || ''), error: 'path must be a path on turva.dev beginning with a single slash' };
+ var md = await markdownOf(p);
+ return { path: p, markdown: md, bytes: md.length };
+ }
+ },
+ {
+ name: 'open_page',
+ description: 'Navigate this browser tab to a named page on turva.dev, so the person sees it. Accepts one of the named pages only, never a URL, and it never leaves this site. Use get_page instead when you only need to read the text.',
+ inputSchema: { type: 'object', properties: { page: { type: 'string', enum: PAGE_KEYS, description: 'Which page to open.' } }, required: ['page'] },
+ outputSchema: { type: 'object', properties: { opened: { type: 'string' }, path: { type: 'string' }, available: { type: 'array', items: { type: 'string' } }, error: { type: 'string' } } },
+ execute: async function(args) {
+ var key = args && args.page ? String(args.page) : '';
+ if (!Object.prototype.hasOwnProperty.call(PAGES, key)) {
+  return { available: PAGE_KEYS, error: key ? 'unknown page: ' + key : 'page is required' };
+ }
+ var path = PAGES[key];
+ if (typeof location !== 'undefined' && location && typeof location.assign === 'function') { location.assign(path); }
+ return { opened: key, path: path };
  }
  }
  ]
