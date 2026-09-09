@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.150.0 - the clearer, more personal text round (2026-09-09, from the Fable page instruction): twelve pages outside the blog and the guides rewritten in the first person around what the reader gets, the two sample reports given plain section and finding headings with every old anchor kept as an alias, the audit and validator FAQ sections folded into the sections above them, and every measurement, price, deadline, scope and refund term left as it stood.
 // turva.dev worker v3.149.0 - the WebMCP surface grew from three tools to six: search_content reads the published llms.txt index, get_page returns any page of this site as markdown and refuses anything that would leave the origin, and open_page navigates the tab to one of ten named pages (an enum, never a caller-supplied URL, so the tool is not an open redirect); every tool now declares an outputSchema and get_company says which fields it returns.
 // turva.dev worker v3.148.0 - the blog filter hides cards for real (.post[hidden] beats .post{display:flex}; the artifact preview had masked it with its own [hidden] reset), three claims on /agent-readiness-audit narrowed to the sample and to what an assistant may do (source use, conflicting facts, scanner coverage), and the audit sample share card says nine findings.
 // turva.dev worker v3.147.0 - buying and content improvements from the 2026-09-08 brief: the home hero shows one finding from the synthetic sample report (F1, three sources, three answers) instead of the generic three-step card, the audit gets its own product page at /agent-readiness-audit (primary path, llms.txt Services row, sitemap, OfferCatalog url, own Service node, FAQPage) while /services keeps every anchor and shortens the two diagnoses to summaries, the home page runs hero, starting point, work you can inspect with the one reference-build board, process, questions, contact, both sample reports open with a one-line synthetic scope, the illustrative date and a "The first decision" summary with two follow-on actions (#f1 alias on the audit sample), /contact opens with the two prepared mailto cards, and /blog gains a search and kind filter served as /blog-filter.js under script-src self with the full list still in the HTML.
@@ -1876,9 +1877,11 @@ For an audit of the whole surface an agent sees, not just this one file, contact
 
   "/llms-txt-validator": `# Free llms.txt validator
 
-Check the structure of a site's llms.txt file and the discovery links on its home page. Free, no signup. This checks the published format. It is not an agent-readiness score.
+Enter a domain to check its llms.txt file and the discovery links on its home page. No signup is needed.
 
-The validator requests the llms.txt file and home page. It does not crawl the rest of the site.
+This checks the file's structure. It does not give your site an agent-readiness score.
+
+The validator requests the llms.txt file and the home page. It does not crawl the rest of the site.
 
 ## How to use it
 
@@ -1888,67 +1891,58 @@ The validator requests the llms.txt file and home page. It does not crawl the re
 
 Both views list the same checks below. The browser page and this markdown twin are kept in sync deliberately.
 
-## What is checked
+## What the validator checks
 
-Eight structural checks on the file:
+Eight checks examine the file:
 
-- The file exists at /llms.txt and returns HTTP 200
-- The response is plain text, not an HTML error page
-- The file starts with an H1 title
-- A blockquote summary follows the title (recommended by the format)
-- H2 sections group the content
-- Markdown links parse and use absolute URLs
-- The file stays small enough to be cheap for an agent to read
-- No HTML markup in the file, since llms.txt should be plain markdown (HTML tags are flagged as a warning)
+- It exists at /llms.txt and returns HTTP 200.
+- It is plain text, not an HTML error page.
+- It starts with an H1 title.
+- It includes the recommended blockquote summary after the title.
+- H2 headings group the content.
+- Markdown links parse and use absolute URLs.
+- The file stays within the validator's size threshold.
+- It contains no inline HTML. HTML produces a warning.
 
-Two discovery checks on the home page, which v2 of the format recommends:
+Two more checks look at the home page:
 
-- Whether the home page points at the llms.txt with rel="describedby"
-- Whether the home page points at a markdown version with rel="alternate" type="text/markdown"
+- A rel="describedby" link to llms.txt.
+- A rel="alternate" link with type="text/markdown" to a Markdown version.
 
-The two v2 discovery checks report pass or information, never a warning and never a failure. They describe the site rather than the file, and they do not change the structural result. The format reached v2 in August 2026, and the version history is in [llms.txt explained](/guides/llms-txt).
+These two v2 checks report pass or information. They cannot produce a warning or a failure and do not affect the structural result. The format reached v2 in August 2026, and the version history is in [llms.txt explained](/guides/llms-txt).
 
-## What this result means
+There is no total and no percentage. Eight structural checks can honestly report pass, warn or fail, and a number stacked on top of them would look like a score without measuring one.
 
-The result is a structure check against the llms.txt format, not an agent-readiness score. Each check is reported with its name, its status as a word, what was observed and what to do next. There is no total, no percentage and no summary number, because eight structural checks can honestly report pass, warn or fail and a number stacked on top of them would look like a score without measuring one.
+## What a valid result tells you
 
-A valid file does not guarantee that any assistant reads it, mentions the site or answers correctly. A full audit measures discoverability, content accessibility, access control and more: see [services](/services), or start with [llms.txt explained](/guides/llms-txt).
+It tells you that the file passed the structural checks. It does not show whether an assistant reads the file, mentions your site or answers correctly.
 
-Two documents are fetched from the target site, its /llms.txt and its home page, each following a redirect to the same host or its www twin when there is one. Nothing else is requested and the site is never crawled. What is fetched is checked and discarded, and the result page is served with a no-store header.
+Agent readiness is measured with an independent public scanner, published security scans and a manual review. That is the [website and API audit](/agent-readiness-audit), and [llms.txt explained](/guides/llms-txt) is the background to this file.
 
-## Use in an agent or CI
+## What is fetched
 
-An agent calls GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header and receives the same checks as JSON, with a no-store header.
+The validator requests two documents: /llms.txt and the home page. Redirects are followed only to the same host or its www counterpart. The rest of the site is not crawled.
 
-The same checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks. The two v2 checks never fail that build, since they are reported as information.
+Fetched content is checked and discarded. The response uses a no-store header.
+
+## Use it from an agent or CI
+
+For JSON, request:
+
+    GET https://turva.dev/llms-txt-validator?url=example.com
+    Accept: application/json
+
+The response contains the same checks and uses a no-store header.
+
+For CI, the open npm package turva-llms-txt-validator provides the llms-txt-validate command. Its --json output matches the web tool's JSON.
+
+Run:
+
+    npx turva-llms-txt-validator your-domain.com --strict
+
+The command runs the package's strict validation. The two v2 discovery checks do not fail the build, since they are reported as information.
 
 All free tools on this site are collected on [the tools page](/tools).
-
-## Frequently asked
-
-**What is llms.txt?**
-
-llms.txt is a plain text file that tells AI agents what a site contains and where the important content lives. It sits at the root of a site or at any path inside it, where it covers the pages under that path. It opens with the site name and a short summary, then lists the key pages as markdown links grouped under headings. This validator checks that structure.
-
-**What does the validator check?**
-
-Eight structural checks: the file exists at /llms.txt and returns HTTP 200, the response is plain text rather than an HTML error page, the file starts with an H1 title, the recommended blockquote summary follows it, H2 sections group the content, markdown links parse and use absolute URLs, the file stays small enough to be cheap for an agent to read, and the file carries no inline HTML, since llms.txt should be plain markdown. Two further checks read the site's home page for the link relations v2 recommends, rel="describedby" to the llms.txt and rel="alternate" type="text/markdown" to a markdown version, and both report pass or information rather than a warning or a failure.
-
-**Why is there no score?**
-
-Deliberately. Eight structural checks can honestly report pass, warn or fail, and a number stacked on top of them would look like an agent-readiness score without measuring one. Agent readiness is measured with an independent public scanner, published security scans and a manual review, which is the paid audit rather than this free check.
-
-**How does an agent call the validator?**
-
-GET https://turva.dev/llms-txt-validator?url=example.com with an Accept: application/json header returns the same checks as JSON. Two documents are fetched from the target site, its /llms.txt and its home page, each following a redirect to the same host or its www twin when there is one, and the response carries a no-store header.
-
-**Does the validator store anything?**
-
-No. What is fetched is checked and discarded, the result goes back with a no-store header, and there is no signup. The validator reads two documents, the llms.txt file and the home page, each following a redirect to the same host or its www twin when there is one, and never crawls the rest of the site.
-
-**Can I run the checks in CI?**
-
-Yes. The same checks are published as an open npm package, turva-llms-txt-validator, with a llms-txt-validate command whose --json output matches this page's JSON exactly. One line in a pipeline, npx turva-llms-txt-validator your-domain.com --strict, fails the build when the file breaks. The two v2 checks never fail that build, since they are reported as information.
 
 ## Related
 
@@ -1957,37 +1951,37 @@ Yes. The same checks are published as an open npm package, turva-llms-txt-valida
 - [Free tools for agent-readiness](/tools)
 `,
 
-  "/tools": `# Free tools for agent-readiness
+  "/tools": `# Free tools for checking your site
 
-Check an llms.txt file, inspect the public MCP interface or use a badge with published criteria. These tools address specific parts of agent-readiness, and each page explains what the result does and does not establish.
+Start with a small check, inspect turva.dev's public MCP interface, or read the criteria for the agent-ready badge. These tools address specific parts of agent-readiness, and each page explains what the result does and does not establish.
 
-## llms.txt validator
+## Check an llms.txt file
 
-Check file structure and discovery links. See the result for each check, without signing up.
+Enter a domain to check the file's structure and its home-page discovery links. No account is needed.
 
 [Open the validator](/llms-txt-validator)
 
-## Public MCP server
+## Read turva.dev through MCP
 
-Read turva.dev's service information, published scan results and engagement principles through a public MCP interface.
+The public MCP server lets clients read service information, published scan results and working principles.
 
 [Read the MCP server guide](/guides/mcp-server-card)
 
-## Agent-ready badge
+## Use the agent-ready badge
 
-A self-declared badge with public eligibility criteria. It is not a certification.
+Read the eligibility criteria and get the embed code. The badge is self-declared, not a certification.
 
 [Read the badge criteria](/badge)
 
-## Technical details
+## For developers
 
-- The validator reports each check as pass, warn or fail, plus two v2 link relation checks that read pass or information and never move the summary. An agent gets the same result as JSON by calling the same URL with an Accept: application/json header. The same checks run in CI as an open npm package, [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI and the same JSON shape. Source on [GitHub](https://github.com/erekola/llms-txt-validator).
-- The MCP server is a read-only Model Context Protocol endpoint at https://mcp.turva.dev/mcp over streamable HTTP, for MCP clients rather than a browser. No authentication. Its server card is published at https://turva.dev/.well-known/mcp/server-card.json.
-- The badge is a small SVG served from turva.dev, linking back to the criteria page. Anyone can run the same public scanner against the displaying site at any time.
+- The validator returns the same checks as JSON when requested with Accept: application/json. Its eight structural checks use pass, warn or fail. The two v2 discovery checks use pass or information and do not change the structural result. The same checks are available in the open npm package [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI and matching JSON output. Source on [GitHub](https://github.com/erekola/llms-txt-validator).
+- The read-only MCP endpoint is https://mcp.turva.dev/mcp. It uses Streamable HTTP and requires no authentication. Connect with an MCP client rather than a browser. Its server card is published at https://turva.dev/.well-known/mcp/server-card.json.
+- The badge is an SVG served by turva.dev. Its link takes readers to the eligibility criteria.
 
-## Need a broader review?
+## Need the whole picture?
 
-These tools cover parts of what an agent-readiness audit measures. The audit itself, with fixed prices, is on the [services page](/services).
+These tools check specific parts of a site. The website and API audit adds a broader scan, manual review and recorded AI answers, and its price is on the [services page](/services).
 
 ## Related
 
@@ -1998,30 +1992,34 @@ These tools cover parts of what an agent-readiness audit measures. The audit its
 
   "/badge": `# The agent-ready badge
 
-A self-declared badge for sites that meet the published eligibility criteria below. It does not certify security, guarantee AI visibility or confirm that an agent can complete every task.
+Use this badge if your site meets either of the criteria below. It is a self-declared badge, not a certification. It does not certify security, guarantee AI visibility or confirm that an agent can complete every task.
 
-## Eligibility
+## Who can use it?
 
-A site may display the badge after completing a turva.dev agent-readiness audit, or after scoring 100/100 on the named public agent-readiness scanner. Completing an audit does not itself mean a 100/100 score.
+Your site is eligible if it has:
 
-- Sites that have completed a turva.dev agent-readiness audit
-- Sites that score 100/100 on a public agent-readiness scanner (isitagentready.com)
+- Completed a turva.dev agent-readiness audit.
+- Scored 100/100 on a public agent-readiness scanner (isitagentready.com).
 
-## What it is, and what it is not
+Completing an audit does not mean the site scored 100/100.
 
-The badge is a self-declared claim against public criteria, not a certification. turva.dev does not police its use. The value of the badge is that the claim is checkable: the scanner can be run against the displaying site by anyone, at any time.
+## What the badge means
 
-## Use the badge
+The badge says the site meets one of these criteria. It does not certify security, guarantee AI visibility or show that an agent can complete every task.
 
-Read the criteria, inspect the preview and copy the complete embed code. Copy this HTML where you want the badge to appear:
+turva.dev does not police its use. Anyone can run the public scanner against a site displaying the badge. That checks its current scanner result, not whether it previously completed an audit.
+
+## Add the badge
+
+If your site is eligible, copy the complete HTML below into your page.
 
     <a href="https://turva.dev/badge"><img src="https://turva.dev/badge.svg" alt="agent-ready. Criteria at turva.dev/badge" width="216" height="36" loading="lazy"></a>
 
-The image is 216 by 36 pixels, dark background, under one kilobyte.
+The image is 216 by 36 pixels, has a dark background and is under one kilobyte.
 
-## If your site is not there yet
+## Want to know where your site stands?
 
-An audit measures where you stand and lists what to fix first. Services and prices are on the [services page](/services). Email <mailto:info@turva.dev> and you get a reply within one business day.
+An audit shows what needs attention and what to fix first. Services and prices are on the [services page](/services). Email <mailto:info@turva.dev> and you get a reply within one business day.
 
 All free tools on this site are collected on [the tools page](/tools).
 `,
@@ -2375,13 +2373,13 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 - [Authentication and authorisation for AI agents](/guides/agent-authentication)
 - [What agents.json describes](/guides/agents-json)
 `,
-  "/samples/audit-report": `# A website and API audit, from evidence to fixes
+  "/samples/audit-report": `# A sample website and API audit
 
-Northwind Fasteners Oy and all readings in this report are fictional. This sample shows the format, evidence and correction instructions a client receives.
+Northwind Fasteners Oy and all readings in this report are invented. The example shows what a client receives: the finding, its evidence, who makes the correction and how the result is checked.
 
 Illustrative report date: 8 September 2026.
 
-## The first decision
+## What to fix first
 
 - **Priority:** Correct the product facts before improving scanner coverage.
 - **Evidence:** Product pages show a real price and lead time. Structured data reports €0.00 and InStock. The API leaves the price empty and marks the product purchasable.
@@ -2390,37 +2388,37 @@ Illustrative report date: 8 September 2026.
 - **Acceptance:** Compare the corrected page, structured data and API against the same product record across the catalog.
 - **Scanner effect:** This finding does not change the sample's scanner score.
 
-## Summary
+## The main findings
 
-The site reads Level 1 of 5 on isitagentready.com, with 2 of the 21 scored checks passing. The two that pass are robots.txt and sitemap.xml, and both exist because the content management system ships them. Everything an agent would use on purpose is missing: no markdown form of any page, no llms.txt, no Link relations, no discovery file for the REST API that already runs, and no named rules for AI crawlers.
+The site passes 2 of 21 scored checks and reads Level 1 of 5 on the sample's scanner run. It has robots.txt and a sitemap, but several discovery files and a Markdown version are missing.
 
-The most expensive finding scores no points. Every one of the 138 product pages publishes structured data with a price of 0,00 EUR and an availability of InStock, and the API publishes an empty price with the product marked purchasable, while the visible page shows a real price and, for 41 products, a six week lead time. One of the twelve by-name answers in the AI run already told a buyer the catalog is free. This is fixed first, across the whole catalog and on all three surfaces the company publishes, before anything that moves the score.
+The first priority is a problem the scanner does not score. All 138 product pages publish incorrect structured prices and availability. The API also withholds prices while marking products as purchasable. One fictional AI answer in the sample calls the catalog free.
 
-Nine findings. Five of them, F2, F3, F5, F6 and F7, flip six scored checks. Two, F1 and F4, correct data the scanner does not score. F8 is a decision to leave the five commerce checks red on purpose, because a commerce declaration that points at a checkout an agent cannot complete would be a false claim. F9 is the old address that two assistants quoted, which is not an agent-readiness check at all and is in the report because the company asked for correct answers.
+There are nine findings. F2, F3, F5, F6 and F7 address six scored checks. F1 and F4 correct information outside those checks. F8 records the company's decision not to offer agent checkout this year. F9 addresses an old address repeated in AI answers.
 
-The edge work in F1 to F7 is about eleven and a half hours. The services page says the list is typically about a day, and this one runs over because the catalog has variants and two price bases, so every product row is tested and not sampled. The fixed price for implementing the list covers it whatever the count. The report names the checks it moves, not a level it promises: the level moves with the check set the scanner runs on the day, and 22 checks were in the set on 2026-09-03.
+Estimated edge work is about eleven and a half hours for F1 to F7, or twelve hours including F9. Source corrections take about five hours. The tables below separate those responsibilities. These are estimates for the sample, not a quote or a promised readiness level. The level moves with the check set the scanner runs on the day, and 22 checks were in the set on 2026-09-03.
 
 ## Contents
 
-- [The first decision](#the-first-decision)
-- [Summary](#summary)
-- [Engagement record](#engagement-record)
-- [Decisions the company makes](#decisions-the-company-makes)
-- [Fix order and owners](#fix-order-and-owners)
-- [Who does what](#who-does-what)
-- [Scope and method](#scope-and-method)
-- [Scanner readings, check by check](#scanner-readings-check-by-check)
-- [Manual review](#manual-review)
-- [AI visibility today](#ai-visibility-today)
-- [Published security scans](#published-security-scans)
-- [Findings](#findings), F1 to F9
-- [What happens next](#what-happens-next)
-- [What this report is not](#what-this-report-is-not)
-- [Appendix A. Evidence chains](#appendix-a-evidence-chains)
-- [Appendix B. The questions and the measurement conditions](#appendix-b-the-questions-and-the-measurement-conditions)
+- [What to fix first](#what-to-fix-first)
+- [The main findings](#the-main-findings)
+- [The agreed work](#the-agreed-work)
+- [Decisions for the company](#decisions-for-the-company)
+- [Fixes, owners and estimated effort](#fixes-owners-and-estimated-effort)
+- [What each party delivers](#what-each-party-delivers)
+- [What was checked](#what-was-checked)
+- [Technical scan results](#technical-scan-results)
+- [Findings from the manual review](#findings-from-the-manual-review)
+- [What the assistants answered](#what-the-assistants-answered)
+- [Public security checks](#public-security-checks)
+- [The findings in detail](#the-findings-in-detail), F1 to F9
+- [After the report](#after-the-report)
+- [Scope limits](#scope-limits)
+- [Appendix A. From evidence to a checked fix](#appendix-a-from-evidence-to-a-checked-fix)
+- [Appendix B. Questions and test conditions](#appendix-b-questions-and-test-conditions)
 - [About this sample](#about-this-sample)
 
-## Engagement record
+## The agreed work
 
 | Field | Value |
 | --- | --- |
@@ -2436,21 +2434,21 @@ The edge work in F1 to F7 is about eleven and a half hours. The services page sa
 | Re-scan | One, included, within 30 days of the report, by 2026-10-08, on the day the company names |
 | Access used | Public surfaces only. No login, no credentials, no code repository |
 
-## Decisions the company makes
+## Decisions for the company
 
-Five decisions belong to the company, and the work below is scoped so that none of them blocks the others.
+The company needs to make five decisions. Each row shows which work depends on it, and none of them blocks the others.
 
 | Decision | Options | Effect | Needed by |
 | --- | --- | --- | --- |
-| D1. Who implements F1 to F7 | The company's team from this report, or turva.dev at the edge for the fixed price on the services page | Decides who owns the acceptance run in the section Who does what | Before the work starts |
+| D1. Who implements F1 to F7 | The company's team from this report, or turva.dev at the edge for the fixed price on the services page | Decides who owns the acceptance run in the section What each party delivers | Before the work starts |
 | D2. The AI crawler preference for F5 | Allow named crawlers, disallow them, or allow search and ai-input and refuse ai-train | Decides the content of robots.txt. The report records no preference of its own | Before F5 is written |
 | D3. The text of llms.txt for F3 | Approve the draft as written, or edit it | The file is the company's own description of itself and goes live only after the company has read it | Before F3 goes live |
 | D4. The four discontinued products and the six price-on-request products, F1 | Keep them published with the right availability, or unpublish them | Decides whether 10 of 138 products stay in the catalog an agent reads | Before the F1 acceptance run |
 | D5. Agent checkout, F8 | No agent checkout this year, as agreed at the kickoff, or a separate scoped engagement when that changes | The five commerce checks stay red on purpose until this decision changes. The report makes no recommendation on the strength of a scanner point | Whenever the company wants |
 
-## Fix order and owners
+## Fixes, owners and estimated effort
 
-The order is by impact on a buyer first and on the score second. The edge column is what turva.dev delivers when the company chooses that route. The source column is work at the origin that the company or its agency does whether or not turva.dev implements the list, because an edge correction serves the right data while the source still holds the wrong data. The effort figures are estimates scoped to these findings, not a quote.
+Fix the problems affecting buyers first. The table separates edge changes from permanent source corrections and names the owner of each. The edge column is what turva.dev delivers when the company chooses that route. The source column is work at the origin that the company or its agency does whether or not turva.dev implements the list, because an edge correction serves the right data while the source still holds the wrong data. The effort figures are estimates scoped to these findings, not a quote.
 
 | Order | Finding | Checks moved | At the edge, turva.dev | At the source, company or agency | Edge hours | Source hours |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -2466,9 +2464,9 @@ The order is by impact on a buyer first and on the score second. The edge column
 
 Edge total for F1 to F7 and F9: about twelve hours. Source total: about five hours, of which the largest is the plugin work behind F1, which the agency does.
 
-## Who does what
+## What each party delivers
 
-Four things are kept apart on purpose, because a client who buys the implementation needs to know what arrives, what has to be in place before it can arrive, what stays theirs afterwards and when the delivery counts as done.
+An edge correction and a source correction are different pieces of work. The sections below explain what turva.dev delivers, what the company needs to arrange, what stays with the company or its agency, and when the delivery is accepted.
 
 What turva.dev delivers. When the company chooses the fixed price route, turva.dev implements the edge column of every row above in one edge worker in front of the origin: the corrected JSON-LD on every product page, the markdown twin of every page with the acceptance list in F2, llms.txt with the Link relations and security.txt, the product sitemap and index, the robots.txt the company decided, the api-catalog linkset with real 404s under /.well-known/, the Organization address, and the DNS-AID record and DNSSEC when the DNS access is in the written arrangement. It also delivers the whole-catalog acceptance script from F1 as a file the company can run itself, and runs it once on the day the work is declared done.
 
@@ -2485,7 +2483,7 @@ When the delivery is accepted. On the day turva.dev declares the work done, the 
 
 What the acceptance does not cover, because it is source work: the API price rows in F1 and the origin sitemap in F4, which the retest reads and reports as the company's remaining work if they are still open.
 
-## Scope and method
+## What was checked
 
 What was measured, in this order.
 
@@ -2496,9 +2494,9 @@ What was measured, in this order.
 
 What was not measured. No code was read, no credentials were used, no penetration test was run and no traffic analytics were seen. The REST API was read through its public routes only. Rankings on any AI platform were not measured and are not promised anywhere in this report. Where the report says an agent may do something, that is a possible effect and not a measured one, and the report keeps the two apart in every finding.
 
-## Scanner readings, check by check
+## Technical scan results
 
-isitagentready.com on 2026-09-03. PASS and FAIL are the scanner's words. INFO marks the one check the scanner reports without scoring. The fix column points at the finding that moves the check, or says why the check stays as it is. The last column reads the check against what the company asked for, because a red check is not a defect when the company does not need what it measures.
+These are the sample's readings from 2026-09-03. PASS and FAIL are the scanner's labels. INFO is not scored. Each row links to a fix or explains why no change is planned. The last column reads the check against what the company asked for, because a red check is not a defect when the company does not need what it measures.
 
 | Category | Check | Reading | What the scanner saw | Fix | What it means for Northwind |
 | --- | --- | --- | --- | --- | --- |
@@ -2529,7 +2527,7 @@ Category totals: Discoverability 2 of 4, Content 0 of 1, Bot access control 0 of
 
 After F2, F3, F5, F6 and F7: Discoverability 4 of 4, Content 1 of 1, Bot access control 2 of 2, API, auth, MCP and A2A 1 of 9, Commerce 0 of 5. Overall 8 of 21, and the report does not translate that into a level, because the level on the retest day depends on the check set the scanner runs that day.
 
-## Manual review
+## Findings from the manual review
 
 The surfaces the scanner does not score, read by hand on 2026-09-03 and 2026-09-04.
 
@@ -2547,9 +2545,9 @@ The surfaces the scanner does not score, read by hand on 2026-09-03 and 2026-09-
 | REST API | /wp-json/wc/store/v1/products answers publicly, 100 products per page, two pages, X-WP-Total 138. Every row has prices.price as an empty string and is_purchasable true. stock_status is instock on 90 rows, onbackorder on 41 and outofstock on 7. | F1 corrects the data, F6 declares the API. |
 | Old documents still served | /wp-content/uploads/2022/hinnasto-2022.pdf is a 2022 price list with the company's previous Tampere address on its cover, linked from nowhere on the site and indexed by two search engines. | F9 |
 
-## AI visibility today
+## What the assistants answered
 
-Fifteen questions, four assistants, one anonymous run per question on 2026-09-04, 60 answers in all. The question set is fixed so that the same run can be repeated after the fixes and the two runs compared. The four assistants are named in appendix B with the conditions of the run. In the tables below they are A to D, because the answers on this page are invented and an invented answer is not put in a real product's mouth. A real report names the assistant on every row.
+The sample contains 60 invented answers: fifteen questions put to four assistants, one anonymous run per question on 2026-09-04. The question set is fixed so that the same run can be repeated after the fixes and the two runs compared. The four assistants are named in appendix B with the conditions of the run. A to D are used in the tables so that invented answers are not attributed to real products. A real report names the assistant on every row.
 
 | Question group | Questions | Answers | Northwind named | Correct where named | What the assistants did instead |
 | --- | --- | --- | --- | --- | --- |
@@ -2567,7 +2565,7 @@ What is recorded and is not an error. Two category answers cited a distributor's
 
 What this measures. Whether an assistant names the company when a buyer describes the need, and whether it gets the facts right when it does. It does not measure ranking, and nothing in this report predicts how the run reads after the fixes. The same 15 questions are run again at the retest under the same conditions, and the two tables are printed side by side.
 
-## Published security scans
+## Public security checks
 
 Run on 2026-09-04, recorded so that the client can re-run them without turva.dev.
 
@@ -2577,19 +2575,19 @@ Run on 2026-09-04, recorded so that the client can re-run them without turva.dev
 | internet.nl mail test | 55 of 100. SPF present, DKIM present, DMARC policy none. | Not an agent surface. Recorded because a buyer checks it. |
 | Hardenize | 17 of 24 categories passed. CAA, DNSSEC, HSTS preload, CSP, Referrer-Policy, security.txt and cookies did not. | security.txt is a five line file the same edge worker serves. It is listed under F3 as a same-day addition. |
 
-## Findings
+## The findings in detail
 
-Nine findings. Each carries the evidence as read, what it costs the company, the change, who does it and roughly how long, and the test that proves it done. Where a finding names an effect on agents, it says whether the effect was observed in this run, is possible, or was shown to follow from the cause. The order is by impact on a buyer first and on the score second.
+Nine findings. Each one shows the evidence, why it matters, the correction, the owner and the check used to confirm the result. Observed effects and possible effects are labelled separately. The order is by impact on a buyer first and on the score second.
 
-### F1. Every product publishes a price of 0 and an availability of InStock, on all three surfaces
+### F1. Product prices and availability disagree across the page, structured data and API
 
-**Category.** Structured data. Manual review, not scored. Invented reading for northwind-fasteners.example, like every figure in this sample.
+**Category and scanner effect.** Structured data. Manual review, not scored.
 
-**Evidence.** GET /products/din-933-m12x40-a2/ on 2026-09-03 returns a JSON-LD Product node with "price": "0.00", "priceCurrency": "EUR" and "availability": "https://schema.org/InStock". The visible page shows 0,42 EUR per piece, VAT 0 %, and a lead time of six weeks. The same node shape appears on all 138 product pages, read by fetching both pages of /wp-json/wc/store/v1/products, following every product URL and reading the price field of each. The API returns prices.price as an empty string and is_purchasable true for every product, and its stock_status field is instock for 90 products, onbackorder for 41 and outofstock for 7. The 19 products that come in several thread lengths show a price per variant on the page and publish one Product node with one price for all of them. The 12 products sold by the box of 100 show the box price on the page and publish it in JSON-LD as if it were the price of one piece.
+**What was found.** GET /products/din-933-m12x40-a2/ on 2026-09-03 returns a JSON-LD Product node with "price": "0.00", "priceCurrency": "EUR" and "availability": "https://schema.org/InStock". The visible page shows 0,42 EUR per piece, VAT 0 %, and a lead time of six weeks. The same node shape appears on all 138 product pages, read by fetching both pages of /wp-json/wc/store/v1/products, following every product URL and reading the price field of each. The API returns prices.price as an empty string and is_purchasable true for every product, and its stock_status field is instock for 90 products, onbackorder for 41 and outofstock for 7. The 19 products that come in several thread lengths show a price per variant on the page and publish one Product node with one price for all of them. The 12 products sold by the box of 100 show the box price on the page and publish it in JSON-LD as if it were the price of one piece.
 
-**Impact.** No scanner points, and the highest impact in this report. Observed in this run: one by-name answer on 2026-09-04 told a buyer the catalog is free and cited the product page. Possible and not observed: an agent that reads the API as data gets an empty price and a purchasable flag, and an agent that reads a per-box price as a per-piece price quotes a hundred times too much. Wrong data is worse than missing data: missing data makes an agent guess, wrong data makes it confident.
+**Why it matters.** No scanner points, and the highest impact in this report. Observed in this run: one by-name answer on 2026-09-04 told a buyer the catalog is free and cited the product page. Possible and not observed: an agent that reads the API as data gets an empty price and a purchasable flag, and an agent that reads a per-box price as a per-piece price quotes a hundred times too much. In this sample, correcting the product facts takes priority because one recorded answer already repeats a wrong price claim.
 
-**Change.** Publish, on the visible page, in the JSON-LD and in the API, the same price, the same currency, the same price basis and the same availability for every product and every variant in the catalog. Four rules, and the acceptance test reads them back.
+**What to change.** Publish, on the visible page, in the JSON-LD and in the API, the same price, the same currency, the same price basis and the same availability for every product and every variant in the catalog. Four rules, and the acceptance test reads them back.
 
 - Price and currency. The JSON-LD Offer price is the number the page shows, in EUR, VAT excluded as the page states, and the API price is the same number in minor units. Prices are not rounded on one surface and not on another.
 - Price basis. A product sold by the box carries a UnitPriceSpecification with referenceQuantity 100 in JSON-LD and its unit in the API, so the number is never read as a per-piece price.
@@ -2598,25 +2596,25 @@ Nine findings. Each carries the evidence as read, what it costs the company, the
 
 Exceptions, listed so that the acceptance test does not read them as failures. Six products are priced on request: the page says so, and they carry no price in JSON-LD or in the API, only an availability from their stock state. Four products are discontinued and still published: they carry availability Discontinued and no price, and decision D4 says whether they stay published at all. The tests below skip the price on those ten and test the availability on the six.
 
-**Owner and effort.** Two owners, and the report keeps them apart. The permanent fix is at the source, in the catalog plugin's structured data mapping and in the setting that hides prices from the API for anonymous readers, and it belongs to the company's web agency: about two and a half hours. When turva.dev implements the list, the JSON-LD is corrected at the edge on the way through, on every product page, from the price, unit, variant and stock elements the page itself renders, so the served node is right from the day the worker goes live: about three hours, plus one hour for the whole-catalog acceptance script the company keeps. The edge cannot correct the API, because the API's empty price is the origin withholding data and there is nothing on the way through to correct it from: the API rows are the agency's, and the acceptance below says which rows are whose.
+**Who does it and estimated effort.** Two owners, and the report keeps them apart. The permanent fix is at the source, in the catalog plugin's structured data mapping and in the setting that hides prices from the API for anonymous readers, and it belongs to the company's web agency: about two and a half hours. When turva.dev implements the list, the JSON-LD is corrected at the edge on the way through, on every product page, from the price, unit, variant and stock elements the page itself renders, so the served node is right from the day the worker goes live: about three hours, plus one hour for the whole-catalog acceptance script the company keeps. The edge cannot correct the API, because the API's empty price is the origin withholding data and there is nothing on the way through to correct it from: the API rows are the agency's, and the acceptance below says which rows are whose.
 
-**Acceptance test.** A script the company keeps, delivered with the report, and run against the live site. It fetches both API pages, checks that the API total, the sitemap product count and the number of product pages agree at 138, follows every product URL, and for every offer compares the visible page, the JSON-LD and the API on price in minor units, currency, price basis and availability. The catalog has 170 price rows, 109 simple products and 61 variants, and 176 availability rows, the same plus the six price-on-request products. The edge delivery is accepted when the JSON-LD column matches the visible page on every one of the 170 and the 176, and when the four discontinued products read Discontinued. The API column is reported per row, and any row where the API still differs is listed as the agency's remaining work with the product URL, not hidden inside a total. The manual finding closes when all three columns agree on every row. Appendix A, chain 1, shows one row of this test end to end.
+**How to check the fix.** A script the company keeps, delivered with the report, and run against the live site. It fetches both API pages, checks that the API total, the sitemap product count and the number of product pages agree at 138, follows every product URL, and for every offer compares the visible page, the JSON-LD and the API on price in minor units, currency, price basis and availability. The catalog has 170 price rows, 109 simple products and 61 variants, and 176 availability rows, the same plus the six price-on-request products. The edge delivery is accepted when the JSON-LD column matches the visible page on every one of the 170 and the 176, and when the four discontinued products read Discontinued. The API column is reported per row, and any row where the API still differs is listed as the agency's remaining work with the product URL, not hidden inside a total. The manual finding closes when all three columns agree on every row. Appendix A, chain 1, shows one row of this test end to end.
 
 **Guide.** [JSON-LD and structured data for AI clients](/guides/json-ld-structured-data).
 
-### F2. Serve markdown next to HTML
+### F2. Offer Markdown alongside HTML
 
-**Category.** Content accessibility. Scored check markdownNegotiation. Invented reading for northwind-fasteners.example, like every figure in this sample.
+**Category and scanner effect.** Content accessibility. Scored check markdownNegotiation.
 
-**Evidence.** GET / with Accept: text/markdown on 2026-09-03 returns Content-Type text/html and a 212 kB body. The same request to /products/ and to a product page returns HTML of 340 kB and 188 kB. No .md address exists for any page. The markdown form of the home page, produced from the same HTML on 2026-09-03, is 9 kB.
+**What was found.** GET / with Accept: text/markdown on 2026-09-03 returns Content-Type text/html and a 212 kB body. The same request to /products/ and to a product page returns HTML of 340 kB and 188 kB. No .md address exists for any page. The markdown form of the home page, produced from the same HTML on 2026-09-03, is 9 kB.
 
-**Impact.** One scored check. Observed: the three page sizes above, and the 9 kB markdown form of the home page. Possible and not observed: an assistant with a fixed reading budget stops before the end of a 212 kB page. Nothing in the AI run of 2026-09-04 shows an assistant truncating a Northwind page, and the report does not claim it.
+**Why it matters.** One scored check. Observed: the three page sizes above, and the 9 kB markdown form of the home page. Possible and not observed: an assistant with a fixed reading budget stops before the end of a 212 kB page. Nothing in the AI run of 2026-09-04 shows an assistant truncating a Northwind page, and the report does not claim it.
 
-**Change.** Put an edge worker in front of the origin that answers a text/markdown request with the markdown form of the page at the same address, and publishes each page at its .md address as well. The origin is not touched. The worker converts the rendered HTML on the way through and caches the result per URL. This is the worker every other edge finding in this report lives in, so its cost is paid once, and the acceptance list below is the acceptance list of the edge itself.
+**What to change.** Put an edge worker in front of the origin that answers a text/markdown request with the markdown form of the page at the same address, and publishes each page at its .md address as well. The origin is not touched. The worker converts the rendered HTML on the way through and caches the result per URL. This is the worker every other edge finding in this report lives in, so its cost is paid once, and the acceptance list below is the acceptance list of the edge itself.
 
-**Owner and effort.** turva.dev or the company's developer, at the edge. About four hours, of which the acceptance list is one.
+**Who does it and estimated effort.** turva.dev or the company's developer, at the edge. About four hours, of which the acceptance list is one.
 
-**Acceptance test.** Every line is checked on the home page, on /products/ and on three product pages, one of them a variable product, and the list is delivered filled in.
+**How to check the fix.** Every line is checked on the home page, on /products/ and on three product pages, one of them a variable product, and the list is delivered filled in.
 
 - Content negotiation. A request with Accept: text/markdown returns Content-Type: text/markdown and a body that starts with the page title as a heading. A request with Accept: text/html, or with no Accept header, returns the HTML exactly as the origin serves it. A request that lists both with a higher q on text/html gets HTML.
 - Separate caches. Every response carries Vary: Accept, so no cache serves the markdown form to a browser or the HTML form to an agent that asked for markdown. Checked by requesting the two forms in both orders from a cold cache.
@@ -2628,137 +2626,137 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Guide.** [Serving Markdown to AI clients](/guides/markdown-for-agents).
 
-### F3. Publish llms.txt and announce it in the Link header
+### F3. Publish llms.txt and link to it in response headers
 
-**Category.** Discoverability. Scored check linkHeaders. Invented reading for northwind-fasteners.example, like every figure in this sample.
+**Category and scanner effect.** Discoverability. Scored check linkHeaders.
 
-**Evidence.** GET /llms.txt on 2026-09-03 returns the HTML 404 page with status 200. No response on the site carries a Link header. GET /.well-known/security.txt returns the same soft 404.
+**What was found.** GET /llms.txt on 2026-09-03 returns the HTML 404 page with status 200. No response on the site carries a Link header. GET /.well-known/security.txt returns the same soft 404.
 
-**Impact.** One scored check. Observed: no file, no header. Possible and not observed: an assistant that looks for llms.txt gets a 200 with an HTML body and has to read the whole page to learn there is nothing there. The AI run of 2026-09-04 does not show whether any of the four assistants asked for the file, and the report does not claim that they do.
+**Why it matters.** One scored check. Observed: no file, no header. Possible and not observed: an assistant that looks for llms.txt gets a 200 with an HTML body and has to read the whole page to learn there is nothing there. The AI run of 2026-09-04 does not show whether any of the four assistants asked for the file, and the report does not claim that they do.
 
-**Change.** Write /llms.txt by hand: the company name, a four line summary, and the pages that matter grouped as products, delivery terms, technical documents and contact, each as an absolute link to the page's markdown form from F2. Announce it with Link: rel="describedby" on every response and add rel="alternate" type="text/markdown" pointing at the page's own .md twin. Serve /.well-known/security.txt from the same worker with a contact address and an expiry date, which closes one Hardenize category the same day.
+**What to change.** Write /llms.txt by hand: the company name, a four line summary, and the pages that matter grouped as products, delivery terms, technical documents and contact, each as an absolute link to the page's markdown form from F2. Announce it with Link: rel="describedby" on every response and add rel="alternate" type="text/markdown" pointing at the page's own .md twin. Serve /.well-known/security.txt from the same worker with a contact address and an expiry date, which closes one Hardenize category the same day.
 
-**Owner and effort.** turva.dev or the company's developer, at the edge. About 90 minutes. The text of llms.txt is decision D3: it goes live after the company has read it, because it is the company's own description of itself.
+**Who does it and estimated effort.** turva.dev or the company's developer, at the edge. About 90 minutes. The text of llms.txt is decision D3: it goes live after the company has read it, because it is the company's own description of itself.
 
-**Acceptance test.** linkHeaders reads PASS on the next full scan. The free validator at [turva.dev/llms-txt-validator](/llms-txt-validator) reads the file as valid with every link resolving. GET /.well-known/security.txt returns text/plain with status 200 and an Expires date in the future.
+**How to check the fix.** linkHeaders reads PASS on the next full scan. The free validator at [turva.dev/llms-txt-validator](/llms-txt-validator) reads the file as valid with every link resolving. GET /.well-known/security.txt returns text/plain with status 200 and an Expires date in the future.
 
 **Guides.** [llms.txt explained](/guides/llms-txt) and [Response headers for AI clients](/guides/response-headers-for-agents).
 
-### F4. The sitemap lists two template pages and misses the catalog
+### F4. Add the product catalog to the sitemap
 
-**Category.** Discoverability. Manual review, not scored. The sitemap check passes and stays green. Invented reading for northwind-fasteners.example, like every figure in this sample.
+**Category and scanner effect.** Discoverability. Manual review, not scored. The sitemap check passes and stays green.
 
-**Evidence.** GET /sitemap.xml on 2026-09-03 lists 14 URLs: the front page, eleven content pages and two CMS template pages titled Sample Page and Privacy Policy Draft. None of the 138 product URLs is in it. robots.txt carries no Sitemap line.
+**What was found.** GET /sitemap.xml on 2026-09-03 lists 14 URLs: the front page, eleven content pages and two CMS template pages titled Sample Page and Privacy Policy Draft. None of the 138 product URLs is in it. robots.txt carries no Sitemap line.
 
-**Impact.** No scanner points. Observed: a sitemap with 14 pages and no product, and two template pages that two search engines index today. Possible and not observed: a reader that starts from the sitemap and reads only what it lists never reaches a product page. The report does not claim any assistant read the sitemap on 2026-09-04.
+**Why it matters.** No scanner points. Observed: a sitemap with 14 pages and no product, and two template pages that two search engines index today. Possible and not observed: a reader that starts from the sitemap and reads only what it lists never reaches a product page. The report does not claim any assistant read the sitemap on 2026-09-04.
 
-**Change.** At the source: let the catalog plugin generate a product sitemap, reference it from a sitemap index, remove the two template pages from the site or from the sitemap, and add one Sitemap line to robots.txt. Four settings, no code. At the edge, when turva.dev implements the list: serve a product sitemap generated from the API and a sitemap index in front of the CMS one, and the robots.txt line comes with F5, so the acceptance test passes without waiting for the agency.
+**What to change.** At the source: let the catalog plugin generate a product sitemap, reference it from a sitemap index, remove the two template pages from the site or from the sitemap, and add one Sitemap line to robots.txt. Four settings, no code. At the edge, when turva.dev implements the list: serve a product sitemap generated from the API and a sitemap index in front of the CMS one, and the robots.txt line comes with F5, so the acceptance test passes without waiting for the agency.
 
-**Owner and effort.** The four settings belong to the company's web agency: about half an hour. The edge sitemap is about half an hour.
+**Who does it and estimated effort.** The four settings belong to the company's web agency: about half an hour. The edge sitemap is about half an hour.
 
-**Acceptance test.** The sitemap index references a product sitemap that lists every product URL, the count agrees with the API total from F1, no template page appears, and robots.txt names the index. The scored check stays green either way, which is why this is a manual finding.
-
-**Guide.** [Sitemaps, robots.txt and agents](/guides/sitemaps-and-robots-for-agents).
-
-### F5. Name the AI crawlers and declare Content Signals in robots.txt
-
-**Category.** Bot access control. Scored checks robotsTxtAiRules and contentSignals. Invented reading for northwind-fasteners.example, like every figure in this sample.
-
-**Evidence.** /robots.txt on 2026-09-03 is the CMS default: User-agent: *, Disallow: /wp-admin/, Allow: /wp-admin/admin-ajax.php. No AI crawler is named and no Content-Signal line exists.
-
-**Impact.** Two scored checks. Observed: the file says nothing about AI crawlers. Possible and not observed: a crawler that reads the file finds no rule for itself and applies its own default, whatever that is. One assistant on 2026-09-04 cited a distributor's copy of a product page instead of Northwind's, and the report records that as an observation only: nothing in the run shows that robots.txt had anything to do with the choice.
-
-**Change.** Add named groups for the crawlers the company wants to allow, and one Content-Signal line that states search yes, ai-input yes, ai-train no, or whichever preference the company holds under decision D2. The line is a stated preference and not an enforcement mechanism, and the file says so in a comment where it appears. The company decides the preference, the report only records what the file says today.
-
-**Owner and effort.** The company decides, the edge worker serves the file. About half an hour once the preference is decided.
-
-**Acceptance test.** robotsTxtAiRules and contentSignals read PASS on the next full scan, and the file names the crawlers the company chose.
+**How to check the fix.** The sitemap index references a product sitemap that lists every product URL, the count agrees with the API total from F1, no template page appears, and robots.txt names the index. The scored check stays green either way, which is why this is a manual finding.
 
 **Guide.** [Sitemaps, robots.txt and agents](/guides/sitemaps-and-robots-for-agents).
 
-### F6. Tell agents that the REST API exists
+### F5. State the company's AI crawler preferences in robots.txt
 
-**Category.** API, auth, MCP and A2A. Scored check apiCatalog. Invented reading for northwind-fasteners.example, like every figure in this sample.
+**Category and scanner effect.** Bot access control. Scored checks robotsTxtAiRules and contentSignals.
 
-**Evidence.** The site runs a public read-only REST API at /wp-json/ with the product catalog behind it at /wp-json/wc/store/v1/products, and no discovery file names it. GET /.well-known/api-catalog on 2026-09-03 returns the HTML 404 page with status 200, as does every path under /.well-known/. The scanner reads apiCatalog as failing along with the eight other checks in the category. Appendix A, chain 3, carries the request and the response.
+**What was found.** /robots.txt on 2026-09-03 is the CMS default: User-agent: *, Disallow: /wp-admin/, Allow: /wp-admin/admin-ajax.php. No AI crawler is named and no Content-Signal line exists.
 
-**Impact.** One scored check now, and the cheapest step in the category. Observed: the API answers and nothing announces it, and every well-known probe gets a 200 with an HTML body. Possible and not observed: an agent that finds the API reads the catalog as data instead of scraping HTML, which is only worth anything once F1 has made the data right.
+**Why it matters.** Two scored checks. Observed: the file says nothing about AI crawlers. Possible and not observed: a crawler that reads the file finds no rule for itself and applies its own default, whatever that is. One assistant on 2026-09-04 cited a distributor's copy of a product page instead of Northwind's, and the report records that as an observation only: nothing in the run shows that robots.txt had anything to do with the choice.
 
-**Change.** Publish /.well-known/api-catalog, one JSON linkset that names the /wp-json/ base URL and its description, with the content type application/linkset+json. Make every other path under /.well-known/ return a real 404. The other eight checks in the category need an authentication story or an MCP server and are not declared until one exists: a server card that points at no server is a false claim, and this report does not recommend one.
+**What to change.** Add named groups for the crawlers the company wants to allow, and one Content-Signal line that states search yes, ai-input yes, ai-train no, or whichever preference the company holds under decision D2. The line is a stated preference and not an enforcement mechanism, and the file says so in a comment where it appears. The company decides the preference, the report only records what the file says today.
 
-**Owner and effort.** turva.dev or the company's developer, at the edge. About half an hour.
+**Who does it and estimated effort.** The company decides, the edge worker serves the file. About half an hour once the preference is decided.
 
-**Acceptance test.** apiCatalog reads PASS on the next full scan. The category reads 1 of 9, and the retest report says which eight are left and why they wait. GET /.well-known/nothing returns 404 with a short plain text body.
+**How to check the fix.** robotsTxtAiRules and contentSignals read PASS on the next full scan, and the file names the crawlers the company chose.
+
+**Guide.** [Sitemaps, robots.txt and agents](/guides/sitemaps-and-robots-for-agents).
+
+### F6. Make the existing REST API discoverable
+
+**Category and scanner effect.** API, auth, MCP and A2A. Scored check apiCatalog.
+
+**What was found.** The site runs a public read-only REST API at /wp-json/ with the product catalog behind it at /wp-json/wc/store/v1/products, and no discovery file names it. GET /.well-known/api-catalog on 2026-09-03 returns the HTML 404 page with status 200, as does every path under /.well-known/. The scanner reads apiCatalog as failing along with the eight other checks in the category. Appendix A, chain 3, carries the request and the response.
+
+**Why it matters.** One scored check now, and the cheapest step in the category. Observed: the API answers and nothing announces it, and every well-known probe gets a 200 with an HTML body. Possible and not observed: an agent that finds the API reads the catalog as data instead of scraping HTML, which is only worth anything once F1 has made the data right.
+
+**What to change.** Publish /.well-known/api-catalog, one JSON linkset that names the /wp-json/ base URL and its description, with the content type application/linkset+json. Make every other path under /.well-known/ return a real 404. The other eight checks in the category need an authentication story or an MCP server and are not declared until one exists: a server card that points at no server is a false claim, and this report does not recommend one.
+
+**Who does it and estimated effort.** turva.dev or the company's developer, at the edge. About half an hour.
+
+**How to check the fix.** apiCatalog reads PASS on the next full scan. The category reads 1 of 9, and the retest report says which eight are left and why they wait. GET /.well-known/nothing returns 404 with a short plain text body.
 
 **Guide.** [The /.well-known directory for agent discovery](/guides/well-known-for-agents).
 
-### F7. Publish a DNS-AID record once the discovery files exist
+### F7. Add the DNS discovery record after the files are live
 
-**Category.** Discoverability. Scored check dnsAid. Invented reading for northwind-fasteners.example, like every figure in this sample.
+**Category and scanner effect.** Discoverability. Scored check dnsAid.
 
-**Evidence.** No _index._agents record exists under northwind-fasteners.example, and DNSSEC is not enabled at the registrar, which internet.nl also reports.
+**What was found.** No _index._agents record exists under northwind-fasteners.example, and DNSSEC is not enabled at the registrar, which internet.nl also reports.
 
-**Impact.** One scored check. This is the check that needs the company's DNS rather than the edge worker, which is why it is last among the scored fixes. DNSSEC also moves the internet.nl website reading.
+**Why it matters.** One scored check. This is the check that needs the company's DNS rather than the edge worker, which is why it is last among the scored fixes. DNSSEC also moves the internet.nl website reading.
 
 **What the check reads, with versions.** The record shape follows the IETF draft DNS for AI Discovery, draft-mozleywilliams-dnsop-dnsaid-02, which defines _index._agents under the domain as an SVCB record pointing at the organisation's agent index. The scanner's dnsAid check, as it read on 2026-09-03, looks for that record and reports whether DNSSEC validated it. Both are moving: the draft has a revision number and an expiry date, and the scanner's check definition is not versioned by the scanner, so the report pins both to their state on 2026-09-03 and the retest reads them against their state on the retest day. If either has moved between the two dates, the retest report names both versions next to the two readings rather than treating the readings as comparable.
 
-**Change.** After the files above are live, add the _index._agents SVCB record pointing at the site and enable DNSSEC at the registrar. The exact record text, as of draft 02, is carried in the delivery, and the report does not reproduce it here because it is the part most likely to change between now and the retest.
+**What to change.** After the files above are live, add the _index._agents SVCB record pointing at the site and enable DNSSEC at the registrar. The exact record text, as of draft 02, is carried in the delivery, and the report does not reproduce it here because it is the part most likely to change between now and the retest.
 
-**Owner and effort.** The surface belongs to the company's IT, at the registrar. About half an hour, plus the DNSSEC propagation wait. When turva.dev implements the list and the written arrangement covers the DNS zone, both records are added from the delivery. Without that access this is the one item that stays with the company, and the acceptance in Who does what says what the retest reads in that case.
+**Who does it and estimated effort.** The surface belongs to the company's IT, at the registrar. About half an hour, plus the DNSSEC propagation wait. When turva.dev implements the list and the written arrangement covers the DNS zone, both records are added from the delivery. Without that access this is the one item that stays with the company, and the acceptance in What each party delivers says what the retest reads in that case.
 
-**Acceptance test.** dnsAid reads PASS on the next full scan, once DNSSEC validates. internet.nl website test shows DNSSEC as passing. The retest report states the draft revision and the scanner check definition date the reading was taken against.
+**How to check the fix.** dnsAid reads PASS on the next full scan, once DNSSEC validates. internet.nl website test shows DNSSEC as passing. The retest report states the draft revision and the scanner check definition date the reading was taken against.
 
 **Guide.** [The /.well-known directory for agent discovery](/guides/well-known-for-agents), which covers the discovery index the record points at.
 
-### F8. Declare no agent commerce surface until a checkout can back it
+### F8. Keep agent checkout undeclared until it is supported
 
-**Category.** Commerce. Scored checks x402, mpp, ucp, acp and ap2. Invented reading for northwind-fasteners.example, like every figure in this sample.
+**Category and scanner effect.** Commerce. Scored checks x402, mpp, ucp, acp and ap2.
 
-**Evidence.** The store checks out through a browser form with a card payment page. None of the five agent commerce surfaces the scanner reads is declared: an x402 payment challenge, an MPP payment discovery document, a UCP profile, an ACP discovery document or an AP2 declaration. All five commerce checks read FAIL.
+**What was found.** The store checks out through a browser form with a card payment page. None of the five agent commerce surfaces the scanner reads is declared: an x402 payment challenge, an MPP payment discovery document, a UCP profile, an ACP discovery document or an AP2 declaration. All five commerce checks read FAIL.
 
-**Impact.** Five scored checks, and none of them is worth flipping this year. A commerce declaration that points at a checkout an agent cannot complete is a false claim, and the scanner cannot tell the difference between a declaration and a working checkout.
+**Why it matters.** Five scored checks, and none of them is worth flipping this year. A commerce declaration that points at a checkout an agent cannot complete is a false claim. The sample's declaration checks do not demonstrate that an agent can complete checkout.
 
-**Change.** No change. The company said at the kickoff that agents do not buy here this year, and that is decision D5. When it changes, agent checkout is a separate engagement scoped from the payment side, and the report makes no recommendation about which of the five surfaces to declare first, because the only reason to pick one on the evidence here would be that it scores, and that is not a reason.
+**What to change.** No change. The company said at the kickoff that agents do not buy here this year, and that is decision D5. When it changes, agent checkout is a separate engagement scoped from the payment side, and the report makes no recommendation about which of the five surfaces to declare first, because the only reason to pick one on the evidence here would be that it scores, and that is not a reason.
 
-**Owner and effort.** The company's management, as a decision. No hours in this round.
+**Who does it and estimated effort.** The company's management, as a decision. No hours in this round.
 
-**Acceptance test.** The five checks stay red on the next scan, on purpose, and the retest report repeats this entry so that nobody reads the red as an oversight.
+**How to check the fix.** The five checks stay red on the next scan, on purpose, and the retest report repeats this entry so that nobody reads the red as an oversight.
 
 **Guides.** [Agent commerce discovery](/guides/agent-commerce-discovery) and [Agentic commerce readiness](/guides/agentic-commerce-readiness).
 
-### F9. The old address is still published in two places and the current one in none an agent reads
+### F9. Correct the published address
 
-**Category.** Correctness of published facts. Manual review, not scored, raised by the AI run. Invented reading for northwind-fasteners.example, like every figure in this sample.
+**Category and scanner effect.** Correctness of published facts. Manual review, not scored, raised by the AI run.
 
-**Evidence.** Two of the twelve by-name answers on 2026-09-04 gave the Tampere address the company left in 2023. Assistant A cited a business directory listing that still carries it. Assistant C cited /wp-content/uploads/2022/hinnasto-2022.pdf, a 2022 price list on the company's own site with the old address on its cover, linked from no page and indexed by two search engines. The site's Organization node carries no address, and the current address appears only as text on the contact page.
+**What was found.** Two of the twelve by-name answers on 2026-09-04 gave the Tampere address the company left in 2023. Assistant A cited a business directory listing that still carries it. Assistant C cited /wp-content/uploads/2022/hinnasto-2022.pdf, a 2022 price list on the company's own site with the old address on its cover, linked from no page and indexed by two search engines. The site's Organization node carries no address, and the current address appears only as text on the contact page.
 
-**Impact.** No scanner points. Observed: two wrong answers in twelve. Possible and not observed: a buyer's assistant sends a visitor or a delivery to the wrong city.
+**Why it matters.** No scanner points. Observed: two wrong answers in twelve. Possible and not observed: a buyer's assistant sends a visitor or a delivery to the wrong city.
 
-**Change.** Three parts with three owners. Add a PostalAddress with the current address to the Organization node on every page, which the edge does from the text the company confirms. Remove the 2022 PDF or replace it with the current price list at the same address, which the company does, because the file is the company's own and a price list from 2022 is wrong on more than the address. Ask the directory to correct its listing, which the company does and which is outside anyone's control here.
+**What to change.** Three parts with three owners. Add a PostalAddress with the current address to the Organization node on every page, which the edge does from the text the company confirms. Remove the 2022 PDF or replace it with the current price list at the same address, which the company does, because the file is the company's own and a price list from 2022 is wrong on more than the address. Ask the directory to correct its listing, which the company does and which is outside anyone's control here.
 
-**Owner and effort.** Edge, about half an hour. Company, about an hour including the directory request.
+**Who does it and estimated effort.** Edge, about half an hour. Company, about an hour including the directory request.
 
-**Acceptance test.** The Organization node on the home page carries the current address. GET /wp-content/uploads/2022/hinnasto-2022.pdf returns 404 or the current list. The three by-name questions at the retest give the current address or none. If the directory still carries the old address on the retest day, the report records that as the directory's state and not as a failure of the site.
+**How to check the fix.** The Organization node on the home page carries the current address. GET /wp-content/uploads/2022/hinnasto-2022.pdf returns 404 or the current list. The three by-name questions at the retest give the current address or none. If the directory still carries the old address on the retest day, the report records that as the directory's state and not as a failure of the site.
 
 **Guide.** [JSON-LD and structured data for AI clients](/guides/json-ld-structured-data).
 
-## What happens next
+## After the report
 
 Three routes, and the report is written so that any of them works.
 
-- The company's team does the work from this report. Every finding carries its change and its acceptance test, the section Who does what says which acceptance belongs to which owner, and the guides linked above carry the patterns.
-- turva.dev implements the edge column of every finding for the fixed price on the services page, bought together with the audit. That price needs the prerequisites listed under Who does what, arranged in writing before the work starts. The source column stays with the company and its agency whichever route is chosen.
+- The company's team does the work from this report. Every finding carries its change and its acceptance test, the section What each party delivers says which acceptance belongs to which owner, and the guides linked above carry the patterns.
+- turva.dev implements the edge column of every finding for the fixed price on the services page, bought together with the audit. That price needs the prerequisites listed under What each party delivers, arranged in writing before the work starts. The source column stays with the company and its agency whichever route is chosen.
 - Nothing is done, and the report stands as a dated record of where the site was on 2026-09-03.
 
 In every case the retest is the same, and it is included in the audit price: once within 30 days of this report, so by 2026-10-08, on the day the company names, the scanner is run again with the same profile, the whole-catalog script from F1 is run again, the 15 questions are put to the same four assistants under the same conditions, and the readings are printed next to the ones above with the versions from F7 stated. One round of written follow-up questions is open until 2026-09-22.
 
-## What this report is not
+## Scope limits
 
 It is not a penetration test, a certification, an SEO audit or a promise of ranking on any AI platform. It reads what the site publishes and records what four assistants said on one day. Where it says an agent may do something, it says so as a possibility and not as a measurement. It does not read the organisation's readiness to adopt agents, which is a different question that often goes by the same name.
 
-## Appendix A. Evidence chains
+## Appendix A. From evidence to a checked fix
 
-Three findings shown end to end: the request as sent, the response as read, the observation, the change, and the acceptance reading as it will appear in the retest report. In this sample the acceptance readings are invented like everything else, and they are shown so that the shape of a closed finding is visible. In a real report the last row is empty until the retest.
+These three examples connect a request and a response to a finding, a correction and a follow-up result. The follow-up readings are fictional too, and they are shown so that the shape of a closed finding is visible. In a real report those fields remain open until the retest is complete.
 
 Chain 1, F1, one row of the whole-catalog test.
 
@@ -2770,7 +2768,7 @@ Chain 1, F1, one row of the whole-catalog test.
 | Response excerpt | "prices": {"price": "", "currency_code": "EUR", "currency_minor_unit": 2}, "is_purchasable": true, "stock_status": "onbackorder" |
 | Observation | Three surfaces, three answers: 0,42 EUR with a six week lead time, 0,00 EUR in stock, and no price at all but purchasable |
 | Change | JSON-LD from the page's own price and stock elements at the edge. Plugin mapping and API price visibility at the source. Availability from stock_status onbackorder, so BackOrder with deliveryLeadTime 6 weeks |
-| Acceptance reading | JSON-LD "price": "0.42", "availability": "https://schema.org/BackOrder", "deliveryLeadTime": 6 weeks. API "price": "42", "stock_status": "onbackorder". Row ALIGNED on all three surfaces, and the script's total line reads 170 of 170 price rows and 176 of 176 availability rows aligned. The API column reads right here because the agency has done its source work by the retest day. The edge delivery alone is accepted on the JSON-LD column, as Who does what says |
+| Acceptance reading | JSON-LD "price": "0.42", "availability": "https://schema.org/BackOrder", "deliveryLeadTime": 6 weeks. API "price": "42", "stock_status": "onbackorder". Row ALIGNED on all three surfaces, and the script's total line reads 170 of 170 price rows and 176 of 176 availability rows aligned. The API column reads right here because the agency has done its source work by the retest day. The edge delivery alone is accepted on the JSON-LD column, as What each party delivers says |
 
 Chain 2, F2, markdown negotiation on the home page.
 
@@ -2792,7 +2790,7 @@ Chain 3, F6, the soft 404 under /.well-known/.
 | Change | Serve the linkset at /.well-known/api-catalog with application/linkset+json, and return a real 404 with a plain text body for every other path under /.well-known/ that the edge does not serve |
 | Acceptance reading | /.well-known/api-catalog: HTTP 200, application/linkset+json, one link with rel service-desc to /wp-json/. /.well-known/nothing: HTTP 404, text/plain. apiCatalog PASS on the retest scan, category 1 of 9 |
 
-## Appendix B. The questions and the measurement conditions
+## Appendix B. Questions and test conditions
 
 The four assistants are ChatGPT, Gemini, Perplexity and Google AI Mode, the same four as in the [published measurement of fifty buyer questions](/blog/what-ai-assistants-call-an-agent-readiness-audit). Claude is not measured because it requires a login. Each question was put once to each assistant on 2026-09-04 between 09:00 and 12:00 EEST, in a fresh conversation without memory, without an account where the platform allows it, with web browsing on, from a Finnish network location, in the language the question is written in. Where a platform did not answer, the row would read missing, and none did on the day. The retest repeats every condition and the report states any that could not be repeated.
 
@@ -2824,13 +2822,13 @@ Every figure on this page is invented. The check names, the categories and the s
 The audit is described on the [services page](/services). To start one, [email info@turva.dev](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) with the site or API URL and what the audit should answer. The Shopify agent storefront check has its own [sample report](/samples/shopify-agent-storefront-check).
 `,
 
-  "/samples/shopify-agent-storefront-check": `# A Shopify check, from product data to corrections
+  "/samples/shopify-agent-storefront-check": `# A sample Shopify storefront check
 
-Northstar Outdoor and all observations in this report are fictional. This sample shows the format, evidence and correction plan a merchant receives.
+Northstar Outdoor and every observation in this report are invented. This example shows how product comparisons, shopping-journey evidence and a correction plan are presented.
 
 Illustrative report date: 8 September 2026.
 
-## The first decision
+## What to fix first
 
 - **Priority:** Correct two product-data mismatches before sending more agent traffic to the store.
 - **Evidence:** The remote catalog quotes the blue Trail Bottle at 31,90 EUR against 29,90 EUR on the storefront, and the M size of the Merino Base Layer is sellable on every surface except the Agentic Catalog preview.
@@ -2839,25 +2837,25 @@ Illustrative report date: 8 September 2026.
 - **Acceptance:** The same variant returns the same price, currency and availability on the storefront, in the WebMCP read and in the Storefront MCP catalog read, and the M variant shows as available in the Catalog preview.
 - **Test limits:** Three products, one market, one anonymous session on 2026-09-05. Nothing was paid, ordered or signed in, and no customer detail was entered.
 
-Correct two data mismatches before sending more agent traffic to the store. The three agent surfaces were all observable, the browser cart worked in the agreed anonymous session and the checkout handoff landed in the right store. Two of the three tested products showed a difference between surfaces: one price two euros higher on the remote catalog than on the storefront, and one variant marked unavailable on the Agentic preview while the storefront sells it. A documented match is what the merchant is paying to be able to show, and two of three products do not have one yet.
+Two of the three tested products need attention. The remote catalog shows one price 2 EUR higher than the storefront. The Agentic preview marks one variant unavailable even though the storefront sells it.
 
-Nothing was paid, ordered or signed in. No customer detail was entered.
+The browser cart worked in the agreed anonymous session, and the checkout handoff reached the right store. No customer details were entered, no payment was submitted and no order was created.
 
 ## Contents
 
-- [The first decision](#the-first-decision)
-- [Engagement record](#engagement-record)
-- [Three-surface map](#three-surface-map)
-- [Product truth matrix](#product-truth-matrix)
-- [Buyer-journey evidence](#buyer-journey-evidence)
-- [Correction plan](#correction-plan), C1 to C3
-- [Configuration changes the check does not recommend](#configuration-changes-the-check-does-not-recommend)
-- [Limits and what stays unresolved](#limits-and-what-stays-unresolved)
-- [Retest](#retest)
-- [What this report is not](#what-this-report-is-not)
+- [What to fix first](#what-to-fix-first)
+- [The agreed work](#the-agreed-work)
+- [The three interfaces](#the-three-interfaces)
+- [Product information compared](#product-information-compared)
+- [The shopping journey](#the-shopping-journey)
+- [What to change](#what-to-change), C1 to C3
+- [Changes not needed in this test](#changes-not-needed-in-this-test)
+- [Scope and unresolved items](#scope-and-unresolved-items)
+- [Checking the corrections](#checking-the-corrections)
+- [Scope limits](#scope-limits)
 - [About this sample](#about-this-sample)
 
-## Engagement record
+## The agreed work
 
 | Field | Value |
 | --- | --- |
@@ -2873,9 +2871,14 @@ Nothing was paid, ordered or signed in. No customer detail was entered.
 | Retest window | Until 2026-09-20, up to two corrected items |
 | Access used | Public storefront surfaces and redacted settings screenshots from the merchant. No Admin login, no credentials, no customer data |
 
-## Three-surface map
+## The three interfaces
 
-What is present, restricted, unavailable or not tested on each of the three surfaces, in the same session and against the same three products. Present means the surface answered and was exercised within scope. Restricted means it answered but refused part of the scope. Unavailable means it did not answer. Not tested means the scope stopped before it.
+The table shows what could be checked on each interface, using the same products in the same session.
+
+- Present: the interface responded and was tested within scope.
+- Restricted: it responded but refused part of the test.
+- Unavailable: it did not respond.
+- Not tested: the agreed scope stopped before that step.
 
 | Surface | Status | What was verified | What was not |
 | --- | --- | --- | --- |
@@ -2883,11 +2886,11 @@ What is present, restricted, unavailable or not tested on each of the three surf
 | Shopify-hosted Storefront MCP and UCP MCP | Present | Catalog search and product read answered at protocol level. One remote UCP cart was created with the blue Trail Bottle and cancelled without a buyer identity. | Checkout MCP was not reached, by scope. |
 | Shopify Catalog and Agentic storefront channels | Present | Catalog access on, auto-enrolment of new products on, one channel active, read from the merchant's redacted settings evidence. Catalog search preview run for the three products. | Channel ranking or sales were not measured. Settings were not changed. |
 
-Finding a surface is a fact about availability. It is not a certification, an endorsement or a security claim.
+These labels describe the test session, not a certification, an endorsement or a security claim.
 
-## Product truth matrix
+## Product information compared
 
-The tested title, variant, price, currency, availability and policy facts on each surface, read in the same market, language, currency and hour. A Mismatch was reproduced once before it was recorded.
+The table compares the product, variant, price, currency, availability and policy facts in the same market, language, currency and test window. A difference was reproduced before being marked Mismatch.
 
 | Product and variant | Storefront page | Browser WebMCP | Storefront and UCP MCP | Agentic Catalog preview | Result |
 | --- | --- | --- | --- | --- | --- |
@@ -2895,13 +2898,13 @@ The tested title, variant, price, currency, availability and policy facts on eac
 | Merino Base Layer, M | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, unavailable | Mismatch, variant eligibility |
 | Camp Mug, green | 18,50 EUR, in stock | 18,50 EUR, in stock | 18,50 EUR, in stock | 18,50 EUR, in stock | Aligned |
 
-Policy facts. The return window of 30 days, free shipping above 80 EUR and the delivery estimate of two to four working days matched on the storefront page, in the WebMCP policy tool and in the Storefront MCP policy read. The Agentic Catalog preview carries no policy fields, which is the surface's shape and not a mismatch.
+The 30 day return window, free shipping above 80 EUR and the delivery estimate of two to four working days matched across the storefront, the WebMCP policy tool and the Storefront MCP policy response. The Agentic Catalog preview has no policy fields, so their absence is not a mismatch.
 
-The price difference was reproduced at 11:20 and 14:05 EEST in the same market, language and currency before Mismatch was recorded. The availability difference was confirmed against the merchant's redacted Catalog settings screenshot, where the M variant is marked not eligible. No setting was changed during the test.
+The price difference was reproduced at 11:20 and 14:05 EEST. The variant's eligibility was checked against the merchant's redacted settings screenshot. No settings were changed during the test.
 
-## Buyer-journey evidence
+## The shopping journey
 
-The five buyer searches and the cart lifecycle, each with the tool, the input, the observed result and the cart state. The session stopped before payment or order creation, and the exact stop is recorded.
+Each row records the tool, the input, the result and the cart state for the five buyer searches and the cart test. It also shows exactly where testing stopped.
 
 | Step | Tool and input | Observed result | Cart state | Status |
 | --- | --- | --- | --- | --- |
@@ -2918,66 +2921,70 @@ The five buyer searches and the cart lifecycle, each with the tool, the input, t
 | Remote UCP cart | Storefront MCP cart create, one blue Trail Bottle | Remote cart created with 31,90 EUR line price, the remote price of the matrix above | Separate remote cart, one line | Mismatch, same cause as the matrix |
 | Cleanup | WebMCP cancel_cart. UCP cart cancelled | Browser cart empty, storefront drawer empty, remote cart cancelled | Empty | Aligned |
 
-The checkout handoff means one navigation to the checkout page. It does not mean that payment or an order was completed, and neither was.
+The checkout handoff was one navigation to the checkout page. It was not a payment or an order. The remote cart was a separate test.
 
-## Correction plan
+## What to change
 
-Up to five specific changes, each with its owner and an acceptance check the merchant can run without turva.dev. This plan carries three, because the check found three things to change. The order is by effect on a buyer.
+This plan contains three changes, ordered by their effect on the buyer. Each has an owner and a check the merchant can repeat. The plan carries up to five.
 
-### C1. Publish the Finnish price list to the remote catalog surface
+### C1. Align the remote catalog with the Finnish price list
 
-**What a buyer sees today.** An agent that reads the store through the Storefront or UCP MCP quotes the blue Trail Bottle at 31,90 EUR, two euros above the storefront and the browser tools, and a remote cart is built at that price.
+**What was found.** The blue Trail Bottle is 31,90 EUR in the remote catalog and cart, compared with 29,90 EUR on the storefront and browser tools.
 
-**Owner.** Shopify Markets and product data, on the merchant's side. Invented finding for northstar-outdoor.example, like every figure in this sample.
+**Who makes the change.** The merchant's Shopify Markets and product-data owner.
 
-**Change.** Verify that the Finland market price list is published to the remote catalog and republish it. If the remote surface reads a default price list instead of the market list, the market assignment is the fix, not the product price.
+**What to change.** Check that the Finland market price list is published to the remote catalog, then republish it. If the remote interface uses the default list, correct the market assignment rather than changing the product price.
 
-**Acceptance check.** The same variant returns 29,90 EUR on the storefront page, in the WebMCP product read and in the Storefront MCP catalog read within one hour, in the fi-FI Finland EUR context.
+**How to check.** Within one hour, the same variant must return 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront MCP catalog response, using the fi-FI Finland EUR context.
 
-### C2. Make the M variant eligible in the Agentic Catalog
+### C2. Make the M variant available in the Agentic Catalog
 
-**What a buyer sees today.** The M size of the Merino Base Layer is in stock and sellable on every surface except the Agentic Catalog preview, so an AI channel that reads the catalog can leave the sellable size out.
+**What was found.** The Merino Base Layer in size M is available on the other tested interfaces but marked unavailable in the Agentic Catalog preview. An AI channel using that catalog may omit it.
 
-**Owner.** Agentic storefront settings and catalog mapping, on the merchant's side. Invented finding for northstar-outdoor.example, like every figure in this sample.
+**Who makes the change.** The merchant's Agentic settings and catalog-mapping owner.
 
-**Change.** Set the variant's eligibility in the Catalog settings and republish the mapping.
+**What to change.** Update the variant's eligibility and republish the mapping.
 
-**Acceptance check.** The M variant shows as available in the Catalog preview and in a public agent answer after the propagation time the settings page states.
+**How to check.** After the propagation time stated in the settings page, the M variant should appear as available in the Catalog preview and in a public agent answer.
 
-### C3. Run a three-surface acceptance test after every catalog or market publish
+### C3. Repeat the comparison after catalog changes
 
-**What a buyer sees today.** Nothing yet. This change keeps C1 and C2 from coming back, because the same difference returns with the next price list, market or theme change.
+**Why this matters.** Later price-list, market or theme changes may introduce new differences. A repeat check can help the team detect them.
 
-**Owner.** E-commerce operations, on the merchant's side. Invented finding for northstar-outdoor.example, like every figure in this sample.
+**Who makes the change.** The merchant's e-commerce operations team.
 
-**Change.** Keep the three products of this check as fixtures and read them on all three surfaces after every relevant publish. The tool calls in the buyer-journey table are the script.
+**What to change.** Keep these three products as test cases. Compare them across the three interfaces after each relevant publication, using the tool calls recorded above.
 
-**Acceptance check.** For each fixture product the identity, the variant, the price in minor units, the currency and the availability match on every surface that carries them.
+**How to check.** For each product, compare its identity, variant, price in minor units, currency and availability across every interface that provides those fields.
 
-## Configuration changes the check does not recommend
+## Changes not needed in this test
 
-No theme, app or product data change beyond C1 to C3 was found necessary for the three products in scope. The ten tool inventory on WebMCP is the platform's own and matched the documented set, so no tool was missing and none needed a change.
+No additional theme, app or product-data changes were identified for the three products in scope. The WebMCP inventory matched the ten platform-provided tools, so no missing tool was recorded.
 
-## Limits and what stays unresolved
+## Scope and unresolved items
 
-- Ranking or sales on any external AI channel were not measured and are not promised.
-- No customer account, order history or order management tool was opened.
-- No payment, order or address was entered.
-- Shopify Admin was not logged into and no setting was changed. Settings evidence came from the merchant as redacted screenshots.
-- The result covers the three named products, the Finland market, EUR, the three surfaces and the test window of 2026-09-05. Other products, markets and hours are outside it.
-- Search 4 returned products outside the scope. They were not read and no claim is made about them.
+- The result covers the three named products, the Finland market, EUR, the three interfaces and the test window on 2026-09-05.
+- Other products and markets were not checked. The two jackets returned by Search 4 were outside scope and were not investigated.
+- No customer account, order history or order-management tool was opened.
+- No address, payment or order was submitted.
+- Shopify Admin was not accessed, and settings evidence came from redacted screenshots.
+- Ranking and sales through external AI channels were not measured or promised.
 
-## Retest
+## Checking the corrections
 
-Up to two corrected items are verified once within 14 days of this package, by 2026-09-20. C1 and C2 are the two items. Each gets the status Aligned, Mismatch or Unknown on direct evidence from the same tools in the same market, language and currency. A surface that cannot be read at the retest reads Unknown, not Aligned. The retest table is printed next to the product truth matrix above.
+C1 and C2 are the two items selected for the included retest, by 2026-09-20. They are checked once within the package's 14-day retest window, using the same tools, market, language and currency.
 
-## What this report is not
+Each item is marked Aligned, Mismatch or Unknown. If an interface cannot be read, the result is Unknown. The retest appears beside the product comparison above.
 
-It is not a Shopify certification, an endorsement by Shopify, a penetration test or a promise of sales through any AI channel. A browser observation is not a remote MCP surface, and a navigation to the checkout page is not a payment or an order. The check reads what an AI shopper receives from one store in one session and records it.
+## Scope limits
+
+This is not a Shopify certification, an endorsement by Shopify, a penetration test or a promise of sales through any AI channel. A browser observation is not a remote MCP interface, and a navigation to the checkout page is not a payment or an order. The check reads what an AI shopper receives from one store in one session and records it.
 
 ## About this sample
 
-Every figure on this page is invented. The surface names, the statuses and the shape of the tables are the real deliverables of the check, so that the sample shows how a real report reads, and the store, the products, the prices and the observations are fiction. A real report carries the tool call log with timestamps and the merchant's redacted settings evidence as an appendix.
+The store, products, prices and results are fictional. The interface names, status labels and report format show what the service delivers.
+
+A real report includes timestamped tool calls and the merchant's redacted settings evidence. This is not a Shopify certification, endorsement, penetration test or promise of sales.
 
 The check is described on its [product page](/shopify-agent-storefront-check). To start one, [email info@turva.dev](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A) with the storefront URL, the .myshopify.com domain, the primary market and up to three priority products. The agent-readiness audit has its own [sample report](/samples/audit-report).
 `,
@@ -3101,100 +3108,96 @@ Written contact only. Email info@turva.dev, Signal @turva.19. First reply within
 - [Serving Markdown to AI clients](/guides/markdown-for-agents)
 - [What a website and API agent-readiness audit covers](/guides/agent-readiness-audit)
 `,
-  "/": `# Know what AI agents see in your product
+  "/": `# Know what AI assistants can find out about your product
 
-Technical audits and AI visibility checks for websites and APIs. Focused checks for Shopify stores. You get documented findings and a prioritised plan your team can act on.
+I'm Erik. I check what AI assistants can read on your website or API, where the information disagrees, and what they say about your product. You get a written report explaining what I found, what to fix first, and how to check the changes.
 
-Async-only. First reply within one business day. [Scope and pricing](/services).
+For Shopify stores, I offer a focused check of product information and the shopping journey before payment.
+
+We work in writing. I reply within one business day. [Scope and pricing](/services).
 
 Technical agent-readiness of turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-06. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
 
-## One product. Conflicting answers.
-
-Synthetic example from the sample audit report, product data. One product, three published sources, and they disagree.
+## One product. Three different answers.
 
 - Visible product page: A real price and lead time
 - Structured product data: €0.00 · InStock
 - Product API: Empty price · Marked purchasable
 
-An assistant may quote the wrong price or availability.
+An assistant may find a different price or availability depending on which source it reads.
 
-First fix: make the published product facts agree.
+What to fix: make the published product facts agree.
 
-Acceptance check: compare the corrected page, structured data and API against the same product record.
+How to check: compare the product page, structured data and API with the same product record.
 
-Fictional company and readings. This issue is not scored by the sample's scanner.
+This example uses an invented business and invented readings. The sample's scanner does not score this issue.
 
-[Inspect the finding](/samples/audit-report#f1)
+[See the finding and its evidence](/samples/audit-report#f1)
 
-## Choose the right starting point
+## Choose the check you need
 
-Choose a focused Shopify check or a broader website and API audit. Each has a fixed scope and can be bought on its own.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. One retest of up to two corrected items follows within 14 days. Delivered within 48 hours of the agreed written kickoff.
+- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered in two weeks.
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. A focused check of what agent-shopping surfaces return for selected products in your Shopify store. It compares product information and documents the buyer journey before payment. Up to three product variants in one market, with a prioritised correction plan. Delivered within 48 hours of the agreed written kickoff.
-- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. A third-party technical scan, manual review and a documented question set tested across selected AI assistants. You receive written findings, prioritised fixes and one included re-scan. Delivered in two weeks.
+Prices exclude VAT. Each service can be bought on its own. Implementation is available separately.
 
-Prices exclude VAT. Implementation is purchased separately.
+Implementation, ongoing advisory, agent operations and MCP server design are scoped separately. [All services and prices](/services).
 
-Implementation, ongoing advisory, agent operations and MCP server design are scoped separately. [Compare all services](/services).
+## See what the work looks like
 
-## Work you can inspect
+Sample reports. See how I explain a finding, show the evidence and describe the fix. Both reports use fictional businesses. [Sample audit report](/samples/audit-report) and [sample Shopify report](/samples/shopify-agent-storefront-check).
 
-Sample deliverables. Read the audit and Shopify sample reports to see the structure, evidence and correction plans. Both use invented businesses and are clearly labelled as synthetic examples. [Sample audit report](/samples/audit-report) and [sample Shopify report](/samples/shopify-agent-storefront-check).
+Research. Read what I measured across company websites and AI assistants. Each study includes its methods, dates and limits. These are research observations, not client results. [Website agent-readiness study](/blog/website-agent-readiness-567-sites), [What AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit) and [Thirty days after the brief](/blog/thirty-days-after-the-brief).
 
-Published research. Read the methods and limitations behind the website measurements, AI-answer study and follow-up research. None of them is a result a paying client achieved. [Website agent-readiness study](/blog/website-agent-readiness-567-sites), [What AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit) and [Thirty days after the brief](/blog/thirty-days-after-the-brief).
-
-Public reference build. turva.dev is my own reference build, measured by the same independent scanner. Its published technical checks have named sources and measurement dates, and the worker source is public. [Public scanner](https://isitagentready.com/) and [read the source](https://github.com/erekola/turva-worker).
+My own site. I use turva.dev to put this work into practice. You can inspect the source code and the published checks. [Public scanner](https://isitagentready.com/) and [read the source](https://github.com/erekola/turva-worker).
 
 Scanner: isitagentready.com (third party, Cloudflare). Discoverability, Content Accessibility, Bot Access Control, and API, Auth, MCP and A2A Discovery: 100/100. Commerce: 100/100. Verified 100/100, Level 5, Agent-Native.
 
-turva.dev publishes its own security scans too, on the same principle that the result should be measurable rather than asserted. Measured 2026-09-06. They are separate measurements, not the same score.
+I also publish the site's security checks. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. Measured 2026-09-06.
 
 - Hardenize: all 24 categories passed. https://www.hardenize.com/report/turva.dev
 - Internet.nl website test: 98/100. https://internet.nl/site/turva.dev/
 - Internet.nl email test: 95/100. https://internet.nl/mail/turva.dev/
 
-## A clear process, in writing
+## How we work
 
-Agree the scope. Send the URL and the question you need answered. I confirm the service, required access, price and start date in writing.
+Tell me what you need to understand. Send the URL and your question. I confirm the scope, price, required access and start date in writing.
 
-Receive the findings. I run the agreed checks and deliver the evidence, priorities and correction instructions in a written report.
+Receive the report. I explain what I checked, what I found and which changes deserve attention first.
 
-Make and verify the corrections. Your team can implement the plan, or you can purchase implementation. The included follow-up check is defined by the service: an audit re-scan within 30 days of the report, or a Shopify retest of up to two corrected items within 14 days.
+Make and check the changes. Your team can use the correction instructions, or you can buy implementation separately. The follow-up check follows the terms of your chosen service.
 
-You work directly with Erik Rekola, an independent consultant in Tampere, Finland. Scope, findings and decisions stay in writing, with no calls or calendar bookings. [About turva.dev](/company).
+You work directly with me. I'm an independent consultant based in Tampere, Finland. [About Erik and turva.dev](/company).
 
 ## Frequently asked
 
-**What is agent-readiness?**
+**What does agent-readiness mean?**
 
-It is how well AI agents can discover, read and use the information and interfaces your product exposes. This audit examines websites and APIs. It is different from assessing an organisation's readiness to adopt AI.
+It means how well an AI agent can find and use the information your website or API publishes. This work examines your product's public information and interfaces.
 
-**Is agent-readiness the same as AI visibility?**
+**Is that the same as AI visibility?**
 
-No. Technical readiness concerns access, information and interfaces. AI visibility concerns how assistants mention and describe your business in their answers. The website and API audit examines both, using separate technical checks and a documented question set.
+No. Technical checks show what an agent can access. AI visibility checks record what selected assistants actually say about your business. The audit covers both and reports them separately.
 
-**Do you guarantee AI mentions or a particular score?**
+**Do you guarantee mentions or a score?**
 
-No. The audit records observed results, identifies issues and defines how corrections can be checked. AI answers and scanner results can change, so every measurement needs its date, scope and method.
+No. I report what I observe and how it was checked. AI answers and scanner results can change.
 
-**Can our own team implement the findings?**
+**Can our own team make the fixes?**
 
-Yes. The report includes correction instructions and acceptance checks. A €499 implementation add-on covers the diagnosis's own fix list when bought with that diagnosis and when the required access is arranged in advance. Work outside that list is scoped separately at €1,500 per day. Each service page sets out the prerequisites and scope.
+Yes. The report includes correction instructions and ways to check the result. Optional implementation and its access requirements are explained on the service pages.
 
-**What access is required?**
+**Do you need our passwords?**
 
-The audit does not require production credentials. If you purchase implementation, any required deployment, DNS, Shopify or repository permissions are agreed separately and limited to the work being carried out.
+The audit does not require production credentials. Any access needed for separately purchased implementation is agreed before that work starts.
 
-Details for each service: [website and API audit](/agent-readiness-audit) and [Shopify agent storefront check](/shopify-agent-storefront-check).
+## Tell me what you want to understand
 
-## Contact
-
-Send your website, API or Shopify store URL and tell me what you want to understand. I'll reply within one business day with the appropriate next step, scope and start date.
+Send your website, API or Shopify store URL and the question you have. If you're unsure which service fits, describe the problem in your own words.
 
 [Request an audit](/contact). Email: <mailto:info@turva.dev>.
 
-Everything is handled in writing. No calls or calendar bookings.
+I'll reply within one business day and explain the next step.
 
 ## Markdown views
 
@@ -3240,341 +3243,269 @@ fraction of the token cost of the HTML.
 - [AI agent use cases and their operating limits](https://turva.dev/guides/ai-agent-use-cases)
 `,
 
-  "/services": `# Agent-readiness services and pricing
+  "/services": `# Services and pricing
 
-Choose a focused Shopify check or a broader website and API audit. Each has a fixed scope and can be bought on its own. You receive documented findings and a prioritised correction plan.
+Start with the question you need answered. I can check a Shopify store, audit a website or API, help implement the findings, or support your team over time.
 
-Async-only. First reply within one business day. Prices exclude VAT.
+You work directly with me, in writing. I reply within one business day. All prices exclude VAT.
 
 ## Choose a starting point
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Find out whether selected products, prices and availability agree across the agent-shopping surfaces your store exposes. One store, up to three product and variant pairs, one market, with buyer-journey evidence and a prioritised correction plan. Delivered within 48 hours of the agreed written kickoff.
-- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. A third-party technical scan, manual review of your website and API surfaces, and a documented question set tested across selected AI assistants. Written findings, a prioritised correction plan and one included re-scan. Delivered in two weeks.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. One retest of up to two corrected items follows within 14 days. Delivered within 48 hours of the agreed written kickoff.
+- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered in two weeks.
 
-See what each report contains before you buy: the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check).
-
-## Shopify agent storefront check
-
-**€999. 48 hours. Fixed scope.**
-
-What an AI shopper actually receives from one live Shopify store, tested across the three agent surfaces this check covers and reported with the evidence attached. One store, one market, up to three product and variant pairs.
-
-Five written deliverables: a three-surface map, a product truth matrix, buyer-journey evidence with the exact stop before payment, a prioritised correction plan of up to five changes with owners and acceptance checks, and one retest of up to two corrected items within 14 days.
-
-No calls, no test order and no implementation of the corrections, which is bought separately and described under Implementation below. The audit is not a prerequisite. The full scope, the exclusions, the preflight and the refund terms are on the [product page](/shopify-agent-storefront-check).
-
-Suited for D2C Shopify stores that want documented evidence of what an agent receives from them today.
-
-## Website and API agent-readiness audit
-
-**€4,300. Two weeks. Fixed scope.**
-
-A third-party technical scan, manual review of your website and API surfaces, and a documented question set tested across selected AI assistants. The report separates technical findings from observed AI answers and explains what to correct, why it matters and how to verify it.
-
-You receive the recorded checks and manual findings with their evidence, the question set and the observed answers, a correction plan ordered by impact with instructions and acceptance checks, one round of written follow-up questions and one included re-scan within 30 days of the report. Large sites are covered in full.
-
-No calls, no ongoing monitoring, which is the advisory engagement below, and no implementation of the fixes, which is bought separately. The full scope, the deliverables and the questions before you start are on the [product page](/agent-readiness-audit).
-
-Suited for teams that want a clear picture of where they stand before deciding what to do about it.
+See the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check) before choosing a service.
 
 ## Implementation
 
-**€1,500 per day. Scoped per task. €499 for a diagnosis's own fix list, bought with that diagnosis.**
+**€499 for the complete fix list from a diagnosis, bought with that diagnosis. €1,500 per day for other work, scoped separately.**
 
-Your team can implement the report, or you can purchase implementation. A €499 add-on covers the diagnosis's own complete fix list when bought with that diagnosis and when the required access is arranged in advance. Work outside that list is scoped separately at €1,500 per day.
+Your team can implement the report. If you want me to do it, the €499 add-on covers the diagnosis's complete fix list when bought with the diagnosis and when the required access is arranged in advance.
 
-Once an audit is complete, the fixes it lists are typically about a day of implementation work, whether your team does them or I do. That figure is an estimate scoped to the findings the audit lists, not a fixed quote, and the audit is what identifies that work and orders it. The report carries the instructions for that work, so the implementation day is a choice rather than a condition.
+The fixed price covers the whole list, whatever the number of corrections. Work outside that list is agreed separately at the day rate.
 
-For a Shopify check, the add-on requires collaborator access to the store. For an audit, it requires an edge runtime, deployment access and any other access the listed fixes need, such as DNS. If those prerequisites cannot be arranged, the add-on is not sold and your team still receives the correction instructions.
+For a Shopify check, I need collaborator access to the store. For an audit, I need an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. If the required access cannot be arranged, the add-on is not sold. Your team still receives the correction instructions.
 
-With the access in place, every fix on the list is implemented for the €499, whatever the count. That is the whole list at a fixed price instead of the day rate.
+The fixes identified by an audit typically take about a day to implement. This is an estimate, not a fixed quote or a limit on the €499 add-on.
 
-An implementation day is hands-on work on the fixes a website and API audit identified, or new agent-ready infrastructure built from scratch. That audit comes first for this work, because the day is spent building rather than diagnosing.
+### Separately scoped implementation days
 
-Your traffic runs through an edge worker I deploy in front of your origin, and the access to do that exists before the day starts. Cloudflare Workers is the default, because that is what this site runs on. Any edge runtime that executes your code in front of the origin does the same job, Fastly Compute, Akamai EdgeWorkers, AWS Lambda@Edge and the edge functions on Netlify and Vercel included, so tell me which one you run when we scope the day. The worker adds agent surfaces beside your site, and it does not touch your application.
+For website and API implementation, the audit comes first so the work is understood before the implementation day starts. A day can cover the identified fixes or new agent-ready infrastructure.
 
-Typical work on a day:
-- Head metadata and /.well-known/ files served at the edge
-- robots.txt with AI crawler rules and Content Signals, and a Web Bot Auth directory
-- Markdown content negotiation, so a request asking for text/markdown gets markdown while a browser still gets HTML
-- An agent skills index, auth.md and an API catalog
-- JSON-LD generators for product, organization and article schemas
-- ai.txt and llms.txt authoring
-- Signed content and agent authentication patterns
-- An MCP server card and an agent-to-agent card for a server that already runs, and the discovery paths that point at it
+I deploy an edge worker in front of your origin. It changes what the site serves without changing your application code. Deployment access must be ready before work starts.
 
-What a separately scoped day does not cover:
-- DNS records for agent discovery, which need your DNS rather than an edge worker
-- Tool declarations inside your pages, which are application work
-- Agent commerce protocols, which need working payment flows behind them
-- Building the MCP server itself, which is its own engagement, so a card written on a day points at a server that already runs
+Cloudflare Workers is the default. Other supported edge runtimes can be agreed when we scope the work, including Fastly Compute, Akamai EdgeWorkers, AWS Lambda@Edge, Netlify and Vercel.
 
-You check the work yourself. Run the scanner before the day and after it, so the result is a number you produced. I do not promise a readiness level, because the level moves depending on which checks are run.
+Typical work includes:
+- Head metadata and /.well-known/ files.
+- AI crawler rules, Content Signals and a Web Bot Auth directory.
+- Markdown responses alongside the existing HTML pages.
+- An agent skills index, auth.md and an API catalog.
+- JSON-LD for products, organisations and articles.
+- ai.txt and llms.txt.
+- Signed content and agent authentication patterns.
+- Discovery cards for an MCP or agent-to-agent server that already runs.
 
-Scoped repository write access per task. No retainer.
+A separately scoped day does not include DNS changes, tool declarations inside your application, agent payment flows or building the MCP server itself. These need their own scope. This day-rate boundary does not reduce the complete fix list covered by an agreed €499 diagnosis add-on.
+
+Repository write access is limited to the task. There is no retainer.
+
+We check technical changes with the relevant scanner or a direct test. A scanner result is recorded with its check set and date. No particular readiness level is promised.
 
 ## Ongoing advisory
 
 **€3,000 per month. Minimum three months.**
 
-Monthly technical and AI-visibility measurements, written review of shipped changes, roadmap input and ongoing written support. Each review records what changed and what the evidence supports. No particular score or AI mention is guaranteed.
+Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next.
 
-What you get:
-- Monthly re-scan with the same scanner and the same profile, and the delta recorded beside the previous reading
-- Monthly AI-visibility delta from the same question set, re-run across the same AI assistants
-- Written review of any agent-readiness related work your team ships, within one business day
-- Roadmap input on what to ship next and why
-- Async channel for questions, email or a shared document
-- Quarterly summary of measurable progress
+You receive:
+- A monthly re-scan with the same scanner and profile, shown beside the previous result.
+- A monthly repeat of the AI question set across the same assistants.
+- Written review of agent-readiness changes your team ships, within one business day.
+- Recommendations for the roadmap.
+- Questions and answers by email or a shared document.
+- A quarterly summary of measurable progress.
 
-What you do not get:
-- Calls or meetings
-- A promised score, because the check set changes when the standards do
-
-The monthly re-run uses the same measurement as the audit, so a delta means something. A number that moved for a reason nobody can name is not progress, and the review says which change moved it.
-
-Suited for teams treating agent-readiness as an ongoing product responsibility rather than a one-off cleanup.
+Each review explains what changed and what the evidence supports. If the method changes, I record that too. A higher score or an AI mention is not guaranteed.
 
 ## Agent operations
 
-**Price on request. Scoped per engagement.**
+**Price agreed for the engagement.**
 
-Review the data, permissions, decision limits and human handoffs around an agent-operated system. Scope and price are agreed separately.
+I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over.
 
-Two things decide whether an agent acts correctly. The data it works from has to arrive intact, even over links that drop or lag. And the decisions it is allowed to make have to sit inside an envelope of permissions and thresholds you set deliberately.
+The work can cover:
+- Where data can be lost, delayed or misread.
+- The actions the agent is allowed to take.
+- Thresholds that require a human decision.
+- How control passes between the agent and a person.
+- Records and checks that help you review what happened.
 
-Typical work:
-- Review of the data path an agent depends on, and where it breaks under real network conditions
-- The permission and threshold envelope that bounds what an agent may decide and act on
-- Where a human stays in the loop, and how control passes between person and agent
-- Guardrails and verification so an agent's decisions can be checked after the fact
+The price depends on the systems involved, whether the agent can move money or delete data, and whether I am reviewing existing limits or helping define and implement them.
 
-What decides the price:
-- How many systems the agent touches, and whether any of them can move money or delete data
-- Whether a decision boundary exists already or has to be written from scratch
-- Whether the work ends at a written envelope or continues into building the guardrails
-
-What you do not get:
-- Calls or meetings
-- An agent built for you, because this is the envelope around one rather than the thing itself
-- Sign-off that your agent is safe, because a review cannot promise that
-
-Suited for teams letting agents act on data and decisions that matter, rather than only reading a marketing site.
+This service covers the controls around an agent. It does not include building the agent itself or certifying that it is safe.
 
 ## MCP server design
 
-**Price on request. Scoped per engagement.**
+**Price agreed for the engagement.**
 
-Design and build a supported interface for agents to read your product data. Tools, data sources, authentication and any write capabilities are scoped explicitly.
+Give agents a supported way to read your product data. I design and build an MCP interface with agreed tools, data sources and access rules.
 
-The default is a read-only server over streamable HTTP transport. For public, non-sensitive data, no auth surface and no logging by default. Auth and an audit trail follow the data and the misuse model.
+The default is a read-only server using Streamable HTTP. For public, non-sensitive data, authentication and logging are off by default. Authentication and an audit trail are added where the data and misuse risks call for them.
 
-Typical work:
-- Read-only discovery tools over your product data
-- An MCP server card at /.well-known/mcp/server-card.json so agents can discover the server
-- Registry publication so the server is findable in MCP directories
+Typical work includes read-only tools, a server card at /.well-known/mcp/server-card.json, and publication in MCP registries.
 
-What decides the price:
-- How many tools the server exposes, and whether they read one system or several
-- Whether your data is already reachable through an API, or the read path has to be built first
-- Whether read-only is enough, which is the default here, or the server has to accept writes
+The price depends on the number of tools and data sources, whether an API already exists, and whether write capabilities are required. Writes are scoped separately and are not included by default.
 
-Write tools are not included by default. A read-only server cannot modify the source through that interface. That is the property worth keeping. It does not settle exposure, bulk extraction or availability. Those are decided per tool.
+Read-only tools cannot modify the source through that interface. Data exposure, bulk extraction and availability still need to be considered for each tool.
 
-Suited for teams that want agents to read product data through a supported interface rather than scraping HTML.
+## Work you can inspect
 
-## How the method is measured
+My published research includes a scan of [567 selected company websites](/blog/website-agent-readiness-567-sites), [193 answers to fifty buyer questions across four AI assistants](/blog/what-ai-assistants-call-an-agent-readiness-audit), and a thirty-day follow-up with [201 comparable site readings from a 210-site cohort](/blog/thirty-days-after-the-brief).
 
-The method is measured in public before it is sold. [567 company websites](/blog/website-agent-readiness-567-sites) read by the same scanner, my own prospecting sample and not a random draw. [Fifty buyer questions put to four AI assistants](/blog/what-ai-assistants-call-an-agent-readiness-audit), 193 answers on one day. [210 sites whose thirty-day rescan came due](/blog/thirty-days-after-the-brief), 201 comparable readings, three moved up and one down, and no effect from the brief established. Each post names its own limits, and none of them is a result a paying client achieved.
+These are research observations, not client results. Each article records its method and limits. The follow-up does not establish an effect from the briefs.
 
-Sites that complete an audit, or score 100/100 on the named public agent-readiness scanner, may display the [agent-ready badge](/badge). It is a self-declared badge with public criteria, not a certification.
+Sites that complete an audit, or score 100/100 on isitagentready.com, may display the self-declared [agent-ready badge](/badge). Read the eligibility criteria before using it.
 
 ## Frequently asked
 
-**What is an agent-readiness audit?**
+**Do I need the audit before the Shopify check?**
 
-An agent-readiness audit measures how well AI agents can discover, read, and act on your website or API. It reads the website and its APIs, not the organisation's readiness to adopt AI agents, which many consultancies describe with the same words. turva.dev runs an independent scanner, isitagentready.com, reviews the agent-facing surfaces manually, records how AI assistants currently answer a documented question set about the site, and delivers a written report with findings prioritised by their impact on users and agent behaviour, with implementation effort and scanner effects recorded separately.
+No. They are separate services. The Shopify check examines selected products and shopping interactions in one store. The audit covers a whole website or API.
 
-**What does an agent-readiness audit cost?**
+**Will you sign our NDA?**
 
-The Shopify agent storefront check is €999, fixed scope, delivered within 48 hours of the agreed written kickoff. The audit is €4,300, fixed scope, delivered in two weeks. Ongoing advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. Implementing exactly what a diagnosis lists is a fixed €499, bought together with that diagnosis. All prices exclude VAT. Agent operations and MCP server design engagements are priced on request.
+Yes. I sign your own NDA as it stands, at no charge, before material is shared.
 
-**How is the audit delivered?**
+**How is our material handled?**
 
-Everything is async. There are no calls or meetings, findings and answers move in writing, and questions get a response within one business day. The audit ends in a written report your team can act on directly, with one round of written follow-up questions included.
+Client material is kept only on systems needed for the work and deleted within thirty days of closure unless the law requires retention. The workstation uses full disk encryption. Credentials are stored in an encrypted vault, and backups are encrypted before upload.
 
-**How is agent readiness measured, and how are fixes verified?**
+**Do you use AI tools?**
 
-With an independent public scanner, a manual review and observed AI answers, kept separate in the report. isitagentready.com grades sites on a Level 0 to 5 scale and scores agent readiness out of 100, and that score describes the named scanner's result rather than the whole of an agent's behaviour. Technical corrections are checked with the relevant scanner or direct test. AI visibility is observed with a documented question set. Follow-up results are shown beside the baseline, with dates, scope and changes in the measurement method.
+Yes. Files needed for a task are processed by the provider of the AI tool in use. The tools work with a local workspace, not directly with your systems. Material you want excluded is named in the NDA and kept out. Vault storage and a tool's runtime permissions are separate controls.
 
-**Do I need the audit before the Shopify agent storefront check?**
+Full detail is in the [terms and data handling](/legal).
 
-No. The two are separate fixed-scope diagnoses and either can be bought on its own. The audit measures a whole site or API against agent-readiness norms. The Shopify check measures what an AI shopper receives from one live Shopify store, across the three agent surfaces this check covers.
+## Tell me what you need
 
-**How much work are the fixes after the audit?**
+Email <mailto:info@turva.dev> with the URL and your question. I'll reply within one business day with a proposed scope, price and start date.
 
-In most cases, once the audit is complete, the fixes it lists are about a day of implementation work. That figure is an estimate scoped to the findings the report lists, not a fixed quote. Your team can do them with the report as the spec, or turva.dev implements them as a scoped engagement. Implementing exactly the fixes the report lists is €499 when it is bought together with the audit. That fixed price needs an edge runtime in front of your origin where the fixes are applied and the access to deploy there, plus any other access a listed fix needs, the DNS zone for example, all arranged in writing before the work starts, and with those in place every fix on the list is implemented, whatever the count.
-
-**Will you sign an NDA, and how is our material handled?**
-
-Yes, your own NDA, signed as it stands before any material moves, at no charge. The audit does not require production credentials. Any deployment, DNS, Shopify or repository access needed for purchased implementation is agreed separately and limited to the work. The workstation is encrypted at disk level, and credentials are held in an encrypted vault instead of in files. Backups are encrypted on the machine before they are uploaded anywhere. Client material is deleted within thirty days of the engagement closing, unless retention is required by law.
-
-**Do AI tools see our material?**
-
-I use AI tools in the work. They run on a local workspace holding the files a task needs, not against your systems. Those files are processed by the provider of the tool in use. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. The vault controls storage, and what a tool may run and reach is scoped separately per task. Material you want kept out of AI tooling is named in the NDA and stays out.
-
-## How to start
-
-Email <mailto:info@turva.dev> with the site, API or store you want examined and the question the work should answer. I respond within one business day with a fixed quote and a start date.
-
-No calls or calendar links, and no discovery sessions.
+We work in writing. There are no calls or calendar links.
 
 All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
 `,
 
   "/agent-readiness-audit": `# Website and API agent-readiness audit
 
-Find out what automated clients can read, where your published facts disagree and what AI assistants currently say about your product. Receive documented findings, priorities and correction instructions your team can use.
+Can an AI assistant find the right information about your product?
 
-€4,300 plus VAT. Two weeks. Fixed scope.
+I check what your website and API make available, whether the facts agree, and what selected AI assistants answer about your product. Then I explain what needs attention and how your team can fix it.
 
-All work is handled in writing. First reply within one business day.
+€4,300 plus VAT. Delivered in two weeks. Fixed scope.
 
-## When this audit is useful
+We agree the work in writing before it starts. The audit uses public information and does not require production credentials.
 
-The audit fits when one of these questions is open. It records what is there today and assumes nothing about your site in advance.
+## When this helps
 
-- Your published product facts may disagree. A page, its structured data and an API can publish conflicting facts, and an assistant may encounter different answers depending on which source it uses.
-- An automated client cannot find or read content or an API that matters to you, and you want the evidence of what it receives today.
-- You need a documented baseline of what AI assistants answer about your product before deciding what to change.
+You may want an audit because:
 
-## A finding that changes the fix order
+- Your pages, structured data and API give different answers about the same product.
+- An automated client cannot find or read information that matters.
+- You want to know what AI assistants currently say before deciding what to change.
 
-In the synthetic sample report, the invented company Northwind Fasteners Oy publishes one product three ways.
+## One example: the price is wrong
 
-- Visible product page: A real price and lead time
-- Structured product data: €0.00 · InStock
-- Product API: Empty price · Marked purchasable
+In the fictional sample report, one product appears with a real price on the page, a zero price in its structured data and an empty price in the API.
 
-In this sample, the scanner does not score the conflict between the product page, structured data and API, and it is still the first fix in the report. Conflicting product facts can lead an assistant to quote the wrong price or availability, so correcting those facts takes priority over improving scanner coverage. The scored gaps, markdown, llms.txt, headers and discovery files, follow in the same plan with their own acceptance tests. Fictional company and readings.
+An assistant may quote different information depending on which source it reads. Correcting those facts is the first priority in the sample, even though its scanner does not score the conflict.
 
-[Inspect the finding in the sample report](/samples/audit-report#f1)
+[See the evidence and the fix](/samples/audit-report#f1)
 
-## What the audit covers
+## What I check
 
 Three kinds of evidence, kept apart in the report because they fail differently.
 
-### Technical scan
+### Can an automated client find and read your information?
 
-An independent scanner, isitagentready.com, runs against the site or API on its default profile, and every check it runs is recorded one by one rather than as one headline number. The level moves with the check set the scanner runs on the day, so the report names the checks that failed and what each one costs to fix, and leaves the headline number out of it.
+I use an independent scanner and review the files, metadata and access rules that affect discovery and access.
 
-### Manual review
+### Do your published facts say the same thing?
 
-Review of /.well-known/ manifests, JSON-LD, head metadata and HTTP headers. Review of robots.txt, sitemap.xml, ai.txt and llms.txt against current agent norms. Whether a page, its structured data and its API publish the same facts, a conflict the scanner in the sample report does not score. Your published web security scans are read alongside the agent checks, so the report rests on measurements you can re-run yourself.
+I compare information across your pages, structured data and API. The report shows where they disagree and what to change.
 
-### Observed AI answers
+### What do AI assistants say about your product?
 
-A documented question set put to several AI assistants, recording what they answer about the site or API today and whether they name it when asked about its category rather than by name. The questions, the assistants and the conditions are written down so the run can be repeated.
+I ask a recorded set of questions across selected assistants. You receive the answers, the date and the conditions of the test.
 
-Large sites are covered in full. If a site is big enough that the live checks reach a tool quota, the quota is raised rather than the coverage reduced.
+The audit covers large sites in full. If a tool quota limits the checks, I raise the quota rather than reduce coverage.
+
+### Technical coverage
+
+The scan uses isitagentready.com on its default profile. I record each check and its result, together with the measurement date.
+
+The manual review covers /.well-known/ files, JSON-LD, head metadata, HTTP headers, robots.txt, sitemap.xml, ai.txt, llms.txt and the consistency of published facts. I also read your published web security scans.
+
+The AI questions test both what assistants say about your product by name and whether they mention it when asked about its category. Questions, assistants and test conditions are recorded separately from the technical checks.
 
 ## What you receive
 
-- Recorded technical checks and manual findings, with the evidence behind each issue.
-- A documented question set and the answers observed across selected AI assistants.
-- A correction plan ordered by impact, with instructions and acceptance checks.
-- One round of written follow-up questions and one included re-scan within 30 days of the report.
+A written report that answers four questions:
 
-Findings are prioritised by their impact on users and agent behaviour, with implementation effort and scanner effects recorded separately. Every finding carries a fix instruction and, where this site has a guide for that surface, a link to it, so your team can do the work without buying implementation.
+- What did I find?
+- What evidence supports it?
+- What should your team fix first?
+- How can the correction be checked?
 
-What you do not get:
-- Calls or meetings
-- Implementation of the fixes, which is optional and described below
-- Ongoing monitoring, which is the advisory engagement on the services page
+You also receive the recorded AI questions and answers, one round of written follow-up questions, and one re-scan within 30 days of the report.
+
+Each finding includes correction instructions and, where available, a link to the relevant guide. The order reflects the effect on users and agent behaviour, with effort and scanner effects recorded separately.
 
 A synthetic [sample report](/samples/audit-report) shows the format: the per-check scanner readings, the manual review, the AI visibility run, nine findings with their owners and acceptance tests, and the decisions the company makes. It is not a report on a real client.
 
 ## How the two weeks work
 
-Agree the scope in writing. Send the URL and the question the audit should answer. I confirm the scope, price and start date in writing, and no production credentials are needed.
+We agree the work. Send the URL and your question. I confirm the scope, price and start date in writing.
 
-Run the checks and document the findings. The scanner run, the manual review and the AI answer run happen inside the two weeks, each dated and recorded.
+I run the checks. I complete the scan, manual review and AI questions, recording the evidence and dates.
 
-Deliver the report and the correction plan. Findings, evidence, priorities, instructions and acceptance checks arrive in writing, with one round of written follow-up questions.
+You receive the report. The findings and correction plan arrive within the agreed two weeks. One round of written follow-up questions is included.
 
-The included re-scan is separate from the two weeks: one re-scan within 30 days of the report, on the day you name, after the corrections have been made.
+After the corrections, you choose the day for the included re-scan within 30 days of the report. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again using the same question set. The follow-up shows both readings and any changes in the method.
 
-## Implementation is optional
+## If you want help with the fixes
 
-Your team can implement the report. A €499 add-on covers the diagnosis's complete fix list when bought with the diagnosis and when the required access is arranged in advance. If those prerequisites cannot be arranged, the add-on is not sold and your team still receives the correction instructions. Work outside that list is scoped separately at €1,500 per day.
+Your team can implement the report. Alternatively, a €499 add-on covers its complete fix list when bought with the audit and when the required access is arranged in advance.
 
-For an audit, the add-on requires an edge runtime in front of your origin, deployment access and any other access the listed fixes need, such as DNS. The access is arranged in writing before the work starts and limited to the work. [Implementation scope and access requirements](/services#implementation).
+For this add-on, I need an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. Access is agreed in writing and limited to the work.
 
-## Frequently asked
+If those prerequisites cannot be arranged, the add-on is not sold. Your team still receives the correction instructions. Work outside the list is scoped separately at €1,500 per day.
 
-**What access does the audit need?**
+[Implementation scope and access requirements](/services#implementation).
 
-None beyond public surfaces. The audit does not require production credentials, a login or a code repository. Only purchased implementation needs deployment, DNS or repository access, agreed separately and limited to the work.
+Ongoing monitoring is available through the separate advisory service.
 
-**Is the whole site covered?**
+## Tell me what you want to understand
 
-Yes. Large sites are covered in full. If the live checks reach a tool quota, the quota is raised rather than the coverage reduced.
+Send your site or API URL and your question to <mailto:info@turva.dev>. I reply within one business day.
 
-**Can our own team implement the findings?**
-
-Yes. Every finding carries a fix instruction and an acceptance check, and the report is written so your team can do the work. Implementation is a separate purchase, not a condition.
-
-**How are corrections verified?**
-
-Technical corrections are checked with the relevant scanner or a direct test of the surface. AI visibility is observed again with the same documented question set. Follow-up results are shown beside the baseline, with dates, scope and any change in the measurement method.
-
-**Is everything handled in writing?**
-
-Yes. There are no calls or meetings. Scope, findings and answers move in writing, and questions get a response within one business day.
-
-## How to start
-
-Email <mailto:info@turva.dev> with the site or API URL and the question the audit should answer. I respond within one business day with a fixed quote and a start date.
-
-No calls or calendar links, and no discovery sessions.
+We work in writing, with no calls or meetings.
 
 All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
 `,
 
   "/shopify-agent-storefront-check": `# Shopify agent storefront check
 
-Find out whether selected products, prices and availability agree across the agent-shopping surfaces your store exposes. Receive documented buyer-journey evidence and a prioritised correction plan.
+Does an AI shopper get the same product information as a person visiting your store?
 
-€999 plus VAT. Fixed scope. Four written deliverables within 48 hours of the agreed written kickoff, followed by the included retest. One store, up to three product and variant pairs, one market.
+I compare selected products, prices and availability across your store's agent-shopping interfaces. I also check the agreed shopping journey up to the stop before payment.
 
-A general agent-readiness audit is not a prerequisite. This check stands on its own, and it is not a step inside the audit. It is an independent service, not affiliated with or endorsed by Shopify.
+€999 plus VAT. One store. One market. Up to three product and variant pairs.
+
+You receive four written deliverables within 48 hours of the agreed written kickoff, followed by one included retest.
 
 ## What you will learn
 
-Shopify stores meet shopping agents through three separate interfaces. They are related, and an agent does not always get the same answer from each. Within 48 hours you receive an evidence-backed status for each of the following, including anything restricted, unavailable or not testable.
+- Which shopping tools were available and worked in the test.
+- Whether the product, variant, price, currency and availability agreed.
+- Whether the intended anonymous cart could be built.
+- Where the shopper was handed over to checkout.
+- Whether the Agentic settings matched your team's intentions.
+- Which changes should come first.
 
-- Which agent tools were observed and functional in the tested session.
-- Whether product, variant, price, currency and availability data agree across the tested surfaces.
-- Whether an agent can build the intended anonymous cart.
-- Where the buyer is handed off to checkout.
-- Whether your Shopify Agentic channel settings match what your team intended.
-- Which product-data, theme, app or configuration changes should be made first.
+I record restricted, unavailable and untestable parts of the journey as well as successful checks.
 
 ## What you receive
 
-Five written deliverables. The first four are sent as one package within 48 hours. The fifth is the retest, and it follows within 14 days.
+The first four items arrive together within 48 hours:
+- A map of the three interfaces: what was available, restricted, unavailable or not tested.
+- A product comparison: titles, variants, prices, currencies, availability and policy facts.
+- A record of the shopping journey: the tool, input, result, cart state and exact stopping point.
+- A correction plan: up to five changes, each with an owner and a check your team can repeat.
 
-- Three-surface map. What is present, restricted, unavailable or not tested on browser WebMCP, remote MCP and Catalog and Agentic channels.
-- Product truth matrix. The tested title, variant, price, currency, availability and policy facts across surfaces.
-- Buyer-journey evidence. The tool, the input, the observed result, the cart state and the exact stop before payment or order creation.
-- Prioritised correction plan. Up to five specific changes, their owner and a ready acceptance check.
-- Retest. One verification of up to two corrected items within 14 days.
+The fifth item is one retest of up to two corrected items within 14 days.
 
-## Fixed scope
-
-The scope is fixed before the clock starts, and it does not move during delivery.
-
-The check covers:
+## What is included
 
 - One Shopify store.
 - One market, language and currency.
@@ -3584,127 +3515,113 @@ The check covers:
 - Browser WebMCP.
 - Storefront and UCP MCP.
 - Shopify Agentic settings and a Catalog search preview.
-- One anonymous browser cart with one permitted checkout navigation, plus one separate remote UCP Cart lifecycle that stops before Checkout MCP.
+- One anonymous browser cart, with one checkout navigation if you authorise it.
+- One separate remote UCP Cart lifecycle, stopping before Checkout MCP.
 - One retest of up to two corrected items within 14 days.
 
-No Shopify Admin password is requested. The check uses public storefront surfaces, an isolated shopper session, and settings evidence you provide as redacted screenshots or a short screen recording.
+The scope is agreed before delivery starts.
 
-No customer details are entered. No payment is submitted and no order is placed.
+## The three interfaces
 
-## The three surfaces
+- Browser WebMCP. Shopping tools available inside the live storefront tab.
+- Storefront and UCP MCP. Shopify-hosted interfaces for remote clients.
+- Catalog and Agentic channels. The catalog preview and settings evidence relevant to the selected products.
 
-Every one of these is tested in the same session, against the same products, so a difference between them is visible rather than inferred.
+I compare these within the same test session and product scope. If one cannot be checked, the report says so.
 
-- Browser WebMCP tools inside the shopper's live storefront tab.
-- Shopify-hosted Storefront and UCP MCP endpoints.
-- Shopify Catalog and Agentic storefront channels.
+## Access and the stopping point
 
-## Price, kickoff and delivery
+You do not share a Shopify Admin password. The check uses public storefront information, an isolated shopper session and settings evidence you provide as redacted screenshots or a short recording.
 
-**€999 plus VAT. Fixed scope. 48 hours.**
+No customer details are entered. No payment is submitted and no order is placed. The browser checkout navigation and the separate remote cart are recorded as different parts of the test.
 
-The 48-hour clock starts at the agreed written kickoff, once the preflight, payment and merchant evidence are complete. No response is required from you during the delivery window.
+## When delivery starts
 
-If the public preflight cannot establish an observable agent-commerce surface suitable for controlled testing, the engagement is not sold and nothing is invoiced.
+The 48-hour clock starts at the agreed written kickoff, after the preflight, payment and your settings evidence are complete. You do not need to respond during the delivery window.
 
-If the 48-hour package of four deliverables is not sent within 48 elapsed hours, the fee is refunded. The retest is the fifth deliverable. It runs on its own 14-day window and is not part of the first package's delivery time.
+If the public preflight cannot find an observable agent-commerce interface suitable for controlled testing, I do not sell or invoice the check.
 
-All work is asynchronous and delivered in writing.
+If I do not send the four-item package within 48 elapsed hours, the fee is refunded. The included retest follows its own 14-day window and is not part of the first package's deadline.
 
-## Optional implementation
+## Help with the corrections
 
-Implementation of the corrections is not included in the €999. Your team can act on the plan directly, or implementing exactly the corrections this check lists is €499 when it is bought together with the check. Work outside the plan is scoped separately at the €1,500 implementation day rate.
+Your team can use the plan directly. For an additional €499, bought together with the check, I implement the complete correction list.
 
-The fixed price needs collaborator access to the store, arranged in writing before the work starts. With it in place, every correction on the plan is implemented for the €499, whatever the count. If access cannot be arranged, the add-on is not sold, and the plan still carries the instructions for your team.
+This requires collaborator access to the store, agreed in writing before work starts. With access in place, the fixed price covers every correction on the plan. If access cannot be arranged, the add-on is not sold and your team still receives the instructions.
 
-## Limits and exclusions
+Work outside the plan is scoped separately at €1,500 per day.
 
-This is an operational storefront check. It is not a penetration test. It is not a Shopify, MCP, WebMCP or UCP certification either.
+## See a sample
 
-A documented Shopify tool or public endpoint is not treated as a vulnerability. Browser WebMCP does not establish remote access. Checkout navigation is not reported as payment completion. Ranking or product placement in an external AI channel is not promised.
+The [sample report](/samples/shopify-agent-storefront-check) uses an invented store and invented observations. It shows the interface map, product comparison, shopping journey, correction plan and retest.
 
-This is an independent service, not affiliated with or endorsed by Shopify.
+## What this check does not establish
 
-## Sample report
+This is an independent service, not affiliated with or endorsed by Shopify. It is not a penetration test or a Shopify, MCP, WebMCP or UCP certification.
 
-A synthetic [sample report](/samples/shopify-agent-storefront-check) is public. It uses invented store data. It shows the three-surface map, the product truth matrix, the buyer-journey evidence, the correction plan and the retest, and it is not a report on a real merchant.
+A documented public tool is not treated as a vulnerability. Browser WebMCP does not establish remote access, and reaching checkout does not mean a payment or order was completed. The check does not promise ranking or product placement in an external AI channel.
 
-## Public preflight evidence
+## Background to the check
 
-Before this check was offered, 26 Shopify storefronts were read with a public read-only preflight on 2026-08-09. All 26 advertised the same ten-tool WebMCP inventory that Shopify documents as its platform-supplied surface. That is a reading of 26 public storefronts, not a result from 26 paying clients.
+Before offering this service, I ran a public, read-only preflight on 26 Shopify storefronts on 2026-08-09. All 26 advertised the same ten-tool WebMCP inventory supplied by Shopify.
 
-What that measurement does not establish, and the reason the paid check exists:
+This was an observation of public storefronts, not work for 26 paying clients. No tools were called, and carts, checkout, payment, orders, remote MCP behaviour and Admin settings were not tested.
 
-- No tool was called on any of the 26 stores.
-- Cart, checkout, payment and order creation were not tested.
-- Remote MCP behaviour and Agentic Admin settings were not read.
-- The identical inventory is Shopify's platform surface rather than 26 separate merchant implementations, so it says nothing about any one store's product data.
-- Five of the 26 needed a repeat run before the scanner finished, so the reading is the latest available observation rather than one clean pass.
-- The 26 of 26 figure describes those stores at that hour under that scanner version, and it is not generalised to Shopify stores.
+The matching inventory describes the platform's tools, not the accuracy of each store's product data. Five stores needed a repeat run before the scanner finished. These results apply to that sample, time and scanner version. They are not a claim about all Shopify stores.
 
 ## Frequently asked
 
-**Do I need an agent-readiness audit first?**
+**Do I need the general audit first?**
 
-No. The Shopify agent storefront check is a separate fixed-scope diagnosis with its own price and its own deliverables. The general audit measures a whole site or API against agent-readiness norms, this check measures what an AI shopper receives from one Shopify store.
+No. This is a separate service with its own scope and price.
 
-**What does it cost, and what is the delivery time?**
+**What if everything matches?**
 
-€999 plus VAT, fixed scope. Four written deliverables arrive as one package within 48 elapsed hours of the agreed written kickoff. The fifth is a retest of up to two corrected items, within 14 days. Implementing exactly the corrections this check lists is a further €499, bought together with the check.
+You receive the same report, with the matching results recorded. The plan explains what to keep consistent when the store changes.
 
-**What does the €499 correction implementation need from me?**
+## Tell me about your store
 
-Collaborator access to the store, arranged in writing before the work starts. The check itself needs none, this add-on does. With access in place, every correction on the plan is implemented for the €499, whatever the count. If access cannot be arranged, the add-on is not sold, and the plan still carries the instructions for your team.
+Email <mailto:info@turva.dev> with your storefront URL, .myshopify.com domain, primary market and up to three priority products.
 
-**Do you need access to my Shopify Admin?**
-
-The check does not. No Shopify Admin password is requested and no credentials are handled: settings evidence comes from you as redacted screenshots or a short screen recording, and everything else is read from public storefront surfaces. The separately bought correction implementation does need collaborator access to the store, arranged in writing before that work starts. No password is shared in either case.
-
-**Will you place a test order?**
-
-No. The cart lifecycle stops before payment, one checkout navigation is permitted if you authorise it, and no customer details, payment or order are ever submitted.
-
-**What happens if the check finds nothing wrong?**
-
-You receive the same deliverables, with the surfaces recorded as matching. A documented match is the result you are paying to be able to show, and the correction plan then names what to keep stable instead.
-
-## How to start
-
-Email <mailto:info@turva.dev> with your storefront URL, your .myshopify.com domain, your primary market and up to three priority products. A preflight and a fixed quote follow within one business day.
-
-No calls, no calendar links, and no discovery sessions.
+I reply within one business day with the preflight and a fixed quote. The work is handled in writing.
 
 All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
 `,
 
   "/company": `# Work directly with Erik Rekola
 
-I'm an independent consultant based in Tampere, Finland. I work on agent-readiness audits, technical reviews and implementation for websites, APIs and Shopify stores. You work directly with me, and scope, findings and decisions stay in writing.
+I'm an independent consultant in Tampere, Finland. I check websites, APIs and Shopify stores to understand what AI agents can access and where the information needs attention.
+
+You work directly with me, from agreeing the scope to reading the findings and deciding what to do next.
 
 ## My background
 
-From 2015 to 2021, I worked in hands-on machine roles involving paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyser at Thermo Fisher Scientific and semiconductor production equipment at ASM International. The common thread was reliable machine data and interventions within defined limits.
+From 2015 to 2021, I worked hands-on with industrial and laboratory equipment: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyser at Thermo Fisher Scientific and semiconductor production equipment at ASM International.
 
-After a career break from 2021 to early 2026, I built turva.dev around technical measurement, review and implementation. My current work is available to inspect through [public source code](https://github.com/erekola), [dated research](/blog) and clearly labelled [sample reports](/samples/audit-report).
+Those roles involved reliable machine data and working within defined limits.
 
-## Why this work matters
+After a career break from 2021 to early 2026, I built turva.dev around technical checks, reviews and implementation. You can inspect my current work through [public source code](https://github.com/erekola), [dated research](/blog) and clearly labelled [sample reports](/samples/audit-report).
 
-A product can look clear to a person while exposing incomplete or conflicting information to automated clients. My work documents what those clients can reach, what they receive and which corrections deserve attention. Technical readiness and observed AI answers are measured separately.
+## Why I do this work
 
-## How I work
+A product page can look clear to a person while giving an automated client incomplete or conflicting information.
 
-- Async-only engagement. No calls, no calendar links.
-- All work delivered remotely. No on-site engagements.
-- The audit does not require production credentials. Access needed for purchased implementation is agreed separately and limited to the work being carried out.
-- Write access scoped per task and only if implementation is purchased.
-- Public readiness claims are verifiable by re-running the scanner. Engagement findings are tied to recorded inputs and observed results.
+I check what the client can reach, what it receives and what needs correcting. I also record what selected AI assistants say, keeping those answers separate from the technical results.
+
+## How we work
+
+I work remotely and in writing. There are no calls, calendar bookings or on-site engagements.
+
+The audit uses public information and does not require production credentials. If you buy implementation, we agree any required access separately and limit it to the task.
+
+The report records what I checked and what I observed, so your team can understand and check the findings.
 
 ## Business details
 
 - **Trade name:** turva.dev
 - **Operator:** Erik Rekola
-- **Form:** Sole proprietorship
-- **Country of registration:** Finland
+- **Business form:** Sole proprietorship
+- **Registered in:** Finland
 - **Business ID:** 3600281-7
 - **VAT ID:** FI36002817
 - **Location:** Tampere, Pirkanmaa, Finland
@@ -3713,62 +3630,66 @@ A product can look clear to a person while exposing incomplete or conflicting in
 
 ## Invoicing
 
-Payment terms are fourteen days net unless agreed otherwise in writing.
+Payment is due within fourteen days unless we agree otherwise in writing.
 
-VAT is added to invoices according to Finnish law. Reverse charge applies to EU B2B customers with a valid VAT ID. Non-EU customers are invoiced without VAT. turva.dev's own VAT ID is FI36002817.
+VAT is added according to Finnish law. Reverse charge applies to EU B2B customers with a valid VAT ID. Non-EU customers are invoiced without VAT. turva.dev's own VAT ID is FI36002817.
 
-## Discuss a project
+## Tell me about your project
 
-Send the URL and the question you want answered. Everything is handled in writing, and the first reply arrives within one business day. Email <mailto:info@turva.dev> or use the [contact page](/contact).
+Send the URL and the question you want answered to <mailto:info@turva.dev>. I reply within one business day. Everything is handled in writing, and you can also use the [contact page](/contact).
 `,
 
-  "/contact": `# Start with the URL and the question
+  "/contact": `# Tell me what you want to understand
 
-Send your website, API or Shopify store URL and the question you need answered. I'll reply within one business day with the next step, proposed scope and start date. Everything is handled in writing.
+Send your website, API or Shopify store URL and your question. If you're unsure which service fits, describe the problem in your own words.
+
+I'll reply within one business day with a proposed next step, scope and start date. We work in writing.
 
 ## Website or API audit
 
-Include the URL and the question the audit should answer.
+Include the URL and what you want the audit to answer.
 
-[Ask about a website or API audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
+[Ask about an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
 ## Shopify check
 
-Include your store URL, primary market and up to three priority products.
+Include your storefront URL, .myshopify.com domain, primary market and up to three priority products.
 
 [Ask about a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A)
 
-## Email
+## Or write your own message
 
-Not sure which fits? Email info@turva.dev with the URL and the question.
+Email info@turva.dev. Existing scanner results are welcome, but you do not need them to get started.
 
 - **Email:** <mailto:info@turva.dev>
 
-Each link above opens a message to info@turva.dev with the subject set and the fields the first reply needs. Nothing is sent until you send it, and the same fields typed into a plain email work just as well. Existing scanner results are welcome, but you do not need them to get started.
+The buttons above open a draft in your email app. You can edit it before sending, or write the same details in a plain email.
 
-## Other channels
+## Other ways to reach me
 
 - **Signal:** [@turva.19](https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK)
-- **LinkedIn:** https://www.linkedin.com/in/erikrekola/
+- **LinkedIn:** [Erik Rekola](https://www.linkedin.com/in/erikrekola/)
 
-Short questions go to Signal, longer documents by email. Open Signal directly, or scan the code with your phone.
+Signal works for short questions. Send longer documents by email. You can open Signal directly or use the QR code.
 
-Signal is end-to-end encrypted. Scanning shares no account of yours.
+Signal is end-to-end encrypted. Scanning the code shares no account of yours.
 
-## Response time and languages
+## Reply time and languages
 
 - Email and Signal: within one business day
 - Weekends: no guaranteed response time
 
-Correspondence in English or Finnish, your choice. A brief I send unasked arrives in the language of the company it is about, and reports are written in English unless a Finnish report is agreed in the written scope.
+You can write in English or Finnish. Reports are in English unless we agree on Finnish in the written scope. A brief I send unasked arrives in the language of the company it is about.
 
-## Confidentiality
+## Confidential material
 
-An NDA is signed before any material moves. Send your own and it is signed as it stands, at no charge. The audit does not require production credentials. Any deployment, DNS, Shopify or repository access needed for purchased implementation is agreed separately and limited to the work.
+I sign your own NDA as it stands, at no charge, before material is shared.
+
+The audit does not require production credentials. Any deployment, DNS, Shopify or repository access needed for purchased implementation is agreed separately and limited to the work.
 
 ## Optional encrypted email
 
-Mail to erik@turva.dev can be OpenPGP encrypted. Encryption is optional, and an unencrypted message gets the same reply time.
+You can send OpenPGP-encrypted email to erik@turva.dev. Encryption is optional, and an ordinary message receives the same reply time.
 
 The public key is at https://turva.dev/pgp-key.asc, and it is also published for automatic discovery, so a mail client that supports Web Key Directory finds it from the address alone. Two keys are published for the same address and a client picks the one it understands: an Ed25519 key that every OpenPGP implementation reads, and a post-quantum ML-DSA-65 key for clients that support OpenPGP version 6.
 
@@ -3780,63 +3701,65 @@ Fingerprint of the post-quantum key:
 
 43DA 21C6 8589 9321 BD1A 70C0 AD85 25CE B408 3B71 DF22 6EFC BE5C 737C BDDA 8DA7
 
-Compare the fingerprint against the key before you use it, because a key served over the web is only as trustworthy as the page that served it.
+Check the fingerprint before you use the key. A fingerprint shown on this page relies on the trustworthiness of the page itself.
 
 ## Business details
 
 - **Business ID:** 3600281-7
 - **Register:** https://tietopalvelu.ytj.fi/yritys/3600281-7
-- **Location:** Tampere, Finland. Service delivered remotely worldwide.
+- **Location:** Tampere, Finland. Services are delivered remotely worldwide.
 - **Agent registration:** https://turva.dev/auth.md
 `,
 
   "/legal": `# Terms, privacy and data handling
 
-The terms for working with turva.dev, how information is handled and where to send a privacy request. Service-specific scope and delivery conditions are described on the relevant service page and confirmed in writing.
+This page explains the terms for working with turva.dev and how information is handled. The scope and delivery conditions for each service are on its service page and confirmed in writing.
 
 ## Operator
 
-turva.dev is operated by Erik Rekola, Business ID 3600281-7, registered in Finland as a sole proprietorship. VAT-registered, VAT ID FI36002817.
+turva.dev is operated by Erik Rekola, a sole proprietor registered in Finland. VAT-registered, VAT ID FI36002817.
+
+Business ID: 3600281-7.
 
 Contact: <mailto:info@turva.dev>
 
 ## Engagement terms
 
-The following terms apply to all engagements (Shopify agent storefront check, audit, advisory, implementation, agent operations and MCP server design) unless replaced by a written agreement.
+These terms apply to Shopify checks, audits, advisory, implementation, agent operations and MCP server design unless a written agreement replaces them.
 
-**Scope.** Each engagement has a defined scope agreed in writing before work starts. Scope changes require a new written agreement and may affect price and timeline.
+**Scope.** We agree the scope in writing before work starts. Changes need a new written agreement and may affect the price and schedule.
 
-**Deliverables.** Audit deliverables are a written report. Shopify agent storefront check deliverables are the five written documents described on the [service page](/shopify-agent-storefront-check). Advisory deliverables are written reviews and a monthly summary. Implementation deliverables are source code committed to the agreed repository.
+**Deliverables.** An audit produces a written report. The Shopify agent storefront check includes the five written deliverables listed on its [service page](/shopify-agent-storefront-check). Advisory includes written reviews and a monthly summary. Implementation is delivered as source code committed to the agreed repository.
 
-**Payment.** Payment terms are fourteen days net unless agreed otherwise in writing. The Shopify agent storefront check is paid before the agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late payment interest follows Finnish law.
+**Payment.** Payment is due within fourteen days unless agreed otherwise in writing. The Shopify agent storefront check is paid before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
 
-**Confidentiality.** Information shared during an engagement is treated as confidential. Your own non-disclosure agreement is signed as it stands before any material moves, at no charge. The audit does not require production credentials. Access needed for purchased implementation is agreed separately and limited to the work being carried out.
+**Confidentiality.** Information shared during the work is confidential. Your own non-disclosure agreement is signed as it stands, at no charge, before material is shared. The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work.
 
 **Liability.** Liability is limited to the value of the engagement. turva.dev is not liable for indirect or consequential damages.
 
-**Intellectual property.** The client owns the deliverables produced for them. Generic methods, templates and reusable code remain with turva.dev.
+**Intellectual property.** You own the deliverables produced for you. turva.dev retains its generic methods, templates and reusable code.
 
 **Governing law.** Finnish law applies. Disputes are resolved in the District Court of Pirkanmaa, Finland.
 
 ## Privacy
 
-This site does not use analytics cookies, tracking pixels or third-party scripts.
+The site does not use analytics cookies, tracking pixels or third-party scripts.
 
-**Server logs.** The hosting provider (Cloudflare) records standard request logs including IP address, user agent and requested path. Logs are retained according to Cloudflare's standard retention policy.
+**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. Retention follows Cloudflare's standard policy.
 
-**Email.** Email communication is stored in standard email infrastructure for as long as needed to deliver the work and meet accounting obligations under Finnish law (six years for invoice records).
+**Email.** Email is stored for as long as needed to deliver the work and to meet accounting obligations under Finnish law. Invoice records are retained for six years.
 
-**Client data.** Data shared by a client during an engagement is stored only on systems necessary to deliver the work, and deleted within thirty days of engagement closure unless retention is required by law. The workstation holding it uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Client material.** Client material is stored only on systems needed for the work. It is deleted within thirty days of the engagement closing unless the law requires retention. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
-**Briefs.** When turva.dev measures a company's public website and sends the reading as a brief, the brief lives at an unlisted address on turva.dev. It contains what the public site serves and how it was read, and nothing a person shared. The address is not indexed and not linked from anywhere. A brief is removed on request, and every brief expires on its own no later than 400 days after it was last published.
+**Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
-**AI tools.** AI tools are used in the work, on a local workspace holding the files a task needs. Those files are processed by the provider of the tool in use. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. The vault controls storage, what a tool may run and reach is scoped separately per task, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
+**AI tools.** AI tools are used in the work, on a local workspace holding the files a task needs. Those files are processed by the provider of the tool in use. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
-No data is sold. Data reaches a third party only through the providers needed to deliver the work: hosting, email, encrypted backup storage and the AI tool in use.
+No data is sold. Third-party processing is limited to the providers needed for the work: hosting, email, encrypted backup storage and the AI tool in use.
 
 ## Data rights
 
-You have the right to access, correct or request deletion of personal data held about you. Send the request to <mailto:info@turva.dev>.
+You can request access to, correction of or deletion of personal data held about you. Send the request to <mailto:info@turva.dev>.
 
 The supervisory authority in Finland is the Data Protection Ombudsman (tietosuojavaltuutettu.fi).
 
@@ -5731,7 +5654,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.149.0",
+    "version": "3.150.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5999,7 +5922,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.149.0",
+  "version": "3.150.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6618,7 +6541,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-08";
+var SITEMAP_LASTMOD = "2026-09-09";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -7916,7 +7839,7 @@ function contactSignalQr() {
   // once and this function adds structure only. The plate is light on purpose:
   // an inverted code is closer to the site's palette but some readers refuse
   // to decode one.
-  const paras = mdSection("/contact", "Other channels").split("\n\n").map((b) => b.trim()).filter((b) => b && !b.startsWith("- "));
+  const paras = mdSection("/contact", "Other ways to reach me").split("\n\n").map((b) => b.trim()).filter((b) => b && !b.startsWith("- "));
   return `
     <div class="sigqr">
       <div class="sigqr-txt">
@@ -8123,8 +8046,10 @@ function mdKvsSec(path, heading, extra) {
     ${grid}${extra || ""}
   </section>`;
 }
-function mdOfferCards(path, heading, linkLabel) {
+function mdOfferCards(path, heading, linkLabel, idFor) {
   // The same row shape as the home page offers: "- [name](href). €price. covers Delivered ...".
+  // idFor carries an old section anchor onto the card that replaced that section, so a link
+  // written before the section became a card still lands on the same offer (/services#shopify).
   const rows = mdSection(path, heading).split("\n").filter((l) => l.startsWith("- "));
   if (!rows.length) throw new Error("mdOfferCards: no offer rows under " + heading + " in " + path);
   return rows.map((line) => {
@@ -8133,7 +8058,8 @@ function mdOfferCards(path, heading, linkLabel) {
     const [, name, href, price, covers, when] = m;
     const label = linkLabel[href];
     if (!label) throw new Error("offer has no link label for " + href);
-    return `<a class="card" href="${href}"><span class="card-top"><span class="name">${escapeHtml(name)}</span><span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span><span class="go">${label}</span></a>`;
+    const cardId = (idFor && idFor[href]) ? ` id="${idFor[href]}"` : "";
+    return `<a class="card"${cardId} href="${href}"><span class="card-top"><span class="name">${escapeHtml(name)}</span><span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span><span class="go">${label}</span></a>`;
   }).join("\n      ");
 }
 function mdActionCards(path, headings) {
@@ -8263,9 +8189,7 @@ var GUIDE_PAGE_FAQ = {
   "/blog/what-ai-assistants-call-an-agent-readiness-audit": mdFaqBlocks("/blog/what-ai-assistants-call-an-agent-readiness-audit", "Frequently asked").pairs,
   "/blog/website-agent-readiness-567-sites": mdFaqBlocks("/blog/website-agent-readiness-567-sites", "Frequently asked").pairs,
   "/services": mdFaqBlocks("/services", "Frequently asked").pairs,
-  "/agent-readiness-audit": mdFaqBlocks("/agent-readiness-audit", "Frequently asked").pairs,
   "/shopify-agent-storefront-check": mdFaqBlocks("/shopify-agent-storefront-check", "Frequently asked").pairs,
-  "/llms-txt-validator": mdFaqBlocks("/llms-txt-validator", "Frequently asked").pairs,
   "/guides/agentic-resource-discovery": mdFaqBlocks("/guides/agentic-resource-discovery", "Frequently asked").pairs,
   "/blog/agent-readiness-code-hosts": mdFaqBlocks("/blog/agent-readiness-code-hosts", "Frequently asked").pairs,
   "/blog/cheating-to-keep-the-old-price": mdFaqBlocks("/blog/cheating-to-keep-the-old-price", "Frequently asked").pairs,
@@ -8476,8 +8400,8 @@ function footerHtml(kieli) { const fi = kieli === "fi"; return `<footer class="t
 // services page; a guide about a free tool or about Shopify points at that instead. Short
 // lines by design: the twin gate reads any paragraph over 80 characters as prose.
 var SAMPLE_HEAD = {
-  "/samples/audit-report": { eyebrow: "Synthetic sample report", after: "the-first-decision", primary: ["Read the evidence", "#f1"], secondary: ["View audit scope and pricing", "/agent-readiness-audit#scope"] },
-  "/samples/shopify-agent-storefront-check": { eyebrow: "Synthetic sample report", after: "the-first-decision", primary: ["View the product comparison", "#product-truth-matrix"], secondary: ["View Shopify check scope", "/shopify-agent-storefront-check"] }
+  "/samples/audit-report": { eyebrow: "Fictional example", after: "what-to-fix-first", primary: ["Read the evidence", "#f1"], secondary: ["View audit scope and pricing", "/agent-readiness-audit#scope"] },
+  "/samples/shopify-agent-storefront-check": { eyebrow: "Fictional example", after: "what-to-fix-first", primary: ["View the product comparison", "#product-information-compared"], secondary: ["View Shopify check scope", "/shopify-agent-storefront-check"] }
 };
 // Kierros 4 (2026-09-06, worker-02): Tek-362 renamed headings in three guides and the id is
 // derived from the heading, so ten fragment addresses that had been served stopped resolving.
@@ -8487,10 +8411,46 @@ var GUIDE_ANCHOR_ALIASES = {
   // Sample reports (2026-09-08): a short permanent anchor for the first finding, and the old
   // Decision id of the Shopify sample after its heading became The first decision.
   "/samples/audit-report": {
-    "f1-every-product-publishes-a-price-of-0-and-an-availability-of-instock-on-all-three-surfaces": ["f1"]
+    "f1-product-prices-and-availability-disagree-across-the-page-structured-data-and-api": ["f1", "f1-every-product-publishes-a-price-of-0-and-an-availability-of-instock-on-all-three-surfaces"],
+    "f2-offer-markdown-alongside-html": ["f2-serve-markdown-next-to-html"],
+    "f3-publish-llms-txt-and-link-to-it-in-response-headers": ["f3-publish-llms-txt-and-announce-it-in-the-link-header"],
+    "f4-add-the-product-catalog-to-the-sitemap": ["f4-the-sitemap-lists-two-template-pages-and-misses-the-catalog"],
+    "f5-state-the-company-s-ai-crawler-preferences-in-robots-txt": ["f5-name-the-ai-crawlers-and-declare-content-signals-in-robots-txt"],
+    "f6-make-the-existing-rest-api-discoverable": ["f6-tell-agents-that-the-rest-api-exists"],
+    "f7-add-the-dns-discovery-record-after-the-files-are-live": ["f7-publish-a-dns-aid-record-once-the-discovery-files-exist"],
+    "f8-keep-agent-checkout-undeclared-until-it-is-supported": ["f8-declare-no-agent-commerce-surface-until-a-checkout-can-back-it"],
+    "f9-correct-the-published-address": ["f9-the-old-address-is-still-published-in-two-places-and-the-current-one-in-none-an-agent-reads"],
+    "what-to-fix-first": ["the-first-decision"],
+    "the-main-findings": ["summary"],
+    "the-agreed-work": ["engagement-record"],
+    "decisions-for-the-company": ["decisions-the-company-makes"],
+    "fixes-owners-and-estimated-effort": ["fix-order-and-owners"],
+    "what-each-party-delivers": ["who-does-what"],
+    "what-was-checked": ["scope-and-method"],
+    "technical-scan-results": ["scanner-readings-check-by-check"],
+    "findings-from-the-manual-review": ["manual-review"],
+    "what-the-assistants-answered": ["ai-visibility-today"],
+    "public-security-checks": ["published-security-scans"],
+    "the-findings-in-detail": ["findings"],
+    "after-the-report": ["what-happens-next"],
+    "scope-limits": ["what-this-report-is-not"],
+    "appendix-a-from-evidence-to-a-checked-fix": ["appendix-a-evidence-chains"],
+    "appendix-b-questions-and-test-conditions": ["appendix-b-the-questions-and-the-measurement-conditions"]
   },
   "/samples/shopify-agent-storefront-check": {
-    "the-first-decision": ["decision"]
+    "what-to-fix-first": ["the-first-decision", "decision"],
+    "the-agreed-work": ["engagement-record"],
+    "the-three-interfaces": ["three-surface-map"],
+    "product-information-compared": ["product-truth-matrix"],
+    "the-shopping-journey": ["buyer-journey-evidence"],
+    "what-to-change": ["correction-plan"],
+    "changes-not-needed-in-this-test": ["configuration-changes-the-check-does-not-recommend"],
+    "scope-and-unresolved-items": ["limits-and-what-stays-unresolved"],
+    "checking-the-corrections": ["retest"],
+    "scope-limits": ["what-this-report-is-not"],
+    "c1-align-the-remote-catalog-with-the-finnish-price-list": ["c1-publish-the-finnish-price-list-to-the-remote-catalog-surface"],
+    "c2-make-the-m-variant-available-in-the-agentic-catalog": ["c2-make-the-m-variant-eligible-in-the-agentic-catalog"],
+    "c3-repeat-the-comparison-after-catalog-changes": ["c3-run-a-three-surface-acceptance-test-after-every-catalog-or-market-publish"]
   },
   "/guides/open-knowledge-format": {
     "structure-versus-meaning": ["structural-interoperability-not-yet-semantic"]
@@ -8727,22 +8687,22 @@ function serveHomeHtml(canonicalUrl) {
   const lead = mdLead("/");
   // The measured date comes from the twin's own agent-readiness sentence, so the hero row and
   // the markdown agree by construction and the Measured-date gate in verify.mjs reads one copy.
-  const evMeasured = ((lead.paras[2] || "").match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
+  const evMeasured = ((lead.paras[3] || "").match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
   if (!evMeasured) throw new Error("home lead carries no Measured date for the scan row");
-  // The hero H1 is the twin's title. The words "AI agents" are the one green highlight the
+  // The hero H1 is the twin's title. The words "AI assistants" are the one green highlight the
   // layout guide (2026-09-06, Tek-354) allows in the heading; if the title stops carrying them,
   // the heading renders plain and nothing breaks.
-  const heroH1 = renderInline(lead.title).replace("AI agents", '<span class="hl">AI agents</span>');
+  const heroH1 = renderInline(lead.title).replace("AI assistants", '<span class="hl">AI assistants</span>');
   // "Title. Body." paragraphs become a titled card; the split is the first ". " and a paragraph
   // without one throws, so a twin edit that drops the title cannot render an empty card.
   const titled = (t, what) => { const k = t.indexOf(". "); if (k < 0) throw new Error("home " + what + " paragraph has no title: " + t.slice(0, 40)); return { t: t.slice(0, k), b: t.slice(k + 2) }; };
   // The two offers are read from the twin list, one card each: name, price, what it covers and
   // when it is delivered. Fail closed: a list line that stops matching the shape throws here
   // instead of rendering a card with an empty price (Tek-355, Tek-357).
-  const offerParas = mdParas("/", "Choose the right starting point", 3);
-  const offerRaw = mdSection("/", "Choose the right starting point").split("\n").filter((l) => l.startsWith("- "));
+  const offerParas = mdParas("/", "Choose the check you need", 2);
+  const offerRaw = mdSection("/", "Choose the check you need").split("\n").filter((l) => l.startsWith("- "));
   if (offerRaw.length !== 2) throw new Error("home starting-point list does not carry exactly two offers: " + offerRaw.length);
-  const OFFER_LINK = { "/shopify-agent-storefront-check": "Explore the Shopify check", "/agent-readiness-audit": "Explore the audit" };
+  const OFFER_LINK = { "/shopify-agent-storefront-check": "See the Shopify check", "/agent-readiness-audit": "See the audit" };
   const offerCards = offerRaw.map((line) => {
     const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)$/);
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
@@ -8751,11 +8711,11 @@ function serveHomeHtml(canonicalUrl) {
     return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span><span class="offer-price">${escapeHtml(price)}</span></span><span class="offer-covers">${escapeHtml(covers)}</span><span class="offer-when">${escapeHtml(when)}</span><span class="offer-link">${OFFER_LINK[href]}</span></a>`;
   }).join("\n      ");
   // The hero card is one finding from the synthetic sample report (2026-09-08 brief, point 1).
-  // Its text is the twin section "One product. Conflicting answers.": an intro, three "Source:
+  // Its text is the twin section "One product. Three different answers.": three "Source:
   // reading" rows, four short paragraphs and the link line. Fail closed on the shape, so a twin
   // edit cannot render an empty row or drop the link.
-  const findHead = "One product. Conflicting answers.";
-  const findParas = mdParas("/", findHead, 6);
+  const findHead = "One product. Three different answers.";
+  const findParas = mdParas("/", findHead, 5);
   const findRows = mdLists("/", findHead)[0] || [];
   if (findRows.length !== 3) throw new Error("home finding card does not carry exactly three source rows: " + findRows.length);
   const findRowHtml = findRows.map((r, k) => {
@@ -8766,14 +8726,14 @@ function serveHomeHtml(canonicalUrl) {
     const flag = k === 0 ? "" : '<span class="rc-flag">conflict</span>';
     return `<div class="rc-row${k === 0 ? "" : " rc-bad"}"><dt>${r.slice(0, c)}</dt><dd>${r.slice(c + 2)}${flag}</dd></div>`;
   }).join("\n          ");
-  const findLink = findParas[5].match(/^<a href="([^"]+)">([^<]+)<\/a>$/);
+  const findLink = findParas[4].match(/^<a href="([^"]+)">([^<]+)<\/a>$/);
   if (!findLink) throw new Error("home finding card does not end in a link line");
-  const work = mdParas("/", "Work you can inspect", 5);
+  const work = mdParas("/", "See what the work looks like", 5);
   const workCards = work.slice(0, 3).map((t) => titled(t, "inspect")).map((c) => `<div class="svc"><div class="svc-h"><span class="svc-t">${c.t}</span></div><p>${c.b}</p></div>`).join("\n      ");
-  const secList = mdLists("/", "Work you can inspect")[0].map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      ");
-  const proc = mdParas("/", "A clear process, in writing", 4);
+  const secList = mdLists("/", "See what the work looks like")[0].map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      ");
+  const proc = mdParas("/", "How we work", 4);
   const procCards = proc.slice(0, 3).map((t, i) => titled(t, "process")).map((c, i) => `<div class="step"><span class="step-n">0${i + 1}</span><span class="step-t">${c.t}</span><p>${c.b}</p></div>`).join("\n      ");
-  const contact = mdParas("/", "Contact", 3);
+  const contact = mdParas("/", "Tell me what you want to understand", 3);
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -8939,38 +8899,38 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
         <p class="eyebrow">Independent agent-readiness audits</p>
         <h1>${heroH1}</h1>
         <p class="lede">${renderInline(lead.paras[0])}</p>
+        <p class="lede">${renderInline(lead.paras[1])}</p>
         <div class="cta">
           <a class="btn" href="/contact">Request an audit</a>
           <a class="btn-ghost" href="/samples/audit-report">Read a sample report</a>
         </div>
-        <p class="svcnote">${renderInline(lead.paras[1])}</p>
+        <p class="svcnote">${renderInline(lead.paras[2])}</p>
       </div>
       <div class="rcard" role="group" aria-label="One finding from the synthetic sample audit report">
-        <div class="rc-top"><span>Synthetic example &middot; Product data</span><span class="rc-tag">Finding F1</span></div>
+        <div class="rc-top"><span>Example from a fictional audit</span><span class="rc-tag">Finding F1</span></div>
         <h2 class="rc-title">${renderInline(findHead)}</h2>
         <dl class="rc-cmp">
           ${findRowHtml}
         </dl>
-        <p class="rc-impact">${findParas[1]}</p>
-        <p class="rc-fix">${findParas[2].replace(/^First fix:/, "<b>First fix:</b>")}</p>
-        <p class="rc-fix">${findParas[3].replace(/^Acceptance check:/, "<b>Acceptance check:</b>")}</p>
-        <p class="rc-foot">${findParas[4]}</p>
+        <p class="rc-impact">${findParas[0]}</p>
+        <p class="rc-fix">${findParas[1].replace(/^What to fix:/, "<b>What to fix:</b>")}</p>
+        <p class="rc-fix">${findParas[2].replace(/^How to check:/, "<b>How to check:</b>")}</p>
+        <p class="rc-foot">${findParas[3]}</p>
         <a class="rc-more" href="${findLink[1]}">${findLink[2]}</a>
       </div>
     </div>
   </section>
   <section class="sec offers">
-    <h2>Choose the right starting point</h2>
-    <p>${offerParas[0]}</p>
+    <h2>Choose the check you need</h2>
     <div class="offer-grid">
       ${offerCards}
     </div>
-    <p class="muted">${offerParas[1]}</p>
-    <p>${offerParas[2]}</p>
+    <p class="muted">${offerParas[0]}</p>
+    <p>${offerParas[1]}</p>
   </section>
   <div class="page">
   <section class="sec">
-    <h2>Work you can inspect</h2>
+    <h2>See what the work looks like</h2>
     <div class="svcgrid">
       ${workCards}
     </div>
@@ -8995,7 +8955,7 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
   </section>
 
   <section class="sec">
-    <h2>A clear process, in writing</h2>
+    <h2>How we work</h2>
     <div class="steps">
       ${procCards}
     </div>
@@ -9011,7 +8971,7 @@ ${mdFaqRows("/", "Frequently asked")}
   </section>
 
   <section class="sec contact">
-    <h2>Start with the URL and the question</h2>
+    <h2>Tell me what you want to understand</h2>
     <p>${contact[0]}</p>
     <div class="cta-row"><a class="cta-btn" href="/contact">Request an audit</a> <a class="mail-link" href="mailto:info@turva.dev">info@turva.dev</a></div>
     <p class="muted">${contact[2]}</p>
@@ -9042,8 +9002,8 @@ function serveServicesHtml(canonicalUrl) {
     // search reads machine-readable prices instead of prose and FAQ answers only.
     `\n<script type="application/ld+json">\n{"@context":"https://schema.org","@graph":[\n${SCHEMA_SERVICE}\n]}\n<\/script>`;
   const head = cardPageHead(metaBlock, jsonLd, canonicalUrl);
-  const start = mdParas("/services", "How to start", 3);
-  const offers = mdOfferCards("/services", "Choose a starting point", { "/shopify-agent-storefront-check": "Explore the Shopify check", "/agent-readiness-audit": "Explore the audit" });
+  const start = mdParas("/services", "Tell me what you need", 3);
+  const offers = mdOfferCards("/services", "Choose a starting point", { "/shopify-agent-storefront-check": "See the Shopify check", "/agent-readiness-audit": "See the audit" }, { "/shopify-agent-storefront-check": "shopify", "/agent-readiness-audit": "audit" });
   const offerParas = mdParas("/services", "Choose a starting point", 1);
   const body = `${head}
 ${cardPageNav("/services")}
@@ -9056,16 +9016,14 @@ ${cardPageNav("/services")}
     </div>
     <p>${offerParas[0]}</p>
   </section>
-  ${mdOpenSec("/services", "Shopify agent storefront check", "shopify")}
-  ${mdOpenSec("/services", "Website and API agent-readiness audit", "audit")}
   ${mdOpenSec("/services", "Implementation")}
   ${mdOpenSec("/services", "Ongoing advisory", "advisory")}
   ${mdOpenSec("/services", "Agent operations")}
   ${mdOpenSec("/services", "MCP server design")}
-  ${mdOpenSec("/services", "How the method is measured")}
-  ${mdFaqSec("/services", "Frequently asked", "questions")}
+  ${mdOpenSec("/services", "Work you can inspect", "how-the-method-is-measured")}
+  ${mdFaqSec("/services", "Frequently asked", "questions").replace("<h2>Frequently asked</h2>", "<h2>Before we start</h2>")}
   <div class="start" id="how-to-start">
-    <h2>How to start</h2>
+    <h2>Tell me what you need</h2>
     <p>${start[0]}</p>
     <p>${start[1]}</p>
     <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A">Request an audit</a></div>
@@ -9526,11 +9484,11 @@ ${cardPageNav("/company")}
 <main id="main">
   ${mdPageStart("/company")}
   ${mdOpenSec("/company", "My background")}
-  ${mdOpenSec("/company", "Why this work matters")}
-  ${mdOpenSec("/company", "How I work")}
+  ${mdOpenSec("/company", "Why I do this work", "why-this-work-matters")}
+  ${mdOpenSec("/company", "How we work", "how-i-work")}
   ${mdKvsSec("/company", "Business details")}
   ${mdOpenSec("/company", "Invoicing")}
-  ${mdOpenSec("/company", "Discuss a project", "discuss", '\n    <div class="cta"><a class="btn" href="/contact">Discuss a project</a></div>')}
+  ${mdOpenSec("/company", "Tell me about your project", "discuss", '\n    <div class="cta"><a class="btn" href="/contact">Discuss a project</a></div>')}
 </main>
 ${footerHtml()}
 </body>
@@ -9552,10 +9510,10 @@ ${cardPageNav("/contact")}
   <div class="cards">
       ${mdActionCards("/contact", ["Website or API audit", "Shopify check"])}
   </div>
-  ${mdOpenSec("/contact", "Email")}
-  ${mdOpenSec("/contact", "Other channels", "channels", contactSignalQr(), true)}
-  ${mdOpenSec("/contact", "Response time and languages")}
-  ${mdOpenSec("/contact", "Confidentiality")}
+  ${mdOpenSec("/contact", "Or write your own message", "email")}
+  ${mdOpenSec("/contact", "Other ways to reach me", "channels", contactSignalQr(), true)}
+  ${mdOpenSec("/contact", "Reply time and languages", "response-time-and-languages")}
+  ${mdOpenSec("/contact", "Confidential material", "confidentiality")}
   ${mdOpenSec("/contact", "Optional encrypted email", "encrypted-email")}
   ${mdKvsSec("/contact", "Business details")}
 </main>
@@ -9597,7 +9555,7 @@ function serveShopifyHtml(canonicalUrl) {
       buildShopifyServiceJsonLd(canonicalUrl) + "\n" +
       buildGuidePageFaqJsonLd("/shopify-agent-storefront-check", canonicalUrl),
     canonicalUrl);
-  const start = mdParas("/shopify-agent-storefront-check", "How to start", 3);
+  const start = mdParas("/shopify-agent-storefront-check", "Tell me about your store", 3);
   const mailto = "mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&amp;body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A";
   const body = `${head}
 ${cardPageNav("/shopify-agent-storefront-check")}
@@ -9606,16 +9564,17 @@ ${cardPageNav("/shopify-agent-storefront-check")}
   <div class="cta"><a class="btn" href="${mailto}">Request a Shopify check</a><a class="btn-ghost" href="/samples/shopify-agent-storefront-check">Read the sample report</a></div>
   ${mdOpenSec("/shopify-agent-storefront-check", "What you will learn")}
   ${mdOpenSec("/shopify-agent-storefront-check", "What you receive")}
-  ${mdOpenSec("/shopify-agent-storefront-check", "Fixed scope")}
-  ${mdOpenSec("/shopify-agent-storefront-check", "The three surfaces")}
-  ${mdOpenSec("/shopify-agent-storefront-check", "Price, kickoff and delivery", "price")}
-  ${mdOpenSec("/shopify-agent-storefront-check", "Optional implementation")}
-  ${mdOpenSec("/shopify-agent-storefront-check", "Limits and exclusions")}
-  ${mdOpenSec("/shopify-agent-storefront-check", "Sample report")}
-  ${mdOpenSec("/shopify-agent-storefront-check", "Public preflight evidence")}
-  ${mdFaqSec("/shopify-agent-storefront-check", "Frequently asked", "questions")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "What is included", "fixed-scope")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "The three interfaces", "the-three-surfaces")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "Access and the stopping point")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "When delivery starts", "price")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "Help with the corrections", "optional-implementation")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "See a sample", "sample-report")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "What this check does not establish", "limits-and-exclusions")}
+  ${mdOpenSec("/shopify-agent-storefront-check", "Background to the check", "public-preflight-evidence")}
+  ${mdFaqSec("/shopify-agent-storefront-check", "Frequently asked", "questions").replace("<h2>Frequently asked</h2>", "<h2>Two common questions</h2>")}
   <div class="start" id="how-to-start">
-    <h2>How to start</h2>
+    <h2>Tell me about your store</h2>
     <p>${start[0]}</p>
     <p>${start[1]}</p>
     <div class="cta-row"><a class="cta-btn" href="${mailto}">Request a Shopify check</a></div>
@@ -9631,14 +9590,14 @@ ${footerHtml()}
 function serveAuditHtml(canonicalUrl) {
   // The commercial page of the website and API audit (2026-09-08). The guide at
   // /guides/agent-readiness-audit stays a guide. Same shape as the Shopify product page:
-  // twin first, open sections, the FAQ under its buyer-facing heading, one prepared mailto.
+  // twin first, open sections, one prepared mailto. Since the 2026-09-09 text round the page
+  // carries no FAQ section, so it publishes no FAQPage either (the twin is the only home).
   const head = cardPageHead(
     buildMetaBlock("/agent-readiness-audit", canonicalUrl),
     buildGuideJsonLd("/agent-readiness-audit", canonicalUrl) + "\n" +
-      buildAuditServiceJsonLd(canonicalUrl) + "\n" +
-      buildGuidePageFaqJsonLd("/agent-readiness-audit", canonicalUrl),
+      buildAuditServiceJsonLd(canonicalUrl),
     canonicalUrl);
-  const start = mdParas("/agent-readiness-audit", "How to start", 3);
+  const start = mdParas("/agent-readiness-audit", "Tell me what you want to understand", 3);
   const mailto = "mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A";
   const request = `<div class="cta-row"><a class="cta-btn" href="${mailto}">Request an audit</a></div>`;
   // The twin's price sentence renders as the price line the other sections use; fail closed
@@ -9652,15 +9611,14 @@ ${cardPageNav("/agent-readiness-audit")}
 <main id="main">
   ${startHtml}
   <div class="cta"><a class="btn" href="${mailto}">Request an audit</a><a class="btn-ghost" href="/samples/audit-report">Read the sample report</a></div>
-  ${mdOpenSec("/agent-readiness-audit", "When this audit is useful")}
-  ${mdOpenSec("/agent-readiness-audit", "A finding that changes the fix order")}
-  ${mdOpenSec("/agent-readiness-audit", "What the audit covers", "scope")}
+  ${mdOpenSec("/agent-readiness-audit", "When this helps", "when-this-audit-is-useful")}
+  ${mdOpenSec("/agent-readiness-audit", "One example: the price is wrong", "a-finding-that-changes-the-fix-order")}
+  ${mdOpenSec("/agent-readiness-audit", "What I check", "scope")}
   ${mdOpenSec("/agent-readiness-audit", "What you receive", "deliverables", request)}
   ${mdOpenSec("/agent-readiness-audit", "How the two weeks work")}
-  ${mdOpenSec("/agent-readiness-audit", "Implementation is optional", "implementation")}
-  ${mdFaqSec("/agent-readiness-audit", "Frequently asked", "questions").replace("<h2>Frequently asked</h2>", "<h2>Questions before you start</h2>")}
+  ${mdOpenSec("/agent-readiness-audit", "If you want help with the fixes", "implementation")}
   <div class="start" id="how-to-start">
-    <h2>Start with the URL and the question</h2>
+    <h2>Tell me what you want to understand</h2>
     <p>${start[0]}</p>
     <p>${start[1]}</p>
     <div class="cta-row"><a class="cta-btn" href="${mailto}">Request an audit</a> <a class="mail-plain" href="mailto:info@turva.dev">info@turva.dev</a></div>
@@ -9679,13 +9637,13 @@ function serveBadgeHtml(canonicalUrl) {
 ${cardPageNav("/badge")}
 <main id="main">
   ${mdPageStart("/badge")}
-  ${mdOpenSec("/badge", "Eligibility")}
-  ${mdOpenSec("/badge", "What it is, and what it is not", "not-a-certification")}
-  <section class="sec" id="use-the-badge"><h2>Use the badge</h2>
+  ${mdOpenSec("/badge", "Who can use it?", "eligibility")}
+  ${mdOpenSec("/badge", "What the badge means", "not-a-certification")}
+  <section class="sec" id="use-the-badge"><h2>Add the badge</h2>
     <p><img src="/badge.svg" alt="agent-ready. Criteria at turva.dev/badge" width="216" height="36"></p>
-    ${mdSecBodyHtml("/badge", "Use the badge")}
+    ${mdSecBodyHtml("/badge", "Add the badge")}
   </section>
-  ${mdOpenSec("/badge", "If your site is not there yet")}
+  ${mdOpenSec("/badge", "Want to know where your site stands?", "if-your-site-is-not-there-yet")}
 </main>
 ${footerHtml()}
 </body>
@@ -9700,10 +9658,10 @@ ${cardPageNav("/tools")}
 <main id="main">
   ${mdPageStart("/tools")}
   <div class="cards three">
-      ${mdToolCards("/tools", ["llms.txt validator", "Public MCP server", "Agent-ready badge"])}
+      ${mdToolCards("/tools", ["Check an llms.txt file", "Read turva.dev through MCP", "Use the agent-ready badge"])}
   </div>
-  ${mdOpenSec("/tools", "Technical details")}
-  ${mdOpenSec("/tools", "Need a broader review?", "services")}
+  ${mdOpenSec("/tools", "For developers", "technical-details")}
+  ${mdOpenSec("/tools", "Need the whole picture?", "services")}
 </main>
 ${footerHtml()}
 </body>
@@ -10316,7 +10274,7 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
     applySecurityHeaders(headers, "agent-api");
     return new Response(JSON.stringify(payload, null, 2), { status: payload.error ? 400 : 200, headers });
   }
-  const head = cardPageHead(buildMetaBlock("/llms-txt-validator", canonicalUrl), buildGuideJsonLd("/llms-txt-validator", canonicalUrl) + "\n" + buildGuidePageFaqJsonLd("/llms-txt-validator", canonicalUrl) + "\n" + buildValidatorAppJsonLd(canonicalUrl), canonicalUrl);
+  const head = cardPageHead(buildMetaBlock("/llms-txt-validator", canonicalUrl), buildGuideJsonLd("/llms-txt-validator", canonicalUrl) + "\n" + buildValidatorAppJsonLd(canonicalUrl), canonicalUrl);
   // The result names each check with its status as a word (colour only accompanies it), and
   // opens with the target and the counts. No total and no percentage on purpose: the twin
   // says why. Error wording is the shared form from the 2026-09-06 page instruction, with
@@ -10335,6 +10293,7 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
     <p class="aview-cmd">${escapeHtml(result.target)}</p>
     <p class="result-sum">${counts}</p>
     ${rows}
+    <p class="fine">The result shows what each check found and what to do next.</p>
     <p class="fine">The two v2 discovery checks are informational and do not change the structural result.</p>
     <p class="fine">A structure check against the llms.txt format, not an agent-readiness score.</p>
   </section>`;
@@ -10354,11 +10313,13 @@ ${cardPageNav("/llms-txt-validator")}
     <li>In a browser: enter a domain in the field above.</li>
     <li>Without typing anything: <a href="/llms-txt-validator?url=turva.dev">run the checks against this site's own file</a>.</li>
     <li>As an agent: <code>GET https://turva.dev/llms-txt-validator?url=example.com</code> with <code>Accept: application/json</code>.</li>
-  </ul></section>
-  ${mdOpenSec("/llms-txt-validator", "What is checked")}
-  ${mdOpenSec("/llms-txt-validator", "What this result means")}
-  ${mdOpenSec("/llms-txt-validator", "Use in an agent or CI")}
-  ${mdFaqSec("/llms-txt-validator", "Frequently asked", "questions")}
+  </ul>
+  <p>Both views list the same checks below.</p>
+  <p>The browser page and this markdown twin are kept in sync deliberately.</p></section>
+  ${mdOpenSec("/llms-txt-validator", "What the validator checks", "what-is-checked")}
+  ${mdOpenSec("/llms-txt-validator", "What a valid result tells you", "what-this-result-means")}
+  ${mdOpenSec("/llms-txt-validator", "What is fetched")}
+  ${mdOpenSec("/llms-txt-validator", "Use it from an agent or CI", "use-in-an-agent-or-ci")}
   ${mdOpenSec("/llms-txt-validator", "Related", "related-guides")}
 </main>
 ${footerHtml()}

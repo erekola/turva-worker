@@ -807,20 +807,19 @@ const twConverted = {
   // h2: the home page renders two twin sections under their own display headings (Tek-357);
   // the rendered-order check (5b) maps the display text back to the twin heading.
   '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: [], prose: [],
-         h2: { 'Questions before you start': 'Frequently asked', 'Start with the URL and the question': 'Contact' } },
+         h2: { 'Questions before you start': 'Frequently asked' } },
   '/blog':    { fn: 'serveBlogHtml',    mdOnly: [], hand: ['All posts'] }, // All posts is the dated list, rendered by blogPostLinks() from META_BY_PATH (2026-09-03)
   '/llms-txt-validator': { fn: 'serveLlmsValidatorHtml', mdOnly: [], hand: ['How to use it'], prose: ['The two v2 discovery checks are informational'] }, // the result note repeats the twin's own sentence under the check list (Tek-358)
-  '/services': { fn: 'serveServicesHtml', mdOnly: [], hand: [] },
+  '/services': { fn: 'serveServicesHtml', mdOnly: [], hand: [], h2: { 'Before we start': 'Frequently asked' } },
   '/tools':   { fn: 'serveToolsHtml',   mdOnly: ['Related'] },
   '/badge':   { fn: 'serveBadgeHtml',   mdOnly: [] },
   '/contact': { fn: 'serveContactHtml', mdOnly: [] },
   '/company': { fn: 'serveCompanyHtml', mdOnly: [] },
   '/legal':   { fn: 'serveLegalHtml',   mdOnly: [] },
-  '/shopify-agent-storefront-check': { fn: 'serveShopifyHtml', mdOnly: [] },
-  // The audit product page (2026-09-08): the FAQ and the start block render under buyer-facing
-  // headings, the same two aliases the home page uses.
-  '/agent-readiness-audit': { fn: 'serveAuditHtml', mdOnly: [],
-         h2: { 'Questions before you start': 'Frequently asked', 'Start with the URL and the question': 'How to start' } },
+  '/shopify-agent-storefront-check': { fn: 'serveShopifyHtml', mdOnly: [], h2: { 'Two common questions': 'Frequently asked' } },
+  // The audit product page: since the 2026-09-09 text round every rendered heading is the
+  // twin's own, so no display alias is needed and the page carries no FAQ section.
+  '/agent-readiness-audit': { fn: 'serveAuditHtml', mdOnly: [] },
   '/guides':  { fn: 'serveGuidesHtml',  mdOnly: [] },
 };
 let twcPages = 0;
