@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.150.1 - hotfix to the text round (2026-09-09): /services carries a short priced summary of the Shopify check and the audit again, and the Implementation block leads with the day rate, because verify.mjs --live binds every priced service to the price that opens its OWN heading block in the markdown WebMCP get_services hands back, and deleting those two sections took that binding with them. The two anchors #shopify and #audit are back on the sections; the long repeating write-ups stay deleted.
 // turva.dev worker v3.150.0 - the clearer, more personal text round (2026-09-09, from the Fable page instruction): twelve pages outside the blog and the guides rewritten in the first person around what the reader gets, the two sample reports given plain section and finding headings with every old anchor kept as an alias, the audit and validator FAQ sections folded into the sections above them, and every measurement, price, deadline, scope and refund term left as it stood.
 // turva.dev worker v3.149.0 - the WebMCP surface grew from three tools to six: search_content reads the published llms.txt index, get_page returns any page of this site as markdown and refuses anything that would leave the origin, and open_page navigates the tab to one of ten named pages (an enum, never a caller-supplied URL, so the tool is not an open redirect); every tool now declares an outputSchema and get_company says which fields it returns.
 // turva.dev worker v3.148.0 - the blog filter hides cards for real (.post[hidden] beats .post{display:flex}; the artifact preview had masked it with its own [hidden] reset), three claims on /agent-readiness-audit narrowed to the sample and to what an assistant may do (source use, conflicting facts, scanner coverage), and the audit sample share card says nine findings.
@@ -3256,9 +3257,25 @@ You work directly with me, in writing. I reply within one business day. All pric
 
 See the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check) before choosing a service.
 
+## Shopify agent storefront check
+
+**€999. 48 hours. Fixed scope.**
+
+What an AI shopper receives from one live Shopify store, across the three agent interfaces this check covers, with the evidence attached. One store, one market, up to three product and variant pairs.
+
+Five written deliverables, and one retest of up to two corrected items within 14 days. The audit is not a prerequisite. [Read the full scope, the exclusions, the preflight and the refund terms](/shopify-agent-storefront-check).
+
+## Website and API agent-readiness audit
+
+**€4,300. Two weeks. Fixed scope.**
+
+A technical scan, a manual review of your website and API surfaces, and a recorded question set put to selected AI assistants. The report keeps the technical findings and the observed AI answers apart.
+
+You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report. [Read the full scope and the deliverables](/agent-readiness-audit).
+
 ## Implementation
 
-**€499 for the complete fix list from a diagnosis, bought with that diagnosis. €1,500 per day for other work, scoped separately.**
+**€1,500 per day, scoped separately. €499 for the complete fix list from a diagnosis, bought with that diagnosis.**
 
 Your team can implement the report. If you want me to do it, the €499 add-on covers the diagnosis's complete fix list when bought with the diagnosis and when the required access is arranged in advance.
 
@@ -5654,7 +5671,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.150.0",
+    "version": "3.150.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5922,7 +5939,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.150.0",
+  "version": "3.150.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9003,7 +9020,7 @@ function serveServicesHtml(canonicalUrl) {
     `\n<script type="application/ld+json">\n{"@context":"https://schema.org","@graph":[\n${SCHEMA_SERVICE}\n]}\n<\/script>`;
   const head = cardPageHead(metaBlock, jsonLd, canonicalUrl);
   const start = mdParas("/services", "Tell me what you need", 3);
-  const offers = mdOfferCards("/services", "Choose a starting point", { "/shopify-agent-storefront-check": "See the Shopify check", "/agent-readiness-audit": "See the audit" }, { "/shopify-agent-storefront-check": "shopify", "/agent-readiness-audit": "audit" });
+  const offers = mdOfferCards("/services", "Choose a starting point", { "/shopify-agent-storefront-check": "See the Shopify check", "/agent-readiness-audit": "See the audit" });
   const offerParas = mdParas("/services", "Choose a starting point", 1);
   const body = `${head}
 ${cardPageNav("/services")}
@@ -9016,6 +9033,8 @@ ${cardPageNav("/services")}
     </div>
     <p>${offerParas[0]}</p>
   </section>
+  ${mdOpenSec("/services", "Shopify agent storefront check", "shopify")}
+  ${mdOpenSec("/services", "Website and API agent-readiness audit", "audit")}
   ${mdOpenSec("/services", "Implementation")}
   ${mdOpenSec("/services", "Ongoing advisory", "advisory")}
   ${mdOpenSec("/services", "Agent operations")}
