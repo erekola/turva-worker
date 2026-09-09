@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.151.0 - the Astra review round (2026-09-09): findLinkRelations reads HTML attributes and Link header parameters with one quote aware scan, so text inside another attribute quoted value is no longer read as a link relation; the in-page WebMCP tools check HTTP status and content type before they treat a response as content, refuse to follow a redirect off this origin, count bytes as UTF-8, and register through navigator.modelContext.provideContext first and the newer registerTool interface only where provideContext is absent, once and never twice.
 // turva.dev worker v3.150.1 - hotfix to the text round (2026-09-09): /services carries a short priced summary of the Shopify check and the audit again, and the Implementation block leads with the day rate, because verify.mjs --live binds every priced service to the price that opens its OWN heading block in the markdown WebMCP get_services hands back, and deleting those two sections took that binding with them. The two anchors #shopify and #audit are back on the sections; the long repeating write-ups stay deleted.
 // turva.dev worker v3.150.0 - the clearer, more personal text round (2026-09-09, from the Fable page instruction): twelve pages outside the blog and the guides rewritten in the first person around what the reader gets, the two sample reports given plain section and finding headings with every old anchor kept as an alias, the audit and validator FAQ sections folded into the sections above them, and every measurement, price, deadline, scope and refund term left as it stood.
 // turva.dev worker v3.149.0 - the WebMCP surface grew from three tools to six: search_content reads the published llms.txt index, get_page returns any page of this site as markdown and refuses anything that would leave the origin, and open_page navigates the tab to one of ten named pages (an enum, never a caller-supplied URL, so the tool is not an open redirect); every tool now declares an outputSchema and get_company says which fields it returns.
@@ -74,7 +75,7 @@ max_age: 604800
 
 var CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-pZEmSy9fbQsDjETh32XJfNoWwxQ2tn/k7Ub4DPMCnQ4='",
+  "script-src 'self' 'sha256-GQIpjcIWEoDzSbOVUonjgtZ68uAVDjMhFJPFvWiAaIk='",
   "style-src 'self' 'unsafe-inline' https: data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
@@ -5671,7 +5672,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.150.1",
+    "version": "3.151.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5779,7 +5780,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"tE9ZXZnem3TrAM8mXRn0E1wxYAP_kfNkrE03Cq_HXLNNpvPMKv0YI3YBJMp5gG4JQhDvEaBTY8G6WCZfmi4bDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LiiUERAbOQt9bjHZniXcJUD44jnhmLxbw_C3Rj6tiBoejEIErz622qf6Z35LBx_XWxBF6XuSTdMDIByxRJSpDg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MQ5F2EMBX3yrdIGT76gA0f74twRcB2RENz7nTvUFjNrJ0VwDjliC3gRlW4ARjM2PHh-GWh715pHid90E5bYGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LiiUERAbOQt9bjHZniXcJUD44jnhmLxbw_C3Rj6tiBoejEIErz622qf6Z35LBx_XWxBF6XuSTdMDIByxRJSpDg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -5794,7 +5795,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "turva.dev/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -5803,7 +5804,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -5939,7 +5940,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.150.1",
+  "version": "3.151.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6434,7 +6435,6 @@ async function buildSkillsIndex() {
 
 var WEBMCP_SCRIPT = `<script>
 (function(){
- if (!navigator.modelContext || typeof navigator.modelContext.provideContext !== 'function') return;
  try {
  var NL = String.fromCharCode(10);
  var PAGES = {
@@ -6460,12 +6460,24 @@ var WEBMCP_SCRIPT = `<script>
    return u.pathname + u.search + u.hash;
   } catch (e) { return ''; }
  }
- async function markdownOf(path) {
-  var r = await fetch(path, { headers: { Accept: 'text/markdown' } });
-  return await r.text();
+ function byteLength(s) {
+  try { return new TextEncoder().encode(s).length; } catch (e) { return String(s).length; }
  }
- navigator.modelContext.provideContext({
- tools: [
+ async function readOwn(path, accept) {
+  var r;
+  try {
+   r = await fetch(path, { headers: { Accept: accept }, mode: 'same-origin', redirect: 'error' });
+  } catch (e) { return { error: 'NETWORK_ERROR' }; }
+  if (!r.ok) {
+   var code = r.status === 404 ? 'NOT_FOUND' : (r.status === 429 ? 'RATE_LIMITED' : 'HTTP_ERROR');
+   return { error: code, status: r.status };
+  }
+  var ct = '';
+  try { ct = String((r.headers && r.headers.get('content-type')) || ''); } catch (e) { ct = ''; }
+  if (ct && ct.split(';')[0].trim() !== accept) return { error: 'UNSUPPORTED_CONTENT_TYPE', status: r.status, contentType: ct };
+  return { text: await r.text(), status: r.status };
+ }
+ var TOOLS = [
  {
  name: 'get_contact',
  description: 'Return the official contact channels for turva.dev, including email, Signal and LinkedIn. Engagement is async only, so there is no phone number and no meeting booking.',
@@ -6479,10 +6491,13 @@ var WEBMCP_SCRIPT = `<script>
  name: 'get_services',
  description: 'Return the services offered by turva.dev (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) as the full services page in markdown, together with fixed prices in EUR for the four priced services.',
  inputSchema: { type: 'object', properties: {} },
- outputSchema: { type: 'object', properties: { markdown: { type: 'string' }, pricing: { type: 'object', properties: { currency: { type: 'string' }, vatIncluded: { type: 'boolean' } } }, bundledImplementation: { type: 'array', items: { type: 'object' } } }, required: ['markdown', 'pricing'] },
+ outputSchema: { type: 'object', properties: { markdown: { type: 'string' }, pricing: { type: 'object', properties: { currency: { type: 'string' }, vatIncluded: { type: 'boolean' }, shopify: { type: 'object' }, audit: { type: 'object' }, advisory: { type: 'object' }, implementation: { type: 'object' } }, required: ['currency', 'vatIncluded', 'shopify', 'audit', 'advisory', 'implementation'] }, bundledImplementation: { type: 'array', items: { type: 'object' } }, error: { type: 'string' }, status: { type: 'number' } }, required: ['pricing'] },
  execute: async function() {
- const r = await fetch('/services', { headers: { Accept: 'text/markdown' } });
- return { markdown: await r.text(), pricing: { currency: 'EUR', vatIncluded: false, shopify: { price: 999, unit: 'fixed' }, audit: { price: 4300, unit: 'fixed' }, advisory: { price: 3000, unit: 'month', minimumCommitmentMonths: 3 }, implementation: { price: 1500, unit: 'day' } }, bundledImplementation: [{ name: 'Audit fix implementation', price: 499, currency: 'EUR', unit: 'fixed', requires: 'audit', soldSeparately: false }, { name: 'Shopify correction implementation', price: 499, currency: 'EUR', unit: 'fixed', requires: 'shopify', soldSeparately: false }] };
+ var pricing = { currency: 'EUR', vatIncluded: false, shopify: { price: 999, unit: 'fixed' }, audit: { price: 4300, unit: 'fixed' }, advisory: { price: 3000, unit: 'month', minimumCommitmentMonths: 3 }, implementation: { price: 1500, unit: 'day' } };
+ var bundled = [{ name: 'Audit fix implementation', price: 499, currency: 'EUR', unit: 'fixed', requires: 'audit', soldSeparately: false }, { name: 'Shopify correction implementation', price: 499, currency: 'EUR', unit: 'fixed', requires: 'shopify', soldSeparately: false }];
+ var got = await readOwn('/services', 'text/markdown');
+ if (got.error) return { error: got.error, status: got.status, pricing: pricing, bundledImplementation: bundled };
+ return { markdown: got.text, pricing: pricing, bundledImplementation: bundled };
  }
  },
  {
@@ -6504,8 +6519,9 @@ var WEBMCP_SCRIPT = `<script>
  var q = raw.toLowerCase();
  if (!q) return { query: raw, count: 0, results: [], error: 'query is required' };
  var max = args && args.limit ? Math.max(1, Math.min(50, Number(args.limit) || 20)) : 20;
- var r = await fetch('/llms.txt', { headers: { Accept: 'text/plain' } });
- var lines = (await r.text()).split(NL);
+ var got = await readOwn('/llms.txt', 'text/plain');
+ if (got.error) return { query: raw, count: 0, results: [], error: got.error };
+ var lines = got.text.split(NL);
  var out = [];
  for (var i = 0; i < lines.length && out.length < max; i++) {
   var line = lines[i];
@@ -6529,12 +6545,13 @@ var WEBMCP_SCRIPT = `<script>
  name: 'get_page',
  description: 'Return the markdown source of one page on turva.dev, byte for byte the text a person reads on that page. Takes a path on this site, for example /guides/llms-txt or /agent-readiness-audit. Read-only. The path is resolved against this site and anything that resolves to another origin is refused, so the tool cannot be pointed elsewhere.',
  inputSchema: { type: 'object', properties: { path: { type: 'string', description: 'A path on turva.dev beginning with a slash, for example /services. Use search_content to find one.' } }, required: ['path'] },
- outputSchema: { type: 'object', properties: { path: { type: 'string' }, markdown: { type: 'string' }, bytes: { type: 'number' }, error: { type: 'string' } }, required: ['path'] },
+ outputSchema: { type: 'object', properties: { path: { type: 'string' }, markdown: { type: 'string' }, bytes: { type: 'number' }, error: { type: 'string' }, status: { type: 'number' } }, required: ['path'] },
  execute: async function(args) {
  var p = ownPath(args && args.path);
  if (!p) return { path: String((args && args.path) || ''), error: 'path must be a path on turva.dev beginning with a single slash' };
- var md = await markdownOf(p);
- return { path: p, markdown: md, bytes: md.length };
+ var got = await readOwn(p, 'text/markdown');
+ if (got.error) return { path: p, error: got.error, status: got.status };
+ return { path: p, markdown: got.text, bytes: byteLength(got.text) };
  }
  },
  {
@@ -6552,8 +6569,22 @@ var WEBMCP_SCRIPT = `<script>
  return { opened: key, path: path };
  }
  }
- ]
- });
+ ];
+ // ONE registration, and provideContext comes first on purpose. The public scanner
+ // detects this page through navigator.modelContext.provideContext today, measured
+ // 2026-09-09 as detectionMethod imperative_api with these six tools, so that branch
+ // stays exactly what it was and the newer registerTool interface is added BELOW it,
+ // not in front of it. Registering the same six tools through two interfaces in one
+ // environment would offer them twice, so the chain stops at the first one that answers.
+ var nav = (typeof navigator !== 'undefined' && navigator) ? navigator.modelContext : null;
+ var doc = (typeof document !== 'undefined' && document) ? document.modelContext : null;
+ if (nav && typeof nav.provideContext === 'function') {
+  nav.provideContext({ tools: TOOLS });
+ } else if (doc && typeof doc.registerTool === 'function') {
+  for (var i = 0; i < TOOLS.length; i++) { doc.registerTool(TOOLS[i]); }
+ } else if (nav && typeof nav.registerTool === 'function') {
+  for (var j = 0; j < TOOLS.length; j++) { nav.registerTool(TOOLS[j]); }
+ }
  } catch (e) {}
 })();
 <\/script>`;
@@ -10167,6 +10198,122 @@ function* htmlTags(text) {
   }
 }
 
+// One forward scan over a tag's attributes, quote aware, first declaration wins, which is
+// what the HTML tokenizer does. A quoted value is opaque: nothing inside it is an
+// attribute name, which is the whole point of reading the tag this way. The quote opens
+// only directly after "=", the same rule tagEnd uses to find the end of the tag, so the
+// two agree on where a value starts and ends.
+function tagAttributes(tag) {
+  const out = {};
+  const space = " \t\n\r\f";
+  const n = tag.length;
+  const open = /^<[a-z0-9]*/i.exec(tag);
+  let i = open ? open[0].length : 0;
+  while (i < n) {
+    const c = tag[i];
+    if (c === ">") break;
+    if (space.includes(c) || c === "/") { i++; continue; }
+    const nameStart = i;
+    while (i < n && !space.includes(tag[i]) && tag[i] !== "/" && tag[i] !== "=" && tag[i] !== ">") i++;
+    const name = tag.slice(nameStart, i).toLowerCase();
+    while (i < n && space.includes(tag[i])) i++;
+    let value = "";
+    if (tag[i] === "=") {
+      i++;
+      while (i < n && space.includes(tag[i])) i++;
+      const q = tag[i];
+      if (q === '"' || q === "'") {
+        i++;
+        const valueStart = i;
+        while (i < n && tag[i] !== q) i++;
+        value = tag.slice(valueStart, i);
+        if (i < n) i++;
+      } else {
+        const valueStart = i;
+        while (i < n && !space.includes(tag[i]) && tag[i] !== ">") i++;
+        value = tag.slice(valueStart, i);
+      }
+    }
+    if (name && !(name in out)) out[name] = value;
+  }
+  return out;
+}
+
+// RFC 8288 section 3: a Link header is a comma separated list, each value an angle
+// bracketed URI reference followed by semicolon separated parameters, and a parameter
+// value may be a quoted string that contains commas, semicolons and backslash escapes.
+// Reading rel and type with one regex over the whole value read the CONTENT of
+// title="note; rel=alternate; type=text/markdown" as parameters of the link.
+function parseLinkHeader(header) {
+  const s = String(header || "");
+  const space = " \t";
+  const n = s.length;
+  const out = [];
+  let i = 0;
+  while (i < n) {
+    while (i < n && (s[i] === "," || space.includes(s[i]))) i++;
+    if (i >= n) break;
+    if (s[i] !== "<") { i = nextLinkValue(s, i); continue; }
+    const gt = s.indexOf(">", i + 1);
+    if (gt === -1) break;
+    const href = s.slice(i + 1, gt).trim();
+    i = gt + 1;
+    const params = {};
+    while (i < n) {
+      while (i < n && space.includes(s[i])) i++;
+      if (i >= n) break;
+      if (s[i] === ",") { i++; break; }
+      if (s[i] !== ";") { i = nextLinkValue(s, i); break; }
+      i++;
+      while (i < n && space.includes(s[i])) i++;
+      const nameStart = i;
+      while (i < n && s[i] !== "=" && s[i] !== ";" && s[i] !== "," && !space.includes(s[i])) i++;
+      const name = s.slice(nameStart, i).toLowerCase();
+      while (i < n && space.includes(s[i])) i++;
+      let value = "";
+      if (s[i] === "=") {
+        i++;
+        while (i < n && space.includes(s[i])) i++;
+        if (s[i] === '"') {
+          i++;
+          let buf = "";
+          while (i < n && s[i] !== '"') {
+            if (s[i] === "\\" && i + 1 < n) { buf += s[i + 1]; i += 2; continue; }
+            buf += s[i];
+            i++;
+          }
+          if (i < n) i++;
+          value = buf;
+        } else {
+          const valueStart = i;
+          while (i < n && s[i] !== ";" && s[i] !== "," && !space.includes(s[i])) i++;
+          value = s.slice(valueStart, i);
+        }
+      }
+      if (name && !(name in params)) params[name] = value;
+    }
+    out.push({ href: href, params: params });
+  }
+  return out;
+}
+
+// Move to the start of the next comma separated value without stopping inside a quoted
+// string, so a comma in title="a, b" does not split one value into two.
+function nextLinkValue(s, from) {
+  let quote = "";
+  for (let j = from; j < s.length; j++) {
+    const c = s[j];
+    if (quote) {
+      if (c === "\\") { j++; continue; }
+      if (c === quote) quote = "";
+      continue;
+    }
+    if (c === '"') { quote = c; continue; }
+    if (c === ",") return j + 1;
+  }
+  return s.length;
+}
+
 // v2 of the llms.txt proposal (August 2026) left the file format alone and added one
 // thing: a page should say where its markdown version and its llms.txt are, using
 // rel="alternate" type="text/markdown" and rel="describedby", as HTML link elements
@@ -10192,24 +10339,26 @@ function findLinkRelations(html, linkHeader) {
     // NAME is "link<link", not as a link element, so \b would count a relation the site
     // does not publish. Measured against parse5, 2026-08-24.
     if (!/^<link(?=[\s/>])/i.test(tag)) continue;
-    // The attribute name has to start the token. \b sits between the hyphen and the name,
-    // so data-rel, data-type and data-href were read as the real attributes until
-    // 2026-08-29, and a page could claim a relation it does not publish.
-    const rel = ((tag.match(/(?:^|[\s/])rel\s*=\s*["']?([^"'>]+)/i) || [])[1] || "").toLowerCase().trim().split(/\s+/);
-    const type = ((tag.match(/(?:^|[\s/])type\s*=\s*["']?([^"'>\s]+)/i) || [])[1] || "").toLowerCase();
-    const href = ((tag.match(/(?:^|[\s/])href\s*=\s*"([^"]*)"|(?:^|[\s/])href\s*=\s*'([^']*)'|(?:^|[\s/])href\s*=\s*([^\s"'>]+)/i) || []).slice(1).find((x) => x !== undefined) || "").trim();
+    // Attributes come from ONE quote aware scan, not from three independent regex matches
+    // over the whole tag. Those three could not tell an attribute from the quoted CONTENT
+    // of another attribute, so data-note=" rel='alternate' type='text/markdown'
+    // href='/fake.md'" reported a relation the page does not publish. The earlier
+    // data-rel fix, 2026-08-29, moved the START of the name and does not reach this.
+    // Measured and fixed 2026-09-09.
+    const attrs = tagAttributes(tag);
+    const rel = (attrs.rel || "").toLowerCase().trim().split(/\s+/);
+    const type = (attrs.type || "").toLowerCase().trim();
+    const href = (attrs.href || "").trim();
     // text/markdown, not anything that starts with it, and a relation without a target is
     // not a relation: both passed until 2026-08-29.
     const isMarkdown = type.split(";")[0].trim() === "text/markdown";
     if (!found.describedby && href && rel.includes("describedby")) found.describedby = href;
     if (!found.markdown && href && rel.includes("alternate") && isMarkdown) found.markdown = href;
   }
-  for (const part of String(linkHeader || "").split(/,(?=\s*<)/)) {
-    const lt = part.indexOf("<");
-    const gt = lt === -1 ? -1 : part.indexOf(">", lt + 1);
-    const href = (gt === -1 ? "" : part.slice(lt + 1, gt)).trim();
-    const rel = ((part.match(/(?:^|[;\s])rel\s*=\s*"?([^";,]+)"?/i) || [])[1] || "").toLowerCase().trim().split(/\s+/);
-    const type = ((part.match(/(?:^|[;\s])type\s*=\s*"?([^";,]+)"?/i) || [])[1] || "").toLowerCase().trim();
+  for (const link of parseLinkHeader(linkHeader)) {
+    const href = link.href;
+    const rel = (link.params.rel || "").toLowerCase().trim().split(/\s+/);
+    const type = (link.params.type || "").toLowerCase().trim();
     const isMarkdownHeader = type.split(";")[0].trim() === "text/markdown";
     if (!found.describedby && href && rel.includes("describedby")) found.describedby = href;
     if (!found.markdown && href && rel.includes("alternate") && isMarkdownHeader) found.markdown = href;

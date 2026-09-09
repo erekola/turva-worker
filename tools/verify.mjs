@@ -2192,13 +2192,15 @@ if (LIVE) {
       // does not, because a null-prototype object has no constructor to walk.
       const ctx = createContext(Object.create(null));
       ctx.__URL = URL;
+      ctx.__TextEncoder = TextEncoder;
       runInContext(`
         globalThis.__md = ${JSON.stringify(svcMdForTool)};
         globalThis.__llms = ${JSON.stringify(llmsForTool)};
         globalThis.__provided = null;
         globalThis.URL = __URL;
+        globalThis.TextEncoder = __TextEncoder;
         globalThis.navigator = { modelContext: { provideContext: function (a) { globalThis.__provided = a; } } };
-        globalThis.fetch = function (u) { var s = String(u); var body = s.indexOf('llms.txt') !== -1 ? globalThis.__llms : globalThis.__md; return Promise.resolve({ ok: true, status: 200, text: function () { return Promise.resolve(body); } }); };
+        globalThis.fetch = function (u) { var s = String(u); var llms = s.indexOf('llms.txt') !== -1; var body = llms ? globalThis.__llms : globalThis.__md; var ct = llms ? 'text/plain; charset=utf-8' : 'text/markdown; charset=utf-8'; return Promise.resolve({ ok: true, status: 200, headers: { get: function (k) { return String(k).toLowerCase() === 'content-type' ? ct : null; } }, text: function () { return Promise.resolve(body); } }); };
       `, ctx, { timeout: 5000 });
       runInContext(servedBody, ctx, { timeout: 5000 });
       const provided = ctx.__provided;
@@ -2295,8 +2297,12 @@ if (LIVE) {
       check(!!byName.get_page, 'WebMCP registers get_page');
       if (byName.get_page) {
         const good = await deadline(byName.get_page.execute({ path: '/services' }), 10000, 'get_page');
-        check(good && typeof good.markdown === 'string' && good.markdown.length > 0 && good.bytes === good.markdown.length,
-          `WebMCP get_page returns markdown for a site path (${good && good.bytes} bytes)`);
+        // bytes is a byte count, so it is compared to the UTF-8 length and not to the
+        // string length. Those two agree only while the page is pure ASCII, and the check
+        // read the same wrong number as the tool until 2026-09-09.
+        const wantBytes = Buffer.byteLength(String(good && good.markdown || ''), 'utf8');
+        check(good && typeof good.markdown === 'string' && good.markdown.length > 0 && good.bytes === wantBytes,
+          `WebMCP get_page bytes is the UTF-8 length of the markdown it returned (saw ${good && good.bytes}, utf8 ${wantBytes}, utf16 ${good && String(good.markdown || '').length})`);
         // An agent's argument can come from the page it is reading, so the three shapes that
         // would leave this origin are refused rather than fetched.
         for (const evil of ['//example.com/', 'https://example.com/', 'services', '/\\\\example.com/', '/\\\\/example.com/']) {
@@ -2326,6 +2332,48 @@ if (LIVE) {
         }
         check(!missing.length, `every WebMCP open_page destination is in CANONICAL_PATHS${missing.length ? ' :: ' + missing.join(', ') : ''}`);
       }
+
+      // The same script, run again in an environment that offers ONLY the newer
+      // registerTool interface. Two things are measured here and neither is provable from
+      // the source: that the compatibility branch registers the same six tools, and that
+      // an environment offering BOTH interfaces registers them once and not twice. The
+      // second is the one that could cost the public scanner's webMcp pass, because a
+      // page that offers the same six tools through two interfaces has offered twelve.
+      const ctx2 = createContext(Object.create(null));
+      ctx2.__URL = URL;
+      ctx2.__TextEncoder = TextEncoder;
+      runInContext(`
+        globalThis.__md = ${JSON.stringify(svcMdForTool)};
+        globalThis.__llms = ${JSON.stringify(llmsForTool)};
+        globalThis.__registered = [];
+        globalThis.URL = __URL;
+        globalThis.TextEncoder = __TextEncoder;
+        globalThis.document = { modelContext: { registerTool: function (t) { globalThis.__registered.push(t); } } };
+        globalThis.fetch = function () { return Promise.resolve({ ok: true, status: 200, headers: { get: function () { return 'text/markdown; charset=utf-8'; } }, text: function () { return Promise.resolve(globalThis.__md); } }); };
+      `, ctx2, { timeout: 5000 });
+      runInContext(servedBody, ctx2, { timeout: 5000 });
+      const viaRegister = (ctx2.__registered || []).map((t) => t && t.name);
+      const viaProvide = tools.map((t) => t.name);
+      check(viaRegister.length === viaProvide.length && viaProvide.every((n) => viaRegister.includes(n)),
+        `WebMCP registerTool branch registers the same ${viaProvide.length} tools (saw ${viaRegister.length}: ${viaRegister.join(', ') || 'none'})`);
+
+      const ctx3 = createContext(Object.create(null));
+      ctx3.__URL = URL;
+      ctx3.__TextEncoder = TextEncoder;
+      runInContext(`
+        globalThis.__provided = null;
+        globalThis.__registered = [];
+        globalThis.URL = __URL;
+        globalThis.TextEncoder = __TextEncoder;
+        globalThis.navigator = { modelContext: { provideContext: function (a) { globalThis.__provided = a; }, registerTool: function (t) { globalThis.__registered.push(t); } } };
+        globalThis.document = { modelContext: { registerTool: function (t) { globalThis.__registered.push(t); } } };
+        globalThis.fetch = function () { return Promise.resolve({ ok: true, status: 200, headers: { get: function () { return 'text/markdown; charset=utf-8'; } }, text: function () { return Promise.resolve(''); } }); };
+      `, ctx3, { timeout: 5000 });
+      runInContext(servedBody, ctx3, { timeout: 5000 });
+      const bothProvided = ctx3.__provided && Array.isArray(ctx3.__provided.tools) ? ctx3.__provided.tools.length : 0;
+      const bothRegistered = (ctx3.__registered || []).length;
+      check(bothProvided === viaProvide.length && bothRegistered === 0,
+        `WebMCP registers through one interface only when both are present (provideContext ${bothProvided}, registerTool ${bothRegistered})`);
     }
   } catch (e) { bad('WebMCP tools: ' + (e.code || e.message)); }
 
@@ -2660,6 +2708,15 @@ if (LIVE) {
       // lived there watched by nothing. They are watched HERE, live, which is the only place
       // this repo can see that server at all. Absent field, wrong price or a missing
       // requires all fail, and so does an add-on the MCP sells without its diagnosis.
+      // Same rule for the service catalogue: the advisory deliverable is a monthly
+      // measurement shown beside the previous one, not a promise that every cycle reads
+      // higher, because /services says in as many words that a higher score is not
+      // guaranteed. Measured contradiction, 2026-09-09.
+      {
+        const svcTxt = JSON.stringify(svc);
+        check(!/[Ee]ach scanner cycle reads higher/.test(svcTxt),
+          'get_services does not promise that each scanner cycle reads higher than the last');
+      }
       const BUN = Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : [];
       const mb = Array.isArray(svc.bundled_implementation) ? svc.bundled_implementation : [];
       check(BUN.length > 0 && mb.length === BUN.length,
@@ -2773,6 +2830,14 @@ if (LIVE) {
       const priTxt = JSON.stringify(pri);
       check(priTxt.includes(`Business ID ${facts.businessId}`),
         `get_principles states "Business ID ${facts.businessId}" as a claim, not as a URL fragment`);
+      // The service promise an agent is told has to be the one a person is told. The
+      // /services page says a higher score is not guaranteed, and the audit report
+      // template has carried the conditional form since 2026-08-16, but turva-mcp was
+      // not in that sweep and kept the unconditional sentence until 2026-09-09. It is
+      // checked here because this is the only place this repo can see that server.
+      check(!/next scan reads higher[^"]*?by the dates it named\.(?!,)/.test(priTxt)
+        && (!priTxt.includes('next scan reads higher') || priTxt.includes('or the report explains why a tradeoff was kept on purpose')),
+        'get_principles does not promise a rise without the tradeoff clause the audit template carries');
     }
 
     // get_contact carries the channels facts.json owns, so the gate compares them there
