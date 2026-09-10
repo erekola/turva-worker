@@ -1891,7 +1891,7 @@ The validator requests the llms.txt file and the home page. It does not crawl th
 - Without typing anything: https://turva.dev/llms-txt-validator?url=turva.dev runs the checks against this site's own file
 - As an agent: GET https://turva.dev/llms-txt-validator?url=example.com with Accept: application/json
 
-Both views list the same checks below. The browser page and this markdown twin are kept in sync deliberately.
+The browser page and the JSON response run the same checks, listed below.
 
 ## What the validator checks
 
@@ -1994,7 +1994,7 @@ These tools check specific parts of a site. The website and API audit adds a bro
 
   "/badge": `# The agent-ready badge
 
-Use this badge if your site meets either of the criteria below. It is a self-declared badge, not a certification. It does not certify security, guarantee AI visibility or confirm that an agent can complete every task.
+Use this badge if your site meets either of the criteria below. It is a self-declared badge, not a certification.
 
 ## Who can use it?
 
@@ -2379,7 +2379,7 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 
 Northwind Fasteners Oy and all readings in this report are invented. The example shows what a client receives: the finding, its evidence, who makes the correction and how the result is checked.
 
-Illustrative report date: 8 September 2026.
+Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below.
 
 ## What to fix first
 
@@ -2398,7 +2398,7 @@ The first priority is a problem the scanner does not score. All 138 product page
 
 There are nine findings. F2, F3, F5, F6 and F7 address six scored checks. F1 and F4 correct information outside those checks. F8 records the company's decision not to offer agent checkout this year. F9 addresses an old address repeated in AI answers.
 
-Estimated edge work is about eleven and a half hours for F1 to F7, or twelve hours including F9. Source corrections take about five hours. The tables below separate those responsibilities. These are estimates for the sample, not a quote or a promised readiness level. The level moves with the check set the scanner runs on the day, and 22 checks were in the set on 2026-09-03.
+Estimated edge work is about eleven hours for F1 to F7, or eleven and a half hours including F9. Source corrections take about five hours. The tables below keep the two kinds of correction apart and name who makes each. These are estimates for the sample, not a quote or a promised readiness level. The level moves with the check set the scanner runs on the day, and 22 checks were in the set on 2026-09-03.
 
 ## Contents
 
@@ -2442,7 +2442,7 @@ The company needs to make five decisions. Each row shows which work depends on i
 
 | Decision | Options | Effect | Needed by |
 | --- | --- | --- | --- |
-| D1. Who implements F1 to F7 | The company's team from this report, or turva.dev at the edge for the fixed price on the services page | Decides who owns the acceptance run in the section What each party delivers | Before the work starts |
+| D1. Who implements the fix list | The company's team from this report, or turva.dev for the fixed price on the services page | Decides who makes the edge and the source corrections in the table below, and who owns the acceptance run in the section What each party delivers | Before the work starts |
 | D2. The AI crawler preference for F5 | Allow named crawlers, disallow them, or allow search and ai-input and refuse ai-train | Decides the content of robots.txt. The report records no preference of its own | Before F5 is written |
 | D3. The text of llms.txt for F3 | Approve the draft as written, or edit it | The file is the company's own description of itself and goes live only after the company has read it | Before F3 goes live |
 | D4. The four discontinued products and the six price-on-request products, F1 | Keep them published with the right availability, or unpublish them | Decides whether 10 of 138 products stay in the catalog an agent reads | Before the F1 acceptance run |
@@ -2450,40 +2450,44 @@ The company needs to make five decisions. Each row shows which work depends on i
 
 ## Fixes, owners and estimated effort
 
-Fix the problems affecting buyers first. The table separates edge changes from permanent source corrections and names the owner of each. The edge column is what turva.dev delivers when the company chooses that route. The source column is work at the origin that the company or its agency does whether or not turva.dev implements the list, because an edge correction serves the right data while the source still holds the wrong data. The effort figures are estimates scoped to these findings, not a quote.
+Fix the problems affecting buyers first. The table separates a correction made at the edge from a permanent correction at the source, because they are different pieces of work. Both columns are on this fix list. Decision D1 says who does them: the company's team from this report, or turva.dev for the fixed price on the services page, in which case the access each source row needs is arranged in writing first, as What each party delivers sets out. Two source cells are neither, and they are marked in the table: a decision belongs to the company, and a request to an outside directory belongs to the directory. The effort figures are estimates scoped to these findings, not a quote.
 
-| Order | Finding | Checks moved | At the edge, turva.dev | At the source, company or agency | Edge hours | Source hours |
+| Order | Finding | Checks moved | Correction at the edge | Correction at the source | Edge hours | Source hours |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | F1 product data on all three surfaces | None, manual | Correct the JSON-LD Product node on every product page from the fields the page renders, and run the whole-catalog acceptance script | Fix the plugin mapping and the API price visibility so the origin publishes the right data itself | 4 | 2,5 |
 | 2 | F2 markdown next to HTML | markdownNegotiation | Edge worker with the acceptance list in F2 | None | 4 | 0 |
-| 3 | F3 llms.txt, Link header, security.txt | linkHeaders | Serve the three files and the header | Read and approve the llms.txt text, D3 | 1,5 | 0,5 |
+| 3 | F3 llms.txt, Link header, security.txt | linkHeaders | Serve the three files and the header | Read and approve the llms.txt text, D3. A company decision, not implementation work | 1,5 | 0,5 |
 | 4 | F4 sitemap content | None, manual | Serve a product sitemap generated from the API and a sitemap index in front of the CMS one | Four plugin settings so the origin sitemap is right on its own | 0,5 | 0,5 |
-| 5 | F5 robots.txt | robotsTxtAiRules, contentSignals | Serve the file | Decide the preference, D2 | 0,5 | 0 |
+| 5 | F5 robots.txt | robotsTxtAiRules, contentSignals | Serve the file | Decide the preference, D2. A company decision, not implementation work | 0,5 | 0 |
 | 6 | F6 api-catalog and real 404s | apiCatalog | Serve the linkset and the 404s | None | 0,5 | 0 |
-| 7 | F7 DNS-AID and DNSSEC | dnsAid | Add the records when the DNS access is in the written arrangement | Add the records and enable DNSSEC when it is not | 0,5 | 0,5 |
+| 7 | F7 DNS-AID and DNSSEC | dnsAid | None. A DNS record is not served by the edge | Add the _index._agents record and enable DNSSEC at the registrar | 0 | 0,5 |
 | 8 | F8 commerce | None, on purpose | None | Decision D5 | 0 | 0 |
-| 9 | F9 the old address | None, manual | Add the current address to the Organization node | Remove or update the 2022 price list PDF, ask the directory to correct its listing | 0,5 | 1 |
+| 9 | F9 the old address | None, manual | Add the current address to the Organization node | Remove or update the 2022 price list PDF. Ask the directory to correct its listing, which is a third party's own action | 0,5 | 1 |
 
-Edge total for F1 to F7 and F9: about twelve hours. Source total: about five hours, of which the largest is the plugin work behind F1, which the agency does.
+Edge total for F1 to F7 and F9: about eleven and a half hours. Source total: about five hours, of which the largest is the plugin work behind F1. Both totals are inside the fix list, and D1 decides who makes them.
 
 ## What each party delivers
 
-An edge correction and a source correction are different pieces of work. The sections below explain what turva.dev delivers, what the company needs to arrange, what stays with the company or its agency, and when the delivery is accepted.
+An edge correction and a source correction are different pieces of work, and both are on the fix list. The sections below explain what turva.dev delivers when the company buys the fixed price implementation, what the company arranges before that work starts, what nobody here can promise and when the delivery is accepted.
 
-What turva.dev delivers. When the company chooses the fixed price route, turva.dev implements the edge column of every row above in one edge worker in front of the origin: the corrected JSON-LD on every product page, the markdown twin of every page with the acceptance list in F2, llms.txt with the Link relations and security.txt, the product sitemap and index, the robots.txt the company decided, the api-catalog linkset with real 404s under /.well-known/, the Organization address, and the DNS-AID record and DNSSEC when the DNS access is in the written arrangement. It also delivers the whole-catalog acceptance script from F1 as a file the company can run itself, and runs it once on the day the work is declared done.
+What turva.dev delivers. When the company chooses the fixed price route, turva.dev makes every correction in the table above, in both columns. At the edge, in one worker in front of the origin: the corrected JSON-LD on every product page, the markdown twin of every page with the acceptance list in F2, llms.txt with the Link relations and security.txt, the product sitemap and index, the robots.txt the company decided, the api-catalog linkset with real 404s under /.well-known/ and the Organization address. At the source, in the systems the company gives access to: the catalog plugin's structured data mapping and the API price visibility behind F1, the four sitemap settings behind F4, the _index._agents record and DNSSEC behind F7 and the removal or replacement of the 2022 price list PDF behind F9. It also delivers the whole-catalog acceptance script from F1 as a file the company keeps, and runs it once on the day the work is declared done.
 
-What the company has in place first. An edge runtime in front of the origin where the worker runs, and the access to deploy there. The DNS zone access if F7 is to be done by turva.dev. A named contact at the web agency for the source work in F1 and F4. The three decisions D2, D3 and D4, because F5, F3 and the F1 acceptance run each wait on one of them. All of this is arranged in writing before the work starts, and the services page says the same.
+What the company has in place first. The fixed price covers the whole list, and every row of it is reachable only through access the company arranges in writing before the work starts. An edge runtime in front of the origin and the access to deploy there. Administrator access to the catalog CMS and its plugin settings, which the F1 mapping, the F1 API price visibility and the F4 sitemap settings all need. The DNS zone access for F7. Access to the media library or the server path for the F9 PDF. The three decisions D2, D3 and D4, because F5, F3 and the F1 acceptance run each wait on one of them. If any of that access cannot be arranged, the add-on is not sold, as the services page states, and the report still carries the instruction for every row so that the company and its agency can do the work themselves.
 
-What stays with the company. The permanent fixes at the source: the plugin mapping and the API price visibility behind F1, the sitemap settings behind F4, and the old PDF and the directory listing behind F9. The edge corrections serve the right data from the day the worker goes live, and they are corrections on the way through, not a repair of the origin: if the origin's plugin still publishes price 0 on the day the edge worker is switched off or bypassed, the wrong data is back. The report says so here and in F1, so that nobody reads a green acceptance run as the plugin having been fixed.
+Why the source rows are on the list. An edge correction serves the right data from the day the worker goes live, and it is a correction on the way through rather than a repair of the origin. If the origin's plugin still publishes price 0 on the day the edge worker is switched off or bypassed, the wrong data is back. The API is the clearest case. The edge cannot correct the API's empty price, because the origin is withholding data and there is nothing on the way through to correct it from, so that row is fixed in the origin's own setting or it is not fixed at all. This is why the fix list carries both columns, and why a green acceptance run on the edge column alone is not the plugin having been fixed.
+
+What nobody here can promise. One item on the list is an outside party's own action. The business directory in F9 is asked to correct its listing, and it corrects it or it does not. turva.dev sends the request and records the answer, and the report counts the request as delivered and the listing as the directory's state.
+
+Three states, kept apart. The report is complete on the day it is delivered, 2026-09-08. The implementation is accepted on the day its acceptance tests pass, which is a later day and a separate test. A finding is closed when its own check reads clean at the retest, which for F1 means the three surfaces agree on every row and for F9 means no answer carries the old address. The retest report says which of the three states each finding is in, so that an accepted implementation is never read as a closed finding.
 
 When the delivery is accepted. On the day turva.dev declares the work done, the acceptance tests of F1 to F7 and F9 are run and their output is delivered with the retest report. The delivery is accepted when all four of the following hold on that day.
 
-- The whole-catalog script from F1 reports zero rows where the JSON-LD differs from the visible page.
+- The whole-catalog script from F1 reports zero rows where the visible page, the JSON-LD and the API disagree, apart from the ten products F1 lists as exceptions.
 - The edge acceptance list in F2 is green in every line.
-- markdownNegotiation, linkHeaders, robotsTxtAiRules, contentSignals, apiCatalog and dnsAid read PASS on a full default-profile scan, or dnsAid reads FAIL with the DNS work recorded as the company's under F7.
-- The acceptance tests of F3, F4, F6 and F9 pass as written.
+- markdownNegotiation, linkHeaders, robotsTxtAiRules, contentSignals, apiCatalog and dnsAid read PASS on a full default-profile scan.
+- The acceptance tests of F3, F4, F6 and F9 pass as written, apart from the directory listing in F9, which is the directory's own.
 
-What the acceptance does not cover, because it is source work: the API price rows in F1 and the origin sitemap in F4, which the retest reads and reports as the company's remaining work if they are still open.
+What the acceptance does not cover: the directory listing in F9, and the five commerce checks in F8, which stay red by decision D5.
 
 ## What was checked
 
@@ -2598,9 +2602,9 @@ Nine findings. Each one shows the evidence, why it matters, the correction, the 
 
 Exceptions, listed so that the acceptance test does not read them as failures. Six products are priced on request: the page says so, and they carry no price in JSON-LD or in the API, only an availability from their stock state. Four products are discontinued and still published: they carry availability Discontinued and no price, and decision D4 says whether they stay published at all. The tests below skip the price on those ten and test the availability on the six.
 
-**Who does it and estimated effort.** Two owners, and the report keeps them apart. The permanent fix is at the source, in the catalog plugin's structured data mapping and in the setting that hides prices from the API for anonymous readers, and it belongs to the company's web agency: about two and a half hours. When turva.dev implements the list, the JSON-LD is corrected at the edge on the way through, on every product page, from the price, unit, variant and stock elements the page itself renders, so the served node is right from the day the worker goes live: about three hours, plus one hour for the whole-catalog acceptance script the company keeps. The edge cannot correct the API, because the API's empty price is the origin withholding data and there is nothing on the way through to correct it from: the API rows are the agency's, and the acceptance below says which rows are whose.
+**Who does it and estimated effort.** Two corrections, and the report keeps them apart. At the source, the catalog plugin's structured data mapping and the setting that hides prices from the API for anonymous readers: about two and a half hours in the CMS and its plugin. At the edge, the JSON-LD is corrected on the way through, on every product page, from the price, unit, variant and stock elements the page itself renders, so the served node is right from the day the worker goes live: about three hours, plus one hour for the whole-catalog acceptance script the company keeps. Both are on the fix list, and D1 decides who makes them. The edge cannot correct the API, because the API's empty price is the origin withholding data and there is nothing on the way through to correct it from, so the API rows are fixed in the origin's own setting whoever holds it. The acceptance below says which rows are read on which surface.
 
-**How to check the fix.** A script the company keeps, delivered with the report, and run against the live site. It fetches both API pages, checks that the API total, the sitemap product count and the number of product pages agree at 138, follows every product URL, and for every offer compares the visible page, the JSON-LD and the API on price in minor units, currency, price basis and availability. The catalog has 170 price rows, 109 simple products and 61 variants, and 176 availability rows, the same plus the six price-on-request products. The edge delivery is accepted when the JSON-LD column matches the visible page on every one of the 170 and the 176, and when the four discontinued products read Discontinued. The API column is reported per row, and any row where the API still differs is listed as the agency's remaining work with the product URL, not hidden inside a total. The manual finding closes when all three columns agree on every row. Appendix A, chain 1, shows one row of this test end to end.
+**How to check the fix.** A script the company keeps, delivered with the report, and run against the live site. It fetches both API pages, checks that the API total, the sitemap product count and the number of product pages agree at 138, follows every product URL, and for every offer compares the visible page, the JSON-LD and the API on price in minor units, currency, price basis and availability. The catalog has 170 price rows, 109 simple products and 61 variants, and 176 availability rows, the same plus the six price-on-request products. The delivery is accepted when the JSON-LD column and the API column both match the visible page on every one of the 170 price rows and the 176 availability rows, and when the four discontinued products read Discontinued. Any row that still differs is listed with its product URL and the surface it differs on, not hidden inside a total. The finding closes at the retest, when the three columns agree on every row. Appendix A, chain 1, shows one row of this test end to end.
 
 **Guide.** [JSON-LD and structured data for AI clients](/guides/json-ld-structured-data).
 
@@ -2618,7 +2622,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **How to check the fix.** Every line is checked on the home page, on /products/ and on three product pages, one of them a variable product, and the list is delivered filled in.
 
-- Content negotiation. A request with Accept: text/markdown returns Content-Type: text/markdown and a body that starts with the page title as a heading. A request with Accept: text/html, or with no Accept header, returns the HTML exactly as the origin serves it. A request that lists both with a higher q on text/html gets HTML.
+- Content negotiation. A request with Accept: text/markdown returns Content-Type: text/markdown and a body that starts with the page title as a heading. A request with Accept: text/html, or with no Accept header, returns the origin's HTML page carrying the corrections this report agrees to and nothing else, which on a product page means the F1 JSON-LD and the F9 Organization address and every other byte as the origin served it. The markdown conversion changes no part of the HTML response. A request that lists both with a higher q on text/html gets HTML.
 - Separate caches. Every response carries Vary: Accept, so no cache serves the markdown form to a browser or the HTML form to an agent that asked for markdown. Checked by requesting the two forms in both orders from a cold cache.
 - Freshness. The markdown form of a product page is not older than the origin's own page: the worker revalidates against the origin on every request or caches the markdown for at most ten minutes, and a price changed at the origin appears in the markdown within that time. Checked by comparing the price in the markdown form with the visible page at the end of the F1 acceptance run.
 - Canonicals. The .md twin carries Link: rel="canonical" pointing at the HTML page, and the HTML page carries rel="alternate" type="text/markdown" pointing at the twin, so search engines see one page and not two.
@@ -2640,7 +2644,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Who does it and estimated effort.** turva.dev or the company's developer, at the edge. About 90 minutes. The text of llms.txt is decision D3: it goes live after the company has read it, because it is the company's own description of itself.
 
-**How to check the fix.** linkHeaders reads PASS on the next full scan. The free validator at [turva.dev/llms-txt-validator](/llms-txt-validator) reads the file as valid with every link resolving. GET /.well-known/security.txt returns text/plain with status 200 and an Expires date in the future.
+**How to check the fix.** Three separate checks. linkHeaders reads PASS on the next full scan. The free validator at [turva.dev/llms-txt-validator](/llms-txt-validator) reads the file's structure as valid, which is a reading of the file's own shape and of the two home page links, and it fetches nothing that the file points at. Every link in llms.txt is then requested once by hand, and the result is recorded per link as the URL, the HTTP status and either the expected content or the redirect that was followed and where it ended. A link resolves when it answers 200 with the page it names, or redirects inside the same host to a page that does. GET /.well-known/security.txt returns text/plain with status 200 and an Expires date in the future.
 
 **Guides.** [llms.txt explained](/guides/llms-txt) and [Response headers for AI clients](/guides/response-headers-for-agents).
 
@@ -2654,7 +2658,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **What to change.** At the source: let the catalog plugin generate a product sitemap, reference it from a sitemap index, remove the two template pages from the site or from the sitemap, and add one Sitemap line to robots.txt. Four settings, no code. At the edge, when turva.dev implements the list: serve a product sitemap generated from the API and a sitemap index in front of the CMS one, and the robots.txt line comes with F5, so the acceptance test passes without waiting for the agency.
 
-**Who does it and estimated effort.** The four settings belong to the company's web agency: about half an hour. The edge sitemap is about half an hour.
+**Who does it and estimated effort.** The four settings are about half an hour in the CMS. The edge sitemap is about half an hour. Both are on the fix list, and D1 decides who makes them.
 
 **How to check the fix.** The sitemap index references a product sitemap that lists every product URL, the count agrees with the API total from F1, no template page appears, and robots.txt names the index. The scored check stays green either way, which is why this is a manual finding.
 
@@ -2684,11 +2688,11 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Why it matters.** One scored check now, and the cheapest step in the category. Observed: the API answers and nothing announces it, and every well-known probe gets a 200 with an HTML body. Possible and not observed: an agent that finds the API reads the catalog as data instead of scraping HTML, which is only worth anything once F1 has made the data right.
 
-**What to change.** Publish /.well-known/api-catalog, one JSON linkset that names the /wp-json/ base URL and its description, with the content type application/linkset+json. Make every other path under /.well-known/ return a real 404. The other eight checks in the category need an authentication story or an MCP server and are not declared until one exists: a server card that points at no server is a false claim, and this report does not recommend one.
+**What to change.** Publish /.well-known/api-catalog, one JSON linkset that names the /wp-json/ base URL and its description, with the content type application/linkset+json. Return a real 404 with a plain text body for every path under /.well-known/ that the edge does not serve, which here is every path except this linkset and the security.txt that F3 publishes in the same directory. A path published on purpose keeps answering with its own content and its own content type. The other eight checks in the category need an authentication story or an MCP server and are not declared until one exists: a server card that points at no server is a false claim, and this report does not recommend one.
 
 **Who does it and estimated effort.** turva.dev or the company's developer, at the edge. About half an hour.
 
-**How to check the fix.** apiCatalog reads PASS on the next full scan. The category reads 1 of 9, and the retest report says which eight are left and why they wait. GET /.well-known/nothing returns 404 with a short plain text body.
+**How to check the fix.** apiCatalog reads PASS on the next full scan. The category reads 1 of 9, and the retest report says which eight are left and why they wait. GET /.well-known/api-catalog returns 200 with application/linkset+json. GET /.well-known/security.txt returns 200 with text/plain. GET /.well-known/nothing returns 404 with a short plain text body. Every path the edge publishes under /.well-known/ is requested in the same run, so that the 404 rule is measured against the list of published paths and not against one invented address alone.
 
 **Guide.** [The /.well-known directory for agent discovery](/guides/well-known-for-agents).
 
@@ -2704,7 +2708,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **What to change.** After the files above are live, add the _index._agents SVCB record pointing at the site and enable DNSSEC at the registrar. The exact record text, as of draft 02, is carried in the delivery, and the report does not reproduce it here because it is the part most likely to change between now and the retest.
 
-**Who does it and estimated effort.** The surface belongs to the company's IT, at the registrar. About half an hour, plus the DNSSEC propagation wait. When turva.dev implements the list and the written arrangement covers the DNS zone, both records are added from the delivery. Without that access this is the one item that stays with the company, and the acceptance in What each party delivers says what the retest reads in that case.
+**Who does it and estimated effort.** The work is at the registrar, about half an hour plus the DNSSEC propagation wait, and it is on the fix list. When turva.dev implements the list, the DNS zone access is one of the prerequisites arranged in writing before the work starts, and both records are added from the delivery.
 
 **How to check the fix.** dnsAid reads PASS on the next full scan, once DNSSEC validates. internet.nl website test shows DNSSEC as passing. The retest report states the draft revision and the scanner check definition date the reading was taken against.
 
@@ -2734,9 +2738,9 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Why it matters.** No scanner points. Observed: two wrong answers in twelve. Possible and not observed: a buyer's assistant sends a visitor or a delivery to the wrong city.
 
-**What to change.** Three parts with three owners. Add a PostalAddress with the current address to the Organization node on every page, which the edge does from the text the company confirms. Remove the 2022 PDF or replace it with the current price list at the same address, which the company does, because the file is the company's own and a price list from 2022 is wrong on more than the address. Ask the directory to correct its listing, which the company does and which is outside anyone's control here.
+**What to change.** Three parts. Add a PostalAddress with the current address to the Organization node on every page, which the edge does from the text the company confirms. Remove the 2022 PDF or replace it with the current price list at the same address, because the file is the company's own and a price list from 2022 is wrong on more than the address. Ask the directory to correct its listing and record the answer. The first two are corrections on the fix list. The third is a request to an outside party, and the listing itself stays that party's to change.
 
-**Who does it and estimated effort.** Edge, about half an hour. Company, about an hour including the directory request.
+**Who does it and estimated effort.** About half an hour at the edge and about an hour at the source, the request to the directory included. Both are on the fix list. The directory's answer is not, and no one here promises it.
 
 **How to check the fix.** The Organization node on the home page carries the current address. GET /wp-content/uploads/2022/hinnasto-2022.pdf returns 404 or the current list. The three by-name questions at the retest give the current address or none. If the directory still carries the old address on the retest day, the report records that as the directory's state and not as a failure of the site.
 
@@ -2746,8 +2750,8 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 Three routes, and the report is written so that any of them works.
 
-- The company's team does the work from this report. Every finding carries its change and its acceptance test, the section What each party delivers says which acceptance belongs to which owner, and the guides linked above carry the patterns.
-- turva.dev implements the edge column of every finding for the fixed price on the services page, bought together with the audit. That price needs the prerequisites listed under What each party delivers, arranged in writing before the work starts. The source column stays with the company and its agency whichever route is chosen.
+- The company's team does the work from this report. Every finding carries its change and its acceptance test, the section What each party delivers says what an accepted delivery means, and the guides linked above carry the patterns.
+- turva.dev makes every correction on the fix list, in both columns, for the fixed price on the services page, bought together with the audit. That price needs the access listed under What each party delivers, arranged in writing before the work starts. Without that access the add-on is not sold, and the report still carries every instruction.
 - Nothing is done, and the report stands as a dated record of where the site was on 2026-09-03.
 
 In every case the retest is the same, and it is included in the audit price: once within 30 days of this report, so by 2026-10-08, on the day the company names, the scanner is run again with the same profile, the whole-catalog script from F1 is run again, the 15 questions are put to the same four assistants under the same conditions, and the readings are printed next to the ones above with the versions from F7 stated. One round of written follow-up questions is open until 2026-09-22.
@@ -2770,7 +2774,7 @@ Chain 1, F1, one row of the whole-catalog test.
 | Response excerpt | "prices": {"price": "", "currency_code": "EUR", "currency_minor_unit": 2}, "is_purchasable": true, "stock_status": "onbackorder" |
 | Observation | Three surfaces, three answers: 0,42 EUR with a six week lead time, 0,00 EUR in stock, and no price at all but purchasable |
 | Change | JSON-LD from the page's own price and stock elements at the edge. Plugin mapping and API price visibility at the source. Availability from stock_status onbackorder, so BackOrder with deliveryLeadTime 6 weeks |
-| Acceptance reading | JSON-LD "price": "0.42", "availability": "https://schema.org/BackOrder", "deliveryLeadTime": 6 weeks. API "price": "42", "stock_status": "onbackorder". Row ALIGNED on all three surfaces, and the script's total line reads 170 of 170 price rows and 176 of 176 availability rows aligned. The API column reads right here because the agency has done its source work by the retest day. The edge delivery alone is accepted on the JSON-LD column, as What each party delivers says |
+| Acceptance reading | JSON-LD "price": "0.42", "availability": "https://schema.org/BackOrder", "deliveryLeadTime": 6 weeks. API "price": "42", "stock_status": "onbackorder". Row ALIGNED on all three surfaces, and the script's total line reads 170 of 170 price rows and 176 of 176 availability rows aligned. The API column reads right here because the source row of F1 was corrected as well, which is what the fix list covers |
 
 Chain 2, F2, markdown negotiation on the home page.
 
@@ -2828,7 +2832,7 @@ The audit is described on the [services page](/services). To start one, [email i
 
 Northstar Outdoor and every observation in this report are invented. This example shows how product comparisons, shopping-journey evidence and a correction plan are presented.
 
-Illustrative report date: 8 September 2026.
+Illustrative report date: 6 September 2026, the delivery date in the engagement record below. Every other date in the example belongs to the same invented engagement. This page itself was last revised on 10 September 2026.
 
 ## What to fix first
 
@@ -2986,7 +2990,7 @@ This is not a Shopify certification, an endorsement by Shopify, a penetration te
 
 The store, products, prices and results are fictional. The interface names, status labels and report format show what the service delivers.
 
-A real report includes timestamped tool calls and the merchant's redacted settings evidence. This is not a Shopify certification, endorsement, penetration test or promise of sales.
+A real report includes timestamped tool calls and the merchant's redacted settings evidence.
 
 The check is described on its [product page](/shopify-agent-storefront-check). To start one, [email info@turva.dev](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A) with the storefront URL, the .myshopify.com domain, the primary market and up to three priority products. The agent-readiness audit has its own [sample report](/samples/audit-report).
 `,
@@ -3138,10 +3142,10 @@ This example uses an invented business and invented readings. The sample's scann
 
 ## Choose the check you need
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. One retest of up to two corrected items follows within 14 days. Delivered within 48 hours of the agreed written kickoff.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Four written deliverables, and a fifth, one retest of up to two corrected items within 14 days. Delivered within 48 hours of the agreed written kickoff.
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered in two weeks.
 
-Prices exclude VAT. Each service can be bought on its own. Implementation is available separately.
+Prices exclude VAT. Each service can be bought on its own.
 
 Implementation, ongoing advisory, agent operations and MCP server design are scoped separately. [All services and prices](/services).
 
@@ -3253,7 +3257,7 @@ You work directly with me, in writing. I reply within one business day. All pric
 
 ## Choose a starting point
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. One retest of up to two corrected items follows within 14 days. Delivered within 48 hours of the agreed written kickoff.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Four written deliverables, and a fifth, one retest of up to two corrected items within 14 days. Delivered within 48 hours of the agreed written kickoff.
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered in two weeks.
 
 See the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check) before choosing a service.
@@ -3264,7 +3268,7 @@ See the [sample audit report](/samples/audit-report) and the [sample Shopify rep
 
 What an AI shopper receives from one live Shopify store, across the three agent interfaces this check covers, with the evidence attached. One store, one market, up to three product and variant pairs.
 
-Five written deliverables, and one retest of up to two corrected items within 14 days. The audit is not a prerequisite. [Read the full scope, the exclusions, the preflight and the refund terms](/shopify-agent-storefront-check).
+Four written deliverables within 48 hours of the agreed written kickoff, and a fifth, one retest of up to two corrected items within 14 days. The audit is not a prerequisite. [Read the full scope, the exclusions, the preflight and the refund terms](/shopify-agent-storefront-check).
 
 ## Website and API agent-readiness audit
 
@@ -10482,8 +10486,7 @@ ${cardPageNav("/llms-txt-validator")}
     <li>Without typing anything: <a href="/llms-txt-validator?url=turva.dev">run the checks against this site's own file</a>.</li>
     <li>As an agent: <code>GET https://turva.dev/llms-txt-validator?url=example.com</code> with <code>Accept: application/json</code>.</li>
   </ul>
-  <p>Both views list the same checks below.</p>
-  <p>The browser page and this markdown twin are kept in sync deliberately.</p></section>
+  <p>The browser page and the JSON response run the same checks, listed below.</p></section>
   ${mdOpenSec("/llms-txt-validator", "What the validator checks", "what-is-checked")}
   ${mdOpenSec("/llms-txt-validator", "What a valid result tells you", "what-this-result-means")}
   ${mdOpenSec("/llms-txt-validator", "What is fetched")}
