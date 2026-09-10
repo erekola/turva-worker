@@ -1061,3 +1061,65 @@ test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guid
   assert.deepEqual(skills, card, "agent-skills index and the A2A card list the skills in one order");
   assert.equal(skills[0], "services");
 });
+
+// Astra 2026-09-10 (F2), decided as Tek-383. A body that does not parse used to become an
+// empty object, so `{`, `null`, `[]` and `""` all answered 201 with the default audit
+// session: a client's input error was told it had created an order. The boundary this test
+// exists to hold is the pair at the end: a VALID empty object still gets the default, and
+// R16 S1-1 above sends exactly that.
+test("A10-1: the ACP checkout refuses a body it cannot read, and keeps the default for one it can", async () => {
+  const post = (body) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
+  for (const [body, code] of [["{", "invalid_body"], ["null", "invalid_body"], ["[]", "invalid_body"], ['""', "invalid_body"], ["3", "invalid_body"]]) {
+    const r = await post(body);
+    assert.equal(r.status, 400, "body " + body + " is not a JSON object");
+    assert.equal((await json(r)).code, code);
+  }
+  const empty = await worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST" }), env, {});
+  assert.equal(empty.status, 400, "no body at all does not parse either");
+  for (const body of ["{}", '{"items":[]}', '{"items":[{"id":"audit"}]}']) {
+    const r = await post(body);
+    assert.equal(r.status, 201, "body " + body + " is a valid request");
+    assert.equal((await json(r)).line_items[0].item.id, "audit");
+  }
+});
+
+// The list was read at index 0 and nowhere else, so a second entry disappeared without a
+// word even when its id was not a service. One session buys one service, because the
+// session id encodes which one (Tek-383).
+test("A10-2: the ACP checkout reads every item, not only the first", async () => {
+  const post = (body) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
+  const two = await post('{"items":[{"id":"shopify"},{"id":"audit"}]}');
+  assert.equal(two.status, 400, "two items are refused rather than truncated to the first");
+  assert.equal((await json(two)).code, "too_many_items");
+  const twoBad = await post('{"items":[{"id":"shopify"},{"id":"not-a-service"}]}');
+  assert.equal(twoBad.status, 400, "a second entry that is not a service does not pass behind a valid first one");
+  assert.equal((await json(await post('{"items":"audit"}'))).code, "invalid_items");
+  assert.equal((await json(await post('{"items":[null]}'))).code, "invalid_item");
+  assert.equal((await json(await post('{"items":[{"id":1}]}'))).code, "invalid_item");
+  const one = await post('{"items":[{"id":"shopify"}]}');
+  assert.equal(one.status, 201, "one valid item is unchanged");
+  assert.equal((await json(one)).line_items[0].item.id, "shopify");
+});
+
+// The hosted validator and the npm package are one implementation in two files and they
+// answer identically by rule. These are the same cases the package's own suite runs
+// (llms-txt-validator/test/validate.test.mjs, Astra 2026-09-10 F1).
+test("A10-3: the hosted validator reads fences and indented headings like the package", async () => {
+  const ask = async (text) => {
+    const real = globalThis.fetch;
+    globalThis.fetch = async (url) => new Response(String(url).endsWith("/llms.txt") ? text : "<html><head></head></html>", { headers: { "Content-Type": String(url).endsWith("/llms.txt") ? "text/plain" : "text/html" } });
+    try {
+      const r = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { Accept: "application/json" } }), env, {});
+      return await json(r);
+    } finally { globalThis.fetch = real; }
+  };
+  const at = (body, id) => body.checks.find((c) => c.id === id);
+  for (const fence of ["```", "~~~"]) {
+    const body = await ask("# Site\n> Summary\n\n" + fence + "\n## Docs\n- [Doc](https://example.com/doc)\n" + fence + "\n");
+    assert.equal(at(body, "sections").status, "warn", fence + ": a fenced H2 is not a section");
+    assert.equal(at(body, "links").status, "warn", fence + ": a fenced link is not a link");
+  }
+  const indented = await ask("# Site\n> Summary\n\n  ## Docs\n  - [Doc](https://example.com/doc)\n");
+  assert.equal(at(indented, "sections").status, "pass", "two spaces is still a heading");
+  assert.equal(indented.summary, "valid");
+});

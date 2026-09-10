@@ -2717,6 +2717,29 @@ if (LIVE) {
         check(!/[Ee]ach scanner cycle reads higher/.test(svcTxt),
           'get_services does not promise that each scanner cycle reads higher than the last');
       }
+      // Prices were watched here and the deliverables were not, and they are the same
+      // promises /services makes in prose, written by hand in two repos. Astra measured the
+      // drift 2026-09-10: the audit deliverable had lost the re-scan within 30 days of the
+      // report that seven places on the site promise, the advisory deliverable had lost the
+      // monthly written summary, and the Shopify retest gave 14 days without naming the day
+      // it counts from. A promise carrying a DATE is the kind an agent acts on, so those are
+      // the ones read back. This is the only place this repo can see that server at all.
+      {
+        const PROMISES = [
+          ['audit', /re-scan within 30 days of the report/i, 'the re-scan within 30 days of the report'],
+          ['audit', /round of written follow-up questions/i, 'the round of written follow-up questions'],
+          ['advisory', /monthly re-scan/i, 'the monthly re-scan'],
+          ['advisory', /monthly written summary/i, 'the monthly written summary'],
+          ['advisory', /quarterly summary/i, 'the quarterly summary'],
+          ['shopify', /within 48 hours of the agreed written kickoff/i, 'the 48 hour first package'],
+          ['shopify', /within 14 days of that first package/i, 'the day the 14 day retest counts from'],
+        ];
+        for (const [id, re, what] of PROMISES) {
+          const one = (svc.services || []).find((x) => x.id === id);
+          check(!!one && re.test(String(one.deliverable || '')),
+            `get_services deliverable for ${id} still carries ${what}`);
+        }
+      }
       const BUN = Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : [];
       const mb = Array.isArray(svc.bundled_implementation) ? svc.bundled_implementation : [];
       check(BUN.length > 0 && mb.length === BUN.length,

@@ -1,0 +1,30 @@
+name: ci
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # The repo had no workflow at all until 2026-09-10 (Tek-384): the tests and the verify
+    # chain existed and nothing ran them on a change. What runs here is what this REPO can
+    # check on its own, which is not the whole release gate: the ship script runs a wider
+    # verify from the private workspace, and this one is a subset of it (mds/gotchas.md
+    # 2026-09-09 (jatko 2), where the repo's own verify was green while the ship failed).
+    # The --live half is deliberately absent: it measures the deployed site, so it is a
+    # report after a ship and cannot be a gate before one.
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node }}
+      # No install step: src/worker.js imports nothing and the suite uses node builtins
+      # only, so wrangler, the one devDependency, is not needed to run the tests.
+      - run: node --test
+        working-directory: turva-worker
+      - run: node tools/verify.mjs

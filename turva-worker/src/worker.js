@@ -5771,7 +5771,7 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok" } } } },
     "/api/v1": { "get": { "summary": "Agent endpoint index", "operationId": "getApiIndex", "description": "Free JSON index of every agent surface this site serves. No payment, no authentication.", "responses": { "200": { "description": "ok" } } } },
-    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id }] } with id one of audit, advisory, implementation, shopify. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session" }, "400": { "description": "unknown item id" }, "405": { "description": "POST only" } } } },
+    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id }] } with id one of audit, advisory, implementation, shopify. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session" }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, or an unknown item id" }, "405": { "description": "POST only" } } } },
     "/api/acp/checkout_sessions/{session_id}": { "get": { "summary": "Retrieve an ACP checkout session", "operationId": "acpGetCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "session" }, "404": { "description": "unknown session id" }, "405": { "description": "GET only" } } } },
     "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Always answers intervention_required: scope is agreed in writing before payment, no API completes it.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "intervention_required" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } },
     "/api/acp/checkout_sessions/{session_id}/cancel": { "post": { "summary": "Cancel an ACP checkout session", "operationId": "acpCancelCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "canceled" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } }
@@ -9786,6 +9786,11 @@ async function fetchLlmsTxt(host, path, accept) {
       }
     });
     if (res.status >= 300 && res.status < 400) {
+      // Six paths leave this branch, five returns and one continue, and not one of them
+      // ever reads the redirect body. undici holds the connection until a body is read or
+      // cancelled, so it is released here, once, before the location is even parsed. A
+      // failed cancel must not turn a redirect verdict into a throw (2026-09-10).
+      try { await res.body?.cancel(); } catch { /* the verdict below is the answer */ }
       const loc = res.headers.get("location") || "";
       if (!loc) return { redirect: true, reason: "no-location", status: res.status, location: "" };
       if (hop >= 4) return { redirect: true, reason: "too-many", status: res.status, location: cut(loc, 120) };
@@ -9867,6 +9872,41 @@ function collectLinks(text) {
 // 2026-08-29). Bounding the quantifier would trade the speed bug for a silent accuracy bug,
 // so the scan is by index: every character is read once and the furthest failed target scan
 // is remembered.
+// CommonMark fenced code blocks, marked line by line. A "## " or a link inside a fence is
+// example text and not the file's own structure, but until 2026-09-10 both counted, so a
+// file whose only section and only link lived inside ``` or ~~~ was reported valid. The
+// scan is one pass over the lines with no backtracking pattern, because the ReDoS repair
+// of 2026-08-24 bought a worse accuracy defect with a bounded quantifier and the rule out
+// of it was to scan by index instead (mds/gotchas.md 2026-08-24 (jatko 12)).
+// Returns one boolean per line: true for a fence line and for everything inside it.
+function fenceMask(lines) {
+  const mask = new Array(lines.length).fill(false);
+  let fenceChar = "", fenceLen = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    let p = 0;
+    while (p < 4 && l[p] === " ") p++;
+    if (p > 3) { mask[i] = fenceChar !== ""; continue; }
+    const c = l[p];
+    let run = 0;
+    if (c === "`" || c === "~") { while (l[p + run] === c) run++; }
+    if (fenceChar === "") {
+      // An opening backtick fence may not carry a backtick in its info string; a tilde
+      // fence may. Anything shorter than three markers is not a fence at all. A later
+      // round will read the consequence as a bug and it is not: in ```js `x` the info
+      // string holds a backtick, so that line is prose, and a bare ``` after it OPENS a
+      // block instead of closing one. CommonMark reads the same input the same way,
+      // measured against the spec 2026-09-10. Leave it.
+      if (run >= 3 && (c !== "`" || l.indexOf("`", p + run) === -1)) {
+        fenceChar = c; fenceLen = run; mask[i] = true;
+      }
+      continue;
+    }
+    mask[i] = true;
+    if (c === fenceChar && run >= fenceLen && l.slice(p + run).trim() === "") { fenceChar = ""; fenceLen = 0; }
+  }
+  return mask;
+}
 function listItemHasLink(l) {
   const m = /^ {0,3}[-*+] /.exec(l);
   if (!m) return false;
@@ -9943,15 +9983,22 @@ function validateLlmsTxt(f) {
   } else {
     add("summary", "warn", "Blockquote summary after the title", "recommended by the format (> one-line summary), not required");
   }
-  const h2Count = (f.text.match(/^## /gm) || []).length;
+  // Headings are read outside fences only, and with the same indentation the H1 check and
+  // listItemHasLink have allowed since 2026-08-29. Until 2026-09-10 this one line still
+  // demanded column zero, so a correct file indented by one to three spaces was reported as
+  // having no sections at all while its list under the same indentation counted fine.
+  const fenced = fenceMask(lines);
+  const h2Count = lines.filter((l, i) => !fenced[i] && /^ {0,3}## /.test(l)).length;
   // A section counts when it carries a file list. An H2 followed by a paragraph satisfied
   // this check until 2026-08-29, and the format puts each section's links in a list.
   let sectionsWithList = 0;
   {
     let inSection = false, counted = false;
-    for (const l of lines) {
-      if (/^## /.test(l)) { inSection = true; counted = false; continue; }
-      if (/^# /.test(l)) { inSection = false; continue; }
+    for (let i = 0; i < lines.length; i++) {
+      const l = lines[i];
+      if (fenced[i]) continue;
+      if (/^ {0,3}## /.test(l)) { inSection = true; counted = false; continue; }
+      if (/^ {0,3}# /.test(l)) { inSection = false; continue; }
       if (inSection && !counted && listItemHasLink(l)) { sectionsWithList++; counted = true; }
     }
   }
@@ -9962,7 +10009,9 @@ function validateLlmsTxt(f) {
   } else {
     add("sections", "warn", "H2 sections group the content", "no H2 sections found; sections are the convention for grouping links");
   }
-  const links = collectLinks(f.text);
+  // Links are collected from the prose only, for the same reason the headings are: a link
+  // shown inside a code fence is an example of a link, not one an agent can follow.
+  const links = collectLinks(lines.filter((l, i) => !fenced[i]).join("\n"));
   // An entry an agent can use has a name and a target with a host. An empty name and a
   // bare "https://" both counted as valid absolute links until 2026-08-29.
   const named = links.filter((m) => m.name.trim() !== "");
@@ -10779,8 +10828,34 @@ async function serveAcpCheckout(request, pathLower) {
     if (method !== "POST") {
       return new Response(JSON.stringify({ "type": "invalid_request", "code": "method_not_allowed", "message": "Use POST to create a checkout session." }, null, 2), { status: 405, headers: acpHeaders("POST, OPTIONS") });
     }
-    let reqBody = {};
-    try { reqBody = await request.json(); } catch (e) { reqBody = {}; }
+    let reqBody;
+    try { reqBody = await request.json(); } catch (e) { reqBody = undefined; }
+    // A parse error used to become an empty object, so a body of `{`, `null`, `[]` or `""`
+    // answered 201 with the default audit session and 4 300 euros: a client's input error
+    // was told it had created an order. Those four answer 400 since 2026-09-10 (Tek-383).
+    // The line that must NOT move with them is the one below: a VALID empty object keeps
+    // the default, which is what test/routes.test.mjs R16 S1-1 sends and what the comment
+    // under it explains.
+    if (!reqBody || typeof reqBody !== "object" || Array.isArray(reqBody)) {
+      return new Response(JSON.stringify({ "type": "invalid_request", "code": "invalid_body", "message": "The request body must be a JSON object, for example {\"items\":[{\"id\":\"audit\"}]}." }, null, 2), { status: 400, headers: acpHeaders() });
+    }
+    if (reqBody.items !== undefined) {
+      // The list was read at index 0 and nowhere else, so a second entry was dropped
+      // without a word even when its id was not a service at all. One checkout session
+      // buys one service, because the session id this route returns encodes which one, so
+      // a longer list has no honest answer and gets a 400 rather than a silent truncation.
+      if (!Array.isArray(reqBody.items)) {
+        return new Response(JSON.stringify({ "type": "invalid_request", "code": "invalid_items", "message": "items must be an array of item objects." }, null, 2), { status: 400, headers: acpHeaders() });
+      }
+      for (const it of reqBody.items) {
+        if (!it || typeof it !== "object" || Array.isArray(it)) {
+          return new Response(JSON.stringify({ "type": "invalid_request", "code": "invalid_item", "message": "Each entry in items must be an object with an id." }, null, 2), { status: 400, headers: acpHeaders() });
+        }
+      }
+      if (reqBody.items.length > 1) {
+        return new Response(JSON.stringify({ "type": "invalid_request", "code": "too_many_items", "message": "One service per checkout session. Send a single item and create another session for the second service." }, null, 2), { status: 400, headers: acpHeaders() });
+      }
+    }
     let serviceId = "audit";
     // Coercing an arbitrary JSON value with String() let a deeply nested array recurse
     // through Array.prototype.join and throw RangeError, which nothing here catches, so
@@ -10792,7 +10867,7 @@ async function serveAcpCheckout(request, pathLower) {
     // overwrites turns {"items":[{"id":1}]} into a paid audit session instead of the
     // 400 it used to return. An id that is present must be a string or the request is
     // invalid; only an absent id keeps the default.
-    const rawItemId = reqBody && Array.isArray(reqBody.items) && reqBody.items[0]
+    const rawItemId = Array.isArray(reqBody.items) && reqBody.items[0]
       ? reqBody.items[0].id
       : undefined;
     if (rawItemId !== undefined && rawItemId !== null) {
