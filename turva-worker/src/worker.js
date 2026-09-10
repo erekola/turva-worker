@@ -1,5 +1,5 @@
 // src/worker.js
-// turva.dev worker v3.151.0 - the Astra review round (2026-09-09): findLinkRelations reads HTML attributes and Link header parameters with one quote aware scan, so text inside another attribute quoted value is no longer read as a link relation; the in-page WebMCP tools check HTTP status and content type before they treat a response as content, refuse to follow a redirect off this origin, count bytes as UTF-8, and register through navigator.modelContext.provideContext first and the newer registerTool interface only where provideContext is absent, once and never twice.
+// turva.dev worker v3.152.0 - the MTA-STS policy names only the Proton hosts (2026-09-10): the mailbox.org move finished on 2026-09-08 when SPF dropped the include, the four mbo000X._domainkey CNAMEs left the zone and the holvi lost mailbox-smtp, so the four mxext lines guarded a rollback that no longer exists and every one of them was a policy line matching no MX. The two Proton hosts stay, mode stays enforce, max_age stays 604800, and the _mta-sts id is bumped after the deploy so senders refetch before the cached policy expires.
 // turva.dev worker v3.150.1 - hotfix to the text round (2026-09-09): /services carries a short priced summary of the Shopify check and the audit again, and the Implementation block leads with the day rate, because verify.mjs --live binds every priced service to the price that opens its OWN heading block in the markdown WebMCP get_services hands back, and deleting those two sections took that binding with them. The two anchors #shopify and #audit are back on the sections; the long repeating write-ups stay deleted.
 // turva.dev worker v3.150.0 - the clearer, more personal text round (2026-09-09, from the Fable page instruction): twelve pages outside the blog and the guides rewritten in the first person around what the reader gets, the two sample reports given plain section and finding headings with every old anchor kept as an alias, the audit and validator FAQ sections folded into the sections above them, and every measurement, price, deadline, scope and refund term left as it stood.
 // turva.dev worker v3.149.0 - the WebMCP surface grew from three tools to six: search_content reads the published llms.txt index, get_page returns any page of this site as markdown and refuses anything that would leave the origin, and open_page navigates the tab to one of ten named pages (an enum, never a caller-supplied URL, so the tool is not an open redirect); every tool now declares an outputSchema and get_company says which fields it returns.
@@ -66,10 +66,6 @@ var MTA_STS_POLICY = `version: STSv1
 mode: enforce
 mx: mail.protonmail.ch
 mx: mailsec.protonmail.ch
-mx: mxext1.mailbox.org
-mx: mxext2.mailbox.org
-mx: mxext3.mailbox.org
-mx: mxext4.mailbox.org
 max_age: 604800
 `;
 
@@ -5686,7 +5682,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.151.0",
+    "version": "3.152.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5954,7 +5950,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.151.0",
+  "version": "3.152.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
