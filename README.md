@@ -17,9 +17,27 @@ curl -H "Accept: text/markdown" https://turva.dev/
 
 In Windows PowerShell, use `curl.exe` if `curl` resolves to `Invoke-WebRequest`. You can also open [index.md](https://turva.dev/index.md) directly. The home page's Markdown is intentionally more concise than its HTML presentation.
 
+## Command-line tools
+
+Two npm packages cover checks you can run against your own site:
+
+| Package | Checks |
+| --- | --- |
+| [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator) | llms.txt structure and home-page discovery declarations. |
+| [markdown-parity-check](https://www.npmjs.com/package/markdown-parity-check) | Differences between the main content of a page's HTML and Markdown representations. |
+
+With Node.js 22 or 24 installed, replace the example addresses with your own:
+
+```sh
+npx --yes turva-llms-txt-validator example.com --json
+npx --yes markdown-parity-check --url https://example.com/page --format json
+```
+
+The comparison requests both formats from the same URL. Add `--markdown-url https://example.com/page.md` if your Markdown has a separate address. Intentional differences, such as this site's shorter home-page Markdown, still appear in the comparison. See the [validator](https://github.com/erekola/llms-txt-validator) and [parity checker](https://github.com/erekola/markdown-parity-check) READMEs for exit codes and limits.
+
 ## Run locally
 
-From the root of your own clone, install the nested project's dependencies and start Wrangler locally:
+Use Node.js 22 or 24, the versions covered by this repository's CI. From the root of your own clone, install the nested project's dependencies and start Wrangler locally:
 
 ```sh
 npm --prefix turva-worker ci
@@ -60,7 +78,7 @@ See [docs/endpoints.md](docs/endpoints.md) for the complete inventory, including
 
 ## Scanner results
 
-The published turva.dev reference build recorded 100/100, Level 5 (Agent-Native) on [isitagentready.com](https://isitagentready.com/) on 2026-09-06. This is a dated measurement of this domain. A fork needs its own checks.
+The published turva.dev reference build recorded 100/100, Level 5 Agent-Native on [isitagentready.com](https://isitagentready.com/) on 2026-09-06. This is a dated measurement of this domain. A fork needs its own checks.
 
 <details>
 <summary>Category results and measurement limits</summary>
@@ -101,6 +119,8 @@ From the repository root:
 node tools/verify.mjs
 npm --prefix turva-worker test
 ```
+
+GitHub Actions runs the local tests and documentation checks on Node.js 22 and 24. The repository's workflow does not deploy the site.
 
 The live variant contacts the declared public endpoints and the separate MCP server. It also verifies the four signed manifests against the published JWKS:
 
