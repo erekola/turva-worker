@@ -2604,7 +2604,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 **Who does it and estimated effort.** Two corrections, and the report keeps them apart. At the source, the catalog plugin's structured data mapping and the setting that hides prices from the API for anonymous readers: about two and a half hours in the CMS and its plugin. At the edge, the JSON-LD is corrected on the way through, on every product page, from the price, unit, variant and stock elements the page itself renders, so the served node is right from the day the worker goes live: about three hours, plus one hour for the whole-catalog acceptance script the company keeps. Both are on the fix list, and D1 decides who makes them. The edge cannot correct the API, because the API's empty price is the origin withholding data and there is nothing on the way through to correct it from, so the API rows are fixed in the origin's own setting whoever holds it. The acceptance below says which rows are read on which surface.
 
-**How to check the fix.** A script the company keeps, delivered with the report, and run against the live site. Every expected count comes from the product list decision D4 settles, not from a fixed number. The catalog holds 138 products on 2026-09-03, with 170 price rows, 109 simple products and 61 variants, and 176 availability rows, the same rows plus the six price-on-request products. Those are the counts if all ten exception products stay published, and each unpublished product takes its own rows out of them. The script prints the list it derived the counts from.
+**How to check the fix.** A script the company keeps, delivered with the report, and run against the live site. Every expected count comes from the product list decision D4 settles, not from a fixed number. The catalog holds 138 products on 2026-09-03, with 170 price rows, 109 simple products and 61 variants, and 180 availability rows, the same 170 rows plus the six price-on-request products and the four discontinued ones, which carry an availability and no price. Those are the counts if all ten exception products stay published, and each unpublished product takes its own rows out of them. The script prints the list it derived the counts from.
 
 It then checks that the API total, the sitemap product count and the number of product pages agree with that list, follows every published product URL, and compares the visible page, the JSON-LD and the API on price in minor units, currency, price basis and availability. Nothing is skipped in silence: a product on neither the published list nor the agreed removal list fails the run.
 
@@ -2644,11 +2644,11 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **Why it matters.** One scored check. Observed: no file, no header. Possible and not observed: an assistant that looks for llms.txt gets a 200 with an HTML body and has to read the whole page to learn there is nothing there. The AI run of 2026-09-04 does not show whether any of the four assistants asked for the file, and the report does not claim that they do.
 
-**What to change.** Write /llms.txt by hand: the company name, a four line summary, and the pages that matter grouped as products, delivery terms, technical documents and contact, each as an absolute link to the page's markdown form from F2. Announce it with Link: rel="describedby" on every response and add rel="alternate" type="text/markdown" pointing at the page's own .md twin. Serve /.well-known/security.txt from the same worker with a contact address and an expiry date, which closes one Hardenize category the same day.
+**What to change.** Write /llms.txt by hand: the company name, a four line summary, and the pages that matter grouped as products, delivery terms, technical documents and contact, each as an absolute link to the page's markdown form from F2. Announce it with Link: rel="describedby" on every response, pointing at llms.txt, which is one file for the whole site and the same target everywhere. The second relation is per page and not site wide: a response carries Link: rel="alternate" type="text/markdown" only when F2 publishes a markdown twin for that exact address, and the header points at that page's own .md address. The routes F2 passes through untouched, /cart/, /checkout/, /my-account/, /wp-admin/, /wp-login.php and every /wp-json/ route, carry no alternate link, because no markdown version of them exists to point at. Serve /.well-known/security.txt from the same worker with a contact address and an expiry date, which closes one Hardenize category the same day.
 
 **Who does it and estimated effort.** turva.dev or the company's developer, at the edge. About 90 minutes. The text of llms.txt is decision D3: it goes live after the company has read it, because it is the company's own description of itself.
 
-**How to check the fix.** Three separate checks. linkHeaders reads PASS on the next full scan. The free validator at [turva.dev/llms-txt-validator](/llms-txt-validator) reads the file's structure as valid, which is a reading of the file's own shape and of the two home page links, and it fetches nothing that the file points at. Every link in llms.txt is then requested once by hand, and the result is recorded per link as the URL, the HTTP status and either the expected content or the redirect that was followed and where it ended. A link resolves when it answers 200 with the page it names, or redirects inside the same host to a page that does. GET /.well-known/security.txt returns text/plain with status 200 and an Expires date in the future.
+**How to check the fix.** Four separate checks. linkHeaders reads PASS on the next full scan. The free validator at [turva.dev/llms-txt-validator](/llms-txt-validator) reads the file's structure as valid, which is a reading of the file's own shape and of the two home page links, and it fetches nothing that the file points at. Every link in llms.txt is then requested once by hand, and the result is recorded per link as the URL, the HTTP status and either the expected content or the redirect that was followed and where it ended. A link resolves when it answers 200 with the page it names, or redirects inside the same host to a page that does. GET /.well-known/security.txt returns text/plain with status 200 and an Expires date in the future. The two Link relations are then read apart on two kinds of address: an ordinary content page carries describedby and an alternate pointing at its own .md twin, and /cart/, /checkout/, /my-account/, /wp-admin/, /wp-login.php and a /wp-json/ route carry describedby and no alternate link at all.
 
 **Guides.** [llms.txt explained](/guides/llms-txt) and [Response headers for AI clients](/guides/response-headers-for-agents).
 
@@ -2778,7 +2778,7 @@ Chain 1, F1, one row of the whole-catalog test.
 | Response excerpt | "prices": {"price": "", "currency_code": "EUR", "currency_minor_unit": 2}, "is_purchasable": true, "stock_status": "onbackorder" |
 | Observation | Three surfaces, three answers: 0,42 EUR with a six week lead time, 0,00 EUR in stock, and no price at all but purchasable |
 | Change | JSON-LD from the page's own price and stock elements at the edge. Plugin mapping and API price visibility at the source. Availability from stock_status onbackorder, so BackOrder with deliveryLeadTime 6 weeks |
-| Acceptance reading | JSON-LD "price": "0.42", "availability": "https://schema.org/BackOrder", "deliveryLeadTime": 6 weeks. API "price": "42", "stock_status": "onbackorder". Row ALIGNED on all three surfaces, and the script's total line reads 170 of 170 price rows and 176 of 176 availability rows aligned, which are the counts of a catalog where decision D4 kept all ten exception products published. The API column reads right here because the source row of F1 was corrected as well, which is what the fix list covers |
+| Acceptance reading | JSON-LD "price": "0.42", "availability": "https://schema.org/BackOrder", "deliveryLeadTime": 6 weeks. API "price": "42", "stock_status": "onbackorder". Row ALIGNED on all three surfaces, and the script's total line reads 170 of 170 price rows and 180 of 180 availability rows aligned, which are the counts of a catalog where decision D4 kept all ten exception products published. The API column reads right here because the source row of F1 was corrected as well, which is what the fix list covers |
 
 Chain 2, F2, markdown negotiation on the home page.
 
@@ -2982,9 +2982,14 @@ No additional theme, app or product-data changes were identified for the three p
 
 ## Checking the corrections
 
-C1 and C2 are the two items selected for the included retest, by 2026-09-20. They are checked once within the package's 14-day retest window, using the same tools, market, language and currency.
+The retest is pending. C1 and C2 are the two items selected for it, and it is due by 2026-09-20, fourteen days after the first package was delivered on 2026-09-06. It is checked once, using the same tools, market, language and currency as the session above.
 
-Each item is marked Aligned, Mismatch or Unknown. If an interface cannot be read, the result is Unknown. The retest appears beside the product comparison above.
+| Retest item | What is checked | Test date | Result |
+| --- | --- | --- | --- |
+| C1 | The blue Trail Bottle returns 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront MCP catalog response | Pending | Pending |
+| C2 | The Merino Base Layer in size M reads as sellable in the Agentic Catalog preview | Pending | Pending |
+
+Each item is then marked Aligned, Mismatch or Unknown. If an interface cannot be read, the result is Unknown. The product comparison above shows the original session on its own until the retest has been run, and the retest result is printed beside it once there is one.
 
 ## Scope limits
 
@@ -3146,7 +3151,7 @@ This example uses an invented business and invented readings. The sample's scann
 
 ## Choose the check you need
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Four written deliverables, and a fifth, one retest of up to two corrected items within 14 days. Delivered within 48 hours of the agreed written kickoff.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff, followed by one retest of up to two corrected items within 14 days of that package.
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered in two weeks.
 
 Prices exclude VAT. Each service can be bought on its own.
@@ -3261,7 +3266,7 @@ You work directly with me, in writing. I reply within one business day. All pric
 
 ## Choose a starting point
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Four written deliverables, and a fifth, one retest of up to two corrected items within 14 days. Delivered within 48 hours of the agreed written kickoff.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff, followed by one retest of up to two corrected items within 14 days of that package.
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered in two weeks.
 
 See the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check) before choosing a service.
@@ -3272,7 +3277,7 @@ See the [sample audit report](/samples/audit-report) and the [sample Shopify rep
 
 What an AI shopper receives from one live Shopify store, across the three agent interfaces this check covers, with the evidence attached. One store, one market, up to three product and variant pairs.
 
-Four written deliverables within 48 hours of the agreed written kickoff, and a fifth, one retest of up to two corrected items within 14 days. The audit is not a prerequisite. [Read the full scope, the exclusions, the preflight and the refund terms](/shopify-agent-storefront-check).
+Four written deliverables within 48 hours of the agreed written kickoff, and a fifth, one retest of up to two corrected items within 14 days of that first package. The audit is not a prerequisite. [Read the full scope, the exclusions, the preflight and the refund terms](/shopify-agent-storefront-check).
 
 ## Website and API agent-readiness audit
 
@@ -3330,6 +3335,7 @@ You receive:
 - Written review of agent-readiness changes your team ships, within one business day.
 - Recommendations for the roadmap.
 - Questions and answers by email or a shared document.
+- A monthly written summary that reads the month's measurements next to the previous month's and names the changes observed.
 - A quarterly summary of measurable progress.
 
 Each review explains what changed and what the evidence supports. If the method changes, I record that too. A higher score or an AI mention is not guaranteed.
@@ -3508,7 +3514,7 @@ I compare selected products, prices and availability across your store's agent-s
 
 €999 plus VAT. One store. One market. Up to three product and variant pairs.
 
-You receive four written deliverables within 48 hours of the agreed written kickoff, followed by one included retest.
+You receive four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows, within 14 days of that first package.
 
 ## What you will learn
 
@@ -3529,7 +3535,7 @@ The first four items arrive together within 48 hours:
 - A record of the shopping journey: the tool, input, result, cart state and exact stopping point.
 - A correction plan: up to five changes, each with an owner and a check your team can repeat.
 
-The fifth item is one retest of up to two corrected items within 14 days.
+The fifth item is one retest of up to two corrected items, within 14 days of the day the first four arrive.
 
 ## What is included
 
@@ -3543,7 +3549,7 @@ The fifth item is one retest of up to two corrected items within 14 days.
 - Shopify Agentic settings and a Catalog search preview.
 - One anonymous browser cart, with one checkout navigation if you authorise it.
 - One separate remote UCP Cart lifecycle, stopping before Checkout MCP.
-- One retest of up to two corrected items within 14 days.
+- One retest of up to two corrected items, within 14 days of the first package.
 
 The scope is agreed before delivery starts.
 
@@ -3567,7 +3573,7 @@ The 48-hour clock starts at the agreed written kickoff, after the preflight, pay
 
 If the public preflight cannot find an observable agent-commerce interface suitable for controlled testing, I do not sell or invoice the check.
 
-If I do not send the four-item package within 48 elapsed hours, the fee is refunded. The included retest follows its own 14-day window and is not part of the first package's deadline.
+If I do not send the four-item package within 48 elapsed hours, the fee is refunded. The included retest follows its own 14-day window, which starts on the day that package is delivered, and is not part of its deadline.
 
 ## Help with the corrections
 
@@ -4813,7 +4819,7 @@ The two fixed-scope diagnoses on the [services page](/services) are the website 
 
 ## Follow-up checks
 
-The audit and the Shopify check both include a retest window, and the windows differ. The audit includes one re-scan after the fixes, within 30 days of the report. The Shopify check includes a retest of up to two corrected items within 14 days of delivery. Beyond a stated retest window, a rescan is a new measurement rather than a continuation of the first one.
+The audit and the Shopify check both include a retest window, and the windows differ. The audit includes one re-scan after the fixes, within 30 days of the report. The Shopify check includes a retest of up to two corrected items within 14 days of the first package being delivered. Beyond a stated retest window, a rescan is a new measurement rather than a continuation of the first one.
 
 ## Frequently asked
 
@@ -4827,7 +4833,7 @@ turva.dev prices an audit at a fixed €4,300 for a two week engagement. The Sho
 
 **How long does an agent-readiness audit take?**
 
-A fixed-scope audit takes two weeks. The Shopify agent storefront check is delivered within 48 hours of the agreed written kickoff, with a retest of up to two corrected items within 14 days. Advisory and implementation run on the cadence the engagement sets.
+A fixed-scope audit takes two weeks. The Shopify agent storefront check is delivered within 48 hours of the agreed written kickoff, with a retest of up to two corrected items within 14 days of that delivery. Advisory and implementation run on the cadence the engagement sets.
 
 **What do you get from an agent-readiness audit?**
 
@@ -6371,7 +6377,7 @@ description: List the service offerings of turva.dev, with fixed prices in EUR f
 Use this skill to learn which services turva.dev offers, and which of them carry a fixed price.
 
 ## Services (fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation, VAT not included; the last two are quoted on request)
-- **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days.
+- **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days of that package.
 - **Audit.** €4,300. Fixed scope, two weeks. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, minimum 3 months. Async-only. Ongoing review, score tracking and a monthly AI-visibility delta across several AI platforms.
 - **Implementation.** €1,500 / day. Scoped per task. Edge workers, MCP servers, well-known manifests, JSON-LD.
@@ -7311,7 +7317,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 // pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
 // second copy would be a second price list, and verify.mjs reads this one against facts.json.
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
-{"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
+{"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
 {"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. An MCP server is a separate engagement.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
@@ -8308,7 +8314,7 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
     "serviceType": "Agent commerce readiness check",
     "provider": { "@id": "https://turva.dev/#business" },
     "areaServed": { "@type": "Place", "name": "Worldwide" },
-    "description": "A fixed-scope check of what an AI shopper receives from one live Shopify store, across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Shopify Catalog and Agentic channels. Four written deliverables as one package within 48 hours of the agreed written kickoff, and a fifth, the retest of up to two corrected items, within 14 days.",
+    "description": "A fixed-scope check of what an AI shopper receives from one live Shopify store, across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Shopify Catalog and Agentic channels. Four written deliverables as one package within 48 hours of the agreed written kickoff, and a fifth, the retest of up to two corrected items, within 14 days of that package.",
     "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
     "offers": {
       "@type": "Offer",
@@ -8323,7 +8329,7 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
         "price": "999",
         "priceCurrency": "EUR",
         "valueAddedTaxIncluded": false,
-        "description": "\u20ac999 fixed price, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days. VAT (25,5%) added per Finnish law."
+        "description": "\u20ac999 fixed price, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package. VAT (25,5%) added per Finnish law."
       }
     }
   };
@@ -10669,7 +10675,7 @@ var X402_ROUTES = {
 };
 
 var ACP_SERVICES = {
-  shopify: { item: "shopify", name: "Shopify agent storefront check", amount: 99900, description: "Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days. One live Shopify store across browser WebMCP, remote MCP and Catalog and Agentic channels." },
+  shopify: { item: "shopify", name: "Shopify agent storefront check", amount: 99900, description: "Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package. One live Shopify store across browser WebMCP, remote MCP and Catalog and Agentic channels." },
   audit: { item: "audit", name: "Agent-readiness audit", amount: 430000, description: "Fixed scope, two weeks. Independent scanner sweep, manual review, written report with prioritized fixes." },
   advisory: { item: "advisory", name: "Continuous advisory", amount: 300000, description: "Monthly re-scan, score delta report, written review, roadmap input. Minimum three months." },
   implementation: { item: "implementation", name: "Implementation day", amount: 150000, description: "Hands-on work at your edge, scoped per task." }
