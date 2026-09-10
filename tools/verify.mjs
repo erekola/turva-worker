@@ -776,7 +776,15 @@ const twFnBody = (name) => {
   const i = src.worker.text.indexOf('function ' + name + '(');
   if (i < 0) return null;
   let j = src.worker.text.length;
-  for (const pat of ['\r\nfunction ', '\r\nasync function ']) {
+  // The delimiter is the bare newline, NOT '\r\nfunction ': the repo stores LF (.gitattributes
+  // says `* text=auto`), so a clone on Linux or macOS, and every GitHub Actions run, reads this
+  // file with LF while the Windows working copy has CRLF. With the CR in the pattern the search
+  // found nothing there, the body ran to the end of worker.js, and eleven checks failed for a
+  // cloner while the same script was green on the machine that wrote it. Measured 2026-09-10 by
+  // running this script against an LF copy of the tracked tree: 306 passed, 11 failed, the same
+  // eleven the first CI run reported. A trailing CR inside the slice is harmless, the body is
+  // read with regexes.
+  for (const pat of ['\nfunction ', '\nasync function ']) {
     const k = src.worker.text.indexOf(pat, i + 1); if (k > i && k < j) j = k;
   }
   return src.worker.text.slice(i, j);
