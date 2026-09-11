@@ -3206,7 +3206,7 @@ Sample reports. See how I explain a finding, show the evidence and describe the 
 
 Research. Read what I measured across company websites and AI assistants. Each study includes its methods, dates and limits. These are research observations, not client results. [Website agent-readiness study](/blog/website-agent-readiness-567-sites), [What AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit) and [Thirty days after the brief](/blog/thirty-days-after-the-brief).
 
-My own site. I use turva.dev to put this work into practice. You can inspect the source code and the published checks. [Public scanner](https://isitagentready.com/) and [read the source](https://github.com/erekola/turva-worker).
+My own site. I use turva.dev to put this work into practice. You can inspect the source code and the published checks. The [public scanner](https://isitagentready.com/) link opens the scanner's start page, where you can run a new check of your own. That page does not show the recorded result below. You can also [read the source](https://github.com/erekola/turva-worker).
 
 Scanner: isitagentready.com (third party, Cloudflare). Discoverability, Content Accessibility, Bot Access Control, and API, Auth, MCP and A2A Discovery: 100/100. Commerce: 100/100. Verified 100/100, Level 5, Agent-Native.
 
@@ -9045,7 +9045,7 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
   <section class="board" aria-label="agent-readiness scan result">
     <div class="board-top">
       <span class="board-head">independent agent-readiness scan of turva.dev <span class="bh-date">&middot; measured ${evMeasured}</span></span>
-      <a class="board-src" href="https://isitagentready.com/">scanner: isitagentready.com &middot; 3rd-party &middot; Cloudflare</a>
+      <a class="board-src" href="https://isitagentready.com/">scanner: isitagentready.com &middot; 3rd-party &middot; Cloudflare &middot; run your own check</a>
     </div>
     <div class="board-grid">
       <div class="cell"><span class="cat">discoverability</span><span class="val">100/100</span></div>
