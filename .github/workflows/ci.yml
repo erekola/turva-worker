@@ -23,8 +23,13 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node }}
-      # No install step: src/worker.js imports nothing and the suite uses node builtins
-      # only, so wrangler, the one devDependency, is not needed to run the tests.
+      # Since v3.154.0 src/worker.js imports one npm package, markdown-parity-check, for the
+      # hosted parity check, and tools/verify.mjs resolves it too. Only the runtime dependencies
+      # are installed, from the lock: --omit=dev leaves out wrangler, which the tests do not need,
+      # and --ignore-scripts runs no package install script. Without this step both jobs fail on
+      # ERR_MODULE_NOT_FOUND (run 13, commit 143d2e3).
+      - run: npm ci --omit=dev --ignore-scripts
+        working-directory: turva-worker
       - run: node --test
         working-directory: turva-worker
       - run: node tools/verify.mjs
