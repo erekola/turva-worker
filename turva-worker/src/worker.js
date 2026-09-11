@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.154.0 - the hosted Markdown parity check (2026-09-11): /markdown-parity-check compares the main content of a turva.dev page's HTML and Markdown with run() from the markdown-parity-check package, the same code the CLI runs, rendering both versions in process so no request leaves the Worker; other hosts answer 403 until the remote transport has its own Worker, CPU limit and egress measurement; a JSON POST API returns the CLI's report, its own PARITY_LIMITER fails closed, and the page joins /tools, PRIMARY_PATHS, the sitemap, META_BY_PATH and llms.txt (re-sign).
 // turva.dev worker v3.153.0 - the Onsite-3 polish round (2026-09-11): the delivery terms on the home and /services offer cards read at body text size and the Shopify retest is its own line, the audit sample's What each party delivers section carries seven subheadings and three lists instead of labels inside long paragraphs, the home finding card quotes the sample's own F1 readings, /contact names info@turva.dev once in its email section, and SITEMAP_LASTMOD moves to the day the page text changed. Both offer parsers still fail closed and accept one optional last sentence that starts One retest.
 // turva.dev worker v3.152.0 - the MTA-STS policy names only the Proton hosts (2026-09-10): the mailbox.org move finished on 2026-09-08 when SPF dropped the include, the four mbo000X._domainkey CNAMEs left the zone and the holvi lost mailbox-smtp, so the four mxext lines guarded a rollback that no longer exists and every one of them was a policy line matching no MX. The two Proton hosts stay, mode stays enforce, max_age stays 604800, and the _mta-sts id is bumped after the deploy so senders refetch before the cached policy expires.
 // turva.dev worker v3.150.1 - hotfix to the text round (2026-09-09): /services carries a short priced summary of the Shopify check and the audit again, and the Implementation block leads with the day rate, because verify.mjs --live binds every priced service to the price that opens its OWN heading block in the markdown WebMCP get_services hands back, and deleting those two sections took that binding with them. The two anchors #shopify and #audit are back on the sections; the long repeating write-ups stay deleted.
@@ -25,6 +26,11 @@
 // v3.132.1 was: hotfix (2026-09-06, Tek-357): the FAQ answer on implementation no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer text raw and the live gate read the link syntax as a difference between the published answer and the page (mds/gotchas.md 2026-09-03 (jatko 9)); the link stands after the FAQ as its own line.
 // v3.132.0 was: home content rewritten to Erik's brief (2026-09-06, Tek-357): eleven sections in the twin and the same order in HTML, two starting points as cards read from the twin list, what the client gets, the process in writing, work you can inspect with the scan board and the dated security scans, support beyond the first report, who does the work, a five-question FAQ and the contact section; the curl demo, the x402 prose and every "higher on the next scan" promise left the home page; title, meta description and the ProfessionalService description say the same thing as the page. Prices, scope and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.131.0 was: one outer frame for every home section (2026-09-06, Tek-356): .page now shares the hero and offer width, so headings, dividers, card grids, the scan board and the process steps align on the same edges, and the text runs the same width, which Erik chose over a narrower reading column. Prices and promises unchanged, llms.txt unchanged (no re-sign).
+
+// The Markdown parity check's comparison core: the npm package's library entry, bundled by wrangler at
+// deploy time and pinned with its integrity in package-lock.json. See the parity block above
+// serveToolsHtml for how the hosted check uses it.
+import { run as mpcRun, errorReport as mpcErrorReport, renderJson as mpcRenderJson, redactReport as mpcRedactReport, RunError as MpcRunError, maskUrl as mpcMaskUrl } from "markdown-parity-check";
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
@@ -148,6 +154,7 @@ var LLMS_TXT = `# turva.dev
 - [Shopify agent storefront check](https://turva.dev/shopify-agent-storefront-check.md)
 - [Free tools for agent-readiness](https://turva.dev/tools.md)
 - [llms.txt validator](https://turva.dev/llms-txt-validator.md)
+- [Markdown parity check](https://turva.dev/markdown-parity-check.md)
 - [Company](https://turva.dev/company.md)
 - [Contact](https://turva.dev/contact.md)
 - [Legal](https://turva.dev/legal.md)
@@ -1950,6 +1957,83 @@ All free tools on this site are collected on [the tools page](/tools).
 - [Free tools for agent-readiness](/tools)
 `,
 
+  "/markdown-parity-check": `# Markdown parity check
+
+Enter a page address to compare the main content of its HTML and its Markdown version. The report lists missing, added and changed blocks, numbers and links. It also shows where each one sits in the source.
+
+The check compares what the two versions say. It does not score the page. A pass does not prove that both versions mean the same thing.
+
+## How to use it
+
+- In a browser: enter the page address in the field above and press Check.
+- More options: a separate Markdown address, a CSS selector for the HTML content, strict mode and front matter handling.
+- As an agent: send a JSON POST request, described below under Use it from an agent or CI.
+
+## What this version checks
+
+This hosted version checks the published pages of turva.dev. The site's own Worker renders both versions of the page, so a check sends no request over the network. An address on any other site is refused with a message that points to the command-line tool.
+
+To check another site, run the same comparison on your own machine:
+
+    npx markdown-parity-check --url https://example.com/page
+
+The page and the command run the same comparison code from the open npm package. The report has the same format too.
+
+## What the check compares
+
+- The HTML content comes from main, article or role="main". Without any of them the page body is used and the report warns about it. A CSS selector overrides the choice.
+- Headings, paragraphs, list items, tables, code blocks and links are compared block by block.
+- Missing and added blocks are errors. So are differences in text, numbers, tables and links.
+- A change of order, heading level, case or punctuation is a warning.
+- Front matter at the top of the Markdown is kept and compared by default. Choose strip to remove it first.
+- Strict mode counts warnings as failures.
+
+## What a result tells you
+
+Pass means that no rejecting difference was found in the compared blocks. Fail lists the differences. Error means that the comparison could not finish, for example because the main content was empty or the page went over a limit.
+
+A missing Markdown version is a failure and never a pass. When the Markdown request returns HTML or an error page, the report says so and compares nothing.
+
+JavaScript is not run. Content that a page builds in the browser is compared as the server sent it.
+
+Not every turva.dev page passes. The HTML adds buttons, cards and forms. Some pages also leave out the Related list that the Markdown carries, and the report names each of these differences.
+
+## Limits
+
+- One page and its Markdown version per check. Nothing else is fetched.
+- HTML up to 512 KiB and Markdown up to 128 KiB.
+- Up to 250 000 block pairs. A larger page ends with an error, never with a partial result.
+- About 10 checks per minute from one IP address at each Cloudflare location.
+
+The command-line tool accepts larger pages.
+
+## Use it from an agent or CI
+
+Send a JSON request:
+
+    POST https://turva.dev/markdown-parity-check
+    Content-Type: application/json
+    Accept: application/json
+
+    {"url": "https://turva.dev/tools", "strict": false, "frontMatter": "keep"}
+
+The optional fields are markdownUrl and selector. The response is the report in the same JSON format as the command's --format json output. Its summary.exitCode carries the same 0, 1 or 2.
+
+HTTP 200 carries a pass or a fail. 400, 413 and 415 mean that the request was malformed. 403 means that the address is outside what this version checks, and 422 means that the comparison could not finish. 429 and 503 ask you to try again later. The Retry-After header says when. 500 means that the service itself failed.
+
+In CI, run the package with --strict. Source and releases are on [GitHub](https://github.com/erekola/markdown-parity-check) and the package is on [npm](https://www.npmjs.com/package/markdown-parity-check).
+
+## What is kept
+
+The service compares the two versions in memory and discards them. It does not store the report or write the address to its logs. The address travels in the request body and not in the page URL. Every response to a check carries a no-store header.
+
+## Related
+
+- [Serving Markdown to AI clients](/guides/markdown-for-agents)
+- [llms.txt validator](/llms-txt-validator)
+- [Free tools for agent-readiness](/tools)
+`,
+
   "/tools": `# Free tools for checking your site
 
 Start with a small check, inspect turva.dev's public MCP interface, or read the criteria for the agent-ready badge. These tools address specific parts of agent-readiness, and each page explains what the result does and does not establish.
@@ -1959,6 +2043,12 @@ Start with a small check, inspect turva.dev's public MCP interface, or read the 
 Enter a domain to check the file's structure and its home-page discovery links. No account is needed.
 
 [Open the validator](/llms-txt-validator)
+
+## Compare HTML and Markdown
+
+Enter a turva.dev page address to compare the main content of its HTML and Markdown versions. The open npm package runs the same comparison on any site.
+
+[Open the parity check](/markdown-parity-check)
 
 ## Read turva.dev through MCP
 
@@ -1975,6 +2065,7 @@ Read the eligibility criteria and get the embed code. The badge is self-declared
 ## For developers
 
 - The validator returns the same checks as JSON when requested with Accept: application/json. Its eight structural checks use pass, warn or fail. The two v2 discovery checks use pass or information and do not change the structural result. The same checks are available in the open npm package [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI and matching JSON output. Source on [GitHub](https://github.com/erekola/llms-txt-validator).
+- The Markdown parity check takes a JSON POST and returns the report format of the open npm package [markdown-parity-check](https://www.npmjs.com/package/markdown-parity-check), which runs the same comparison on any site. Source on [GitHub](https://github.com/erekola/markdown-parity-check).
 - The read-only MCP endpoint is https://mcp.turva.dev/mcp. It uses Streamable HTTP and requires no authentication. Connect with an MCP client rather than a browser. Its server card is published at https://turva.dev/.well-known/mcp/server-card.json.
 - The badge is an SVG served by turva.dev. Its link takes readers to the eligibility criteria.
 
@@ -1985,6 +2076,7 @@ These tools check specific parts of a site. The website and API audit adds a bro
 ## Related
 
 - [llms.txt validator](/llms-txt-validator)
+- [Markdown parity check](/markdown-parity-check)
 - [The agent-ready badge](/badge)
 - [MCP server cards and discovery](/guides/mcp-server-card)
 `,
@@ -5197,7 +5289,7 @@ Facts stated as data rather than prose, and the same fact visible in more than o
 // reads all three against this order. Round 17 (2026-09-03) found the blog ahead of the home
 // page in llms-full.txt and the pricing on line 78 of llms.txt; the order lived in five hand
 // lists that had drifted apart. It lives here now.
-var PRIMARY_PATHS = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/company", "/contact", "/legal"];
+var PRIMARY_PATHS = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
 var AUX_PATHS = ["/badge", "/auth.md", "/samples/audit-report", "/samples/shopify-agent-storefront-check"];
 var _guideOrderCache = null;
 function guideOrder() {
@@ -5732,7 +5824,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.153.0",
+    "version": "3.154.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5840,7 +5932,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MQ5F2EMBX3yrdIGT76gA0f74twRcB2RENz7nTvUFjNrJ0VwDjliC3gRlW4ARjM2PHh-GWh715pHid90E5bYGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LiiUERAbOQt9bjHZniXcJUD44jnhmLxbw_C3Rj6tiBoejEIErz622qf6Z35LBx_XWxBF6XuSTdMDIByxRJSpDg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MQ5F2EMBX3yrdIGT76gA0f74twRcB2RENz7nTvUFjNrJ0VwDjliC3gRlW4ARjM2PHh-GWh715pHid90E5bYGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4wJnXeE4Q88Qxbzh-kT_PapoqD90kwo1v4648Ei8HH4VAlW6EJi949a4cxsmFZpI56Ygw6RYD2rLYoOQHraNAA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6000,7 +6092,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.153.0",
+  "version": "3.154.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6657,6 +6749,7 @@ var SITEMAP_ENTRIES = [
   ["/shopify-agent-storefront-check", "monthly", "0.9"],
   ["/tools", "monthly", "0.6"],
   ["/llms-txt-validator", "monthly", "0.6"],
+  ["/markdown-parity-check", "monthly", "0.6"],
   ["/company", "monthly", "0.7"],
   ["/contact", "monthly", "0.7"],
   ["/legal", "yearly", "0.3"],
@@ -6790,7 +6883,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -7013,6 +7106,12 @@ var META_BY_PATH = {
     description: "Check llms.txt structure and home-page discovery links. Free, no signup. Per-check results for browsers, agents and CI.",
     image: "/og-llms-txt-validator.jpg",
     imageAlt: "llms.txt validator"
+  },
+  "/markdown-parity-check": {
+    title: "Markdown parity check for HTML pages · turva.dev",
+    description: "Compare the main content of a page's HTML and Markdown versions. Lists missing, added and changed blocks with their source lines. Free, no signup.",
+    image: "/og-markdown-parity-check.jpg",
+    imageAlt: "turva.dev tools card: the Markdown parity check compares a page's HTML and Markdown versions and lists every difference with its source line."
   },
   "/badge": {
     title: "Agent-ready badge: criteria and embed code · turva.dev",
@@ -8418,6 +8517,27 @@ function buildAuditServiceJsonLd(canonicalUrl) {
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
+function buildParityAppJsonLd(canonicalUrl) {
+  const url = canonicalUrl || "https://turva.dev/markdown-parity-check";
+  const app = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "@id": url + "#app",
+    "name": "Markdown parity check",
+    "url": url,
+    "description": "Compares the main content of a turva.dev page's HTML and Markdown versions and lists missing, added and changed blocks with their source lines. JSON output for agents.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en",
+    "isAccessibleForFree": true,
+    "isBasedOn": "https://www.npmjs.com/package/markdown-parity-check",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+    "publisher": { "@id": "https://turva.dev/#business" }
+  };
+  const json2 = JSON.stringify(app).replace(/<\/script/gi, "<\\/script");
+  return `<script type="application/ld+json">\n${json2}\n<\/script>`;
+}
+
 function buildValidatorAppJsonLd(canonicalUrl) {
   const url = canonicalUrl || "https://turva.dev/llms-txt-validator";
   const app = {
@@ -9288,6 +9408,25 @@ ${FAQ_CSS}
 .chk .l{color:#F2F4F3;font-weight:600;}
 .chk .d{grid-column:2;color:#C9D1CE;font-size:.95rem;line-height:1.5;}
 .chk.pass .s{color:#5DF18F;}.chk.warn .s{color:#E8C15A;}.chk.fail .s{color:#F17F5D;}.chk.info .s{color:#7FB2D9;}
+.pform>p,.pform>details,.pform>.verr{flex-basis:100%;margin:0;}
+.popts{border:1px solid #2D3D3D;border-radius:7px;padding:0 14px;margin:.3rem 0 .2rem;}
+.popts>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:600;color:#F2F4F3;}
+.popts[open]{padding-bottom:14px;}
+.popts label{display:block;font-size:.95rem;color:#F2F4F3;font-weight:600;margin:.8rem 0 .35rem;}
+.popts input[type=url],.popts input[type=text]{display:block;width:100%;box-sizing:border-box;min-height:50px;background:#07110D;border:1px solid #2D3D3D;border-radius:7px;padding:10px 14px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:16px;}
+.pcheck{display:flex;align-items:center;gap:10px;min-height:44px;margin:.4rem 0;}
+.popts .pcheck label{display:inline;margin:0;font-weight:500;}
+.pcheck input{width:22px;height:22px;min-height:0;padding:0;margin:0;flex:none;accent-color:#5DF18F;}
+.pradio{border:0;padding:0;margin:.6rem 0 0;min-width:0;}
+.pradio legend{font-size:.95rem;color:#F2F4F3;font-weight:600;padding:0;}
+.vform input:focus-visible,.popts>summary:focus-visible,#result pre:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
+.vform button[aria-disabled="true"]{opacity:.75;cursor:progress;}
+#result h3{margin:1.4rem 0 .6rem;}
+#result pre{max-height:28rem;overflow:auto;}
+#result q{color:#F2F4F3;}
+#result .copy-btn{margin:0 10px 0 0;}
+.pform .copy-btn{margin:0;min-height:44px;background:transparent;color:#F2F4F3;border:1px solid rgba(255,255,255,0.24);font-weight:600;}
+.pform .copy-btn:hover{border-color:#5DF18F;color:#5DF18F;}
 .tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
 .tbl table{margin:0;min-width:100%;}
 .tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
@@ -9767,8 +9906,8 @@ function serveToolsHtml(canonicalUrl) {
 ${cardPageNav("/tools")}
 <main id="main">
   ${mdPageStart("/tools")}
-  <div class="cards three">
-      ${mdToolCards("/tools", ["Check an llms.txt file", "Read turva.dev through MCP", "Use the agent-ready badge"])}
+  <div class="cards">
+      ${mdToolCards("/tools", ["Check an llms.txt file", "Compare HTML and Markdown", "Read turva.dev through MCP", "Use the agent-ready badge"])}
   </div>
   ${mdOpenSec("/tools", "For developers", "technical-details")}
   ${mdOpenSec("/tools", "Need the whole picture?", "services")}
@@ -10606,6 +10745,492 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers });
 }
 
+// ---------------------------------------------------------------------------
+// Markdown parity check, hosted (v3.154.0). The comparison is the npm package markdown-parity-check,
+// its library entry bundled by wrangler: the same run() the CLI calls, with lower limits for this
+// runtime. This block only gets the two documents, validates the request and renders the report.
+//
+// What is fetched. Phase 1 checks turva.dev's own published pages (PAGE_MARKDOWN keys and the home
+// page). They are rendered in process through handleRequest, so no request leaves the Worker, the
+// content is this site's own, and a tool path (this page, the llms.txt validator) is refused so a
+// check can never start another check. Every other host answers 403 until the remote transport runs in
+// its own Worker with its own CPU limit (env.PARITY, a service binding, and env.PARITY_REMOTE_FETCH
+// "on"). The reasons are measured, not assumed: Workers fetch() has no documented guarantee against
+// private or rebound destinations, and the Markdown parser is quadratic on hostile input (40 KB of
+// emphasis markers took 12.6 s of CPU in Node.js, 2026-09-11), and a synchronous parse cannot be
+// interrupted by a timer. Nothing here writes the target address or the report to a log, and every
+// response to a check is no-store.
+var PARITY_PATH = "/markdown-parity-check";
+var PARITY_SCRIPT_PATH = "/markdown-parity-check.js";
+// Lower than the CLI defaults (4 000 000 pairs, 1 000 000 candidates, unbounded work, depth 1 024):
+// measured 2026-09-11 in Node.js 24, a 490 by 490 paragraph pair at these limits took 63 ms and the
+// similarity search stopped at its candidate limit after 69 ms. Exceeding one is an error result.
+var PARITY_LIMITS = { maxAlignmentPairs: 250000, maxSimilarityCandidates: 50000, maxSimilarityWork: 2000000, maxNestingDepth: 512 };
+var PARITY_MAX_HTML_BYTES = 524288;
+var PARITY_MAX_MARKDOWN_BYTES = 131072;
+var PARITY_MAX_REQUEST_BYTES = 8192;
+var PARITY_MAX_URL_CHARS = 2048;
+var PARITY_MAX_SELECTOR_CHARS = 300;
+var PARITY_MAX_REDIRECTS = 5;
+var PARITY_MAX_CONCURRENT = 4;
+var PARITY_FINDINGS_SHOWN = 200;
+var PARITY_JSON_EMBED_MAX = 409600;
+var PARITY_EXAMPLE_URL = "https://turva.dev/tools";
+// Comparisons running in this isolate. The rate limiter is per client and per Cloudflare location;
+// this bounds how many synchronous comparisons one isolate holds at once, and a request over it gets
+// 503 with Retry-After instead of waiting.
+var parityActive = 0;
+
+class ParityError extends Error {
+  constructor(kind, status, message, field) {
+    super(message);
+    this.name = "ParityError";
+    this.kind = kind;
+    this.status = status;
+    this.field = field || null;
+  }
+}
+
+async function parityReadCapped(body, cap) {
+  if (!body) return { buf: new Uint8Array(0), bytes: 0, over: false };
+  const reader = body.getReader();
+  const chunks = [];
+  let bytes = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    bytes += value.length;
+    if (bytes > cap) {
+      try { await reader.cancel(); } catch { /* the size verdict is the answer */ }
+      return { buf: null, bytes, over: true };
+    }
+    chunks.push(value);
+  }
+  const buf = new Uint8Array(bytes);
+  let o = 0;
+  for (const c of chunks) { buf.set(c, o); o += c.length; }
+  return { buf, bytes, over: false };
+}
+
+// Same decoding as the CLI's decodeBody: the charset from Content-Type, UTF-8 when it is missing or
+// the runtime does not know it.
+function parityDecode(buf, contentType) {
+  const m = /charset=([^;]+)/i.exec(contentType || "");
+  const charset = (m ? m[1] : "utf-8").trim().replace(/^"|"$/g, "").toLowerCase();
+  try {
+    return new TextDecoder(charset, { fatal: false }).decode(buf);
+  } catch {
+    return new TextDecoder("utf-8").decode(buf);
+  }
+}
+
+// The request: JSON from an agent, or the page's form. Field values are kept so the form can show
+// what was sent next to the error.
+async function parityParseInput(request) {
+  const type = (request.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+  const form = type === "application/x-www-form-urlencoded";
+  const values = {};
+  const fail = (kind, status, message, field) => {
+    const e = new ParityError(kind, status, message, field);
+    e.values = values;
+    return e;
+  };
+  if (!form && type !== "application/json") throw fail("unsupported_media_type", 415, "Send the check as application/json or from the form on this page.");
+  const read = await parityReadCapped(request.body, PARITY_MAX_REQUEST_BYTES);
+  if (read.over) throw fail("request_too_large", 413, "The request body is larger than " + PARITY_MAX_REQUEST_BYTES + " bytes.");
+  const text = new TextDecoder("utf-8").decode(read.buf);
+  let raw;
+  if (form) {
+    const p = new URLSearchParams(text);
+    raw = { url: p.get("url"), markdownUrl: p.get("markdown_url"), selector: p.get("selector"), strict: p.get("strict") === "on", frontMatter: p.get("front_matter") || "keep" };
+  } else {
+    try { raw = JSON.parse(text); } catch { throw fail("invalid_json", 400, "The request body is not valid JSON."); }
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw fail("invalid_json", 400, "The request body must be a JSON object.");
+  }
+  for (const k of ["url", "markdownUrl", "selector"]) if (typeof raw[k] === "string") values[k] = cut(raw[k], PARITY_MAX_URL_CHARS);
+  if (typeof raw.strict === "boolean") values.strict = raw.strict;
+  if (raw.frontMatter === "strip") values.frontMatter = "strip";
+  const str = (v, field, max, label) => {
+    if (v === undefined || v === null) return undefined;
+    if (typeof v !== "string") throw fail("invalid_field", 400, label + " must be a string.", field);
+    const s = v.trim();
+    if (s.length > max) throw fail("invalid_field", 400, label + " is longer than " + max + " characters.", field);
+    return s === "" ? undefined : s;
+  };
+  const input = {
+    url: str(raw.url, "url", PARITY_MAX_URL_CHARS, "The page URL"),
+    markdownUrl: str(raw.markdownUrl, "markdownUrl", PARITY_MAX_URL_CHARS, "The Markdown URL"),
+    selector: str(raw.selector, "selector", PARITY_MAX_SELECTOR_CHARS, "The CSS selector"),
+    strict: raw.strict === undefined ? false : raw.strict,
+    frontMatter: raw.frontMatter === undefined ? "keep" : raw.frontMatter
+  };
+  if (typeof input.strict !== "boolean") throw fail("invalid_field", 400, "strict must be true or false.", "strict");
+  if (input.frontMatter !== "keep" && input.frontMatter !== "strip") throw fail("invalid_field", 400, "frontMatter must be keep or strip.", "frontMatter");
+  if (!input.url) throw fail("invalid_field", 400, "Enter the page URL.", "url");
+  return { input, values, form };
+}
+
+// https only, a public DNS name (the validator's isValidPublicHost: no IP literals, no local or
+// internal names), no port, no credentials. The fragment is dropped, as a browser does.
+function parityTarget(raw, field, label) {
+  let u;
+  try { u = new URL(raw); } catch { throw new ParityError("invalid_url", 400, label + " is not a full address. Start it with https://.", field); }
+  if (u.protocol !== "https:") throw new ParityError("invalid_url", 400, label + " must start with https://.", field);
+  if (u.username || u.password) throw new ParityError("invalid_url", 400, label + " must not carry a user name or a password.", field);
+  if (u.port) throw new ParityError("invalid_url", 400, label + " must use the default https port.", field);
+  if (!isValidPublicHost(u.hostname.toLowerCase())) throw new ParityError("blocked", 422, label + " must name a public domain. IP addresses and local names are refused.", field);
+  u.hash = "";
+  return u;
+}
+
+function paritySameSite(a, b) {
+  const apex = (h) => (h.startsWith("www.") ? h.slice(4) : h).toLowerCase();
+  return apex(a.hostname) === apex(b.hostname);
+}
+
+function parityIsSelf(u) {
+  const h = u.hostname.toLowerCase();
+  return h === "turva.dev" || h === "www.turva.dev";
+}
+
+// A published page: the home page or a PAGE_MARKDOWN key, as the page, its .md twin or with a
+// trailing slash. The two tool pages are not: a check must never start a check or a fetch.
+function paritySelfPathAllowed(pathname) {
+  if (pathname === PARITY_SCRIPT_PATH) return false;
+  let base = pathname.endsWith(".html.md") ? pathname.slice(0, -8) : pathname.endsWith(".md") ? pathname.slice(0, -3) : pathname;
+  if (base.length > 1 && base.endsWith("/")) base = base.slice(0, -1);
+  if (base === PARITY_PATH || base === "/llms-txt-validator") return false;
+  if (base === "/" || base === "" || base === "/index") return true;
+  return Object.prototype.hasOwnProperty.call(PAGE_MARKDOWN, base);
+}
+
+async function paritySource(requested, final, res, accept, redirects) {
+  const cap = accept === "text/html" ? PARITY_MAX_HTML_BYTES : PARITY_MAX_MARKDOWN_BYTES;
+  const read = await parityReadCapped(res.body, cap);
+  const label = accept === "text/html" ? "HTML" : "Markdown";
+  if (read.over) throw new ParityError("too_large", 422, "The " + label + " response is larger than " + cap + " bytes, the limit of this hosted version. The command-line tool accepts larger pages.");
+  const contentType = res.headers.get("content-type");
+  return {
+    meta: { kind: "url", url: mpcMaskUrl(final), requestedUrl: mpcMaskUrl(requested), status: res.status, contentType, accept, redirects, bytes: read.bytes, baseUrl: mpcMaskUrl(final) },
+    body: parityDecode(read.buf, contentType),
+    base: final
+  };
+}
+
+// One of turva.dev's own pages, rendered in process with the Accept header the CLI sends. Redirects
+// are followed within turva.dev only, and every hop is checked against the published-page list again.
+async function parityFetchSelf(start, accept, env) {
+  let url = new URL(start.href);
+  let redirects = 0;
+  const visited = new Set();
+  for (;;) {
+    if (visited.has(url.href)) throw new ParityError("redirect_loop", 422, "Redirect loop at " + mpcMaskUrl(url.href) + ".");
+    visited.add(url.href);
+    if (!parityIsSelf(url)) throw new ParityError("off_host", 422, "The address redirects to another host, " + mpcMaskUrl(url.href) + ". Redirects are followed within the same site only.");
+    if (!paritySelfPathAllowed(url.pathname)) throw new ParityError("not_published", 403, mpcMaskUrl(url.href) + " is not one of turva.dev's published pages, so this version does not check it.", "url");
+    const res = await handleRequest(new Request(url.href, { method: "GET", headers: { accept } }), env);
+    if (res.status >= 300 && res.status < 400) {
+      try { await res.body?.cancel(); } catch { /* nothing to release */ }
+      const loc = res.headers.get("location");
+      if (!loc) throw new ParityError("protocol", 422, "HTTP " + res.status + " without a Location header.");
+      if (redirects >= PARITY_MAX_REDIRECTS) throw new ParityError("too_many_redirects", 422, "More than " + PARITY_MAX_REDIRECTS + " redirects.");
+      url = new URL(loc, url);
+      url.hash = "";
+      redirects++;
+      continue;
+    }
+    return paritySource(start.href, url.href, res, accept, redirects);
+  }
+}
+
+// Phase 2: the remote transport lives in its own Worker behind a service binding, so its CPU limit
+// and its failures stay out of this isolate. Its answer is { status, report }.
+async function parityRemote(input, env) {
+  let res;
+  try {
+    res = await env.PARITY.fetch("https://parity.internal/check", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(input) });
+  } catch {
+    throw new ParityError("remote_failed", 503, "The comparison service did not answer. Try again later.");
+  }
+  if (res.status !== 200) throw new ParityError("remote_failed", 503, "The comparison service did not answer. Try again later.");
+  const out = await res.json();
+  if (!out || !out.report || typeof out.status !== "number") throw new ParityError("remote_failed", 503, "The comparison service sent an answer this page cannot read.");
+  return { status: out.status, report: out.report, field: out.field || null };
+}
+
+function parityOptions(input) {
+  return { selector: input ? input.selector : undefined, frontMatter: input ? input.frontMatter : "keep", strict: input ? input.strict : false, mode: "url", limits: PARITY_LIMITS };
+}
+
+async function parityRunCheck(input, env) {
+  const options = parityOptions(input);
+  let html = null;
+  let markdown = null;
+  try {
+    const page = parityTarget(input.url, "url", "The page URL");
+    const mdTarget = input.markdownUrl ? parityTarget(input.markdownUrl, "markdownUrl", "The Markdown URL") : page;
+    if (!paritySameSite(page, mdTarget)) throw new ParityError("off_host", 422, "The Markdown URL must be on the same site as the page.", "markdownUrl");
+    // A .md address always answers with Markdown here, whatever the Accept header says, so as the page
+    // URL it would compare Markdown with Markdown under an HTML label. It belongs in the Markdown field.
+    if (parityIsSelf(page) && page.pathname.toLowerCase().endsWith(".md")) throw new ParityError("invalid_url", 400, "The page URL must be the HTML page. Put a .md address in the Markdown URL field.", "url");
+    if (!parityIsSelf(page)) {
+      if (env && env.PARITY_REMOTE_FETCH === "on" && env.PARITY) return await parityRemote(input, env);
+      throw new ParityError("remote_disabled", 403, "This hosted version checks turva.dev pages only. For any other site, run npx markdown-parity-check --url with the page address on your own machine.", "url");
+    }
+    html = await parityFetchSelf(page, "text/html", env);
+    if (html.meta.status >= 400) throw new ParityError("no_page", 422, "The HTML request returned HTTP " + html.meta.status + ". There is no page to compare.", "url");
+    markdown = await parityFetchSelf(mdTarget, "text/markdown", env);
+    return { status: 200, report: mpcRun(html, markdown, options), field: null };
+  } catch (err) {
+    let status = 500;
+    let field = null;
+    let message;
+    if (err instanceof ParityError) {
+      status = err.status;
+      field = err.field;
+      message = err.message;
+    } else if (err instanceof MpcRunError) {
+      status = 422;
+      message = err.message;
+      if (/^(Invalid selector|Selector ")/.test(message)) field = "selector";
+    } else {
+      // Unexpected: the name only, so no page content or address can reach a log.
+      console.error("parity check failed unexpectedly:", err && err.name ? err.name : "unknown");
+      message = "The comparison failed unexpectedly. Nothing about the page was stored.";
+    }
+    return { status, report: mpcErrorReport(options, html ? html.meta : null, markdown ? markdown.meta : null, message), field };
+  }
+}
+
+function parityResponse(asJson, status, report, state, retryAfter) {
+  if (asJson) {
+    const headers = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex", "vary": "Accept" });
+    applySecurityHeaders(headers, "default");
+    if (retryAfter) headers.set("retry-after", String(retryAfter));
+    return new Response(mpcRenderJson(report), { status, headers });
+  }
+  const res = serveParityHtml("https://turva.dev/markdown-parity-check", Object.assign({ report, status }, state || {}));
+  if (retryAfter) res.headers.set("retry-after", String(retryAfter));
+  return res;
+}
+
+async function handleParityPost(request, env) {
+  const asJson = wantsJson(request) || (request.headers.get("content-type") || "").toLowerCase().startsWith("application/json");
+  const refuse = (status, message, retryAfter) => parityResponse(asJson, status, mpcErrorReport(parityOptions(null), null, null, message), null, retryAfter);
+  // Fail closed: without its limiter this endpoint does not run, unlike the site-wide limiter,
+  // which fails open because a page must never go dark over it.
+  if (!env || !env.PARITY_LIMITER) return refuse(503, "The check is unavailable because its rate limiter is not configured. Try again later.", 60);
+  let allowed = false;
+  try {
+    allowed = (await env.PARITY_LIMITER.limit({ key: "parity:" + (request.headers.get("CF-Connecting-IP") || "no-ip") })).success === true;
+  } catch {
+    return refuse(503, "The check is unavailable because its rate limiter did not answer. Try again later.", 60);
+  }
+  if (!allowed) return refuse(429, "Too many checks from your IP address. Wait a minute and try again.", 60);
+  if (parityActive >= PARITY_MAX_CONCURRENT) return refuse(503, "The service is busy with other checks. Try again in a few seconds.", 10);
+  parityActive++;
+  try {
+    let parsed;
+    try {
+      parsed = await parityParseInput(request);
+    } catch (err) {
+      if (!(err instanceof ParityError)) throw err;
+      return parityResponse(asJson, err.status, mpcErrorReport(parityOptions(null), null, null, err.message), { values: err.values || {}, field: err.field });
+    }
+    const out = await parityRunCheck(parsed.input, env);
+    return parityResponse(asJson, out.status, out.report, { values: parsed.values, field: out.field });
+  } finally {
+    parityActive--;
+  }
+}
+
+function parityFormHtml(state) {
+  const v = (state && state.values) || {};
+  const report = state && state.report;
+  const err = report && report.summary.result === "error" ? report.summary.error : null;
+  const field = err && state.field ? state.field : null;
+  const errFor = (f) => (field === f ? `<p class="verr" id="mpc-${f}-err">${escapeHtml(err)}</p>` : "");
+  const desc = (f) => (field === f ? ` aria-invalid="true" aria-describedby="mpc-${f}-hint mpc-${f}-err"` : ` aria-describedby="mpc-${f}-hint"`);
+  const open = v.markdownUrl || v.selector || v.strict || v.frontMatter === "strip" || field === "markdownUrl" || field === "selector";
+  // The addresses come back masked, like everything else a check answers with: a secret in a query
+  // string is not repeated in the response, even to the person who sent it.
+  const shown = (s) => (s ? mpcMaskUrl(s) : "");
+  return `<form class="vform pform" id="mpc-form" method="post" action="/markdown-parity-check#result" novalidate>
+    <label for="mpc-url">Page URL</label>
+    <input type="url" id="mpc-url" name="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://turva.dev/tools" value="${escapeHtml(shown(v.url))}"${desc("url")}>
+    <button type="submit" id="mpc-submit">Check</button>
+    <p class="fine" id="mpc-url-hint">A full address that starts with https://. The Markdown is requested from the same address.</p>
+    ${errFor("url")}
+    <details class="popts"${open ? " open" : ""}>
+      <summary>More options</summary>
+      <label for="mpc-markdownUrl">Markdown URL, optional</label>
+      <input type="url" id="mpc-markdownUrl" name="markdown_url" inputmode="url" autocomplete="off" spellcheck="false" value="${escapeHtml(shown(v.markdownUrl))}"${desc("markdownUrl")}>
+      <p class="fine" id="mpc-markdownUrl-hint">For a Markdown version at its own address on the same site.</p>
+      ${errFor("markdownUrl")}
+      <label for="mpc-selector">CSS selector for the HTML content, optional</label>
+      <input type="text" id="mpc-selector" name="selector" autocomplete="off" spellcheck="false" value="${escapeHtml(v.selector || "")}"${desc("selector")}>
+      <p class="fine" id="mpc-selector-hint">Without one: main, article or role="main", then body.</p>
+      ${errFor("selector")}
+      <p class="pcheck"><input type="checkbox" id="mpc-strict" name="strict" value="on"${v.strict ? " checked" : ""}><label for="mpc-strict">Strict: count warnings as failures</label></p>
+      <fieldset class="pradio"><legend>Front matter at the top of the Markdown</legend>
+        <p class="pcheck"><input type="radio" id="mpc-fm-keep" name="front_matter" value="keep"${v.frontMatter !== "strip" ? " checked" : ""}><label for="mpc-fm-keep">Keep it and compare it, the default</label></p>
+        <p class="pcheck"><input type="radio" id="mpc-fm-strip" name="front_matter" value="strip"${v.frontMatter === "strip" ? " checked" : ""}><label for="mpc-fm-strip">Strip it before the comparison</label></p>
+      </fieldset>
+    </details>
+    <p class="fine" id="mpc-status" role="status" aria-live="polite"></p>
+    <p class="fine"><button type="button" class="copy-btn" id="mpc-example" data-url="${PARITY_EXAMPLE_URL}" hidden>Fill in an example</button></p>
+  </form>`;
+}
+
+function parityResultHtml(input, status) {
+  const r = mpcRedactReport(input);
+  const s = r.summary;
+  const word = { pass: "Pass", fail: "Fail", error: "Error" };
+  const sev = { error: "Error", warning: "Warning", info: "Information" };
+  const cls = { error: "fail", warning: "warn", info: "info" };
+  const dir = { html_only: "HTML only", markdown_only: "Markdown only", both: "both versions" };
+  const src = (label, m) => (m && m.kind === "url" && m.url
+    ? `<p class="aview-cmd">${label}: ${escapeHtml(m.url)}, HTTP ${escapeHtml(String(m.status))}, ${escapeHtml(m.contentType || "no content type")}, ${m.bytes} bytes, ${m.redirects} redirect(s)</p>`
+    : "");
+  const where = (label, side) => {
+    if (!side) return "";
+    const parts = [];
+    if (side.line !== undefined) parts.push("line " + side.line);
+    if (side.path) parts.push(side.path);
+    if (side.blockIndex !== undefined) parts.push("block " + side.blockIndex);
+    return `<span class="d">${label}: ${escapeHtml(parts.join(", ") || "no location")}${side.excerpt !== undefined ? ` <q>${escapeHtml(side.excerpt)}</q>` : ""}</span>`;
+  };
+  let out = `<section class="sec" id="result" aria-labelledby="result-h"><h2 id="result-h">Result: ${word[s.result] || "Error"}</h2>`;
+  if (s.result === "error") {
+    out += `<p class="verr">${escapeHtml(s.error || "The comparison could not be completed.")}</p>`;
+  } else {
+    out += `<p class="result-sum"><span><b>Errors</b> ${s.errors}</span><span><b>Warnings</b> ${s.warnings}</span><span><b>Information</b> ${s.infos}</span><span><b>Strict</b> ${s.strict ? "on" : "off"}</span></p>`;
+  }
+  out += src("HTML", r.sources.html) + src("Markdown", r.sources.markdown);
+  if (r.extraction) {
+    const e = r.extraction;
+    out += `<p>HTML content from ${escapeHtml(e.html.strategy)}, ${e.html.confidence} confidence, ${e.html.blockCount} blocks. Markdown ${e.markdown.blockCount} blocks.</p>`;
+    const notes = [...e.html.notes, ...e.markdown.notes];
+    if (notes.length) out += `<ul>${notes.map((n) => `<li>${escapeHtml(n)}</li>`).join("")}</ul>`;
+  } else if (s.result === "fail") {
+    out += `<p>Nothing was compared: the Markdown delivery failed.</p>`;
+  }
+  if (s.coverage) {
+    const c = s.coverage;
+    out += `<p>Aligned: ${c.htmlMatched} of ${c.htmlBlocks} HTML blocks and ${c.markdownMatched} of ${c.markdownBlocks} Markdown blocks.</p>`;
+  }
+  const shown = r.findings.slice(0, PARITY_FINDINGS_SHOWN);
+  if (r.findings.length > shown.length) out += `<p class="verr">Showing the first ${shown.length} of ${r.findings.length} findings. The JSON report below lists all of them.</p>`;
+  if (shown.length) {
+    out += `<h3>Findings</h3>\n    ` + shown.map((f) => `<div class="chk ${cls[f.severity] || "info"}"><span class="s">${sev[f.severity] || escapeHtml(f.severity)}</span><span class="l">${escapeHtml(f.code)}, ${dir[f.direction] || escapeHtml(f.direction)}: ${escapeHtml(f.message)}</span>${where("HTML", f.html)}${where("Markdown", f.markdown)}${f.before !== undefined || f.after !== undefined ? `<span class="d">Before: ${escapeHtml(f.before === undefined ? "none" : f.before)}. After: ${escapeHtml(f.after === undefined ? "none" : f.after)}.</span>` : ""}</div>`).join("\n    ");
+  } else if (s.result !== "error") {
+    out += `<p>No findings.</p>`;
+  }
+  out += `<h3>Limits of this result</h3><ul>${r.limitations.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}</ul>`;
+  const json = mpcRenderJson(input);
+  if (json.length <= PARITY_JSON_EMBED_MAX) {
+    out += `<h3>JSON report</h3>
+    <p class="fine"><button type="button" class="copy-btn" id="mpc-copy" hidden>Copy JSON</button><button type="button" class="copy-btn" id="mpc-save" hidden>Save JSON</button></p>
+    <p class="fine" id="mpc-json-status" role="status" aria-live="polite"></p>
+    <details><summary>Show the JSON report</summary><pre id="mpc-json" tabindex="0">${escapeHtml(json)}</pre></details>`;
+  } else {
+    out += `<p>The JSON report is ${json.length} characters, too long to show here. Request it with Accept: application/json.</p>`;
+  }
+  return out + `\n  </section>`;
+}
+
+function serveParityHtml(canonicalUrl, state) {
+  const head = cardPageHead(buildMetaBlock("/markdown-parity-check", canonicalUrl), buildGuideJsonLd("/markdown-parity-check", canonicalUrl) + "\n" + buildParityAppJsonLd(canonicalUrl), canonicalUrl, `<script src="${PARITY_SCRIPT_PATH}" defer></script>`);
+  const body = `${head}
+${cardPageNav("/markdown-parity-check")}
+<main id="main">
+  ${mdPageStart("/markdown-parity-check")}
+  ${parityFormHtml(state)}
+  ${state && state.report ? parityResultHtml(state.report, state.status) : ""}
+  ${mdOpenSec("/markdown-parity-check", "How to use it")}
+  ${mdOpenSec("/markdown-parity-check", "What this version checks", "scope")}
+  ${mdOpenSec("/markdown-parity-check", "What the check compares", "what-is-compared")}
+  ${mdOpenSec("/markdown-parity-check", "What a result tells you", "what-a-result-means")}
+  ${mdOpenSec("/markdown-parity-check", "Limits", "limits")}
+  ${mdOpenSec("/markdown-parity-check", "Use it from an agent or CI", "use-in-an-agent-or-ci")}
+  ${mdOpenSec("/markdown-parity-check", "What is kept", "what-is-kept")}
+  ${mdOpenSec("/markdown-parity-check", "Related", "related-guides")}
+</main>
+${footerHtml()}
+</body>
+</html>`;
+  const headers = cardPageHeaders(canonicalUrl);
+  if (state) {
+    headers.set("cache-control", "no-store");
+    headers.set("x-robots-tag", "noindex");
+  }
+  return new Response(body, { status: state && state.status ? state.status : 200, headers });
+}
+
+// Served at /markdown-parity-check.js, allowed by script-src 'self' like /blog-filter.js: no inline
+// script and no CSP change. It only adds the busy state, the example button and copy and save for the
+// JSON report; the form works without it. No backticks and no template placeholders in this literal,
+// so the served bytes are the source bytes. Every text it writes goes through textContent.
+var PARITY_JS = `(function () {
+  var form = document.getElementById("mpc-form");
+  if (!form) return;
+  var status = document.getElementById("mpc-status");
+  var submit = document.getElementById("mpc-submit");
+  var url = document.getElementById("mpc-url");
+  var example = document.getElementById("mpc-example");
+  var label = submit ? submit.textContent : "Check";
+  function reset() {
+    if (!submit) return;
+    submit.removeAttribute("aria-disabled");
+    submit.textContent = label;
+  }
+  window.addEventListener("pageshow", reset);
+  if (example && url) {
+    example.hidden = false;
+    example.addEventListener("click", function () {
+      url.value = example.getAttribute("data-url") || "";
+      if (status) status.textContent = "The example address is in the Page URL field. Press Check to run it.";
+    });
+  }
+  form.addEventListener("submit", function (event) {
+    if (!submit) return;
+    if (submit.getAttribute("aria-disabled") === "true") { event.preventDefault(); return; }
+    submit.setAttribute("aria-disabled", "true");
+    submit.textContent = "Checking";
+    if (status) status.textContent = "Checking. Both versions are being read and compared.";
+  });
+  var pre = document.getElementById("mpc-json");
+  var note = document.getElementById("mpc-json-status");
+  var copy = document.getElementById("mpc-copy");
+  var save = document.getElementById("mpc-save");
+  function tell(text) { if (note) note.textContent = text; }
+  if (pre && copy) {
+    copy.hidden = false;
+    copy.addEventListener("click", function () {
+      var text = pre.textContent || "";
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { tell("The JSON report is copied."); }, function () { tell("The browser blocked copying. Open the JSON report and select the text instead."); });
+      } else {
+        tell("This browser cannot copy from the page. Open the JSON report and select the text instead.");
+      }
+    });
+  }
+  if (pre && save) {
+    save.hidden = false;
+    save.addEventListener("click", function () {
+      var blob = new Blob([pre.textContent || ""], { type: "application/json" });
+      var link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "markdown-parity-report.json";
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(function () { URL.revokeObjectURL(link.href); link.remove(); }, 2000);
+      tell("The JSON report was saved as markdown-parity-report.json.");
+    });
+  }
+})();
+`;
+
 function mdGuideGroupSec(path, h) {
   const blocks = mdSection(path, h).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
   const lead = blocks.filter((b) => !b.startsWith("- ")).map((b) => `<p>${renderInline(b)}</p>`).join("");
@@ -11159,7 +11784,8 @@ async function handleRequest(request, env) {
   const postAllowed = pathLower === "/v1/message:send" || pathLower === "/v1/message:send/"
     || pathLower === "/api" || pathLower === "/api/" || pathLower === "/x402" || pathLower === "/x402/"
     || !!X402_ROUTES[pathLower] || !!X402_ROUTES[pathLower.replace(/\/$/, "")]
-    || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token";
+    || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token"
+    || pathname === "/markdown-parity-check";
   if (!acpFamily && request.method !== "GET" && request.method !== "OPTIONS" && !(request.method === "POST" && postAllowed)) {
     return serve405(postAllowed ? "GET, HEAD, POST, OPTIONS" : "GET, HEAD, OPTIONS", pathLower);
   }
@@ -11177,7 +11803,7 @@ async function handleRequest(request, env) {
     // A page or an unknown path: answer the method question and nothing else. Until v3.115.0
     // OPTIONS / fell through to serveHomeHtml and returned the whole page. The fediverse
     // aliases and the legacy paths keep redirecting on OPTIONS, as they do on GET.
-    const headers = new Headers({ "allow": "GET, HEAD, OPTIONS" });
+    const headers = new Headers({ "allow": postAllowed ? "GET, HEAD, POST, OPTIONS" : "GET, HEAD, OPTIONS" });
     applySecurityHeaders(headers, "default");
     return new Response(null, { status: 204, headers });
   }
@@ -11281,6 +11907,12 @@ async function handleRequest(request, env) {
   var briefR = briefRoute(pathname);
   if (briefR) return serveBrief(briefR, pathname, env, request);
 
+  // A check is a POST and runs before content negotiation, so an Accept header that names
+  // Markdown cannot turn a check into the twin.
+  if (pathname === "/markdown-parity-check" && request.method === "POST") {
+    return handleParityPost(request, env);
+  }
+
   if (pathname.endsWith(".md")) {
     if (pathname === "/index.md" || pathname === "/index.html.md") {
       return serveMarkdown(HOME_MARKDOWN, "https://turva.dev/");
@@ -11349,6 +11981,12 @@ async function handleRequest(request, env) {
   }
   if (pathname === "/tools") {
     return serveToolsHtml("https://turva.dev/tools");
+  }
+  if (pathname === "/markdown-parity-check") {
+    return serveParityHtml("https://turva.dev/markdown-parity-check", null);
+  }
+  if (pathname === "/markdown-parity-check.js") {
+    return serveStatic(PARITY_JS, "text/javascript; charset=utf-8", "asset");
   }
   if ((pathname.startsWith("/guides/") || pathname.startsWith("/blog/") || pathname.startsWith("/samples/")) && PAGE_MARKDOWN[pathname]) {
     return serveGuideHtml(pathname, "https://turva.dev" + pathname);

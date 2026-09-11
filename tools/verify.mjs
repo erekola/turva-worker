@@ -15,7 +15,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createPublicKey, verify as edVerify } from 'node:crypto';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -818,6 +819,7 @@ const twConverted = {
          h2: { 'Questions before you start': 'Frequently asked' } },
   '/blog':    { fn: 'serveBlogHtml',    mdOnly: [], hand: ['All posts'] }, // All posts is the dated list, rendered by blogPostLinks() from META_BY_PATH (2026-09-03)
   '/llms-txt-validator': { fn: 'serveLlmsValidatorHtml', mdOnly: [], hand: ['How to use it'], prose: ['The two v2 discovery checks are informational'] }, // the result note repeats the twin's own sentence under the check list (Tek-358)
+  '/markdown-parity-check': { fn: 'serveParityHtml', mdOnly: [], hand: [] }, // the form and the result come from parityFormHtml and parityResultHtml; every twin section renders through mdOpenSec (v3.154.0)
   '/services': { fn: 'serveServicesHtml', mdOnly: [], hand: [], h2: { 'Before we start': 'Frequently asked' } },
   '/tools':   { fn: 'serveToolsHtml',   mdOnly: ['Related'] },
   '/badge':   { fn: 'serveBadgeHtml',   mdOnly: [] },
@@ -1371,7 +1373,11 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // not mdOnly/hand must be rendered, and the rendered ones must keep the twin's order.
     // Extra rendered headings (index lists, hand sections) are ignored, not failed.
     try {
-      const rendered = (await import('data:text/javascript;base64,' + Buffer.from(src.worker.text).toString('base64'))).default;
+      // worker.js imports markdown-parity-check (v3.154.0) and a data: URL resolves no package, so the
+      // bare specifier is pointed at the file the worker's own node_modules resolves it to.
+      const mpcEntry = pathToFileURL(createRequire(join(ROOT, 'turva-worker', 'package.json')).resolve('markdown-parity-check')).href;
+      const workerText = src.worker.text.replace('from "markdown-parity-check";', 'from "' + mpcEntry + '";');
+      const rendered = (await import('data:text/javascript;base64,' + Buffer.from(workerText).toString('base64'))).default;
       for (const [path, cfg] of Object.entries(twConverted)) {
         const md = twMdTwin(path);
         if (!md) continue;

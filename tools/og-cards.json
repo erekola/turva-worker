@@ -281,6 +281,12 @@
     "subhead": "Fetches a site's /llms.txt and checks the structure against the format. JSON output for agents.",
     "white": "llms.txt validator,"
   },
+  "og-markdown-parity-check.jpg": {
+    "green": "compared block by block.",
+    "kicker": "Tools",
+    "subhead": "Missing, added and changed blocks, with the line where each one sits.",
+    "white": "HTML and Markdown,"
+  },
   "og-measuring-the-ai-patch-surge.jpg": {
     "green": "I measured how much bigger.",
     "kicker": "Blog",

@@ -48,6 +48,7 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/<indexnow-key>.txt` | IndexNow key file. A weekly cron resubmits the canonical URLs |
 | Aliases | `/ai.txt`, `/security.txt`, `/.well-known/mcp.json`, `/.well-known/openid-configuration`, `/.well-known/openapi.json`, favicons, and fediverse redirects (`host-meta`, `webfinger`, `nodeinfo`) |
 | `/llms-txt-validator` | llms.txt structure checker (HTML form, JSON for agents) |
+| `/markdown-parity-check` | Main-content comparison of this site's pages with the markdown-parity-check package (HTML form, JSON POST for agents); `/markdown-parity-check.js` adds the busy state and the JSON copy and save, and the form works without it |
 | `/badge` and `/badge.svg` | Agent-ready badge criteria and embeddable SVG |
 | `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Public synthetic sample reports for the two fixed-scope diagnoses, invented sites, markdown twins at `.md` |
 | `/agent-readiness-audit` | Product page of the website and API audit (the guide at `/guides/agent-readiness-audit` stays a guide), markdown twin at `.md` |

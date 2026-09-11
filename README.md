@@ -70,6 +70,7 @@ The [MCP server](https://github.com/erekola/turva-mcp#connect) runs separately. 
 | `/.well-known/signatures.json`, `/.well-known/jwks.json` | Detached signatures and public verification keys |
 | `/api`, `/x402`, `/api/agent/*` | Payment-required responses and quote-on-request service routes |
 | `/llms-txt-validator` | Structure checker with HTML and JSON responses |
+| `/markdown-parity-check` | HTML and Markdown comparison of this site's pages, as a form and a JSON POST |
 | `/agent-readiness-audit`, `/shopify-agent-storefront-check` | Product pages, with the service comparison at `/services` |
 | `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Sample reports using invented sites |
 | `/blog-filter.js` | Search and kind filter for the blog index. Every post remains listed without it |

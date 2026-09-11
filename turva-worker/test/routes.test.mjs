@@ -1029,7 +1029,7 @@ test("R16 S4-1: no live brief address and no prospect name sits in the source", 
 // derives the expectation from the same sources a reader would use: the /guides twin for the
 // guide order and the posts' dates for the blog, with the primary pages written out.
 test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guides in /guides order, blog newest first", async () => {
-  const primary = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/company", "/contact", "/legal"];
+  const primary = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
   const guidesMd = await (await get("/guides.md")).text();
   const guides = [...guidesMd.matchAll(/\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g)].map((m) => m[1]);
   assert.ok(guides.length >= 20, "the /guides twin lists the guides");
