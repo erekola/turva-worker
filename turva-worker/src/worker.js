@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.153.0 - the Onsite-3 polish round (2026-09-11): the delivery terms on the home and /services offer cards read at body text size and the Shopify retest is its own line, the audit sample's What each party delivers section carries seven subheadings and three lists instead of labels inside long paragraphs, the home finding card quotes the sample's own F1 readings, /contact names info@turva.dev once in its email section, and SITEMAP_LASTMOD moves to the day the page text changed. Both offer parsers still fail closed and accept one optional last sentence that starts One retest.
 // turva.dev worker v3.152.0 - the MTA-STS policy names only the Proton hosts (2026-09-10): the mailbox.org move finished on 2026-09-08 when SPF dropped the include, the four mbo000X._domainkey CNAMEs left the zone and the holvi lost mailbox-smtp, so the four mxext lines guarded a rollback that no longer exists and every one of them was a policy line matching no MX. The two Proton hosts stay, mode stays enforce, max_age stays 604800, and the _mta-sts id is bumped after the deploy so senders refetch before the cached policy expires.
 // turva.dev worker v3.150.1 - hotfix to the text round (2026-09-09): /services carries a short priced summary of the Shopify check and the audit again, and the Implementation block leads with the day rate, because verify.mjs --live binds every priced service to the price that opens its OWN heading block in the markdown WebMCP get_services hands back, and deleting those two sections took that binding with them. The two anchors #shopify and #audit are back on the sections; the long repeating write-ups stay deleted.
 // turva.dev worker v3.150.0 - the clearer, more personal text round (2026-09-09, from the Fable page instruction): twelve pages outside the blog and the guides rewritten in the first person around what the reader gets, the two sample reports given plain section and finding headings with every old anchor kept as an alias, the audit and validator FAQ sections folded into the sections above them, and every measurement, price, deadline, scope and refund term left as it stood.
@@ -2464,19 +2465,61 @@ Edge total for F1 to F7 and F9: about eleven and a half hours. Source total: abo
 
 ## What each party delivers
 
-An edge correction and a source correction are different pieces of work, and both are on the fix list. The sections below explain what turva.dev delivers when the company buys the fixed price implementation, what the company arranges before that work starts, what nobody here can promise and when the delivery is accepted.
+An edge correction and a source correction are different pieces of work, and both are on the fix list. The sections below explain what turva.dev delivers when the company buys the fixed price implementation, what the company has in place first, what depends on an outside party and when the delivery is accepted.
 
-What turva.dev delivers. When the company chooses the fixed price route, turva.dev makes every correction in the table above, in both columns. At the edge, in one worker in front of the origin: the corrected JSON-LD on every product page, the markdown twin of every page with the acceptance list in F2, llms.txt with the Link relations and security.txt, the product sitemap, the content sitemap and the index, the robots.txt the company decided, the api-catalog linkset with real 404s under /.well-known/ and the Organization address. At the source, in the systems the company gives access to: the catalog plugin's structured data mapping and the API price visibility behind F1, the four sitemap settings behind F4, DNSSEC behind F7 and the removal or replacement of the 2022 price list PDF behind F9. It also delivers the whole-catalog acceptance script from F1 as a file the company keeps, and runs it once on the day the work is declared done.
+### What turva.dev delivers
 
-What the company has in place first. The fixed price covers the whole list, and every row of it is reachable only through access the company arranges in writing before the work starts. An edge runtime in front of the origin and the access to deploy there. Administrator access to the catalog CMS and its plugin settings, which the F1 mapping, the F1 API price visibility and the F4 sitemap settings all need. DNS zone access and registrar access for F7, because enabling DNSSEC means signing the zone and publishing its DS record at the registrar, and the two can sit with different providers. Access to the media library or the server path for the F9 PDF. The three decisions D2, D3 and D4, because F5, F3 and the F1 acceptance run each wait on one of them. If any of that access cannot be arranged, the add-on is not sold, as the services page states, and the report still carries the instruction for every row so that the company and its agency can do the work themselves. The confirmed product record that F1 is checked against also comes from the company, whoever makes the corrections: its own list of products and variants with the price, currency, price basis and availability it stands behind.
+When the company chooses the fixed price route, turva.dev makes every correction in the table above, in both columns.
 
-Why the source rows are on the list. An edge correction serves the right data from the day the worker goes live, and it is a correction on the way through rather than a repair of the origin. If the origin's plugin still publishes price 0 on the day the edge worker is switched off or bypassed, the wrong data is back. The API is the clearest case. The edge cannot correct the API's empty price, because the origin is withholding data and there is nothing on the way through to correct it from, so that row is fixed in the origin's own setting or it is not fixed at all. This is why the fix list carries both columns, and why a green acceptance run on the edge column alone is not the plugin having been fixed.
+At the edge, in one worker in front of the origin:
 
-What nobody here can promise. One item on the list is an outside party's own action. The business directory in F9 is asked to correct its listing, and it corrects it or it does not. turva.dev sends the request and records it with any answer it gets, and the report counts the request as delivered and the listing as the directory's state.
+- The corrected JSON-LD on every product page.
+- The markdown twin of every page, with the acceptance list in F2.
+- The llms.txt file and its Link relations.
+- The security.txt file.
+- The product sitemap, the content sitemap and the index.
+- The robots.txt the company decided.
+- The api-catalog linkset with real 404s under /.well-known/.
+- The Organization address.
 
-Three states, kept apart. The report is complete on the day it is delivered, 2026-09-08. The implementation is accepted on the day its acceptance tests pass, which is a later day and a separate test. A finding is closed when its own check reads clean at the retest, which for F1 means the three surfaces and the confirmed product record agree on every row. F9 is read in two parts, the same two parts its own section and the acceptance list keep apart. Its technical fix is closed when the Organization address check and the 2022 PDF check pass and the request to the directory is documented. Its AI observation is separate, and the retest records whether an answer still carries the old address and which source that answer used. The AI observation can stay open after the technical fix is closed. A wrong answer is not marked corrected, and it is not a condition of accepting the implementation either. The retest report says which of the three states each finding is in, so that an accepted implementation is never read as a closed finding.
+At the source, in the systems the company gives access to:
 
-When the delivery is accepted. On the day turva.dev declares the work done, the acceptance tests of F1 to F7 and F9 are run and their output is delivered with the retest report. The delivery is accepted when all five of the following hold on that day.
+- The catalog plugin's structured data mapping and the API price visibility behind F1.
+- The four sitemap settings behind F4.
+- DNSSEC behind F7.
+- The removal or replacement of the 2022 price list PDF behind F9.
+
+For the acceptance, turva.dev delivers the whole-catalog acceptance script from F1 as a file the company keeps, and runs it once on the day the work is declared done.
+
+### What the company has in place first
+
+The fixed price covers the whole list, and every row of it is reachable only through what the company arranges in writing before the work starts:
+
+- An edge runtime in front of the origin and the access to deploy there.
+- Administrator access to the catalog CMS and its plugin settings, which the F1 mapping, the F1 API price visibility and the F4 sitemap settings all need.
+- DNS zone access and registrar access for F7, because enabling DNSSEC means signing the zone and publishing its DS record at the registrar, and the two can sit with different providers.
+- Access to the media library or the server path for the F9 PDF.
+- The three decisions D2, D3 and D4, because F5, F3 and the F1 acceptance run each wait on one of them.
+
+If any of that access cannot be arranged, the add-on is not sold, as the services page states, and the report still carries the instruction for every row so that the company and its agency can do the work themselves.
+
+The confirmed product record that F1 is checked against also comes from the company, whoever makes the corrections: its own list of products and variants with the price, currency, price basis and availability it stands behind.
+
+### Why the source rows are on the list
+
+An edge correction serves the right data from the day the worker goes live, and it is a correction on the way through rather than a repair of the origin. If the origin's plugin still publishes price 0 on the day the edge worker is switched off or bypassed, the wrong data is back. The API is the clearest case. The edge cannot correct the API's empty price, because the origin is withholding data and there is nothing on the way through to correct it from, so that row is fixed in the origin's own setting or it is not fixed at all. This is why the fix list carries both columns, and why a green acceptance run on the edge column alone is not the plugin having been fixed.
+
+### What depends on an outside party
+
+One item on the list is an outside party's own action. The business directory in F9 is asked to correct its listing, and it corrects it or it does not. turva.dev sends the request and records it with any answer it gets, and the report counts the request as delivered and the listing as the directory's state.
+
+### Three states, kept apart
+
+The report is complete on the day it is delivered, 2026-09-08. The implementation is accepted on the day its acceptance tests pass, which is a later day and a separate test. A finding is closed when its own check reads clean at the retest, which for F1 means the three surfaces and the confirmed product record agree on every row. F9 is read in two parts, the same two parts its own section and the acceptance list keep apart. Its technical fix is closed when the Organization address check and the 2022 PDF check pass and the request to the directory is documented. Its AI observation is separate, and the retest records whether an answer still carries the old address and which source that answer used. The AI observation can stay open after the technical fix is closed. A wrong answer is not marked corrected, and it is not a condition of accepting the implementation either. The retest report says which of the three states each finding is in, so that an accepted implementation is never read as a closed finding.
+
+### When the delivery is accepted
+
+On the day turva.dev declares the work done, the acceptance tests of F1 to F7 and F9 are run and their output is delivered with the retest report. The delivery is accepted when all five of the following hold on that day.
 
 - The whole-catalog script from F1 reports zero rows where the visible page, the JSON-LD, the API and the confirmed product record disagree, counted against the published product list decision D4 settles. The ten exception products are exempt from the price rules F1 writes for them, not from the run. The price basis is compared on the page, in the JSON-LD and in the record, because the API has no field for it, and F1 records that as a remaining limit.
 - The edge acceptance list in F2 is green in every line.
@@ -2484,7 +2527,9 @@ When the delivery is accepted. On the day turva.dev declares the work done, the 
 - The acceptance tests of F3, F4 and F6 pass as written, and the three tests F9 states for the site pass: the Organization node carries the current address on every page, the 2022 PDF returns 404 or the current list, and the request to the directory is recorded with the date it was sent, the recipient, the correction that was asked for and its state on the day of the check. An answer is recorded with the request when one has arrived, and a request with no answer is recorded as "No response received as of" the real date of that check. A documented request meets this delivery item whether or not the directory answers.
 - The source corrections are read on the origin itself, apart from the edge: the origin's own JSON-LD on the product pages the F1 script reads, and the origin's own sitemap from F4. The method is agreed with the company in writing, and the edge routing is not switched off and no protection is bypassed for the test. A green edge reading does not accept a source correction. Where the agreed method cannot read the origin, the source rows are recorded as not verified and stay open.
 
-What the acceptance does not cover. The directory's own listing in F9, the five commerce checks in F8, which stay red by decision D5, the dnsAid check, which waits under F7 for an agent registry, and what any assistant answers on the retest day. The 15 questions are put again under the conditions in appendix B, and that reading is reported next to the fixes as an observation. An assistant can repeat an old fact from a copy nobody here controls, so the report does not make the delivery wait on it and does not promise it goes away.
+### What the acceptance does not cover
+
+Four things stay outside it: the directory's own listing in F9, the five commerce checks in F8, which stay red by decision D5, the dnsAid check, which waits under F7 for an agent registry, and what any assistant answers on the retest day. The 15 questions are put again under the conditions in appendix B, and that reading is reported next to the fixes as an observation. An assistant can repeat an old fact from a copy nobody here controls, so the report does not make the delivery wait on it and does not promise it goes away.
 
 ## What was checked
 
@@ -3132,8 +3177,8 @@ Technical agent-readiness of turva.dev: 100/100 and Level 5, Agent-Native, on is
 
 ## One product. Three different answers.
 
-- Visible product page: A real price and lead time
-- Structured product data: €0.00 · InStock
+- Visible product page: 0,42 EUR per piece · VAT 0 % · Lead time six weeks
+- Structured product data: 0,00 EUR · InStock
 - Product API: Empty price · Marked purchasable
 
 An assistant may find a different price or availability depending on which source it reads.
@@ -3148,7 +3193,7 @@ This example uses an invented business and invented readings. The sample's scann
 
 ## Choose the check you need
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff, followed by one retest of up to two corrected items within 14 days of that package.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package.
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered in two weeks.
 
 Prices exclude VAT. Each service can be bought on its own.
@@ -3263,7 +3308,7 @@ You work directly with me, in writing. I reply within one business day. All pric
 
 ## Choose a starting point
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff, followed by one retest of up to two corrected items within 14 days of that package.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package.
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered in two weeks.
 
 See the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check) before choosing a service.
@@ -3688,9 +3733,7 @@ Include your storefront URL, .myshopify.com domain, primary market and up to thr
 
 ## Or write your own message
 
-Email info@turva.dev. Existing scanner results are welcome, but you do not need them to get started.
-
-- **Email:** <mailto:info@turva.dev>
+Email <mailto:info@turva.dev>. Existing scanner results are welcome, but you do not need them to get started.
 
 The buttons above open a draft in your email app. You can edit it before sending, or write the same details in a plain email.
 
@@ -5689,7 +5732,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.152.0",
+    "version": "3.153.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5957,7 +6000,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.152.0",
+  "version": "3.153.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6606,7 +6649,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-09";
+var SITEMAP_LASTMOD = "2026-09-11";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -8112,19 +8155,19 @@ function mdKvsSec(path, heading, extra) {
   </section>`;
 }
 function mdOfferCards(path, heading, linkLabel, idFor) {
-  // The same row shape as the home page offers: "- [name](href). €price. covers Delivered ...".
+  // The same row shape as the home page offers: "- [name](href). €price. covers Delivered ... [One retest ...]".
   // idFor carries an old section anchor onto the card that replaced that section, so a link
   // written before the section became a card still lands on the same offer (/services#shopify).
   const rows = mdSection(path, heading).split("\n").filter((l) => l.startsWith("- "));
   if (!rows.length) throw new Error("mdOfferCards: no offer rows under " + heading + " in " + path);
   return rows.map((line) => {
-    const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)$/);
+    const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)(?: (One retest [^.]+\.))?$/);
     if (!m) throw new Error("offer line does not parse: " + line.slice(0, 60));
-    const [, name, href, price, covers, when] = m;
+    const [, name, href, price, covers, when, retest] = m;
     const label = linkLabel[href];
     if (!label) throw new Error("offer has no link label for " + href);
     const cardId = (idFor && idFor[href]) ? ` id="${idFor[href]}"` : "";
-    return `<a class="card"${cardId} href="${href}"><span class="card-top"><span class="name">${escapeHtml(name)}</span><span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span><span class="go">${label}</span></a>`;
+    return `<a class="card"${cardId} href="${href}"><span class="card-top"><span class="name">${escapeHtml(name)}</span><span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span>${retest ? `<span class="when">${escapeHtml(retest)}</span>` : ""}<span class="go">${label}</span></a>`;
   }).join("\n      ");
 }
 function mdActionCards(path, headings) {
@@ -8762,18 +8805,18 @@ function serveHomeHtml(canonicalUrl) {
   // without one throws, so a twin edit that drops the title cannot render an empty card.
   const titled = (t, what) => { const k = t.indexOf(". "); if (k < 0) throw new Error("home " + what + " paragraph has no title: " + t.slice(0, 40)); return { t: t.slice(0, k), b: t.slice(k + 2) }; };
   // The two offers are read from the twin list, one card each: name, price, what it covers and
-  // when it is delivered. Fail closed: a list line that stops matching the shape throws here
+  // when it is delivered, plus a retest line when the service has one. Fail closed: a list line that stops matching the shape throws here
   // instead of rendering a card with an empty price (Tek-355, Tek-357).
   const offerParas = mdParas("/", "Choose the check you need", 2);
   const offerRaw = mdSection("/", "Choose the check you need").split("\n").filter((l) => l.startsWith("- "));
   if (offerRaw.length !== 2) throw new Error("home starting-point list does not carry exactly two offers: " + offerRaw.length);
   const OFFER_LINK = { "/shopify-agent-storefront-check": "See the Shopify check", "/agent-readiness-audit": "See the audit" };
   const offerCards = offerRaw.map((line) => {
-    const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)$/);
+    const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)(?: (One retest [^.]+\.))?$/);
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
-    const [, name, href, price, covers, when] = m;
+    const [, name, href, price, covers, when, retest] = m;
     if (!OFFER_LINK[href]) throw new Error("home offer has no link label for " + href);
-    return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span><span class="offer-price">${escapeHtml(price)}</span></span><span class="offer-covers">${escapeHtml(covers)}</span><span class="offer-when">${escapeHtml(when)}</span><span class="offer-link">${OFFER_LINK[href]}</span></a>`;
+    return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span><span class="offer-price">${escapeHtml(price)}</span></span><span class="offer-covers">${escapeHtml(covers)}</span><span class="offer-when">${escapeHtml(when)}</span>${retest ? `<span class="offer-when">${escapeHtml(retest)}</span>` : ""}<span class="offer-link">${OFFER_LINK[href]}</span></a>`;
   }).join("\n      ");
   // The hero card is one finding from the synthetic sample report (2026-09-08 brief, point 1).
   // Its text is the twin section "One product. Three different answers.": three "Source:
@@ -8878,7 +8921,7 @@ main{max-width:none;margin:0;padding:0;}
 .offer-name{font-size:1.15rem;font-weight:700;color:#F2F4F3;}
 .offer-price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
 .offer-covers{font-size:.95rem;line-height:1.55;color:#C9D1CE;}
-.offer-when{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.03em;color:#9AA3A0;}
+.offer-when{font-size:.95rem;line-height:1.55;color:#C9D1CE;}.offer-covers+.offer-when{border-top:1px solid #2D3D3D;padding-top:10px;}
 .offer-link{margin-top:auto;padding-top:6px;font-size:.9rem;font-weight:600;color:#5DF18F;}
 .muted{font-size:.9rem;color:#9AA3A0;}
 .mail-link{display:inline-block;margin-left:14px;color:#F2F4F3;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.3);padding:.15rem 0;}
@@ -9164,7 +9207,7 @@ a.card:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
 .card h2,.card h3,.card .name{font-size:1.15rem;line-height:1.3;font-weight:700;color:#F2F4F3;margin:0;}
 .card .price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
 .card p{font-size:.97rem;line-height:1.55;color:#C9D1CE;margin:0;}
-.card .when{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.03em;color:#9AA3A0;}
+.card .when{font-size:.97rem;line-height:1.55;color:#C9D1CE;}.card p+.when{border-top:1px solid #2D3D3D;padding-top:10px;}
 .card .go{margin-top:auto;padding-top:6px;font-size:.92rem;font-weight:600;color:#5DF18F;}
 .card ul{list-style:none;margin:0;padding:0;}
 .card li{position:relative;padding:0 0 0 1.4rem;margin:0 0 .4rem;font-size:.95rem;line-height:1.5;color:#C9D1CE;}
