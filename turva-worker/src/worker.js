@@ -2390,9 +2390,9 @@ Illustrative report date: 8 September 2026, which is the delivery date in the en
 
 The site passes 2 of 21 scored checks and reads Level 1 of 5 on the sample's scanner run. It has robots.txt and a sitemap, but several discovery files and a Markdown version are missing.
 
-The first priority is a problem the scanner does not score. All 138 product pages publish incorrect structured prices and availability. The API also withholds prices while marking products as purchasable. One fictional AI answer in the sample calls the catalog free.
+The first priority is a problem the scanner does not score. All 138 product pages publish a structured price of 0.00, and all of them say InStock, which the API's stock state contradicts for part of the catalog. The API also withholds prices while marking products as purchasable. One fictional AI answer in the sample calls the catalog free.
 
-There are nine findings. F2, F3, F5, F6 and F7 address six scored checks. F1 and F4 correct information outside those checks. F8 records the company's decision not to offer agent checkout this year. F9 addresses an old address repeated in AI answers.
+There are nine findings. F2, F3, F5 and F6 address five scored checks. F7 enables DNSSEC and holds the sixth, dnsAid, until the company has an agent registry for the DNS record to point at. F1 and F4 correct information outside those checks. F8 records the company's decision not to offer agent checkout this year. F9 addresses an old address repeated in AI answers.
 
 Estimated edge work is about eleven hours for F1 to F7, or eleven and a half hours including F9. Source corrections take about five hours. The tables below keep the two kinds of correction apart and name who makes each. These are estimates for the sample, not a quote or a promised readiness level. The level moves with the check set the scanner runs on the day, and 22 checks were in the set on 2026-09-03.
 
@@ -2452,11 +2452,11 @@ Fix the problems affecting buyers first. The table separates a correction made a
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | F1 product data on all three surfaces | None, manual | Correct the JSON-LD Product node on every product page from the fields the page renders, and run the whole-catalog acceptance script | Fix the plugin mapping and the API price visibility so the origin publishes the right data itself | 4 | 2,5 |
 | 2 | F2 markdown next to HTML | markdownNegotiation | Edge worker with the acceptance list in F2 | None | 4 | 0 |
-| 3 | F3 llms.txt, Link header, security.txt | linkHeaders | Serve the three files and the header | Read and approve the llms.txt text, D3. A company decision, not implementation work | 1,5 | 0,5 |
+| 3 | F3 llms.txt, Link header, security.txt | linkHeaders | Serve llms.txt and /.well-known/security.txt, and add the describedby and alternate Link relations | Read and approve the llms.txt text, D3. A company decision, not implementation work | 1,5 | 0,5 |
 | 4 | F4 sitemap content | None, manual | Serve a product sitemap generated from the API and a sitemap index in front of the CMS one | Four plugin settings so the origin sitemap is right on its own | 0,5 | 0,5 |
 | 5 | F5 robots.txt | robotsTxtAiRules, contentSignals | Serve the file | Decide the preference, D2. A company decision, not implementation work | 0,5 | 0 |
 | 6 | F6 api-catalog and real 404s | apiCatalog | Serve the linkset and the 404s | None | 0,5 | 0 |
-| 7 | F7 DNS-AID and DNSSEC | dnsAid | None. A DNS record is not served by the edge | Add the _index._agents record and enable DNSSEC at the registrar | 0 | 0,5 |
+| 7 | F7 DNSSEC, the DNS-AID record waits | None in this round. dnsAid waits for an agent registry | None. DNS is not served by the edge | Enable DNSSEC in the DNS zone and at the registrar. The _index._agents record waits until the company publishes an agent registry for it to point at | 0 | 0,5 |
 | 8 | F8 commerce | None, on purpose | None | Decision D5 | 0 | 0 |
 | 9 | F9 the old address | None, manual | Add the current address to the Organization node | Remove or update the 2022 price list PDF. Ask the directory to correct its listing, which is a third party's own action | 0,5 | 1 |
 
@@ -2466,24 +2466,25 @@ Edge total for F1 to F7 and F9: about eleven and a half hours. Source total: abo
 
 An edge correction and a source correction are different pieces of work, and both are on the fix list. The sections below explain what turva.dev delivers when the company buys the fixed price implementation, what the company arranges before that work starts, what nobody here can promise and when the delivery is accepted.
 
-What turva.dev delivers. When the company chooses the fixed price route, turva.dev makes every correction in the table above, in both columns. At the edge, in one worker in front of the origin: the corrected JSON-LD on every product page, the markdown twin of every page with the acceptance list in F2, llms.txt with the Link relations and security.txt, the product sitemap and index, the robots.txt the company decided, the api-catalog linkset with real 404s under /.well-known/ and the Organization address. At the source, in the systems the company gives access to: the catalog plugin's structured data mapping and the API price visibility behind F1, the four sitemap settings behind F4, the _index._agents record and DNSSEC behind F7 and the removal or replacement of the 2022 price list PDF behind F9. It also delivers the whole-catalog acceptance script from F1 as a file the company keeps, and runs it once on the day the work is declared done.
+What turva.dev delivers. When the company chooses the fixed price route, turva.dev makes every correction in the table above, in both columns. At the edge, in one worker in front of the origin: the corrected JSON-LD on every product page, the markdown twin of every page with the acceptance list in F2, llms.txt with the Link relations and security.txt, the product sitemap and index, the robots.txt the company decided, the api-catalog linkset with real 404s under /.well-known/ and the Organization address. At the source, in the systems the company gives access to: the catalog plugin's structured data mapping and the API price visibility behind F1, the four sitemap settings behind F4, DNSSEC behind F7 and the removal or replacement of the 2022 price list PDF behind F9. It also delivers the whole-catalog acceptance script from F1 as a file the company keeps, and runs it once on the day the work is declared done.
 
-What the company has in place first. The fixed price covers the whole list, and every row of it is reachable only through access the company arranges in writing before the work starts. An edge runtime in front of the origin and the access to deploy there. Administrator access to the catalog CMS and its plugin settings, which the F1 mapping, the F1 API price visibility and the F4 sitemap settings all need. The DNS zone access for F7. Access to the media library or the server path for the F9 PDF. The three decisions D2, D3 and D4, because F5, F3 and the F1 acceptance run each wait on one of them. If any of that access cannot be arranged, the add-on is not sold, as the services page states, and the report still carries the instruction for every row so that the company and its agency can do the work themselves.
+What the company has in place first. The fixed price covers the whole list, and every row of it is reachable only through access the company arranges in writing before the work starts. An edge runtime in front of the origin and the access to deploy there. Administrator access to the catalog CMS and its plugin settings, which the F1 mapping, the F1 API price visibility and the F4 sitemap settings all need. DNS zone access and registrar access for F7, because enabling DNSSEC means signing the zone and publishing its DS record at the registrar, and the two can sit with different providers. Access to the media library or the server path for the F9 PDF. The three decisions D2, D3 and D4, because F5, F3 and the F1 acceptance run each wait on one of them. If any of that access cannot be arranged, the add-on is not sold, as the services page states, and the report still carries the instruction for every row so that the company and its agency can do the work themselves. The confirmed product record that F1 is checked against also comes from the company, whoever makes the corrections: its own list of products and variants with the price, currency, price basis and availability it stands behind.
 
 Why the source rows are on the list. An edge correction serves the right data from the day the worker goes live, and it is a correction on the way through rather than a repair of the origin. If the origin's plugin still publishes price 0 on the day the edge worker is switched off or bypassed, the wrong data is back. The API is the clearest case. The edge cannot correct the API's empty price, because the origin is withholding data and there is nothing on the way through to correct it from, so that row is fixed in the origin's own setting or it is not fixed at all. This is why the fix list carries both columns, and why a green acceptance run on the edge column alone is not the plugin having been fixed.
 
 What nobody here can promise. One item on the list is an outside party's own action. The business directory in F9 is asked to correct its listing, and it corrects it or it does not. turva.dev sends the request and records it with any answer it gets, and the report counts the request as delivered and the listing as the directory's state.
 
-Three states, kept apart. The report is complete on the day it is delivered, 2026-09-08. The implementation is accepted on the day its acceptance tests pass, which is a later day and a separate test. A finding is closed when its own check reads clean at the retest, which for F1 means the three surfaces agree on every row. F9 is read in two parts, the same two parts its own section and the acceptance list keep apart. Its technical fix is closed when the Organization address check and the 2022 PDF check pass and the request to the directory is documented. Its AI observation is separate, and the retest records whether an answer still carries the old address and which source that answer used. The AI observation can stay open after the technical fix is closed. A wrong answer is not marked corrected, and it is not a condition of accepting the implementation either. The retest report says which of the three states each finding is in, so that an accepted implementation is never read as a closed finding.
+Three states, kept apart. The report is complete on the day it is delivered, 2026-09-08. The implementation is accepted on the day its acceptance tests pass, which is a later day and a separate test. A finding is closed when its own check reads clean at the retest, which for F1 means the three surfaces and the confirmed product record agree on every row. F9 is read in two parts, the same two parts its own section and the acceptance list keep apart. Its technical fix is closed when the Organization address check and the 2022 PDF check pass and the request to the directory is documented. Its AI observation is separate, and the retest records whether an answer still carries the old address and which source that answer used. The AI observation can stay open after the technical fix is closed. A wrong answer is not marked corrected, and it is not a condition of accepting the implementation either. The retest report says which of the three states each finding is in, so that an accepted implementation is never read as a closed finding.
 
-When the delivery is accepted. On the day turva.dev declares the work done, the acceptance tests of F1 to F7 and F9 are run and their output is delivered with the retest report. The delivery is accepted when all four of the following hold on that day.
+When the delivery is accepted. On the day turva.dev declares the work done, the acceptance tests of F1 to F7 and F9 are run and their output is delivered with the retest report. The delivery is accepted when all five of the following hold on that day.
 
-- The whole-catalog script from F1 reports zero rows where the visible page, the JSON-LD and the API disagree, counted against the published product list decision D4 settles. The ten exception products are exempt from the price rules F1 writes for them, not from the run.
+- The whole-catalog script from F1 reports zero rows where the visible page, the JSON-LD, the API and the confirmed product record disagree, counted against the published product list decision D4 settles. The ten exception products are exempt from the price rules F1 writes for them, not from the run.
 - The edge acceptance list in F2 is green in every line.
-- markdownNegotiation, linkHeaders, robotsTxtAiRules, contentSignals, apiCatalog and dnsAid read PASS on a full default-profile scan.
+- markdownNegotiation, linkHeaders, robotsTxtAiRules, contentSignals and apiCatalog read PASS on a full default-profile scan, and the internet.nl website test shows DNSSEC as passing.
 - The acceptance tests of F3, F4 and F6 pass as written, and the three tests F9 states for the site pass: the Organization node carries the current address on every page, the 2022 PDF returns 404 or the current list, and the request to the directory is recorded with the date it was sent, the recipient, the correction that was asked for and its state on the day of the check. An answer is recorded with the request when one has arrived, and a request with no answer is recorded as "No response received as of" the real date of that check. A documented request meets this delivery item whether or not the directory answers.
+- The source corrections are read on the origin itself, apart from the edge: the origin's own JSON-LD on the product pages the F1 script reads, and the origin's own sitemap from F4. The method is agreed with the company in writing, and the edge routing is not switched off and no protection is bypassed for the test. A green edge reading does not accept a source correction. Where the agreed method cannot read the origin, the source rows are recorded as not verified and stay open.
 
-What the acceptance does not cover. The directory's own listing in F9, the five commerce checks in F8, which stay red by decision D5, and what any assistant answers on the retest day. The 15 questions are put again under the conditions in appendix B, and that reading is reported next to the fixes as an observation. An assistant can repeat an old fact from a copy nobody here controls, so the report does not make the delivery wait on it and does not promise it goes away.
+What the acceptance does not cover. The directory's own listing in F9, the five commerce checks in F8, which stay red by decision D5, the dnsAid check, which waits under F7 for an agent registry, and what any assistant answers on the retest day. The 15 questions are put again under the conditions in appendix B, and that reading is reported next to the fixes as an observation. An assistant can repeat an old fact from a copy nobody here controls, so the report does not make the delivery wait on it and does not promise it goes away.
 
 ## What was checked
 
@@ -2505,7 +2506,7 @@ These are the sample's readings from 2026-09-03. PASS and FAIL are the scanner's
 | Discoverability | robotsTxt | PASS | /robots.txt exists and parses. One wildcard group. | F5 changes its content, the check stays green | Green because the CMS ships the file, not because it says anything useful |
 | Discoverability | sitemap | PASS | /sitemap.xml exists and parses, 14 URLs. | F4, a manual finding, the check stays green | Green with none of the 138 products in it. The check reads the file, not the catalog |
 | Discoverability | linkHeaders | FAIL | No Link header on any response. | F3 | Cheap, and it is how a page points at its own markdown twin and at llms.txt |
-| Discoverability | dnsAid | FAIL | No _index._agents record under the domain, DNSSEC not enabled. | F7 | Needs the company's DNS, not the edge. Last among the scored fixes for that reason |
+| Discoverability | dnsAid | FAIL | No _index._agents record under the domain, DNSSEC not enabled. | F7 enables DNSSEC, the record waits | Needs the company's DNS and an agent registry for the record to point at. Northwind publishes none, so the check stays red after this round |
 | Content | markdownNegotiation | FAIL | Accept: text/markdown returns text/html, 212 kB on the home page. | F2 | The catalog and the delivery terms are what a buyer's assistant reads, and today it reads them as 200 kB of markup per page |
 | Bot access control | robotsTxtAiRules | FAIL | No AI crawler named in robots.txt. | F5 | A stated preference the company has not stated. Decision D2 |
 | Bot access control | contentSignals | FAIL | No Content-Signal line in robots.txt. | F5 | Same file, same decision |
@@ -2527,7 +2528,7 @@ These are the sample's readings from 2026-09-03. PASS and FAIL are the scanner's
 
 Category totals: Discoverability 2 of 4, Content 0 of 1, Bot access control 0 of 2, API, auth, MCP and A2A 0 of 9, Commerce 0 of 5. Overall 2 of 21 scored checks, Level 1 of 5.
 
-After F2, F3, F5, F6 and F7: Discoverability 4 of 4, Content 1 of 1, Bot access control 2 of 2, API, auth, MCP and A2A 1 of 9, Commerce 0 of 5. Overall 8 of 21, and the report does not translate that into a level, because the level on the retest day depends on the check set the scanner runs that day.
+After F2, F3, F5 and F6: Discoverability 3 of 4, Content 1 of 1, Bot access control 2 of 2, API, auth, MCP and A2A 1 of 9, Commerce 0 of 5. Overall 7 of 21, and the report does not translate that into a level, because the level on the retest day depends on the check set the scanner runs that day.
 
 ## Findings from the manual review
 
@@ -2540,11 +2541,11 @@ The surfaces the scanner does not score, read by hand on 2026-09-03 and 2026-09-
 | JSON-LD, home and category pages | Organization node with name and logo, no address, no taxID, no sameAs. WebSite node present. No BreadcrumbList. | F9 adds the address. The rest is recorded, no fix in this round. Completeness, not correctness. |
 | Head metadata and Open Graph | Title and description present on all seven pages read. og:image missing on the five product pages. | Recorded, no fix in this round. |
 | HTTP response headers | Content-Type correct. No Link, no RateLimit-Policy, no security headers except HSTS. | F3 adds the Link relations. Security headers are in the internet.nl reading below. |
-| /.well-known/ | Empty. Every path under it returns the HTML 404 page with status 200. | F3, F6 and F7 populate it. The soft 404 is F6's first line. |
+| /.well-known/ | Empty. Every path under it returns the HTML 404 page with status 200. | F3 and F6 populate it. The soft 404 is F6's first line. |
 | robots.txt | The CMS default. One wildcard group, Disallow: /wp-admin/, no Sitemap line, no AI crawler, no Content-Signal. | F5 |
 | sitemap.xml | 14 URLs. The front page, eleven content pages and two template pages titled Sample Page and Privacy Policy Draft. No product page. | F4 |
 | ai.txt and llms.txt | Neither exists. | F3 publishes llms.txt. ai.txt is not published: the norm it followed has merged into robots.txt Content Signals. |
-| REST API | /wp-json/wc/store/v1/products answers publicly, 100 products per page, two pages, X-WP-Total 138. Every row has prices.price as an empty string and is_purchasable true. stock_status is instock on 90 rows, onbackorder on 41 and outofstock on 7. | F1 corrects the data, F6 declares the API. |
+| REST API | /wp-json/wc/store/v1/products, the WooCommerce Store API v1, answers publicly, 100 products per page, two pages, X-WP-Total 138. As the Store API does by default, the listing leaves the variations out. Every row has prices.price as an empty string and is_purchasable true. The other stock fields show 90 rows in stock with no backorder, is_on_backorder true on 41 and is_in_stock false on 7. No field in the response carries a price basis. | F1 corrects the data, F6 declares the API. |
 | Old documents still served | /wp-content/uploads/2022/hinnasto-2022.pdf is a 2022 price list with the company's previous Tampere address on its cover, linked from nowhere on the site and indexed by two search engines. | F9 |
 
 ## What the assistants answered
@@ -2554,13 +2555,13 @@ The sample contains 60 invented answers: fifteen questions put to four assistant
 | Question group | Questions | Answers | Northwind named | Correct where named | What the assistants did instead |
 | --- | --- | --- | --- | --- | --- |
 | Category, no company name. "Where can a Finnish workshop buy DIN 933 bolts in bulk online" and eleven like it | 12 | 48 | 0 | Not applicable | Named three national distributors and two marketplaces. Two answers cited a distributor's price list page and quoted its markdown form as the source |
-| Company by name. "What does Northwind Fasteners sell" and two like it | 3 | 12 | 12 | 9 | Two answers gave the Tampere address the company left in 2023. One answer said the catalog is free, citing the structured data F1 corrects |
+| Company by name. "What does Northwind Fasteners sell" and two like it | 3 | 12 | 12 | 9 | Two answers gave the Tampere address the company left in 2023. One answer said the catalog is free and cited a product page, the page whose structured data F1 corrects |
 
-Every material error has a source read on the site or off it, a follow-up in this report, an owner and a retest, so that the retest can say whether the error is gone and why.
+Every material error has a cited source on the site or off it, a follow-up in this report, an owner and a retest, so that the retest can say whether the error is gone and why.
 
-| Error | Answers | Source read | Follow-up | Owner | Retest |
+| Error | Answers | Source cited | Follow-up | Owner | Retest |
 | --- | --- | --- | --- | --- | --- |
-| The catalog is free | 1 of 12, assistant B | The answer cited the product page, whose JSON-LD says price 0.00. Read on 2026-09-04, appendix A, chain 1 | F1 | The implementer decision D1 names, at the edge and at the source. The company arranges the CMS and plugin access first | The three by-name questions, same conditions, recorded as an observation: whether any answer still states a price the page does not show, and which source it cites |
+| The catalog is free | 1 of 12, assistant B | The answer cited the product page URL. That page shows 0,42 EUR in its text and price 0.00 in its JSON-LD, read on 2026-09-03 in appendix A, chain 1. Nothing recorded with the answer shows which of the two it used, so tracing it to the JSON-LD is an interpretation | F1 | The implementer decision D1 names, at the edge and at the source. The company arranges the CMS and plugin access first | The three by-name questions, same conditions, recorded as an observation: whether any answer still states a price the page does not show, and which source it cites |
 | The company is at the old Tampere address | 2 of 12, assistants A and C | A cited a business directory listing that still carries the old address. C cited the 2022 price list PDF at /wp-content/uploads/2022/hinnasto-2022.pdf. The site's own Organization node has no address at all, so neither assistant could have read the current one from structured data | F9 | The implementer decision D1 names, for the Organization node, the 2022 PDF and the request sent to the directory. The company arranges the media library access and confirms the address. The listing itself stays the directory's | The three by-name questions, same conditions, recorded as an observation: whether an answer still gives the old address and where it read it. An assistant can repeat it from a copy nobody here controls, so the reading is reported next to the fix and not as a failure of the site |
 
 What is recorded and is not an error. Two category answers cited a distributor's price list page as markdown. That is an observation about the distributor's site and this report draws no conclusion from it about Northwind's. One category answer named no Finnish source at all. Nothing in this run shows why any assistant chose the sources it chose, and the report does not guess.
@@ -2573,7 +2574,7 @@ Run on 2026-09-04, recorded so that the client can re-run them without turva.dev
 
 | Scan | Reading | What it means for agents |
 | --- | --- | --- |
-| internet.nl website test | 64 of 100. IPv6 absent, DNSSEC absent, HTTPS configuration passes, security headers partial. | DNSSEC is a prerequisite of the dnsAid check, so F7 moves this reading too. |
+| internet.nl website test | 64 of 100. IPv6 absent, DNSSEC absent, HTTPS configuration passes, security headers partial. | F7 enables DNSSEC, which moves this reading. DNSSEC is also a prerequisite of the dnsAid check. |
 | internet.nl mail test | 55 of 100. SPF present, DKIM present, DMARC policy none. | Not an agent surface. Recorded because a buyer checks it. |
 | Hardenize | 17 of 24 categories passed. CAA, DNSSEC, HSTS preload, CSP, Referrer-Policy, security.txt and cookies did not. | security.txt is a five line file the same edge worker serves. It is listed under F3 as a same-day addition. |
 
@@ -2585,26 +2586,26 @@ Nine findings. Each one shows the evidence, why it matters, the correction, the 
 
 **Category and scanner effect.** Structured data. Manual review, not scored.
 
-**What was found.** GET /products/din-933-m12x40-a2/ on 2026-09-03 returns a JSON-LD Product node with "price": "0.00", "priceCurrency": "EUR" and "availability": "https://schema.org/InStock". The visible page shows 0,42 EUR per piece, VAT 0 %, and a lead time of six weeks. The same node shape appears on all 138 product pages, read by fetching both pages of /wp-json/wc/store/v1/products, following every product URL and reading the price field of each. The API returns prices.price as an empty string and is_purchasable true for every product, and its stock_status field is instock for 90 products, onbackorder for 41 and outofstock for 7. The 19 products that come in several thread lengths show a price per variant on the page and publish one Product node for all of them. The 12 products sold by the box of 100 show the box price on the page and publish no unit at all, in JSON-LD or in the API, so nothing on either surface says which quantity a price belongs to.
+**What was found.** GET /products/din-933-m12x40-a2/ on 2026-09-03 returns a JSON-LD Product node with "price": "0.00", "priceCurrency": "EUR" and "availability": "https://schema.org/InStock". The visible page shows 0,42 EUR per piece, VAT 0 %, and a lead time of six weeks. The same node shape appears on all 138 product pages, read by fetching both pages of /wp-json/wc/store/v1/products, following every product URL and reading the price field of each. The API returns prices.price as an empty string and is_purchasable true for every product. Its stock fields show 90 products in stock with no backorder, is_on_backorder true for 41 and is_in_stock false for 7. The 19 products that come in several thread lengths show a price per variant on the page and publish one Product node for all of them. The 12 products sold by the box of 100 show the box price on the page and publish no unit at all, in JSON-LD or in the API, so nothing on either surface says which quantity a price belongs to.
 
-**Why it matters.** No scanner points, and the highest impact in this report. Observed in this run: one by-name answer on 2026-09-04 told a buyer the catalog is free and cited the product page. Possible and not observed: an agent that reads the API as data gets an empty price and a purchasable flag. A second effect belongs to later rather than now: a box price published without its unit may be read as the price of one piece, making the quoted per-piece price one hundred times the actual per-piece price. That is why price and price basis are two separate rules below. In this sample, correcting the product facts takes priority because one recorded answer already repeats a wrong price claim.
+**Why it matters.** No scanner points, and the highest impact in this report. Observed in this run: one by-name answer on 2026-09-04 told a buyer the catalog is free and cited the product page. That page carries two prices, 0,42 EUR in its text and 0.00 in its JSON-LD, and the zero price is a technical finding of its own. Nothing recorded shows which part of the page the assistant used, so the link between the two is an interpretation. Possible and not observed: an agent that reads the API as data gets an empty price and a purchasable flag. A second effect belongs to later rather than now: a box price published without its unit may be read as the price of one piece, making the quoted per-piece price one hundred times the actual per-piece price. That is why price and price basis are two separate rules below. In this sample, correcting the product facts takes priority because one recorded answer already repeats a wrong price claim.
 
 **What to change.** Publish, on the visible page, in the JSON-LD and in the API, the same price, the same currency, the same price basis and the same availability for every product and every variant in the catalog. Four rules, and the acceptance test reads them back.
 
-- Price and currency. The JSON-LD Offer price is the number the page shows, in EUR, VAT excluded as the page states, and the API price is the same number in minor units. Prices are not rounded on one surface and not on another.
-- Price basis. A product sold by the box carries a UnitPriceSpecification with referenceQuantity 100 in JSON-LD and its unit in the API, so the number is never read as a per-piece price.
-- Availability from the stock state, not from the lead time text. InStock when stock_status is instock, BackOrder when it is onbackorder, OutOfStock when it is outofstock. PreOrder is not used: no product in this catalog has a release date, and a lead time on an existing product is a BackOrder with a deliveryLeadTime of six weeks, not a pre-order. The lead time is published in that field and in the page text, and it does not decide the availability value on its own.
-- Variants. The 19 variable products publish one offer per variant, 61 in all, with the variant's own price and stock state, matching the variation list the page shows and the variations array the API returns.
+- Price and currency. The JSON-LD Offer price is the number the page shows, in EUR, VAT excluded as the page states, and the API's prices.price is the same number in minor units, with currency_code EUR and currency_minor_unit 2. Prices are not rounded on one surface and not on another.
+- Price basis. A product sold by the box carries a UnitPriceSpecification with referenceQuantity 100 in JSON-LD, so the number is never read as a per-piece price. The Store API has no price basis field. There prices.price is the price of the box the product is sold in, and the acceptance run takes the basis from the confirmed product record, not from the API.
+- Availability from the stock state, not from the lead time text. In the Store API the stock state is two fields. BackOrder when is_on_backorder is true, OutOfStock when is_in_stock is false, InStock when is_in_stock is true and is_on_backorder is false. The schema notes that is_on_backorder also reads false when backorder notifications are turned off, so a product the confirmed record lists on backorder and the API shows only as in stock is a row to resolve, not a pass. PreOrder is not used: no product in this catalog has a release date, and a lead time on an existing product is a BackOrder with a deliveryLeadTime of six weeks, not a pre-order. The lead time is published in that field and in the page text, and it does not decide the availability value on its own.
+- Variants. The 19 variable products publish one offer per variant, 61 in all, with the variant's own price and stock state, matching the variation list the page shows. The Store API leaves variations out of its default listing, and the parent's variations array carries only each variant's id and attributes, so the 61 variant rows are read from /wp-json/wc/store/v1/products?type=variation, where each variant has its own prices, is_in_stock and is_on_backorder.
 
-Exceptions, listed so that the acceptance test does not read them as failures. Six products are priced on request: the page says so, and they carry no price in JSON-LD or in the API, only an availability from their stock state. Four products are discontinued and still published: they carry availability Discontinued and no price. Decision D4 says whether any of the ten stays published, and the acceptance run reads the published ones against these rules and the unpublished ones against the removal list. The exception is from the price rules, not from the run.
+Exceptions, listed so that the acceptance test does not read them as failures. Six products are priced on request: the page says so, and they carry no price in JSON-LD or in the API, only an availability from their stock state. The API marks them is_purchasable false. Four products are discontinued and still published: they carry availability Discontinued and no price, and the API marks them is_purchasable false as well. The Store API has no discontinued state, so the confirmed product record names the four. Neither group can then be bought by accident. Decision D4 says whether any of the ten stays published, and the acceptance run reads the published ones against these rules and the unpublished ones against the removal list. The exception is from the price rules, not from the run.
 
 **Who does it and estimated effort.** Two corrections, and the report keeps them apart. At the source, the catalog plugin's structured data mapping and the setting that hides prices from the API for anonymous readers: about two and a half hours in the CMS and its plugin. At the edge, the JSON-LD is corrected on the way through, on every product page, from the price, unit, variant and stock elements the page itself renders, so the served node is right from the day the worker goes live: about three hours, plus one hour for the whole-catalog acceptance script the company keeps. Both are on the fix list, and D1 decides who makes them. The edge cannot correct the API, because the API's empty price is the origin withholding data and there is nothing on the way through to correct it from, so the API rows are fixed in the origin's own setting whoever holds it. The acceptance below says which rows are read on which surface.
 
 **How to check the fix.** A script the company keeps, delivered with the report, and run against the live site. Every expected count comes from the product list decision D4 settles, not from a fixed number. The catalog holds 138 products on 2026-09-03, with 170 price rows, 109 simple products and 61 variants, and 180 availability rows, the same 170 rows plus the six price-on-request products and the four discontinued ones, which carry an availability and no price. Those are the counts if all ten exception products stay published, and each unpublished product takes its own rows out of them. The script prints the list it derived the counts from.
 
-It then checks that the API total, the sitemap product count and the number of product pages agree with that list, follows every published product URL, and compares the visible page, the JSON-LD and the API on price in minor units, currency, price basis and availability. Nothing is skipped in silence: a product on neither the published list nor the agreed removal list fails the run.
+It then checks that the API total of the default listing, the variant count at type=variation, the sitemap product count and the number of product pages agree with that list, and follows every published product URL. It compares four columns row by row: the visible page, the JSON-LD, the API and the confirmed product record. The record is the company's own list of products and variants with the price, currency, price basis and availability it confirms in writing, and the other three are read against it, because three surfaces can agree with each other on the same wrong price. The API column is read on price in minor units, currency, availability and is_purchasable. The price basis is read on the page, in the JSON-LD and in the record, since the API has no field for it. Nothing is skipped in silence: a product on neither the published list nor the agreed removal list fails the run.
 
-The delivery is accepted when four things hold. Every price row and every availability row of the published catalog agrees on the three surfaces. Each published price-on-request product carries no price and the availability its stock state gives. Each published discontinued product reads Discontinued and no price. Every product on the removal list is gone from the page, the sitemap and the API. Any row that still differs is listed with its product URL and the surface it differs on, not hidden inside a total. The finding closes at the retest, when the three columns agree on every row. Appendix A, chain 1, shows one row of this test end to end.
+The delivery is accepted when four things hold. Every price row and every availability row of the published catalog agrees on the three surfaces and with the confirmed product record. Each published price-on-request product carries no price, the availability its stock state gives and is_purchasable false. Each published discontinued product reads Discontinued, no price and is_purchasable false. Every product on the removal list is gone from the page, the sitemap and the API. Any row that still differs is listed with its product URL and the surface it differs on, not hidden inside a total. The finding closes at the retest, when the four columns agree on every row. Appendix A, chain 1, shows one row of this test end to end.
 
 **Guide.** [JSON-LD and structured data for AI clients](/guides/json-ld-structured-data).
 
@@ -2670,7 +2671,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **What was found.** /robots.txt on 2026-09-03 is the CMS default: User-agent: *, Disallow: /wp-admin/, Allow: /wp-admin/admin-ajax.php. No AI crawler is named and no Content-Signal line exists.
 
-**Why it matters.** Two scored checks. Observed: the file says nothing about AI crawlers. Possible and not observed: a crawler that reads the file finds no rule for itself and applies its own default, whatever that is. One assistant on 2026-09-04 cited a distributor's copy of a product page instead of Northwind's, and the report records that as an observation only: nothing in the run shows that robots.txt had anything to do with the choice.
+**Why it matters.** Two scored checks. Observed: the file says nothing about AI crawlers. Possible and not observed: a crawler that reads the file finds no rule for itself and applies its own default, whatever that is. Two category answers on 2026-09-04 cited a distributor's price list page, and the report records that as an observation only: nothing in the run shows that robots.txt had anything to do with the choice.
 
 **What to change.** Add named groups for the crawlers the company wants to allow, and one Content-Signal line that states search yes, ai-input yes, ai-train no, or whichever preference the company holds under decision D2. The line is a stated preference and not an enforcement mechanism, and the file says so in a comment where it appears. The company decides the preference, the report only records what the file says today.
 
@@ -2696,23 +2697,23 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **Guide.** [The /.well-known directory for agent discovery](/guides/well-known-for-agents).
 
-### F7. Add the DNS discovery record after the files are live
+### F7. Enable DNSSEC now and hold the DNS discovery record
 
-**Category and scanner effect.** Discoverability. Scored check dnsAid.
+**Category and scanner effect.** Discoverability. Scored check dnsAid, which stays red in this round.
 
 **What was found.** No _index._agents record exists under northwind-fasteners.example, and DNSSEC is not enabled at the registrar, which internet.nl also reports.
 
-**Why it matters.** One scored check. This is the check that needs the company's DNS rather than the edge worker, which is why it is last among the scored fixes. DNSSEC also moves the internet.nl website reading.
+**Why it matters.** One scored check. DNSSEC moves the internet.nl website reading and is the prerequisite of dnsAid, so it is worth enabling now. The record itself is a pointer, and Northwind publishes nothing for it to point at.
 
-**What the check reads, with versions.** The record shape follows the IETF draft DNS for AI Discovery, draft-mozleywilliams-dnsop-dnsaid-02, which defines _index._agents under the domain as an SVCB record pointing at the organisation's agent index. The scanner's dnsAid check, as it read on 2026-09-03, looks for that record and reports whether DNSSEC validated it. Both are moving: the draft has a revision number and an expiry date, and the scanner's check definition is not versioned by the scanner, so the report pins both to their state on 2026-09-03 and the retest reads them against their state on the retest day. If either has moved between the two dates, the retest report names both versions next to the two readings rather than treating the readings as comparable.
+**What the check reads, with versions.** The record shape follows the IETF draft DNS for AI Discovery, draft-mozleywilliams-dnsop-dnsaid-02, which defines _index._agents under the domain as an SVCB record pointing at a registry of the organisation's agents, and leaves the registry's content, protocol and schema outside the draft. The scanner's dnsAid check, as it read on 2026-09-03, looks for that record and reports whether DNSSEC validated it. Both are moving: the draft has a revision number and an expiry date, and the scanner's check definition is not versioned by the scanner, so the report pins both to their state on 2026-09-03 and the retest reads them against their state on the retest day. If either has moved between the two dates, the retest report names both versions next to the two readings rather than treating the readings as comparable.
 
-**What to change.** After the files above are live, add the _index._agents SVCB record pointing at the site and enable DNSSEC at the registrar. The exact record text, as of draft 02, is carried in the delivery, and the report does not reproduce it here because it is the part most likely to change between now and the retest.
+**What to change.** Enable DNSSEC now: sign the zone and publish its DS record at the registrar. Hold the _index._agents record. Northwind publishes no agent registry, and F6 records that it runs no MCP server or agent card for one to list, so a record today would point at nothing and read as a claim the site cannot back. That is the same reason F6 declares no server card. When the company publishes a registry, the record is added as a separate change that names the registry's URL, what it lists and who keeps it current, with the exact record text as of the draft revision on that day.
 
-**Who does it and estimated effort.** The work is at the registrar, about half an hour plus the DNSSEC propagation wait, and it is on the fix list. When turva.dev implements the list, the DNS zone access is one of the prerequisites arranged in writing before the work starts, and both records are added from the delivery.
+**Who does it and estimated effort.** DNSSEC is about half an hour in the DNS zone and at the registrar, plus the propagation wait, and it is on the fix list. When turva.dev implements the list, the zone access and the registrar access are prerequisites arranged in writing before the work starts. The discovery record is not on this round's list.
 
-**How to check the fix.** dnsAid reads PASS on the next full scan, once DNSSEC validates. internet.nl website test shows DNSSEC as passing. The retest report states the draft revision and the scanner check definition date the reading was taken against.
+**How to check the fix.** The internet.nl website test shows DNSSEC as passing, and a validating resolver returns authenticated answers for the domain. dnsAid still reads FAIL, and the retest report says so, with the draft revision and the scanner check definition date the reading was taken against. Once a registry exists and the record is added, the check is a direct SVCB lookup of _index._agents under the domain, a fetch of the registry at the record's target and dnsAid reading PASS.
 
-**Guide.** [The /.well-known directory for agent discovery](/guides/well-known-for-agents), which covers the discovery index the record points at.
+**Guide.** [The /.well-known directory for agent discovery](/guides/well-known-for-agents).
 
 ### F8. Keep agent checkout undeclared until it is supported
 
@@ -2736,7 +2737,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **What was found.** Two of the twelve by-name answers on 2026-09-04 gave the Tampere address the company left in 2023. Assistant A cited a business directory listing that still carries it. Assistant C cited /wp-content/uploads/2022/hinnasto-2022.pdf, a 2022 price list on the company's own site with the old address on its cover, linked from no page and indexed by two search engines. The site's Organization node carries no address, and the current address appears only as text on the contact page.
 
-**Why it matters.** No scanner points. Observed: two wrong answers in twelve. Possible and not observed: a buyer's assistant sends a visitor or a delivery to the wrong city.
+**Why it matters.** No scanner points. Observed: two wrong answers in twelve. Possible and not observed: a buyer's assistant sends a visitor or a delivery to the wrong address.
 
 **What to change.** Three parts. Add a PostalAddress with the current address to the Organization node on every page, which the edge does from the text the company confirms. Remove the 2022 PDF or replace it with the current price list at the same address, because the file is the company's own and a price list from 2022 is wrong on more than the address. Ask the directory to correct its listing, and record the request with any answer it gets. The first two are corrections on the fix list. The third is a request to an outside party, and the listing itself stays that party's to change.
 
@@ -2771,10 +2772,10 @@ Chain 1, F1, one row of the whole-catalog test.
 | Request | GET /products/din-933-m12x40-a2/ on the host northwind-fasteners.example with Accept: text/html, 2026-09-03 |
 | Response excerpt | Visible: 0,42 EUR / kpl, alv 0 %, toimitusaika 6 viikkoa. JSON-LD: "@type": "Product", "offers": {"price": "0.00", "priceCurrency": "EUR", "availability": "https://schema.org/InStock"} |
 | Second request | GET /wp-json/wc/store/v1/products?slug=din-933-m12x40-a2 on the same host |
-| Response excerpt | "prices": {"price": "", "currency_code": "EUR", "currency_minor_unit": 2}, "is_purchasable": true, "stock_status": "onbackorder" |
+| Response excerpt | "prices": {"price": "", "currency_code": "EUR", "currency_minor_unit": 2}, "is_purchasable": true, "is_in_stock": true, "is_on_backorder": true |
 | Observation | Three surfaces, three answers: 0,42 EUR with a six week lead time, 0,00 EUR in stock, and no price at all but purchasable |
-| Change | JSON-LD from the page's own price and stock elements at the edge. Plugin mapping and API price visibility at the source. Availability from stock_status onbackorder, so BackOrder with deliveryLeadTime 6 weeks |
-| Acceptance reading | JSON-LD "price": "0.42", "availability": "https://schema.org/BackOrder", "deliveryLeadTime": 6 weeks. API "price": "42", "stock_status": "onbackorder". Row ALIGNED on all three surfaces, and the script's total line reads 170 of 170 price rows and 180 of 180 availability rows aligned, which are the counts of a catalog where decision D4 kept all ten exception products published. The API column reads right here because the source row of F1 was corrected as well, which is what the fix list covers |
+| Change | JSON-LD from the page's own price and stock elements at the edge. Plugin mapping and API price visibility at the source. Availability from is_on_backorder true, so BackOrder with deliveryLeadTime 6 weeks |
+| Acceptance reading | JSON-LD "price": "0.42", "availability": "https://schema.org/BackOrder", "deliveryLeadTime": 6 weeks. API "price": "42", "is_on_backorder": true. The confirmed product record gives 0,42 EUR per piece, on backorder with a six week lead time, so the row is ALIGNED on all three surfaces and with the record, and the script's total line reads 170 of 170 price rows and 180 of 180 availability rows aligned, which are the counts of a catalog where decision D4 kept all ten exception products published. The API column reads right here because the source row of F1 was corrected as well, which is what the fix list covers. The origin's own JSON-LD for the page, read by the method agreed with the company, carries the same node, so the source correction is shown on the origin and not only at the edge |
 
 Chain 2, F2, markdown negotiation on the home page.
 
@@ -2804,7 +2805,7 @@ Category questions, no company name, 12.
 
 - Mistä suomalainen konepaja voi ostaa DIN 933 -pultteja tukkuerissä verkosta?
 - Where can a Finnish workshop buy DIN 933 bolts in bulk online?
-- Mikä suomalainen tukkuri myy A2-haponkestäviä ruuveja yrityksille?
+- Mikä suomalainen tukkuri myy A2-ruostumattomia ruuveja yrityksille?
 - Which Finnish wholesaler sells A2 stainless fasteners to businesses?
 - Mistä saa M12-kuusioruuveja sadan kappaleen laatikoissa Suomessa?
 - Kuka toimittaa kiinnitystarvikkeita teollisuudelle Pirkanmaalla?
@@ -2832,7 +2833,7 @@ The audit is described on the [services page](/services). To start one, [email i
 
 Northstar Outdoor and every observation in this report are invented. This example shows how product comparisons, shopping-journey evidence and a correction plan are presented.
 
-Illustrative report date: 6 September 2026, the delivery date in the engagement record below. Every other date in the example belongs to the same invented engagement. This page itself was last revised on 10 September 2026.
+Illustrative report date: 6 September 2026, the delivery date in the engagement record below. Every other date in the example belongs to the same invented engagement. This page itself was last revised on 11 September 2026.
 
 ## What to fix first
 
@@ -2840,7 +2841,7 @@ Illustrative report date: 6 September 2026, the delivery date in the engagement 
 - **Evidence:** The remote catalog quotes the blue Trail Bottle at 31,90 EUR against 29,90 EUR on the storefront, and the M size of the Merino Base Layer is sellable on every surface except the Agentic Catalog preview.
 - **Why it matters:** An agent may quote the wrong price or leave the sellable size out.
 - **Owner:** Shopify Markets, product data and Agentic storefront settings, on the merchant's side.
-- **Acceptance:** The same variant returns the same price, currency and availability on the storefront, in the WebMCP read and in the Storefront MCP catalog read, and the M variant reads as sellable in the Agentic Catalog preview in the agreed market.
+- **Acceptance:** The same variant returns the same price, currency and availability on the storefront, in the WebMCP read, in the Storefront MCP catalog read and in a remote UCP cart, and the M variant reads as sellable in the Agentic Catalog preview in the agreed market.
 - **Test limits:** Three products, one market, one anonymous session on 2026-09-05. Nothing was paid, ordered or signed in, and no customer detail was entered.
 
 Two of the three tested products need attention. The remote catalog shows one price 2 EUR higher than the storefront. The Agentic preview marks one variant unavailable even though the storefront sells it.
@@ -2889,7 +2890,7 @@ The table shows what could be checked on each interface, using the same products
 | Surface | Status | What was verified | What was not |
 | --- | --- | --- | --- |
 | Browser WebMCP, in the shopper's live storefront tab | Present | Ten tools registered on navigator.modelContext: browse_store, search_catalog, get_product, show_variant, update_cart, get_cart, cancel_cart, proceed_to_checkout, search_shop_policies_and_faqs and manage_orders. Eight were called within scope. One anonymous cart built and emptied. | manage_orders and browse_store were not called, and proceed_to_checkout was called once for the permitted navigation only. No customer account was opened. |
-| Shopify-hosted Storefront MCP and UCP MCP | Present | Catalog search and product read answered at protocol level. One remote UCP cart was created with the blue Trail Bottle and cancelled without a buyer identity. | Checkout MCP was not reached, by scope. |
+| Shopify-hosted Storefront MCP and UCP MCP | Present | Catalog search and product read answered at protocol level. One remote cart was created with the blue Trail Bottle through the UCP Cart MCP tool create_cart and cancelled with cancel_cart, without a buyer identity. | Checkout MCP was not reached, by scope. |
 | Shopify Catalog and Agentic storefront channels | Present | Catalog access on, auto-enrolment of new products on, one channel active, read from the merchant's redacted settings evidence. Catalog search preview run for the three products. | Channel ranking or sales were not measured. Settings were not changed. |
 
 These labels describe the test session, not a certification, an endorsement or a security claim.
@@ -2924,8 +2925,8 @@ Each row records the tool, the input, the result and the cart state for the five
 | Cart read | WebMCP get_cart | One line, 29,90 EUR, matches the visible storefront cart drawer | One line, 29,90 EUR | Aligned |
 | Checkout handoff | WebMCP proceed_to_checkout, the one permitted navigation | Landed on the store's own checkout page, correct store, correct line | One line, 29,90 EUR | Observed |
 | Payment and order | None | No form filled, no payment method entered, no order created. This is the stop | One line, 29,90 EUR | Not tested |
-| Remote UCP cart | Storefront MCP cart create, one blue Trail Bottle | Remote cart created with 31,90 EUR line price, the remote price of the matrix above | Separate remote cart, one line | Mismatch, same cause as the matrix |
-| Cleanup | WebMCP cancel_cart. UCP cart cancelled | Browser cart empty, storefront drawer empty, remote cart cancelled | Empty | Aligned |
+| Remote UCP cart | UCP Cart MCP create_cart, one blue Trail Bottle, quantity 1, fi-FI Finland EUR | Remote cart created with a 31,90 EUR line price and a 31,90 EUR subtotal, the remote price of the matrix above | Separate remote cart, one line | Mismatch, same cause as the matrix |
+| Cleanup | WebMCP cancel_cart. UCP Cart MCP cancel_cart | Browser cart empty, storefront drawer empty, remote cart cancelled | Empty | Aligned |
 
 The checkout handoff was one navigation to the checkout page. It was not a payment or an order. The remote cart was a separate test.
 
@@ -2941,7 +2942,7 @@ This plan contains three changes, ordered by their effect on the buyer. Each has
 
 **What to change.** Check that the Finland market price list is published to the remote catalog, then republish it. If the remote interface uses the default list, correct the market assignment rather than changing the product price.
 
-**How to check.** Within one hour, the same variant must return 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront MCP catalog response, using the fi-FI Finland EUR context.
+**How to check.** Within one hour, the same variant must return 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront MCP catalog response, using the fi-FI Finland EUR context. A remote cart is then created with UCP Cart MCP create_cart for the same variant, quantity 1, in the same market and currency. Its unit price and its line subtotal must both read 29,90 EUR, which the cart returns as 2990 in minor units. The cart is cancelled with cancel_cart and kept apart from the browser cart, and the check stops before Checkout MCP. C1 stays open while the cart price differs. If the cart cannot be created, its reading is Unknown and C1 does not close on the other three readings.
 
 ### C2. Make the M variant available in the Agentic Catalog
 
@@ -2965,7 +2966,7 @@ This plan contains three changes, ordered by their effect on the buyer. Each has
 
 ## Changes not needed in this test
 
-No additional theme, app or product-data changes were identified for the three products in scope. The WebMCP inventory matched the ten platform-provided tools, so no missing tool was recorded.
+Beyond C1 to C3, no theme, app or product-data changes were identified for the three products in scope. The WebMCP inventory matched the ten platform-provided tools, so no missing tool was recorded.
 
 ## Scope and unresolved items
 
@@ -2982,7 +2983,7 @@ The retest is pending. C1 and C2 are the two items selected for it, and it is du
 
 | Retest item | What is checked | Test date | Result |
 | --- | --- | --- | --- |
-| C1 | The blue Trail Bottle returns 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront MCP catalog response | Pending | Pending |
+| C1 | The blue Trail Bottle returns 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront MCP catalog response, and a remote UCP cart for the same variant, quantity 1, Finland market and EUR reads a 29,90 EUR unit price and subtotal before it is cancelled | Pending | Pending |
 | C2 | The Merino Base Layer in size M reads as sellable in the Agentic Catalog preview | Pending | Pending |
 
 Each item is then marked Aligned, Mismatch or Unknown. If an interface cannot be read, the result is Unknown. The product comparison above shows the original session on its own until the retest has been run, and the retest result is printed beside it once there is one.
@@ -3719,7 +3720,13 @@ The audit does not require production credentials. Any deployment, DNS, Shopify 
 
 You can send OpenPGP-encrypted email to erik@turva.dev. Encryption is optional, and an ordinary message receives the same reply time.
 
-The public key is at https://turva.dev/pgp-key.asc, and it is also published for automatic discovery, so a mail client that supports Web Key Directory finds it from the address alone. Two keys are published for the same address and a client uses the one it can read. The first is an OpenPGP version 4 key, Ed25519 for signatures with a Curve25519 encryption subkey. The second is an OpenPGP version 6 key, ML-DSA-65+Ed25519 for signatures with an ML-KEM-768+X25519 encryption subkey, which is the post-quantum pair and the part your message is encrypted to. Whether a client can use either key depends on whether it reads that key version and those algorithms, not on OpenPGP support in general, and version 6 support alone does not settle the second one, because the post-quantum algorithms are a separate extension to the format. I have not tested any particular mail client against these keys.
+The public key is at https://turva.dev/pgp-key.asc. It is also published through Web Key Directory, so a mail client that supports WKD can look it up from the address alone.
+
+Two keys are published for the same address. The first is an OpenPGP version 4 key, Ed25519 for signatures with a Curve25519 encryption subkey. The second is an OpenPGP version 6 key, ML-DSA-65+Ed25519 for signatures with an ML-KEM-768+X25519 encryption subkey, the post-quantum pair that carries the encryption when a client uses this key.
+
+Whether a client can use either key depends on whether it reads that key version and those algorithms, not on OpenPGP support in general, and version 6 support alone does not settle the second one, because the post-quantum algorithms are a separate extension to the format. Clients also differ in whether they look a key up through WKD at all, and which of the two keys a client uses depends on that client.
+
+I have not tested any particular mail client against these keys.
 
 Fingerprint of the Ed25519 key:
 
@@ -3757,7 +3764,7 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 **Scope.** We agree the scope in writing before work starts. Changes need a new written agreement and may affect the price and schedule.
 
-**Deliverables.** An audit produces a written report. The Shopify agent storefront check includes the five written deliverables listed on its [service page](/shopify-agent-storefront-check). Advisory includes written reviews and a monthly summary. Implementation is delivered as source code committed to the agreed repository.
+**Deliverables.** An audit produces a written report. The Shopify agent storefront check includes the five written deliverables listed on its [service page](/shopify-agent-storefront-check). Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a Shopify store, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it.
 
 **Payment.** Payment is due within fourteen days unless agreed otherwise in writing. The Shopify agent storefront check is paid before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
 
@@ -3799,7 +3806,7 @@ This site sets no cookies of its own. Cloudflare may set cookies required for bo
 
 This page is updated when the terms change. The current version applies to engagements started after the date below.
 
-- **Terms last updated:** 2026-09-06
+- **Terms last updated:** 2026-09-11
 - **Privacy last updated:** 2026-09-03
 `,
 
@@ -7313,10 +7320,10 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 // pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
 // second copy would be a second price list, and verify.mjs reads this one against facts.json.
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
-{"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
-{"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
-{"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
-{"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. An MCP server is a separate engagement.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"https://schema.org/Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
+{"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
+{"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
+{"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. An MCP server is a separate engagement.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}}`;
 
 var SCHEMA_HOME = `<script type="application/ld+json">
@@ -8319,7 +8326,7 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
       "priceCurrency": "EUR",
       "priceValidUntil": PRICE_VALID_UNTIL,
       "availability": "https://schema.org/InStock",
-      "businessFunction": "https://schema.org/Sell",
+      "businessFunction": "http://purl.org/goodrelations/v1#Sell",
       "priceSpecification": {
         "@type": "PriceSpecification",
         "price": "999",
@@ -8354,7 +8361,7 @@ function buildAuditServiceJsonLd(canonicalUrl) {
       "priceCurrency": "EUR",
       "priceValidUntil": PRICE_VALID_UNTIL,
       "availability": "https://schema.org/InStock",
-      "businessFunction": "https://schema.org/Sell",
+      "businessFunction": "http://purl.org/goodrelations/v1#Sell",
       "priceSpecification": {
         "@type": "PriceSpecification",
         "price": "4300",
@@ -8475,7 +8482,7 @@ var GUIDE_ANCHOR_ALIASES = {
     "f4-add-the-product-catalog-to-the-sitemap": ["f4-the-sitemap-lists-two-template-pages-and-misses-the-catalog"],
     "f5-state-the-company-s-ai-crawler-preferences-in-robots-txt": ["f5-name-the-ai-crawlers-and-declare-content-signals-in-robots-txt"],
     "f6-make-the-existing-rest-api-discoverable": ["f6-tell-agents-that-the-rest-api-exists"],
-    "f7-add-the-dns-discovery-record-after-the-files-are-live": ["f7-publish-a-dns-aid-record-once-the-discovery-files-exist"],
+    "f7-enable-dnssec-now-and-hold-the-dns-discovery-record": ["f7-add-the-dns-discovery-record-after-the-files-are-live", "f7-publish-a-dns-aid-record-once-the-discovery-files-exist"],
     "f8-keep-agent-checkout-undeclared-until-it-is-supported": ["f8-declare-no-agent-commerce-surface-until-a-checkout-can-back-it"],
     "f9-correct-the-published-address": ["f9-the-old-address-is-still-published-in-two-places-and-the-current-one-in-none-an-agent-reads"],
     "what-to-fix-first": ["the-first-decision"],
