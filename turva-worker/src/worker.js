@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.157.0 - the hosted parity check runs the current package release (2026-09-12): the pinned dependency moves 0.2.0 to 0.2.5, so a report's toolVersion names the release npx installs. Measured across ten pages and 106 findings: every hosted report is byte-identical apart from toolVersion and generatedAt, and no JSON schema key changed, so the comparison core, the severities and the exit codes are untouched. The only library change between those releases was 0.2.2's ReDoS hardening, which the hosted route never exposed because its inputs are capped.
 // turva.dev worker v3.156.0 - the parity page states its scope before the address field (2026-09-12): /markdown-parity-check names the turva.dev limit and the npx route in its lead, the Page URL hint repeats the limit where a screen reader reads it, the dated tools example gets its structural reading and links to /blog/html-and-markdown-can-disagree, that post joins the page's Related list, and the twin's command carries --yes like the package README. No change to the comparison core, the severities, the exit codes or the JSON schema.
 // turva.dev worker v3.155.4 - the deck sentence of one blog post matches its description again (2026-09-12): /blog/html-and-markdown-can-disagree said "the two versions actually contain" under its date line while META_BY_PATH said "the two versions contain", so the index card and the page disagreed by one word. The word is dropped from the deck rather than added to the description, which is already 154 characters (Tek-364).
 // turva.dev worker v3.155.3 - Bing metadata for eight indexed pages (2026-09-12): the five titles Bing reported as too long get a short titleTag used for the <title> element only, so og:title, the /blog index card and the markdown twin keep the heading the page itself carries; the three descriptions Bing reported on length are rewritten, and the Finnish B2B post's deck sentence moves with its description so the index card and the page still say the same thing (Tek-364).
@@ -5919,7 +5920,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.156.0",
+    "version": "3.157.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6187,7 +6188,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.156.0",
+  "version": "3.157.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
