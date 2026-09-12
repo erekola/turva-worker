@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.155.4 - the deck sentence of one blog post matches its description again (2026-09-12): /blog/html-and-markdown-can-disagree said "the two versions actually contain" under its date line while META_BY_PATH said "the two versions contain", so the index card and the page disagreed by one word. The word is dropped from the deck rather than added to the description, which is already 154 characters (Tek-364).
 // turva.dev worker v3.155.3 - Bing metadata for eight indexed pages (2026-09-12): the five titles Bing reported as too long get a short titleTag used for the <title> element only, so og:title, the /blog index card and the markdown twin keep the heading the page itself carries; the three descriptions Bing reported on length are rewritten, and the Finnish B2B post's deck sentence moves with its description so the index card and the page still say the same thing (Tek-364).
 // turva.dev worker v3.155.2 - the new blog post gets its Frequently asked section (2026-09-12): four question and answer pairs on what a clean report does not establish, running the check against a site you do not own, why a plain diff is not the same comparison, and which difference to fix first. The path joins GUIDE_PAGE_FAQ, so the page publishes FAQPage structured data the way the other blog posts do.
 // turva.dev worker v3.155.1 - AEO shape for the new blog post (2026-09-12): four section headings of /blog/html-and-markdown-can-disagree are now questions, each answered directly in the first paragraph under it, which is what the cross-post channels score as answer-engine readiness. No FAQ section and no schema change, and llms.txt is untouched, so no re-sign.
@@ -437,7 +438,7 @@ var PAGE_MARKDOWN = {
 
 2026-09-12
 
-A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions actually contain.
+A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.
 
 My own tools page gave the checker something to report. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown version that the HTML page leaves out. The comparison returned five errors. That dated result is recorded in the [tool's README](https://github.com/erekola/markdown-parity-check#command-line-and-hosted-page).
 
@@ -5912,7 +5913,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.155.3",
+    "version": "3.155.4",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6180,7 +6181,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.155.3",
+  "version": "3.155.4",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
