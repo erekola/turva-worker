@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.155.3 - Bing metadata for eight indexed pages (2026-09-12): the five titles Bing reported as too long get a short titleTag used for the <title> element only, so og:title, the /blog index card and the markdown twin keep the heading the page itself carries; the three descriptions Bing reported on length are rewritten, and the Finnish B2B post's deck sentence moves with its description so the index card and the page still say the same thing (Tek-364).
 // turva.dev worker v3.155.2 - the new blog post gets its Frequently asked section (2026-09-12): four question and answer pairs on what a clean report does not establish, running the check against a site you do not own, why a plain diff is not the same comparison, and which difference to fix first. The path joins GUIDE_PAGE_FAQ, so the page publishes FAQPage structured data the way the other blog posts do.
 // turva.dev worker v3.155.1 - AEO shape for the new blog post (2026-09-12): four section headings of /blog/html-and-markdown-can-disagree are now questions, each answered directly in the first paragraph under it, which is what the cross-post channels score as answer-engine readiness. No FAQ section and no schema change, and llms.txt is untouched, so no re-sign.
 // turva.dev worker v3.155.0 - the blog post HTML and Markdown can disagree (2026-09-12): the post explains what markdown-parity-check compares, records the dated five-error result on /tools and states what a clean report does not establish; it joins /blog, META_BY_PATH, CANONICAL_PATHS, the sitemap and llms.txt (re-sign), and SITEMAP_LASTMOD moves to the day the page text changed.
@@ -1722,7 +1723,7 @@ Windows Credential Manager caps a single entry at 2560 bytes and some forges iss
 
 2026-07-07
 
-A small, selected sample of sixteen Finnish B2B sites introduced the scan series. Read it as a historical snapshot and follow the later 567-site study.
+A scan of sixteen selected Finnish B2B sites records gaps in agent-readiness. This historical sample leads into the later study of 567 sites.
 
 Over the past weeks I ran an independent agent-readiness scanner over sixteen Finnish company websites, mostly industrial and B2B, a few in healthcare. The scanner was isitagentready.com, which grades on a Level 0 to 5 scale. This is a small, non-random sample. The sites came from my own prospecting, not a statistical draw, so read it as a snapshot, not a census. The pattern was consistent enough to be worth writing down.
 
@@ -5911,7 +5912,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.155.2",
+    "version": "3.155.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6179,7 +6180,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.155.2",
+  "version": "3.155.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7007,6 +7008,7 @@ var META_BY_PATH = {
   },
   "/blog/two-auth-md-dialects": {
     title: "Two files called auth.md, and they disagree on the field names · turva.dev",
+    titleTag: "Two auth.md formats compared · turva.dev",
     description: "Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.",
     date: "2026-09-04",
     modified: "2026-09-06",
@@ -7016,6 +7018,7 @@ var META_BY_PATH = {
   },
   "/blog/thirty-days-after-the-brief": {
     title: "Thirty-day follow-up: 201 comparable readings from 210 sites · turva.dev",
+    titleTag: "Thirty-day website follow-up · turva.dev",
     description: "A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.",
     date: "2026-09-03",
     kind: "Research",
@@ -7042,6 +7045,7 @@ var META_BY_PATH = {
   },
   "/blog/trace-runtime-attestation": {
     title: "TRACE signs how an agent ran, not what it was allowed to reach · turva.dev",
+    titleTag: "TRACE runtime attestation and its limits · turva.dev",
     description: "This article examines what a TRACE Trust Record attests to, and why runtime evidence does not itself establish the right permissions or correct decisions.",
     date: "2026-08-30",
     kind: "Protocol notes",
@@ -7050,6 +7054,7 @@ var META_BY_PATH = {
   },
   "/blog/agent-readiness-code-hosts": {
     title: "I scanned fourteen code hosts. Not one served an MCP server card. · turva.dev",
+    titleTag: "Agent discovery on fourteen code hosts · turva.dev",
     description: "Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.",
     date: "2026-08-22",
     kind: "Research",
@@ -7124,6 +7129,7 @@ var META_BY_PATH = {
   },
   "/blog/measuring-the-ai-patch-surge": {
     title: "Microsoft said the patches would get bigger. I measured how much bigger. · turva.dev",
+    titleTag: "Microsoft security updates, measured · turva.dev",
     description: "A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.",
     date: "2026-07-15",
     kind: "Research",
@@ -7141,7 +7147,7 @@ var META_BY_PATH = {
   },
   "/blog/agent-readiness-finnish-b2b": {
     title: "How agent-ready are Finnish B2B sites? I scanned sixteen · turva.dev",
-    description: "A small, selected sample of sixteen Finnish B2B sites introduced the scan series. Read it as a historical snapshot and follow the later 567-site study.",
+    description: "A scan of sixteen selected Finnish B2B sites records gaps in agent-readiness. This historical sample leads into the later study of 567 sites.",
     date: "2026-07-07",
     kind: "Research",
     modified: "2026-07-17",
@@ -7331,13 +7337,13 @@ var META_BY_PATH = {
   },
   "/samples/audit-report": {
     title: "Sample audit report, synthetic · turva.dev",
-    description: "Explore a synthetic website and API audit report with evidence, technical findings, observed AI answers, priorities and acceptance checks.",
+    description: "A fictional website and API audit follows incorrect product data from the evidence to assigned fixes and the checks used to accept the work.",
     image: "/og-samples-audit-report.jpg",
     imageAlt: "turva.dev sample card: the synthetic agent-readiness audit report for an invented company, every check, finding and acceptance test in the format a client receives."
   },
   "/samples/shopify-agent-storefront-check": {
     title: "Sample Shopify storefront check report · turva.dev",
-    description: "Read a synthetic Shopify check with product comparisons across three agent surfaces, buyer-journey evidence and a prioritised correction plan.",
+    description: "A fictional Shopify storefront check compares product data across agent interfaces and follows a shopping journey through to the checkout handoff.",
     image: "/og-samples-shopify-agent-storefront-check.jpg",
     imageAlt: "turva.dev sample card: the synthetic Shopify agent storefront check report for an invented store, the five deliverables in the format a merchant receives."
   },
@@ -7527,7 +7533,10 @@ function buildMetaBlock(pathname, canonicalUrl) {
       articleMeta += `\n<meta property="article:published_time" content="${m.date}" />\n<meta property="article:modified_time" content="${m.modified || m.date}" />`;
     }
   }
-  const st = escapeHtml(m.title);
+  // Bing reported five titles as too long. The short form lives in titleTag and is used
+  // for the <title> element only; og:title, the /blog index card and the markdown twin
+  // keep m.title, which matches the page H1, so the list and the page still agree.
+  const st = escapeHtml(m.titleTag || m.title);
   // Social cards and Medium's importer read og:title, and the " · turva.dev" suffix
   // that belongs in <title> only repeats the domain there. Strip it for og/twitter.
   const sot = escapeHtml(m.title.replace(/\s*[|\u00b7]\s*turva\.dev$/, ""));
