@@ -2804,9 +2804,9 @@ if (LIVE) {
         `get_agent_readiness category keys == facts.json [${cats.map((c) => c.id)}] (saw [${Object.keys(gotCats)}])`);
       for (const c of cats) {
         // Shaped, not scraped. Pulling loose integers accepted "100 (4/4 checks failed)"
-        // as a pass, and it broke on any added word. The score is derived from this
-        // category's own two counts rather than borrowed from the site total, which are
-        // different numbers that happen to agree while everything passes.
+        // as a pass, and it broke on any added word. The expected value is this category's
+        // own score string, not the site total, which is a different number that happens to
+        // agree while everything passes. Nothing here computes a score from check counts.
         // Fixed 2026-08-30. The expected value was written here as a literal (100), so the
         // gate held its own copy of a published number: if the number moves, the gate would
         // watch the old value. It is now read from facts.json's per-category field.

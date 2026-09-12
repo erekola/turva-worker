@@ -9630,10 +9630,13 @@ function cardPageHeaders(canonicalUrl) {
 // every brief that goes out would be a code change, a deploy and a push. The content
 // therefore comes from KV and this file carries only the route.
 //
-// THE CONTENT IS NOT RENDERED HERE. KV holds finished markdown and finished JSON, which
+// THE BRIEF'S CONTENT COMES FROM KV. KV holds finished markdown and finished JSON, which
 // docs/auditit/briefgen/template.py produces from the same block list as the PDF's. The
-// HTML is set from that same markdown. The Worker therefore composes no sentence of its
-// own, and none of the three formats can say something different from another.
+// HTML body is typeset here from that stored markdown, the Worker adds only the page
+// frame (navigation, the format links, the contact line and the footer), and .md and
+// .json go out as stored. Keeping the markdown and the JSON in agreement is the
+// publishing pipeline's job: this route checks only that rec.md is a string and
+// rec.json is present, and it never compares what the two say.
 //
 // NOT FOR SEARCH ENGINES. The path is not in CANONICAL_PATHS and not in SITEMAP_ENTRIES,
 // the id is unguessable, and every response carries a noindex header. robots.txt is NOT
@@ -9664,8 +9667,9 @@ function briefRoute(pathname) {
 // is a placeholder: a live address does not belong in a public repo, kierros 16 S4-1)
 // in three runs out of three.
 //
-// THE CLEANUP CANNOT EAT A REAL ID, because BRIEF_ID allows only the characters [a-z0-9-]
-// and an id therefore cannot end in a punctuation mark. The closing parenthesis is
+// THE CLEANUP CANNOT EAT A REAL ID, because it strips only the characters in
+// BRIEF_LOPPUVALIMERKIT and BRIEF_ID allows none of them. An id may end in a hyphen, and
+// the hyphen is not in the cleanup set, so it stays. The closing parenthesis is
 // included, because a markdown-style (https://...) is another way an address ends beside one.
 //
 // THE ANSWER IS A 301 AND NOT THE CONTENT. If the same brief answered from two addresses,
@@ -9682,13 +9686,31 @@ function briefSiivousKohde(pathname) {
   return siivottu;
 }
 
-function briefUnescape(md) {
-  // template.py's _md_suoja() escapes line-leading characters with a backslash, so that a
-  // real markdown parser does not read prose as a list or a heading. markdownToHtml() does
-  // not know about backslash escaping, so it would set the backslash visibly. The unescaping
-  // is done ONLY for the HTML typesetting. The .md response goes out byte for byte as it
-  // is in KV, because it is written for a markdown parser.
-  return md.replace(/\\([#>+*\-.)])/g, "$1");
+// template.py's _md_suoja() escapes line-leading characters with a backslash, so that a
+// real markdown parser does not read prose as a list or a heading. markdownToHtml() does
+// not know about backslash escaping. Until 2026-09-12 the escapes were removed BEFORE it
+// classified the blocks, so "\# text" came out as an h1 and "\- text" as a list that
+// dropped the paragraph's other lines, the very reading the escape exists to prevent
+// (found in a comment audit 2026-09-12). Each escaped character is now held as a private
+// use placeholder while the blocks are classified and the inline markup is set, and it
+// becomes the literal character again only in the finished HTML. A character that is
+// already in the placeholder range U+E000 to U+E007 (an icon font glyph copied from a
+// site, say) is held as U+E007 followed by itself, so it comes out unchanged and is never
+// read as a placeholder. The .md response still
+// goes out byte for byte as it is in KV, because it is written for a markdown parser.
+var BRIEF_ESCAPABLE = "#>+*-.)";
+
+function briefHoldEscapes(md) {
+  return md.replace(/[\uE000-\uE007]/g, "\uE007$&").replace(/\\([#>+*\-.)])/g, function (m, c) {
+    return String.fromCharCode(0xE000 + BRIEF_ESCAPABLE.indexOf(c));
+  });
+}
+
+function briefReleaseEscapes(html) {
+  return html.replace(/\uE007([\uE000-\uE007])|[\uE000-\uE006]/g, function (p, kept) {
+    if (kept) return kept;
+    return escapeHtml(BRIEF_ESCAPABLE.charAt(p.charCodeAt(0) - 0xE000));
+  });
 }
 
 function briefHeaders(kind, kieli) {
@@ -9703,10 +9725,10 @@ function briefHeaders(kind, kieli) {
   return headers;
 }
 
-// The brief page's own spacing. Erik 2026-08-26: space between the h1 and the subheading.
-// CARDPAGE_CSS gives the h1 0,6rem, which is enough for a short card page but not for a
-// two-line brief title. SUBHEADINGS ARE NOT WIDENED: 3.108.2 did that too, and Erik
-// removed it 2026-08-26. This applies ONLY to the /brief/ page, because the same
+// The brief page's own spacing. Erik 2026-08-26: more space between the h1 and the line
+// under it. The h1 margin in CARDPAGE_CSS is sized for a short card page title and is too
+// tight under a brief title that wraps onto two lines. THE SPACING AROUND SECTION
+// HEADINGS IS NOT INCREASED: 3.108.2 did that too, and Erik reverted it 2026-08-26. This applies ONLY to the /brief/ page, because the same
 // CARDPAGE_CSS serves the public card pages and their typesetting is not changed here.
 // The brief body is plain markdown inside main, with no section wrappers, so the shared
 // page template's open-section rules are restated here for bare headings, lists and code.
@@ -9786,7 +9808,7 @@ ${BRIEF_CSS}
 <a class="skip" href="#main">${kieli === "fi" ? "Siirry sisältöön" : "Skip to content"}</a>
 ${cardPageNav("")}
 <main id="main">
-${markdownToHtml(briefUnescape(rec.md))}
+${briefReleaseEscapes(markdownToHtml(briefHoldEscapes(rec.md)))}
 <p class="date">${vaihtoehdot}</p>
 <p class="date">${yhteys}</p>
 </main>
@@ -10164,13 +10186,6 @@ function collectLinks(text) {
   return out;
 }
 
-// A markdown list item that carries a link, scanned once from left to right instead of
-// matched with /^ {0,3}[-*+] .*\[[^\][]*\]\([^)\s]+\)/. That pattern is quadratic on a line
-// such as "- " followed by "[a](" repeated, because every candidate rescans the target to the
-// end of the line, and the line comes from the audited site (CodeQL js/polynomial-redos,
-// 2026-08-29). Bounding the quantifier would trade the speed bug for a silent accuracy bug,
-// so the scan is by index: every character is read once and the furthest failed target scan
-// is remembered.
 // CommonMark fenced code blocks, marked line by line. A "## " or a link inside a fence is
 // example text and not the file's own structure, but until 2026-09-10 both counted, so a
 // file whose only section and only link lived inside ``` or ~~~ was reported valid. The
@@ -10206,6 +10221,13 @@ function fenceMask(lines) {
   }
   return mask;
 }
+// A markdown list item that carries a link, scanned once from left to right instead of
+// matched with /^ {0,3}[-*+] .*\[[^\][]*\]\([^)\s]+\)/. That pattern is quadratic on a line
+// such as "- " followed by "[a](" repeated, because every candidate rescans the target to the
+// end of the line, and the line comes from the audited site (CodeQL js/polynomial-redos,
+// 2026-08-29). Bounding the quantifier would trade the speed bug for a silent accuracy bug,
+// so the scan is by index: every character is read once and the furthest failed target scan
+// is remembered.
 function listItemHasLink(l) {
   const m = /^ {0,3}[-*+] /.exec(l);
   if (!m) return false;
@@ -10694,7 +10716,10 @@ function findLinkRelations(html, linkHeader) {
   // a link element the parser moves into the body is not what these two checks are about.
   // Counting any of them would report a relation the site does not serve, which is the one
   // thing a measurement may not do. See headOfDocument above for the shape by shape rules.
-  // The 64 KB bound is a cap on work, not a rule: a head longer than that is not a head.
+  // The scan reads only the first 65,536 UTF-16 code units of what headOfDocument returns.
+  // The cap applies after the head is collected, so it bounds this tag scan and not the head
+  // parse, and a relation declared past it is not found here. The Link response header is
+  // read separately below.
   const head = headOfDocument(html).slice(0, 65536);
   for (const tag of htmlTags(head)) {
     // The name has to END at "link": a real parser reads "<link<link" as ONE tag whose

@@ -483,6 +483,15 @@ const BRIEF_MD = [
   "| --- | --- |",
   "| 3/4 | 1/2 |",
   "",
+  "\\# Tama rivi on proosaa eika otsikko.",
+  "",
+  "\\- Tama rivi on proosaa eika lista.",
+  "Toinen rivi samassa kappaleessa.",
+  "",
+  "\\> Tama rivi on proosaa eika lainaus.",
+  "",
+  "Lahteen oma yksityisalueen merkki \uE003 sailyy.",
+  "",
   "1\\. Tama on lause eika lista."
 ].join("\n") + "\n";
 
@@ -524,6 +533,13 @@ test("brief: HTML vastaa, kantaa noindexin eika mene valimuistiin", async () => 
   assert.match(html, /<li>Ensimmainen kohta\.<\/li>/);
   assert.ok(!/1\\\./.test(html), "markdownin kenoviivasuojaus ei saa nakya sivulla");
   assert.match(html, /1\. Tama on lause/, "suojattu rivi latoutuu proosana");
+  assert.match(html, /<p># Tama rivi on proosaa eika otsikko\.<\/p>/, "suojattu # latoutuu proosana");
+  assert.ok(!/<h1>Tama rivi/.test(html), "suojattu # ei saa tulla otsikoksi");
+  assert.match(html, /<p>- Tama rivi on proosaa eika lista\.\nToinen rivi samassa kappaleessa\.<\/p>/, "suojattu - latoutuu proosana ja kappaleen toinen rivi sailyy");
+  assert.ok(!/<li>Tama rivi/.test(html), "suojattu - ei saa tulla listaksi");
+  assert.match(html, /<p>&gt; Tama rivi on proosaa eika lainaus\.<\/p>/, "suojattu > latoutuu tekstina");
+  assert.match(html, /<p>Lahteen oma yksityisalueen merkki \uE003 sailyy\.<\/p>/, "lahteen oma yksityisalueen merkki ei muutu valimerkiksi");
+  assert.equal((html.match(/[\uE000-\uE007]/g) || []).length, 1, "paikanvaraaja ei saa jaada sivulle");
 });
 
 test("brief: .md vastaa tavulleen sen mita KV:ssa on", async () => {
