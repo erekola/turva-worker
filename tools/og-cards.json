@@ -257,6 +257,12 @@
     "subhead": "Making auth.md cleaner made the scanner fail. The honest form was the precise one.",
     "white": "When honesty and the checker"
   },
+  "og-html-and-markdown-can-disagree.jpg": {
+    "green": "can disagree",
+    "kicker": "Blog",
+    "subhead": "A parity check compares what the two versions of a page actually contain.",
+    "white": "HTML and Markdown"
+  },
   "og-i-rebuilt-turva-dev-around-the-report.jpg": {
     "green": "around the report",
     "kicker": "Blog",

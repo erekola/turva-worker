@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.155.0 - the blog post HTML and Markdown can disagree (2026-09-12): the post explains what markdown-parity-check compares, records the dated five-error result on /tools and states what a clean report does not establish; it joins /blog, META_BY_PATH, CANONICAL_PATHS, the sitemap and llms.txt (re-sign), and SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.154.0 - the hosted Markdown parity check (2026-09-11): /markdown-parity-check compares the main content of a turva.dev page's HTML and Markdown with run() from the markdown-parity-check package, the same code the CLI runs, rendering both versions in process so no request leaves the Worker; other hosts answer 403 until the remote transport has its own Worker, CPU limit and egress measurement; a JSON POST API returns the CLI's report, its own PARITY_LIMITER fails closed, and the page joins /tools, PRIMARY_PATHS, the sitemap, META_BY_PATH and llms.txt (re-sign).
 // turva.dev worker v3.153.0 - the Onsite-3 polish round (2026-09-11): the delivery terms on the home and /services offer cards read at body text size and the Shopify retest is its own line, the audit sample's What each party delivers section carries seven subheadings and three lists instead of labels inside long paragraphs, the home finding card quotes the sample's own F1 readings, /contact names info@turva.dev once in its email section, and SITEMAP_LASTMOD moves to the day the page text changed. Both offer parsers still fail closed and accept one optional last sentence that starts One retest.
 // turva.dev worker v3.152.0 - the MTA-STS policy names only the Proton hosts (2026-09-10): the mailbox.org move finished on 2026-09-08 when SPF dropped the include, the four mbo000X._domainkey CNAMEs left the zone and the holvi lost mailbox-smtp, so the four mxext lines guarded a rollback that no longer exists and every one of them was a policy line matching no MX. The two Proton hosts stay, mode stays enforce, max_age stays 604800, and the _mta-sts id is bumped after the deploy so senders refetch before the cached policy expires.
@@ -223,6 +224,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree.md)
 - [I rebuilt turva.dev around the report](https://turva.dev/blog/i-rebuilt-turva-dev-around-the-report.md)
 - [What 19 identity vendors publish for agents](https://turva.dev/blog/agent-readiness-identity-vendors.md)
 - [Two files called auth.md, and they disagree on the field names](https://turva.dev/blog/two-auth-md-dialects.md)
@@ -428,6 +430,70 @@ The two OAuth documents are named in Discovery above.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/html-and-markdown-can-disagree": `# HTML and Markdown can disagree
+
+2026-09-12
+
+A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions actually contain.
+
+My own tools page gave the checker something to report. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown version that the HTML page leaves out. The comparison returned five errors. That dated result is recorded in the [tool's README](https://github.com/erekola/markdown-parity-check#command-line-and-hosted-page).
+
+The difference is structural rather than missing content. The HTML page links to the same four destinations from its tool cards, so nothing was unreachable, but the Markdown reader gets a Related section the HTML reader never sees. Neither version looked broken on its own.
+
+## The difference that matters
+
+HTML carries the structure a browser renders, often with navigation and controls around the main text. Markdown expresses text structure with lighter notation. A heading can use an HTML element in one version and a hash mark in the other without changing what it says.
+
+The problem starts when the content changes with the format. A condition disappears from a service description. A table keeps an old value. A link has the same label but points to another address.
+
+These are examples of differences worth checking, not findings about anyone else's website. A client using Markdown receives the content in that response. If the response omits a condition, that condition is absent from the material the client was given, regardless of how clearly it appears in a browser.
+
+Serving a Markdown response and keeping it consistent with the HTML are separate things to verify.
+
+## Comparing the content
+
+I built [markdown-parity-check](https://github.com/erekola/markdown-parity-check) for this comparison. It extracts the main content from HTML and compares it with the Markdown in blocks, so the report can point back to the text that differs.
+
+The checks cover headings and paragraphs, list items, tables, code blocks and links. Missing or added blocks are errors. Changed wording and changed numbers can fail the comparison too, and so can a link that keeps its label but points to a different address. Changes in heading level or order are reported as warnings, as are changes in case or punctuation.
+
+A warning still needs reading. The order of instructions can matter even when the words match. The tool's severity is a starting point for review.
+
+## Run it against a page
+
+With Node.js 22 or newer available, this command requests both representations of my tools page and prints the comparison:
+
+    npx --yes markdown-parity-check --url https://turva.dev/tools
+
+It sends one request with the header Accept: text/html and another with Accept: text/markdown. Replace the address with your own public page. When Markdown lives at a separate address, supply it with --markdown-url. The [usage documentation](https://github.com/erekola/markdown-parity-check#check-your-own-site) also covers comparing two local files.
+
+In URL mode the delivery check runs first. An HTTP error or an HTML response in place of Markdown fails that check. The content comparison stops there.
+
+For a build pipeline, --format json --output report.json writes a structured report, and --strict makes warnings reject the run too. Exit code 1 means the completed check found a rejecting difference. Exit code 2 means an input or execution problem prevented a reliable comparison. Both deserve attention, for different reasons.
+
+## Choose what you compare
+
+The HTML container matters. By default, the tool looks for main, then article, then an element with role=main, and falls back to the page body. That fallback lets navigation and other surrounding content enter the comparison, and it produces a warning. Use --selector when the intended content needs a more precise boundary.
+
+Markdown front matter is kept by default. If that metadata has no HTML counterpart, it can fail the comparison on its own. Use --front-matter strip when front matter is outside the content you intend to compare, and keep that choice visible in the command.
+
+I would start with the page a buyer relies on to understand a service. Reading that report is what tells me which differences belong in the source. Then I would keep the same comparison in the release checks. A shorter report is useful only if it still covers the content that matters.
+
+## Try the hosted check
+
+The [browser version](/markdown-parity-check) checks published pages on turva.dev. It refuses addresses on other sites. Use the command-line package for your own public site or a pair of local files.
+
+The hosted page pins a release and applies smaller limits. Its report includes a toolVersion field, which matters when comparing results from the browser and the command line. The npm package can be newer than the hosted release.
+
+JavaScript is not executed by the checker. It compares the HTML as received, so content added later in a browser needs a separate check. Block matching is heuristic too. A clean report means the implemented checks found nothing to reject. It does not prove that the two versions mean the same thing, or that either version is factually correct.
+
+The Related section on my tools page is the kind of finding I want this to expose: a difference I can locate in both versions and decide about before the next release.
+
+## Related
+
+- [Serving Markdown to AI clients](/guides/markdown-for-agents)
+- [Markdown parity check](/markdown-parity-check)
+- [Tools for agent-readiness](/tools)`,
+
   "/blog/i-rebuilt-turva-dev-around-the-report": `# I rebuilt turva.dev around the report
 
 2026-09-07
@@ -2127,6 +2193,7 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## All posts
 
+- [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree). 2026-09-12.
 - [I rebuilt turva.dev around the report](/blog/i-rebuilt-turva-dev-around-the-report). 2026-09-07.
 - [What 19 identity vendors publish for agents](/blog/agent-readiness-identity-vendors). 2026-09-05.
 - [Two files called auth.md, and they disagree on the field names](/blog/two-auth-md-dialects). 2026-09-04.
@@ -5824,7 +5891,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.154.0",
+    "version": "3.155.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -5932,7 +5999,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MQ5F2EMBX3yrdIGT76gA0f74twRcB2RENz7nTvUFjNrJ0VwDjliC3gRlW4ARjM2PHh-GWh715pHid90E5bYGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4wJnXeE4Q88Qxbzh-kT_PapoqD90kwo1v4648Ei8HH4VAlW6EJi949a4cxsmFZpI56Ygw6RYD2rLYoOQHraNAA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MQ5F2EMBX3yrdIGT76gA0f74twRcB2RENz7nTvUFjNrJ0VwDjliC3gRlW4ARjM2PHh-GWh715pHid90E5bYGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"VGEtyQ9LK-HJxBRsQzf17gKQI0IH9gtrJV_3Fn107GVXbppNAihcdcvNcNcXB-o-ywbTfqblK5ao1hUYxEFUBQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6092,7 +6159,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.154.0",
+  "version": "3.155.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6741,7 +6808,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-11";
+var SITEMAP_LASTMOD = "2026-09-12";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -6783,6 +6850,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/html-and-markdown-can-disagree", "monthly", "0.6"],
   ["/blog/i-rebuilt-turva-dev-around-the-report", "monthly", "0.6"],
   ["/blog/agent-readiness-identity-vendors", "monthly", "0.6"],
   ["/blog/two-auth-md-dialects", "monthly", "0.6"],
@@ -6883,7 +6951,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -6893,6 +6961,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/html-and-markdown-can-disagree": {
+    title: "HTML and Markdown can disagree · turva.dev",
+    description: "A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.",
+    date: "2026-09-12",
+    kind: "Build notes",
+    image: "/og-html-and-markdown-can-disagree.jpg",
+    imageAlt: "turva.dev blog card: HTML and Markdown can disagree, the parity check that compares what the two versions of a page actually contain.",
+  },
   "/blog/i-rebuilt-turva-dev-around-the-report": {
     title: "I rebuilt turva.dev around the report · turva.dev",
     description: "The updated site puts sample reports beside the services they describe, with evidence, correction owners and acceptance checks visible before purchase.",
