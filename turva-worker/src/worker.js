@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.155.1 - AEO shape for the new blog post (2026-09-12): four section headings of /blog/html-and-markdown-can-disagree are now questions, each answered directly in the first paragraph under it, which is what the cross-post channels score as answer-engine readiness. No FAQ section and no schema change, and llms.txt is untouched, so no re-sign.
 // turva.dev worker v3.155.0 - the blog post HTML and Markdown can disagree (2026-09-12): the post explains what markdown-parity-check compares, records the dated five-error result on /tools and states what a clean report does not establish; it joins /blog, META_BY_PATH, CANONICAL_PATHS, the sitemap and llms.txt (re-sign), and SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.154.0 - the hosted Markdown parity check (2026-09-11): /markdown-parity-check compares the main content of a turva.dev page's HTML and Markdown with run() from the markdown-parity-check package, the same code the CLI runs, rendering both versions in process so no request leaves the Worker; other hosts answer 403 until the remote transport has its own Worker, CPU limit and egress measurement; a JSON POST API returns the CLI's report, its own PARITY_LIMITER fails closed, and the page joins /tools, PRIMARY_PATHS, the sitemap, META_BY_PATH and llms.txt (re-sign).
 // turva.dev worker v3.153.0 - the Onsite-3 polish round (2026-09-11): the delivery terms on the home and /services offer cards read at body text size and the Shopify retest is its own line, the audit sample's What each party delivers section carries seven subheadings and three lists instead of labels inside long paragraphs, the home finding card quotes the sample's own F1 readings, /contact names info@turva.dev once in its email section, and SITEMAP_LASTMOD moves to the day the page text changed. Both offer parsers still fail closed and accept one optional last sentence that starts One retest.
@@ -440,9 +441,11 @@ My own tools page gave the checker something to report. A check recorded on 11 S
 
 The difference is structural rather than missing content. The HTML page links to the same four destinations from its tool cards, so nothing was unreachable, but the Markdown reader gets a Related section the HTML reader never sees. Neither version looked broken on its own.
 
-## The difference that matters
+## Which differences actually matter?
 
-HTML carries the structure a browser renders, often with navigation and controls around the main text. Markdown expresses text structure with lighter notation. A heading can use an HTML element in one version and a hash mark in the other without changing what it says.
+Notation is not the difference worth chasing. A heading can use an HTML element in one version and a hash mark in the other and still say the same thing. The difference that matters is in the content itself.
+
+HTML carries the structure a browser renders, often with navigation and controls around the main text. Markdown expresses text structure with lighter notation.
 
 The problem starts when the content changes with the format. A condition disappears from a service description. A table keeps an old value. A link has the same label but points to another address.
 
@@ -450,15 +453,17 @@ These are examples of differences worth checking, not findings about anyone else
 
 Serving a Markdown response and keeping it consistent with the HTML are separate things to verify.
 
-## Comparing the content
+## What does the checker compare?
 
-I built [markdown-parity-check](https://github.com/erekola/markdown-parity-check) for this comparison. It extracts the main content from HTML and compares it with the Markdown in blocks, so the report can point back to the text that differs.
+It compares the main content of the two versions block by block. The checks cover headings and paragraphs, list items, tables, code blocks and links, and every reported difference points back to the text it came from.
 
-The checks cover headings and paragraphs, list items, tables, code blocks and links. Missing or added blocks are errors. Changed wording and changed numbers can fail the comparison too, and so can a link that keeps its label but points to a different address. Changes in heading level or order are reported as warnings, as are changes in case or punctuation.
+I built [markdown-parity-check](https://github.com/erekola/markdown-parity-check) for this comparison. It extracts the main content from HTML and lines it up with the Markdown.
+
+Missing or added blocks are errors. Changed wording and changed numbers can fail the comparison too, and so can a link that keeps its label but points to a different address. Changes in heading level or order are reported as warnings, as are changes in case or punctuation.
 
 A warning still needs reading. The order of instructions can matter even when the words match. The tool's severity is a starting point for review.
 
-## Run it against a page
+## How do I run it on my own page?
 
 With Node.js 22 or newer available, this command requests both representations of my tools page and prints the comparison:
 
@@ -478,7 +483,7 @@ Markdown front matter is kept by default. If that metadata has no HTML counterpa
 
 I would start with the page a buyer relies on to understand a service. Reading that report is what tells me which differences belong in the source. Then I would keep the same comparison in the release checks. A shorter report is useful only if it still covers the content that matters.
 
-## Try the hosted check
+## Can I run the check in a browser?
 
 The [browser version](/markdown-parity-check) checks published pages on turva.dev. It refuses addresses on other sites. Use the command-line package for your own public site or a pair of local files.
 
@@ -5891,7 +5896,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.155.0",
+    "version": "3.155.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6159,7 +6164,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.155.0",
+  "version": "3.155.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
