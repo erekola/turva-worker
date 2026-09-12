@@ -63,10 +63,12 @@ The [MCP server](https://github.com/erekola/turva-mcp#connect) runs separately. 
 `/markdown-parity-check` runs the comparison from the npm package [markdown-parity-check](https://github.com/erekola/markdown-parity-check). The Worker imports the package's library entry, which Wrangler bundles at deploy time. The version is pinned in [turva-worker/package.json](turva-worker/package.json) and its lockfile. The comparison code is the same one the command-line tool runs. Fetching and limits belong to this route:
 
 - It checks turva.dev's own published pages only. The Worker renders the page and its Markdown version through its own request handler, so a check sends no request over the network. The two tool pages are not accepted as targets.
-- An address on another host is refused with HTTP 403 and a pointer to `npx markdown-parity-check`. Forwarding other hosts to a separate Worker is switched off in [wrangler.jsonc](turva-worker/wrangler.jsonc).
+- An address on another host is refused with HTTP 403 and a pointer to `npx --yes markdown-parity-check`. Forwarding other hosts to a separate Worker is switched off in [wrangler.jsonc](turva-worker/wrangler.jsonc).
 - Its limits are lower than the command-line defaults: HTML up to 512 KiB, Markdown up to 128 KiB and at most 250 000 block pairs.
 - The `PARITY_LIMITER` binding allows about 10 checks per minute per client IP at each Cloudflare location. Without the binding the route answers 503 and runs nothing.
 - Every response to a check carries `Cache-Control: no-store`, and the route does not write the target address or the report to its logs.
+
+The page states the turva.dev limit in its opening paragraph and again in the address field's own hint, so a reader sees it before typing an address. Fill in an example only writes turva.dev's tools page into the field, and Check is the separate step that runs the comparison. That example returns a fail, and [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree) reads the result: the Related heading and its four links are in the Markdown and not in the HTML, while the same four targets are links inside the HTML page's tool cards.
 
 The pinned release can be older than the latest npm release, and the report's `toolVersion` field names the one that ran. A newer package reaches the hosted page only through a site release.
 

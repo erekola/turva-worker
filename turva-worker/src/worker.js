@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.156.0 - the parity page states its scope before the address field (2026-09-12): /markdown-parity-check names the turva.dev limit and the npx route in its lead, the Page URL hint repeats the limit where a screen reader reads it, the dated tools example gets its structural reading and links to /blog/html-and-markdown-can-disagree, that post joins the page's Related list, and the twin's command carries --yes like the package README. No change to the comparison core, the severities, the exit codes or the JSON schema.
 // turva.dev worker v3.155.4 - the deck sentence of one blog post matches its description again (2026-09-12): /blog/html-and-markdown-can-disagree said "the two versions actually contain" under its date line while META_BY_PATH said "the two versions contain", so the index card and the page disagreed by one word. The word is dropped from the deck rather than added to the description, which is already 154 characters (Tek-364).
 // turva.dev worker v3.155.3 - Bing metadata for eight indexed pages (2026-09-12): the five titles Bing reported as too long get a short titleTag used for the <title> element only, so og:title, the /blog index card and the markdown twin keep the heading the page itself carries; the three descriptions Bing reported on length are rewritten, and the Finnish B2B post's deck sentence moves with its description so the index card and the page still say the same thing (Tek-364).
 // turva.dev worker v3.155.2 - the new blog post gets its Frequently asked section (2026-09-12): four question and answer pairs on what a clean report does not establish, running the check against a site you do not own, why a plain diff is not the same comparison, and which difference to fix first. The path joins GUIDE_PAGE_FAQ, so the page publishes FAQPage structured data the way the other blog posts do.
@@ -2047,7 +2048,9 @@ All free tools on this site are collected on [the tools page](/tools).
 
   "/markdown-parity-check": `# Markdown parity check
 
-Enter a page address to compare the main content of its HTML and its Markdown version. The report lists missing, added and changed blocks, numbers and links. It also shows where each one sits in the source.
+Enter the address of a published turva.dev page to compare the main content of its HTML and its Markdown version. The report lists missing, added and changed blocks, numbers and links. It also shows where each one sits in the source.
+
+This check covers turva.dev only, and an address on another site is refused. To check a page on your own site, run the markdown-parity-check package with npx on your own machine.
 
 The check compares what the two versions say. It does not score the page. A pass does not prove that both versions mean the same thing.
 
@@ -2059,11 +2062,11 @@ The check compares what the two versions say. It does not score the page. A pass
 
 ## What this version checks
 
-This hosted version checks the published pages of turva.dev. The site's own Worker renders both versions of the page, so a check sends no request over the network. An address on any other site is refused with a message that points to the command-line tool.
+This hosted version checks the published pages of turva.dev. The site's own Worker renders both versions of the page, so a check sends no request over the network.
 
 To check another site, run the same comparison on your own machine:
 
-    npx markdown-parity-check --url https://example.com/page
+    npx --yes markdown-parity-check --url https://example.com/page
 
 The page and the command run the same comparison code from the open npm package. The report has the same format too.
 
@@ -2085,6 +2088,8 @@ A missing Markdown version is a failure and never a pass. When the Markdown requ
 JavaScript is not run. Content that a page builds in the browser is compared as the server sent it.
 
 Not every turva.dev page passes. The HTML adds buttons, cards and forms. Some pages also leave out the Related list that the Markdown carries, and the report names each of these differences.
+
+The example address is turva.dev's own tools page. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown that the HTML page leaves out, and returned five errors. The same four targets are links inside the HTML cards, so the difference is structural and no target is out of reach. [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree) reads that finding in full.
 
 ## Limits
 
@@ -2117,6 +2122,7 @@ The service compares the two versions in memory and discards them. It does not s
 
 ## Related
 
+- [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree)
 - [Serving Markdown to AI clients](/guides/markdown-for-agents)
 - [llms.txt validator](/llms-txt-validator)
 - [Free tools for agent-readiness](/tools)
@@ -5913,7 +5919,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.155.4",
+    "version": "3.156.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6181,7 +6187,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.155.4",
+  "version": "3.156.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -11082,7 +11088,7 @@ async function parityRunCheck(input, env) {
     if (parityIsSelf(page) && page.pathname.toLowerCase().endsWith(".md")) throw new ParityError("invalid_url", 400, "The page URL must be the HTML page. Put a .md address in the Markdown URL field.", "url");
     if (!parityIsSelf(page)) {
       if (env && env.PARITY_REMOTE_FETCH === "on" && env.PARITY) return await parityRemote(input, env);
-      throw new ParityError("remote_disabled", 403, "This hosted version checks turva.dev pages only. For any other site, run npx markdown-parity-check --url with the page address on your own machine.", "url");
+      throw new ParityError("remote_disabled", 403, "This hosted version checks turva.dev pages only. For any other site, run npx --yes markdown-parity-check --url with the page address on your own machine.", "url");
     }
     html = await parityFetchSelf(page, "text/html", env);
     if (html.meta.status >= 400) throw new ParityError("no_page", 422, "The HTML request returned HTTP " + html.meta.status + ". There is no page to compare.", "url");
@@ -11166,7 +11172,7 @@ function parityFormHtml(state) {
     <label for="mpc-url">Page URL</label>
     <input type="url" id="mpc-url" name="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://turva.dev/tools" value="${escapeHtml(shown(v.url))}"${desc("url")}>
     <button type="submit" id="mpc-submit">Check</button>
-    <p class="fine" id="mpc-url-hint">A full address that starts with https://. The Markdown is requested from the same address.</p>
+    <p class="fine" id="mpc-url-hint">A published turva.dev page, as a full address that starts with https://. The Markdown is requested from the same address.</p>
     ${errFor("url")}
     <details class="popts"${open ? " open" : ""}>
       <summary>More options</summary>
@@ -11185,7 +11191,7 @@ function parityFormHtml(state) {
       </fieldset>
     </details>
     <p class="fine" id="mpc-status" role="status" aria-live="polite"></p>
-    <p class="fine"><button type="button" class="copy-btn" id="mpc-example" data-url="${PARITY_EXAMPLE_URL}" hidden>Fill in an example</button></p>
+    <p class="fine"><button type="button" class="copy-btn" id="mpc-example" data-url="${PARITY_EXAMPLE_URL}" hidden>Fill in an example</button> <a href="/blog/html-and-markdown-can-disagree">What the example found on 11 September 2026</a></p>
   </form>`;
 }
 
