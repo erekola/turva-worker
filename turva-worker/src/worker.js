@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.155.2 - the new blog post gets its Frequently asked section (2026-09-12): four question and answer pairs on what a clean report does not establish, running the check against a site you do not own, why a plain diff is not the same comparison, and which difference to fix first. The path joins GUIDE_PAGE_FAQ, so the page publishes FAQPage structured data the way the other blog posts do.
 // turva.dev worker v3.155.1 - AEO shape for the new blog post (2026-09-12): four section headings of /blog/html-and-markdown-can-disagree are now questions, each answered directly in the first paragraph under it, which is what the cross-post channels score as answer-engine readiness. No FAQ section and no schema change, and llms.txt is untouched, so no re-sign.
 // turva.dev worker v3.155.0 - the blog post HTML and Markdown can disagree (2026-09-12): the post explains what markdown-parity-check compares, records the dated five-error result on /tools and states what a clean report does not establish; it joins /blog, META_BY_PATH, CANONICAL_PATHS, the sitemap and llms.txt (re-sign), and SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.154.0 - the hosted Markdown parity check (2026-09-11): /markdown-parity-check compares the main content of a turva.dev page's HTML and Markdown with run() from the markdown-parity-check package, the same code the CLI runs, rendering both versions in process so no request leaves the Worker; other hosts answer 403 until the remote transport has its own Worker, CPU limit and egress measurement; a JSON POST API returns the CLI's report, its own PARITY_LIMITER fails closed, and the page joins /tools, PRIMARY_PATHS, the sitemap, META_BY_PATH and llms.txt (re-sign).
@@ -492,6 +493,20 @@ The hosted page pins a release and applies smaller limits. Its report includes a
 JavaScript is not executed by the checker. It compares the HTML as received, so content added later in a browser needs a separate check. Block matching is heuristic too. A clean report means the implemented checks found nothing to reject. It does not prove that the two versions mean the same thing, or that either version is factually correct.
 
 The Related section on my tools page is the kind of finding I want this to expose: a difference I can locate in both versions and decide about before the next release.
+
+## Frequently asked
+
+**Does a clean report mean the two versions say the same thing?**
+
+No. It means the implemented checks found nothing to reject in the blocks that were extracted. Block matching is heuristic, JavaScript is not executed, and nothing in the tool reads meaning. A plain diff would report every notation difference instead, which is why this comparison aligns blocks first.
+
+**Can I run it against a site I do not own?**
+
+Yes, from the command line. The package takes any public address with --url and compares what that address returns for Accept: text/html and for Accept: text/markdown. The hosted page on this site is the exception. It checks turva.dev pages only and answers 403 for any other host.
+
+**What should I fix first when the report is long?**
+
+The differences that change what a reader is told: a condition that is missing, a number that moved, a link whose target is not the one in the other version. I read the ordering and punctuation warnings too, but they rarely change a release. The tool reports quantities and does not decide which difference matters to your business.
 
 ## Related
 
@@ -5896,7 +5911,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.155.1",
+    "version": "3.155.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6164,7 +6179,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.155.1",
+  "version": "3.155.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8470,6 +8485,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/html-and-markdown-can-disagree": mdFaqBlocks("/blog/html-and-markdown-can-disagree", "Frequently asked").pairs,
   "/blog/i-rebuilt-turva-dev-around-the-report": mdFaqBlocks("/blog/i-rebuilt-turva-dev-around-the-report", "Frequently asked").pairs,
   "/blog/agent-readiness-identity-vendors": mdFaqBlocks("/blog/agent-readiness-identity-vendors", "Frequently asked").pairs,
   "/blog/two-auth-md-dialects": mdFaqBlocks("/blog/two-auth-md-dialects", "Frequently asked").pairs,
