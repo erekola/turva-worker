@@ -8,9 +8,9 @@
 //                                  manifests against the published JWKS, and
 //                                  speak MCP to mcp.turva.dev to prove the signed
 //                                  server card matches the running server
-// existsSync lisatty 2026-08-16: og-cards.json -tarkistus kaytti sita ilman importtia, ja se ei
-// ollut koskaan ajanut, koska manifesti oli tyhja. Ensimmainen kortti manifestissa kaatoi koko
-// verify-ajon ReferenceErroriin. Tarkistus joka ei ole koskaan ajanut ei ole vihrea vaan ajamaton.
+// existsSync added 2026-08-16: the og-cards.json check used it without an import, and it
+// had never run, because the manifest was empty. The first card in the manifest brought the
+// whole verify run down with a ReferenceError. A check that has never run is not green, it is unrun.
 import { readFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -345,10 +345,10 @@ console.log('\nCategory set (facts.json owns which categories exist)');
 
   const spellings = (c) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase());
   const resolve = (item) => CATS.find((c) => spellings(c).includes(String(item).trim().toLowerCase()));
-  // Sama haku tarvitaan kolmella muulla pinnalla (README-taulu, etusivun taulu ja MCP:n
-  // live-vastaus), jotka kaikki vertasivat riviaan KOKONAISPISTEESEEN 2026-08-30 asti.
-  // Se on gotchas 2026-08-01 (jatko 18) Ansa 4. Nostettu moduulitasolle, jotta jokainen
-  // pinta lukee saman kentan samalla tavalla eika kukin keksi omaa hakuaan.
+  // The same lookup is needed on three other surfaces (the README table, the home table and the
+  // MCP live response), and until 2026-08-30 all three compared their row with the TOTAL SCORE.
+  // That is gotchas 2026-08-01 (jatko 18) Ansa 4. Lifted to module level so that every
+  // surface reads the same field the same way instead of each inventing its own lookup.
   CAT_LOOKUP = resolve;
   check(CATS.length > 0, `facts.json records the category set (${CATS.length})`);
   check(CATS.length > 0 && CATS.every((c) => typeof c.label === 'string' && c.label.trim().length > 0),
@@ -510,10 +510,10 @@ console.log('\nCategory set (facts.json owns which categories exist)');
         .map((m) => ({ cat: m[1].trim(), val: m[2].trim() }))
         .filter((r) => r.cat !== 'Category' && !/^-+$/.test(r.cat));
       enumerated(rows.map((r) => r.cat), 'README table', true);
-      // Korjattu 2026-08-30 yhdessa etusivun taulun kanssa: rivi verrattiin ennen
-      // kokonaispisteeseen, mika on oikein vain niin kauan kuin jokainen kategoria on taysi.
-      // Puuttuva odotusarvo on FAIL eika ohitus, jotta kaksi katoavaa arvoa eivat vertaudu
-      // toisiinsa (sama osio, Ansa 2).
+      // Fixed 2026-08-30 together with the home table: the row used to be compared with the
+      // total score, which is correct only as long as every category is full.
+      // A missing expected value is a FAIL and not a skip, so that two vanishing values cannot
+      // be compared with each other (same section, Ansa 2).
       const wrong = rows.filter((r) => {
         const want = (CAT_LOOKUP(r.cat) || {}).score;
         return typeof want !== 'string' || want.trim().length === 0 || r.val !== want;
@@ -1136,13 +1136,13 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       const upto = w.slice(head, m.index);
       navCalls.push({ arg: m[1], fn: (upto.match(/^\nfunction (\w+)/) || [])[1] || '?', page: (upto.match(/buildMetaBlock\("([^"]*)"/) || [])[1] });
     }
-    // 2026-08-24, Tek-269. briefHtmlPage on ensimmainen sivu joka EI kuulu valikkoon:
-    // se palvelee polkua /brief/<tunnus>, jota ei ole nv-menussa eika saa olla, koska
-    // sivu on yhden asiakkaan eika julkinen. Oikea arvo sille on tyhja, jolloin yksikaan
-    // valikon kohta ei saa aria-current="page". Ehto EI ole loysatty muotoon "tyhja
-    // kelpaa aina", koska silloin sivu joka vain unohtaa oman polkunsa lapaisisi. Poikkeus
-    // on nimetty funktiokohtaisesti, ja alla oleva erillinen ehto kaataa ajon jos nimetty
-    // funktio katoaa, jotta poikkeus ei jaa elamaan uudelleennimeamisen yli.
+    // 2026-08-24, Tek-269. briefHtmlPage is the first page that does NOT belong in the menu:
+    // it serves /brief/<id>, which is not in the nav menu and must not be, because the
+    // page belongs to one client and is not public. Its correct value is empty, so that no
+    // menu item gets aria-current="page". The condition is NOT loosened to "empty is
+    // always fine", because then a page that merely forgets its own path would pass. The
+    // exception is named per function, and the separate condition below fails the run if the
+    // named function disappears, so the exception cannot outlive a rename.
     const NAV_ULKOPUOLELLA = new Set(['briefHtmlPage']);
     for (const nimi of NAV_ULKOPUOLELLA) {
       check(navCalls.some((c) => c.fn === nimi),
@@ -1762,11 +1762,11 @@ console.log('\nx402 amounts derive from facts.json eurUsdc (kierros 18, S6-1)');
   const eu = facts.eurUsdc;
   check(!!eu && typeof eu.rate === 'number' && eu.rate > 0, `facts.json eurUsdc.rate is a positive number (saw ${eu ? JSON.stringify(eu.rate) : 'absent'})`);
   check(!!eu && /^\d{4}-\d{2}-\d{2}$/.test(String(eu.measuredAt)), `facts.json eurUsdc.measuredAt is an ISO date (saw ${eu ? JSON.stringify(eu.measuredAt) : 'absent'})`);
-  // Avainjoukkoa EI nimeta tassa. Kolmen avaimen literaali korjattiin kerran jo
-  // (loydos B4-19) ja kasvoi takaisin tahan lohkoon, eli neljas hinnoiteltu palvelu tai
-  // neljas maksullinen reitti olisi jaanyt kokonaan tarkistamatta. Joukko luetaan
-  // X402_ROUTES-reittitaulusta, joka on se mita Worker oikeasti tarjoilee, ja manifesti
-  // luetaan sita vasten: uusi reitti ilman manifestitarjousta kaataa ajon itsestaan.
+  // The key set is NOT named here. The three-key literal was fixed once already
+  // (finding B4-19) and grew back into this block, so a fourth priced service or a
+  // fourth paid route would have gone unchecked entirely. The set is read from the
+  // X402_ROUTES route table, which is what the Worker actually serves, and the manifest
+  // is read against it: a new route with no manifest offer fails the run by itself.
   const routeBlock = (() => {
     const i = src.worker.text.indexOf('var X402_ROUTES');
     if (i < 0) return '';
@@ -2002,11 +2002,11 @@ if (LIVE) {
         const r = await fetch(base + pth, { headers: { accept: 'text/markdown' } });
         const ct = (r.headers.get('content-type') || '').toLowerCase();
         const body = await r.text();
-        // 429 on eri asia kuin rikkinainen kaksonen, ja ilman tata eroa portti raportoi oman
-        // liikenteensa sivuston vikana. Riippumaton tarkastus nosti taman 2026-08-16: 700 ms
-        // tahdistus laskettiin vain taman lohkon 114 pyynnosta, mutta samassa --live-ajossa on
-        // 40 to 65 muuta tahdistamatonta pyyntoa, jotka kaikki lasketaan samaan 100/60 s
-        // kiintioon. Tahdistus nostettiin 1100 millisekuntiin ja 429 raportoidaan omanaan.
+        // A 429 is not the same thing as a broken twin, and without that distinction the gate
+        // reports its own traffic as a fault in the site. An independent review raised this
+        // 2026-08-16: the 700 ms pacing counted only this block's 114 requests, while the same
+        // --live run makes 40 to 65 other unpaced requests, all of which count against the same
+        // 100/60 s quota. The pacing went up to 1100 milliseconds and a 429 is reported as itself.
         if (r.status === 429) { rajoitettu.push(pth); continue; }
         if (!r.ok) { rikki.push(`${pth}: HTTP ${r.status}`); continue; }
         if (!ct.includes('markdown')) { rikki.push(`${pth}: content-type ${ct || 'none'}`); continue; }
@@ -2807,12 +2807,12 @@ if (LIVE) {
         // as a pass, and it broke on any added word. The score is derived from this
         // category's own two counts rather than borrowed from the site total, which are
         // different numbers that happen to agree while everything passes.
-        // Korjattu 2026-08-30. Odotusarvo oli kirjoitettu tahan literaalina (100), eli
-        // portilla oli oma kopio julkaistusta luvusta: jos luku muuttuu, portti vahtisi
-        // vanhaa arvoa. Se luetaan nyt facts.jsonin kategoriakohtaisesta kentasta.
-        // Muoto tarkistetaan yha, koska irrallisten kokonaislukujen poiminta hyvaksyi
-        // kerran merkityksen kaantavan sanan (gotchas 2026-08-01 (jatko 18) Ansa 3):
-        // vertailu on koko merkkijonolle eika sen sisalta loytyville numeroille.
+        // Fixed 2026-08-30. The expected value was written here as a literal (100), so the
+        // gate held its own copy of a published number: if the number moves, the gate would
+        // watch the old value. It is now read from facts.json's per-category field.
+        // The form is still checked, because picking out bare integers once accepted a word
+        // that reverses the meaning (gotchas 2026-08-01 (jatko 18) Ansa 3):
+        // the comparison is against the whole string and not against numbers found inside it.
         const want = typeof c.score === 'string' ? c.score.trim() : '';
         if (!want) { check(false, `facts.json category ${c.id} carries a score for the MCP comparison`); continue; }
         check(String(gotCats[c.id]) === want,

@@ -8051,13 +8051,13 @@ function markdownToHtml(md) {
         html.push(`<div class="tbl" tabindex="0">${tableHtml("")}</div>\n<details class="tbl-list"><summary>Read this table as a list</summary>${tableHtml(" stacked")}</details>`);
       }
     } else if (/^-{3,}$/.test(trimmed)) {
-      // Vaakaviiva. Lisatty 2026-08-24 (Tek-269). Syntyi briefsivua varten, mutta brief
-      // EI enaa tuota vaakaviivaa markdowniinsa: tyylipassin R6 luki sen irralliseksi
-      // riviksi rungossa, joten se jai samana paivana pois template.py:n markdownista ja
-      // on nyt vain PDF:n koriste. Haara jaa tanne, koska se on oikea tapa lukea
-      // markdownin vaakaviiva ja mika tahansa sivu voi kayttaa sita. Mitattu samana
-      // paivana ettei yksikaan PAGE_MARKDOWN-lohko sisalla riviaan joka on tasan ---,
-      // joten tama ei muuta yhdenkaan olemassa olevan sivun ulostuloa.
+      // Horizontal rule. Added 2026-08-24 (Tek-269). It came in for the brief page, but a
+      // brief no longer writes a horizontal rule into its markdown: the style pass's R6 read
+      // it as a bare line in the body, so it left template.py's markdown the same day and is
+      // now only a PDF decoration. The branch stays here, because it is the right way to read
+      // a markdown horizontal rule and any page may use it. Measured the same day that no
+      // PAGE_MARKDOWN block contains a line that is exactly ---, so this changes the output
+      // of no existing page.
       html.push("<hr />");
     } else if (trimmed.startsWith("## ")) {
       // id since v3.123.0 (Tek-342): a stable anchor per section, so a long page can carry a
@@ -8859,7 +8859,7 @@ function serveGuideHtml(pathname, canonicalUrl) {
   const meta = META_BY_PATH[pathname] || {};
   const bylined = navSection === "" ? aliased : aliased.replace(/<p class="date">(\d{4}-\d{2}-\d{2})<\/p>/, (m, d) =>
     `<p class="date">Erik Rekola &middot; ${d}${meta.modified && meta.modified !== d ? ` &middot; updated ${meta.modified}` : ""}</p>`);
-  // Guides carry no date line in the twin. Since 2026-09-06 (koko sivuston tarkistus, kohta 6)
+  // Guides carry no date line in the twin. Since 2026-09-06 (the whole-site review, item 6)
   // META_BY_PATH.checked is the day the guide was last read against its primary sources, and
   // /guides says that date is the one that counts, so it is rendered under the H1. It is not a
   // publication or modification date and is not written into the JSON-LD as one.
@@ -9621,27 +9621,27 @@ function cardPageHeaders(canonicalUrl) {
 }
 
 // ---------------------------------------------------------------------------
-// BRIEF, Tek-269 (2026-08-24). Yhden asiakkaan agent-readiness-brief kolmessa
-// muodossa samasta osoitteesta: HTML selaimelle, .md ja .json koneelle.
+// BRIEF, Tek-269 (2026-08-24). One client's agent-readiness brief in three formats
+// from the same address: HTML for a browser, .md and .json for a machine.
 //
-// MIKSI KV EIKA PAGE_MARKDOWN. Tama repo on JULKINEN. Asiakkaan brief nimeaa
-// yrityksen ja sen puutteet, joten sen kirjoittaminen worker.js:aan julkaisisi
-// ne pysyvasti julkisessa repossa eika se olisi peruttavissa jalkikateen. Lisaksi
-// jokainen lahteva brief olisi koodimuutos, deploy ja push. Sisalto tulee siksi
-// KV:sta ja tama tiedosto kantaa vain reitin.
+// WHY KV AND NOT PAGE_MARKDOWN. This repo is PUBLIC. A client's brief names the
+// company and its gaps, so writing it into worker.js would publish those permanently
+// in a public repo and there would be no taking it back afterwards. On top of that,
+// every brief that goes out would be a code change, a deploy and a push. The content
+// therefore comes from KV and this file carries only the route.
 //
-// SISALTOA EI RENDEROIDA TASSA. KV:ssa on valmis markdown ja valmis JSON, jotka
-// docs/auditit/briefgen/template.py tuottaa samasta lohkolistasta kuin PDF:n. HTML
-// ladotaan siita samasta markdownista. Worker ei siis muodosta yhtaan virketta
-// itse, eika mikaan kolmesta muodosta voi sanoa eri asiaa kuin toinen.
+// THE CONTENT IS NOT RENDERED HERE. KV holds finished markdown and finished JSON, which
+// docs/auditit/briefgen/template.py produces from the same block list as the PDF's. The
+// HTML is set from that same markdown. The Worker therefore composes no sentence of its
+// own, and none of the three formats can say something different from another.
 //
-// EI HAKUKONEISIIN. Polku ei ole CANONICAL_PATHS:issa eika SITEMAP_ENTRIES:issa,
-// tunnus on arvaamaton, ja jokainen vastaus kantaa noindex-otsakkeen. robots.txt:aa
-// EI muuteta: sen sisalto on osa tuotteen omaa mitattavaa pintaa, eika Disallow-rivin
-// vaikutusta skannerin bot-access-control-tarkistuksiin ole mitattu.
+// NOT FOR SEARCH ENGINES. The path is not in CANONICAL_PATHS and not in SITEMAP_ENTRIES,
+// the id is unguessable, and every response carries a noindex header. robots.txt is NOT
+// changed: its content is part of the product's own measurable surface, and the effect of
+// a Disallow line on the scanner's bot-access-control checks has not been measured.
 //
-// TUNTEMATON TUNNUS VASTAA TASAN KUTEN MIKA TAHANSA TUNTEMATON POLKU, eli 404:lla.
-// Erillinen "briefia ei ole" -sivu kertoisi ulkopuoliselle, etta polku on olemassa.
+// AN UNKNOWN ID ANSWERS EXACTLY LIKE ANY OTHER UNKNOWN PATH, that is, with a 404.
+// A separate "no such brief" page would tell an outsider that the path exists.
 var BRIEF_ID = /^[a-z0-9][a-z0-9-]{7,79}$/;
 
 function briefRoute(pathname) {
@@ -9654,24 +9654,24 @@ function briefRoute(pathname) {
   return { id: rest, muoto: muoto };
 }
 
-// LOPPUVALIMERKKI OSOITTEEN PERASSA, lisatty 2026-08-31 (Tek-323). Brief-osoite kulkee
-// sahkopostin TEKSTIOSASSA: tools/laheta.mjs rakentaa viestin yhtena
-// `Content-Type: text/plain; charset=UTF-8` -osana eika laheta HTML-vaihtoehtoa lainkaan,
-// joten osoitteesta tekee linkin vastaanottajan oma postiohjelma. Osa niista ottaa
-// virkkeen lopettavan pisteen mukaan linkkiin, ja silloin lukija saa 404:n tasan siita
-// osoitteesta jonka koko viestin oli maara toimittaa. Mitattu 2026-08-31:
-// /brief/<tunnus> vastasi 200:lla ja sama osoite pisteen kanssa 404:lla (tunnus on tassa
-// paikanpitaja: elava osoite ei kuulu julkiseen repoon, kierros 16 S4-1)
-// kolmessa ajossa kolmesta.
+// A TRAILING PUNCTUATION MARK AFTER THE ADDRESS, added 2026-08-31 (Tek-323). A brief
+// address travels in the TEXT PART of an email: tools/laheta.mjs builds the message as a
+// single `Content-Type: text/plain; charset=UTF-8` part and sends no HTML alternative at
+// all, so the recipient's own mail client is what turns the address into a link. Some of
+// them take the sentence-ending period into the link, and then the reader gets a 404 from
+// the very address the whole message was meant to deliver. Measured on 2026-08-31:
+// /brief/<id> answered 200 and the same address with a period answered 404 (the id here
+// is a placeholder: a live address does not belong in a public repo, kierros 16 S4-1)
+// in three runs out of three.
 //
-// SIIVOUS EI VOI SYODA OIKEAA TUNNUSTA, koska BRIEF_ID sallii vain merkit [a-z0-9-] eika
-// tunnus voi siksi paattya valimerkkiin. Sulkumerkki on mukana, koska markdown-tyylinen
-// (https://...) on toinen tapa jolla osoite paatyy sulkeutuvan merkin viereen.
+// THE CLEANUP CANNOT EAT A REAL ID, because BRIEF_ID allows only the characters [a-z0-9-]
+// and an id therefore cannot end in a punctuation mark. The closing parenthesis is
+// included, because a markdown-style (https://...) is another way an address ends beside one.
 //
-// VASTAUS ON 301 EIKA SISALTO. Jos sama brief vastaisi kahdesta osoitteesta, kanoninen
-// osoite ei olisi enaa yksi, ja tama sivu on nimenomaan yhden osoitteen varassa. Ohjaus
-// kantaa noindexin kuten kaikki muutkin taman polun vastaukset, koska ohjauksen KOHDE on
-// yksityinen sivu eika ohjaus saa olla se rivi joka paljastaa polun hakukoneelle.
+// THE ANSWER IS A 301 AND NOT THE CONTENT. If the same brief answered from two addresses,
+// the canonical address would no longer be one, and this page rests on exactly one address.
+// The redirect carries noindex like every other response on this path, because the redirect's
+// TARGET is a private page and it must not be the line that reveals the path to a search engine.
 var BRIEF_LOPPUVALIMERKIT = /[.,;:!?)\]]+$/;
 
 function briefSiivousKohde(pathname) {
@@ -9683,18 +9683,18 @@ function briefSiivousKohde(pathname) {
 }
 
 function briefUnescape(md) {
-  // template.py:n _md_suoja() suojaa rivin alun merkit kenoviivalla, jotta oikea
-  // markdown-jasennin ei lue proosaa listaksi tai otsikoksi. markdownToHtml() ei
-  // tunne kenoviivasuojausta, joten se latoisi kenoviivan nakyviin. Purku tehdaan
-  // VAIN HTML-latomista varten; .md-vastaus menee ulos tavulleen sellaisena kuin
-  // se on KV:ssa, koska se on kirjoitettu markdown-jasentimelle.
+  // template.py's _md_suoja() escapes line-leading characters with a backslash, so that a
+  // real markdown parser does not read prose as a list or a heading. markdownToHtml() does
+  // not know about backslash escaping, so it would set the backslash visibly. The unescaping
+  // is done ONLY for the HTML typesetting. The .md response goes out byte for byte as it
+  // is in KV, because it is written for a markdown parser.
   return md.replace(/\\([#>+*\-.)])/g, "$1");
 }
 
 function briefHeaders(kind, kieli) {
   var headers = new Headers();
-  // Yksityinen sivu, ei valimuistiin. Brief voi saada paivatyn uusintaskannauslohkon,
-  // ja reunalla oleva vanha kopio sanoisi silloin eri asian kuin KV.
+  // A private page, not for the cache. A brief can gain a dated rescan block, and an old
+  // copy at the edge would then say something different from KV.
   headers.set("cache-control", "private, no-store");
   headers.set("X-Robots-Tag", "noindex, nofollow");
   headers.set("content-language", kieli === "fi" ? "fi" : "en");
@@ -9703,11 +9703,11 @@ function briefHeaders(kind, kieli) {
   return headers;
 }
 
-// Briefsivun oma valistys. Erik 2026-08-26: valia h1:n ja alaotsikon valiin.
-// CARDPAGE_CSS antaa h1:lle 0,6rem, mika riittaa lyhyelle korttisivulle mutta ei
-// kaksiriviselle briefotsikolle. VALIOTSIKOITA EI VALJENNETA: 3.108.2 teki myos sen,
-// ja Erik poisti sen 2026-08-26. Tama koskee VAIN /brief/-sivua, koska sama
-// CARDPAGE_CSS servaa julkiset korttisivut eika niiden ladontaa muuteta tassa.
+// The brief page's own spacing. Erik 2026-08-26: space between the h1 and the subheading.
+// CARDPAGE_CSS gives the h1 0,6rem, which is enough for a short card page but not for a
+// two-line brief title. SUBHEADINGS ARE NOT WIDENED: 3.108.2 did that too, and Erik
+// removed it 2026-08-26. This applies ONLY to the /brief/ page, because the same
+// CARDPAGE_CSS serves the public card pages and their typesetting is not changed here.
 // The brief body is plain markdown inside main, with no section wrappers, so the shared
 // page template's open-section rules are restated here for bare headings, lists and code.
 // Every brief, old or new, is rendered from KV through this shell at request time, so a
@@ -9731,19 +9731,19 @@ function briefHtmlPage(rec, canonicalUrl) {
   var kuvaus = kieli === "fi"
     ? "Agent-readiness-briiffi, " + (rec.yritys || "") + ". Sama sisältö markdownina ja JSONina samasta osoitteesta."
     : "Agent readiness brief, " + (rec.yritys || "") + ". The same content as markdown and JSON at the same address.";
-  // OG JA TWITTER, lisatty 2026-09-01. Ilman og:description LinkedInin raaputtaja ei
-  // putoa meta name="description" -tagiin vaan raapii sivun nakyvaa tekstia ylhaalta,
-  // ja sivun ensimmainen nakyva teksti on saavutettavuuslinkki "Skip to content".
-  // Mitattu eraan briefista 2026-09-01: esikatselu luki "Skip to content turva . dev".
-  // Kuvaus tulee samasta kuvaus-muuttujasta kuin meta description, jottei kaksi
-  // samaa tarkoittavaa merkkijonoa ajaudu erilleen.
+  // OG AND TWITTER, added 2026-09-01. Without og:description LinkedIn's scraper does not
+  // fall back to the meta name="description" tag but scrapes the page's visible text from
+  // the top, and the page's first visible text is the accessibility link "Skip to content".
+  // Measured on one brief 2026-09-01: the preview read "Skip to content turva . dev".
+  // The description comes from the same kuvaus variable as the meta description, so that two
+  // strings meaning the same thing cannot drift apart.
   var someOtsikko = rec.otsikko || rec.yritys || "agent readiness brief";
   var vaihtoehdot = kieli === "fi"
     ? "Sama sisältö koneluettavana: <a href=\"" + canonicalUrl + ".md\">markdown</a> ja <a href=\"" + canonicalUrl + ".json\">JSON</a>."
     : "The same content, machine readable: <a href=\"" + canonicalUrl + ".md\">markdown</a> and <a href=\"" + canonicalUrl + ".json\">JSON</a>.";
-  // KEHYS SUOMEKSI, lisatty 2026-09-03 (kierros 17, kohta A). Suomenkielisen briefin runko oli
-  // suomea mutta ohituslinkki, alatunniste ja tama rivi olivat englantia, ja "sisalto" oli
-  // ilman aakkosia. Nav pysyy englanniksi, koska se vie englanninkielisille sivuille.
+  // THE FRAME IN FINNISH, added 2026-09-03 (kierros 17, item A). The body of a Finnish brief
+  // was Finnish but the skip link, the footer and this line were English, and "sisalto" was
+  // written without umlauts. The nav stays English, because it leads to English pages.
   var yhteys = kieli === "fi"
     ? "Kysymykset suomeksi tai englanniksi: <a href=\"mailto:info@turva.dev\">info@turva.dev</a>. Vastaan kirjallisesti yhden arkipäivän kuluessa."
     : "Questions in English or Finnish: <a href=\"mailto:info@turva.dev\">info@turva.dev</a>. I reply in writing within one business day.";
@@ -9797,8 +9797,8 @@ ${footerHtml(kieli)}
 
 async function serveBrief(route, pathname, env, request) {
   var kv = env && env.BRIEFIT;
-  // Ilman bindingia reitti ei ole olemassa. Nain testit ja deployta edeltava tila
-  // vastaavat samoin kuin tuntemattomaan polkuun, eika puuttuva binding ole 500.
+  // Without the binding the route does not exist. This way the tests and the pre-deploy
+  // state answer as they would for an unknown path, and a missing binding is not a 500.
   if (!kv || typeof kv.get !== "function") return serve404(pathname);
   var rec = null;
   try {
@@ -9809,11 +9809,11 @@ async function serveBrief(route, pathname, env, request) {
   }
   if (!rec || typeof rec.md !== "string" || !rec.json) return serve404(pathname);
   var canonicalUrl = "https://turva.dev/brief/" + route.id;
-  // ACCEPT-NEUVOTTELU KUULUU TANNEKIN. Mitattu livesta 2026-08-24: paate-osoitteet
-  // toimivat, mutta `Accept: text/markdown` briefin omaan osoitteeseen palautti HTML:n.
-  // Koko sivusto vastaa muuten Acceptiin, ja markdown-neuvottelu on yksi niista
-  // tarkistuksista jotka skanneri lukee lapaisseeksi, joten uusi reitti oli ainoa pinta
-  // joka ei pitanyt talon omaa lupausta. Sivu kantaa jo `vary: Accept`.
+  // ACCEPT NEGOTIATION BELONGS HERE TOO. Measured live 2026-08-24: the suffix addresses
+  // worked, but `Accept: text/markdown` to the brief's own address returned HTML.
+  // The whole site otherwise answers Accept, and markdown negotiation is one of the checks
+  // the scanner reads as passed, so the new route was the only surface that did not keep
+  // the house's own promise. The page already carries `vary: Accept`.
   if (route.muoto === "html") {
     if (wantsJson(request)) route = { id: route.id, muoto: "json" };
     else if (wantsMarkdown(request)) route = { id: route.id, muoto: "md" };
@@ -12006,10 +12006,10 @@ async function handleRequest(request, env) {
   // canonical link back to the HTML page so the .md URL is an alternate and not a
   // second page. /auth.md and the skill.md files have no PAGE_MARKDOWN entry and fall
   // through to their own handlers untouched.
-  // BRIEF, Tek-269. Ennen .md-kasittelya, jotta /brief/<id>.md ei koskaan kulje
-  // PAGE_MARKDOWN-logiikan lapi. briefRoute palauttaa null jokaiselle muulle polulle.
-  // Loppuvalimerkin siivous ajetaan ENNEN briefRoutea, koska briefRoute palauttaa
-  // pisteelliselle polulle nullin ja polku putoaisi muuten 404:aan. Ks. Tek-323.
+  // BRIEF, Tek-269. Before the .md handling, so that /brief/<id>.md never goes through
+  // the PAGE_MARKDOWN logic. briefRoute returns null for every other path.
+  // The trailing-punctuation cleanup runs BEFORE briefRoute, because briefRoute returns
+  // null for a path with a period and the path would otherwise fall to a 404. See Tek-323.
   var briefSiivous = briefSiivousKohde(pathname);
   if (briefSiivous) {
     return new Response(null, { status: 301, headers: {

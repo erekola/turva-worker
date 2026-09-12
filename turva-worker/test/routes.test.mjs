@@ -458,11 +458,11 @@ test("the validator reports the two v2 relations and its summary does not move",
 });
 
 // ---------------------------------------------------------------------------
-// BRIEF-REITTI, Tek-269. Ensimmainen reitti joka lukee env:sta bindingin, joten
-// nama testit tuovat mukanaan ensimmaisen mock-env:n tassa tiedostossa. Kaksi
-// asiaa on tarkoituksella testattu negatiivisena: puuttuva binding ja tuntematon
-// tunnus vastaavat MOLEMMAT 404:lla, koska erillinen virhesivu kertoisi
-// ulkopuoliselle etta polku on olemassa.
+// BRIEF ROUTE, Tek-269. The first route that reads a binding from env, so these
+// tests bring the first mock env into this file. Two things are tested as
+// negatives on purpose: a missing binding and an unknown id BOTH answer with a
+// 404, because a separate error page would tell an outsider that the path
+// exists.
 const BRIEF_MD = [
   "turva.dev",
   "",
@@ -559,9 +559,9 @@ test("brief: kaikki kolme muotoa tulevat samasta tunnuksesta", async () => {
 });
 
 test("brief: loppuvalimerkki ohjataan pois, ei 404, Tek-323", async () => {
-  // Postiohjelma linkittaa tekstiosan osoitteen itse ja osa niista ottaa virkkeen
-  // lopettavan pisteen mukaan. Ilman tata reittia lukija saa 404:n juuri siita
-  // osoitteesta jonka viestin oli maara toimittaa. Mitattu 2026-08-31 elavana.
+  // A mail client links the address in the text part itself, and some of them take
+  // the sentence-ending period along. Without this route the reader gets a 404 from
+  // the very address the message was meant to deliver. Measured live 2026-08-31.
   const kanta = "/brief/" + BRIEF_REC.id;
   for (const [polku, kohde] of [
     [kanta + ".", kanta],
@@ -579,16 +579,16 @@ test("brief: loppuvalimerkki ohjataan pois, ei 404, Tek-323", async () => {
 });
 
 test("brief: siivous ei pelasta kelvotonta tunnusta eika koske muihin polkuihin, Tek-323", async () => {
-  // Portti saa korjata VAIN loppuvalimerkin. Jos se pelastaisi liian lyhyen tai
-  // isokirjaimisen tunnuksen, se avaisi polun jonka BRIEF_ID nimenomaan sulkee.
-  // "/brief/.." EI ole tassa listassa, ja syy on mittaus eika mielipide: URL-jasennin
-  // normalisoi sen poluksi "/" ennen kuin worker nakee sita, joten se vastaa 200:lla
-  // etusivuna eika kerro tasta reitista mitaan. Kelvottomuus testataan tunnuksella.
+  // The gate may repair ONLY a trailing punctuation mark. If it rescued an id that is
+  // too short or upper-case, it would open the path BRIEF_ID exists to close.
+  // "/brief/.." is NOT in this list, and the reason is a measurement rather than an
+  // opinion: the URL parser normalises it to "/" before the worker sees it, so it
+  // answers 200 as the home page and says nothing about this route. Invalidity is tested with an id.
   for (const p of ["/brief/lyhyt.", "/brief/ISOT.", "/brief/.", "/brief/", "/brief/aaaaaaa."]) {
     const r = await getBrief(p);
     assert.equal(r.status, 404, p + " ei saa ohjautua");
   }
-  // Muut polut eivat kuulu tahan reittiin lainkaan.
+  // Other paths do not belong to this route at all.
   const muu = await getBrief("/services.");
   assert.notEqual(muu.status, 301, "siivous ei saa vuotaa /brief/-polun ulkopuolelle");
 });
