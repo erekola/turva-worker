@@ -95,7 +95,7 @@ See [docs/endpoints.md](docs/endpoints.md) for the complete inventory, including
 
 ## Scanner results
 
-The published turva.dev reference build recorded 100/100, Level 5 Agent-Native on [isitagentready.com](https://isitagentready.com/) on 2026-09-06. This is a dated measurement of this domain. A fork needs its own checks.
+The published turva.dev reference build recorded 100/100, Level 5 Agent-Native on [isitagentready.com](https://isitagentready.com/) on 2026-09-14. This is a dated measurement of this domain. A fork needs its own checks.
 
 <details>
 <summary>Category results and measurement limits</summary>
@@ -120,9 +120,9 @@ The payment routes return x402 challenges and publish Stripe payment links. x402
 
 ## Web security
 
-Recorded on 2026-09-06: all 24 categories passed on [Hardenize](https://www.hardenize.com/report/turva.dev), 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 95/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
+Recorded on 2026-09-14: all 24 categories passed on [Hardenize](https://www.hardenize.com/report/turva.dev), 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
 
-The website deduction concerned the key-exchange hash function in one HTTPS sub-test. Its IPv6, DNSSEC and RPKI checks passed in full. The email deduction concerned the receiving mail servers' cipher configuration, operated by the mail provider. Its IPv6, DNSSEC and RPKI checks passed in full. DMARC with DKIM and SPF also passed.
+The website deduction concerned the key-exchange hash function in one HTTPS sub-test. Its IPv6, DNSSEC and RPKI checks passed in full. The email deduction concerned IPv6, because the receiving mail servers, operated by the mail provider, publish no IPv6 address. Its DNSSEC and RPKI checks passed in full. DMARC with DKIM and SPF, and STARTTLS with DANE, also passed.
 
 Use the linked reports for current results. Recorded values and dates are maintained in [tools/facts.json](tools/facts.json).
 

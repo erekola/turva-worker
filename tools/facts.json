@@ -3,7 +3,7 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.159.0",
+    "site": "3.159.1",
     "mcp": "1.4.1"
   },
   "mtaSts": {
@@ -90,7 +90,7 @@
     "wikidataPerson": "https://www.wikidata.org/wiki/Q140276321"
   },
   "agentReadiness": {
-    "measuredAt": "2026-09-06",
+    "measuredAt": "2026-09-14",
     "isitagentready": {
       "level": "Level 5",
       "score": "100/100",
@@ -159,7 +159,7 @@
     }
   },
   "security": {
-    "measuredAt": "2026-09-06",
+    "measuredAt": "2026-09-14",
     "hardenize": {
       "result": "all 24 categories passed",
       "url": "https://www.hardenize.com/report/turva.dev"
@@ -169,7 +169,7 @@
       "url": "https://internet.nl/site/turva.dev/"
     },
     "internetnlMail": {
-      "score": "95/100",
+      "score": "90/100",
       "url": "https://internet.nl/mail/turva.dev/"
     },
     "advisoriesCheckedAt": "2026-08-16"
