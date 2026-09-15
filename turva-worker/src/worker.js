@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.159.2 - monthly guide source review (2026-09-15): /guides/agentic-resource-discovery describes the ARD repository as a versioned v0.91 draft with issue-first normative changes, /guides/agent-commerce-discovery records the April 2026 AP2 donation to the FIDO Alliance, /guides/x402-agent-payments links the x402 repository at x402-foundation, three guides link Google's generative AI optimization guide instead of the AI features page, and all 24 guides carry checked 2026-09-15
 // turva.dev worker v3.159.1 - measurement day (2026-09-14, Erik): turva.dev re-measured, Level 5/5 on isitagentready, internet.nl website test 98 and Hardenize all 24 categories passed, all unchanged; the internet.nl email test now reads 90 instead of 95, because after the move to Proton the STARTTLS and DANE group passes in full and the only failing group is IPv6, the provider's receiving mail servers publishing no IPv6 address. The measured-at date moves from 2026-09-06 to 2026-09-14 on every surface that states it.
 // turva.dev worker v3.159.0 - the hosted llms.txt validator reads link relations the way an HTML parser does (2026-09-12): character references in attribute values are decoded, lowercasing and whitespace follow the tokenizer's ASCII rules, CR becomes LF before the head is read, and a tag ends where the tokenizer ends it. rel="described&#98;y" is now found, an &amp; in an href is reported as &, and U+0130 or NBSP in the head no longer hides a relation or invents one. The comment scan in the head is linear again: 100 KB of short comments took 770 ms and now takes under 2 ms. Found by a second outside review, a differential fuzz against parse5 and an independent verifier. On this file, 350 000 generated documents read the same as parse5, from generators written by two authors, one of them the independent verifier. The two v2 discovery checks still report only pass or info, and the summary line is unchanged. No signed surface changed.
 // turva.dev worker v3.158.0 - the hosted parity check runs package release 0.2.6 (2026-09-12): the pinned dependency moves 0.2.5 to 0.2.6, so a report's toolVersion names the release npx installs. 0.2.6 changes how two relative links are compared when no base URL is known, and the hosted route always has one. Measured across the same ten pages and 106 findings: every hosted report is byte-identical apart from toolVersion and generatedAt, and no JSON schema key changed.
@@ -3262,7 +3263,7 @@ AP2 is the Agent Payments Protocol. Under the v0.1 specification, which is what 
 
 The detail that trips people up is the URI. Some helper guides write it as "github.com/google-agentic-commerce/AP2/tree/v0.1.0", with an uppercase name and a three-part version. The v0.1 specification uses "github.com/google-agentic-commerce/ap2/tree/v0.1", lowercase, version v0.1. A scanner that validates against that specification rejects the uppercase form even when everything else is correct. Copy the URI from the spec, not from a fix message. The URI is an identifier, not an address: the repository is named AP2 and its tag is v0.1.0, so the lowercase form answers 404 in a browser, and a validator compares the string instead of fetching it. Do not correct the identifier to a working URL to silence the 404. That answer is expected and the validator does not fetch it.
 
-Note that the current AP2 specification, v0.2 from April 2026, restructures the protocol around checkout and payment mandates and drops the Agent Card extension entirely. The deployed discovery convention and the scanners still follow v0.1, so publish the v0.1 declaration for discoverability today and expect this surface to change as v0.2 adoption arrives.
+Note that the current AP2 specification, v0.2 from April 2026, restructures the protocol around checkout and payment mandates and drops the Agent Card extension entirely. The deployed discovery convention and the scanners still follow v0.1, so publish the v0.1 declaration for discoverability today and expect this surface to change as v0.2 adoption arrives. In April 2026 Google donated AP2 to the FIDO Alliance, where the standards work is carried out by the Agentic Authentication Technical Working Group and the Payments Technical Working Group.
 
 ## ACP discovery and checkout
 
@@ -4430,7 +4431,7 @@ Checkout is one common stopping point. An agent can find a product and compare o
 ## Sources
 
 - [x402 protocol site](https://x402.org/)
-- [x402 repository](https://github.com/coinbase/x402)
+- [x402 repository](https://github.com/x402-foundation/x402)
 - [a2a-x402 extension](https://github.com/google-agentic-commerce/a2a-x402)
 - [Agent Payments Protocol (AP2) repository](https://github.com/google-agentic-commerce/AP2)
 
@@ -4536,7 +4537,7 @@ Yes. Search match is scored on relevance to a query and on ranking signals, whil
 
 ## Sources
 
-- [Google Search Central, AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)
+- [Google Search Central, optimizing your website for generative AI features on Google Search](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
 - [isitagentready.com](https://isitagentready.com/)
 
 ## Related
@@ -4683,7 +4684,7 @@ llms.txt tells an agent where a site's content lives. An ai-catalog or ard manif
 
 ## Draft status and how to validate a manifest
 
-The specification is early. The repository that carries it calls itself a temporary working repo, and its field names are still being argued in pull requests. Publishing a manifest today means validating it against the draft revision the client you care about actually reads, rather than assuming one fixed shape.
+The specification is early. As of September 2026 the repository carries a versioned draft, v0.91, and a normative change to the spec or its schemas starts as an issue before a maintainer lands it. Publishing a manifest today still means validating it against the draft revision the client you care about actually reads, rather than assuming one fixed shape.
 
 ## What a scan checks, and why it matters now
 
@@ -5146,7 +5147,7 @@ Measure first, because the three overlap and the same fix should not be paid for
 
 ## Sources
 
-- [Google Search Central, AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)
+- [Google Search Central, optimizing your website for generative AI features on Google Search](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
 - [llms.txt proposal](https://llmstxt.org/)
 
 ## Related
@@ -5366,7 +5367,7 @@ Facts stated as data rather than prose, and the same fact visible in more than o
 
 ## Sources
 
-- [Google Search Central, AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)
+- [Google Search Central, optimizing your website for generative AI features on Google Search](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
 - [OpenAI crawler and user-agent documentation](https://developers.openai.com/api/docs/bots)
 - [Content Signals](https://contentsignals.org/)
 - [llms.txt proposal](https://llmstxt.org/)
@@ -5923,7 +5924,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.159.1",
+    "version": "3.159.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6191,7 +6192,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.159.1",
+  "version": "3.159.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6840,7 +6841,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-12";
+var SITEMAP_LASTMOD = "2026-09-15";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -7272,7 +7273,7 @@ var META_BY_PATH = {
   },
   "/guides/agent-commerce-discovery": {
     title: "Agent commerce discovery: A2A, AP2, ACP and UCP · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Commerce discovery describes the interfaces and payment-related capabilities a service supports.",
     image: "/og-guide-agent-commerce-discovery.jpg",
     imageAlt: "turva.dev guide card: A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint."
@@ -7287,14 +7288,14 @@ var META_BY_PATH = {
   },
   "/guides/agentic-resource-discovery": {
     title: "Agentic Resource Discovery and resource catalogs · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Resource catalogs describe the agent-facing interfaces a site exposes.",
     image: "/og-guide-agentic-resource-discovery.jpg",
     imageAlt: "turva.dev guide card: Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation."
   },
   "/guides/open-knowledge-format": {
     title: "Open Knowledge Format explained · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Open Knowledge Format describes knowledge as linked Markdown documents.",
     image: "/og-guide-open-knowledge-format.jpg",
     imageAlt: "turva.dev guide card: What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness."
@@ -7384,147 +7385,147 @@ var META_BY_PATH = {
   },
   "/guides/agent-readiness-audit": {
     title: "What a website and API agent-readiness audit covers · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "A technical scan, manual review and observed AI answers reveal different problems.",
     image: "/og-guide-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored against current standards by an independent scanner."
   },
   "/guides/llms-txt": {
     title: "llms.txt explained · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "An llms.txt file offers a curated map of a site for clients that choose to read it. Learn its structure, discovery links and limits.",
     image: "/og-guide-llms-txt.jpg",
     imageAlt: "turva.dev guide card: llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives, and how it differs from robots.txt and sitemaps."
   },
   "/guides/mcp-server-card": {
     title: "MCP server cards and discovery · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "A server card describes an MCP endpoint for clients that support the relevant discovery convention.",
     image: "/og-guide-mcp-server-card.jpg",
     imageAlt: "turva.dev guide card: An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and connect to it."
   },
   "/guides/agents-json": {
     title: "What agents.json describes · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "agents.json is one pattern for describing actions and endpoints for automated clients.",
     image: "/og-guide-agents-json.jpg",
     imageAlt: "turva.dev guide card: agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one."
   },
   "/guides/x402-agent-payments": {
     title: "x402 and HTTP payment flows · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "x402 describes an HTTP-based payment flow. A payment declaration, an accepted payment and settlement are different states and should be documented separately.",
     image: "/og-guide-x402-agent-payments.jpg",
     imageAlt: "turva.dev guide card: x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout."
   },
   "/guides/response-headers-for-agents": {
     title: "Response headers for AI clients · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Response headers describe formats, discovery links and request policy. Check both what a header declares and whether the server behaves accordingly.",
     image: "/og-guide-response-headers-for-agents.jpg",
     imageAlt: "turva.dev guide card: The right HTTP response headers let AI agents work without parsing full HTML."
   },
   "/guides/seo-vs-agent-readiness": {
     title: "SEO and agent-readiness: overlap and differences · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "SEO, AI-answer visibility and technical agent access overlap, but they answer different questions.",
     image: "/og-guide-seo-vs-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: SEO makes a site rank for people to click. Agent-readiness makes it legible and usable by AI agents."
   },
   "/guides/json-ld-structured-data": {
     title: "JSON-LD and structured data for AI clients · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Structured data makes page facts explicit, but those facts must agree with the visible page and underlying source.",
     image: "/og-guide-json-ld-structured-data.jpg",
     imageAlt: "turva.dev guide card: JSON-LD states a page's facts as data an AI agent can read without parsing prose."
   },
   "/guides/well-known-for-agents": {
     title: "The /.well-known directory for agent discovery · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Well-known URLs give clients predictable places to look for specific metadata.",
     image: "/og-guide-well-known-for-agents.jpg",
     imageAlt: "turva.dev guide card: The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata."
   },
   "/guides/agent-authentication": {
     title: "Authentication and authorisation for AI agents · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Authentication identifies a client, authorisation determines what it may access or do.",
     image: "/og-guide-agent-authentication.jpg",
     imageAlt: "turva.dev guide card: Agent authentication lets an automated client gain scoped access without a human login."
   },
   "/guides/measurement-led-agent-readiness": {
     title: "Measure agent-readiness with evidence · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "A scan is one source of evidence. Combine it with direct technical checks and observed AI answers, and record the method and date behind every conclusion.",
     image: "/og-guide-measurement-led-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: A hand-filled checklist records intentions. An independent scanner records what an agent actually finds."
   },
   "/guides/prerendering-for-agents": {
     title: "When AI clients cannot read rendered pages · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Some clients read the initial HTTP response without running a browser.",
     image: "/og-guide-prerendering-for-agents.jpg",
     imageAlt: "turva.dev guide card: JavaScript-rendered sites return an empty shell to agents, so the content never arrives."
   },
   "/guides/sitemaps-and-robots-for-agents": {
     title: "Sitemaps, robots.txt and AI crawler access · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Sitemaps describe published URLs, while robots.txt communicates crawler rules. Neither file guarantees retrieval or replaces access control.",
     image: "/og-guide-sitemaps-and-robots-for-agents.jpg",
     imageAlt: "turva.dev guide card: robots.txt and the sitemap decide whether an agent is allowed in and what it can find."
   },
   "/guides/markdown-for-agents": {
     title: "Serving Markdown to AI clients · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "A Markdown representation can make published content easier for text-based clients to consume. Keep its facts and links aligned with the HTML page.",
     image: "/og-guide-markdown-for-agents.jpg",
     imageAlt: "turva.dev guide card: Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens."
   },
   "/guides/agent-readiness-aeo-geo": {
     title: "Agent-readiness, AEO and GEO · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "These labels describe overlapping work around discovery, answers and automated use.",
     image: "/og-guide-agent-readiness-aeo-geo.jpg",
     imageAlt: "turva.dev guide card: How AEO, GEO and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice."
   },
   "/guides/agentic-commerce-readiness": {
     title: "Agentic commerce readiness · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Agent commerce involves product information, permitted actions and a supported checkout path.",
     image: "/og-guide-agentic-commerce-readiness.jpg",
     imageAlt: "turva.dev guide card: What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase."
   },
   "/guides/letting-agents-act-on-data": {
     title: "Define what an agent may do with your data · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Reliable agent operations depend on usable inputs, explicit permissions and observable outcomes.",
     image: "/og-guide-letting-agents-act-on-data.jpg",
     imageAlt: "turva.dev guide card: Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds."
   },
   "/guides/ai-agent-use-cases": {
     title: "AI agent use cases and their operating limits · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Explore examples of agents reading data and taking permitted actions.",
     image: "/og-guide-ai-agent-use-cases.jpg",
     imageAlt: "turva.dev guide card: AI agent use cases across commerce, monitoring, field support, remote operations and back-office data work, and what makes each one reliable."
   },
   "/guides/get-cited-by-ai-assistants": {
     title: "Make your website easier for AI assistants to find and cite · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Clear, accessible content and consistent facts help retrieval systems understand a site.",
     image: "/og-guide-get-cited-by-ai-assistants.jpg",
     imageAlt: "turva.dev guide card: What it takes to be a source AI assistants cite: readable content, structured data, corroboration, indexing where assistants search, and measurement."
   },
   "/guides/choosing-an-agent-readiness-audit": {
     title: "How to choose an agent-readiness audit · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "Compare an audit by its scope, evidence, deliverables and follow-up checks. See how the website and API audit differs from a focused Shopify check.",
     image: "/og-guide-choosing-an-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: Who provides agent-readiness audits, what they cost, how long they take, and what you get."
   },
   "/guides/agent-readiness-gaps": {
     title: "Common agent-readiness gaps in a measured sample · turva.dev",
-    checked: "2026-09-05",
+    checked: "2026-09-15",
     description: "A prospecting sample of 567 company sites revealed recurring technical gaps.",
     image: "/og-guide-agent-readiness-gaps.jpg",
     imageAlt: "turva.dev guide card: Marketing sites are often strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes."
