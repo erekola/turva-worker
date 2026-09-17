@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.159.3 - six cascade losses repaired (2026-09-17): .aview-cmd, .result-sum, .bcount and .verr lost to .sec p inside a section, a.v lost to .kv .v on /company, .scard h2 inherited article h2's top rule and top padding in the guides FAQ panel, and .crumb a was underlined at rest because the article template has no bare a rule. Every rule keeps its scope: the repair adds a more specific selector or resets the inherited property. Read from computed styles before and after on nine locally rendered pages, with a negative control. No signed surface changed.
 // turva.dev worker v3.159.2 - monthly guide source review (2026-09-15): /guides/agentic-resource-discovery describes the ARD repository as a versioned v0.91 draft with issue-first normative changes, /guides/agent-commerce-discovery records the April 2026 AP2 donation to the FIDO Alliance, /guides/x402-agent-payments links the x402 repository at x402-foundation, three guides link Google's generative AI optimization guide instead of the AI features page, and all 24 guides carry checked 2026-09-15
 // turva.dev worker v3.159.1 - measurement day (2026-09-14, Erik): turva.dev re-measured, Level 5/5 on isitagentready, internet.nl website test 98 and Hardenize all 24 categories passed, all unchanged; the internet.nl email test now reads 90 instead of 95, because after the move to Proton the STARTTLS and DANE group passes in full and the only failing group is IPv6, the provider's receiving mail servers publishing no IPv6 address. The measured-at date moves from 2026-09-06 to 2026-09-14 on every surface that states it.
 // turva.dev worker v3.159.0 - the hosted llms.txt validator reads link relations the way an HTML parser does (2026-09-12): character references in attribute values are decoded, lowercasing and whitespace follow the tokenizer's ASCII rules, CR becomes LF before the head is read, and a tag ends where the tokenizer ends it. rel="described&#98;y" is now found, an &amp; in an href is reported as &, and U+0130 or NBSP in the head no longer hides a relation or invents one. The comment scan in the head is linear again: 100 KB of short comments took 770 ms and now takes under 2 ms. Found by a second outside review, a differential fuzz against parse5 and an independent verifier. On this file, 350 000 generated documents read the same as parse5, from generators written by two authors, one of them the independent verifier. The two v2 discovery checks still report only pass or info, and the summary line is unchanged. No signed surface changed.
@@ -5924,7 +5925,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.159.2",
+    "version": "3.159.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6192,7 +6193,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.159.2",
+  "version": "3.159.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8681,7 +8682,7 @@ function buildValidatorAppJsonLd(canonicalUrl) {
 // none of them read right on Erik's displays in three browsers. The whole site reads the full
 // 68rem frame (Tek-360 stands). READ_CSS stays as an empty hook so the templates need no change.
 var READ_CSS = ``;
-var FOOTER_CSS = `${READ_CSS}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr{color:#F17F5D}
+var FOOTER_CSS = `${READ_CSS}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:3rem clamp(24px,5vw,72px);display:flex;flex-direction:column;gap:1.5rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:10px;}.tv-foot .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}.tv-foot .nv-word b{color:#5DF18F;}
 .tv-foot .foot-brand svg{display:block;width:34px;height:34px;}
@@ -8708,7 +8709,7 @@ p,li{text-wrap:pretty;}
 // its own four .scard rules on purpose, they are a smaller set and not a copy.
 var SCARD_CSS = `.scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.4rem 1.5rem 1.2rem;margin:0 0 1rem;transition:border-color .15s ease;}
 .scard:hover{border-color:rgba(93,241,143,0.35);}
-.scard h2{color:#5DF18F;font-size:1.2rem;font-weight:700;letter-spacing:-0.01em;margin:0 0 .85rem;}
+.scard h2{color:#5DF18F;font-size:1.2rem;font-weight:700;letter-spacing:-0.01em;margin:0 0 .85rem;border-top:none;padding-top:0;}
 .scard p{color:#C9D1CE;margin:0 0 .85rem;font-size:.97rem;}
 .scard p:last-child{margin-bottom:0;}
 .scard ul{list-style:none;margin:0;padding:0;}
@@ -8960,7 +8961,7 @@ article .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-si
 .tbl-list[open] summary{margin-bottom:.6rem;}
 table.stacked{display:block;border:0;min-width:0;width:100%;}table.stacked thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stacked tbody,table.stacked tr{display:block;}table.stacked tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stacked td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stacked td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stacked td:first-child{color:#F2F4F3;font-weight:600;}
 .crumb{margin:0 0 1.2rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;}
-.crumb a{color:#9AA3A0;}
+.crumb a{color:#9AA3A0;text-decoration:none;}
 .crumb a:hover{color:#5DF18F;text-decoration:none;}
 a:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 .tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
@@ -9457,7 +9458,7 @@ ${SCARD_CSS}
 .kv{display:contents;}
 .kv .k{color:#9AA3A0;font-size:.9rem;}
 .kv .v{color:#F2F4F3;font-weight:600;word-break:break-word;}
-a.v{color:#5DF18F;}
+a.v,.kv a.v{color:#5DF18F;}
 @media (max-width:420px){.kvs{grid-template-columns:minmax(0,1fr);gap:.15rem .9rem;}.kv .v{margin-bottom:.55rem;}}
 .sigqr{display:grid;grid-template-columns:1fr auto;gap:1.1rem 1.4rem;align-items:center;margin-top:1.1rem;padding-top:1.1rem;border-top:0.5px solid rgba(255,255,255,0.10);}
 .sigqr-txt p{color:#C9D1CE;margin:0;font-size:.97rem;}
@@ -9498,7 +9499,7 @@ ${FAQ_CSS}
 .bkind{min-height:44px;padding:0 16px;border:1px solid rgba(255,255,255,0.24);border-radius:999px;background:transparent;color:#C9D1CE;font:600 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;}
 .bkind:hover{border-color:#5DF18F;color:#F2F4F3;}
 .bkind[aria-pressed="true"]{background:#5DF18F;border-color:#5DF18F;color:#06100F;}
-.bcount{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:0 0 .9rem;}
+.bcount,.sec .bcount{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:0 0 .9rem;}
 .bempty{color:#F2F4F3;font-size:17px;margin:0 0 .9rem;}
 .bclear{min-height:44px;padding:0 16px;margin:0 0 1rem;border:1px solid rgba(255,255,255,0.24);border-radius:7px;background:transparent;color:#F2F4F3;font:600 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;}
 .bclear:hover{border-color:#5DF18F;color:#5DF18F;}
@@ -9519,7 +9520,7 @@ ${FAQ_CSS}
 .vform input{flex:1 1 16rem;min-width:0;min-height:50px;background:#07110D;border:1px solid #2D3D3D;border-radius:7px;padding:10px 14px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:16px;}
 .vform button{min-height:50px;background:#5DF18F;color:#06100F;border:0;border-radius:7px;padding:10px 22px;font-weight:700;cursor:pointer;font-size:15px;}
 @media (max-width:560px){.vform input,.vform button{flex-basis:100%;width:100%;}.cta{flex-direction:column;}.btn,.btn-ghost,.cta-btn{width:100%;}}
-.result-sum{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin:0 0 1rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#C9D1CE;}
+.result-sum,.sec .result-sum{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin:0 0 1rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#C9D1CE;}
 .result-sum b{color:#F2F4F3;}
 .chk{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.15rem .7rem;align-items:baseline;margin:0 0 .9rem;padding:0 0 .9rem;border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .chk .s{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;}
