@@ -10,7 +10,7 @@
     "start": "wrangler dev"
   },
   "dependencies": {
-    "markdown-parity-check": "0.2.6"
+    "markdown-parity-check": "0.2.9"
   },
   "devDependencies": {
     "wrangler": "^4.134.0"
