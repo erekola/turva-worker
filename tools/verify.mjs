@@ -79,7 +79,12 @@ const unmet = (m) => { unmeasured++; console.log('  SKIP  ' + m); };
 // Codes that mean "this machine could not ask", never "the answer was wrong". ENOTFOUND and
 // ENODATA are absent on purpose: they are answers, and a missing MTA-STS record is a finding.
 const TRANSIENT = new Set(['ETIMEOUT', 'ETIMEDOUT', 'ESERVFAIL', 'EAI_AGAIN', 'ECONNRESET',
-  'ENETUNREACH', 'EHOSTUNREACH', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'EDOHRCODE']);
+  'ENETUNREACH', 'EHOSTUNREACH', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'EDOHRCODE',
+  // EACCES and EPERM: the operator's own machine refused to open the socket. Added 2026-09-19
+  // after a local firewall began refusing DNS-over-HTTPS and the MTA-STS check read that as
+  // "fetch failed" against the domain. ECONNREFUSED stays out: a server can refuse, and that is
+  // an answer.
+  'EACCES', 'EPERM']);
 // This file's own timeouts (the fetch wrapper above and the 6 s DoH signal) reject with a
 // DOMException whose name is TimeoutError and whose code is the NUMBER 23, not a string, so
 // the set above never matched them and a timed-out read was booked as a FAIL against the domain.
