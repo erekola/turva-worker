@@ -32,13 +32,11 @@ cleared as they appear, because this repository is a reference implementation
 people fork. `npm audit` found no advisories in either tree.
 Checked 2026-09-19.
 
-`package.json` also carries `"overrides": { "esbuild": "0.28.1" }`. It was
-added on 2026-06-14, when wrangler pinned a vulnerable `esbuild` `0.27.3`
-(GHSA-g7r4-m6w7-qqqr, an arbitrary file read in the development server on
-Windows, fixed in 0.28.1). Since wrangler 4.134.0, its own dependencies declare
-`esbuild` `0.28.1`, so the override no longer changes what is installed. A second
-advisory this paragraph used to cite, GHSA-gv7w-rqvm-qjhr, was withdrawn by
-GitHub on 2026-06-17, so the override rested on the first one alone.
+`esbuild` is in the toolchain only as a dependency of wrangler. Wrangler
+4.134.0 declares it at exactly `0.28.1`, the release that fixed
+GHSA-g7r4-m6w7-qqqr, an arbitrary file read in the esbuild development server
+on Windows. `turva-worker/package-lock.json` resolves that version, and
+`turva-worker/package.json` does not override it.
 
 ## Reporting a Vulnerability
 
