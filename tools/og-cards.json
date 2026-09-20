@@ -95,6 +95,12 @@
     "subhead": "x402 and MPP to green on isitagentready, without faking settlement.",
     "white": "Finishing the optional"
   },
+  "og-five-rounds-before-the-agent-signed.jpg": {
+    "green": "the agent signed anything",
+    "kicker": "Blog",
+    "subhead": "An agent moved tokens on a test network after five fix rounds and three stopped attempts.",
+    "white": "Five rounds before"
+  },
   "og-free-llms-txt-validator.jpg": {
     "green": "for people and for agents",
     "kicker": "Blog",

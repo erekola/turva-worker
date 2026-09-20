@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.161.0 - the blog post Five rounds before the agent signed anything (2026-09-20): the post records the two hashes an owner of Mandate Desk approves, the three attempts that stopped in the preparation parser before any signature, the six writes and four controls of the live Sepolia run of 15 September 2026, why the first evidence package was exported as incomplete and what one run on a test network does not establish; it joins /blog, META_BY_PATH, CANONICAL_PATHS, GUIDE_PAGE_FAQ, the sitemap and llms.txt (re-sign), and SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.160.0 - the x402 payTo wallet moves to a new Base address (2026-09-20, Erik): X402_PAY_TO is the only definition of it, so the manifest at /.well-known/x402, the challenge at /x402 and every 402 challenge on /api and the three /api/agent/* routes now name the new address. Nothing else about the payment posture changes: the amounts, the network eip155:8453, the USDC asset and the quote-on-request settlement stay as they were, and no signed surface changed.
 // turva.dev worker v3.159.3 - six cascade losses repaired (2026-09-17): .aview-cmd, .result-sum, .bcount and .verr lost to .sec p inside a section, a.v lost to .kv .v on /company, .scard h2 inherited article h2's top rule and top padding in the guides FAQ panel, and .crumb a was underlined at rest because the article template has no bare a rule. Every rule keeps its scope: the repair adds a more specific selector or resets the inherited property. Read from computed styles before and after on nine locally rendered pages, with a negative control. No signed surface changed.
 // turva.dev worker v3.159.2 - monthly guide source review (2026-09-15): /guides/agentic-resource-discovery describes the ARD repository as a versioned v0.91 draft with issue-first normative changes, /guides/agent-commerce-discovery records the April 2026 AP2 donation to the FIDO Alliance, /guides/x402-agent-payments links the x402 repository at x402-foundation, three guides link Google's generative AI optimization guide instead of the AI features page, and all 24 guides carry checked 2026-09-15
@@ -236,6 +237,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Five rounds before the agent signed anything](https://turva.dev/blog/five-rounds-before-the-agent-signed.md)
 - [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree.md)
 - [I rebuilt turva.dev around the report](https://turva.dev/blog/i-rebuilt-turva-dev-around-the-report.md)
 - [What 19 identity vendors publish for agents](https://turva.dev/blog/agent-readiness-identity-vendors.md)
@@ -442,6 +444,74 @@ The two OAuth documents are named in Discovery above.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/five-rounds-before-the-agent-signed": `# Five rounds before the agent signed anything
+
+2026-09-20
+
+An agent moved tokens on Ethereum Sepolia after five fix rounds, each answering an independent review. Three attempts stopped before any signature.
+
+The run was made on 15 September 2026 and the project is called Mandate Desk. An owner sets transfer caps, reviews the agent's exact plan, approves it for a limited window and can revoke the mandate. The code is public under MIT at [erekola/mandate-desk](https://github.com/erekola/mandate-desk). Substantial implementation code in it was written with AI tools, and the repository carries its own disclosure file saying so.
+
+## What does the owner actually approve?
+
+Two hashes. One is the plan, meaning the recipient, the amount and the exact contents of the transaction. The other is the stable identity of the source code that will sign it.
+
+The second hash is the one I did not start with. A plan hash on its own says nothing about the program holding the key, so a fix that changes one line of the signing path produces a program the owner never approved. The owner, the agent and the signer read that identity again before every call that can write. A process whose bytes differ from the approved identity still follows a broadcast transaction to its receipt by reads and records what it saw, but it never records a semantic result.
+
+## What stopped the first three attempts?
+
+The parser that reads the preparation response, three times in a row, and nothing was signed in any of them.
+
+The documented response carries an x402Requirements quote. My parser read that quote as a payment demand and stopped. I fixed it to read the quote as data, and the next attempt failed because the fix accepted it only as an object while the live response sent a list. The third attempt met an executionMode echo that is not in the documentation at all, and the exact key set refused it.
+
+Four review rounds had not caught any of this, and the reason is worth naming. The fake gateway I tested against never returned a quote, so every test agreed with the parser about a field the parser had never seen. The parser now reads the quote in any JSON form, keeps it out of the transaction and out of the preparation hash and never pays against it. It admits the undocumented echo only when the client signed that value itself. The fake gateway sends both fields in every response now.
+
+## What did the run produce?
+
+Six writes and four on-chain controls. Action setup, a token approval, the mandate grant, an agent execute of 10000 raw units through execute_approved, the revocation and an allowance reset.
+
+Every write was confirmed with the same block hash on two independent read sources before a dependent write was prepared. The evidence package sits in the repository with the transaction hashes and explorer links, and it holds no signed bytes and no key.
+
+## Why was the first evidence package marked incomplete?
+
+Because one of the two read sources had stopped reporting new finalized blocks the day before the run.
+
+The completeness rule is the run's own. A package counts as complete only when both sources report every block of the run as finalized. Here one source finalized normally and the other was stuck on a block from the previous afternoon, more than twenty hours old. Calling the run finished on the source that worked would have been the easy reading, and it would have changed what the package means without saying so. The first export went out marked incomplete instead, and it was replaced when the stuck source recovered at 12:12 UTC, under four hours after the last write. The verification record names a deviation of the run itself. The last step was reached with a fetch throttle preload in the owner process, and that preload sits outside the approved code identity.
+
+## What does this not establish?
+
+That the design is safe. One run on a test network says the path worked once under the conditions of that day, and the snapshot that made it passed its own suite of 390 tests twice.
+
+It says nothing about an adversarial counterparty, a reorg deeper than the tests model, a signer running on a machine I do not control, or the same code against a different API than the one it was built for. Every review round so far has found something, which is the part I would weigh most if I were reading this from the outside.
+
+## Where the project is
+
+The submission is on Brickken's developer hub under agentic tools: [Mandate Desk on the Build with Brickken hub](https://devs.brickken.com/submissions/cmu1g5mmp000819p7n3k42qmo). The page has a vote button, one vote per person, and it does not ask anyone to create an account.
+
+## Frequently asked
+
+**Did the agent hold the key?**
+
+No. Signing happens in a separate signer process that the owner starts. The agent can prepare a request and call execute_approved for the one step the owner approved. No MCP tool exposes owner approval, the grant, the revocation, a signer or a key.
+
+**Is this a product?**
+
+No. It is a local reference implementation with a public repository and a demo you run on your own machine. There is no hosted deployment and no public demo address.
+
+**Did the run move real money?**
+
+No. It ran on Ethereum Sepolia, which is a test network, with test funds. The Sepolia fixture in the public repository pays a synthetic recipient address.
+
+**Why does an agent readiness business build a payment demo?**
+
+Because the interesting part of agent readiness is not the file you publish. It is the envelope an agent acts inside: what it may do, and what proof is left once it has done it. A transfer is the clearest case of that question I have found.
+
+## Related
+
+- [x402 and agent payments](/guides/x402-agent-payments)
+- [TRACE signs how an agent ran, not what it was allowed to reach](/blog/trace-runtime-attestation)
+- [Letting agents act on data](/guides/letting-agents-act-on-data)`,
+
   "/blog/html-and-markdown-can-disagree": `# HTML and Markdown can disagree
 
 2026-09-12
@@ -2228,6 +2298,7 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## All posts
 
+- [Five rounds before the agent signed anything](/blog/five-rounds-before-the-agent-signed). 2026-09-20.
 - [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree). 2026-09-12.
 - [I rebuilt turva.dev around the report](/blog/i-rebuilt-turva-dev-around-the-report). 2026-09-07.
 - [What 19 identity vendors publish for agents](/blog/agent-readiness-identity-vendors). 2026-09-05.
@@ -5926,7 +5997,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.160.0",
+    "version": "3.161.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6034,7 +6105,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MQ5F2EMBX3yrdIGT76gA0f74twRcB2RENz7nTvUFjNrJ0VwDjliC3gRlW4ARjM2PHh-GWh715pHid90E5bYGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"VGEtyQ9LK-HJxBRsQzf17gKQI0IH9gtrJV_3Fn107GVXbppNAihcdcvNcNcXB-o-ywbTfqblK5ao1hUYxEFUBQ\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MQ5F2EMBX3yrdIGT76gA0f74twRcB2RENz7nTvUFjNrJ0VwDjliC3gRlW4ARjM2PHh-GWh715pHid90E5bYGAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D5h1l13_aXIWkqeD8WmQ8cF4VZWnv9tsiOawSrP5ANTNzlElRFqvC2_brOxJtR9NqHaguJafWbI_bDquToOnBw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6194,7 +6265,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.160.0",
+  "version": "3.161.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6843,7 +6914,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-15";
+var SITEMAP_LASTMOD = "2026-09-20";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -6885,6 +6956,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/five-rounds-before-the-agent-signed", "monthly", "0.6"],
   ["/blog/html-and-markdown-can-disagree", "monthly", "0.6"],
   ["/blog/i-rebuilt-turva-dev-around-the-report", "monthly", "0.6"],
   ["/blog/agent-readiness-identity-vendors", "monthly", "0.6"],
@@ -6986,7 +7058,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -6996,6 +7068,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/five-rounds-before-the-agent-signed": {
+    title: "Five rounds before the agent signed anything · turva.dev",
+    description: "An agent moved tokens on Ethereum Sepolia after five fix rounds, each answering an independent review. Three attempts stopped before any signature.",
+    date: "2026-09-20",
+    kind: "Build notes",
+    image: "/og-five-rounds-before-the-agent-signed.jpg",
+    imageAlt: "turva.dev blog card: five rounds before the agent signed anything, the review rounds and the live Sepolia run behind one agent transfer.",
+  },
   "/blog/html-and-markdown-can-disagree": {
     title: "HTML and Markdown can disagree · turva.dev",
     description: "A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.",
@@ -8508,6 +8588,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/five-rounds-before-the-agent-signed": mdFaqBlocks("/blog/five-rounds-before-the-agent-signed", "Frequently asked").pairs,
   "/blog/html-and-markdown-can-disagree": mdFaqBlocks("/blog/html-and-markdown-can-disagree", "Frequently asked").pairs,
   "/blog/i-rebuilt-turva-dev-around-the-report": mdFaqBlocks("/blog/i-rebuilt-turva-dev-around-the-report", "Frequently asked").pairs,
   "/blog/agent-readiness-identity-vendors": mdFaqBlocks("/blog/agent-readiness-identity-vendors", "Frequently asked").pairs,
