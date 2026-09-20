@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.160.0 - the x402 payTo wallet moves to a new Base address (2026-09-20, Erik): X402_PAY_TO is the only definition of it, so the manifest at /.well-known/x402, the challenge at /x402 and every 402 challenge on /api and the three /api/agent/* routes now name the new address. Nothing else about the payment posture changes: the amounts, the network eip155:8453, the USDC asset and the quote-on-request settlement stay as they were, and no signed surface changed.
 // turva.dev worker v3.159.3 - six cascade losses repaired (2026-09-17): .aview-cmd, .result-sum, .bcount and .verr lost to .sec p inside a section, a.v lost to .kv .v on /company, .scard h2 inherited article h2's top rule and top padding in the guides FAQ panel, and .crumb a was underlined at rest because the article template has no bare a rule. Every rule keeps its scope: the repair adds a more specific selector or resets the inherited property. Read from computed styles before and after on nine locally rendered pages, with a negative control. No signed surface changed.
 // turva.dev worker v3.159.2 - monthly guide source review (2026-09-15): /guides/agentic-resource-discovery describes the ARD repository as a versioned v0.91 draft with issue-first normative changes, /guides/agent-commerce-discovery records the April 2026 AP2 donation to the FIDO Alliance, /guides/x402-agent-payments links the x402 repository at x402-foundation, three guides link Google's generative AI optimization guide instead of the AI features page, and all 24 guides carry checked 2026-09-15
 // turva.dev worker v3.159.1 - measurement day (2026-09-14, Erik): turva.dev re-measured, Level 5/5 on isitagentready, internet.nl website test 98 and Hardenize all 24 categories passed, all unchanged; the internet.nl email test now reads 90 instead of 95, because after the move to Proton the STARTTLS and DANE group passes in full and the only failing group is IPv6, the provider's receiving mail servers publishing no IPv6 address. The measured-at date moves from 2026-09-06 to 2026-09-14 on every surface that states it.
@@ -46,7 +47,7 @@ import { run as mpcRun, errorReport as mpcErrorReport, renderJson as mpcRenderJs
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
-var X402_PAY_TO = "0x023184fe62881ed1d938192b7a4b09d0119d7d39";
+var X402_PAY_TO = "0x35a46b0b699864f8b7fff52c581fc83adb80fae1";
 var X402_USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 
 var LEGACY_REDIRECTS = {
@@ -5925,7 +5926,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.159.3",
+    "version": "3.160.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6193,7 +6194,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.159.3",
+  "version": "3.160.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
