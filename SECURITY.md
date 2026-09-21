@@ -30,7 +30,7 @@ reaches the parsers. It does not make such an advisory irrelevant.
 and its own dependencies are in the build and test toolchain. They are still
 cleared as they appear, because this repository is a reference implementation
 people fork. `npm audit` found no advisories in either tree.
-Checked 2026-09-19.
+Checked 2026-09-21.
 
 `esbuild` is in the toolchain only as a dependency of wrangler. Wrangler
 4.134.0 declares it at exactly `0.28.1`, the release that fixed

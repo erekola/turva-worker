@@ -3,8 +3,8 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.161.0",
-    "mcp": "1.4.1"
+    "site": "3.162.0",
+    "mcp": "1.4.2"
   },
   "mtaSts": {
     "txtId": "20260910202321",
@@ -172,6 +172,6 @@
       "score": "90/100",
       "url": "https://internet.nl/mail/turva.dev/"
     },
-    "advisoriesCheckedAt": "2026-09-19"
+    "advisoriesCheckedAt": "2026-09-21"
   }
 }
