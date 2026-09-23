@@ -38,7 +38,12 @@
       "id": "457b974771c6471885cb0ba1ae64804d"
     }
   ],
-  "compatibility_date": "2026-04-09",
+  // Round 19 (Erik 2026-09-23): the date moves to 2026-09-23. From 2026-08-04 on a date turns
+  // Node.js compatibility on by default, and this Worker imports no node: module, so the two
+  // flags keep the runtime as narrow as it was and make that a stated choice, the off-pair
+  // Cloudflare documents for exactly this (changelog 2026-08-04, compatibility flags page).
+  "compatibility_date": "2026-09-23",
+  "compatibility_flags": ["no_nodejs_compat", "no_nodejs_compat_v2"],
   "routes": [
     {
       "pattern": "mta-sts.turva.dev/*",
