@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.164.0 - round 19, an audit of the Worker itself (2026-09-23): markdownToHtml reads fenced code blocks and keeps an ATX heading to its own line, so a published brief no longer renders the scanner's raw output as one h2 with literal backticks, and code inside a brief keeps its backslash escapes; a heading slug repeated in one document gets -2 and -3; the llms.txt validator masks an accepted redirect's target as it already masked a refused one, and drops bidirectional controls from the text it quotes; the parity check reads the request body before it takes one of its four comparison slots, so bodies that never finish no longer hold them; a root-relative markdown link must resolve to this origin, which refuses /\host, and the WebMCP path check refuses /.//host; every redirect and the A2A preflight carry the security headers, which makes the response headers guide's every-response sentence true; the site-wide 429 is no-store; the home FAQ JSON-LD writes </ as <\/ like every other builder; OpenAPI declares POST on the three agent auth paths; the services skill names the two quoted services; prefers-reduced-motion stops the card hover lift; the July source-move post's correction is its own paragraph and its modified date is 2026-09-06; the audit sample states source hours for both scopes.
 // turva.dev worker v3.163.0 - the repairs of an outside review of the public repos (2026-09-22): the hosted llms.txt validator masks a refused redirect target with maskLocation() before the 120 character cut, so a user name, a password, a query value or a fragment in a Location header no longer reaches the check's detail, the JSON answer or the page, and for a typed entry with an @, a ? or a # the form shows only the host it names; the A2A message:send and ACP checkout routes read their JSON body through a 16384 byte cap counted from the stream and answer 413 above it, with or without Content-Length, and A2A takes at most 32 parts. The package turva-llms-txt-validator 0.3.5 mirrors the masking, and the hosted parity check runs markdown-parity-check 0.2.10, which masks user names and passwords in URLs and keeps numbers from masked URL parts out of findings.
 // turva.dev worker v3.162.0 - the hosted parity check runs package release 0.2.9 (2026-09-21): the pinned dependency moves 0.2.6 to 0.2.9, so a report's toolVersion names the release npx installs. Measured across eight pages and 184 findings before the raise was taken: with toolVersion and generatedAt set aside, every report is identical under both versions, so the comparison core, the severities, the exit codes and the JSON schema keys are the same, and the runtime tree stays at 79 packages. Same shape as v3.157.0 and v3.158.0. turva-mcp 1.4.1 to 1.4.2 ships in the same release, agents 0.22.0 to 0.23.0 and zod 4.6.2 to 4.6.5, and the MCP server card is re-signed for it.
 // turva.dev worker v3.161.0 - the blog post Five rounds before the agent signed anything (2026-09-20): the post records the two hashes an owner of Mandate Desk approves, the three attempts that stopped in the preparation parser before any signature, the six writes and four controls of the live Sepolia run of 15 September 2026, why the first evidence package was exported as incomplete and what one run on a test network does not establish; it joins /blog, META_BY_PATH, CANONICAL_PATHS, GUIDE_PAGE_FAQ, the sitemap and llms.txt (re-sign), and SITEMAP_LASTMOD moves to the day the page text changed.
@@ -94,7 +95,7 @@ max_age: 604800
 
 var CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-GQIpjcIWEoDzSbOVUonjgtZ68uAVDjMhFJPFvWiAaIk='",
+  "script-src 'self' 'sha256-aYDvr8aW6OGCZCnuXXpdb79gguLAY+ZwnmUjQuB+7Qk='",
   "style-src 'self' 'unsafe-inline' https: data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
@@ -1962,7 +1963,9 @@ The source moved to Codeberg and later returned to GitHub. This dated incident l
 
 Status, July 26: the source is on GitHub only, at github.com/erekola. This post is the dated log of a move that later reversed, and the three updates at the end record each step in order. The account of the incident itself stands as written.
 
-The company page of this site tells a buyer they can read every line before hiring me. That promise depends on the source being reachable, and for two weeks it was not, in a way I could not see. This is the log of what broke and why the source moved to Codeberg. Corrected 2026-09-06: this paragraph used to carry the mirror's own address as a link, and the mirror was deleted on 24 July, so that link answered 404.
+The company page of this site tells a buyer they can read every line before hiring me. That promise depends on the source being reachable, and for two weeks it was not, in a way I could not see. This is the log of what broke and why the source moved to Codeberg.
+
+Corrected 2026-09-06: the paragraph above used to carry the mirror's own address as a link, and the mirror was deleted on 24 July, so that link answered 404.
 
 ## Two weeks of 404s I could not see
 
@@ -2662,7 +2665,7 @@ The first priority is a problem the scanner does not score. All 138 product page
 
 There are nine findings. F2, F3, F5 and F6 address five scored checks. F7 enables DNSSEC and holds the sixth, dnsAid, until the company has an agent registry for the DNS record to point at. F1 and F4 correct information outside those checks. F8 records the company's decision not to offer agent checkout this year. F9 addresses an old address repeated in AI answers.
 
-Estimated edge work is about eleven hours for F1 to F7, or eleven and a half hours including F9. Source corrections take about five hours. The tables below keep the two kinds of correction apart and name who makes each. These are estimates for the sample, not a quote or a promised readiness level. The level moves with the check set the scanner runs on the day, and 22 checks were in the set on 2026-09-03.
+Estimated edge work is about eleven hours for F1 to F7, or eleven and a half hours including F9. Source corrections take about four hours for F1 to F7, or five hours including F9. The tables below keep the two kinds of correction apart and name who makes each. These are estimates for the sample, not a quote or a promised readiness level. The level moves with the check set the scanner runs on the day, and 22 checks were in the set on 2026-09-03.
 
 ## Contents
 
@@ -5999,7 +6002,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.163.0",
+    "version": "3.164.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6060,9 +6063,9 @@ var OPENAPI_SPEC = JSON.stringify({
       }
     },
     "/x402": { "get": { "summary": "x402 discovery endpoint (HTTP 402)", "operationId": "getX402Endpoint", "responses": { "402": { "description": "Payment required" } } } },
-    "/agent/auth/register": { "get": { "summary": "Agent registration instructions", "operationId": "getAgentAuthRegister", "responses": { "200": { "description": "ok" } } } },
-    "/agent/auth/claim": { "get": { "summary": "Agent claim instructions", "operationId": "getAgentAuthClaim", "responses": { "200": { "description": "ok" } } } },
-    "/agent/auth/revoke": { "get": { "summary": "Agent revocation instructions", "operationId": "getAgentAuthRevoke", "responses": { "200": { "description": "ok" } } } },
+    "/agent/auth/register": { "get": { "summary": "Agent registration instructions", "operationId": "getAgentAuthRegister", "responses": { "200": { "description": "ok" } } }, "post": { "summary": "Agent registration instructions", "operationId": "postAgentAuthRegister", "responses": { "200": { "description": "ok" } } } },
+    "/agent/auth/claim": { "get": { "summary": "Agent claim instructions", "operationId": "getAgentAuthClaim", "responses": { "200": { "description": "ok" } } }, "post": { "summary": "Agent claim instructions", "operationId": "postAgentAuthClaim", "responses": { "200": { "description": "ok" } } } },
+    "/agent/auth/revoke": { "get": { "summary": "Agent revocation instructions", "operationId": "getAgentAuthRevoke", "responses": { "200": { "description": "ok" } } }, "post": { "summary": "Agent revocation instructions", "operationId": "postAgentAuthRevoke", "responses": { "200": { "description": "ok" } } } },
     "/llms.txt": { "get": { "summary": "LLM summary", "operationId": "getLlmsTxt", "responses": { "200": { "description": "ok" } } } },
     "/llms-full.txt": { "get": { "summary": "Full concatenated content", "operationId": "getLlmsFullTxt", "responses": { "200": { "description": "ok" } } } },
     "/auth.md": { "get": { "summary": "Agent registration metadata", "operationId": "getAuthMd", "responses": { "200": { "description": "ok" } } } },
@@ -6267,7 +6270,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.163.0",
+  "version": "3.164.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6689,7 +6692,7 @@ description: List the service offerings of turva.dev, with fixed prices in EUR f
 
 Use this skill to learn which services turva.dev offers, and which of them carry a fixed price.
 
-## Services (fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation, VAT not included; the last two are quoted on request)
+## Services (fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation, VAT not included; agent operations and MCP server design are quoted on request)
 - **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days of that package.
 - **Audit.** €4,300. Fixed scope, two weeks. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, minimum 3 months. Async-only. Ongoing review, score tracking and a monthly AI-visibility delta across several AI platforms.
@@ -6783,7 +6786,7 @@ var WEBMCP_SCRIPT = `<script>
   if (s.charAt(0) !== '/') return '';
   try {
    var u = new URL(s, ORIGIN + '/');
-   if (u.origin !== ORIGIN) return '';
+   if (u.origin !== ORIGIN || u.pathname.charAt(1) === '/') return '';
    return u.pathname + u.search + u.hash;
   } catch (e) { return ''; }
  }
@@ -7281,7 +7284,7 @@ var META_BY_PATH = {
     description: "The source moved to Codeberg and later returned to GitHub. This dated incident log preserves the sequence and links readers to the current public source.",
     date: "2026-07-04",
     kind: "Build notes",
-    modified: "2026-07-26",
+    modified: "2026-09-06",
     image: "/og-moving-source-to-codeberg.jpg",
     imageAlt: "turva.dev blog card: GitHub's spam filter silently hid this site's source from everyone but its owner for two weeks."
   },
@@ -7676,7 +7679,7 @@ var SCHEMA_HOME = `<script type="application/ld+json">
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 ${SCHEMA_SERVICE},
 {"@type":"FAQPage","@id":"https://turva.dev/#faq","inLanguage":"en","mainEntity":[
-${mdFaqBlocks("/", "Frequently asked").pairs.map((p) => `{"@type":"Question","name":${JSON.stringify(p.q)},"acceptedAnswer":{"@type":"Answer","text":${JSON.stringify(p.a)}}}`).join(",\n")}
+${jsonLdSafe(mdFaqBlocks("/", "Frequently asked").pairs.map((p) => `{"@type":"Question","name":${JSON.stringify(p.q)},"acceptedAnswer":{"@type":"Answer","text":${JSON.stringify(p.a)}}}`).join(",\n"))}
 ]}
 ]}
 <\/script>`;
@@ -7720,6 +7723,17 @@ var FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" f
 // same 200 body as GET, while the OpenAPI document declares one get operation for those
 // paths and the CORS preflight promised only GET, POST and OPTIONS. The Allow header names
 // what the route serves; HEAD is always in it because worker_default turns HEAD into GET.
+// Every redirect carries the security headers a page carries (round 19, K1-1). Response.redirect()
+// sets Location and nothing else, so until v3.164.0 nine redirects, the brief's punctuation
+// redirect and the A2A preflight left without RateLimit-Policy, Referrer-Policy, X-Frame-Options
+// and the rest, while /guides/response-headers-for-agents says the policy header goes out on every
+// response. The kind follows the path, as it does for 405 and 429.
+function redirectTo(location, status, pathLower) {
+  const headers = new Headers({ location: location });
+  applySecurityHeaders(headers, AGENT_API_PATH_RE.test(pathLower || "") ? "agent-api" : "default");
+  return new Response(null, { status: status, headers: headers });
+}
+
 function serve405(allow, pathLower) {
   const agent = AGENT_API_PATH_RE.test(pathLower);
   const headers = new Headers({ "content-type": "text/plain; charset=utf-8", "allow": allow, "cache-control": "no-store" });
@@ -8083,18 +8097,44 @@ function cut(s, n) {
 // renderer writes; the visible text keeps them because escapeHtml already neutralises markup.
 var BIDI_CONTROLS = /[\u202A-\u202E\u2066-\u2069]/g;
 
+// The set of BIDI_CONTROLS as a function. A function declaration exists from the module's first
+// line, while that var is still undefined when a module-level constant renders markdown
+// (mds/gotchas.md 2026-09-06 (jatko 10)), so the new call sites use this one.
+function stripBidi(s) {
+  return String(s).replace(/[\u202A-\u202E\u2066-\u2069]/g, "");
+}
+
+// A root-relative link target stays on this site only if it resolves to this origin. A list of
+// refused characters misses what the parser knows: "/\host" is "//host" to every WHATWG parser in
+// an http or https URL (round 19, K4-1; the trap of mds/gotchas.md 2026-09-09 (jatko 1)).
+function mdSameOrigin(path) {
+  try { return new URL(path, "https://turva.dev/").origin === "https://turva.dev"; } catch { return false; }
+}
+
+// "</" inside a JSON-LD string would close the script element early, and JSON.stringify leaves it
+// as it is. Every builder writes it as "<\/", which JSON reads as the same two characters (round
+// 19, K4-4: SCHEMA_HOME's FAQ was the one without it).
+function jsonLdSafe(s) {
+  return String(s).split("</").join("<" + String.fromCharCode(92) + "/");
+}
+
 function renderInline(text) {
   let out = escapeHtml(text);
-  out = out.replace(/&lt;mailto:(.+?)&gt;/g, '<a href="mailto:$1">$1</a>');
-  out = out.replace(/&lt;(https?:\/\/.+?)&gt;/g, '<a href="$1">$1</a>');
+  out = out.replace(/&lt;mailto:(.+?)&gt;/g, (m, a) => { const v = stripBidi(a); return '<a href="mailto:' + v + '">' + v + "</a>"; });
+  out = out.replace(/&lt;(https?:\/\/.+?)&gt;/g, (m, a) => { const v = stripBidi(a); return '<a href="' + v + '">' + v + "</a>"; });
   out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, label, href) => {
     // out has already been through escapeHtml, so href arrives escaped, and escaping it
     // again would double-encode: the first link to carry two query parameters would render
     // "&amp;amp;" and 404 silently. No link in the file has an "&" today, so this is a
     // hazard removed rather than a bug observed. The autolinkers above already do not
-    // re-escape. The "/" branch also has to refuse "//host", which is protocol-relative
-    // and external, not root-relative.
-    return /^(https?:\/\/|mailto:|\/(?!\/)|#)/i.test(href.trim()) ? `<a href="${href.replace(BIDI_CONTROLS, "")}">${label}</a>` : escapeHtml(label);
+    // re-escape. A root-relative target must resolve to this origin (mdSameOrigin), which refuses
+    // "//host" and "/\host" alike, and bidirectional controls leave the visible label as well as
+    // the href (round 19, K4-1 and K4-2).
+    const h = href.trim();
+    const low = h.toLowerCase();
+    const ok = low.startsWith("https://") || low.startsWith("http://") || low.startsWith("mailto:") || h.startsWith("#") || (h.startsWith("/") && mdSameOrigin(h));
+    const shown = stripBidi(label);
+    return ok ? `<a href="${stripBidi(href)}">${shown}</a>` : escapeHtml(shown);
   });
   out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   // The three autolinkers below run only OUTSIDE anchors already built above. Before
@@ -8107,7 +8147,7 @@ function renderInline(text) {
     var tm = url.match(/[.,;:!?]+$/);
     var tail = "";
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
-    return pre + '<a href="' + url.replace(BIDI_CONTROLS, "") + '">' + url + '</a>' + tail;
+    return pre + '<a href="' + stripBidi(url) + '">' + stripBidi(url) + '</a>' + tail;
   }));
   out = outside(out, (t) => t.replace(/(^|[\s(])((?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/[^\s<)"]*)/gi, function(m, pre, url) {
     // Kierros 18 (2026-09-06, S5-1): this branch used to link ANY "label.label/path"
@@ -8124,7 +8164,7 @@ function renderInline(text) {
     var tm = url.match(/[.,;:!?]+$/);
     var tail = "";
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
-    return pre + '<a href="https://' + url.replace(BIDI_CONTROLS, "") + '">' + url + '</a>' + tail;
+    return pre + '<a href="https://' + stripBidi(url) + '">' + stripBidi(url) + '</a>' + tail;
   }));
   return out;
 }
@@ -8136,16 +8176,93 @@ function renderInline(text) {
 var AUTOLINK_TLDS = new Set(["com", "dev", "org", "net", "io", "fi", "nl", "eu", "se", "no", "dk", "de", "uk", "ai", "app", "me", "info"]);
 var AUTOLINK_NOT_HOSTS = new Set(["io.modelcontextprotocol/protocolVersion", "io.modelcontextprotocol/clientCapabilities"]);
 
+// Fenced code, since v3.164.0 (round 19, F1). A block that opens with three or more backticks or
+// tildes, up to three spaces in, runs to a closing fence of the same character and at least the
+// same length, and its lines are code even across blank lines. A brief carries the scanner's raw
+// output this way, and until then its "## Discoverability" line and every FAIL line under it
+// rendered as one h2 with the fence as literal text. A fence that never closes stays ordinary
+// text, as it was. A site twin never uses a fence, because verify.mjs fails one that does, so no
+// page's output changes.
+function mdFenceOpen(line) {
+  const m = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+  if (!m) return null;
+  if (m[1].charAt(0) === "`" && m[2].includes("`")) return null;
+  return m[1];
+}
+
+function mdFenceCloses(line, fence) {
+  const m = /^ {0,3}(`{3,}|~{3,}) *$/.exec(line);
+  return !!m && m[1].charAt(0) === fence.charAt(0) && m[1].length >= fence.length;
+}
+
+// A brief's held escapes (briefHoldEscapes) go back to the backslash form inside code, so code
+// reads as the source wrote it (round 19, K6-1). Until v3.164.0 the release step turned an escaped
+// # in code into a bare #, while an unescaped $ beside it kept its backslash. A site page carries
+// no placeholder, so for it this returns the text as it is.
+function mdCodeText(s) {
+  let out = "";
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charCodeAt(i);
+    if (c === 0xE007 && i + 1 < s.length && s.charCodeAt(i + 1) >= 0xE000 && s.charCodeAt(i + 1) <= 0xE007) { out += s[i] + s[i + 1]; i++; continue; }
+    if (c >= 0xE000 && c <= 0xE006) { out += String.fromCharCode(92) + BRIEF_ESCAPABLE.charAt(c - 0xE000); continue; }
+    out += s[i];
+  }
+  return out;
+}
+
 function markdownToHtml(md) {
-  const blocks = md.replace(/\r\n/g, "\n").split(/\n{2,}/);
+  const lines = md.replace(/\r\n/g, "\n").split("\n");
+  const blocks = [];
+  let prose = [];
+  // An ATX heading is one line (round 19, F1). Until v3.164.0 a heading block took every line
+  // under it, so a list written directly below a heading rendered inside the h2.
+  const flush = () => {
+    if (!prose.length) return;
+    for (const part of prose.join("\n").split(/\n{2,}/)) {
+      const t = part.trim();
+      const nl = t.indexOf("\n");
+      if (nl > 0 && /^#{1,3} /.test(t)) { blocks.push(t.slice(0, nl), t.slice(nl + 1)); continue; }
+      blocks.push(part);
+    }
+    prose = [];
+  };
+  for (let i = 0; i < lines.length; i++) {
+    const fence = mdFenceOpen(lines[i]);
+    if (fence) {
+      let j = i + 1;
+      while (j < lines.length && !mdFenceCloses(lines[j], fence)) j++;
+      if (j < lines.length) {
+        flush();
+        blocks.push({ code: lines.slice(i + 1, j).join("\n") });
+        i = j;
+        continue;
+      }
+    }
+    prose.push(lines[i]);
+  }
+  flush();
   const html = [];
+  // Heading ids are unique within one document (round 19, K4-3): a second heading with the same
+  // slug gets -2, a third -3, so a contents link cannot land on the wrong section. No page had a
+  // repeated slug when this was added, so no existing anchor moved.
+  const usedIds = new Map();
+  const uniqueId = (id) => {
+    if (!id) return id;
+    const n = (usedIds.get(id) || 0) + 1;
+    usedIds.set(id, n);
+    return n === 1 ? id : id + "-" + n;
+  };
   for (const block of blocks) {
+    if (typeof block !== "string") {
+      html.push(`<pre><code>${escapeHtml(mdCodeText(block.code))}</code></pre>`);
+      continue;
+    }
     const trimmed = block.trim();
     if (!trimmed) continue;
     const rawLines = block.split("\n").filter((l) => l.trim() !== "");
     const tl = trimmed.split("\n").map((l) => l.trim());
     if (rawLines.length && rawLines.every((l) => l.startsWith("    "))) {
-      html.push(`<pre><code>${escapeHtml(rawLines.map((l) => l.slice(4)).join("\n"))}</code></pre>`);
+      html.push(`<pre><code>${escapeHtml(mdCodeText(rawLines.map((l) => l.slice(4)).join("\n")))}</code></pre>`);
     } else if (tl.length >= 2 && tl[0].startsWith("|") && /^\|[\s:|-]+\|$/.test(tl[1])) {
       const cells = (l) => l.replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => renderInline(c.trim()));
       // Since v3.133.0 (Tek-358) every cell carries its column name as data-label, the
@@ -8179,13 +8296,13 @@ function markdownToHtml(md) {
       // contents list. The slug is the heading text lowercased with runs of anything but
       // a to z and 0 to 9 collapsed to one hyphen, which is what a reader would type by hand.
       const h2 = trimmed.slice(3).trim();
-      const h2Id = h2.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      const h2Id = uniqueId(h2.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""));
       html.push(`<h2${h2Id ? ` id="${h2Id}"` : ""}>${renderInline(h2)}</h2>`);
     } else if (trimmed.startsWith("### ")) {
       // H3 since v3.133.0 (Tek-358): the same slug rule as H2, so a finding or a term can be
       // linked from a contents list without promoting it to a section.
       const h3 = trimmed.slice(4).trim();
-      const h3Id = h3.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      const h3Id = uniqueId(h3.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""));
       html.push(`<h3${h3Id ? ` id="${h3Id}"` : ""}>${renderInline(h3)}</h3>`);
     } else if (trimmed.startsWith("# ")) {
       html.push(`<h1>${renderInline(trimmed.slice(2).trim())}</h1>`);
@@ -8806,7 +8923,7 @@ var FOOTER_CSS = `${READ_CSS}main table{border-collapse:collapse;margin:1.1rem 0
 .tv-foot .foot-meta a:hover{color:#5DF18F;}
 .turva-nav,.tv-foot{padding-left:max(clamp(24px,5vw,72px),calc(50% - var(--col-half,34rem)));padding-right:max(clamp(24px,5vw,72px),calc(50% - var(--col-half,34rem)));}.turva-nav > ul.nv-menu{flex:1;justify-content:space-between;}.tv-foot .foot-links{justify-content:space-between;}
 a:focus-visible,button:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;border-radius:2px;}
-@media (prefers-reduced-motion:reduce){.cursor{animation:none;opacity:1;}}
+@media (prefers-reduced-motion:reduce){:root .cell,:root .step,:root .svc{transition:none;}:root .cell:hover,:root .step:hover,:root .svc:hover{transform:none;}}
 ::selection{background:#5DF18F;color:#06100F;}
 h1,h2{text-wrap:balance;}
 p,li{text-wrap:pretty;}
@@ -10438,7 +10555,9 @@ function validateLlmsTxt(f) {
     add("http-status", "fail", "File exists at /llms.txt", "expected HTTP 200, got " + f.status);
     return checks;
   }
-  add("http-status", "pass", "File exists at /llms.txt", f.redirectedFrom ? "HTTP 200, followed a redirect from " + f.redirectedFrom + " to " + f.finalUrl : "HTTP 200");
+  // An accepted redirect is shown masked as well (round 19, K7-2). Until v3.164.0 only a refused
+  // one was, so a query value or a fragment in a same-host Location reached this detail as sent.
+  add("http-status", "pass", "File exists at /llms.txt", f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + " to " + maskLocation(f.finalUrl) : "HTTP 200");
   const ct = (f.contentType || "").toLowerCase();
   const looksHtml = /^\s*(<!doctype|<html|<head|<body)/i.test(f.text);
   if (looksHtml) {
@@ -11450,6 +11569,9 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
       }
     }
   }
+  // Text quoted from the fetched file leaves without bidirectional controls (round 19, V6-U1): a
+  // site's own H1 or summary could otherwise read in another order here and in the JSON answer.
+  if (result) result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripBidi(c.detail) }) : c));
   if (wantsJson(request)) {
     const payload = error
       ? { error }
@@ -11798,16 +11920,19 @@ async function handleParityPost(request, env) {
     return refuse(503, "The check is unavailable because its rate limiter did not answer. Try again later.", 60);
   }
   if (!allowed) return refuse(429, "Too many checks from your IP address. Wait a minute and try again.", 60);
+  // The body is read before a slot is taken (round 19, K8-1). The four slots bound comparisons,
+  // which run on this isolate; reading a body only waits. Until v3.164.0 the slot came first, so
+  // four request bodies that never finished held every slot and every other check got 503.
+  let parsed;
+  try {
+    parsed = await parityParseInput(request);
+  } catch (err) {
+    if (!(err instanceof ParityError)) throw err;
+    return parityResponse(asJson, err.status, mpcErrorReport(parityOptions(null), null, null, err.message), { values: err.values || {}, field: err.field });
+  }
   if (parityActive >= PARITY_MAX_CONCURRENT) return refuse(503, "The service is busy with other checks. Try again in a few seconds.", 10);
   parityActive++;
   try {
-    let parsed;
-    try {
-      parsed = await parityParseInput(request);
-    } catch (err) {
-      if (!(err instanceof ParityError)) throw err;
-      return parityResponse(asJson, err.status, mpcErrorReport(parityOptions(null), null, null, err.message), { values: err.values || {}, field: err.field });
-    }
     const out = await parityRunCheck(parsed.input, env);
     return parityResponse(asJson, out.status, out.report, { values: parsed.values, field: out.field });
   } finally {
@@ -12457,6 +12582,8 @@ var worker_default = {
             applySecurityHeaders(rlHeaders, rlAgent ? "agent-api" : "default");
             if (rlAgent) rlHeaders.set("access-control-allow-origin", "*");
             rlHeaders.set("Retry-After", "60");
+            // Never cached (round 19, F2): the parity page says every response to a check is no-store.
+            rlHeaders.set("cache-control", "no-store");
             const rlResponse = new Response("429 Too Many Requests. This site enforces its declared rate limit of 100 requests per 60 seconds per client IP. Retry after 60 seconds.\n", { status: 429, headers: rlHeaders });
             return isHead ? stripBody(rlResponse) : rlResponse;
           }
@@ -12515,7 +12642,7 @@ async function handleRequest(request, env) {
 
   if (hostname === "mta-sts.turva.dev") {
     if (pathLower === "/.well-known/mta-sts.txt") return serveMtaStsPolicy();
-    return Response.redirect("https://turva.dev/", 301);
+    return redirectTo("https://turva.dev/", 301, pathLower);
   }
 
   // WKD advanced method, Tek-288. Its URLs live on their own host and repeat the
@@ -12530,11 +12657,11 @@ async function handleRequest(request, env) {
     if (pathLower === "/.well-known/openpgpkey/turva.dev/policy") {
       return serveStatic("", "text/plain; charset=utf-8", "agent-api");
     }
-    return Response.redirect("https://turva.dev/", 301);
+    return redirectTo("https://turva.dev/", 301, pathLower);
   }
 
   if (hostname === "www.turva.dev") {
-    return Response.redirect("https://turva.dev" + pathname + url.search, 301);
+    return redirectTo("https://turva.dev" + pathname + url.search, 301, pathLower);
   }
 
   // CORS preflight answers only on the apex, after the host redirects above, so the
@@ -12583,7 +12710,7 @@ async function handleRequest(request, env) {
   }
 
   if (pathLower === "/.well-known/host-meta" || pathLower === "/.well-known/webfinger" || pathLower === "/.well-known/nodeinfo") {
-    return Response.redirect("https://social.turva.dev" + pathname + url.search, 301);
+    return redirectTo("https://social.turva.dev" + pathname + url.search, 301, pathLower);
   }
   if (pathLower === "/x402") {
     return serveX402Root();
@@ -12622,7 +12749,7 @@ async function handleRequest(request, env) {
   }
 
   if (LEGACY_REDIRECTS[pathname]) {
-    return Response.redirect("https://turva.dev" + LEGACY_REDIRECTS[pathname] + url.search, 301);
+    return redirectTo("https://turva.dev" + LEGACY_REDIRECTS[pathname] + url.search, 301, pathLower);
   }
 
   // A trailing slash is how crawlers, agents and hand-written links commonly
@@ -12641,11 +12768,11 @@ async function handleRequest(request, env) {
   if (pathname.length > 1 && pathname.endsWith("/")) {
     const strippedPath = pathname.slice(0, -1);
     if (PAGE_MARKDOWN[strippedPath]) {
-      return Response.redirect("https://turva.dev" + strippedPath + url.search, 301);
+      return redirectTo("https://turva.dev" + strippedPath + url.search, 301, pathLower);
     }
     const strippedLower = strippedPath.toLowerCase();
     if (X402_ROUTES[strippedLower] || strippedLower === "/x402") {
-      return Response.redirect("https://turva.dev" + strippedLower + url.search, 301);
+      return redirectTo("https://turva.dev" + strippedLower + url.search, 301, pathLower);
     }
   }
 
@@ -12657,7 +12784,7 @@ async function handleRequest(request, env) {
   if (pathname.startsWith("/blog/") && !PAGE_MARKDOWN[pathname]) {
     const guidePath = "/guides/" + pathname.slice(6).replace(/\/$/, "");
     if (PAGE_MARKDOWN[guidePath]) {
-      return Response.redirect("https://turva.dev" + guidePath + url.search, 301);
+      return redirectTo("https://turva.dev" + guidePath + url.search, 301, pathLower);
     }
   }
 
@@ -12672,10 +12799,9 @@ async function handleRequest(request, env) {
   // null for a path with a period and the path would otherwise fall to a 404. See Tek-323.
   var briefSiivous = briefSiivousKohde(pathname);
   if (briefSiivous) {
-    return new Response(null, { status: 301, headers: {
-      Location: "https://turva.dev" + briefSiivous + url.search,
-      "X-Robots-Tag": "noindex, nofollow"
-    } });
+    var briefSiivousHeaders = new Headers({ Location: "https://turva.dev" + briefSiivous + url.search, "X-Robots-Tag": "noindex, nofollow" });
+    applySecurityHeaders(briefSiivousHeaders, "default");
+    return new Response(null, { status: 301, headers: briefSiivousHeaders });
   }
 
   var briefR = briefRoute(pathname);
@@ -12799,18 +12925,20 @@ async function handleRequest(request, env) {
     return serve402("/api", { label: "API", amountUsdcMicro: "1000", amountEurCents: 0, description: "turva.dev agent API, payable via x402 on Base (USDC). Free discovery stays open at /openapi.json, /.well-known/* and /api/v1. Paid services: /api/agent/audit, /api/agent/advisory, /api/agent/implementation." });
   }
   if (pathLower === "/v1/message:send/") {
-    return Response.redirect(new URL("/v1/message:send", request.url).toString(), 301);
+    return redirectTo(new URL("/v1/message:send", request.url).toString(), 301, pathLower);
   }
   if (pathLower === "/v1/message:send") {
     if (request.method === "OPTIONS") {
       // /v1 was the one agent-API surface the preflight branch below did not cover, so a
       // browser-based agent could not send the application/json POST this endpoint requires.
-      return new Response(null, { status: 204, headers: {
+      const a2aPreflight = new Headers({
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "POST, OPTIONS",
         "access-control-allow-headers": "Content-Type",
         "access-control-max-age": "86400"
-      } });
+      });
+      applySecurityHeaders(a2aPreflight, "agent-api");
+      return new Response(null, { status: 204, headers: a2aPreflight });
     }
     return serveA2AMessageSend(request);
   }

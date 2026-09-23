@@ -25,7 +25,7 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/.well-known/mpp` | MPP discovery manifest |
 | `/.well-known/oauth-authorization-server` | OAuth / auth discovery |
 | `/.well-known/oauth-protected-resource` | OAuth protected resource metadata |
-| `/auth.md` | Agent registration metadata (public key at `/.well-known/mcp-registry-auth`) |
+| `/auth.md` | Agent authentication guide: the anonymous and verified-email pathways and where the agent auth endpoints live |
 | `/agent/auth/register`, `/agent/auth/claim`, `/agent/auth/revoke` | Agent identity registration, out-of-band flow |
 | `/oauth/authorize`, `/oauth/token` | OAuth endpoints (spec-valid closed errors, see `/auth.md`) |
 | `/api` | x402 402 challenge. The free endpoint index moved to `/api/v1` in v3.51.0 |
@@ -40,6 +40,7 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/pgp-key.asc`, `/.well-known/pgp-key.asc` | PGP public key |
 | `/.well-known/openpgpkey/policy` | WKD advanced method policy for turva.dev |
 | `/.well-known/openpgpkey/hu/<hash>` | WKD advanced method key lookup for turva.dev |
+| `/.well-known/mcp-registry-auth` | Public key that proves this domain to the MCP registry for `dev.turva/turva-mcp` (HTTP domain authentication) |
 | `openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/policy`, `openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/hu/<hash>` | WKD advanced method on its own subdomain, required for the DNS record to resolve (Tek-288) |
 | `/x402` | HTTP 402 payment-required endpoint |
 | `/robots.txt` | Crawler directives |
