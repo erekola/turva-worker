@@ -31,11 +31,39 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 // expected condition rather than the fault being measured.
 const FETCH_TIMEOUT_MS = Number(process.env.VERIFY_FETCH_TIMEOUT_MS || 20000);
 const nativeFetch = globalThis.fetch;
-const fetch = (input, init = {}) => (
+const timedFetch = (input, init = {}) => (
   init && init.signal
     ? nativeFetch(input, init)
     : nativeFetch(input, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
 );
+
+// THE SITE'S OWN RATE LIMIT, added 2026-09-23 (Tek-455). Both Workers allow 100 requests per
+// 60 s per client IP and answer above that with 429 and Retry-After: 60. A --live run makes
+// about 100 requests to turva.dev within five seconds, so a second run in the same minute, or
+// any other request from the same address, turned the run's last checks red against the
+// site's own limiter: seven FAILs in the ship of 2026-09-23, none of them about the site.
+// A 429 from one of the two hosts with a Retry-After of at most RATE_WAIT_MAX_S is waited out
+// and asked once more. A second 429 stays the answer, so a limiter that keeps refusing still
+// fails its check. A call with its own abort signal is not retried, because the wait could
+// outlast that signal. Every wait is printed: a run that changes its own timing silently
+// hides the change.
+const RATE_WAIT_MAX_S = 65;
+const OWN_HOSTS = new Set(['turva.dev', 'mcp.turva.dev']);
+let rateWaits = 0;
+const fetch = async (input, init = {}) => {
+  const r = await timedFetch(input, init);
+  if (r.status !== 429 || (init && init.signal)) return r;
+  let url;
+  try { url = new URL(typeof input === 'object' && input && input.url ? input.url : String(input)); } catch { return r; }
+  const wait = Number(r.headers.get('retry-after'));
+  const body = init && init.body;
+  if (!OWN_HOSTS.has(url.host) || !(wait > 0 && wait <= RATE_WAIT_MAX_S)
+    || (body != null && typeof body !== 'string')) return r;
+  rateWaits++;
+  console.log(`  note  ${url.host}${url.pathname} answered 429 from the site's own limit; waiting ${wait} s and asking once more`);
+  await new Promise((res) => setTimeout(res, wait * 1000));
+  return timedFetch(input, init);
+};
 const LIVE = process.argv.includes('--live');
 const facts = JSON.parse(readFileSync(join(ROOT, 'tools/facts.json'), 'utf8'));
 
