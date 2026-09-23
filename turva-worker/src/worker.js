@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.167.2 - the site's rate limit is described as approximate (2026-09-23, round 20, TJ-2): the site-wide 429 body and the response-headers guide said this site enforces 100 requests per 60 seconds per client IP, while Cloudflare's rate-limiting binding keeps a separate, approximate count in each location, and 140 sequential requests to /robots.txt in 21 seconds all passed. Both now say about 100 requests per 60 seconds per client IP and that a burst can pass more requests before the first 429, as turva-mcp 1.5.0 already does, and the guide names the real reason no RateLimit header is sent: the binding reports only whether a request may pass. RateLimit-Policy and the binding are unchanged.
 // turva.dev worker v3.167.1 - the MCP server card is re-signed (2026-09-23): 3.167.0 served the card's new bytes beside the signature of the previous card, so /.well-known/signatures.json now carries the signature of the card as it is served. Nothing else changed.
 // turva.dev worker v3.167.0 - round 20, the MCP batch (2026-09-23): the MCP server card names the server dev.turva/turva-mcp as the MCP registry and turva-mcp/server.json do, declares the tools capability with listChanged false as the server itself now does, and carries turva-mcp 1.5.0. That server release gives every tool an outputSchema and returns its data as structuredContent beside the text, refuses JSON-RPC batches on both protocol lanes, bodies over 64 KiB and 2026-07-28 requests without MCP-Protocol-Version, and describes its rate limit as approximate and counted per Cloudflare location. The card is re-signed.
 // turva.dev worker v3.166.0 - round 19, the content batch (2026-09-23): every sentence that states the audit's duration says it is delivered within two weeks of the agreed written kickoff, while the structured duration fields, the audit's card and the short price line on /services keep two weeks and the audit page's meta description no longer states a duration; advisory states that after the three-month minimum it runs month to month and either party can end it by email before the next month, and that the monthly summary arrives within five business days of the month's end; the Shopify check, its sample and the MCP catalog state that a further retest is bought as a new check; the contact page, the contact skill and the MCP contact block say that LinkedIn messages have no set reply time, and the contact card, its alt text and the AP2 and MPP quote channels no longer put LinkedIn under the one-business-day reply; the ARD and ai-catalog entries take the spec's urn:air: identifier form; the ARD guide, OpenAPI and a code comment stop attributing the MCP media type to ARD v0.91 and describe the manifest as the spec defines it; the Open Knowledge Format guide gains a Sources section and a sources-checked date of 2026-09-23, and eight guides gain a closing line toward an audit; the parity page links the audit like the validator page does and both name the audit as what measures agent readiness, the validator page names its 256 KB limit, the Shopify background says its 26-store reading dates from 2026-08-09, and the home page says both listed services can be bought on their own; both samples carry a last-revised date and the scanner's own category name, the Shopify sample's title says synthetic, and a verify check now reads the samples' category names; the July commerce post carries its 2026-08-21 correction; a June build note about the site's former rendering service is withdrawn with its listings, card and sitemap row, and its path answers 404.
@@ -4518,7 +4519,7 @@ A Link header can point a client straight at a site's machine-readable resources
 
 ## Rate limits
 
-RateLimit-Policy states the quota a server enforces, and RateLimit adds the remaining allowance per client where the server tracks one, so a well-behaved client can throttle itself instead of guessing. Sending a RateLimit-Policy header does not by itself prove the server enforces the stated quota. Checking enforcement means sending requests past the stated limit and confirming the server responds accordingly, not reading the header alone. This site sends the policy header on every response and enforces it, and it keeps no per-client counter, so it sends no RateLimit header.
+RateLimit-Policy states the quota a server enforces, and RateLimit adds the remaining allowance per client where the server tracks one, so a well-behaved client can throttle itself instead of guessing. Sending a RateLimit-Policy header does not by itself prove the server enforces the stated quota. Checking enforcement means sending requests past the stated limit and confirming the server responds accordingly, not reading the header alone. This site sends the policy header on every response and applies it with Cloudflare's rate-limiting binding. The binding keeps an approximate count per client IP in each Cloudflare location, so a burst can pass more requests than the policy states before the first 429. It answers only whether a request may pass and never how much of the quota remains, so the site sends no RateLimit header.
 
 ## Verification
 
@@ -5984,7 +5985,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.167.1",
+    "version": "3.167.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6256,7 +6257,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.167.1",
+  "version": "3.167.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -12597,12 +12598,18 @@ var worker_default = {
       });
     }
     try {
-      // Enforce the declared RateLimit policy: 100 requests per 60 seconds per
-      // client IP, per Cloudflare location. applySecurityHeaders promises this
-      // limit on every response, and an advertised limit that no code enforces
-      // would be exactly the kind of declared-but-unresolved surface this site
-      // audits for. Fail open: if the binding is missing or errors, the request
-      // is served normally.
+      // Apply the declared RateLimit policy: about 100 requests per 60 seconds
+      // per client IP. applySecurityHeaders sends this policy on every response,
+      // and an advertised limit that no code applies would be exactly the kind
+      // of declared-but-unresolved surface this site audits for. The policy
+      // states the configured quota and not an exact ceiling. Cloudflare's
+      // rate-limiting binding keeps a separate, approximate count in each
+      // location, so it slows a burst down instead of cutting it at request 101:
+      // on 2026-09-23, 140 sequential requests to /robots.txt in 21 seconds all
+      // passed. /blog/enforcing-the-rate-limit-i-advertised records two July bursts.
+      // The 429 body below states the limit the same way (round 20, TJ-2).
+      // Fail open: if the binding is missing or errors, the request is served
+      // normally.
       if (env && env.RATE_LIMITER) {
         try {
           const rlKey = request.headers.get("CF-Connecting-IP") || "no-ip";
@@ -12628,7 +12635,7 @@ var worker_default = {
             rlHeaders.set("Retry-After", "60");
             // Never cached (round 19, F2): the parity page says every response to a check is no-store.
             rlHeaders.set("cache-control", "no-store");
-            const rlResponse = new Response("429 Too Many Requests. This site enforces its declared rate limit of 100 requests per 60 seconds per client IP. Retry after 60 seconds.\n", { status: 429, headers: rlHeaders });
+            const rlResponse = new Response("429 Too Many Requests. This site allows about 100 requests per 60 seconds per client IP. Each Cloudflare location keeps its own approximate count, so a burst can pass more requests before this answer. Retry after 60 seconds.\n", { status: 429, headers: rlHeaders });
             return isHead ? stripBody(rlResponse) : rlResponse;
           }
         } catch (rlErr) {

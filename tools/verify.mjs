@@ -37,8 +37,9 @@ const timedFetch = (input, init = {}) => (
     : nativeFetch(input, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
 );
 
-// THE SITE'S OWN RATE LIMIT, added 2026-09-23 (Tek-455). Both Workers allow 100 requests per
-// 60 s per client IP and answer above that with 429 and Retry-After: 60. A --live run makes
+// THE SITE'S OWN RATE LIMIT, added 2026-09-23 (Tek-455). Both Workers allow about 100 requests
+// per 60 s per client IP, counted approximately in each Cloudflare location, and answer above
+// that with 429 and Retry-After: 60. A --live run makes
 // about 100 requests to turva.dev within five seconds, so a second run in the same minute, or
 // any other request from the same address, turned the run's last checks red against the
 // site's own limiter: seven FAILs in the ship of 2026-09-23, none of them about the site.
@@ -2175,11 +2176,13 @@ if (LIVE) {
   // one is how a gate passes for the wrong reason.
   //
   // WHY IT IS OPT-IN, and this was measured before the check ever ran. Fifty-seven paths at two
-  // requests each is 114 requests, and this site enforces its own advertised rate limit of 100
-  // requests per 60 s per IP (verified against the zone on 2026-08-16: action block, 600 s
-  // mitigation). A gate that trips the control it is verifying would fail for a reason that has
-  // nothing to do with the twins, and would block the operator's own IP for ten minutes while
-  // doing it. So it runs only with `--twins`, and it paces itself under the limit. Erik's call
+  // requests each is 114 requests, and this site applies its own advertised rate limit of about
+  // 100 requests per 60 s per IP, counted approximately in each Cloudflare location. The zone
+  // rule with a 10 minute block (read 2026-09-23: action block, 600 s mitigation) covers only
+  // /llms-txt-validator and the parity check's POST, so this sweep meets the Worker's 429 and
+  // never that block. A gate that trips the control it is verifying would fail for a reason
+  // that has nothing to do with the twins. So it runs only with `--twins`, and it paces itself
+  // under the limit. Erik's call
   // 2026-08-16 was to take the three new gates into trial use and drop any that cause trouble;
   // an opt-in flag is what makes dropping it a decision rather than an incident.
   if (LIVE && process.argv.includes('--twins')) try {
