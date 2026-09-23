@@ -3163,6 +3163,14 @@ if (LIVE) {
       }
       check(conTxt.includes(facts.businessId),
         `get_contact states business ID ${facts.businessId}`);
+      // Since turva-mcp 1.6.0 get_contact also says who runs turva.dev. Its business_id and
+      // vat_id are the two identifiers facts.json owns, so they are compared there, and its
+      // company_page must be the turva.dev page that states the same business details.
+      const op = con.operator || {};
+      check(op.business_id === facts.businessId && op.vat_id === facts.vatId,
+        `get_contact operator carries business ID ${facts.businessId} and VAT ID ${facts.vatId} (saw ${JSON.stringify([op.business_id, op.vat_id])})`);
+      check(op.company_page === 'https://turva.dev/company' && typeof op.run_by === 'string' && op.run_by.length > 0,
+        `get_contact operator names who runs turva.dev and links https://turva.dev/company (saw ${JSON.stringify([op.run_by, op.company_page])})`);
     }
 
     // The name-agreement rule, proven rather than assumed. Without this a server that
