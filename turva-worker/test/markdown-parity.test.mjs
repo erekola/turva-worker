@@ -71,7 +71,8 @@ test("parity check: the JSON answer is run() from the package over the bytes the
     assert.equal(res.status, 200, path);
     assert.match(res.headers.get("content-type"), /application\/json/);
     assert.equal(res.headers.get("cache-control"), "no-store");
-    assert.equal(res.headers.get("access-control-allow-origin"), null, "no CORS: browsers on other sites cannot drive checks");
+    assert.equal(res.headers.get("access-control-allow-origin"), "*", "a browser agent on another origin may read the JSON answer (round 19, P2)");
+    assert.equal(res.headers.get("cross-origin-resource-policy"), "cross-origin", "an agent-api resource, like the validator's JSON answer");
     const hosted = strip(await res.text());
     const h = await served(path, "text/html");
     const m = await served(path, "text/markdown");
@@ -249,10 +250,13 @@ test("parity check: phase 2 forwards other hosts only when switched on and bound
 });
 
 test("parity route: methods and preflight name POST, and a POST that asks for Markdown still runs the check", async () => {
+  // OPTIONS is a CORS preflight since round 19 (P2, Erik 2026-09-23), so it names POST in
+  // access-control-allow-methods; the 405 below still names the full set in Allow.
   const opt = await worker.fetch(new Request("https://turva.dev/markdown-parity-check", { method: "OPTIONS" }), {});
   assert.equal(opt.status, 204);
-  assert.equal(opt.headers.get("allow"), "GET, HEAD, POST, OPTIONS");
-  assert.equal(opt.headers.get("access-control-allow-origin"), null);
+  assert.equal(opt.headers.get("access-control-allow-methods"), "GET, POST, OPTIONS");
+  assert.equal(opt.headers.get("access-control-allow-origin"), "*");
+  assert.match(opt.headers.get("access-control-allow-headers"), /Content-Type/);
   const put = await worker.fetch(new Request("https://turva.dev/markdown-parity-check", { method: "PUT", body: "x" }), {});
   assert.equal(put.status, 405);
   assert.equal(put.headers.get("allow"), "GET, HEAD, POST, OPTIONS");

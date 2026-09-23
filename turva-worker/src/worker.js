@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.165.0 - round 19, second batch (2026-09-23): a page or its markdown twin asked for in another letter case answers 301 to the lower-case path; the parity check's JSON answer and its preflight carry CORS for browser agents, and the site-wide 429 takes the agent form only for a parity POST that asks for JSON; the validator refuses the arpa and onion TLDs and reads one trailing dot as the same host; every cacheable GET 200 text response carries a weak ETag and answers 304 to a matching If-None-Match; the weekly IndexNow run submits only the pages whose sitemap lastmod is within eight days; the CSP drops https: from style-src and font-src and Permissions-Policy denies five more features; OpenAPI declares the two closed OAuth endpoints; every JSON-LD builder uses jsonLdSafe; an Accept q above 1 counts as 1; the rules for unused CSS classes are gone and the smallest label reads at .75rem; card and mailto hrefs go through escapeHtml; /brief/<id>/ redirects like trailing punctuation, and a brief's markdown and JSON are same-origin; the parity result drops bidirectional controls from quoted text; the skills index is built once per isolate; a markdown twin's case redirect carries the twin's agent-api headers and origin grant, and /index.html.md in another case redirects too; the parity check folds letter case, reads one trailing dot as the same host, checks the home page's markdown twin again, drops bidirectional controls from every value it echoes and writes them as JSON escapes in its report; and a measurement day (2026-09-23, Erik): turva.dev re-measured, Level 5/5 on isitagentready, internet.nl website test 98 and email test 90, Hardenize all 24 categories, so the measured-at date moves from 2026-09-14 to 2026-09-23 on every surface that states it.
 // turva.dev worker v3.164.0 - round 19, an audit of the Worker itself (2026-09-23): markdownToHtml reads fenced code blocks and keeps an ATX heading to its own line, so a published brief no longer renders the scanner's raw output as one h2 with literal backticks, and code inside a brief keeps its backslash escapes; a heading slug repeated in one document gets -2 and -3; the llms.txt validator masks an accepted redirect's target as it already masked a refused one, and drops bidirectional controls from the text it quotes; the parity check reads the request body before it takes one of its four comparison slots, so bodies that never finish no longer hold them; a root-relative markdown link must resolve to this origin, which refuses /\host, and the WebMCP path check refuses /.//host; every redirect and the A2A preflight carry the security headers, which makes the response headers guide's every-response sentence true; the site-wide 429 is no-store; the home FAQ JSON-LD writes </ as <\/ like every other builder; OpenAPI declares POST on the three agent auth paths; the services skill names the two quoted services; prefers-reduced-motion stops the card hover lift; the July source-move post's correction is its own paragraph and its modified date is 2026-09-06; the audit sample states source hours for both scopes.
 // turva.dev worker v3.163.0 - the repairs of an outside review of the public repos (2026-09-22): the hosted llms.txt validator masks a refused redirect target with maskLocation() before the 120 character cut, so a user name, a password, a query value or a fragment in a Location header no longer reaches the check's detail, the JSON answer or the page, and for a typed entry with an @, a ? or a # the form shows only the host it names; the A2A message:send and ACP checkout routes read their JSON body through a 16384 byte cap counted from the stream and answer 413 above it, with or without Content-Length, and A2A takes at most 32 parts. The package turva-llms-txt-validator 0.3.5 mirrors the masking, and the hosted parity check runs markdown-parity-check 0.2.10, which masks user names and passwords in URLs and keeps numbers from masked URL parts out of findings.
 // turva.dev worker v3.162.0 - the hosted parity check runs package release 0.2.9 (2026-09-21): the pinned dependency moves 0.2.6 to 0.2.9, so a report's toolVersion names the release npx installs. Measured across eight pages and 184 findings before the raise was taken: with toolVersion and generatedAt set aside, every report is identical under both versions, so the comparison core, the severities, the exit codes and the JSON schema keys are the same, and the runtime tree stays at 79 packages. Same shape as v3.157.0 and v3.158.0. turva-mcp 1.4.1 to 1.4.2 ships in the same release, agents 0.22.0 to 0.23.0 and zod 4.6.2 to 4.6.5, and the MCP server card is re-signed for it.
@@ -96,9 +97,9 @@ max_age: 604800
 var CSP_HTML = [
   "default-src 'self'",
   "script-src 'self' 'sha256-aYDvr8aW6OGCZCnuXXpdb79gguLAY+ZwnmUjQuB+7Qk='",
-  "style-src 'self' 'unsafe-inline' https: data:",
+  "style-src 'self' 'unsafe-inline' data:",
   "img-src 'self' data: blob: https:",
-  "font-src 'self' data: https:",
+  "font-src 'self' data:",
   "connect-src 'self' https: wss:",
   "media-src 'self' https: data:",
   "object-src 'none'",
@@ -114,7 +115,8 @@ var PERMISSIONS_POLICY = [
   "fullscreen=(self)", "geolocation=()", "gyroscope=()", "magnetometer=()",
   "microphone=()", "midi=()", "payment=()", "picture-in-picture=()",
   "publickey-credentials-get=()", "screen-wake-lock=()", "sync-xhr=()",
-  "usb=()", "web-share=()", "xr-spatial-tracking=()"
+  "usb=()", "web-share=()", "xr-spatial-tracking=()", "bluetooth=()", "hid=()", "serial=()",
+  "idle-detection=()", "browsing-topics=()"
 ].join(", ");
 
 // The agent-API paths, as one regex, so the 429 answer in worker_default and the 405 answer
@@ -3443,7 +3445,7 @@ For Shopify stores, I offer a focused check of product information and the shopp
 
 We work in writing. I reply within one business day. [Scope and pricing](/services).
 
-Technical agent-readiness of turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-14. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
+Technical agent-readiness of turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
 
 ## One product. Three different answers.
 
@@ -3480,7 +3482,7 @@ My own site. I use turva.dev to put this work into practice. You can inspect the
 
 Scanner: isitagentready.com (third party, Cloudflare). Discoverability, Content Accessibility, Bot Access Control, and API, Auth, MCP and A2A Discovery: 100/100. Commerce: 100/100. Verified 100/100, Level 5, Agent-Native.
 
-I also publish the site's security checks. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. Measured 2026-09-14.
+I also publish the site's security checks. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. Measured 2026-09-23.
 
 - Hardenize: all 24 categories passed. https://www.hardenize.com/report/turva.dev
 - Internet.nl website test: 98/100. https://internet.nl/site/turva.dev/
@@ -4284,7 +4286,7 @@ A separate question from both of the above is what an AI assistant actually says
 
 The result of an audit is a list. Each check passes or fails, and each failure comes with a concrete fix instruction and, where this site has a guide for that surface, a link to it. The report is written so your own team can do the work, which means implementation is something you buy if you want it rather than something the report forces on you.
 
-turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-14. That is one scan on one day against one named scanner, and it does not stand in for manual review or for how an assistant answers a buyer's question, so it counts as one input among the three above rather than a summary of all of them. A rescan after a fix shows whether that specific fix passed. The audit a client receives runs the same three kinds of check against their site.
+turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. That is one scan on one day against one named scanner, and it does not stand in for manual review or for how an assistant answers a buyer's question, so it counts as one input among the three above rather than a summary of all of them. A rescan after a fix shows whether that specific fix passed. The audit a client receives runs the same three kinds of check against their site.
 
 ## Frequently asked
 
@@ -4871,7 +4873,7 @@ Asking a named assistant a buyer's question and recording what it says is a thir
 
 ## Recording the method and the date
 
-Each conclusion should say which of the three it rests on and when it was taken. This is the standard turva.dev applies to its own site. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the categories the report named are the ones a later scan is checked against. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-14. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
+Each conclusion should say which of the three it rests on and when it was taken. This is the standard turva.dev applies to its own site. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the categories the report named are the ones a later scan is checked against. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
 
 For an audit that reports measured results, naming the method behind each one, contact info@turva.dev.
 
@@ -6002,7 +6004,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.164.0",
+    "version": "3.165.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6066,6 +6068,8 @@ var OPENAPI_SPEC = JSON.stringify({
     "/agent/auth/register": { "get": { "summary": "Agent registration instructions", "operationId": "getAgentAuthRegister", "responses": { "200": { "description": "ok" } } }, "post": { "summary": "Agent registration instructions", "operationId": "postAgentAuthRegister", "responses": { "200": { "description": "ok" } } } },
     "/agent/auth/claim": { "get": { "summary": "Agent claim instructions", "operationId": "getAgentAuthClaim", "responses": { "200": { "description": "ok" } } }, "post": { "summary": "Agent claim instructions", "operationId": "postAgentAuthClaim", "responses": { "200": { "description": "ok" } } } },
     "/agent/auth/revoke": { "get": { "summary": "Agent revocation instructions", "operationId": "getAgentAuthRevoke", "responses": { "200": { "description": "ok" } } }, "post": { "summary": "Agent revocation instructions", "operationId": "postAgentAuthRevoke", "responses": { "200": { "description": "ok" } } } },
+    "/oauth/authorize": { "get": { "summary": "OAuth authorization endpoint, closed: a spec-valid access_denied error pointing to the agent auth flow", "operationId": "getOauthAuthorize", "responses": { "400": { "description": "access_denied, see /auth.md" } } }, "post": { "summary": "OAuth authorization endpoint, closed", "operationId": "postOauthAuthorize", "responses": { "400": { "description": "access_denied, see /auth.md" } } } },
+    "/oauth/token": { "get": { "summary": "OAuth token endpoint, closed: a spec-valid invalid_request error pointing to the agent auth flow", "operationId": "getOauthToken", "responses": { "400": { "description": "invalid_request, see /auth.md" } } }, "post": { "summary": "OAuth token endpoint, closed", "operationId": "postOauthToken", "responses": { "400": { "description": "invalid_request, see /auth.md" } } } },
     "/llms.txt": { "get": { "summary": "LLM summary", "operationId": "getLlmsTxt", "responses": { "200": { "description": "ok" } } } },
     "/llms-full.txt": { "get": { "summary": "Full concatenated content", "operationId": "getLlmsFullTxt", "responses": { "200": { "description": "ok" } } } },
     "/auth.md": { "get": { "summary": "Agent registration metadata", "operationId": "getAuthMd", "responses": { "200": { "description": "ok" } } } },
@@ -6270,7 +6274,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.164.0",
+  "version": "3.165.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6763,6 +6767,14 @@ async function buildSkillsIndex() {
   }, null, 2);
 }
 
+// Built once per isolate, like the sitemap and llms-full.txt: the three digests only change on a
+// deploy (round 19, K2-P3).
+var _skillsIndexCache = null;
+async function getSkillsIndex() {
+  if (_skillsIndexCache === null) _skillsIndexCache = await buildSkillsIndex();
+  return _skillsIndexCache;
+}
+
 var WEBMCP_SCRIPT = `<script>
 (function(){
  try {
@@ -6996,21 +7008,26 @@ var SITEMAP_ENTRIES = [
   ["/blog/owning-your-fediverse-identity", "monthly", "0.6"],
   ["/blog/moving-off-prerender", "monthly", "0.6"],
 ];
+// The sitemap's lastmod for one path, shared by buildSitemapXml and the weekly IndexNow run so
+// the two cannot disagree about what changed (round 19, K1-P5).
+function sitemapLastmodOf(path) {
+  if (path.indexOf("/blog/") === 0) {
+    return (META_BY_PATH[path] && (META_BY_PATH[path].modified || META_BY_PATH[path].date)) || SITEMAP_LASTMOD;
+  } else if (path === "/blog") {
+    const ds = Object.keys(META_BY_PATH).filter(function(k) { return k.indexOf("/blog/") === 0; }).map(function(k) { return META_BY_PATH[k].modified || META_BY_PATH[k].date; }).filter(Boolean).sort();
+    return ds.length ? ds[ds.length - 1] : SITEMAP_LASTMOD;
+  } else {
+    return SITEMAP_LASTMOD;
+  }
+}
+
 function buildSitemapXml() {
   // Sorted by the one site order (siteRank); the literal above is a set of rows with their
   // changefreq and priority, and a new row may go anywhere in its block.
   const entries = SITEMAP_ENTRIES.map(function(e, idx) { return { e: e, idx: idx, r: siteRank(e[0]) }; }).sort(compareSiteRank).map(function(x) { return x.e; });
   const rows = entries.map(function(e) {
     const path = e[0], cf = e[1], pr = e[2];
-    let lastmod;
-    if (path.indexOf("/blog/") === 0) {
-      lastmod = (META_BY_PATH[path] && (META_BY_PATH[path].modified || META_BY_PATH[path].date)) || SITEMAP_LASTMOD;
-    } else if (path === "/blog") {
-      const ds = Object.keys(META_BY_PATH).filter(function(k) { return k.indexOf("/blog/") === 0; }).map(function(k) { return META_BY_PATH[k].modified || META_BY_PATH[k].date; }).filter(Boolean).sort();
-      lastmod = ds.length ? ds[ds.length - 1] : SITEMAP_LASTMOD;
-    } else {
-      lastmod = SITEMAP_LASTMOD;
-    }
+    const lastmod = sitemapLastmodOf(path);
     const loc = "https://turva.dev" + (path === "/" ? "/" : path);
     return " <url><loc>" + loc + "</loc><lastmod>" + lastmod + "</lastmod><changefreq>" + cf + "</changefreq><priority>" + pr + "</priority></url>";
   }).join("\n");
@@ -7728,10 +7745,39 @@ var FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" f
 // redirect and the A2A preflight left without RateLimit-Policy, Referrer-Policy, X-Frame-Options
 // and the rest, while /guides/response-headers-for-agents says the policy header goes out on every
 // response. The kind follows the path, as it does for 405 and 429.
-function redirectTo(location, status, pathLower) {
+// A caller that knows the target's kind better than the path regex passes it: a markdown twin's
+// case redirect is an agent resource like the twin it points to (round 19 review of P1).
+function redirectTo(location, status, pathLower, kind) {
   const headers = new Headers({ location: location });
-  applySecurityHeaders(headers, AGENT_API_PATH_RE.test(pathLower || "") ? "agent-api" : "default");
+  applySecurityHeaders(headers, kind || (AGENT_API_PATH_RE.test(pathLower || "") ? "agent-api" : "default"));
   return new Response(null, { status: status, headers: headers });
+}
+
+// An entity tag on every cacheable 200, so an agent or a crawler that already holds the bytes can
+// ask again with If-None-Match and get 304 without the body (round 19, P1-P1). The tag is the
+// SHA-256 of the exact body, so it moves when one byte moves, and it is weak, because Cloudflare
+// compresses on the way out and a strong tag would not survive that. A response marked no-store
+// or private (the validator, the parity check, a brief, the OAuth errors) and a body that is not
+// text are left as they are.
+async function withValidator(request, response) {
+  if (request.method !== "GET" || response.status !== 200 || !response.body || response.headers.has("etag")) return response;
+  const cc = (response.headers.get("cache-control") || "").toLowerCase();
+  if (cc.includes("no-store") || cc.includes("private")) return response;
+  const ct = (response.headers.get("content-type") || "").toLowerCase();
+  if (!(ct.startsWith("text/") || ct.includes("json") || ct.includes("xml") || ct.includes("javascript"))) return response;
+  const bytes = await response.arrayBuffer();
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
+  let hex = "";
+  for (let i = 0; i < 16; i++) hex += digest[i].toString(16).padStart(2, "0");
+  const tag = '"' + hex + '"';
+  const headers = new Headers(response.headers);
+  headers.set("etag", "W/" + tag);
+  const asked = (request.headers.get("if-none-match") || "").split(",").map((t) => t.trim()).map((t) => (t.startsWith("W/") ? t.slice(2) : t));
+  if (asked.includes(tag) || asked.includes("*")) {
+    headers.delete("content-length");
+    return new Response(null, { status: 304, headers });
+  }
+  return new Response(bytes, { status: 200, headers });
 }
 
 function serve405(allow, pathLower) {
@@ -7978,7 +8024,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 999, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-09-14" }, null, 2);
+var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 999, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-09-23" }, null, 2);
 var API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"
@@ -8006,6 +8052,7 @@ function acceptRanking(request) {
       if (m) q = parseFloat(m[1]);
     }
     if (!(q >= 0)) q = 0;
+    if (q > 1) q = 1;
     if (ranking[type] === undefined || q > ranking[type]) ranking[type] = q;
   }
   return ranking;
@@ -8104,6 +8151,13 @@ function stripBidi(s) {
   return String(s).replace(/[\u202A-\u202E\u2066-\u2069]/g, "");
 }
 
+// A JSON text with every bidirectional control written as an escape (round 19 review of V6-P1).
+// The parsed value is the same, so the parity report stays the package's own, and no raw control
+// character can reorder what a person reads in the page, in a saved file or in a terminal.
+function jsonBidiEscape(json) {
+  return String(json).replace(/[\u202A-\u202E\u2066-\u2069]/g, (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"));
+}
+
 // A root-relative link target stays on this site only if it resolves to this origin. A list of
 // refused characters misses what the parser knows: "/\host" is "//host" to every WHATWG parser in
 // an http or https URL (round 19, K4-1; the trap of mds/gotchas.md 2026-09-09 (jatko 1)).
@@ -8114,6 +8168,14 @@ function mdSameOrigin(path) {
 // "</" inside a JSON-LD string would close the script element early, and JSON.stringify leaves it
 // as it is. Every builder writes it as "<\/", which JSON reads as the same two characters (round
 // 19, K4-4: SCHEMA_HOME's FAQ was the one without it).
+// A replacement that must happen: it throws when its anchor is missing or repeated, so a renamed
+// heading fails the build instead of shipping unchanged (round 19, K6-P4).
+function replaceExactlyOnce(s, from, to) {
+  const n = s.split(from).length - 1;
+  if (n !== 1) throw new Error("replaceExactlyOnce: " + JSON.stringify(from) + " occurs " + n + " times");
+  return s.replace(from, to);
+}
+
 function jsonLdSafe(s) {
   return String(s).split("</").join("<" + String.fromCharCode(92) + "/");
 }
@@ -8611,7 +8673,7 @@ function mdOfferCards(path, heading, linkLabel, idFor) {
     const label = linkLabel[href];
     if (!label) throw new Error("offer has no link label for " + href);
     const cardId = (idFor && idFor[href]) ? ` id="${idFor[href]}"` : "";
-    return `<a class="card"${cardId} href="${href}"><span class="card-top"><span class="name">${escapeHtml(name)}</span><span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span>${retest ? `<span class="when">${escapeHtml(retest)}</span>` : ""}<span class="go">${label}</span></a>`;
+    return `<a class="card"${cardId} href="${escapeHtml(href)}"><span class="card-top"><span class="name">${escapeHtml(name)}</span><span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span>${retest ? `<span class="when">${escapeHtml(retest)}</span>` : ""}<span class="go">${label}</span></a>`;
   }).join("\n      ");
 }
 function mdActionCards(path, headings) {
@@ -8633,7 +8695,7 @@ function mdToolCards(path, headings) {
     const last = blocks[blocks.length - 1].match(/^\[([^\]]+)\]\(([^)]+)\)$/);
     if (!last) throw new Error("mdToolCards: " + h + " does not end in a link line");
     const paras = blocks.slice(0, -1).map((b) => `<p>${renderInline(b.replace(/\s*\n\s*/g, " "))}</p>`).join("");
-    return `<div class="card"><h2>${renderInline(h)}</h2>${paras}<a class="go" href="${last[2]}">${escapeHtml(last[1])}</a></div>`;
+    return `<div class="card"><h2>${renderInline(h)}</h2>${paras}<a class="go" href="${escapeHtml(last[2])}">${escapeHtml(last[1])}</a></div>`;
   }).join("\n      ");
 }
 function mdTidyUrlText(html) {
@@ -8690,7 +8752,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
     });
     if (posts.length) article.blogPost = posts;
   }
-  const json = JSON.stringify(article).replace(/<\/script/gi, "<\\/script");
+  const json = jsonLdSafe(JSON.stringify(article));
   let breadcrumb = "";
   if (isBlogPost || pathname.startsWith("/guides/")) {
     const section = isBlogPost ? { name: "Blog", url: "https://turva.dev/blog" } : { name: "Guides", url: "https://turva.dev/guides" };
@@ -8703,7 +8765,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
         { "@type": "ListItem", "position": 3, "name": headline, "item": url }
       ]
     };
-    breadcrumb = "\n<script type=\"application/ld+json\">\n" + JSON.stringify(bc).replace(/<\/script/gi, "<\\/script") + "\n<\/script>";
+    breadcrumb = "\n<script type=\"application/ld+json\">\n" + jsonLdSafe(JSON.stringify(bc)) + "\n<\/script>";
   }
   return `<script type="application/ld+json">
 ${json}
@@ -8721,7 +8783,7 @@ function buildGuidesFaqJsonLd() {
       "acceptedAnswer": { "@type": "Answer", "text": item.a }
     }))
   };
-  const json = JSON.stringify(faq).replace(/<\/script/gi, "<\\/script");
+  const json = jsonLdSafe(JSON.stringify(faq));
   return `<script type="application/ld+json">
 ${json}
 <\/script>`;
@@ -8792,7 +8854,7 @@ function buildGuidePageFaqJsonLd(pathname, canonicalUrl) {
       "acceptedAnswer": { "@type": "Answer", "text": item.a }
     }))
   };
-  const json = JSON.stringify(faq).replace(/<\/script/gi, "<\\/script");
+  const json = jsonLdSafe(JSON.stringify(faq));
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
@@ -8825,7 +8887,7 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
       }
     }
   };
-  const json = JSON.stringify(svc).replace(/<\/script/gi, "<\\/script");
+  const json = jsonLdSafe(JSON.stringify(svc));
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
@@ -8860,7 +8922,7 @@ function buildAuditServiceJsonLd(canonicalUrl) {
       }
     }
   };
-  const json = JSON.stringify(svc).replace(/<\/script/gi, "<\\/script");
+  const json = jsonLdSafe(JSON.stringify(svc));
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
@@ -8881,7 +8943,7 @@ function buildParityAppJsonLd(canonicalUrl) {
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
     "publisher": { "@id": "https://turva.dev/#business" }
   };
-  const json2 = JSON.stringify(app).replace(/<\/script/gi, "<\\/script");
+  const json2 = jsonLdSafe(JSON.stringify(app));
   return `<script type="application/ld+json">\n${json2}\n<\/script>`;
 }
 
@@ -8901,7 +8963,7 @@ function buildValidatorAppJsonLd(canonicalUrl) {
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
     "publisher": { "@id": "https://turva.dev/#business" }
   };
-  const json2 = JSON.stringify(app).replace(/<\/script/gi, "<\\/script");
+  const json2 = jsonLdSafe(JSON.stringify(app));
   return `<script type="application/ld+json">\n${json2}\n<\/script>`;
 }
 
@@ -8929,7 +8991,7 @@ h1,h2{text-wrap:balance;}
 p,li{text-wrap:pretty;}
 .skip{position:absolute;left:-999px;top:-999px;overflow:hidden;}
 .skip:focus{position:fixed;left:14px;top:12px;z-index:20;background:#5DF18F;color:#06100F;font-weight:700;padding:.55rem .95rem;border-radius:8px;text-decoration:none;}
-@media print{*{background:#fff!important;color:#000!important;}a{text-decoration:underline;}.turva-nav,.tv-foot,.skip,.crumb,.cursor{display:none!important;}}`;
+@media print{*{background:#fff!important;color:#000!important;}a{text-decoration:underline;}.turva-nav,.tv-foot,.skip,.crumb{display:none!important;}}`;
 
 // The card shell and the FAQ rows, one home each. The three .faq copies this
 // replaces were byte-identical and nothing compared them, and guide pages would
@@ -9372,7 +9434,7 @@ main{max-width:none;margin:0;padding:0;}
 .rc-row dt{margin:0 0 2px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;}
 .rc-row dd{margin:0;font-size:.95rem;line-height:1.4;color:#F2F4F3;overflow-wrap:anywhere;}
 .rc-bad dd{color:#F2F4F3;}
-.rc-flag{display:inline-block;margin-left:8px;vertical-align:baseline;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:#F1B27F;border:1px solid rgba(241,178,127,0.45);border-radius:999px;padding:.05rem .5rem;}
+.rc-flag{display:inline-block;margin-left:8px;vertical-align:baseline;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:#F1B27F;border:1px solid rgba(241,178,127,0.45);border-radius:999px;padding:.05rem .5rem;}
 .rc-impact{margin:0 0 10px;font-size:.98rem;line-height:1.45;color:#F2F4F3;font-weight:600;}
 .rc-fix{margin:0 0 8px;font-size:.88rem;line-height:1.5;color:#C9D1CE;}
 .rc-fix b{color:#5DF18F;font-weight:700;}
@@ -9405,15 +9467,11 @@ main{max-width:none;margin:0;padding:0;}
 .cell:hover{border-color:rgba(93,241,143,0.45);transform:translateY(-1px);}
 .cell .cat{display:block;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .25rem;}
 .cell .val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.02rem;color:#5DF18F;font-weight:700;}
-.board-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}.whynot{margin:.85rem 0 0;font-size:.85rem;line-height:1.55;color:#96A79C;border-left:2px solid #5DF18F;padding:.1rem 0 .1rem .8rem;}.whynot b,.whynot strong{color:#F2F5F3;}.bizline{max-width:100%;overflow-wrap:anywhere;margin:.7rem 0 0;font-size:.78rem;color:#9AA3A0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+.board-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}
 .board-sum b{color:#5DF18F;}
 .pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
 .sec{padding:1.9rem 0;border-top:0.5px solid rgba(255,255,255,0.07);}
 ${FAQ_CSS}
-.exgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:.6rem;margin:0 0 1.1rem;}
-.ex{position:relative;background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:.7rem .8rem .7rem 1.7rem;font-size:.9rem;color:#C9D1CE;transition:border-color .15s ease,transform .15s ease;}
-.ex:hover{border-color:rgba(93,241,143,0.38);transform:translateY(-1px);}
-.ex::before{content:"›";position:absolute;left:.75rem;top:.62rem;color:#5DF18F;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;}
 .evlist{margin:0 0 1.05rem;padding:0 0 0 1.2rem;color:#C9D1CE;}
 .evlist li{margin:0 0 .5rem;font-size:.92rem;}
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:.7rem;margin:.2rem 0 1.3rem;}
@@ -9422,23 +9480,13 @@ ${FAQ_CSS}
 .step-n{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#5DF18F;font-weight:700;margin:0 0 .3rem;}
 .step-t{display:block;font-size:1rem;font-weight:700;color:#F2F4F3;margin:0 0 .45rem;}
 .step p{font-size:.86rem;margin:0;color:#9AA3A0;line-height:1.55;}
-.notes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.7rem;}
-.notes li{position:relative;padding:0 0 0 1.6rem;font-size:.92rem;color:#C9D1CE;line-height:1.6;}
-.notes li::before{content:"✓";position:absolute;left:0;top:0;color:#5DF18F;font-weight:700;}
 .svcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:.7rem;margin:.2rem 0 0;}
 .svc{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:1.05rem 1.05rem 1.1rem;transition:border-color .15s ease,transform .15s ease;}
 .svc:hover{border-color:rgba(93,241,143,0.4);transform:translateY(-1px);}
-.svc-tag{flex:0 0 auto;white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;letter-spacing:.03em;color:#5DF18F;background:rgba(93,241,143,0.08);border:1px solid rgba(93,241,143,0.22);border-radius:999px;padding:.12rem .55rem;}
 .svc-h{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;margin:0 0 .45rem;}
 .svc-t{display:block;font-size:1.05rem;font-weight:700;color:#5DF18F;margin:0;min-width:0;}
 .svc p{font-size:.86rem;margin:0;color:#9AA3A0;line-height:1.55;}
 .contact{border-top:1px solid rgba(93,241,143,0.2);}
-.contact-card{border:1px solid rgba(255,255,255,0.14);border-radius:14px;background:rgba(93,241,143,0.04);padding:1.2rem 1.2rem 1rem;margin:.4rem 0 0;}
-.contact-card .ch{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:.6rem;margin:0 0 .6rem;font-size:1rem;color:#F2F4F3;text-decoration:none;}
-.contact-card a.ch:hover{color:#5DF18F;text-decoration:none;}
-.contact-card .ch:last-child{margin-bottom:0;}
-.contact-card .ch svg{flex:0 0 auto;width:18px;height:18px;}
-.contact-card .ch > span{min-width:0;overflow-wrap:anywhere;}
 .cta-row{margin:1.25rem 0 0;}
 .cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;transition:background-color .15s ease;}
 .cta-btn:hover{background:#7df7a6;text-decoration:none;}
@@ -9626,7 +9674,6 @@ a{color:#5DF18F;text-decoration:none;}
 a:hover{text-decoration:underline;}
 a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
-.meta-line{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.03em;color:#9AA3A0;margin:0 0 1.4rem;overflow-wrap:anywhere;}
 .turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:24px clamp(24px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
@@ -9695,7 +9742,6 @@ a.v,.kv a.v{color:#5DF18F;}
 .sigqr-plate img{display:block;width:147px;height:147px;}
 .sigqr-user{display:block;margin-top:.45rem;text-align:center;font:600 .8rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#9AA3A0;letter-spacing:.01em;}
 @media (max-width:560px){.sigqr{grid-template-columns:1fr;justify-items:start;}}
-.gv{color:#5DF18F;font-weight:600;}
 .scard .sub{color:#9AA3A0;font-size:.95rem;margin:-.4rem 0 .9rem;}
 ${FAQ_CSS}
 .faq{}
@@ -9909,7 +9955,8 @@ function briefRoute(pathname) {
 // the canonical address would no longer be one, and this page rests on exactly one address.
 // The redirect carries noindex like every other response on this path, because the redirect's
 // TARGET is a private page and it must not be the line that reveals the path to a search engine.
-var BRIEF_LOPPUVALIMERKIT = /[.,;:!?)\]]+$/;
+// A trailing slash joined the set in round 19 (K6-P1): /brief/<id>/ answered 404.
+var BRIEF_LOPPUVALIMERKIT = /[.,;:!?)\]\/]+$/;
 
 function briefSiivousKohde(pathname) {
   if (!pathname.startsWith("/brief/")) return null;
@@ -10074,7 +10121,9 @@ async function serveBrief(route, pathname, env, request) {
     else if (wantsMarkdown(request)) route = { id: route.id, muoto: "md" };
   }
   if (route.muoto === "md") {
-    var mh = briefHeaders("agent-api", rec.kieli);
+    // Same-origin since round 19 (K6-P3): a brief is private, so no other site may load it as a
+    // resource; an agent fetching it server-side is not affected.
+    var mh = briefHeaders("default", rec.kieli);
     mh.set("content-type", "text/markdown; charset=utf-8");
     mh.set("content-location", canonicalUrl);
     mh.append("Link", `<${canonicalUrl}>; rel="canonical"`);
@@ -10082,7 +10131,7 @@ async function serveBrief(route, pathname, env, request) {
     return new Response(rec.md, { status: 200, headers: mh });
   }
   if (route.muoto === "json") {
-    var jh = briefHeaders("agent-api", rec.kieli);
+    var jh = briefHeaders("default", rec.kieli);
     jh.set("content-type", "application/json; charset=utf-8");
     jh.set("content-location", canonicalUrl);
     jh.append("Link", `<${canonicalUrl}>; rel="canonical"`);
@@ -10174,12 +10223,12 @@ function serveShopifyHtml(canonicalUrl) {
       buildGuidePageFaqJsonLd("/shopify-agent-storefront-check", canonicalUrl),
     canonicalUrl);
   const start = mdParas("/shopify-agent-storefront-check", "Tell me about your store", 3);
-  const mailto = "mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&amp;body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A";
+  const mailto = "mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A";
   const body = `${head}
 ${cardPageNav("/shopify-agent-storefront-check")}
 <main id="main">
   ${mdPageStart("/shopify-agent-storefront-check")}
-  <div class="cta"><a class="btn" href="${mailto}">Request a Shopify check</a><a class="btn-ghost" href="/samples/shopify-agent-storefront-check">Read the sample report</a></div>
+  <div class="cta"><a class="btn" href="${escapeHtml(mailto)}">Request a Shopify check</a><a class="btn-ghost" href="/samples/shopify-agent-storefront-check">Read the sample report</a></div>
   ${mdOpenSec("/shopify-agent-storefront-check", "What you will learn")}
   ${mdOpenSec("/shopify-agent-storefront-check", "What you receive")}
   ${mdOpenSec("/shopify-agent-storefront-check", "What is included", "fixed-scope")}
@@ -10190,12 +10239,12 @@ ${cardPageNav("/shopify-agent-storefront-check")}
   ${mdOpenSec("/shopify-agent-storefront-check", "See a sample", "sample-report")}
   ${mdOpenSec("/shopify-agent-storefront-check", "What this check does not establish", "limits-and-exclusions")}
   ${mdOpenSec("/shopify-agent-storefront-check", "Background to the check", "public-preflight-evidence")}
-  ${mdFaqSec("/shopify-agent-storefront-check", "Frequently asked", "questions").replace("<h2>Frequently asked</h2>", "<h2>Two common questions</h2>")}
+  ${replaceExactlyOnce(mdFaqSec("/shopify-agent-storefront-check", "Frequently asked", "questions"), "<h2>Frequently asked</h2>", "<h2>Two common questions</h2>")}
   <div class="start" id="how-to-start">
     <h2>Tell me about your store</h2>
     <p>${start[0]}</p>
     <p>${start[1]}</p>
-    <div class="cta-row"><a class="cta-btn" href="${mailto}">Request a Shopify check</a></div>
+    <div class="cta-row"><a class="cta-btn" href="${escapeHtml(mailto)}">Request a Shopify check</a></div>
     <p class="fine">${start[2]}</p>
   </div>
 </main>
@@ -10216,8 +10265,8 @@ function serveAuditHtml(canonicalUrl) {
       buildAuditServiceJsonLd(canonicalUrl),
     canonicalUrl);
   const start = mdParas("/agent-readiness-audit", "Tell me what you want to understand", 3);
-  const mailto = "mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A";
-  const request = `<div class="cta-row"><a class="cta-btn" href="${mailto}">Request an audit</a></div>`;
+  const mailto = "mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A";
+  const request = `<div class="cta-row"><a class="cta-btn" href="${escapeHtml(mailto)}">Request an audit</a></div>`;
   // The twin's price sentence renders as the price line the other sections use; fail closed
   // if the sentence moves, so the page never shows a plain paragraph where the price belongs.
   const priceRe = /<p>(€[\d,]+) plus VAT\. ([^.<]+)\. ([^.<]+)\.<\/p>/;
@@ -10228,7 +10277,7 @@ function serveAuditHtml(canonicalUrl) {
 ${cardPageNav("/agent-readiness-audit")}
 <main id="main">
   ${startHtml}
-  <div class="cta"><a class="btn" href="${mailto}">Request an audit</a><a class="btn-ghost" href="/samples/audit-report">Read the sample report</a></div>
+  <div class="cta"><a class="btn" href="${escapeHtml(mailto)}">Request an audit</a><a class="btn-ghost" href="/samples/audit-report">Read the sample report</a></div>
   ${mdOpenSec("/agent-readiness-audit", "When this helps", "when-this-audit-is-useful")}
   ${mdOpenSec("/agent-readiness-audit", "One example: the price is wrong", "a-finding-that-changes-the-fix-order")}
   ${mdOpenSec("/agent-readiness-audit", "What I check", "scope")}
@@ -10239,7 +10288,7 @@ ${cardPageNav("/agent-readiness-audit")}
     <h2>Tell me what you want to understand</h2>
     <p>${start[0]}</p>
     <p>${start[1]}</p>
-    <div class="cta-row"><a class="cta-btn" href="${mailto}">Request an audit</a> <a class="mail-plain" href="mailto:info@turva.dev">info@turva.dev</a></div>
+    <div class="cta-row"><a class="cta-btn" href="${escapeHtml(mailto)}">Request an audit</a> <a class="mail-plain" href="mailto:info@turva.dev">info@turva.dev</a></div>
     <p class="fine">${start[2]}</p>
   </div>
 </main>
@@ -10304,7 +10353,10 @@ function normalizeHostInput(raw) {
   if (u.protocol !== "https:" && u.protocol !== "http:") return null;
   if (u.port && u.port !== "443" && u.port !== "80") return null;
   if (u.username || u.password) return null;
-  return u.hostname;
+  // One trailing dot names the same host in absolute form, so "example.com." is read as
+  // example.com instead of refused (round 19, K7-P5).
+  const typedHost = u.hostname;
+  return typedHost.length > 1 && typedHost.endsWith(".") ? typedHost.slice(0, -1) : typedHost;
 }
 
 function isValidPublicHost(host) {
@@ -10312,7 +10364,9 @@ function isValidPublicHost(host) {
   if (host.startsWith("[") || /^\d+\.\d+\.\d+\.\d+$/.test(host)) return false;
   if (!/^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{1,62}$/.test(host)) return false;
   const tld = host.split(".").pop();
-  if (["localhost", "local", "internal", "home", "lan", "corp", "test", "invalid"].includes(tld)) return false;
+  // arpa and onion since round 19 (P3, Erik 2026-09-23): home.arpa is the home-network name of
+  // RFC 8375, in-addr.arpa names an address, and an onion name never resolves on the public web.
+  if (["localhost", "local", "internal", "home", "lan", "corp", "test", "invalid", "arpa", "onion"].includes(tld)) return false;
   return true;
 }
 
@@ -11771,6 +11825,9 @@ function parityTarget(raw, field, label) {
   if (u.protocol !== "https:") throw new ParityError("invalid_url", 400, label + " must start with https://.", field);
   if (u.username || u.password) throw new ParityError("invalid_url", 400, label + " must not carry a user name or a password.", field);
   if (u.port) throw new ParityError("invalid_url", 400, label + " must use the default https port.", field);
+  // One trailing dot names the same host in absolute form, as the validator reads it (round 19,
+  // K7-P5), so https://turva.dev./tools is checked as https://turva.dev/tools.
+  if (u.hostname.length > 1 && u.hostname.endsWith(".")) u.hostname = u.hostname.slice(0, -1);
   if (!isValidPublicHost(u.hostname.toLowerCase())) throw new ParityError("blocked", 422, label + " must name a public domain. IP addresses and local names are refused.", field);
   u.hash = "";
   return u;
@@ -11789,11 +11846,16 @@ function parityIsSelf(u) {
 // A published page: the home page or a PAGE_MARKDOWN key, as the page, its .md twin or with a
 // trailing slash. The two tool pages are not: a check must never start a check or a fetch.
 function paritySelfPathAllowed(pathname) {
-  if (pathname === PARITY_SCRIPT_PATH) return false;
-  let base = pathname.endsWith(".html.md") ? pathname.slice(0, -8) : pathname.endsWith(".md") ? pathname.slice(0, -3) : pathname;
+  // Letter case is folded first, because another case of a page now answers 301 to the lower-case
+  // path (round 19, P1), and the home page's twin is /index.md or /index.html.md although /index
+  // itself is not served (round 19 review of K8-P4).
+  const path = String(pathname).toLowerCase();
+  if (path === PARITY_SCRIPT_PATH) return false;
+  if (path === "/index.md" || path === "/index.html.md") return true;
+  let base = path.endsWith(".html.md") ? path.slice(0, -8) : path.endsWith(".md") ? path.slice(0, -3) : path;
   if (base.length > 1 && base.endsWith("/")) base = base.slice(0, -1);
   if (base === PARITY_PATH || base === "/llms-txt-validator") return false;
-  if (base === "/" || base === "" || base === "/index") return true;
+  if (base === "/" || base === "") return true;
   return Object.prototype.hasOwnProperty.call(PAGE_MARKDOWN, base);
 }
 
@@ -11897,10 +11959,13 @@ async function parityRunCheck(input, env) {
 
 function parityResponse(asJson, status, report, state, retryAfter) {
   if (asJson) {
-    const headers = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex", "vary": "Accept" });
-    applySecurityHeaders(headers, "default");
+    // A browser-based agent may call the JSON form from another origin (round 19, P2, Erik
+    // 2026-09-23); the answer carries no cookie and no credential, so any origin may read it,
+    // and it is an agent-api resource like the validator's JSON answer.
+    const headers = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex", "vary": "Accept", "access-control-allow-origin": "*" });
+    applySecurityHeaders(headers, "agent-api");
     if (retryAfter) headers.set("retry-after", String(retryAfter));
-    return new Response(mpcRenderJson(report), { status, headers });
+    return new Response(jsonBidiEscape(mpcRenderJson(report)), { status, headers });
   }
   const res = serveParityHtml("https://turva.dev/markdown-parity-check", Object.assign({ report, status }, state || {}));
   if (retryAfter) res.headers.set("retry-after", String(retryAfter));
@@ -11943,14 +12008,14 @@ async function handleParityPost(request, env) {
 function parityFormHtml(state) {
   const v = (state && state.values) || {};
   const report = state && state.report;
-  const err = report && report.summary.result === "error" ? report.summary.error : null;
+  const err = report && report.summary.result === "error" ? stripBidi(report.summary.error) : null;
   const field = err && state.field ? state.field : null;
   const errFor = (f) => (field === f ? `<p class="verr" id="mpc-${f}-err">${escapeHtml(err)}</p>` : "");
   const desc = (f) => (field === f ? ` aria-invalid="true" aria-describedby="mpc-${f}-hint mpc-${f}-err"` : ` aria-describedby="mpc-${f}-hint"`);
   const open = v.markdownUrl || v.selector || v.strict || v.frontMatter === "strip" || field === "markdownUrl" || field === "selector";
   // The addresses come back masked, like everything else a check answers with: a secret in a query
   // string is not repeated in the response, even to the person who sent it.
-  const shown = (s) => (s ? mpcMaskUrl(s) : "");
+  const shown = (s) => (s ? stripBidi(mpcMaskUrl(s)) : "");
   return `<form class="vform pform" id="mpc-form" method="post" action="/markdown-parity-check#result" novalidate>
     <label for="mpc-url">Page URL</label>
     <input type="url" id="mpc-url" name="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://turva.dev/tools" value="${escapeHtml(shown(v.url))}"${desc("url")}>
@@ -11964,7 +12029,7 @@ function parityFormHtml(state) {
       <p class="fine" id="mpc-markdownUrl-hint">For a Markdown version at its own address on the same site.</p>
       ${errFor("markdownUrl")}
       <label for="mpc-selector">CSS selector for the HTML content, optional</label>
-      <input type="text" id="mpc-selector" name="selector" autocomplete="off" spellcheck="false" value="${escapeHtml(v.selector || "")}"${desc("selector")}>
+      <input type="text" id="mpc-selector" name="selector" autocomplete="off" spellcheck="false" value="${escapeHtml(stripBidi(v.selector || ""))}"${desc("selector")}>
       <p class="fine" id="mpc-selector-hint">Without one: main, article or role="main", then body.</p>
       ${errFor("selector")}
       <p class="pcheck"><input type="checkbox" id="mpc-strict" name="strict" value="on"${v.strict ? " checked" : ""}><label for="mpc-strict">Strict: count warnings as failures</label></p>
@@ -11994,11 +12059,11 @@ function parityResultHtml(input, status) {
     if (side.line !== undefined) parts.push("line " + side.line);
     if (side.path) parts.push(side.path);
     if (side.blockIndex !== undefined) parts.push("block " + side.blockIndex);
-    return `<span class="d">${label}: ${escapeHtml(parts.join(", ") || "no location")}${side.excerpt !== undefined ? ` <q>${escapeHtml(side.excerpt)}</q>` : ""}</span>`;
+    return `<span class="d">${label}: ${escapeHtml(parts.join(", ") || "no location")}${side.excerpt !== undefined ? ` <q>${escapeHtml(stripBidi(side.excerpt))}</q>` : ""}</span>`;
   };
   let out = `<section class="sec" id="result" aria-labelledby="result-h"><h2 id="result-h">Result: ${word[s.result] || "Error"}</h2>`;
   if (s.result === "error") {
-    out += `<p class="verr">${escapeHtml(s.error || "The comparison could not be completed.")}</p>`;
+    out += `<p class="verr">${escapeHtml(stripBidi(s.error || "The comparison could not be completed."))}</p>`;
   } else {
     out += `<p class="result-sum"><span><b>Errors</b> ${s.errors}</span><span><b>Warnings</b> ${s.warnings}</span><span><b>Information</b> ${s.infos}</span><span><b>Strict</b> ${s.strict ? "on" : "off"}</span></p>`;
   }
@@ -12018,12 +12083,12 @@ function parityResultHtml(input, status) {
   const shown = r.findings.slice(0, PARITY_FINDINGS_SHOWN);
   if (r.findings.length > shown.length) out += `<p class="verr">Showing the first ${shown.length} of ${r.findings.length} findings. The JSON report below lists all of them.</p>`;
   if (shown.length) {
-    out += `<h3>Findings</h3>\n    ` + shown.map((f) => `<div class="chk ${cls[f.severity] || "info"}"><span class="s">${sev[f.severity] || escapeHtml(f.severity)}</span><span class="l">${escapeHtml(f.code)}, ${dir[f.direction] || escapeHtml(f.direction)}: ${escapeHtml(f.message)}</span>${where("HTML", f.html)}${where("Markdown", f.markdown)}${f.before !== undefined || f.after !== undefined ? `<span class="d">Before: ${escapeHtml(f.before === undefined ? "none" : f.before)}. After: ${escapeHtml(f.after === undefined ? "none" : f.after)}.</span>` : ""}</div>`).join("\n    ");
+    out += `<h3>Findings</h3>\n    ` + shown.map((f) => `<div class="chk ${cls[f.severity] || "info"}"><span class="s">${sev[f.severity] || escapeHtml(f.severity)}</span><span class="l">${escapeHtml(f.code)}, ${dir[f.direction] || escapeHtml(f.direction)}: ${escapeHtml(stripBidi(f.message))}</span>${where("HTML", f.html)}${where("Markdown", f.markdown)}${f.before !== undefined || f.after !== undefined ? `<span class="d">Before: ${escapeHtml(stripBidi(f.before === undefined ? "none" : f.before))}. After: ${escapeHtml(stripBidi(f.after === undefined ? "none" : f.after))}.</span>` : ""}</div>`).join("\n    ");
   } else if (s.result !== "error") {
     out += `<p>No findings.</p>`;
   }
   out += `<h3>Limits of this result</h3><ul>${r.limitations.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}</ul>`;
-  const json = mpcRenderJson(input);
+  const json = jsonBidiEscape(mpcRenderJson(input));
   if (json.length <= PARITY_JSON_EMBED_MAX) {
     out += `<h3>JSON report</h3>
     <p class="fine"><button type="button" class="copy-btn" id="mpc-copy" hidden>Copy JSON</button><button type="button" class="copy-btn" id="mpc-save" hidden>Save JSON</button></p>
@@ -12577,8 +12642,12 @@ var worker_default = {
             // /llms-txt-validator is one path with two policies: the JSON branch is an agent
             // API that sets CORS deliberately, the HTML branch is a page. A path regex cannot
             // tell them apart, so the accepted request decides, which is what this comment asks.
+            // /markdown-parity-check is the same, and its JSON branch is a POST that asks for
+            // JSON or sends a JSON body, the rule handleParityPost uses; a form POST gets a page.
             const rlAgent = AGENT_API_PATH_RE.test(rlPath)
-              || (rlPath === "/llms-txt-validator" && wantsJson(request));
+              || (rlPath === "/llms-txt-validator" && wantsJson(request))
+              || (rlPath === "/markdown-parity-check" && request.method === "POST"
+                && (wantsJson(request) || (request.headers.get("content-type") || "").toLowerCase().startsWith("application/json")));
             applySecurityHeaders(rlHeaders, rlAgent ? "agent-api" : "default");
             if (rlAgent) rlHeaders.set("access-control-allow-origin", "*");
             rlHeaders.set("Retry-After", "60");
@@ -12591,7 +12660,7 @@ var worker_default = {
           console.error("Rate limiter error (failing open):", rlErr && rlErr.stack ? rlErr.stack : String(rlErr));
         }
       }
-      const response = await handleRequest(workingRequest, env);
+      const response = await withValidator(workingRequest, await handleRequest(workingRequest, env));
       return isHead ? stripBody(response) : response;
     } catch (err) {
       console.error("Worker error:", err && err.stack ? err.stack : String(err));
@@ -12603,9 +12672,18 @@ var worker_default = {
   },
   async scheduled(event, env, ctx) {
     try {
-      const urlList = Array.from(CANONICAL_PATHS).map((p) =>
+      // Only the pages whose sitemap lastmod falls in the last eight days go out (round 19,
+      // K1-P5). IndexNow is a change notice, and tools/indexnow.mjs already submits every
+      // canonical URL on each ship, so resubmitting unchanged pages every week told the engines
+      // nothing new.
+      const cutoff = new Date((event && event.scheduledTime ? event.scheduledTime : Date.now()) - 8 * 86400000).toISOString().slice(0, 10);
+      const urlList = Array.from(CANONICAL_PATHS).filter((p) => sitemapLastmodOf(p) >= cutoff).map((p) =>
         p === "/" ? "https://turva.dev/" : "https://turva.dev" + p
       );
+      if (!urlList.length) {
+        console.log("IndexNow: no page changed since " + cutoff + ", nothing submitted");
+        return;
+      }
       const body = JSON.stringify({
         host: "turva.dev",
         key: INDEXNOW_KEY,
@@ -12673,7 +12751,7 @@ async function handleRequest(request, env) {
   // agent-api JSON and text surface now answers 204. The fediverse aliases stay out because
   // they redirect to social.turva.dev, and /v1/message:send keeps its own POST-only preflight.
   const fediPath = pathLower === "/.well-known/host-meta" || pathLower === "/.well-known/webfinger" || pathLower === "/.well-known/nodeinfo";
-  const preflightPath = pathLower === "/x402" || pathLower === "/x402/" || pathLower === "/api" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token" || pathLower === "/openapi.json" || pathLower === "/llms.txt" || pathLower === "/llms-full.txt" || pathLower === "/auth.md" || pathLower === "/robots.txt" || pathLower === "/sitemap.xml" || (pathLower.startsWith("/.well-known/") && !fediPath);
+  const preflightPath = pathLower === "/x402" || pathLower === "/x402/" || pathLower === "/api" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token" || pathLower === "/openapi.json" || pathLower === "/llms.txt" || pathLower === "/llms-full.txt" || pathLower === "/auth.md" || pathLower === "/robots.txt" || pathLower === "/sitemap.xml" || pathLower === "/markdown-parity-check" || (pathLower.startsWith("/.well-known/") && !fediPath);
   // METHOD GATE, round 16 (S1-1 to S1-4, C1-2, C5-20, C7-2, measured 2026-09-03). GET and
   // OPTIONS are allowed everywhere; HEAD arrives here as GET (worker_default). POST is
   // allowed only where a handler or the OpenAPI document knows it: the A2A transport, the
@@ -12750,6 +12828,23 @@ async function handleRequest(request, env) {
 
   if (LEGACY_REDIRECTS[pathname]) {
     return redirectTo("https://turva.dev" + LEGACY_REDIRECTS[pathname] + url.search, 301, pathLower);
+  }
+
+  // Round 19, P1 (Erik 2026-09-23): a page or its markdown twin asked for in another letter case
+  // answers 301 to the lower-case path, as every agent surface here already answers any case.
+  // Only a path that lower-cases to a served page moves, so any other path keeps its honest 404,
+  // and a brief keeps its exact address, because its id is lower case by construction.
+  if (pathname !== pathLower && !pathLower.startsWith("/brief/")) {
+    const lowerPath = pathLower.length > 1 && pathLower.endsWith("/") ? pathLower.slice(0, -1) : pathLower;
+    const twinBase = lowerPath.endsWith(".html.md") ? lowerPath.slice(0, -8) : lowerPath.endsWith(".md") ? lowerPath.slice(0, -3) : null;
+    const twin = lowerPath === "/index.md" || lowerPath === "/index.html.md" || (twinBase !== null && !!PAGE_MARKDOWN[twinBase]);
+    if (PAGE_MARKDOWN[lowerPath] || twin) {
+      // A browser agent's cross-origin fetch checks every hop, so a twin's redirect carries the
+      // same agent-api headers and origin grant as the twin itself (round 19 review).
+      const moved = redirectTo("https://turva.dev" + lowerPath + url.search, 301, pathLower, twin ? "agent-api" : null);
+      if (twin) moved.headers.set("access-control-allow-origin", "*");
+      return moved;
+    }
   }
 
   // A trailing slash is how crawlers, agents and hand-written links commonly
@@ -12990,7 +13085,7 @@ async function handleRequest(request, env) {
     return serveStatic(UCP_PROFILE, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/agent-skills/index.json") {
-    const body = await buildSkillsIndex();
+    const body = await getSkillsIndex();
     return serveStatic(body, "application/json; charset=utf-8", "agent-api");
   }
   const skillMatch = pathLower.match(/^\/\.well-known\/agent-skills\/([a-z0-9-]+)\/skill\.md$/);

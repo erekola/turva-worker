@@ -42,13 +42,15 @@ const timedFetch = (input, init = {}) => (
 // about 100 requests to turva.dev within five seconds, so a second run in the same minute, or
 // any other request from the same address, turned the run's last checks red against the
 // site's own limiter: seven FAILs in the ship of 2026-09-23, none of them about the site.
-// A 429 from one of the two hosts with a Retry-After of at most RATE_WAIT_MAX_S is waited out
+// A 429 from one of these hosts with a Retry-After of at most RATE_WAIT_MAX_S is waited out
 // and asked once more. A second 429 stays the answer, so a limiter that keeps refusing still
 // fails its check. A call with its own abort signal is not retried, because the wait could
 // outlast that signal. Every wait is printed: a run that changes its own timing silently
 // hides the change.
 const RATE_WAIT_MAX_S = 65;
-const OWN_HOSTS = new Set(['turva.dev', 'mcp.turva.dev']);
+// mta-sts.turva.dev joined the set in round 19 (gotchas.md 2026-09-23 (jatko 10)): the
+// live MTA-STS check fetches it too, and it answers from the same site-wide limiter.
+const OWN_HOSTS = new Set(['turva.dev', 'mcp.turva.dev', 'mta-sts.turva.dev']);
 let rateWaits = 0;
 const fetch = async (input, init = {}) => {
   const r = await timedFetch(input, init);
@@ -709,6 +711,10 @@ console.log('\nBundled implementation add-ons (Tek-317)');
     check(got.price === x.price, `HOME_JSON ${x.name} priced ${x.price} (saw ${JSON.stringify(got.price)})`);
     check(got.soldSeparately === false, `HOME_JSON ${x.name} says it is not sold separately (saw ${JSON.stringify(got.soldSeparately)})`);
     check(typeof got.requires === 'string' && got.requires.trim(), `HOME_JSON ${x.name} names what it requires (saw ${JSON.stringify(got.requires)})`);
+    // G2-3 (round 19): scope was declared and type-checked in facts.json but never
+    // compared to what HOME_JSON actually states, so the two could read differently
+    // with no red check anywhere.
+    check(got.scope === x.scope, `HOME_JSON ${x.name} scope matches facts.json (facts: ${JSON.stringify(x.scope)}, saw ${JSON.stringify(got.scope)})`);
   }
 }
 
@@ -850,7 +856,7 @@ const twConverted = {
   // the rendered-order check (5b) maps the display text back to the twin heading.
   '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: [], prose: [],
          h2: { 'Questions before you start': 'Frequently asked' } },
-  '/blog':    { fn: 'serveBlogHtml',    mdOnly: [], hand: ['All posts'] }, // All posts is the dated list, rendered by blogPostLinks() from META_BY_PATH (2026-09-03)
+  '/blog':    { fn: 'serveBlogHtml',    mdOnly: [], hand: ['All posts'], h2: { 'Browse all articles': 'All posts' } }, // All posts is the dated list, rendered by blogPostLinks() from META_BY_PATH (2026-09-03); the rendered heading reads "Browse all articles" (round 19, G2-1/G2-2), so h2 is what still lets the hand heading be verified present
   '/llms-txt-validator': { fn: 'serveLlmsValidatorHtml', mdOnly: [], hand: ['How to use it'], prose: ['The two v2 discovery checks are informational'] }, // the result note repeats the twin's own sentence under the check list (Tek-358)
   '/markdown-parity-check': { fn: 'serveParityHtml', mdOnly: [], hand: [] }, // the form and the result come from parityFormHtml and parityResultHtml; every twin section renders through mdOpenSec (v3.154.0)
   '/services': { fn: 'serveServicesHtml', mdOnly: [], hand: [], h2: { 'Before we start': 'Frequently asked' } },
@@ -882,8 +888,21 @@ for (const [path, cfg] of Object.entries(twConverted)) {
   if (!body.includes(`"${path}"`)) probs.push('function never references its twin path');
   const heads = [...md.matchAll(/^## (.+)$/gm)].map((h) => h[1].trim());
   const twcSkip = [...cfg.mdOnly, ...(cfg.hand || [])];
+  // G2-1/G2-2 (round 19): mdOnly and hand used to mean the same thing here, skip this
+  // heading forever, so a hand-rendered section (real HTML, not an md*() call) could
+  // vanish from the page with nothing red. mdOnly still means what it says: the twin
+  // may carry a heading the HTML never shows. hand means the opposite: the page renders
+  // it by hand, sometimes under a different literal string than the twin's own words
+  // (cfg.h2 names that string when it differs, as /blog's "Browse all articles" does for
+  // the twin's "All posts"), and that string must still be found in the source.
+  const twcH2Rev = Object.fromEntries(Object.entries(cfg.h2 || {}).map(([shown, twin]) => [twin, shown]));
   for (const h of heads) {
-    if (!body.includes(`"${h}"`) && !twcSkip.includes(h)) probs.push('twin section not rendered: ' + h);
+    if (cfg.mdOnly.includes(h)) continue;
+    if ((cfg.hand || []).includes(h)) {
+      if (!body.includes(twcH2Rev[h] || h)) probs.push('hand-rendered heading not found in source: ' + h);
+      continue;
+    }
+    if (!body.includes(`"${h}"`)) probs.push('twin section not rendered: ' + h);
   }
   for (const m of body.matchAll(/\bmd\w+\("([^"]+)", "([^"]+)"\)/g)) {
     if (m[1] === path && !heads.includes(m[2])) probs.push('references a section the twin lacks: ' + m[2]);
@@ -1307,9 +1326,11 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   }
 
   console.log('\nBlog index, three homes (B1-19)');
-  // LLMS_TXT, the /blog twin and META_BY_PATH each carry the post list. The twin gate
-  // compares "## " headings and /blog has none, so it passes on an empty comparison and
-  // the reader never sees the twin list anyway (mdLead drops it).
+  // LLMS_TXT, the /blog twin and META_BY_PATH each carry the post list. The twin's
+  // "## " headings are not empty (it carries two today, Start with the research and
+  // All posts, round 19 G2-P4), so this is not a comparison against nothing; it is
+  // still needed because it checks the DATED list, which the heading comparison above
+  // does not read.
   {
     const llms = region('var LLMS_TXT', '\nvar ');
     // The .md suffix arrived with llms.txt v2 (2026-08-24): the file's links point at the
@@ -1411,13 +1432,18 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       const mpcEntry = pathToFileURL(createRequire(join(ROOT, 'turva-worker', 'package.json')).resolve('markdown-parity-check')).href;
       const workerText = src.worker.text.replace('from "markdown-parity-check";', 'from "' + mpcEntry + '";');
       const rendered = (await import('data:text/javascript;base64,' + Buffer.from(workerText).toString('base64'))).default;
+      let homePriceHtml = null, servicesPriceHtml = null;
       for (const [path, cfg] of Object.entries(twConverted)) {
         const md = twMdTwin(path);
         if (!md) continue;
         const res = await rendered.fetch(new Request('https://turva.dev' + path, { headers: { accept: 'text/html' } }), {}, { waitUntil() {} });
         const html = await res.text();
         const heads = [...md.matchAll(/^## (.+)$/gm)].map((h) => h[1].trim());
-        const skip = [...cfg.mdOnly, ...(cfg.hand || [])];
+        // G2-1 (round 19): only mdOnly means "may be absent from the served page" now;
+        // a hand heading is required here exactly like any other, because this block
+        // already reads the actual rendered bytes and has no reason to excuse a heading
+        // it can see directly.
+        const skip = cfg.mdOnly;
         const h2s = [...html.matchAll(/<h2(?:\s[^>]*)?>([\s\S]*?)<\/h2>/g)].map((m) => twHtml(m[1]));
         const seenR = [];
         for (const t of h2s) { const h = (cfg.h2 || {})[t] || H2_ALIAS[t] || t; if (heads.includes(h) && !seenR.includes(h)) seenR.push(h); }
@@ -1426,7 +1452,31 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
         const badR = idxR.findIndex((v, i) => i > 0 && v < idxR[i - 1]);
         check(res.status === 200 && seenR.length > 0 && missing.length === 0 && badR === -1,
           `${path}: rendered h2 order follows the twin (${seenR.length} of ${heads.length - skip.length} headings)${missing.length ? ' :: not rendered: ' + missing.join(', ') : ''}${badR === -1 ? '' : ' :: ' + seenR[badR] + ' is rendered before ' + seenR[badR - 1]}`);
+        // K5-P3 (round 19): reuse these two renders (home and /services already came
+        // through this loop) to check their price cards against facts.json instead of
+        // rendering the worker a second time.
+        if (path === '/') homePriceHtml = html;
+        if (path === '/services') servicesPriceHtml = html;
       }
+      // K5-P3 (round 19): the home page's two starting-point offers render as
+      // .offer-price spans, but /services states each priced service's rate as bold
+      // prose inside an open section (mdOpenSec, Tek-358) with no dedicated price
+      // element, so /services is checked by substring: every facts.json price must be
+      // stated in EUR somewhere on the page. Neither side is cross-checked against
+      // facts.json anywhere else, so a price edited in one place and forgotten in the
+      // other would still render, and pass, with the wrong number.
+      const priceNum = (s) => Number(s.replace(/&#8364;|\u20ac/g, '').replace(/,/g, ''));
+      if (homePriceHtml) {
+        const homePrices = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => priceNum(m[1]));
+        setSame('home page offer-price spans vs facts.json (shopify, audit)', homePrices, ['shopify', 'audit'].map((k) => facts.prices[k]));
+      } else bad('K5-P3: the home page was not rendered, cannot check its prices');
+      if (servicesPriceHtml) {
+        const wantEuro = (n) => '\u20ac' + n.toLocaleString('en-US');
+        const svcPriced = Object.entries(facts.prices).filter(([k]) => k !== 'currency');
+        const svcMissing = svcPriced.filter(([, v]) => !servicesPriceHtml.includes(wantEuro(v)));
+        check(svcPriced.length > 0 && svcMissing.length === 0,
+          `/services states every facts.json price in EUR${svcMissing.length ? ' :: missing ' + svcMissing.map(([k, v]) => k + '=' + wantEuro(v)).join(', ') : ' (' + svcPriced.map(([k]) => k).join(', ') + ')'}`);
+      } else bad('K5-P3: /services was not rendered, cannot check its prices');
     } catch (e) {
       bad('rendered h2 order: the worker could not be imported or rendered :: ' + (e && e.message));
     }
@@ -1478,6 +1528,47 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       `every dateModified assignment reads the modified field first (saw ${dm.length}: [${dm.join(' | ')}])`);
   }
 
+  console.log('\nSitemap / CANONICAL_PATHS / META_BY_PATH path sets (K3-P1)');
+  // K3-P1 (round 19): three hand-maintained lists describe the same HTML page set, and
+  // until now nothing compared them, so a new or removed page could land in one and be
+  // forgotten in the other two without a red check anywhere.
+  {
+    const sitemapPaths = [...region('var SITEMAP_ENTRIES = [', '\n];').matchAll(/[[]"([^"]+)"/g)].map((m) => m[1]);
+    const canonicalPaths = [...region('var CANONICAL_PATHS = new Set([', ']);').matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+    const metaPaths = [...region('var META_BY_PATH = {', '\nvar PRICE_VALID_UNTIL').matchAll(/\n  "([^"]+)": [{]/g)].map((m) => m[1]);
+    // /auth.md is served as text/markdown, not an HTML page (K3, round 19): it carries no
+    // canonical link and no OG meta by design, so it is named here instead of silently
+    // excluded.
+    const NOT_HTML = ['/auth.md'];
+    const htmlSitemapPaths = sitemapPaths.filter((p) => !NOT_HTML.includes(p));
+    check(sitemapPaths.length > 0 && canonicalPaths.length > 0 && metaPaths.length > 0,
+      `sitemap (${sitemapPaths.length}), CANONICAL_PATHS (${canonicalPaths.length}) and META_BY_PATH (${metaPaths.length}) all parsed`);
+    setSame('sitemap HTML paths (excludes /auth.md) vs CANONICAL_PATHS', htmlSitemapPaths, canonicalPaths);
+    setSame('sitemap HTML paths (excludes /auth.md) vs META_BY_PATH keys', htmlSitemapPaths, metaPaths);
+    setSame('CANONICAL_PATHS vs META_BY_PATH keys', canonicalPaths, metaPaths);
+  }
+
+  console.log('\nCorrected marker starts its own line, every PAGE_MARKDOWN twin (C4-P1)');
+  // C4-1 (round 19): B1-11 above reads "Corrected YYYY-MM-DD" only at a line start (^,
+  // multiline), by design, because a mid-sentence date is prose and not a machine-readable
+  // marker. That means a marker landing mid-sentence is invisible to B1-11 instead of
+  // caught by it, which is exactly what happened to one post until v3.164.0. This block
+  // watches for that failure mode directly, across every twin, not only the blog's.
+  {
+    const pmRegion = region('var PAGE_MARKDOWN = {', '\nvar PRIMARY_PATHS');
+    const pmAllKeys = [...pmRegion.matchAll(/\n  "(\/[a-z0-9/-]*)": `/g)].map((m) => m[1]);
+    const badCorrected = [];
+    for (const p of pmAllKeys) {
+      const md = (twMdTwin(p) || '').replace(/\r\n/g, '\n');
+      for (const m of md.matchAll(/Corrected [0-9]{4}-[0-9]{2}-[0-9]{2}/g)) {
+        const atLineStart = m.index === 0 || md[m.index - 1] === '\n';
+        if (!atLineStart) badCorrected.push(`${p}: "${m[0]}" is not at the start of its line`);
+      }
+    }
+    check(pmAllKeys.length > 0 && badCorrected.length === 0,
+      `every "Corrected YYYY-MM-DD" marker in PAGE_MARKDOWN starts its own line, the only place B1-11 reads it (${pmAllKeys.length} pages read)${badCorrected.length ? ' :: ' + badCorrected.join(' | ') : ''}`);
+  }
+
   console.log('\nx402 amounts, two constants (B1-20)');
   // The same three USDC amounts live in X402_MANIFEST and X402_ROUTES with nothing
   // comparing them, and they encode a EUR/USDC rate that has no source and no
@@ -1514,6 +1605,52 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     check(/Sessions are stateless/.test(acp), 'a created or retrieved checkout session states that sessions are stateless');
     check(/Sessions are stateless/.test(cancel), 'a canceled checkout session states that sessions are stateless');
     check(/Sessions are stateless/.test(region('code": "not_found", "message": "Unknown checkout session id', '\n')), 'the 404 body still explains statelessness');
+  }
+
+  console.log('\nAgent-body and parity limits declared with real values (G2-4, G2-P1)');
+  // G2-4 (round 19): AGENT_JSON_MAX_BYTES, A2A_MAX_PARTS and the PARITY_MAX_* limits are
+  // exactly the surface the previous day's fixes (F-010, F-011) touched, and grepping this
+  // whole file for their names found zero matches: nothing would notice a future edit
+  // quietly loosening or dropping one of them.
+  {
+    const constInt = (name) => {
+      const m = w.match(new RegExp('var ' + name + ' = ([0-9]+);'));
+      return m ? Number(m[1]) : null;
+    };
+    const agentJsonMax = constInt('AGENT_JSON_MAX_BYTES');
+    const a2aMaxParts = constInt('A2A_MAX_PARTS');
+    const parityMaxRequestBytes = constInt('PARITY_MAX_REQUEST_BYTES');
+    const parityMaxConcurrent = constInt('PARITY_MAX_CONCURRENT');
+    check(agentJsonMax === 16384, `AGENT_JSON_MAX_BYTES == 16384 (saw ${agentJsonMax})`);
+    check(a2aMaxParts === 32, `A2A_MAX_PARTS == 32 (saw ${a2aMaxParts})`);
+    check(Number.isInteger(parityMaxRequestBytes) && parityMaxRequestBytes > 0 && parityMaxRequestBytes <= 1048576,
+      `PARITY_MAX_REQUEST_BYTES is a positive integer at most 1 MB (saw ${parityMaxRequestBytes})`);
+    check(parityMaxConcurrent === 4, `PARITY_MAX_CONCURRENT == 4 (saw ${parityMaxConcurrent})`);
+
+    // F-010 (round 19, K7-2): every redirect detail fetchLlmsTxt can build is masked or
+    // empty, in both the refused-redirect branches and the one accepted-redirect detail
+    // v3.164.0 added.
+    const fetchLlmsTxtSrc = region('async function fetchLlmsTxt', '\nfunction collectLinks');
+    const locFields = (fetchLlmsTxtSrc.match(/location: /g) || []).length;
+    const maskedFields = (fetchLlmsTxtSrc.match(/location: cut[(]maskLocation[(]/g) || []).length;
+    const emptyFields = (fetchLlmsTxtSrc.match(/location: ""/g) || []).length;
+    check(locFields > 0 && maskedFields + emptyFields === locFields,
+      `every redirect detail in fetchLlmsTxt is masked or empty (${maskedFields} masked, ${emptyFields} empty, ${locFields} total)`);
+
+    const validateLlmsTxtSrc = region('function validateLlmsTxt', '\nfunction startsTag');
+    check(validateLlmsTxtSrc.includes('f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + " to " + maskLocation(f.finalUrl)'),
+      'validateLlmsTxt masks both sides of an accepted redirect (redirectedFrom and finalUrl) with maskLocation');
+
+    // V6-U1 (round 19): a validator check's detail can quote a third-party llms.txt
+    // verbatim, so a bidirectional control character in that quoted text must not reach
+    // the answer.
+    check(w.includes('result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripBidi(c.detail) }) : c));'),
+      'every validator check detail is passed through stripBidi before it reaches the JSON or HTML answer');
+
+    // K1-1 (round 19): the bare Response.redirect() carries only Location, so a redirect
+    // built with it skips applySecurityHeaders; redirectTo() is the one replacement.
+    check(!w.includes('return Response.redirect('),
+      'handleRequest builds no redirect with the bare Response.redirect() (every redirect goes through redirectTo(), which carries the security headers)');
   }
 
   check(anchorFails.length === 0,
