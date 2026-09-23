@@ -1214,3 +1214,108 @@ test("many comments in the head are scanned in linear time", () => {
   const took = Date.now() - started;
   assert.ok(took < 2000, "took " + took + " ms");
 });
+
+// Outside review of the public repos, 2026-09-22 (F05). Both anonymous JSON routes read the whole
+// body before this, so a request of about 1 MB was parsed and answered 200 or 201. The cap is
+// counted from the stream, and the stream case below sends no Content-Length at all.
+const streamOf = (text, chunk = 4096) => {
+  const bytes = new TextEncoder().encode(text);
+  let o = 0;
+  return new ReadableStream({
+    pull(c) {
+      if (o >= bytes.length) { c.close(); return; }
+      c.enqueue(bytes.slice(o, o + chunk));
+      o += chunk;
+    }
+  });
+};
+const postBody = (path, body, extraEnv) => worker.fetch(new Request("https://turva.dev" + path, typeof body === "string"
+  ? { method: "POST", headers: { "content-type": "application/json" }, body }
+  : { method: "POST", headers: { "content-type": "application/json" }, body, duplex: "half" }), extraEnv || env, {});
+
+test("F05: A2A and ACP answer 413 to a body over 16 KB, with and without Content-Length", async () => {
+  const bodies = {
+    "/v1/message:send": (n) => JSON.stringify({ message: { parts: [{ kind: "text", text: "x".repeat(n) }] } }),
+    "/api/acp/checkout_sessions": (n) => JSON.stringify({ items: [{ id: "audit" }], padding: "x".repeat(n) })
+  };
+  for (const [path, make] of Object.entries(bodies)) {
+    const huge = make(1024 * 1024);
+    for (const body of [huge, streamOf(huge)]) {
+      const r = await postBody(path, body);
+      assert.equal(r.status, 413, path + (typeof body === "string" ? " with a length" : " as a stream"));
+      assert.match(r.headers.get("content-type"), /application\/json/);
+      const j = await json(r);
+      assert.ok(JSON.stringify(j).includes("16384"), path + " names the limit");
+    }
+    // The boundary: a body of exactly 16384 bytes is read, one byte more is not.
+    const pad = (target) => { const base = make(0).length; return make(target - base); };
+    assert.equal(pad(16384).length, 16384);
+    const at = await postBody(path, streamOf(pad(16384), 1000));
+    assert.equal(at.status, path === "/v1/message:send" ? 200 : 201, path + " at the limit");
+    const over = await postBody(path, pad(16385));
+    assert.equal(over.status, 413, path + " one byte over");
+  }
+});
+
+test("F05: the rate limiter still answers first, and a malformed body is still a 400", async () => {
+  const limited = { RATE_LIMITER: { limit: async () => ({ success: false }) } };
+  const huge = JSON.stringify({ message: { parts: [{ text: "x".repeat(1024 * 1024) }] } });
+  assert.equal((await postBody("/v1/message:send", huge, limited)).status, 429);
+  assert.equal((await postBody("/api/acp/checkout_sessions", huge, limited)).status, 429);
+  assert.equal((await postBody("/v1/message:send", "{")).status, 400);
+  assert.equal((await postBody("/api/acp/checkout_sessions", "{")).status, 400);
+  assert.equal((await postBody("/api/acp/checkout_sessions", '{"items":[{"id":"audit"}]}')).status, 201);
+});
+
+test("F05: A2A takes at most 32 parts", async () => {
+  const parts = (n) => JSON.stringify({ message: { parts: Array.from({ length: n }, () => ({ kind: "text", text: "services" })) } });
+  assert.equal((await postBody("/v1/message:send", parts(32))).status, 200);
+  const r = await postBody("/v1/message:send", parts(33));
+  assert.equal(r.status, 400);
+  assert.ok((await json(r)).error.message.includes("32 parts"));
+});
+
+// Outside review, 2026-09-22 (F04). A refused redirect kept the target's user name and password in
+// the check's detail, and the form repeated a typed password. Every value here is synthetic, and
+// fetch is replaced in memory, so no request leaves the test.
+test("F04: the hosted validator masks a refused redirect target and a typed secret", async () => {
+  const SECRET = "SYNTHETICPASSWORDNOTREAL";
+  const QSECRET = "SYNTHETICQUERYNOTREAL";
+  const orig = globalThis.fetch;
+  const asked = [];
+  globalThis.fetch = async (u) => {
+    asked.push(String(u));
+    return new Response(null, { status: 302, headers: { location: "https://user:" + SECRET + "@example.com/llms.txt?token=" + QSECRET + "#frag" } });
+  };
+  try {
+    const r = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), env, {});
+    const text = await r.text();
+    assert.equal(r.status, 200);
+    const detail = JSON.parse(text).checks[0].detail;
+    assert.ok(detail.includes("unsupported target (https://example.com/llms.txt?token=***)"), detail);
+    assert.ok(!text.includes(SECRET) && !text.includes(QSECRET) && !text.includes("frag"), "JSON answer");
+    const html = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com"), env, {})).text();
+    assert.ok(html.includes("unsupported target"), "the HTML answer shows the refusal");
+    assert.ok(!html.includes(SECRET) && !html.includes(QSECRET), "HTML answer");
+    assert.ok(asked.every((u) => !u.includes(SECRET)), "the credential target was never requested");
+    const echo = (page) => (/id="vurl" name="url"[^>]*value="([^"]*)"/.exec(page) || [])[1];
+    const typedCases = [
+      ["https://user:" + SECRET + "@example.com/", ""],
+      ["user:" + SECRET + "@example.com", ""],
+      ["example.com/?k=" + QSECRET, "example.com"],
+      // Found by the independent review of the first version: an @ past the 300 character cut, and a
+      // second scheme that makes the parser read "https" as the host and put the secret in the path.
+      ["https://user:" + SECRET + "S".repeat(300) + "@example.com/", ""],
+      ["https:/user:" + SECRET + "@example.com/path", "https"]
+    ];
+    for (const [typed, shown] of typedCases) {
+      const page = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(typed)), env, {})).text();
+      assert.ok(!page.includes(SECRET) && !page.includes(QSECRET), typed.slice(0, 40));
+      assert.equal(echo(page), shown, typed.slice(0, 40));
+    }
+  } finally {
+    globalThis.fetch = orig;
+  }
+  const plain = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent("not a domain")), env, {})).text();
+  assert.ok(plain.includes('value="not a domain"'), "an entry without @, ? or # is repeated as typed");
+});

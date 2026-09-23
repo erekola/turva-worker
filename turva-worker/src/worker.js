@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.163.0 - the repairs of an outside review of the public repos (2026-09-22): the hosted llms.txt validator masks a refused redirect target with maskLocation() before the 120 character cut, so a user name, a password, a query value or a fragment in a Location header no longer reaches the check's detail, the JSON answer or the page, and for a typed entry with an @, a ? or a # the form shows only the host it names; the A2A message:send and ACP checkout routes read their JSON body through a 16384 byte cap counted from the stream and answer 413 above it, with or without Content-Length, and A2A takes at most 32 parts. The package turva-llms-txt-validator 0.3.5 mirrors the masking, and the hosted parity check runs markdown-parity-check 0.2.10, which masks user names and passwords in URLs and keeps numbers from masked URL parts out of findings.
 // turva.dev worker v3.162.0 - the hosted parity check runs package release 0.2.9 (2026-09-21): the pinned dependency moves 0.2.6 to 0.2.9, so a report's toolVersion names the release npx installs. Measured across eight pages and 184 findings before the raise was taken: with toolVersion and generatedAt set aside, every report is identical under both versions, so the comparison core, the severities, the exit codes and the JSON schema keys are the same, and the runtime tree stays at 79 packages. Same shape as v3.157.0 and v3.158.0. turva-mcp 1.4.1 to 1.4.2 ships in the same release, agents 0.22.0 to 0.23.0 and zod 4.6.2 to 4.6.5, and the MCP server card is re-signed for it.
 // turva.dev worker v3.161.0 - the blog post Five rounds before the agent signed anything (2026-09-20): the post records the two hashes an owner of Mandate Desk approves, the three attempts that stopped in the preparation parser before any signature, the six writes and four controls of the live Sepolia run of 15 September 2026, why the first evidence package was exported as incomplete and what one run on a test network does not establish; it joins /blog, META_BY_PATH, CANONICAL_PATHS, GUIDE_PAGE_FAQ, the sitemap and llms.txt (re-sign), and SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.160.0 - the x402 payTo wallet moves to a new Base address (2026-09-20, Erik): X402_PAY_TO is the only definition of it, so the manifest at /.well-known/x402, the challenge at /x402 and every 402 challenge on /api and the three /api/agent/* routes now name the new address. Nothing else about the payment posture changes: the amounts, the network eip155:8453, the USDC asset and the quote-on-request settlement stay as they were, and no signed surface changed.
@@ -5998,7 +5999,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.162.0",
+    "version": "3.163.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6072,7 +6073,7 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/api-catalog": { "get": { "summary": "API catalog", "operationId": "getApiCatalog", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/ard.json": { "get": { "summary": "ARD manifest (v0.91)", "operationId": "getArdManifest", "responses": { "200": { "description": "Agentic Resource Discovery manifest, same entries as ai-catalog.json with the v0.91 media types", "content": { "application/json": {} } } } } },
     "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok" } } } },
-    "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "responses": { "200": { "description": "ok" }, "400": { "description": "invalid params" }, "405": { "description": "POST only" } } } },
+    "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "responses": { "200": { "description": "ok" }, "400": { "description": "invalid params, or more than 32 parts" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
     "/.well-known/agent-card.json": { "get": { "summary": "A2A Agent Card", "operationId": "getAgentCard", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/security.txt": { "get": { "summary": "Security", "operationId": "getSecurity", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/oauth-authorization-server": { "get": { "summary": "OAuth Authorization Server Metadata", "operationId": "getOauthDiscovery", "responses": { "200": { "description": "ok" } } } },
@@ -6083,7 +6084,7 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok" } } } },
     "/api/v1": { "get": { "summary": "Agent endpoint index", "operationId": "getApiIndex", "description": "Free JSON index of every agent surface this site serves. No payment, no authentication.", "responses": { "200": { "description": "ok" } } } },
-    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id }] } with id one of audit, advisory, implementation, shopify. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session" }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, or an unknown item id" }, "405": { "description": "POST only" } } } },
+    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id }] } with id one of audit, advisory, implementation, shopify. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session" }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, or an unknown item id" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
     "/api/acp/checkout_sessions/{session_id}": { "get": { "summary": "Retrieve an ACP checkout session", "operationId": "acpGetCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "session" }, "404": { "description": "unknown session id" }, "405": { "description": "GET only" } } } },
     "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Always answers intervention_required: scope is agreed in writing before payment, no API completes it.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "intervention_required" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } },
     "/api/acp/checkout_sessions/{session_id}/cancel": { "post": { "summary": "Cancel an ACP checkout session", "operationId": "acpCancelCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "canceled" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } }
@@ -6266,7 +6267,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.162.0",
+  "version": "3.163.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7873,15 +7874,42 @@ function a2aError(code, message, data, status, allow) {
   return a2aJson({ error: err }, status, allow);
 }
 
+// The two anonymous JSON routes read their body through this cap before JSON.parse. request.json()
+// read the whole body whatever its size, and an outside review on 2026-09-22 had an A2A request of
+// 1 048 611 bytes answered 200 and an ACP request of 1 048 615 bytes answered 201. The bytes are
+// counted from the stream, so a request with no Content-Length, or a false one, stops at the same
+// point, and the answer is 413. 16 KB is many times what either route reads: a skill id and a few
+// short texts, or one item id. Nothing after the parse walks the value recursively, so the cap also
+// bounds the work that a deeply nested body can cause.
+var AGENT_JSON_MAX_BYTES = 16384;
+// More parts than this is not a question for three fixed skills, and each part is read and joined.
+var A2A_MAX_PARTS = 32;
+
+async function readAgentJson(request) {
+  const read = await parityReadCapped(request.body, AGENT_JSON_MAX_BYTES);
+  if (read.over) return { tooLarge: true, value: undefined };
+  try {
+    return { tooLarge: false, value: JSON.parse(new TextDecoder("utf-8").decode(read.buf)) };
+  } catch {
+    return { tooLarge: false, value: undefined };
+  }
+}
+
 async function serveA2AMessageSend(request) {
   if (request.method !== "POST") {
     return a2aError(-32600, "invalid request: A2A message:send is POST only", null, 405, "POST, OPTIONS");
   }
-  let payload;
-  try { payload = await request.json(); } catch { payload = null; }
+  const body = await readAgentJson(request);
+  if (body.tooLarge) {
+    return a2aError(-32600, "invalid request: the body is larger than " + AGENT_JSON_MAX_BYTES + " bytes", null, 413);
+  }
+  const payload = body.value;
   const msg = payload && payload.message;
   if (!msg || !Array.isArray(msg.parts)) {
     return a2aError(-32602, "invalid params: expected a message object with a parts array", null, 400);
+  }
+  if (msg.parts.length > A2A_MAX_PARTS) {
+    return a2aError(-32602, "invalid params: at most " + A2A_MAX_PARTS + " parts", null, 400);
   }
   // Only a string is accepted here. Coercing an arbitrary value with String() let a deeply
   // nested array recurse through Array.prototype.join and throw RangeError, which escaped this
@@ -10171,6 +10199,54 @@ function isValidPublicHost(host) {
   return true;
 }
 
+// A redirect target the way a report may show it. The scheme, the host and the path stay readable,
+// and the parts that can carry a secret do not: the user name and the password are removed, every
+// query value becomes ***, and the fragment is dropped. The caller cuts the result to length
+// afterwards, because a cut is not a mask. Until 2026-09-22 a refused redirect to
+// https://user:password@host/ kept both in the check's detail and in the JSON answer (outside
+// review of the public repos). A target the URL parser refuses is masked by hand: nothing after the
+// first ? or # survives, and when the target has a scheme or starts with two slashes, everything up
+// to the last @ before them is shown as ***.
+// The package turva-llms-txt-validator mirrors this as maskLocation() from 0.3.5.
+function maskLocation(href, base) {
+  let u = null;
+  try { u = new URL(href, base); } catch { u = null; }
+  if (u) {
+    u.username = "";
+    u.password = "";
+    for (const key of Array.from(u.searchParams.keys())) u.searchParams.set(key, "***");
+    u.hash = "";
+    return u.href;
+  }
+  let s = String(href).replace(/[\t\n\r]/g, "");
+  const stop = s.search(/[?#]/);
+  if (stop >= 0) s = s.slice(0, stop) + (s[stop] === "?" ? "?***" : "");
+  const scheme = /^[a-z][a-z0-9+.-]*:/i.exec(s);
+  const start = scheme ? scheme[0].length : 0;
+  let from = start;
+  while (from < s.length && (s[from] === "/" || s[from] === "\\")) from++;
+  // Without a scheme and two slashes there is no authority, and an @ is part of a path.
+  if (!scheme && from - start < 2) return s;
+  // Nothing tells which @ of a refused target ends the user information, so everything up to the
+  // last one is shown as ***. The mask is visible on purpose: three review rounds on 2026-09-22
+  // measured every rule that guessed, and each one either returned a password that holds a slash
+  // or made the host vanish without a trace.
+  const at = s.lastIndexOf("@");
+  return at < from ? s : s.slice(0, from) + "***@" + s.slice(at + 1);
+}
+
+// The validator form repeats what was typed. An entry with an @, a ? or a # can carry a user name,
+// a password or a query value, so for such an entry the field shows only the host that
+// normalizeHostInput reads from it, or nothing when it reads none (2026-09-22). The test runs on the
+// whole typed value, not on the 300 character cut, and the host is taken from the parser, because a
+// first version masked the text itself: an @ past character 300 was cut away before the test, and
+// "https:/user:secret@host" read as a host named https with the secret in its path (independent
+// review of the repair, same day).
+function validatorEcho(typed, shown) {
+  if (!/[@?#]/.test(typed)) return shown;
+  return normalizeHostInput(typed) || "";
+}
+
 // The second argument was added for the v2 discovery checks, which need the site's
 // home page as well as its llms.txt. It is one parameter and nothing else moved:
 // the redirect budget, the same-host rule, the credential and port rejections and
@@ -10202,13 +10278,13 @@ async function fetchLlmsTxt(host, path, accept) {
       try { await res.body?.cancel(); } catch { /* the verdict below is the answer */ }
       const loc = res.headers.get("location") || "";
       if (!loc) return { redirect: true, reason: "no-location", status: res.status, location: "" };
-      if (hop >= 4) return { redirect: true, reason: "too-many", status: res.status, location: cut(loc, 120) };
+      if (hop >= 4) return { redirect: true, reason: "too-many", status: res.status, location: cut(maskLocation(loc, url), 120) };
       let next;
-      try { next = new URL(loc, url); } catch { return { redirect: true, reason: "bad-location", status: res.status, location: cut(loc, 120) }; }
+      try { next = new URL(loc, url); } catch { return { redirect: true, reason: "bad-location", status: res.status, location: cut(maskLocation(loc, url), 120) }; }
       const safeTarget = next.protocol === "https:" && !next.port && !next.username && !next.password && isValidPublicHost(next.hostname);
       const twin = (next.hostname.startsWith("www.") ? next.hostname.slice(4) : next.hostname) === reqApex;
-      if (!safeTarget) return { redirect: true, reason: "unsafe-target", status: res.status, location: cut(next.href, 120) };
-      if (!twin) return { redirect: true, reason: "off-host", status: res.status, location: cut(next.href, 120) };
+      if (!safeTarget) return { redirect: true, reason: "unsafe-target", status: res.status, location: cut(maskLocation(next.href), 120) };
+      if (!twin) return { redirect: true, reason: "off-host", status: res.status, location: cut(maskLocation(next.href), 120) };
       if (!redirectedFrom) redirectedFrom = url;
       url = next.href;
       continue;
@@ -11331,7 +11407,8 @@ function summarizeChecks(checks) {
 
 async function serveLlmsValidatorHtml(request, canonicalUrl) {
   const reqUrl = new URL(request.url);
-  const raw = cut(reqUrl.searchParams.get("url") || "", 300);
+  const typed = reqUrl.searchParams.get("url") || "";
+  const raw = cut(typed, 300);
   let result = null;
   let error = null;
   if (raw) {
@@ -11414,7 +11491,7 @@ ${cardPageNav("/llms-txt-validator")}
   ${mdPageStart("/llms-txt-validator")}
   <form class="vform" method="get" action="/llms-txt-validator">
     <label for="vurl">Domain to check</label>
-    <input type="text" id="vurl" name="url" placeholder="example.com" value="${escapeHtml(raw)}" aria-label="Domain to check" required>
+    <input type="text" id="vurl" name="url" placeholder="example.com" value="${escapeHtml(validatorEcho(typed, raw))}" aria-label="Domain to check" required>
     <button type="submit">Check llms.txt</button>
   </form>
   <p class="fine"><a href="/llms-txt-validator?url=turva.dev">Try it with turva.dev</a></p>
@@ -12193,8 +12270,11 @@ async function serveAcpCheckout(request, pathLower) {
     if (method !== "POST") {
       return new Response(JSON.stringify({ "type": "invalid_request", "code": "method_not_allowed", "message": "Use POST to create a checkout session." }, null, 2), { status: 405, headers: acpHeaders("POST, OPTIONS") });
     }
-    let reqBody;
-    try { reqBody = await request.json(); } catch (e) { reqBody = undefined; }
+    const body = await readAgentJson(request);
+    if (body.tooLarge) {
+      return new Response(JSON.stringify({ "type": "invalid_request", "code": "request_too_large", "message": "The request body is larger than " + AGENT_JSON_MAX_BYTES + " bytes." }, null, 2), { status: 413, headers: acpHeaders() });
+    }
+    const reqBody = body.value;
     // A parse error used to become an empty object, so a body of `{`, `null`, `[]` or `""`
     // answered 201 with the default audit session and 4 300 euros: a client's input error
     // was told it had created an order. Those four answer 400 since 2026-09-10 (Tek-383).
