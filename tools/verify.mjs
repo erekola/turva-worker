@@ -2810,6 +2810,17 @@ if (LIVE) {
     const liveCaps = Object.keys(result.capabilities || {}).sort();
     check(cardCaps.join(',') === liveCaps.join(','),
       `capabilities parity: card [${cardCaps}] == live [${liveCaps}]`);
+    // Comparing the keys alone let a false value through. @modelcontextprotocol/server sets
+    // tools.listChanged to true for a server that never sends the notification, and the card
+    // copied it, so card and server agreed on a promise neither kept. Round 20 found this as
+    // A1-1 on 2026-09-23. This check compares the whole object and refuses a listChanged
+    // true, because this server sends no notifications/tools/list_changed.
+    const canon = (v) => JSON.stringify(v, (k, x) => (x && typeof x === 'object' && !Array.isArray(x)
+      ? Object.fromEntries(Object.entries(x).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) : x));
+    check(canon(card.capabilities || {}) === canon(result.capabilities || {}),
+      `capabilities equal field by field: card ${canon(card.capabilities || {})} == live ${canon(result.capabilities || {})}`);
+    check(!(result.capabilities && result.capabilities.tools && result.capabilities.tools.listChanged === true),
+      `server/discover does not declare tools.listChanged true (saw ${canon(result.capabilities || {})})`);
 
     // Every capability the card declares must answer its list method. A declared
     // capability that returns -32601 is a declared surface that does not resolve.
@@ -2834,6 +2845,39 @@ if (LIVE) {
     const liveTools = ((liveList.body.result && liveList.body.result.tools) || []).map((t) => t.name).sort();
     check(cardTools.length > 0 && cardTools.join(',') === liveTools.join(','),
       `tool-name parity: card [${cardTools}] == live [${liveTools}]`);
+    // Since turva-mcp 1.5.0 every tool describes its output, and none takes an argument.
+    for (const t of (liveList.body.result && liveList.body.result.tools) || []) {
+      check(!!t.outputSchema && t.outputSchema.type === 'object',
+        `tools/list ${t.name} declares an outputSchema`);
+      check(!!t.inputSchema && t.inputSchema.additionalProperties === false,
+        `tools/list ${t.name} inputSchema allows no unknown argument`);
+    }
+
+    // A JSON-RPC batch carried many tool calls past a limiter that counts one request, which
+    // round 20 found as I-1. This one uses the 2025-era shape, the lane that used to answer it.
+    const batchRes = await fetch(MCP, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream' },
+      body: JSON.stringify([{ jsonrpc: '2.0', id: 1, method: 'tools/list' }, { jsonrpc: '2.0', id: 2, method: 'tools/list' }]),
+    });
+    const batchBody = await batchRes.json().catch(() => ({}));
+    check(batchRes.status === 400 && batchBody.error && batchBody.error.code === -32600,
+      `a JSON-RPC batch is refused with 400 and -32600 (saw ${batchRes.status} / ${batchBody.error && batchBody.error.code})`);
+
+    // The revision requires MCP-Protocol-Version on a request, and @modelcontextprotocol/server
+    // reads the version from the body alone, so a request without the header was served until
+    // the Worker began to refuse it. Round 20 found this as D-2.
+    const noVerRes = await fetch(MCP, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream', 'mcp-method': 'server/discover' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'server/discover', params: { _meta: {
+        'io.modelcontextprotocol/protocolVersion': REV,
+        'io.modelcontextprotocol/clientCapabilities': {},
+      } } }),
+    });
+    const noVerBody = await noVerRes.json().catch(() => ({}));
+    check(noVerRes.status === 400 && noVerBody.error && noVerBody.error.code === -32020,
+      `a ${REV} request without MCP-Protocol-Version is refused with 400 and -32020 (saw ${noVerRes.status} / ${noVerBody.error && noVerBody.error.code})`);
 
     // The header/body agreement rule, proven rather than assumed: a POST whose
     // Mcp-Method header contradicts the body must be refused, not served.
@@ -2845,6 +2889,8 @@ if (LIVE) {
     // refused, not answered with an empty body, which is what the old transport did.
     const getRes = await fetch(MCP, { method: 'GET', headers: { accept: 'application/json, text/event-stream' } });
     check(getRes.status === 405, `GET ${MCP} answers 405 (saw ${getRes.status})`);
+    check(getRes.headers.get('allow') === 'POST, OPTIONS',
+      `GET ${MCP} names what is allowed (Allow: ${getRes.headers.get('allow')})`);
     const delRes = await fetch(MCP, { method: 'DELETE', headers: { accept: 'application/json, text/event-stream' } });
     check(delRes.status === 405, `DELETE ${MCP} answers 405 (saw ${delRes.status})`);
 
@@ -2878,6 +2924,19 @@ if (LIVE) {
     if (svc) {
       check(svc.currency === facts.prices.currency,
         `get_services currency == facts.json ${facts.prices.currency} (saw ${svc.currency})`);
+      // Since K10 of round 20 every service names the turva.dev page that describes it, and two
+      // name a published sample. A url that does not answer 200 is a declared surface that
+      // does not resolve. A fragment names an anchor on the page, so the page itself is read.
+      const svcList = svc.services || [];
+      check(svcList.length > 0 && svcList.every((s) => typeof s.url === 'string' && s.url.startsWith('https://turva.dev/')),
+        `get_services names a turva.dev page for every service`);
+      const svcPages = [...new Set(svcList.flatMap((s) => [s.url, s.sample_url])
+        .filter((u) => typeof u === 'string').map((u) => u.split('#')[0]))];
+      for (const u of svcPages) {
+        const r = await fetch(u, { redirect: 'manual' });
+        check(r.status === 200, `get_services page ${u} answers 200 (saw ${r.status})`);
+        await r.arrayBuffer().catch(() => null);
+      }
       const byId = Object.fromEntries((svc.services || []).map((s) => [s.id, s]));
       // The id list is derived from facts.json rather than written out here. It was a
       // literal ['audit', 'advisory', 'implementation'] until 2026-08-09, so a fourth
@@ -3069,9 +3128,22 @@ if (LIVE) {
       // template has carried the conditional form since 2026-08-16, but turva-mcp was
       // not in that sweep and kept the unconditional sentence until 2026-09-09. It is
       // checked here because this is the only place this repo can see that server.
-      check(!/next scan reads higher[^"]*?by the dates it named\.(?!,)/.test(priTxt)
-        && (!priTxt.includes('next scan reads higher') || priTxt.includes('or the report explains why a tradeoff was kept on purpose')),
-        'get_principles does not promise a rise without the tradeoff clause the audit template carries');
+      // K11 of round 20 rewrote the rationale in the site's own words, "the next scan either
+      // reads higher in the categories the report named or the report explains which tradeoff
+      // was kept on purpose". The anchors this check had read no longer occurred, so it passed
+      // whatever the text said, as the round's QA found in VC-1. It now reads every sentence of
+      // every string the tool returns, and each sentence that promises a higher reading must
+      // carry the tradeoff clause itself, so a second promise in the same field cannot borrow
+      // the first one's clause, which QA 3 of the round measured in Q3-2.
+      const priStrings = [];
+      const walkPri = (v) => {
+        if (typeof v === 'string') priStrings.push(v);
+        else if (v && typeof v === 'object') Object.values(v).forEach(walkPri);
+      };
+      walkPri(pri);
+      const rises = priStrings.flatMap((s) => s.split(/(?<=[.!?])\s+/)).filter((s) => /reads higher/.test(s));
+      check(rises.every((s) => /or the report explains (?:why a|which) tradeoff was kept on purpose/.test(s)),
+        `get_principles does not promise a rise without the tradeoff clause the audit template carries (${rises.length} promise(s) read)`);
     }
 
     // get_contact carries the channels facts.json owns, so the gate compares them there

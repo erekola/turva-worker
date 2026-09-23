@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.167.0 - round 20, the MCP batch (2026-09-23): the MCP server card names the server dev.turva/turva-mcp as the MCP registry and turva-mcp/server.json do, declares the tools capability with listChanged false as the server itself now does, and carries turva-mcp 1.5.0. That server release gives every tool an outputSchema and returns its data as structuredContent beside the text, refuses JSON-RPC batches on both protocol lanes, bodies over 64 KiB and 2026-07-28 requests without MCP-Protocol-Version, and describes its rate limit as approximate and counted per Cloudflare location. The card is re-signed.
 // turva.dev worker v3.166.0 - round 19, the content batch (2026-09-23): every sentence that states the audit's duration says it is delivered within two weeks of the agreed written kickoff, while the structured duration fields, the audit's card and the short price line on /services keep two weeks and the audit page's meta description no longer states a duration; advisory states that after the three-month minimum it runs month to month and either party can end it by email before the next month, and that the monthly summary arrives within five business days of the month's end; the Shopify check, its sample and the MCP catalog state that a further retest is bought as a new check; the contact page, the contact skill and the MCP contact block say that LinkedIn messages have no set reply time, and the contact card, its alt text and the AP2 and MPP quote channels no longer put LinkedIn under the one-business-day reply; the ARD and ai-catalog entries take the spec's urn:air: identifier form; the ARD guide, OpenAPI and a code comment stop attributing the MCP media type to ARD v0.91 and describe the manifest as the spec defines it; the Open Knowledge Format guide gains a Sources section and a sources-checked date of 2026-09-23, and eight guides gain a closing line toward an audit; the parity page links the audit like the validator page does and both name the audit as what measures agent readiness, the validator page names its 256 KB limit, the Shopify background says its 26-store reading dates from 2026-08-09, and the home page says both listed services can be bought on their own; both samples carry a last-revised date and the scanner's own category name, the Shopify sample's title says synthetic, and a verify check now reads the samples' category names; the July commerce post carries its 2026-08-21 correction; a June build note about the site's former rendering service is withdrawn with its listings, card and sitemap row, and its path answers 404.
 // turva.dev worker v3.165.0 - round 19, second batch (2026-09-23): a page or its markdown twin asked for in another letter case answers 301 to the lower-case path; the parity check's JSON answer and its preflight carry CORS for browser agents, and the site-wide 429 takes the agent form only for a parity POST that asks for JSON; the validator refuses the arpa and onion TLDs and reads one trailing dot as the same host; every cacheable GET 200 text response carries a weak ETag and answers 304 to a matching If-None-Match; the weekly IndexNow run submits only the pages whose sitemap lastmod is within eight days; the CSP drops https: from style-src and font-src and Permissions-Policy denies five more features; OpenAPI declares the two closed OAuth endpoints; every JSON-LD builder uses jsonLdSafe; an Accept q above 1 counts as 1; the rules for unused CSS classes are gone and the smallest label reads at .75rem; card and mailto hrefs go through escapeHtml; /brief/<id>/ redirects like trailing punctuation, and a brief's markdown and JSON are same-origin; the parity result drops bidirectional controls from quoted text; the skills index is built once per isolate; a markdown twin's case redirect carries the twin's agent-api headers and origin grant, and /index.html.md in another case redirects too; the parity check folds letter case, reads one trailing dot as the same host, checks the home page's markdown twin again, drops bidirectional controls from every value it echoes and writes them as JSON escapes in its report; and a measurement day (2026-09-23, Erik): turva.dev re-measured, Level 5/5 on isitagentready, internet.nl website test 98 and email test 90, Hardenize all 24 categories, so the measured-at date moves from 2026-09-14 to 2026-09-23 on every surface that states it.
 // turva.dev worker v3.164.0 - round 19, an audit of the Worker itself (2026-09-23): markdownToHtml reads fenced code blocks and keeps an ATX heading to its own line, so a published brief no longer renders the scanner's raw output as one h2 with literal backticks, and code inside a brief keeps its backslash escapes; a heading slug repeated in one document gets -2 and -3; the llms.txt validator masks an accepted redirect's target as it already masked a refused one, and drops bidirectional controls from the text it quotes; the parity check reads the request body before it takes one of its four comparison slots, so bodies that never finish no longer hold them; a root-relative markdown link must resolve to this origin, which refuses /\host, and the WebMCP path check refuses /.//host; every redirect and the A2A preflight carry the security headers, which makes the response headers guide's every-response sentence true; the site-wide 429 is no-store; the home FAQ JSON-LD writes </ as <\/ like every other builder; OpenAPI declares POST on the three agent auth paths; the services skill names the two quoted services; prefers-reduced-motion stops the card hover lift; the July source-move post's correction is its own paragraph and its modified date is 2026-09-06; the audit sample states source hours for both scopes.
@@ -5982,7 +5983,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.166.0",
+    "version": "3.167.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6104,10 +6105,10 @@ var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\
 // julkaisu/resign-server-card-local.mjs.
 var MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
-  "name": "turva.dev/turva-mcp",
+  "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6116,7 +6117,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.4.2",
+    "version": "1.5.0",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -6129,8 +6130,11 @@ var MCP_SERVER_CARD = JSON.stringify({
   // resources or prompts here would put a promise the code does not keep inside a
   // signed manifest. Do not add them back, and do not add empty implementations to
   // match a declaration; see agent-memory/project-do-not-fix.md.
+  // listChanged is false, the value server/discover returns since turva-mcp 1.5.0: the tool
+  // set changes only on deploy and the server sends no list_changed notification. The public
+  // verify compares this object with the live one field by field, not only by its keys.
   "capabilities": {
-    "tools": { "listChanged": true }
+    "tools": { "listChanged": false }
   },
   "tools": [
     { "name": "get_services", "description": "Service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
@@ -6251,7 +6255,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.166.0",
+  "version": "3.167.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
