@@ -80,7 +80,7 @@
   "og-contact.jpg": {
     "green": "response within one business day",
     "kicker": "Contact",
-    "subhead": "Email, Signal or LinkedIn. No calls and no meetings required.",
+    "subhead": "By email or Signal. No calls and no meetings required.",
     "white": "Async only,"
   },
   "og-enforcing-the-rate-limit-i-advertised.jpg": {
@@ -304,12 +304,6 @@
     "kicker": "Blog",
     "subhead": "Twelve months of MSRC data: the July package is 3,0 times the baseline, and the median CVE got more severe.",
     "white": "Microsoft said the patches would get bigger."
-  },
-  "og-moving-off-prerender.jpg": {
-    "green": "off prerender.io",
-    "kicker": "Blog",
-    "subhead": "Finished HTML from a Cloudflare Worker at the edge, with no prerender hop.",
-    "white": "Moving turva.dev"
   },
   "og-moving-source-to-codeberg.jpg": {
     "green": "from GitHub to Codeberg",

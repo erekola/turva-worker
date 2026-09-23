@@ -558,6 +558,33 @@ console.log('\nCategory set (facts.json owns which categories exist)');
     }
   }
 
+  // E. The two sample reports' technical-scan tables (C2-P4, round 19, C2-2 follow-up).
+  // A sample exists to show a buyer what a real report reads, so its own category column
+  // is read against the same canonical list a real report's cells are checked against
+  // above (block D), not left as an unwatched copy of its own invention (that gap is
+  // C2-2, and it shipped a wrong category name for at least three rounds unnoticed).
+  // Matched by a scored reading in the same row (PASS, FAIL or INFO), because that is
+  // what marks a row as a scan-result row and not some other table on either page: the
+  // Shopify sample's own tables never carry one, so it contributes zero rows here today.
+  {
+    const SAMPLE_PATHS = ['/samples/audit-report', '/samples/shopify-agent-storefront-check'];
+    const rows2 = [];
+    for (const p of SAMPLE_PATHS) {
+      const open = `\n  "${p}": \``;
+      const i = src.worker.text.indexOf(open);
+      if (i < 0) { bad(`${p}: PAGE_MARKDOWN entry not found`); continue; }
+      const rest = src.worker.text.slice(i + open.length);
+      const relEnd = rest.search(/`,\r?\n/);
+      const body = relEnd < 0 ? '' : rest.slice(0, relEnd);
+      for (const m of body.matchAll(/^\| ([^|]+?) \| [^|]+? \| (?:PASS|FAIL|INFO) \|/gm)) {
+        rows2.push({ path: p, cat: m[1].trim() });
+      }
+    }
+    const unknown2 = rows2.filter((r) => !resolve(r.cat));
+    check(rows2.length > 0 && unknown2.length === 0,
+      `both samples' scan tables use only the scanner's real category names (${rows2.length} rows checked)${unknown2.length ? ' :: unknown ' + unknown2.map((r) => `${r.path} "${r.cat}"`).join(', ') : ''}`);
+  }
+
   // The dead-spelling rule. A spelling nobody uses is either a leftover from copy that
   // has since changed, or room for a future mismatch to resolve into. Scoped to
   // category.prose: the labels are the board's spelling, the board is a served

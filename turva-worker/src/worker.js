@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.166.0 - round 19, the content batch (2026-09-23): every sentence that states the audit's duration says it is delivered within two weeks of the agreed written kickoff, while the structured duration fields, the audit's card and the short price line on /services keep two weeks and the audit page's meta description no longer states a duration; advisory states that after the three-month minimum it runs month to month and either party can end it by email before the next month, and that the monthly summary arrives within five business days of the month's end; the Shopify check, its sample and the MCP catalog state that a further retest is bought as a new check; the contact page, the contact skill and the MCP contact block say that LinkedIn messages have no set reply time, and the contact card, its alt text and the AP2 and MPP quote channels no longer put LinkedIn under the one-business-day reply; the ARD and ai-catalog entries take the spec's urn:air: identifier form; the ARD guide, OpenAPI and a code comment stop attributing the MCP media type to ARD v0.91 and describe the manifest as the spec defines it; the Open Knowledge Format guide gains a Sources section and a sources-checked date of 2026-09-23, and eight guides gain a closing line toward an audit; the parity page links the audit like the validator page does and both name the audit as what measures agent readiness, the validator page names its 256 KB limit, the Shopify background says its 26-store reading dates from 2026-08-09, and the home page says both listed services can be bought on their own; both samples carry a last-revised date and the scanner's own category name, the Shopify sample's title says synthetic, and a verify check now reads the samples' category names; the July commerce post carries its 2026-08-21 correction; a June build note about the site's former rendering service is withdrawn with its listings, card and sitemap row, and its path answers 404.
 // turva.dev worker v3.165.0 - round 19, second batch (2026-09-23): a page or its markdown twin asked for in another letter case answers 301 to the lower-case path; the parity check's JSON answer and its preflight carry CORS for browser agents, and the site-wide 429 takes the agent form only for a parity POST that asks for JSON; the validator refuses the arpa and onion TLDs and reads one trailing dot as the same host; every cacheable GET 200 text response carries a weak ETag and answers 304 to a matching If-None-Match; the weekly IndexNow run submits only the pages whose sitemap lastmod is within eight days; the CSP drops https: from style-src and font-src and Permissions-Policy denies five more features; OpenAPI declares the two closed OAuth endpoints; every JSON-LD builder uses jsonLdSafe; an Accept q above 1 counts as 1; the rules for unused CSS classes are gone and the smallest label reads at .75rem; card and mailto hrefs go through escapeHtml; /brief/<id>/ redirects like trailing punctuation, and a brief's markdown and JSON are same-origin; the parity result drops bidirectional controls from quoted text; the skills index is built once per isolate; a markdown twin's case redirect carries the twin's agent-api headers and origin grant, and /index.html.md in another case redirects too; the parity check folds letter case, reads one trailing dot as the same host, checks the home page's markdown twin again, drops bidirectional controls from every value it echoes and writes them as JSON escapes in its report; and a measurement day (2026-09-23, Erik): turva.dev re-measured, Level 5/5 on isitagentready, internet.nl website test 98 and email test 90, Hardenize all 24 categories, so the measured-at date moves from 2026-09-14 to 2026-09-23 on every surface that states it.
 // turva.dev worker v3.164.0 - round 19, an audit of the Worker itself (2026-09-23): markdownToHtml reads fenced code blocks and keeps an ATX heading to its own line, so a published brief no longer renders the scanner's raw output as one h2 with literal backticks, and code inside a brief keeps its backslash escapes; a heading slug repeated in one document gets -2 and -3; the llms.txt validator masks an accepted redirect's target as it already masked a refused one, and drops bidirectional controls from the text it quotes; the parity check reads the request body before it takes one of its four comparison slots, so bodies that never finish no longer hold them; a root-relative markdown link must resolve to this origin, which refuses /\host, and the WebMCP path check refuses /.//host; every redirect and the A2A preflight carry the security headers, which makes the response headers guide's every-response sentence true; the site-wide 429 is no-store; the home FAQ JSON-LD writes </ as <\/ like every other builder; OpenAPI declares POST on the three agent auth paths; the services skill names the two quoted services; prefers-reduced-motion stops the card hover lift; the July source-move post's correction is its own paragraph and its modified date is 2026-09-06; the audit sample states source hours for both scopes.
 // turva.dev worker v3.163.0 - the repairs of an outside review of the public repos (2026-09-22): the hosted llms.txt validator masks a refused redirect target with maskLocation() before the 120 character cut, so a user name, a password, a query value or a fragment in a Location header no longer reaches the check's detail, the JSON answer or the page, and for a typed entry with an @, a ? or a # the form shows only the host it names; the A2A message:send and ACP checkout routes read their JSON body through a 16384 byte cap counted from the stream and answer 413 above it, with or without Content-Length, and A2A takes at most 32 parts. The package turva-llms-txt-validator 0.3.5 mirrors the masking, and the hosted parity check runs markdown-parity-check 0.2.10, which masks user names and passwords in URLs and keeps numbers from masked URL parts out of findings.
@@ -181,7 +182,7 @@ var LLMS_TXT = `# turva.dev
 
 ## Pricing (EUR, VAT not included)
 - Shopify agent storefront check: €999 (fixed scope, 48 hours)
-- Audit: €4,300 (fixed scope, two weeks)
+- Audit: €4,300 (fixed scope, within two weeks of the agreed written kickoff)
 - Advisory: €3,000 / month (monthly retainer, minimum 3 months)
 - Implementation: €1,500 / day (scoped per task)
 - Audit fix implementation: €499 (fixed, sold only together with the audit)
@@ -275,7 +276,6 @@ Final price is confirmed in writing after scope is agreed.
 - [When an agent can prove it is Claude](https://turva.dev/blog/verifiable-agent-identity.md)
 - [What makes an AI agent's decisions reliable](https://turva.dev/blog/reliable-agent-decisions.md)
 - [Owning your fediverse identity](https://turva.dev/blog/owning-your-fediverse-identity.md)
-- [Moving turva.dev off prerender.io](https://turva.dev/blog/moving-off-prerender.md)
 
 ## Agent endpoints
 - Agent registration: https://turva.dev/auth.md
@@ -1503,6 +1503,8 @@ An earlier post left these two checks red, on the reasoning that satisfying them
 
 ## The services, and how a card payment works
 
+Corrected 2026-08-21. The agent-readiness audit price and its checkout link moved to €4,300 and two weeks, from €6,500 and two to three weeks, as [It would be cheating to keep the old price](/blog/cheating-to-keep-the-old-price) explains. Advisory and implementation kept their prices and links.
+
 The three fixed offerings have a card checkout link each, prices ex VAT:
 
 - [Agent-readiness audit, €4,300](https://buy.stripe.com/bJe5kD5Tu0dBcFG9o75EY03)
@@ -2001,7 +2003,7 @@ For an audit that checks a site the way a stranger's agent reaches it, contact i
 
 ## Related
 
-- [Moving turva.dev off prerender.io](/blog/moving-off-prerender)
+- [Every response promised a rate limit. Nothing enforced it.](/blog/enforcing-the-rate-limit-i-advertised)
 - [Owning your fediverse identity](/blog/owning-your-fediverse-identity)
 `,
 
@@ -2080,7 +2082,7 @@ Eight checks examine the file:
 - It includes the recommended blockquote summary after the title.
 - H2 headings group the content.
 - Markdown links parse and use absolute URLs.
-- The file stays within the validator's size threshold.
+- The file stays under 256 KB. Anything larger is read truncated.
 - It contains no inline HTML. HTML produces a warning.
 
 Two more checks look at the home page:
@@ -2096,7 +2098,7 @@ There is no total and no percentage. Eight structural checks can honestly report
 
 It tells you that the file passed the structural checks. It does not show whether an assistant reads the file, mentions your site or answers correctly.
 
-Agent readiness is measured with an independent public scanner, published security scans and a manual review. That is the [website and API audit](/agent-readiness-audit), and [llms.txt explained](/guides/llms-txt) is the background to this file.
+The [website and API audit](/agent-readiness-audit) measures agent readiness with an independent public scanner, published security scans and a manual review. For background on the file itself, read [llms.txt explained](/guides/llms-txt).
 
 ## What is fetched
 
@@ -2174,6 +2176,8 @@ JavaScript is not run. Content that a page builds in the browser is compared as 
 Not every turva.dev page passes. The HTML adds buttons, cards and forms. Some pages also leave out the Related list that the Markdown carries, and the report names each of these differences.
 
 The example address is turva.dev's own tools page. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown that the HTML page leaves out, and returned five errors. The same four targets are links inside the HTML cards, so the difference is structural and no target is out of reach. [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree) reads that finding in full.
+
+The [website and API audit](/agent-readiness-audit) measures agent readiness with an independent public scanner, published security scans and a manual review.
 
 ## Limits
 
@@ -2338,7 +2342,6 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 - [When an agent can prove it is Claude](/blog/verifiable-agent-identity). 2026-06-25.
 - [What makes an AI agent's decisions reliable](/blog/reliable-agent-decisions). 2026-06-22.
 - [Owning your fediverse identity](/blog/owning-your-fediverse-identity). 2026-06-21.
-- [Moving turva.dev off prerender.io](/blog/moving-off-prerender). 2026-06-20.
 `,
   "/blog/agent-access-is-now-a-setting": `# Agent access is now a setting
 
@@ -2648,7 +2651,7 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 
 Northwind Fasteners Oy and all readings in this report are invented. The example shows what a client receives: the finding, its evidence, who makes the correction and how the result is checked.
 
-Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below.
+Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 23 September 2026.
 
 ## What to fix first
 
@@ -2828,24 +2831,24 @@ These are the sample's readings from 2026-09-03. PASS and FAIL are the scanner's
 | Bot access control | robotsTxtAiRules | FAIL | No AI crawler named in robots.txt. | F5 | A stated preference the company has not stated. Decision D2 |
 | Bot access control | contentSignals | FAIL | No Content-Signal line in robots.txt. | F5 | Same file, same decision |
 | Bot access control | webBotAuth | INFO | No Web Bot Auth directory. Informational, not scored. | None | The company operates no bots that would sign requests |
-| API, auth, MCP and A2A | apiCatalog | FAIL | /.well-known/api-catalog returns the HTML 404 page. | F6 | The catalog API already exists. Naming it is the cheapest route to an agent reading prices as data |
-| API, auth, MCP and A2A | oauthDiscovery | FAIL | No /.well-known/oauth-authorization-server or openid-configuration. | Waits, see F6 | No agent needs to log in here. Stays red at no cost |
-| API, auth, MCP and A2A | oauthProtectedResource | FAIL | No /.well-known/oauth-protected-resource. | Waits, see F6 | Same |
-| API, auth, MCP and A2A | authMd | FAIL | No /auth.md and no agent_auth metadata. | Waits, see F6 | Same |
-| API, auth, MCP and A2A | mcpServerCard | FAIL | No /.well-known/mcp/server-card.json. | Waits, see F6 | There is no MCP server to point at, and a card that points at none is a false claim |
-| API, auth, MCP and A2A | a2aAgentCard | FAIL | No /.well-known/agent-card.json. | Waits, see F6 | Same |
-| API, auth, MCP and A2A | agentSkills | FAIL | No /.well-known/agent-skills/index.json. | Waits, see F6 | Same |
-| API, auth, MCP and A2A | webMcp | FAIL | No navigator.modelContext tools on the home page. | Waits, see F6 | Browser tools on a catalog page are worth a look after the data is right, not before |
-| API, auth, MCP and A2A | ard | FAIL | No capability manifest at the well-known path. | Waits, see F6 | Same as the server card |
+| API, Auth, MCP & A2A Discovery | apiCatalog | FAIL | /.well-known/api-catalog returns the HTML 404 page. | F6 | The catalog API already exists. Naming it is the cheapest route to an agent reading prices as data |
+| API, Auth, MCP & A2A Discovery | oauthDiscovery | FAIL | No /.well-known/oauth-authorization-server or openid-configuration. | Waits, see F6 | No agent needs to log in here. Stays red at no cost |
+| API, Auth, MCP & A2A Discovery | oauthProtectedResource | FAIL | No /.well-known/oauth-protected-resource. | Waits, see F6 | Same |
+| API, Auth, MCP & A2A Discovery | authMd | FAIL | No /auth.md and no agent_auth metadata. | Waits, see F6 | Same |
+| API, Auth, MCP & A2A Discovery | mcpServerCard | FAIL | No /.well-known/mcp/server-card.json. | Waits, see F6 | There is no MCP server to point at, and a card that points at none is a false claim |
+| API, Auth, MCP & A2A Discovery | a2aAgentCard | FAIL | No /.well-known/agent-card.json. | Waits, see F6 | Same |
+| API, Auth, MCP & A2A Discovery | agentSkills | FAIL | No /.well-known/agent-skills/index.json. | Waits, see F6 | Same |
+| API, Auth, MCP & A2A Discovery | webMcp | FAIL | No navigator.modelContext tools on the home page. | Waits, see F6 | Browser tools on a catalog page are worth a look after the data is right, not before |
+| API, Auth, MCP & A2A Discovery | ard | FAIL | No capability manifest at the well-known path. | Waits, see F6 | Same as the server card |
 | Commerce | x402 | FAIL | No 402 challenge on any route. | Stays red on purpose, F8 | No agent checkout this year, by the company's own decision |
 | Commerce | mpp | FAIL | No payment discovery document. | Stays red on purpose, F8 | Same |
 | Commerce | ucp | FAIL | No /.well-known/ucp. | Stays red on purpose, F8 | Same |
 | Commerce | acp | FAIL | No ACP discovery document. | Stays red on purpose, F8 | Same |
 | Commerce | ap2 | FAIL | No AP2 declaration. | Stays red on purpose, F8 | Same |
 
-Category totals: Discoverability 2 of 4, Content 0 of 1, Bot access control 0 of 2, API, auth, MCP and A2A 0 of 9, Commerce 0 of 5. Overall 2 of 21 scored checks, Level 1 of 5.
+Category totals: Discoverability 2 of 4, Content 0 of 1, Bot access control 0 of 2, API, Auth, MCP & A2A Discovery 0 of 9, Commerce 0 of 5. Overall 2 of 21 scored checks, Level 1 of 5.
 
-After F2, F3, F5 and F6: Discoverability 3 of 4, Content 1 of 1, Bot access control 2 of 2, API, auth, MCP and A2A 1 of 9, Commerce 0 of 5. Overall 7 of 21, and the report does not translate that into a level, because the level on the retest day depends on the check set the scanner runs that day.
+After F2, F3, F5 and F6: Discoverability 3 of 4, Content 1 of 1, Bot access control 2 of 2, API, Auth, MCP & A2A Discovery 1 of 9, Commerce 0 of 5. Overall 7 of 21, and the report does not translate that into a level, because the level on the retest day depends on the check set the scanner runs that day.
 
 ## Findings from the manual review
 
@@ -3000,7 +3003,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 ### F6. Make the existing REST API discoverable
 
-**Category and scanner effect.** API, auth, MCP and A2A. Scored check apiCatalog.
+**Category and scanner effect.** API, Auth, MCP & A2A Discovery. Scored check apiCatalog.
 
 **What was found.** The site runs a public read-only REST API at /wp-json/ with the product catalog behind it at /wp-json/wc/store/v1/products, and no discovery file names it. GET /.well-known/api-catalog on 2026-09-03 returns the HTML 404 page with status 200, as does every path under /.well-known/. The scanner reads apiCatalog as failing along with the eight other checks in the category. Appendix A, chain 3, carries the request and the response.
 
@@ -3141,7 +3144,7 @@ Questions by name, 3.
 
 ## About this sample
 
-Every figure on this page is invented. The check names, the categories and the statuses are the scanner's real vocabulary as it stood on 2026-09-03, the draft name in F7 is the real IETF draft, and the four assistants in appendix B are the four the published measurement used, so that the sample shows how a real report reads. The site, the readings, the assistants' answers, the addresses and the security scores are fiction. A real report carries the raw scanner output, the request and response logs, the whole-catalog script and its output and the 60 AI answers with the assistant named on each.
+Every figure on this page is invented. The check names, the categories and the statuses are the scanner's real vocabulary as read on 2026-09-23, the draft name in F7 is the real IETF draft, and the four assistants in appendix B are the four the published measurement used, so that the sample shows how a real report reads. The site, the readings, the assistants' answers, the addresses and the security scores are fiction. A real report carries the raw scanner output, the request and response logs, the whole-catalog script and its output and the 60 AI answers with the assistant named on each.
 
 The audit is described on the [services page](/services). To start one, [email info@turva.dev](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) with the site or API URL and what the audit should answer. The Shopify agent storefront check has its own [sample report](/samples/shopify-agent-storefront-check).
 `,
@@ -3150,7 +3153,7 @@ The audit is described on the [services page](/services). To start one, [email i
 
 Northstar Outdoor and every observation in this report are invented. This example shows how product comparisons, shopping-journey evidence and a correction plan are presented.
 
-Illustrative report date: 6 September 2026, the delivery date in the engagement record below. Every other date in the example belongs to the same invented engagement. This page itself was last revised on 11 September 2026.
+Illustrative report date: 6 September 2026, the delivery date in the engagement record below. Every other date in the example belongs to the same invented engagement. This page itself was last revised on 23 September 2026.
 
 ## What to fix first
 
@@ -3296,7 +3299,7 @@ Beyond C1 to C3, no theme, app or product-data changes were identified for the t
 
 ## Checking the corrections
 
-The retest is pending. C1 and C2 are the two items selected for it, and it is due by 2026-09-20, fourteen days after the first package was delivered on 2026-09-06. It is checked once, using the same tools, market, language and currency as the session above.
+The retest is pending. C1 and C2 are the two items selected for it, and it is due by 2026-09-20, fourteen days after the first package was delivered on 2026-09-06. A further retest is bought as a new check. It is checked once, using the same tools, market, language and currency as the session above.
 
 | Retest item | What is checked | Test date | Result |
 | --- | --- | --- | --- |
@@ -3403,40 +3406,6 @@ A UCP profile at /.well-known/ucp names the merchant, the services it offers wit
 - [The /.well-known directory for agent discovery](/guides/well-known-for-agents)
 - [How to choose an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
-  "/blog/moving-off-prerender": `# Moving turva.dev off prerender.io
-
-2026-06-20
-
-A dated account of moving the homepage rendering into a Cloudflare Worker and serving HTML or Markdown from the same public site.
-
-For the general trade-offs of relying on a prerender service, see the [prerendering guide](/guides/prerendering-for-agents).
-
-For a while the turva.dev homepage was rendered by a third party. The page was built on Sitejet, served to people as a JavaScript app, and served to agents through prerender.io, which returned a finished HTML snapshot so a crawler did not read an empty shell. It worked and it scored well, but it was a workaround. I did not want a site that sells agent-readiness to depend on a separate service to be readable by agents.
-
-Today the homepage moved into the Cloudflare Worker that already fronts the domain. The Worker renders the finished HTML itself, on every request, at the edge. There is no client-side hydration step and no prerender hop. An agent reads the real content in the first response, and so does a person.
-
-## What the Worker returns
-
-The Worker decides by the request. A browser asking for HTML gets the rendered page. An agent that sends Accept: text/markdown gets a markdown version of the same content, at a fraction of the tokens. An agent that sends Accept: application/json gets a structured summary of the business and its services. The same facts, in the form the client asked for.
-
-## What this removed
-
-The prerender.io branch is gone from the Worker. No request is sent to an external prerender service, and the token it used is no longer read. Sitejet now serves only static assets such as the social image, and those move to the Worker next. The page is one codebase, under version control, open source at github.com/erekola/turva-worker.
-
-## The result is measured, not asserted
-
-The change was verified the same way the service verifies client work: by an independent scanner, before and after. isitagentready read Level 5, Agent-Native. The homepage migration did not drop a point.
-
-One more note. This change was planned and deployed in a single session with an AI agent, and the result was checked by an independent scanner with no stake in the outcome. The claims on this site are measurements anyone can reproduce. Either the next scan reads the same or higher, or it does not.
-
-Written contact only. Email info@turva.dev, Signal @turva.19. First reply within one business day.
-
-## Related
-
-- [When AI clients cannot read rendered pages](/guides/prerendering-for-agents)
-- [Serving Markdown to AI clients](/guides/markdown-for-agents)
-- [What a website and API agent-readiness audit covers](/guides/agent-readiness-audit)
-`,
   "/": `# Know what AI assistants can find out about your product
 
 I'm Erik. I check what AI assistants can read on your website or API, where the information disagrees, and what they say about your product. You get a written report explaining what I found, what to fix first, and how to check the changes.
@@ -3466,9 +3435,9 @@ This example uses an invented business and invented readings. The sample's scann
 ## Choose the check you need
 
 - [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package.
-- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered in two weeks.
+- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered within two weeks of the agreed written kickoff.
 
-Prices exclude VAT. Each service can be bought on its own.
+Prices exclude VAT. Both can be bought on their own.
 
 Implementation, ongoing advisory, agent operations and MCP server design are scoped separately. [All services and prices](/services).
 
@@ -3581,7 +3550,7 @@ You work directly with me, in writing. I reply within one business day. All pric
 ## Choose a starting point
 
 - [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package.
-- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered in two weeks.
+- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered within two weeks of the agreed written kickoff.
 
 See the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check) before choosing a service.
 
@@ -3591,7 +3560,7 @@ See the [sample audit report](/samples/audit-report) and the [sample Shopify rep
 
 What an AI shopper receives from one live Shopify store, across the three agent interfaces this check covers, with the evidence attached. One store, one market, up to three product and variant pairs.
 
-Four written deliverables within 48 hours of the agreed written kickoff, and a fifth, one retest of up to two corrected items within 14 days of that first package. The audit is not a prerequisite. [Read the full scope, the exclusions, the preflight and the refund terms](/shopify-agent-storefront-check).
+Four written deliverables within 48 hours of the agreed written kickoff, and a fifth, one retest of up to two corrected items within 14 days of that first package. A further retest is bought as a new check. The audit is not a prerequisite. [Read the full scope, the exclusions, the preflight and the refund terms](/shopify-agent-storefront-check).
 
 ## Website and API agent-readiness audit
 
@@ -3599,7 +3568,7 @@ Four written deliverables within 48 hours of the agreed written kickoff, and a f
 
 A technical scan, a manual review of your website and API surfaces, and a recorded question set put to selected AI assistants. The report keeps the technical findings and the observed AI answers apart.
 
-You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report. [Read the full scope and the deliverables](/agent-readiness-audit).
+The audit is delivered within two weeks of the agreed written kickoff. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report. [Read the full scope and the deliverables](/agent-readiness-audit).
 
 ## Implementation
 
@@ -3641,6 +3610,8 @@ We check technical changes with the relevant scanner or a direct test. A scanner
 
 **€3,000 per month. Minimum three months.**
 
+After the three-month minimum the retainer runs month to month, and either party can end it by email before the next month starts.
+
 Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next.
 
 You receive:
@@ -3649,7 +3620,7 @@ You receive:
 - Written review of agent-readiness changes your team ships, within one business day.
 - Recommendations for the roadmap.
 - Questions and answers by email or a shared document.
-- A monthly written summary that reads the month's measurements next to the previous month's and names the changes observed.
+- A monthly written summary that reads the month's measurements next to the previous month's and names the changes observed. The monthly summary is delivered within five business days after the month ends.
 - A quarterly summary of measurable progress.
 
 Each review explains what changed and what the evidence supports. If the method changes, I record that too. A higher score or an AI mention is not guaranteed.
@@ -3728,7 +3699,7 @@ Can an AI assistant find the right information about your product?
 
 I check what your website and API make available, whether the facts agree, and what selected AI assistants answer about your product. Then I explain what needs attention and how your team can fix it.
 
-€4,300 plus VAT. Delivered in two weeks. Fixed scope.
+€4,300 plus VAT. Delivered within two weeks of the agreed written kickoff. Fixed scope.
 
 We agree the work in writing before it starts. The audit uses public information and does not require production credentials.
 
@@ -3795,7 +3766,7 @@ We agree the work. Send the URL and your question. I confirm the scope, price an
 
 I run the checks. I complete the scan, manual review and AI questions, recording the evidence and dates.
 
-You receive the report. The findings and correction plan arrive within the agreed two weeks. One round of written follow-up questions is included.
+You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. One round of written follow-up questions is included.
 
 After the corrections, you choose the day for the included re-scan within 30 days of the report. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again using the same question set. The follow-up shows both readings and any changes in the method.
 
@@ -3849,7 +3820,7 @@ The first four items arrive together within 48 hours:
 - A record of the shopping journey: the tool, input, result, cart state and exact stopping point.
 - A correction plan: up to five changes, each with an owner and a check your team can repeat.
 
-The fifth item is one retest of up to two corrected items, within 14 days of the day the first four arrive.
+The fifth item is one retest of up to two corrected items, within 14 days of the day the first four arrive. A further retest is bought as a new check.
 
 ## What is included
 
@@ -3913,7 +3884,7 @@ Before offering this service, I ran a public, read-only preflight on 26 Shopify 
 
 This was an observation of public storefronts, not work for 26 paying clients. No tools were called, and carts, checkout, payment, orders, remote MCP behaviour and Admin settings were not tested.
 
-The matching inventory describes the platform's tools, not the accuracy of each store's product data. Five stores needed a repeat run before the scanner finished. These results apply to that sample, time and scanner version. They are not a claim about all Shopify stores.
+The matching inventory describes the platform's tools, not the accuracy of each store's product data. Five stores needed a repeat run before the scanner finished. These results apply to that sample, time and scanner version. They are not a claim about all Shopify stores. This reading has not been re-verified since 2026-08-09.
 
 ## Frequently asked
 
@@ -4021,6 +3992,7 @@ Signal is end-to-end encrypted. Scanning the code shares no account of yours.
 ## Reply time and languages
 
 - Email and Signal: within one business day
+- LinkedIn: no set reply time
 - Weekends: no guaranteed response time
 
 You can write in English or Finnish. Reports are in English unless we agree on Finnish in the written scope. A brief I send unasked arrives in the language of the company it is about.
@@ -4155,7 +4127,7 @@ So OKF is not a replacement for an llms.txt or a markdown surface on a site. It 
 
 ## What to do with it today
 
-OKF is new and small, version 0.2 since July 2026, and the semantic half is still open. That makes it worth understanding now and worth watching, but early to build an entire knowledge catalog on. A site that already serves markdown to agents and keeps an llms.txt has the instinct OKF formalizes, and adopting it later will be a short step rather than a rebuild.
+OKF is new and small, version 0.2 since July 2026, and the semantic half is still open. That makes it worth understanding now and worth watching, but early to build an entire knowledge catalog on. A site that already serves markdown to agents and keeps an llms.txt has the instinct OKF formalizes, and adopting it later will be a short step rather than a rebuild. For an audit of the data behind a site, not only the pages agents see, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -4170,6 +4142,12 @@ The shape of the files, not yet their meaning. Version 0.2 fixes the folder of m
 **Does OKF replace llms.txt?**
 
 No. An llms.txt and a markdown surface make the pages in front of the site readable. OKF packages the knowledge behind it, the catalog, the metrics and the rules a decision depends on. It is the same instinct one layer in.
+
+## Sources
+
+- [Introducing the Open Knowledge Format, Google Cloud Blog](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)
+- [OKF v0.2 adds trust signals, Google Cloud Blog](https://cloud.google.com/blog/products/data-analytics/okf-v0-2-adds-trust-signals)
+- [Open Knowledge Format specification (SPEC.md), GoogleCloudPlatform/knowledge-catalog](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
 
 ## Related
 
@@ -4393,7 +4371,7 @@ A server card sits in the same family as other well-known manifests a client loo
 
 ## Practical steps
 
-Publish the card at the deployed convention your target clients actually check, and confirm it with a live connection attempt rather than a directory listing. Where a client supports the newer draft location, publish there too rather than choosing one over the other, since the two conventions have not converged. The card is a low cost step for a site that wants to expose a capability to agents, and it only becomes useful once a client can reach and use the endpoint it names.
+Publish the card at the deployed convention your target clients actually check, and confirm it with a live connection attempt rather than a directory listing. Where a client supports the newer draft location, publish there too rather than choosing one over the other, since the two conventions have not converged. The card is a low cost step for a site that wants to expose a capability to agents, and it only becomes useful once a client can reach and use the endpoint it names. For an audit of whether a site's MCP server card and its live endpoint agree, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -4442,7 +4420,7 @@ agents.json sits beside other declarations a client looks for. An MCP server car
 
 ## Limits
 
-Declaring an action in agents.json describes what exists. It does not grant a client permission to call it, and it does not perform the authorisation or rate limiting that has to happen on the server when the call arrives. Those checks live at the endpoint, not in the declaration file, and a site still has to enforce them regardless of what agents.json says. Treat the file as documentation a client can parse, not as an access control mechanism.
+Declaring an action in agents.json describes what exists. It does not grant a client permission to call it, and it does not perform the authorisation or rate limiting that has to happen on the server when the call arrives. Those checks live at the endpoint, not in the declaration file, and a site still has to enforce them regardless of what agents.json says. Treat the file as documentation a client can parse, not as an access control mechanism. For an audit of whether a site's endpoints enforce what its declared actions promise, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -4542,7 +4520,7 @@ RateLimit-Policy states the quota a server enforces, and RateLimit adds the rema
 
 ## Verification
 
-As of July 2026 the [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/), revision 11 from May 2026, remains active without yet becoming a standard. Checking a site's headers means requesting a page and reading the response headers directly, then confirming the behaviour they describe, such as a different response for a different Accept value or a request that is actually throttled once a stated limit is passed. The fix for a missing or wrong header is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response.
+As of July 2026 the [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/), revision 11 from May 2026, remains active without yet becoming a standard. Checking a site's headers means requesting a page and reading the response headers directly, then confirming the behaviour they describe, such as a different response for a different Accept value or a request that is actually throttled once a stated limit is passed. The fix for a missing or wrong header is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response. For an audit of a site's response headers and the behaviour behind them, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -4713,7 +4691,7 @@ The value of a well-known path is that discovery becomes a lookup rather than a 
 
 ## What a missing directory means
 
-A missing or thin well-known directory does not break a site for people, and it does not mean every client will abandon the site outright. It does mean a client that relies on lookup rather than crawling has to fall back to guessing or skip the site, so the practical effect depends on which clients the site cares about and how those clients behave when a lookup fails. turva.dev publishes an API catalog, a server card, OAuth metadata, payment manifests and a security contact under /.well-known.
+A missing or thin well-known directory does not break a site for people, and it does not mean every client will abandon the site outright. It does mean a client that relies on lookup rather than crawling has to fall back to guessing or skip the site, so the practical effect depends on which clients the site cares about and how those clients behave when a lookup fails. turva.dev publishes an API catalog, a server card, OAuth metadata, payment manifests and a security contact under /.well-known. For an audit of what a site publishes under /.well-known, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -4754,7 +4732,7 @@ Agentic Resource Discovery, or ARD, is an open specification for telling AI agen
 
 A site advertises its agentic resources by serving a static JSON manifest under /.well-known. ARD v0.91, published 26 August 2026, names the file /.well-known/ard.json and the link relation ard, and says a conformant client MUST read that path. The predecessor path /.well-known/ai-catalog.json and the relation ai-catalog are ones a client MAY also consult, so a site that serves only the old path may not be found by a client that follows the current revision.
 
-The manifest itself is a small envelope with a specVersion, a host block that names the operator, and an entries array. Each entry describes one resource with a stable identifier, a display name, a type, a url and a short description. A resource can be an MCP server, an A2A agent, an API or a skill set. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
+The current specification defines the manifest itself as a JSON document holding an entries array. Other top-level members, such as the specVersion and host fields the predecessor AI Catalog convention still carries, are transport-defined and ignored by ARD. Each entry describes one resource with a stable identifier, a display name, a type and a url or inline data. A resource can be an MCP server, an A2A agent, an API or a skill set. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
 
 ## Where it sits, and how it differs from llms.txt
 
@@ -4772,7 +4750,7 @@ A technical scan can check whether a manifest resolves at the declared path, par
 
 Adoption is early. In a June 2026 check against public well-known paths, none of the launch partners the [announcement](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/) shows yet served a discoverable ai-catalog.json, so publishing one now is a forward move rather than table stakes. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
 
-turva.dev serves the same entries at both paths, /.well-known/ard.json with the v0.91 media types and rel="ard" in every page head, and /.well-known/ai-catalog.json for clients and scanners that still read the predecessor. Both index its MCP server, its A2A agent, its API and its agent skills, each of which already resolves on its own. The separate experimental MCP Server Card discovery document keeps its own convention, an AI Catalog at /.well-known/ai-catalog.json, so the two profiles are described apart and not merged. For an audit of a site's discovery surface, contact info@turva.dev.
+turva.dev serves the same entries at both paths, /.well-known/ard.json with the MCP Server Card media type on its MCP entry and rel="ard" in every page head, and /.well-known/ai-catalog.json for clients and scanners that still read the predecessor. Both index its MCP server, its A2A agent, its API and its agent skills, each of which already resolves on its own. The separate experimental MCP Server Card discovery document keeps its own convention, an AI Catalog at /.well-known/ai-catalog.json, so the two profiles are described apart and not merged. For an audit of a site's discovery surface, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -4978,7 +4956,7 @@ A Content-Signal directive is a stated preference and not an enforcement mechani
 
 Getting these files wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident stops that crawler from fetching the pages and can keep the content out of what it feeds, though it does not by itself remove the site from an assistant's answers, since an answer can still name a page through another source. A stale sitemap hides new pages. The files are small and the fix is fast, which is why they are the first thing a readiness review checks. In [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) finished in September 2026, robots.txt and the sitemap were the two most frequent first-fix subjects among the 74 sites that read Level 0, 45 and 38 of 68 notes, and 29 named both, usually a robots.txt the CMS shipped by default and a sitemap that was missing or never announced in it.
 
-turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a complete sitemap.
+turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a complete sitemap. For an audit of a site's robots.txt, Content Signals and sitemap, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -5031,7 +5009,7 @@ Markdown delivery is not a separate site. It is the same content offered in a se
 
 The token saving can be large. On turva.dev the markdown form of a page has measured at a fraction of the tokens the HTML form costs for the same content, and that difference is what decides whether a client reads a page in full or runs out of budget partway through. That figure is tied to the page it was measured on and to how the receiving client counts tokens, so it is a measured example rather than a cost guarantee that holds for every client and every page. Checking a given page means comparing its own HTML and markdown byte counts, not assuming a figure measured elsewhere carries over.
 
-turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. Every page also answers at its own .md address, and /guides/markdown-for-agents and /guides/markdown-for-agents.md return the same markdown byte for byte.
+turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. Every page also answers at its own .md address, and /guides/markdown-for-agents and /guides/markdown-for-agents.md return the same markdown byte for byte. For an audit of whether a site's markdown and HTML agree, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -5133,7 +5111,7 @@ Every finding in the report rests on one of three kinds of evidence. A technical
 
 A written report that lists each check, what was found, and a concrete fix for each gap, ordered by priority. The result is verifiable. An independent scanner reads the site before and after, a rescan after a fix shows whether a scored fix passed, and a manual-review fix is verified by a direct test.
 
-The two fixed-scope diagnoses on the [services page](/services) are the website and API audit at €4,300 in two weeks and the Shopify agent storefront check at €999 within 48 hours of the agreed written kickoff. Implementing a diagnosis's own complete fix list is a €499 add-on when it is bought with that diagnosis and the required access is arranged in advance: collaborator access to the store for a Shopify check, and an edge runtime, deployment access and any other access the listed fixes need for an audit. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions.
+The two fixed-scope diagnoses on the [services page](/services) are the website and API audit at €4,300 within two weeks of the agreed written kickoff and the Shopify agent storefront check at €999 within 48 hours of the agreed written kickoff. Implementing a diagnosis's own complete fix list is a €499 add-on when it is bought with that diagnosis and the required access is arranged in advance: collaborator access to the store for a Shopify check, and an edge runtime, deployment access and any other access the listed fixes need for an audit. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions.
 
 ## Follow-up checks
 
@@ -5147,11 +5125,11 @@ turva.dev provides independent agent-readiness audits and advisory for product t
 
 **What does an agent-readiness audit cost?**
 
-turva.dev prices an audit at a fixed €4,300 for a two week engagement. The Shopify agent storefront check is a separate fixed-scope diagnosis at €999, delivered within 48 hours of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. Prices exclude VAT, and the scope is written before any payment.
+turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. The Shopify agent storefront check is a separate fixed-scope diagnosis at €999, delivered within 48 hours of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. Prices exclude VAT, and the scope is written before any payment.
 
 **How long does an agent-readiness audit take?**
 
-A fixed-scope audit takes two weeks. The Shopify agent storefront check is delivered within 48 hours of the agreed written kickoff, with a retest of up to two corrected items within 14 days of that delivery. Advisory and implementation run on the cadence the engagement sets.
+A fixed-scope audit is delivered within two weeks of the agreed written kickoff. The Shopify agent storefront check is delivered within 48 hours of the agreed written kickoff, with a retest of up to two corrected items within 14 days of that delivery. Advisory and implementation run on the cadence the engagement sets.
 
 **What do you get from an agent-readiness audit?**
 
@@ -5429,7 +5407,7 @@ Several assistants retrieve through a search index before they answer. If a site
 
 ## Measure it
 
-Whether a site is cited is observable, and it is the one part of this list that has to be measured rather than reasoned about. Ask the assistants the questions a buyer would ask and record which sources they name. Repeat on a schedule. The sources that appear, and the ones that do not, tell you where the work is. turva.dev runs this check against its own queries.
+Whether a site is cited is observable, and it is the one part of this list that has to be measured rather than reasoned about. Ask the assistants the questions a buyer would ask and record which sources they name. Repeat on a schedule. The sources that appear, and the ones that do not, tell you where the work is. turva.dev runs this check against its own queries. For an audit that measures whether AI assistants can find and cite a site, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -6004,7 +5982,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.165.0",
+    "version": "3.166.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6078,7 +6056,7 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/mcp/server-card.json": { "get": { "summary": "MCP Server Card", "operationId": "getMcpCard", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/agent-skills/index.json": { "get": { "summary": "Agent Skills index", "operationId": "getSkillsIndex", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/api-catalog": { "get": { "summary": "API catalog", "operationId": "getApiCatalog", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/ard.json": { "get": { "summary": "ARD manifest (v0.91)", "operationId": "getArdManifest", "responses": { "200": { "description": "Agentic Resource Discovery manifest, same entries as ai-catalog.json with the v0.91 media types", "content": { "application/json": {} } } } } },
+    "/.well-known/ard.json": { "get": { "summary": "ARD manifest (v0.91)", "operationId": "getArdManifest", "responses": { "200": { "description": "Agentic Resource Discovery manifest, same entries as ai-catalog.json with the MCP Server Card media type on the MCP entry", "content": { "application/json": {} } } } } },
     "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok" } } } },
     "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "responses": { "200": { "description": "ok" }, "400": { "description": "invalid params, or more than 32 parts" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
     "/.well-known/agent-card.json": { "get": { "summary": "A2A Agent Card", "operationId": "getAgentCard", "responses": { "200": { "description": "ok" } } } },
@@ -6104,7 +6082,7 @@ var AGENT_JSON = JSON.stringify({
   "name_for_human": "turva.dev",
   "name_for_model": "turva_dev",
   "description_for_human": "Agent-readiness audits and advisory for product teams.",
-  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Async-only engagement. Pricing (EUR, VAT not included): Shopify agent storefront check €999 (fixed, 48 hours), Audit €4,300 (fixed, two weeks), Advisory €3,000/month (minimum 3 months), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
+  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Async-only engagement. Pricing (EUR, VAT not included): Shopify agent storefront check €999 (fixed, 48 hours), Audit €4,300 (fixed, within two weeks of the agreed written kickoff), Advisory €3,000/month (minimum 3 months), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
   "contact_email": "info@turva.dev",
   "legal_info_url": "https://turva.dev/legal",
   "logo_url": "https://turva.dev/logo.png",
@@ -6114,7 +6092,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-PPZXORW5ltdmfpDsNgd6DWH66beIkqkKhoxrxijh3g-43LGp9VqlWtCTL1dj-z4ttRe66qQU0OU77NpUzD1CQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"32jzT1gvxsMwVGpqR8BBQ9FXqoeejj5W_AgQXuZ2VvCXFkTt_e2SS_kwnS_4X00O09_Lr0f50yKHBYRgpTO-Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D5h1l13_aXIWkqeD8WmQ8cF4VZWnv9tsiOawSrP5ANTNzlElRFqvC2_brOxJtR9NqHaguJafWbI_bDquToOnBw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"32jzT1gvxsMwVGpqR8BBQ9FXqoeejj5W_AgQXuZ2VvCXFkTt_e2SS_kwnS_4X00O09_Lr0f50yKHBYRgpTO-Cg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8c8c-ulPHDTD04oXnIzpqfo4tSZKKKdrhmTMs2sObMc1DVJStWLYXniAA7t9Iu1hTvJgYDH_E_qZOpr9w_q2Dg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6239,8 +6217,7 @@ var AP2_MANIFEST = JSON.stringify({
     "type": "human_contact",
     "channels": [
       { "type": "email", "value": "mailto:info@turva.dev?subject=Quote%20request" },
-      { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" },
-      { "type": "linkedin", "value": "https://www.linkedin.com/in/erikrekola/" }
+      { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" }
     ],
     "languages": ["en"],
     "typical_response_time": "P1D"
@@ -6274,7 +6251,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.165.0",
+  "version": "3.166.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6362,33 +6339,36 @@ var A2A_AGENT_CARD = JSON.stringify({
   ]
 }, null, 2);
 
+// Every entry identifier takes the spec's domain-anchored form urn:air:<publisher>:<namespace>:<name>
+// (ARD v0.91 section 4.2 and Appendix C, and the ard-spec URN naming guide). Until 3.166.0 the
+// prefix was urn:ai:, which the scanner counted as not conformant (urnConformantCount 0).
 var AI_CATALOG = JSON.stringify({
   "specVersion": "1.0",
   "host": { "displayName": "turva.dev", "identifier": "turva.dev" },
   "entries": [
     {
-      "identifier": "urn:ai:turva.dev:mcp-server:turva-mcp",
+      "identifier": "urn:air:turva.dev:mcp-server:turva-mcp",
       "displayName": "turva.dev MCP server",
       "type": "application/mcp-server+json",
       "url": "https://turva.dev/.well-known/mcp/server-card.json",
       "description": "Public read-only MCP server: service catalog, own agent-readiness scores, security evidence, engagement principles."
     },
     {
-      "identifier": "urn:ai:turva.dev:agent:a2a",
+      "identifier": "urn:air:turva.dev:agent:a2a",
       "displayName": "turva.dev A2A agent",
       "type": "application/a2a-agent-card+json",
       "url": "https://turva.dev/.well-known/agent-card.json",
       "description": "A2A agent card describing turva.dev's read-only HTTP and JSON surface."
     },
     {
-      "identifier": "urn:ai:turva.dev:api:openapi",
+      "identifier": "urn:air:turva.dev:api:openapi",
       "displayName": "turva.dev API",
       "type": "application/openapi+json",
       "url": "https://turva.dev/openapi.json",
       "description": "OpenAPI description of turva.dev's public endpoints."
     },
     {
-      "identifier": "urn:ai:turva.dev:skills:index",
+      "identifier": "urn:air:turva.dev:skills:index",
       "displayName": "turva.dev Agent Skills",
       "type": "application/agent-skills+json",
       "url": "https://turva.dev/.well-known/agent-skills/index.json",
@@ -6399,7 +6379,7 @@ var AI_CATALOG = JSON.stringify({
 
 // ARD v0.91 (ards-project/ard-spec, 2026-08-26) renamed the well-known file to ard.json and the
 // link relation to ard, and made those the ones a client MUST read; ai-catalog.json is the
-// predecessor a client MAY consult. Same entries, v0.91 media type for the MCP card. AI_CATALOG
+// predecessor a client MAY consult. Same entries, with the MCP entry's type set to the MCP Server Card media type (from the MCP ext-server-card spec, not ARD itself) for ard.json. AI_CATALOG
 // stays as it is because the isitagentready ard check and the experimental MCP Server Card
 // discovery document still read /.well-known/ai-catalog.json (Tek-349, 2026-09-05).
 var ARD_MANIFEST = JSON.stringify(Object.assign({}, JSON.parse(AI_CATALOG), {
@@ -6574,8 +6554,7 @@ var MPP_MANIFEST = JSON.stringify({
     "supported_rails": ["card-stripe-link", "x402-base-usdc"],
     "quote_channels": [
       { "type": "email", "value": "mailto:info@turva.dev?subject=Quote%20request" },
-      { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" },
-      { "type": "linkedin", "value": "https://www.linkedin.com/in/erikrekola/" }
+      { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" }
     ],
     "typical_response_time": "P1D",
     "languages": ["en"]
@@ -6681,7 +6660,7 @@ Use this skill to retrieve official contact methods for turva.dev.
 - **Business ID (Finland):** 3600281-7
 - **Language:** English
 - **Engagement:** Async-only. No calls, no calendar links.
-- **Response time:** First reply in writing within one business day.
+- **Response time:** First reply in writing within one business day by email or Signal. LinkedIn messages have no set reply time.
 
 ## Source
 - https://turva.dev/contact
@@ -6698,7 +6677,7 @@ Use this skill to learn which services turva.dev offers, and which of them carry
 
 ## Services (fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation, VAT not included; agent operations and MCP server design are quoted on request)
 - **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days of that package.
-- **Audit.** €4,300. Fixed scope, two weeks. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
+- **Audit.** €4,300. Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, minimum 3 months. Async-only. Ongoing review, score tracking and a monthly AI-visibility delta across several AI platforms.
 - **Implementation.** €1,500 / day. Scoped per task. Edge workers, MCP servers, well-known manifests, JSON-LD.
 - **Agent operations.** On request. The data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
@@ -6931,7 +6910,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-20";
+var SITEMAP_LASTMOD = "2026-09-23";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -7006,7 +6985,6 @@ var SITEMAP_ENTRIES = [
   ["/blog/verifiable-agent-identity", "monthly", "0.6"],
   ["/blog/reliable-agent-decisions", "monthly", "0.6"],
   ["/blog/owning-your-fediverse-identity", "monthly", "0.6"],
-  ["/blog/moving-off-prerender", "monthly", "0.6"],
 ];
 // The sitemap's lastmod for one path, shared by buildSitemapXml and the weekly IndexNow run so
 // the two cannot disagree about what changed (round 19, K1-P5).
@@ -7080,7 +7058,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/blog/moving-off-prerender", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -7223,7 +7201,7 @@ var META_BY_PATH = {
     description: "A dated implementation note separates discoverable payment declarations from settlement. The scanner checks changed, the settlement boundary did not.",
     date: "2026-07-20",
     kind: "Build notes",
-    modified: "2026-08-02",
+    modified: "2026-08-21",
     image: "/og-finishing-the-optional-commerce-checks.jpg",
     imageAlt: "turva.dev blog card: Taking the last two optional commerce checks, x402 and MPP, to green on isitagentready without faking settlement, and what the scanner actually probes."
   },
@@ -7399,7 +7377,7 @@ var META_BY_PATH = {
   },
   "/guides/open-knowledge-format": {
     title: "Open Knowledge Format explained · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-09-23",
     description: "Open Knowledge Format describes knowledge as linked Markdown documents.",
     image: "/og-guide-open-knowledge-format.jpg",
     imageAlt: "turva.dev guide card: What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness."
@@ -7420,14 +7398,6 @@ var META_BY_PATH = {
     image: "/og-owning-your-fediverse-identity.jpg",
     imageAlt: "turva.dev blog card: Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker."
   },
-  "/blog/moving-off-prerender": {
-    title: "Moving turva.dev off prerender.io · turva.dev",
-    description: "A dated account of moving the homepage rendering into a Cloudflare Worker and serving HTML or Markdown from the same public site.",
-    date: "2026-06-20",
-    kind: "Build notes",
-    image: "/og-moving-off-prerender.jpg",
-    imageAlt: "turva.dev blog card: The turva.dev homepage now renders finished HTML in a Cloudflare Worker at the edge, with no prerender.io hop."
-  },
   "/": {
     title: "Agent-readiness audits for websites, APIs and Shopify · turva.dev",
     description: "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.",
@@ -7441,7 +7411,7 @@ var META_BY_PATH = {
   },
   "/agent-readiness-audit": {
     title: "Website and API agent-readiness audit, €4,300 · turva.dev",
-    description: "Fixed-scope audit of what automated clients read, where published facts disagree and what AI assistants say. Findings, priorities and fixes in two weeks.",
+    description: "Fixed-scope audit of what automated clients read, where published facts disagree and what AI assistants say, with written findings, priorities and fixes.",
     image: "/og-agent-readiness-audit.jpg",
     imageAlt: "turva.dev service card: the website and API agent-readiness audit, €4,300 fixed scope, two weeks, technical scan, manual review and observed AI answers with a correction plan."
   },
@@ -7458,7 +7428,7 @@ var META_BY_PATH = {
     imageAlt: "turva.dev sample card: the synthetic agent-readiness audit report for an invented company, every check, finding and acceptance test in the format a client receives."
   },
   "/samples/shopify-agent-storefront-check": {
-    title: "Sample Shopify storefront check report · turva.dev",
+    title: "Sample Shopify storefront check report, synthetic · turva.dev",
     description: "A fictional Shopify storefront check compares product data across agent interfaces and follows a shopping journey through to the checkout handoff.",
     image: "/og-samples-shopify-agent-storefront-check.jpg",
     imageAlt: "turva.dev sample card: the synthetic Shopify agent storefront check report for an invented store, the five deliverables in the format a merchant receives."
@@ -7473,7 +7443,7 @@ var META_BY_PATH = {
     title: "Contact Erik Rekola · turva.dev",
     description: "Send a website, API or Shopify URL and the question you need answered. First reply within one business day. All communication stays in writing.",
     image: "/og-contact.jpg",
-    imageAlt: "turva.dev contact card: async only by email, Signal or LinkedIn, first response within one business day."
+    imageAlt: "turva.dev contact card: async only, a first response within one business day by email or Signal."
   },
   "/legal": {
     title: "Terms, privacy and data handling · turva.dev",
@@ -7684,7 +7654,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 // second copy would be a second price list, and verify.mjs reads this one against facts.json.
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
 {"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
-{"@type":"Offer","name":"Audit","description":"Fixed scope, two weeks. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. An MCP server is a separate engagement.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}}`;
@@ -8868,7 +8838,7 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
     "serviceType": "Agent commerce readiness check",
     "provider": { "@id": "https://turva.dev/#business" },
     "areaServed": { "@type": "Place", "name": "Worldwide" },
-    "description": "A fixed-scope check of what an AI shopper receives from one live Shopify store, across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Shopify Catalog and Agentic channels. Four written deliverables as one package within 48 hours of the agreed written kickoff, and a fifth, the retest of up to two corrected items, within 14 days of that package.",
+    "description": "A fixed-scope check of what an AI shopper receives from one live Shopify store, across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Shopify Catalog and Agentic channels. Four written deliverables as one package within 48 hours of the agreed written kickoff, and a fifth, the retest of up to two corrected items, within 14 days of that package. A further retest is bought as a new check.",
     "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
     "offers": {
       "@type": "Offer",
@@ -8903,7 +8873,7 @@ function buildAuditServiceJsonLd(canonicalUrl) {
     "serviceType": "Agent-readiness audit",
     "provider": { "@id": "https://turva.dev/#business" },
     "areaServed": { "@type": "Place", "name": "Worldwide" },
-    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report. Delivered in two weeks.",
+    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report. Delivered within two weeks of the agreed written kickoff.",
     "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
     "offers": {
       "@type": "Offer",
@@ -8918,7 +8888,7 @@ function buildAuditServiceJsonLd(canonicalUrl) {
         "price": "4300",
         "priceCurrency": "EUR",
         "valueAddedTaxIncluded": false,
-        "description": "\u20ac4,300 fixed price, two weeks. VAT (25,5%) added per Finnish law."
+        "description": "\u20ac4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."
       }
     }
   };
@@ -12337,7 +12307,7 @@ ${footerHtml()}
 var X402_ROUTES = {
   "/api/agent/audit": {
     label: "Audit",
-    description: "turva.dev: Agent-readiness audit (fixed scope, two weeks)",
+    description: "turva.dev: Agent-readiness audit (fixed scope, within two weeks of the agreed written kickoff)",
     amountUsdcMicro: "4904000000",
     amountEurCents: 430000
   },
@@ -12357,7 +12327,7 @@ var X402_ROUTES = {
 
 var ACP_SERVICES = {
   shopify: { item: "shopify", name: "Shopify agent storefront check", amount: 99900, description: "Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package. One live Shopify store across browser WebMCP, remote MCP and Catalog and Agentic channels." },
-  audit: { item: "audit", name: "Agent-readiness audit", amount: 430000, description: "Fixed scope, two weeks. Independent scanner sweep, manual review, written report with prioritized fixes." },
+  audit: { item: "audit", name: "Agent-readiness audit", amount: 430000, description: "Fixed scope, delivered within two weeks of the agreed written kickoff. Independent scanner sweep, manual review, written report with prioritized fixes." },
   advisory: { item: "advisory", name: "Continuous advisory", amount: 300000, description: "Monthly re-scan, score delta report, written review, roadmap input. Minimum three months." },
   implementation: { item: "implementation", name: "Implementation day", amount: 150000, description: "Hands-on work at your edge, scoped per task." }
 };
