@@ -3010,7 +3010,13 @@ if (LIVE) {
         : 'The DNS or HTTPS call timed out after three attempts, ')
       + 'which says nothing about the record. Run this again on a network that '
       + 'resolves, and read mds/decisions.md Tek-299 before treating it as a finding.');
-    else bad('MTA-STS: ' + (e.code || e.message));
+    // fetch() keeps its reason in e.cause (a socket or TLS code), so a failed read printed only
+    // "fetch failed" and a red run could not tell this machine's network from the domain.
+    else {
+      const c = e && e.cause;
+      const why = c && (c.code || c.message) ? ' (cause: ' + [c.code, c.message].filter(Boolean).join(': ') + ')' : '';
+      bad('MTA-STS: ' + (e.code || e.message) + why);
+    }
   }
 } else {
   console.log('\n(static run - add --live on a networked machine to GET every declared URL and verify signatures)');
