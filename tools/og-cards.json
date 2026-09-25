@@ -293,6 +293,12 @@
     "subhead": "Fetches a site's /llms.txt and checks the structure against the format. JSON output for agents.",
     "white": "llms.txt validator,"
   },
+  "og-local-agent-memory.jpg": {
+    "green": "in local files gets me",
+    "kicker": "Blog",
+    "subhead": "Plain local files give each Claude Code session what the earlier sessions learned.",
+    "white": "What agent memory"
+  },
   "og-markdown-parity-check.jpg": {
     "green": "compared block by block.",
     "kicker": "Tools",

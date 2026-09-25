@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.169.0 - new Build notes post /blog/local-agent-memory (2026-09-25): What agent memory in local files gets me, with its Frequently asked section, its OG card, a new Blog line in LLMS_TXT (re-signed), a sitemap row and a canonical path, and SITEMAP_LASTMOD moves to the day the page text changed. Nothing else changed.
 // turva.dev worker v3.168.0 - turva-mcp 1.6.0 (2026-09-23): get_contact also says who runs turva.dev. Its new operator object carries the trade name, the operator, the business form, the business ID and VAT ID, the location, a one-person team and a short background, as the Business details section of /company states them, because Glama's tool-definition review found no company background or team information in the tool set. The MCP server card moves to version 1.6.0, its get_contact summary names the operator, and the card is re-signed.
 // turva.dev worker v3.167.2 - the site's rate limit is described as approximate (2026-09-23, round 20, TJ-2): the site-wide 429 body and the response-headers guide said this site enforces 100 requests per 60 seconds per client IP, while Cloudflare's rate-limiting binding keeps a separate, approximate count in each location, and 140 sequential requests to /robots.txt in 21 seconds all passed. Both now say about 100 requests per 60 seconds per client IP and that a burst can pass more requests before the first 429, as turva-mcp 1.5.0 already does, and the guide names the real reason no RateLimit header is sent: the binding reports only whether a request may pass. RateLimit-Policy and the binding are unchanged.
 // turva.dev worker v3.167.1 - the MCP server card is re-signed (2026-09-23): 3.167.0 served the card's new bytes beside the signature of the previous card, so /.well-known/signatures.json now carries the signature of the card as it is served. Nothing else changed.
@@ -247,6 +248,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [What agent memory in local files gets me](https://turva.dev/blog/local-agent-memory.md)
 - [Five rounds before the agent signed anything](https://turva.dev/blog/five-rounds-before-the-agent-signed.md)
 - [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree.md)
 - [I rebuilt turva.dev around the report](https://turva.dev/blog/i-rebuilt-turva-dev-around-the-report.md)
@@ -453,6 +455,118 @@ The two OAuth documents are named in Discovery above.
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/local-agent-memory": `# What agent memory in local files gets me
+
+2026-09-25
+
+I run turva.dev with Claude Code sessions and a memory made of plain files on my disk. Every project sits in the same folder, beside 1 419 122 words of rules and logs. The memory is why a new session starts where the last one stopped. Keeping it current is constant work, and nobody outside can make sense of its language.
+
+## What does agent memory give a session?
+
+It gives a new session everything the earlier sessions learned. The session starts with 476 numbered decisions and 662 recorded traps in reach, and its 22 procedures load when a task needs them.
+
+A Claude Code session remembers nothing from yesterday. Without the files every session would be a capable stranger, and I would explain the same things again and watch the same mistakes happen again. With them, a session already knows how I publish and which mistakes were made once before. A mistake becomes an entry in the trap log and usually a rule. A rule that matters becomes a gate that stops the next session before it repeats the mistake, and the gates have written 713 entries into their log.
+
+I get far more out of the same model with this memory than a session could give me without it. Much of that difference is work I can hand over whole, because the checks are written down and many of them run by themselves.
+
+## Where does the memory live?
+
+It lives in plain Markdown files in a folder on my machine. There is no memory service or database behind it.
+
+A rules file of 6 545 words is the first thing every session reads. An index of 8 986 words points to 173 memory facts, one fact per file, and 68 closed facts sit in an archive folder. The gates are local as well. A plugin runs them as scripts on my machine before and after a session's tool calls. A private repository on GitHub keeps the history and a second copy. The model itself runs at Anthropic, so local here means the storage and the rules.
+
+## What else lives in the workspace?
+
+Every project I work on lives there too. The code, the memory and the history share one folder, so a session that opens one project has the rules and the history of all of them in reach.
+
+- The website, one Cloudflare Worker whose source file has 13 232 lines.
+- The MCP server, which runs as a second Worker.
+- Two open source npm packages, an llms.txt validator and a Markdown parity check.
+- A public reference project and a local prototype.
+- 81 scripts and 682 task folders.
+
+Counted without git data and installed dependencies, the folder holds 29 508 files. The repositories on GitHub are copies pushed from this folder.
+
+## Why does the workspace need constant upkeep?
+
+Every session trusts what it reads. An out of date fact steers the next session as firmly as a correct one does, so the memory is worth only as much as its upkeep, and the upkeep never ends.
+
+Every session that changes something ends with a documentation round, and each kind of information has one home file. A hook stops a session once at the end if it changed work files and wrote nothing down. Closed facts move to the archive so that the index lists only what is still live, and the session log is rotated into an archive file when it grows.
+
+Audits read the whole workspace against the disk. The latest one used 178 agents and produced 220 findings, and one or two further agents tried to refute each finding.
+
+A sync tool once put 1 380 files back to an older state, 52 of them in the memory folder with the index among them. The next session would have read old facts as current ones. A script restored all 1 380 the same evening. Every project in the folder stands on this upkeep, and I count it as part of the work itself.
+
+## How big has it grown?
+
+Reading it once would take about 95 hours at 250 words a minute, and that is the written knowledge alone without any code. A script counted these figures on 25 September 2026.
+
+| What was counted | Count |
+|---|---|
+| Words in the knowledge base, 251 Markdown files | 1 419 122 |
+| Numbered decisions with their reasoning | 476 |
+| Recorded traps, each a mistake and the rule it left | 662 |
+| Recorded measurements | 464 |
+| Dated entries in the session log | 1 101 |
+| Memory facts in use | 173 |
+| Memory facts in the archive | 68 |
+| Places where a text cites a decision by its number | 6 384 |
+| Different Finnish words for a gate | 108 |
+| Entries in the gates' log, warnings included | 713 |
+| Files in the workspace, without git data and dependencies | 29 508 |
+
+## What does it look like to someone else?
+
+It looks like this sentence from the rules file: "The day-plus-jatko tag is not reserved this way, because renumbering it costs one line while renumbering a Tek touches every file that cites it."
+
+Every log entry carries a tag. A decision is Tek plus a number. Everything else is a date plus jatko, the Finnish word for continuation, so a later entry on the same day is written 2026-09-12 (jatko 5). Several sessions write to the same logs at the same time, and two of them can take the same number. The sentence tells a session which of its numbers it may simply change afterwards and which one it has to reserve before it starts. It is exact. I understand it because I was there when each part of it was decided.
+
+The word for gate is portti, and the knowledge base uses 108 different compound words built on it. A tunnisteportti checks tags and a varausportti checks reservations. A kulttuuriportti catches PowerShell code that a Finnish locale would print with periods where a timestamp needs colons. Three of them have two spellings. The memory index mixes Finnish and English, sometimes inside one line.
+
+## Why does it look normal to me?
+
+Every word in it arrived with a reason I remember. A trap entry is written on the day a session makes the mistake, and each new term made sense at the moment it was named. Read one at a time, they never piled up in front of me.
+
+The reader these files are written for is not a person either. It is the next agent session. It reads fast and forgets everything when it ends, so it needs each rule together with the incident behind it. Dense cross references suit that reader, and for a person they are a wall.
+
+It is hard for me too in places. The memory index grew to 79 KB, and the hook that loads it at the start of a session now loads a shorter map of titles, because the whole index had grown too large to put in front of every session. Many things in it I would have to look up before I could explain them to someone else.
+
+## What does this have to do with agent readiness?
+
+My site publishes a Markdown version of every page, so that a person and an agent read the same content, and a check compares the two. The workspace behind the site has no version for a person.
+
+Everything in the workspace is shaped for the agent. The site's code is public and a buyer can read every line of it. The workspace is private and far too long for that. It is the case I know best when I write about data that agents act on. Text written by agents for agents keeps growing, and each reasonable entry makes the whole a little harder for a person to check.
+
+## What does this not show?
+
+It does not show that any of it is good. A word count says nothing about whether the rules are right, and one incident can leave entries in two or three logs at once, each in the home for its kind.
+
+The gates' log mixes stops with warnings about a write already made, and it does not say whether a stop was right. When new gate versions were replayed against old sessions, some of their new stops were real catches and some were false, and I have no such total for the whole log. I have no measurement of the same work done without the memory, so the difference in the first section is my own judgement. These are the counts of one person's workspace on one day.
+
+## Frequently asked
+
+**What is agent memory in this workspace?**
+
+A folder of Markdown files with one fact in each, and an index file that every Claude Code session is pointed to when it starts. It is how a session that remembers nothing from yesterday knows what was already decided.
+
+**Does the memory leave my machine?**
+
+The files stay in a local folder, and a private repository keeps a second copy. What a session reads from them is sent to the model as part of that session. Local describes where the memory is stored, and the model runs at Anthropic.
+
+**Who wrote the knowledge base?**
+
+Almost all of it was written by AI agent sessions as the last step of their own work. I decide what gets recorded and where, and the sessions write it.
+
+**Why not delete most of it?**
+
+The scripts and gates check new work against the old entries. A shorter log would be easier to read and harder to check, and a decision that was later replaced still records why the first way failed.
+
+## Related
+
+- [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree)
+- [Serving Markdown to AI clients](/guides/markdown-for-agents)
+- [Define what an agent may do with your data](/guides/letting-agents-act-on-data)`,
+
   "/blog/five-rounds-before-the-agent-signed": `# Five rounds before the agent signed anything
 
 2026-09-20
@@ -2313,6 +2427,7 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## All posts
 
+- [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25.
 - [Five rounds before the agent signed anything](/blog/five-rounds-before-the-agent-signed). 2026-09-20.
 - [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree). 2026-09-12.
 - [I rebuilt turva.dev around the report](/blog/i-rebuilt-turva-dev-around-the-report). 2026-09-07.
@@ -5986,7 +6101,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.168.0",
+    "version": "3.169.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6096,7 +6211,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"G8xAXUtbGuaA-6jb3kshikArQEiY-X00hrFHbA8TTH1n_FjwK0lkxSvkerIvgckCxbCZZO-bdraOYvMby_fqDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8c8c-ulPHDTD04oXnIzpqfo4tSZKKKdrhmTMs2sObMc1DVJStWLYXniAA7t9Iu1hTvJgYDH_E_qZOpr9w_q2Dg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"G8xAXUtbGuaA-6jb3kshikArQEiY-X00hrFHbA8TTH1n_FjwK0lkxSvkerIvgckCxbCZZO-bdraOYvMby_fqDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"9OzcBkf6DR4xYim4lQcYjpw0vG7HNmQSy0WyIL_Lwu8uqFQOALdOtSUAopb3Y1a8UhF-k7JPIUWikjouXj64Ag\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6258,7 +6373,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.168.0",
+  "version": "3.169.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6917,7 +7032,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-23";
+var SITEMAP_LASTMOD = "2026-09-25";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -6959,6 +7074,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/local-agent-memory", "monthly", "0.6"],
   ["/blog/five-rounds-before-the-agent-signed", "monthly", "0.6"],
   ["/blog/html-and-markdown-can-disagree", "monthly", "0.6"],
   ["/blog/i-rebuilt-turva-dev-around-the-report", "monthly", "0.6"],
@@ -7065,7 +7181,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -7075,6 +7191,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/local-agent-memory": {
+    title: "What agent memory in local files gets me · turva.dev",
+    description: "Plain local files give each Claude Code session what the earlier sessions learned. A count of that memory, and why it now reads like a private language.",
+    date: "2026-09-25",
+    kind: "Build notes",
+    image: "/og-local-agent-memory.jpg",
+    imageAlt: "turva.dev blog card: what agent memory in local files gets me, 1 419 122 words of rules and logs that let each Claude Code session start where the last one stopped.",
+  },
   "/blog/five-rounds-before-the-agent-signed": {
     title: "Five rounds before the agent signed anything · turva.dev",
     description: "An agent moved tokens on Ethereum Sepolia after five fix rounds, each answering an independent review. Three attempts stopped before any signature.",
@@ -8773,6 +8897,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/local-agent-memory": mdFaqBlocks("/blog/local-agent-memory", "Frequently asked").pairs,
   "/blog/five-rounds-before-the-agent-signed": mdFaqBlocks("/blog/five-rounds-before-the-agent-signed", "Frequently asked").pairs,
   "/blog/html-and-markdown-can-disagree": mdFaqBlocks("/blog/html-and-markdown-can-disagree", "Frequently asked").pairs,
   "/blog/i-rebuilt-turva-dev-around-the-report": mdFaqBlocks("/blog/i-rebuilt-turva-dev-around-the-report", "Frequently asked").pairs,
