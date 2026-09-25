@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.169.1 - the post /blog/local-agent-memory names its backups (2026-09-25): the section Where does the memory live and the Frequently asked answer on whether the memory leaves the machine now say that a local clone is taken every night and Proton Drive holds an offsite copy, and the line count of the site's source file is dated to the day it was counted. Nothing else changed.
 // turva.dev worker v3.169.0 - new Build notes post /blog/local-agent-memory (2026-09-25): What agent memory in local files gets me, with its Frequently asked section, its OG card, a new Blog line in LLMS_TXT (re-signed), a sitemap row and a canonical path, and SITEMAP_LASTMOD moves to the day the page text changed. Nothing else changed.
 // turva.dev worker v3.168.0 - turva-mcp 1.6.0 (2026-09-23): get_contact also says who runs turva.dev. Its new operator object carries the trade name, the operator, the business form, the business ID and VAT ID, the location, a one-person team and a short background, as the Business details section of /company states them, because Glama's tool-definition review found no company background or team information in the tool set. The MCP server card moves to version 1.6.0, its get_contact summary names the operator, and the card is re-signed.
 // turva.dev worker v3.167.2 - the site's rate limit is described as approximate (2026-09-23, round 20, TJ-2): the site-wide 429 body and the response-headers guide said this site enforces 100 requests per 60 seconds per client IP, while Cloudflare's rate-limiting binding keeps a separate, approximate count in each location, and 140 sequential requests to /robots.txt in 21 seconds all passed. Both now say about 100 requests per 60 seconds per client IP and that a burst can pass more requests before the first 429, as turva-mcp 1.5.0 already does, and the guide names the real reason no RateLimit header is sent: the binding reports only whether a request may pass. RateLimit-Policy and the binding are unchanged.
@@ -473,13 +474,13 @@ I get far more out of the same model with this memory than a session could give 
 
 It lives in plain Markdown files in a folder on my machine. There is no memory service or database behind it.
 
-A rules file of 6 545 words is the first thing every session reads. An index of 8 986 words points to 173 memory facts, one fact per file, and 68 closed facts sit in an archive folder. The gates are local as well. A plugin runs them as scripts on my machine before and after a session's tool calls. A private repository on GitHub keeps the history and a second copy. The model itself runs at Anthropic, so local here means the storage and the rules.
+A rules file of 6 545 words is the first thing every session reads. An index of 8 986 words points to 173 memory facts, one fact per file, and 68 closed facts sit in an archive folder. The gates are local as well. A plugin runs them as scripts on my machine before and after a session's tool calls. A private repository on GitHub keeps the history. Every night a local clone of the folder goes to a disk that keeps ten versions, and Proton Drive holds a copy offsite. The model itself runs at Anthropic, so local here means the storage and the rules.
 
 ## What else lives in the workspace?
 
 Every project I work on lives there too. The code, the memory and the history share one folder, so a session that opens one project has the rules and the history of all of them in reach.
 
-- The website, one Cloudflare Worker whose source file has 13 232 lines.
+- The website, one Cloudflare Worker whose source file had 13 107 lines when these figures were counted.
 - The MCP server, which runs as a second Worker.
 - Two open source npm packages, an llms.txt validator and a Markdown parity check.
 - A public reference project and a local prototype.
@@ -551,7 +552,7 @@ A folder of Markdown files with one fact in each, and an index file that every C
 
 **Does the memory leave my machine?**
 
-The files stay in a local folder, and a private repository keeps a second copy. What a session reads from them is sent to the model as part of that session. Local describes where the memory is stored, and the model runs at Anthropic.
+The working files stay in a local folder. A private repository on GitHub and a backup on Proton Drive hold copies of them, and a local clone is taken every night. What a session reads from them is sent to the model as part of that session. Local describes where the memory is worked on, and the model runs at Anthropic.
 
 **Who wrote the knowledge base?**
 
@@ -6101,7 +6102,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.169.0",
+    "version": "3.169.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6373,7 +6374,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.169.0",
+  "version": "3.169.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
