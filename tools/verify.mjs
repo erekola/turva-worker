@@ -2,12 +2,15 @@
 // tools/verify.mjs - turva.dev consistency + integrity checker for this repo.
 // This is the deploy gate the site runs on itself before every ship.
 // Source of truth: tools/facts.json. MIT, same license as the repo.
-//   node tools/verify.mjs          static, offline-safe
-//   node tools/verify.mjs --live   also GET every declared URL, verify the
-//                                  Ed25519 signatures of the four signed
-//                                  manifests against the published JWKS, and
-//                                  speak MCP to mcp.turva.dev to prove the signed
-//                                  server card matches the running server
+//   node tools/verify.mjs          static, offline-safe; since Tek-475 this also verifies
+//                                  the four signed surfaces offline, against worker.js's OWN
+//                                  bytes and its own embedded JWKS/signatures, before any
+//                                  deploy (kitka-lokit-003)
+//   node tools/verify.mjs --live   also GET every declared URL, verify the Ed25519
+//                                  signatures of the four signed manifests against the
+//                                  PUBLISHED JWKS of the already-deployed site, and speak MCP
+//                                  to mcp.turva.dev to prove the signed server card matches
+//                                  the running server
 // existsSync added 2026-08-16: the og-cards.json check used it without an import, and it
 // had never run, because the manifest was empty. The first card in the manifest brought the
 // whole verify run down with a ReferenceError. A check that has never run is not green, it is unrun.
@@ -1872,9 +1875,22 @@ console.log('\nRate limiter: wrangler.jsonc vs worker.js literals (round 14, R1g
     check(src.worker.text.includes(`'"default";q=${rlLimit};w=${rlPeriod}'`),
       `worker.js RateLimit-Policy header literal matches wrangler.jsonc (q=${rlLimit};w=${rlPeriod})`);
     const rlWording = `${rlLimit} requests per ${rlPeriod} seconds`;
-    const rlWordingCount = (src.worker.text.match(new RegExp(rlWording.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+    // avoimet-muisti-011 / Tek-475: this used to count the whole file, so it stayed green
+    // on two incidental hits (the release-header comment, an old blog post) even if the
+    // 429 body itself lost the number. Narrowed to the limiter's own response code: the
+    // enforcement comment above env.RATE_LIMITER.limit() through the 429 Response() call
+    // itself, the two places this check's own message already claimed to cover.
+    const rlBlockStart = '// Apply the declared RateLimit policy:';
+    const rlBlockEnd = ', { status: 429, headers: rlHeaders });';
+    const rlBlockFrom = src.worker.text.indexOf(rlBlockStart);
+    const rlBlockToRaw = rlBlockFrom >= 0 ? src.worker.text.indexOf(rlBlockEnd, rlBlockFrom) : -1;
+    const rlBlockTo = rlBlockToRaw >= 0 ? rlBlockToRaw + rlBlockEnd.length : -1;
+    check(rlBlockFrom >= 0 && rlBlockTo > rlBlockFrom,
+      `worker.js: the rate limiter's own enforcement comment and its 429 Response() are both found`);
+    const rlBlock = rlBlockTo > rlBlockFrom ? src.worker.text.slice(rlBlockFrom, rlBlockTo) : '';
+    const rlWordingCount = (rlBlock.match(new RegExp(rlWording.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
     check(rlWordingCount >= 2,
-      `worker.js states "${rlWording}" at least twice, covering the enforcement comment and the 429 body (saw ${rlWordingCount})`);
+      `worker.js's rate limiter code states "${rlWording}" at least twice, in its own enforcement comment and its own 429 body (saw ${rlWordingCount})`);
   }
 }
 
@@ -2003,6 +2019,53 @@ console.log('\nSigning material is declared where an agent looks (kierros 18, S6
     check(cat.includes(href), `API_CATALOG service-meta names ${href.replace('https://turva.dev', '')}`);
   }
 }
+
+console.log('\nSigned surfaces match their stored signature, offline before deploy (kitka-lokit-003, Tek-475)');
+// Everything above this line, including the declaration check just above, is what ship.ps1's
+// static gate runs before every deploy, and it Die()s on a nonzero exit. Everything from
+// if (LIVE) below, including the live signature check further down, only runs AFTER a
+// deploy, and on failure it only prints a warning, never Die()s. So the static gate never
+// checked a single signature: a signed surface's served bytes could drift away from its own
+// stored signature and still pass here. This block closes that gap. It imports worker.js's
+// own default export from its own source text, no copy, no deploy, no network, no private key,
+// and calls its own fetch() handler locally for the four signed paths to get the exact bytes
+// this ship would serve, then verifies each against the Ed25519 signature and JWKS that
+// worker.js itself already declares. A worker.js edit not yet followed by a fresh resign now
+// fails HERE, before any ship, not only after one (Tek-475, kitka-lokit-003).
+try {
+  const jwksM = src.worker.text.match(/var JWKS_JSON = "((?:[^"\\]|\\.)*)";/);
+  const sigsM = src.worker.text.match(/var SIGNATURES_JSON = "((?:[^"\\]|\\.)*)";/);
+  if (!jwksM || !sigsM) throw new Error('JWKS_JSON or SIGNATURES_JSON not found in worker.js');
+  const jwksLocal = JSON.parse(new Function('return "' + jwksM[1] + '"')());
+  const sigsLocal = JSON.parse(new Function('return "' + sigsM[1] + '"')());
+  const jwkToKey = (jwk) => {
+    const raw = Buffer.from(jwk.x, 'base64url');
+    const der = Buffer.concat([Buffer.from('302a300506032b6570032100', 'hex'), raw]); // Ed25519 SPKI prefix
+    return createPublicKey({ key: der, format: 'der', type: 'spki' });
+  };
+  const keyByKid = Object.fromEntries(jwksLocal.keys.map((k) => [k.kid, jwkToKey(k)]));
+  const preDeployCount = Object.keys(sigsLocal.signatures).length;
+  check(preDeployCount > 0, `worker.js SIGNATURES_JSON declares at least one surface to check pre-deploy (saw ${preDeployCount})`);
+  // Same technique as 5b above, not a plain file:// import of worker.js. e16portti.mjs runs
+  // this file inside a sandbox copy that deliberately excludes node_modules, with NODE_PATH
+  // pointed at the real one instead (ebportti.mjs copies turva-worker the same way, but its
+  // own cases never invoke this file). NODE_PATH is not consulted for ESM import resolution,
+  // only for CommonJS require(), so a direct import(file://...worker.js) threw
+  // ERR_MODULE_NOT_FOUND on worker.js's own "markdown-parity-check" import inside that sandbox
+  // (measured), even though the very same import works from the real tree. createRequire(...)
+  // .resolve() DOES follow NODE_PATH, so the bare specifier is pointed at a real file first,
+  // the same fix already applied to 5b above.
+  const mpcEntry = pathToFileURL(createRequire(join(ROOT, 'turva-worker', 'package.json')).resolve('markdown-parity-check')).href;
+  const workerTextForImport = src.worker.text.replace('from "markdown-parity-check";', 'from "' + mpcEntry + '";');
+  const { default: workerModule } = await import('data:text/javascript;base64,' + Buffer.from(workerTextForImport).toString('base64'));
+  for (const [p, s] of Object.entries(sigsLocal.signatures)) {
+    const res = await workerModule.fetch(new Request('https://turva.dev' + p), {});
+    const body = Buffer.from(await res.arrayBuffer());
+    const pub = keyByKid[s.kid];
+    const valid = res.ok && !!pub && edVerify(null, body, pub, Buffer.from(s.signature, 'base64url'));
+    check(valid, `pre-deploy: this worker.js's own served bytes for ${p} still match its own stored signature`);
+  }
+} catch (e) { bad('pre-deploy signature check: ' + (e.code || e.message)); }
 
 if (LIVE) {
   console.log('\nLive (URLs + signatures)');

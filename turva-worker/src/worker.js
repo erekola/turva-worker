@@ -9203,13 +9203,7 @@ article pre{max-width:100%;}
 article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:-.35rem 0 1.4rem;}
 article .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
 .toc{margin:0 0 1.6rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;}
-.toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
-.toc ul{list-style:none;margin:0;padding:0;columns:2;column-gap:1.4rem;}
-.toc li{margin:0 0 .3rem;padding:0;font-size:.95rem;break-inside:avoid;}
-.toc li::before{content:none;}
-.toc a{color:#C9D1CE;}
-.toc a:hover{color:#5DF18F;}
-@media (max-width:560px){.toc ul{columns:1;}}
+${TOC_SUB_CSS}
 .next{margin:clamp(36px,5vw,56px) 0 0;padding:1.4rem 1.5rem;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;}
 .next p{margin:0 0 .8rem;}
 .next p:last-child{margin:0;}
@@ -9231,22 +9225,9 @@ table.stacked{display:block;border:0;min-width:0;width:100%;}table.stacked thead
 .crumb a{color:#9AA3A0;text-decoration:none;}
 .crumb a:hover{color:#5DF18F;text-decoration:none;}
 a:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
-.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
-.tbl table{margin:0;min-width:100%;}
-.tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
-@media (max-width:640px){table.stack{display:block;border:0;min-width:0;}table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stack tbody,table.stack tr{display:block;}table.stack tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stack td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stack td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stack td:first-child{color:#F2F4F3;font-weight:600;}}
+${TBL_CSS}
 @media (max-width:360px){main{padding-left:20px;padding-right:20px;}}
-.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:24px clamp(24px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
-.turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
-.turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.turva-nav .nv-brand svg{display:block;width:36px;height:36px;}
-.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}
-.turva-nav .nv-word b{color:#5DF18F;}
-${NAV_MOBILE_CSS}
-.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;flex:1;}
-.turva-nav .nv-menu a{font-size:18px;font-weight:500;color:#9AA3A0;text-decoration:none;}
-.turva-nav .nv-menu a:hover{color:#F2F4F3;}
-.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
+${NAV_CORE_CSS}
 @media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:15px;}}
 ${faqAt === -1 ? "" : SCARD_CSS + "\n" + FAQ_CSS + "\n"}${FOOTER_CSS}
 </style>
@@ -9373,17 +9354,7 @@ p{margin:0 0 1.05rem;color:#C9D1CE;}
 a{color:#5DF18F;text-decoration:none;}
 a:hover{text-decoration:underline;}
 strong{color:#F2F4F3;}
-.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:24px clamp(24px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
-.turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
-.turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.turva-nav .nv-brand svg{display:block;width:36px;height:36px;}
-.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}
-.turva-nav .nv-word b{color:#5DF18F;}
-${NAV_MOBILE_CSS}
-.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;flex:1;}
-.turva-nav .nv-menu a{font-size:18px;font-weight:500;color:#9AA3A0;text-decoration:none;}
-.turva-nav .nv-menu a:hover{color:#F2F4F3;}
-.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
+${NAV_CORE_CSS}
 main{max-width:none;margin:0;padding:0;}
 .page{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:0 clamp(24px,5vw,72px) 3rem;}
 .hero{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(48px,6vw,72px) clamp(24px,5vw,72px) clamp(40px,5vw,56px);border-bottom:0.5px solid rgba(255,255,255,0.07);}
@@ -9641,6 +9612,42 @@ ${footerHtml()}
 // Defined before CARDPAGE_CSS on purpose: that constant is built at module load and reads this one.
 var NAV_MOBILE_CSS = `.turva-nav .nv-mobile{display:none;}
 @media (max-width:760px){.turva-nav{flex-wrap:nowrap;justify-content:space-between;position:relative;padding:10px clamp(16px,4vw,24px);}.turva-nav > ul.nv-menu{display:none;}.turva-nav .nv-mobile{display:block;flex:0 0 auto;}.turva-nav .nv-mobile summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;color:#F2F4F3;font-weight:600;font-size:14px;user-select:none;}.turva-nav .nv-mobile summary::-webkit-details-marker{display:none;}.turva-nav .nv-mobile summary::after{content:"+";font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;line-height:1;}.turva-nav .nv-mobile[open] summary::after{content:"\\2212";}.turva-nav .nv-mobile summary:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}.turva-nav .nv-mobile .nv-list{position:absolute;left:0;right:0;top:100%;z-index:10;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;background:#0A1316;border-bottom:0.5px solid rgba(255,255,255,0.14);padding:6px 0 10px;box-shadow:0 14px 30px rgba(0,0,0,0.35);}.turva-nav .nv-mobile .nv-list li{margin:0;}.turva-nav .nv-mobile .nv-list a{display:block;box-sizing:border-box;min-height:44px;padding:12px clamp(16px,4vw,24px);font-size:16px;color:#F2F4F3;}.turva-nav .nv-mobile .nv-list a[aria-current]{color:#5DF18F;}}`;
+// Hoisted 2026-09-25 (Tek-475, K5-P1, approved kierros 19): the .turva-nav skeleton
+// below was written three times, byte-identical, in serveGuideHtml, serveHomeHtml and
+// CARDPAGE_CSS. Defined here, right after NAV_MOBILE_CSS and before CARDPAGE_CSS, for
+// the same reason as NAV_MOBILE_CSS itself: this constant is built at module load, and
+// CARDPAGE_CSS reads it (through NAV_MOBILE_CSS) when IT is built a few lines below,
+// while the two guide/home functions read it lazily at request time, once the whole
+// module has finished loading. The 404 page's own .turva-nav block is NOT identical to
+// this one (different gap and padding, no border-bottom) and stays separate on purpose.
+var NAV_CORE_CSS = `.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:24px clamp(24px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
+.turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.turva-nav .nv-brand svg{display:block;width:36px;height:36px;}
+.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}
+.turva-nav .nv-word b{color:#5DF18F;}
+${NAV_MOBILE_CSS}
+.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;flex:1;}
+.turva-nav .nv-menu a{font-size:18px;font-weight:500;color:#9AA3A0;text-decoration:none;}
+.turva-nav .nv-menu a:hover{color:#F2F4F3;}
+.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}`;
+// Hoisted 2026-09-25 (Tek-475, K5-P1, approved kierros 19), same round as NAV_CORE_CSS
+// above: two more sub-blocks that turned out byte-identical between the guide template
+// and CARDPAGE_CSS specifically (home carries no .toc or .tbl rules at all, so this pair
+// is a two-way merge, not three). The base .toc{...} rule itself is NOT identical (the
+// guide uses margin 1.6rem, CARDPAGE_CSS 1.4rem) and stays written out separately in
+// each template on purpose.
+var TOC_SUB_CSS = `.toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
+.toc ul{list-style:none;margin:0;padding:0;columns:2;column-gap:1.4rem;}
+.toc li{margin:0 0 .3rem;padding:0;font-size:.95rem;break-inside:avoid;}
+.toc li::before{content:none;}
+.toc a{color:#C9D1CE;}
+.toc a:hover{color:#5DF18F;}
+@media (max-width:560px){.toc ul{columns:1;}}`;
+var TBL_CSS = `.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
+.tbl table{margin:0;min-width:100%;}
+.tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
+@media (max-width:640px){table.stack{display:block;border:0;min-width:0;}table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stack tbody,table.stack tr{display:block;}table.stack tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stack td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stack td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stack td:first-child{color:#F2F4F3;font-weight:600;}}`;
 var CARDPAGE_CSS = `html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(24px,5vw,72px) 3.5rem;}
 main *,main *::before,main *::after{box-sizing:border-box;}
@@ -9651,17 +9658,7 @@ a{color:#5DF18F;text-decoration:none;}
 a:hover{text-decoration:underline;}
 a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
-.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:24px clamp(24px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
-.turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
-.turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.turva-nav .nv-brand svg{display:block;width:36px;height:36px;}
-.turva-nav .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}
-.turva-nav .nv-word b{color:#5DF18F;}
-${NAV_MOBILE_CSS}
-.turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;flex:1;}
-.turva-nav .nv-menu a{font-size:18px;font-weight:500;color:#9AA3A0;text-decoration:none;}
-.turva-nav .nv-menu a:hover{color:#F2F4F3;}
-.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}
+${NAV_CORE_CSS}
 @media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:15px;}}
 .cta{display:flex;flex-wrap:wrap;gap:14px;margin:1.4rem 0 .6rem;}
 .btn,.btn-ghost{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:50px;padding:.75rem 1.35rem;border-radius:7px;font-size:15px;font-weight:700;max-width:100%;overflow-wrap:break-word;text-align:center;}
@@ -9728,13 +9725,7 @@ ${FAQ_CSS}
 .dl p{margin:0;color:#C9D1CE;font-size:17px;line-height:1.6;}
 .dl .term{color:#F2F4F3;font-weight:700;}
 .toc{margin:0 0 1.4rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;}
-.toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
-.toc ul{list-style:none;margin:0;padding:0;columns:2;column-gap:1.4rem;}
-.toc li{margin:0 0 .3rem;padding:0;font-size:.95rem;break-inside:avoid;}
-.toc li::before{content:none;}
-.toc a{color:#C9D1CE;}
-.toc a:hover{color:#5DF18F;}
-@media (max-width:560px){.toc ul{columns:1;}}
+${TOC_SUB_CSS}
 .post{display:flex;flex-direction:column;gap:6px;box-sizing:border-box;min-width:0;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;padding:18px 22px;margin:0 0 .75rem;text-decoration:none;transition:border-color .15s ease;}
 .post:hover{border-color:#5DF18F;text-decoration:none;}
 .post[hidden]{display:none;}
@@ -9797,10 +9788,7 @@ ${FAQ_CSS}
 #result .copy-btn{margin:0 10px 0 0;}
 .pform .copy-btn{margin:0;min-height:44px;background:transparent;color:#F2F4F3;border:1px solid rgba(255,255,255,0.24);font-weight:600;}
 .pform .copy-btn:hover{border-color:#5DF18F;color:#5DF18F;}
-.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
-.tbl table{margin:0;min-width:100%;}
-.tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
-@media (max-width:640px){table.stack{display:block;border:0;min-width:0;}table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stack tbody,table.stack tr{display:block;}table.stack tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stack td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stack td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stack td:first-child{color:#F2F4F3;font-weight:600;}}
+${TBL_CSS}
 .tbl-list{margin:-.4rem 0 1.2rem;}
 .tbl-list summary{cursor:pointer;color:#C9D1CE;font-size:.9rem;padding:.4rem 0;}
 .tbl-list summary:hover{color:#5DF18F;}
