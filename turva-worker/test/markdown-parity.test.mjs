@@ -101,6 +101,32 @@ test("parity check: every published page can be checked within the hosted limits
   assert.deepEqual(bad, []);
 });
 
+test("parity check: no guide or post carries its page frame as content (Tek-479 P14)", async () => {
+  // Measured 2026-09-25 against v3.169.1: every checkable page of this site failed its own check, 552
+  // of 836 findings came from the frame inside <main>, and 45 pages failed on the frame alone. The
+  // frame now sits outside <main>, so a finding that quotes it is a regression.
+  const sitemap = await (await get("/sitemap.xml")).text();
+  const paths = [...sitemap.matchAll(/<loc>https:\/\/turva\.dev(\/(?:guides|blog)\/[^<]+)<\/loc>/g)].map((m) => m[1]);
+  assert.ok(paths.length > 50, "sitemap read " + paths.length + " article paths");
+  const frame = /^(?:\u2039 all (?:guides|posts)|Sources checked \d|On this page$|Erik Rekola(?: \u00b7|$))/;
+  const hits = [];
+  for (const p of paths) {
+    const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
+    for (const f of r.findings || []) {
+      const ex = String(f.before || (f.html && f.html.excerpt) || "");
+      if (frame.test(ex) || (f.html && /(?:^|> )(?:nav|aside)\b/.test(f.html.path || ""))) hits.push(p + ": " + f.code + " " + ex.slice(0, 40));
+    }
+  }
+  assert.deepEqual(hits, []);
+});
+
+test("parity check: a guide and a post pass in full against their own twins (Tek-479 P14)", async () => {
+  for (const p of ["/guides/llms-txt", "/blog/html-and-markdown-can-disagree"]) {
+    const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
+    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code + " " + (f.before || ""))));
+  }
+});
+
 test("parity check: redirects inside turva.dev are followed and counted, www and a trailing slash", async () => {
   for (const url of ["https://turva.dev/tools/", "https://www.turva.dev/tools"]) {
     const r = JSON.parse(await (await post({ url })).text());

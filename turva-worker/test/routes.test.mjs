@@ -84,13 +84,41 @@ test("/services carries the same priced Service node as the home page, and both 
   assert.ok((await (await get("/services")).text()).includes('"@id":"https://turva.dev/#service"'), "same @id as the home page");
 });
 
-test("the primary navigation is a named landmark on every page", async () => {
-  for (const p of ["/", "/services", "/agent-readiness-audit", "/contact", "/legal", "/company", "/blog", "/guides", "/tools", "/nonexistent-path"]) {
+test("the primary navigation is a named landmark on every page, and a contents list is a second named nav", async () => {
+  // Since v3.171.0 (Tek-479 P14, Erik 2026-09-25) a long page's contents list is a second <nav>,
+  // labelled by its own visible heading, so markdown-parity-check and assistive technology both read
+  // it as navigation. The primary navigation stays the first nav and the only one named Main.
+  for (const p of ["/", "/services", "/agent-readiness-audit", "/contact", "/legal", "/company", "/blog", "/guides", "/tools", "/nonexistent-path",
+                   "/guides/llms-txt", "/blog/html-and-markdown-can-disagree"]) {
     const html = await (await get(p)).text();
     const navs = html.match(/<nav\b[^>]*>/g) || [];
-    assert.equal(navs.length, 1, p + " has one nav");
+    assert.ok(navs.length === 1 || navs.length === 2, p + " has the primary nav and at most a contents list, saw " + navs.length);
     assert.match(navs[0], /aria-label="Main"/, p + " nav is named");
+    for (const n of navs.slice(1)) {
+      assert.match(n, /^<nav class="toc" aria-labelledby="toc-h">$/, p + " the second nav is the named contents list");
+    }
   }
+  for (const p of ["/legal", "/guides/llms-txt", "/blog/html-and-markdown-can-disagree"]) {
+    const html = await (await get(p)).text();
+    assert.ok(html.includes('<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p>'), p + " carries its contents list as the named nav");
+  }
+});
+
+test("the article frame sits outside <main>: back link, frame dates and next step (Tek-479 P14)", async () => {
+  const mainOf = (html) => html.slice(html.indexOf('<main id="main"'), html.indexOf("</main>") + 7);
+  const guide = await (await get("/guides/llms-txt")).text();
+  const gm = mainOf(guide);
+  assert.ok(gm.includes("<h1>llms.txt explained</h1>"), "the guide's main holds the article");
+  for (const frame of ['class="crumb"', "Sources checked", 'class="next"']) assert.ok(!gm.includes(frame), "not inside the guide's main: " + frame);
+  assert.match(guide, /<header class="pagehead">\n<p class="crumb"><a href="\/guides">&#8249; all guides<\/a><\/p>\n<p class="date">Sources checked \d{4}-\d{2}-\d{2}<\/p>\n<\/header>\n<main id="main" class="has-next">/, "back link and checked date in the page head");
+  assert.match(guide, /<\/main>\n<div class="pagefoot"><aside class="next"><p>/, "the next step follows main");
+  const post = await (await get("/blog/html-and-markdown-can-disagree")).text();
+  const pm = mainOf(post);
+  for (const frame of ['class="crumb"', "Erik Rekola"]) assert.ok(!pm.includes(frame), "not inside the post's main: " + frame);
+  assert.match(pm, /<h1>HTML and Markdown can disagree<\/h1>\n<p class="date">2026-09-12<\/p>/, "the twin's bare date line stays under the H1 as the twin has it");
+  assert.match(post, /<header class="pagehead">\n<p class="crumb"><a href="\/blog">&#8249; all posts<\/a><\/p>\n<p class="date">Erik Rekola(?: &middot; updated \d{4}-\d{2}-\d{2})?<\/p>\n<\/header>\n<main id="main">/, "the author is in the page head");
+  const sample = await (await get("/samples/audit-report")).text();
+  assert.ok(!sample.includes('class="pagehead"'), "a page without a frame gets no empty page head");
 });
 
 test("a trailing slash redirects to the canonical path for every served page", async () => {

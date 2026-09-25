@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.171.0 - the site's own Markdown parity and the traffic analyses (Tek-479 P14 and O2, 2026-09-25): the article frame sits outside <main>, with the back link and the frame's dates in a page head above it and a guide's next step after it, a post keeps the twin's bare date line under the H1 and shows the author in the page head, the contents list is a second <nav> labelled by its heading, twenty-six adjacent card elements gain a space (twenty-five on served pages, one in the unused mdPcard) so a text reader gets separate words, the hosted parity check passes 51 of 71 pages instead of none, the post HTML and Markdown can disagree records the before and after figures, and /legal says a traffic-spike analysis keeps the network operator and the request counts without the addresses. Nothing a page says about a price, a service or the score changed.
 // turva.dev worker v3.170.0 - the outside read of 2026-09-25 (Tek-479): /legal names its providers, the roles and lawful bases, the Worker log retention, when the thirty-day deletion starts and which copies it does not cover, cancellation and refunds, the liability exceptions and where the postal address is given; /company and /contact state the postal address rule; the Shopify check says it is paid by invoice and both add-on pages say the retest window starts when the corrections are delivered; the audit page qualifies large-site coverage and single-run AI answers; the two sample reports gain answer records, script output, an OpenAPI row, a Markdown content line, the merchant's intent and the remote reads; the validator page, the llms.txt, x402 and choosing guides and two research posts correct wording that said more than the tools or the data do.
 // turva.dev worker v3.169.1 - the post /blog/local-agent-memory names its backups (2026-09-25): the section Where does the memory live and the Frequently asked answer on whether the memory leaves the machine now say that a local clone is taken every night and Proton Drive holds an offsite copy, and the line count of the site's source file is dated to the day it was counted. Nothing else changed.
 // turva.dev worker v3.169.0 - new Build notes post /blog/local-agent-memory (2026-09-25): What agent memory in local files gets me, with its Frequently asked section, its OG card, a new Blog line in LLMS_TXT (re-signed), a sitemap row and a canonical path, and SITEMAP_LASTMOD moves to the day the page text changed. Nothing else changed.
@@ -712,6 +713,8 @@ Yes, from the command line. The package takes any public address with --url and 
 **What should I fix first when the report is long?**
 
 The differences that change what a reader is told: a condition that is missing, a number that moved, a link whose target is not the one in the other version. I read the ordering and punctuation warnings too, but they rarely change a release. The tool reports quantities and does not decide which difference matters to your business.
+
+Corrected 2026-09-25. This post used my tools page as the example of what the checker finds. A run on 25 September over every page the hosted check accepts, 71 of them, failed all 71 with 836 findings. Of those, 552 came from the page frame: the back link, the date line, the contents list and the next-step box sat inside the main element, which the checker reads as the content. The frame now sits outside it, and the contents list is a navigation element. After that change the same run passes 51 pages and reports 271 findings: 166 on the hand-built service and company pages, where cards, calls to action and email links differ from the Markdown, 71 on the two index pages, 23 on the two sample reports and 11 on seven articles, ten of which are links the HTML makes from a bare address that the Markdown leaves as plain text.
 
 ## Related
 
@@ -4232,7 +4235,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data, a legal obligation for accounting records and legitimate interest for outreach. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
-**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/).
+**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses, and those earlier versions remain in turva.dev's private version history and encrypted backups for as long as each is kept. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/).
 
 **Email.** Email is stored for as long as needed to deliver the work and to meet accounting obligations under Finnish law. Invoice records are retained for six years.
 
@@ -6149,7 +6152,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.170.0",
+    "version": "3.171.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6421,7 +6424,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.170.0",
+  "version": "3.171.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7260,6 +7263,7 @@ var META_BY_PATH = {
     description: "A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.",
     date: "2026-09-12",
     kind: "Build notes",
+    modified: "2026-09-25",
     image: "/og-html-and-markdown-can-disagree.jpg",
     imageAlt: "turva.dev blog card: HTML and Markdown can disagree, the parity check that compares what the two versions of a page actually contain.",
   },
@@ -8705,7 +8709,7 @@ function mdPcard(path, heading) {
   let meta = segs.slice(1);
   const pm = price.match(/^(€[\d,]+)\s+(.+)$/);
   if (pm) { price = pm[1]; meta = [pm[2], ...meta]; }
-  const parts = [`<div class="pcard-head"><h2 class="pcard-t">${renderInline(heading)}</h2><span class="pcard-price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span><span class="pcard-meta">${meta.map((m) => escapeHtml(m)).join(" &middot; ")}</span></div>`];
+  const parts = [`<div class="pcard-head"><h2 class="pcard-t">${renderInline(heading)}</h2><span class="pcard-price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span> <span class="pcard-meta">${meta.map((m) => escapeHtml(m)).join(" &middot; ")}</span></div>`];
   const bodyBlocks = blocks.slice(1);
   bodyBlocks.forEach((b, i) => {
     const lines = b.split("\n");
@@ -8773,7 +8777,7 @@ function mdSecBodyHtml(path, heading, listOnly) {
       let meta = segs.slice(1);
       const pm = price.match(/^(€[\d,]+)\s+(.+)$/);
       if (pm) { price = pm[1]; meta = [pm[2], ...meta]; }
-      parts.push(`<p class="price-line"><span class="price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span><span class="terms">${meta.map((m) => escapeHtml(m)).join(" &middot; ")}</span></p>`);
+      parts.push(`<p class="price-line"><span class="price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span> <span class="terms">${meta.map((m) => escapeHtml(m)).join(" &middot; ")}</span></p>`);
     } else if (/:$/.test(lines[0].trim()) && lines.slice(1).some((l) => l.startsWith("- "))) {
       const label = lines[0].trim().replace(/:$/, "");
       const items = [];
@@ -8823,7 +8827,7 @@ function mdOfferCards(path, heading, linkLabel, idFor) {
     const label = linkLabel[href];
     if (!label) throw new Error("offer has no link label for " + href);
     const cardId = (idFor && idFor[href]) ? ` id="${idFor[href]}"` : "";
-    return `<a class="card"${cardId} href="${escapeHtml(href)}"><span class="card-top"><span class="name">${escapeHtml(name)}</span><span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span>${retest ? `<span class="when">${escapeHtml(retest)}</span>` : ""}<span class="go">${label}</span></a>`;
+    return `<a class="card"${cardId} href="${escapeHtml(href)}"><span class="card-top"><span class="name">${escapeHtml(name)}</span> <span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span>${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""}<span class="go">${label}</span></a>`;
   }).join("\n      ");
 }
 function mdActionCards(path, headings) {
@@ -9297,26 +9301,34 @@ function serveGuideHtml(pathname, canonicalUrl) {
   const aliased = withAnchorAliases(pathname, article);
   const navSection = pathname.startsWith("/blog/") ? "/blog" : (pathname.startsWith("/guides/") ? "/guides" : "");
   const crumb = navSection === "/blog" ? '<p class="crumb"><a href="/blog">&#8249; all posts</a></p>\n' : (navSection === "/guides" ? '<p class="crumb"><a href="/guides">&#8249; all guides</a></p>\n' : "");
-  // Article template since v3.133.0 (Tek-358): the twin's bare date line becomes a byline
-  // with the author and the real dates from META_BY_PATH, a contents list is generated from
-  // the H2 ids when an article carries more than four sections and no contents list of its
-  // own, and a guide ends in one restrained next step. Nothing here adds prose over 80
-  // characters; the article text is the twin.
+  // Article template since v3.133.0 (Tek-358): a contents list is generated from the H2 ids when
+  // an article carries more than four sections and no contents list of its own, and a guide ends
+  // in one restrained next step. Nothing here adds prose over 80 characters; the article text is
+  // the twin.
+  // Since v3.171.0 (Tek-479 P14) the page frame sits outside the content markdown-parity-check
+  // reads, which is <main>: before that the frame made every page of this site fail its own check
+  // (mds/gotchas.md 2026-09-25 (jatko 22)). A page head above <main> carries the back link and the
+  // frame's own dates, the contents list is a second named <nav> (Erik 2026-09-25), and a guide's
+  // next step follows <main>. A post keeps the twin's bare date line under the H1 as the twin has
+  // it; the author and the update date, which the twin does not carry, are in the page head.
   const meta = META_BY_PATH[pathname] || {};
-  const bylined = navSection === "" ? aliased : aliased.replace(/<p class="date">(\d{4}-\d{2}-\d{2})<\/p>/, (m, d) =>
-    `<p class="date">Erik Rekola &middot; ${d}${meta.modified && meta.modified !== d ? ` &middot; updated ${meta.modified}` : ""}</p>`);
+  const twinDate = (aliased.match(/<p class="date">(\d{4}-\d{2}-\d{2})<\/p>/) || [])[1];
+  const byline = navSection === "/blog" && twinDate
+    ? `<p class="date">Erik Rekola${meta.modified && meta.modified !== twinDate ? ` &middot; updated ${meta.modified}` : ""}</p>\n`
+    : "";
   // Guides carry no date line in the twin. Since 2026-09-06 (the whole-site review, item 6)
   // META_BY_PATH.checked is the day the guide was last read against its primary sources, and
-  // /guides says that date is the one that counts, so it is rendered under the H1. It is not a
-  // publication or modification date and is not written into the JSON-LD as one.
+  // /guides says that date is the one that counts, so it is rendered in the page head. It is not
+  // a publication or modification date and is not written into the JSON-LD as one.
   const checkedLine = navSection === "/guides" && meta.checked
-    ? `<p class="date">Sources checked ${meta.checked}</p>`
+    ? `<p class="date">Sources checked ${meta.checked}</p>\n`
     : "";
-  const withChecked = checkedLine ? bylined.replace(/<\/h1>\n?/, (m) => `${m}${checkedLine}\n`) : bylined;
+  const pageHead = crumb || byline || checkedLine ? `<header class="pagehead">\n${crumb}${byline}${checkedLine}</header>\n` : "";
+  const withChecked = aliased;
   const h2s = [...withChecked.matchAll(/<h2 id="([^"]+)">(.*?)<\/h2>/g)].map((m) => ({ id: m[1], text: stripTags(m[2]) }));
   const hasOwnContents = /<h2 id="contents">/.test(withChecked) || /<h2 id="[^"]*">Contents<\/h2>/.test(withChecked);
   const toc = h2s.length > 4 && !hasOwnContents
-    ? `<div class="toc"><p>On this page</p><ul>${h2s.map((h) => `<li><a href="#${h.id}">${h.text}</a></li>`).join("")}</ul></div>`
+    ? `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${h2s.map((h) => `<li><a href="#${h.id}">${h.text}</a></li>`).join("")}</ul></nav>`
     : "";
   const withToc = toc ? withChecked.replace(/(<\/p>\n)(?=<h2 )/, `$1${toc}\n`) : withChecked;
   // Sample reports (Tek-360): the synthetic label stands above the H1, and two actions follow
@@ -9332,7 +9344,7 @@ function serveGuideHtml(pathname, canonicalUrl) {
     if (a0 < 0) throw new Error("sample section missing: " + pathname + "#" + sample.after);
     const a1 = withToc.indexOf("\n<h2 ", a0 + afterTag.length);
     if (a1 < 0) throw new Error("sample section is the last section: " + pathname + "#" + sample.after);
-    const ctaHtml = `\n<div class="cta"><a class="btn" href="${sample.primary[1]}">${sample.primary[0]}</a><a class="btn-ghost" href="${sample.secondary[1]}">${sample.secondary[0]}</a></div>`;
+    const ctaHtml = `\n<div class="cta"><a class="btn" href="${sample.primary[1]}">${sample.primary[0]}</a> <a class="btn-ghost" href="${sample.secondary[1]}">${sample.secondary[0]}</a></div>`;
     withSample = withToc.slice(0, a1) + ctaHtml + withToc.slice(a1);
     withSample = withSample.replace(/^<h1>/, `<p class="eyebrow">${sample.eyebrow}</p>\n<h1>`);
     const dateRe = /<p>(Illustrative report date: [^<]+)<\/p>/;
@@ -9398,9 +9410,16 @@ table.stacked{display:block;border:0;min-width:0;width:100%;}table.stacked thead
 .crumb{margin:0 0 1.2rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;}
 .crumb a{color:#9AA3A0;text-decoration:none;}
 .crumb a:hover{color:#5DF18F;text-decoration:none;}
+.pagehead{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(24px,5vw,72px) 1.2rem;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.35rem 1.5rem;}
+.pagehead + main{padding-top:0;}
+.pagehead .crumb,.pagehead p.date{margin:0;}
+.pagehead p.date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;}
+main.has-next{padding-bottom:0;}
+.pagefoot{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:0 clamp(24px,5vw,72px) 3.5rem;}
+.pagefoot *,.pagefoot *::before,.pagefoot *::after{box-sizing:border-box;}
 a:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 ${TBL_CSS}
-@media (max-width:360px){main{padding-left:20px;padding-right:20px;}}
+@media (max-width:360px){main,.pagehead,.pagefoot{padding-left:20px;padding-right:20px;}}
 ${NAV_CORE_CSS}
 @media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:15px;}}
 ${faqAt === -1 ? "" : SCARD_CSS + "\n" + FAQ_CSS + "\n"}${FOOTER_CSS}
@@ -9425,13 +9444,12 @@ ${navMenuHtml(`    <li><a href="/">home</a></li>
     <li><a href="/legal">legal</a></li>
     <li><a href="/contact">contact</a></li>`)}
 </nav>
-<main id="main">
-${crumb}<article>
+${pageHead}<main id="main"${next ? ' class="has-next"' : ""}>
+<article>
 ${withSample}
 </article>
-${next}
 </main>
-${footerHtml()}
+${next ? `<div class="pagefoot">${next}</div>\n` : ""}${footerHtml()}
 </body>
 </html>`;
   const headers = new Headers({
@@ -9477,7 +9495,7 @@ function serveHomeHtml(canonicalUrl) {
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
     const [, name, href, price, covers, when, retest] = m;
     if (!OFFER_LINK[href]) throw new Error("home offer has no link label for " + href);
-    return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span><span class="offer-price">${escapeHtml(price)}</span></span><span class="offer-covers">${escapeHtml(covers)}</span><span class="offer-when">${escapeHtml(when)}</span>${retest ? `<span class="offer-when">${escapeHtml(retest)}</span>` : ""}<span class="offer-link">${OFFER_LINK[href]}</span></a>`;
+    return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span> <span class="offer-price">${escapeHtml(price)}</span></span> <span class="offer-covers">${escapeHtml(covers)}</span> <span class="offer-when">${escapeHtml(when)}</span>${retest ? ` <span class="offer-when">${escapeHtml(retest)}</span>` : ""}<span class="offer-link">${OFFER_LINK[href]}</span></a>`;
   }).join("\n      ");
   // The hero card is one finding from the synthetic sample report (2026-09-08 brief, point 1).
   // Its text is the twin section "One product. Three different answers.": three "Source:
@@ -9501,7 +9519,7 @@ function serveHomeHtml(canonicalUrl) {
   const workCards = work.slice(0, 3).map((t) => titled(t, "inspect")).map((c) => `<div class="svc"><div class="svc-h"><span class="svc-t">${c.t}</span></div><p>${c.b}</p></div>`).join("\n      ");
   const secList = mdLists("/", "See what the work looks like")[0].map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      ");
   const proc = mdParas("/", "How we work", 4);
-  const procCards = proc.slice(0, 3).map((t, i) => titled(t, "process")).map((c, i) => `<div class="step"><span class="step-n">0${i + 1}</span><span class="step-t">${c.t}</span><p>${c.b}</p></div>`).join("\n      ");
+  const procCards = proc.slice(0, 3).map((t, i) => titled(t, "process")).map((c, i) => `<div class="step"><span class="step-n">0${i + 1}</span> <span class="step-t">${c.t}</span><p>${c.b}</p></div>`).join("\n      ");
   const contact = mdParas("/", "Tell me what you want to understand", 3);
   const body = `<!doctype html>
 <html lang="en">
@@ -9652,7 +9670,7 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
         <p class="svcnote">${renderInline(lead.paras[2])}</p>
       </div>
       <div class="rcard" role="group" aria-label="One finding from the synthetic sample audit report">
-        <div class="rc-top"><span>Example from a fictional audit</span><span class="rc-tag">Finding F1</span></div>
+        <div class="rc-top"><span>Example from a fictional audit</span> <span class="rc-tag">Finding F1</span></div>
         <h2 class="rc-title">${renderInline(findHead)}</h2>
         <dl class="rc-cmp">
           ${findRowHtml}
@@ -9685,11 +9703,11 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
       <a class="board-src" href="https://isitagentready.com/">scanner: isitagentready.com &middot; 3rd-party &middot; Cloudflare &middot; run your own check</a>
     </div>
     <div class="board-grid">
-      <div class="cell"><span class="cat">discoverability</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">content</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">bot access control</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">api, auth, mcp &amp; a2a</span><span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">commerce</span><span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">discoverability</span> <span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">content</span> <span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">bot access control</span> <span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">api, auth, mcp &amp; a2a</span> <span class="val">100/100</span></div>
+      <div class="cell"><span class="cat">commerce</span> <span class="val">100/100</span></div>
     </div>
     <div class="board-sum"><span>verified</span> <b>100/100</b> <span class="pill">Level 5</span> <span class="pill">Agent-Native</span></div>
   </section>
@@ -9754,7 +9772,7 @@ function serveServicesHtml(canonicalUrl) {
 ${cardPageNav("/services")}
 <main id="main">
   ${mdPageStart("/services")}
-  <div class="cta"><a class="btn" href="#start">Choose a starting point</a><a class="btn-ghost" href="/samples/audit-report">Read a sample audit report</a></div>
+  <div class="cta"><a class="btn" href="#start">Choose a starting point</a> <a class="btn-ghost" href="/samples/audit-report">Read a sample audit report</a></div>
   <section class="sec" id="start"><h2>Choose a starting point</h2>
     <div class="cards">
       ${offers}
@@ -10332,7 +10350,7 @@ ${footerHtml()}
 function serveLegalHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/legal", canonicalUrl), buildGuideJsonLd("/legal", canonicalUrl), canonicalUrl);
   const secs = ["Operator", "Engagement terms", "Privacy", "Data rights", "Cookies", "Updates"];
-  const toc = `<div class="toc"><p>On this page</p><ul>${secs.map((h) => `<li><a href="#${mdSlug(h)}">${h}</a></li>`).join("")}</ul></div>`;
+  const toc = `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${secs.map((h) => `<li><a href="#${mdSlug(h)}">${h}</a></li>`).join("")}</ul></nav>`;
   const terms = (h) => `<section class="sec" id="${mdSlug(h)}"><h2>${h}</h2>
     ${mdTermsHtml("/legal", h)}
   </section>`;
@@ -10367,7 +10385,7 @@ function serveShopifyHtml(canonicalUrl) {
 ${cardPageNav("/shopify-agent-storefront-check")}
 <main id="main">
   ${mdPageStart("/shopify-agent-storefront-check")}
-  <div class="cta"><a class="btn" href="${escapeHtml(mailto)}">Request a Shopify check</a><a class="btn-ghost" href="/samples/shopify-agent-storefront-check">Read the sample report</a></div>
+  <div class="cta"><a class="btn" href="${escapeHtml(mailto)}">Request a Shopify check</a> <a class="btn-ghost" href="/samples/shopify-agent-storefront-check">Read the sample report</a></div>
   ${mdOpenSec("/shopify-agent-storefront-check", "What you will learn")}
   ${mdOpenSec("/shopify-agent-storefront-check", "What you receive")}
   ${mdOpenSec("/shopify-agent-storefront-check", "What is included", "fixed-scope")}
@@ -10411,12 +10429,12 @@ function serveAuditHtml(canonicalUrl) {
   const priceRe = /<p>(€[\d,]+) plus VAT\. ([^.<]+)\. ([^.<]+)\.<\/p>/;
   const pageStart = mdPageStart("/agent-readiness-audit");
   if (!priceRe.test(pageStart)) throw new Error("audit page lead carries no price sentence");
-  const startHtml = pageStart.replace(priceRe, (m, price, a, b) => `<p class="price-line"><span class="price">${price.replace(/€/g, "&#8364;")}</span><span class="terms">plus VAT &middot; ${a} &middot; ${b}</span></p>`);
+  const startHtml = pageStart.replace(priceRe, (m, price, a, b) => `<p class="price-line"><span class="price">${price.replace(/€/g, "&#8364;")}</span> <span class="terms">plus VAT &middot; ${a} &middot; ${b}</span></p>`);
   const body = `${head}
 ${cardPageNav("/agent-readiness-audit")}
 <main id="main">
   ${startHtml}
-  <div class="cta"><a class="btn" href="${escapeHtml(mailto)}">Request an audit</a><a class="btn-ghost" href="/samples/audit-report">Read the sample report</a></div>
+  <div class="cta"><a class="btn" href="${escapeHtml(mailto)}">Request an audit</a> <a class="btn-ghost" href="/samples/audit-report">Read the sample report</a></div>
   ${mdOpenSec("/agent-readiness-audit", "When this helps", "when-this-audit-is-useful")}
   ${mdOpenSec("/agent-readiness-audit", "One example: the price is wrong", "a-finding-that-changes-the-fix-order")}
   ${mdOpenSec("/agent-readiness-audit", "What I check", "scope")}
@@ -11789,7 +11807,7 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
   } else if (result) {
     const counts = ["pass", "warn", "fail", "info"].map((k) => `<span><b>${word[k]}</b> ${result.checks.filter((c) => c.status === k).length}</span>`).join("");
     const rows = result.checks.map((c) =>
-      `<div class="chk ${c.status}"><span class="s">${word[c.status] || escapeHtml(c.status)}</span><span class="l">${escapeHtml(c.label)}</span><span class="d">${escapeHtml(c.detail)}</span></div>`
+      `<div class="chk ${c.status}"><span class="s">${word[c.status] || escapeHtml(c.status)}</span> <span class="l">${escapeHtml(c.label)}</span> <span class="d">${escapeHtml(c.detail)}</span></div>`
     ).join("\n    ");
     resultHtml = `<section class="sec" id="result"><h2>Result: ${escapeHtml(summarizeChecks(result.checks))}</h2>
     <p class="aview-cmd">${escapeHtml(result.target)}</p>
@@ -12222,7 +12240,7 @@ function parityResultHtml(input, status) {
   const shown = r.findings.slice(0, PARITY_FINDINGS_SHOWN);
   if (r.findings.length > shown.length) out += `<p class="verr">Showing the first ${shown.length} of ${r.findings.length} findings. The JSON report below lists all of them.</p>`;
   if (shown.length) {
-    out += `<h3>Findings</h3>\n    ` + shown.map((f) => `<div class="chk ${cls[f.severity] || "info"}"><span class="s">${sev[f.severity] || escapeHtml(f.severity)}</span><span class="l">${escapeHtml(f.code)}, ${dir[f.direction] || escapeHtml(f.direction)}: ${escapeHtml(stripBidi(f.message))}</span>${where("HTML", f.html)}${where("Markdown", f.markdown)}${f.before !== undefined || f.after !== undefined ? `<span class="d">Before: ${escapeHtml(stripBidi(f.before === undefined ? "none" : f.before))}. After: ${escapeHtml(stripBidi(f.after === undefined ? "none" : f.after))}.</span>` : ""}</div>`).join("\n    ");
+    out += `<h3>Findings</h3>\n    ` + shown.map((f) => `<div class="chk ${cls[f.severity] || "info"}"><span class="s">${sev[f.severity] || escapeHtml(f.severity)}</span> <span class="l">${escapeHtml(f.code)}, ${dir[f.direction] || escapeHtml(f.direction)}: ${escapeHtml(stripBidi(f.message))}</span>${where("HTML", f.html)}${where("Markdown", f.markdown)}${f.before !== undefined || f.after !== undefined ? `<span class="d">Before: ${escapeHtml(stripBidi(f.before === undefined ? "none" : f.before))}. After: ${escapeHtml(stripBidi(f.after === undefined ? "none" : f.after))}.</span>` : ""}</div>`).join("\n    ");
   } else if (s.result !== "error") {
     out += `<p>No findings.</p>`;
   }
@@ -12382,7 +12400,7 @@ function blogPostLinks() {
   return posts.map(({ path, meta }) => {
     const title = (meta.title || "").replace(/ [|\u00B7] turva\.dev$/, "");
     const search = (title + " " + (meta.description || "")).toLowerCase();
-    return `  <a class="post" href="${path}" data-kind="${escapeHtml(meta.kind || "")}" data-search="${escapeHtml(search)}"><span class="pt">${escapeHtml(title)}</span><span class="pm"><span class="pd">${meta.date}</span>${meta.kind ? `<span class="pk">${escapeHtml(meta.kind)}</span>` : ""}</span>${meta.description ? `<span class="ps">${escapeHtml(meta.description)}</span>` : ""}</a>`;
+    return `  <a class="post" href="${path}" data-kind="${escapeHtml(meta.kind || "")}" data-search="${escapeHtml(search)}"><span class="pt">${escapeHtml(title)}</span> <span class="pm"><span class="pd">${meta.date}</span>${meta.kind ? ` <span class="pk">${escapeHtml(meta.kind)}</span>` : ""}</span>${meta.description ? ` <span class="ps">${escapeHtml(meta.description)}</span>` : ""}</a>`;
   }).join("\n");
 }
 // The four filters of the blog index, in display order. Every post's kind has to be one of

@@ -1711,10 +1711,13 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 // (Ansa 2 in the same 2026-08-01 entry, measured in this very file). So a missing or
 // empty expected value is a FAIL here too, never a skip.
 const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
+  // Since v3.171.0 (Tek-479 P14) a cell carries a space between its label and its value, so a text
+  // reader gets "content 100/100" and not "content100/100". The separator is whitespace either way;
+  // the label, the value, their order and the count are compared exactly as before.
   const virheet = [];
   const gridM = lahde.match(/<div class="board-grid">([\s\S]*?)<\/div>\s*<div class="board-sum">([\s\S]*?)<\/div>/);
   if (!gridM) return ['board-grid / board-sum not found in worker.js source'];
-  const cells = [...gridM[1].matchAll(/<div class="cell"><span class="cat">([^<]*)<\/span><span class="val">([^<]*)<\/span><\/div>/g)]
+  const cells = [...gridM[1].matchAll(/<div class="cell"><span class="cat">([^<]*)<\/span>\s*<span class="val">([^<]*)<\/span><\/div>/g)]
     .map((m) => ({ cat: twDecode(m[1]).trim(), val: twDecode(m[2]).trim() }));
   const want = (Array.isArray(kategoriat) ? kategoriat : []);
   if (!want.length) virheet.push('facts.json declares no categories, so the board would be compared against nothing');
@@ -1744,7 +1747,7 @@ const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
   // on purpose: the surface drifting from the data, and the data losing its value.
   const kSarja = (rivit, summa) =>
     `<div class="board-grid">${rivit}</div>\n<div class="board-sum"><span>verified</span> <b>${summa}</b> <span class="pill">Level 5</span> <span class="pill">Agent-Native</span></div>`;
-  const kCell = (cat, val) => `<div class="cell"><span class="cat">${cat}</span><span class="val">${val}</span></div>`;
+  const kCell = (cat, val) => `<div class="cell"><span class="cat">${cat}</span> <span class="val">${val}</span></div>`;
   const kCats = [{ id: 'a', label: 'alpha', score: '100/100' }, { id: 'b', label: 'beta', score: '90/100' }];
   const kHyva = kSarja(kCell('alpha', '100/100') + kCell('beta', '90/100'), '100/100');
   const kAjautunut = kSarja(kCell('alpha', '100/100') + kCell('beta', '80/100'), '100/100');   // pinta ajautui datasta
@@ -2152,7 +2155,7 @@ if (LIVE) {
     const gridM = homeHtml.match(/<div class="board-grid">([\s\S]*?)<\/div>\s*<div class="board-sum">([\s\S]*?)<\/div>/);
     if (!gridM) bad('board: board-grid / board-sum not found in the served homepage');
     else {
-      const cells = [...gridM[1].matchAll(/<div class="cell"><span class="cat">([^<]*)<\/span><span class="val">([^<]*)<\/span><\/div>/g)]
+      const cells = [...gridM[1].matchAll(/<div class="cell"><span class="cat">([^<]*)<\/span>\s*<span class="val">([^<]*)<\/span><\/div>/g)]
         .map((m) => ({ cat: twDecode(m[1]).trim(), val: twDecode(m[2]).trim() }));
       const wantLabels = CATS.map((c) => c.label);
       // Both sides can go empty at once, and then two empty joins compare equal. The
