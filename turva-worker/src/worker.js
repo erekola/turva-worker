@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.172.0 - the retest window's short statements (Tek-481, 2026-09-25): the home and /services offer cards, the two /services sections, three places on the Shopify page, the audit-choice guide's answer, the services skill, the JSON-LD offers and services, the ACP checkout session and the audit sample's agreed-work table now say that the included retest or re-scan window starts on the day the corrections are delivered when the correction add-on is bought (Tek-479 P8); turva-mcp 1.6.1 says the same in get_services, which moves the version in the signed MCP server card.
 // turva.dev worker v3.171.0 - the site's own Markdown parity and the traffic analyses (Tek-479 P14 and O2, 2026-09-25): the article frame sits outside <main>, with the back link and the frame's dates in a page head above it and a guide's next step after it, a post keeps the twin's bare date line under the H1 and shows the author in the page head, the contents list is a second <nav> labelled by its heading, twenty-six adjacent card elements gain a space (twenty-five on served pages, one in the unused mdPcard) so a text reader gets separate words, the hosted parity check passes 51 of 71 pages instead of none, the post HTML and Markdown can disagree records the before and after figures, and /legal says a traffic-spike analysis keeps the network operator and the request counts without the addresses. Nothing a page says about a price, a service or the score changed.
 // turva.dev worker v3.170.0 - the outside read of 2026-09-25 (Tek-479): /legal names its providers, the roles and lawful bases, the Worker log retention, when the thirty-day deletion starts and which copies it does not cover, cancellation and refunds, the liability exceptions and where the postal address is given; /company and /contact state the postal address rule; the Shopify check says it is paid by invoice and both add-on pages say the retest window starts when the corrections are delivered; the audit page qualifies large-site coverage and single-run AI answers; the two sample reports gain answer records, script output, an OpenAPI row, a Markdown content line, the merchant's intent and the remote reads; the validator page, the llms.txt, x402 and choosing guides and two research posts correct wording that said more than the tools or the data do.
 // turva.dev worker v3.169.1 - the post /blog/local-agent-memory names its backups (2026-09-25): the section Where does the memory live and the Frequently asked answer on whether the memory leaves the machine now say that a local clone is taken every night and Proton Drive holds an offsite copy, and the line count of the site's source file is dated to the day it was counted. Nothing else changed.
@@ -2833,7 +2834,7 @@ Estimated edge work is about eleven hours for F1 to F7, or eleven and a half hou
 | AI visibility run | 2026-09-04, 15 questions to four assistants, one anonymous run per question, conditions in appendix B |
 | Report delivered | 2026-09-08, fourteen days after the kickoff |
 | Written follow-up round | Open until 2026-09-22 |
-| Re-scan | One, included, within 30 days of the report, by 2026-10-08, on the day the company names |
+| Re-scan | One, included, on a day the company names: within 30 days of the report, by 2026-10-08, or within 30 days of the delivered corrections when the correction add-on is bought, the second route under After the report |
 | Access used | Public surfaces only. No login, no credentials, no code repository |
 
 ## Decisions for the company
@@ -3592,8 +3593,8 @@ This example uses an invented business and invented readings. The sample's scann
 
 ## Choose the check you need
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package.
-- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered within two weeks of the agreed written kickoff.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package, or of the delivered corrections when the correction add-on is bought.
+- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 
 Prices exclude VAT. Both can be bought on their own.
 
@@ -3707,8 +3708,8 @@ You work directly with me, in writing. I reply within one business day. All pric
 
 ## Choose a starting point
 
-- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package.
-- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and one re-scan within 30 days of the report is included. Delivered within two weeks of the agreed written kickoff.
+- [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package, or of the delivered corrections when the correction add-on is bought.
+- [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 
 See the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check) before choosing a service.
 
@@ -3718,7 +3719,7 @@ See the [sample audit report](/samples/audit-report) and the [sample Shopify rep
 
 What an AI shopper receives from one live Shopify store, across the three agent interfaces this check covers, with the evidence attached. One store, one market, up to three product and variant pairs.
 
-Four written deliverables within 48 hours of the agreed written kickoff, and a fifth, one retest of up to two corrected items within 14 days of that first package. A further retest is bought as a new check. The audit is not a prerequisite. [Read the full scope, the exclusions, the preflight and the refund terms](/shopify-agent-storefront-check).
+Four written deliverables within 48 hours of the agreed written kickoff, and a fifth, one retest of up to two corrected items within 14 days of that first package, or of the delivered corrections when the correction add-on is bought. A further retest is bought as a new check. The audit is not a prerequisite. [Read the full scope, the exclusions, the preflight and the refund terms](/shopify-agent-storefront-check).
 
 ## Website and API agent-readiness audit
 
@@ -3726,7 +3727,7 @@ Four written deliverables within 48 hours of the agreed written kickoff, and a f
 
 A technical scan, a manual review of your website and API surfaces, and a recorded question set put to selected AI assistants. The report keeps the technical findings and the observed AI answers apart.
 
-The audit is delivered within two weeks of the agreed written kickoff. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report. [Read the full scope and the deliverables](/agent-readiness-audit).
+The audit is delivered within two weeks of the agreed written kickoff. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. [Read the full scope and the deliverables](/agent-readiness-audit).
 
 ## Implementation
 
@@ -3957,7 +3958,7 @@ I compare selected products, prices and availability across your store's agent-s
 
 €999 plus VAT. One store. One market. Up to three product and variant pairs.
 
-You receive four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows, within 14 days of that first package.
+You receive four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows, within 14 days of that first package, or of the delivered corrections when the correction add-on is bought.
 
 ## What you will learn
 
@@ -3978,7 +3979,7 @@ The first four items arrive together within 48 hours:
 - A record of the shopping journey: the tool, input, result, cart state and exact stopping point.
 - A correction plan: up to five changes, each with an owner and a check your team can repeat.
 
-The fifth item is one retest of up to two corrected items, within 14 days of the day the first four arrive. A further retest is bought as a new check.
+The fifth item is one retest of up to two corrected items, within 14 days of the day the first four arrive, or of the day the corrections are delivered when the correction add-on is bought. A further retest is bought as a new check.
 
 ## What is included
 
@@ -3992,7 +3993,7 @@ The fifth item is one retest of up to two corrected items, within 14 days of the
 - Shopify Agentic settings and a Catalog search preview.
 - One anonymous browser cart, with one checkout navigation if you authorise it.
 - One separate remote UCP Cart lifecycle, stopping before Checkout MCP.
-- One retest of up to two corrected items, within 14 days of the first package.
+- One retest of up to two corrected items, within 14 days of the first package, or of the delivered corrections when the correction add-on is bought.
 
 The scope is agreed before delivery starts.
 
@@ -5299,7 +5300,7 @@ turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the
 
 **How long does an agent-readiness audit take?**
 
-A fixed-scope audit is delivered within two weeks of the agreed written kickoff. The Shopify agent storefront check is delivered within 48 hours of the agreed written kickoff, with a retest of up to two corrected items within 14 days of that delivery. Advisory and implementation run on the cadence the engagement sets.
+A fixed-scope audit is delivered within two weeks of the agreed written kickoff. The Shopify agent storefront check is delivered within 48 hours of the agreed written kickoff, with a retest of up to two corrected items within 14 days of that delivery, or of the delivered corrections when the correction add-on is bought. Advisory and implementation run on the cadence the engagement sets.
 
 **What do you get from an agent-readiness audit?**
 
@@ -6152,7 +6153,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.171.0",
+    "version": "3.172.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6262,7 +6263,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"G8xAXUtbGuaA-6jb3kshikArQEiY-X00hrFHbA8TTH1n_FjwK0lkxSvkerIvgckCxbCZZO-bdraOYvMby_fqDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"9OzcBkf6DR4xYim4lQcYjpw0vG7HNmQSy0WyIL_Lwu8uqFQOALdOtSUAopb3Y1a8UhF-k7JPIUWikjouXj64Ag\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oePJ7PJxhab2T0Q8N4FUo9F_FHpWiyuNHQkxF-ut2MuU51sgFtLWdj2AjOILodtjq2OuJAYM8nF1UIq8CDJPDA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"9OzcBkf6DR4xYim4lQcYjpw0vG7HNmQSy0WyIL_Lwu8uqFQOALdOtSUAopb3Y1a8UhF-k7JPIUWikjouXj64Ag\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6277,7 +6278,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6286,7 +6287,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.0",
+    "version": "1.6.1",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -6424,7 +6425,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.171.0",
+  "version": "3.172.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6849,7 +6850,7 @@ description: List the service offerings of turva.dev, with fixed prices in EUR f
 Use this skill to learn which services turva.dev offers, and which of them carry a fixed price.
 
 ## Services (fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation, VAT not included; agent operations and MCP server design are quoted on request)
-- **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days of that package.
+- **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought.
 - **Audit.** €4,300. Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, minimum 3 months. Async-only. Ongoing review, score tracking and a monthly AI-visibility delta across several AI platforms.
 - **Implementation.** €1,500 / day. Scoped per task. Edge workers, MCP servers, well-known manifests, JSON-LD.
@@ -7837,8 +7838,8 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 // pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
 // second copy would be a second price list, and verify.mjs reads this one against facts.json.
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
-{"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
-{"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
+{"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across several AI platforms, written review of shipped work within one business day, roadmap input. Minimum three months.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. An MCP server is a separate engagement.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}}`;
@@ -9023,7 +9024,7 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
     "serviceType": "Agent commerce readiness check",
     "provider": { "@id": "https://turva.dev/#business" },
     "areaServed": { "@type": "Place", "name": "Worldwide" },
-    "description": "A fixed-scope check of what an AI shopper receives from one live Shopify store, across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Shopify Catalog and Agentic channels. Four written deliverables as one package within 48 hours of the agreed written kickoff, and a fifth, the retest of up to two corrected items, within 14 days of that package. A further retest is bought as a new check.",
+    "description": "A fixed-scope check of what an AI shopper receives from one live Shopify store, across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Shopify Catalog and Agentic channels. Four written deliverables as one package within 48 hours of the agreed written kickoff, and a fifth, the retest of up to two corrected items, within 14 days of that package, or of the delivered corrections when the correction add-on is bought. A further retest is bought as a new check.",
     "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
     "offers": {
       "@type": "Offer",
@@ -9038,7 +9039,7 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
         "price": "999",
         "priceCurrency": "EUR",
         "valueAddedTaxIncluded": false,
-        "description": "\u20ac999 fixed price, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package. VAT (25,5%) added per Finnish law."
+        "description": "\u20ac999 fixed price, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. VAT (25,5%) added per Finnish law."
       }
     }
   };
@@ -9058,7 +9059,7 @@ function buildAuditServiceJsonLd(canonicalUrl) {
     "serviceType": "Agent-readiness audit",
     "provider": { "@id": "https://turva.dev/#business" },
     "areaServed": { "@type": "Place", "name": "Worldwide" },
-    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report. Delivered within two weeks of the agreed written kickoff.",
+    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.",
     "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
     "offers": {
       "@type": "Offer",
@@ -12513,7 +12514,7 @@ var X402_ROUTES = {
 };
 
 var ACP_SERVICES = {
-  shopify: { item: "shopify", name: "Shopify agent storefront check", amount: 99900, description: "Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package. One live Shopify store across browser WebMCP, remote MCP and Catalog and Agentic channels." },
+  shopify: { item: "shopify", name: "Shopify agent storefront check", amount: 99900, description: "Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store across browser WebMCP, remote MCP and Catalog and Agentic channels." },
   audit: { item: "audit", name: "Agent-readiness audit", amount: 430000, description: "Fixed scope, delivered within two weeks of the agreed written kickoff. Independent scanner sweep, manual review, written report with prioritized fixes." },
   advisory: { item: "advisory", name: "Continuous advisory", amount: 300000, description: "Monthly re-scan, score delta report, written review, roadmap input. Minimum three months." },
   implementation: { item: "implementation", name: "Implementation day", amount: 150000, description: "Hands-on work at your edge, scoped per task." }
