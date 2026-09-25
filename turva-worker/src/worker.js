@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.170.0 - the outside read of 2026-09-25 (Tek-479): /legal names its providers, the roles and lawful bases, the Worker log retention, when the thirty-day deletion starts and which copies it does not cover, cancellation and refunds, the liability exceptions and where the postal address is given; /company and /contact state the postal address rule; the Shopify check says it is paid by invoice and both add-on pages say the retest window starts when the corrections are delivered; the audit page qualifies large-site coverage and single-run AI answers; the two sample reports gain answer records, script output, an OpenAPI row, a Markdown content line, the merchant's intent and the remote reads; the validator page, the llms.txt, x402 and choosing guides and two research posts correct wording that said more than the tools or the data do.
 // turva.dev worker v3.169.1 - the post /blog/local-agent-memory names its backups (2026-09-25): the section Where does the memory live and the Frequently asked answer on whether the memory leaves the machine now say that a local clone is taken every night and Proton Drive holds an offsite copy, and the line count of the site's source file is dated to the day it was counted. Nothing else changed.
 // turva.dev worker v3.169.0 - new Build notes post /blog/local-agent-memory (2026-09-25): What agent memory in local files gets me, with its Frequently asked section, its OG card, a new Blog line in LLMS_TXT (re-signed), a sitemap row and a canonical path, and SITEMAP_LASTMOD moves to the day the page text changed. Nothing else changed.
 // turva.dev worker v3.168.0 - turva-mcp 1.6.0 (2026-09-23): get_contact also says who runs turva.dev. Its new operator object carries the trade name, the operator, the business form, the business ID and VAT ID, the location, a one-person team and a short background, as the Business details section of /company states them, because Glama's tool-definition review found no company background or team information in the tool set. The MCP server card moves to version 1.6.0, its get_contact summary names the operator, and the card is re-signed.
@@ -1071,7 +1072,7 @@ Of the 567 sites, 485 read Level 1 of 5. Level 1 is the floor an ordinary CMS si
 
 The Finnish subset is 407 sites, and 352 of them, 86,5 percent, read Level 1. The 160 sites from outside Finland read 83,1 percent at Level 1 and 14,4 percent at Level 0. The two subsets read the same, so the floor is not a Finnish trait.
 
-The scanner added one check to its set during these ten weeks, so the two ends of the period are not measured on an identical instrument. The level scale did not change. The thirty-day rescans I promise each company are a separate series and are not in these figures.
+The scanner added one check to its set during these ten weeks, Agentic Resource Discovery, which reads /.well-known/ai-catalog.json, so the two ends of the period are not measured on an identical instrument. The level scale did not change. On the one site I measured on both sides of the change, the passing checks and the level stayed the same. The thirty-day rescans I promise each company are a separate series and are not in these figures.
 
 ## What the Level 0 notes say
 
@@ -1083,7 +1084,7 @@ The 439 Level 1 sites with a note are more varied. The sitemap appears in 102 no
 
 A level from an independent scanner is a claim someone else can verify. Run the same scanner on the same site and you get the same reading, or a newer one that shows what changed. That is the only reason I publish my own score, and it is why every company I wrote to got the level on the day of writing and an offer to read it again thirty days later.
 
-Four levels separate the typical company site from a site an agent can read and act on, and the gap is mostly mechanical: serve markdown next to HTML, publish structured data, publish an llms.txt that lists real pages, expose the discovery files, and answer on the endpoints they declare. That is web development with a checklist, and it can start before anyone writes an AI strategy.
+In this sample, four levels separate the typical site from a site an agent can read and act on, and the gap is mostly mechanical: serve markdown next to HTML, publish structured data, publish an llms.txt that lists real pages, expose the discovery files, and answer on the endpoints they declare. That is web development with a checklist, and it can start before anyone writes an AI strategy.
 
 ## How to read your own site
 
@@ -1093,15 +1094,17 @@ Run isitagentready.com on your domain and read the level, then read which checks
 
 **Are these 567 sites broken?**
 
-No. They load and a person can use them without trouble. The level measures something else, whether a machine reading on someone's behalf can find the site, read it without a browser, learn what the company sells and act on it. Level 1 is where most working company sites sit today.
+No. They load and a person can use them without trouble. The level measures something else, whether a machine reading on someone's behalf can find the site, read it without a browser, learn what the company sells and act on it. Level 1 is where most sites in this sample sat on the day I wrote to them.
 
 **Why do Finnish and other sites read the same?**
 
-Because Level 1 is what a CMS ships by default: a robots.txt, a sitemap and HTML pages. Nothing in that default was built for agents, and no country's CMS market ships more than that, so the floor is the same wherever the company is.
+Because Level 1 is what a CMS ships by default: a robots.txt, a sitemap and HTML pages. Nothing in that default was built for agents. My reading is that this is why the Finnish sites and the others land on the same floor, and that reading is not measured: the data has no country-by-country split and no record of which CMS each site runs.
 
 **How do I check my own site?**
 
 Run the scanner on your domain and read the level, then read which checks failed. The free llms.txt validator on this site reads the llms.txt part in detail. The audit reads the whole surface and lists the fixes in priority order, and it starts with an email carrying the domain.
+
+Corrected 2026-09-25. Three sentences said more than the data shows. Two described the typical company site and where most company sites sit, and they now describe this sample. A third gave a reason for the shared floor that no measurement supports, and it is now marked as my reading. I also named the check the scanner added. The counts did not change.
 
 ## Related
 
@@ -1937,7 +1940,7 @@ Over the past weeks I ran an independent agent-readiness scanner over sixteen Fi
 - Sixteen Finnish B2B sites scanned with an independent scanner, isitagentready.com.
 - Almost all sites landed at isitagentready Level 1 of 5, a couple at Level 0, one at Level 2, none higher.
 - The three most common gaps: HTML-only pages with heavy token overhead, missing structured data, and no action or capability layer.
-- Largest measured token saving: about 16500 tokens of HTML where 1400 tokens of markdown carry the same content, a 91 percent saving.
+- Largest token saving reported: about 16500 tokens of HTML against an estimated 1400 tokens of markdown on one site, a 91 percent saving.
 - The two sites that published a real llms.txt sat at the top of the range.
 
 Note added July 17: one reading of the llms.txt point is circular, since
@@ -1953,21 +1956,23 @@ To be clear about what that means, these are not broken websites. They load, the
 
 ## The three gaps that showed up almost everywhere
 
-Discoverability was usually fine, legibility was not. Most sites had robots.txt, a sitemap, sometimes explicit AI-bot rules, so an agent can find them. But the same sites served HTML only, often with heavy token overhead. One consumer-facing corporate site returned about 16500 tokens of HTML where 1400 tokens of markdown would carry the same content, a 91 percent saving. An agent can fetch the page, but reading it is slow and lossy.
+Discoverability was usually fine, legibility was not. Most sites had robots.txt, a sitemap, sometimes explicit AI-bot rules, so an agent can find them. But the same sites served HTML only, often with heavy token overhead. One consumer-facing corporate site returned about 16500 tokens of HTML where a markdown version was estimated at 1400 tokens, a 91 percent saving. An agent can fetch the page, but reading it is slow and lossy.
 
-The second gap was structured data, or the lack of it. Missing JSON-LD and product data was common, so an agent reaches the site, sees a wall of markup, and cannot answer a plain question like what this company makes or sells.
+The second gap was structured data, or the lack of it. Missing JSON-LD and product data was common, so an agent that reaches the site finds no structured statement of what the company makes or sells and has to infer it from the markup.
 
 The third and most consistent gap was the action and capability layer. No markdown negotiation, no MCP server, no API discovery, no agent-auth metadata. One site that belongs to an AI company itself passed zero of eight checks in that discovery group. This is the layer that lets an agent move from finding a site to operating it, and it was absent almost everywhere.
 
 ## Why this matters now
 
-AI agents are becoming a discovery and transaction channel. When an agent reads a site and cannot parse or act on it, the business does not rank lower, it becomes invisible inside the answer. The sites in this sample are not behind on SEO, most rank fine. They are behind on the next thing, being legible and actionable to the agents that increasingly read on a person's behalf.
+AI agents are becoming a discovery and transaction channel. When an agent reads a site and cannot parse or act on it, the business risks being left out of the answer, which is a different problem from ranking lower. This scan read the sites. It did not record any assistant's answer or any search ranking. What it shows is that the sites in this sample are behind on being legible and actionable to the agents that increasingly read on a person's behalf.
 
 The encouraging part is that the fixes are mostly known and mechanical. Serve markdown alongside HTML, add structured data, publish an llms.txt, expose the discovery manifests. Two of the sixteen had already started, they published a real llms.txt, and that is exactly why they sat at the top of the range.
 
 For the larger sample, a later post ran the same scanner across [567 company sites](/blog/website-agent-readiness-567-sites).
 
 To check where a site stands, the free llms.txt validator is at turva.dev/llms-txt-validator, and the agent-readiness audit and advisory work is at turva.dev.
+
+Corrected 2026-09-25. Three passages said more than the scan measured. The token figures were an estimate from a scanner this site no longer uses, and they are now labelled as reported and estimated. Two sentences drew what an agent can answer and whether a business appears in an answer from configuration checks, and a third said most of these sites rank fine in search, which was never measured. They now say what the scan read. The counts did not change.
 
 ## Related
 
@@ -2177,7 +2182,7 @@ For an audit of the whole surface an agent sees, not just this one file, contact
 
   "/llms-txt-validator": `# Free llms.txt validator
 
-Enter a domain to check its llms.txt file and the discovery links on its home page. No signup is needed.
+Enter a domain, or the address of its llms.txt file, to check the file and the discovery links on its home page. No signup is needed.
 
 This checks the file's structure. It does not give your site an agent-readiness score.
 
@@ -2201,12 +2206,12 @@ Eight checks examine the file:
 - It includes the recommended blockquote summary after the title.
 - H2 headings group the content.
 - Markdown links parse and use absolute URLs.
-- The file stays under 256 KB. Anything larger is read truncated.
+- The file is small enough to read cheaply. A file over 50 KB gets a warning, and one over 256 KB is read truncated. With --strict, a warning fails the run.
 - It contains no inline HTML. HTML produces a warning.
 
 Two more checks look at the home page:
 
-- A rel="describedby" link to llms.txt.
+- A rel="describedby" link with a target. The validator does not fetch the target, so it cannot confirm that the target is llms.txt.
 - A rel="alternate" link with type="text/markdown" to a Markdown version.
 
 These two v2 checks report pass or information. They cannot produce a warning or a failure and do not affect the structural result. The format reached v2 in August 2026, and the version history is in [llms.txt explained](/guides/llms-txt).
@@ -2341,7 +2346,7 @@ Start with a small check, inspect turva.dev's public MCP interface, or read the 
 
 ## Check an llms.txt file
 
-Enter a domain to check the file's structure and its home-page discovery links. No account is needed.
+Enter a domain or the address of its llms.txt file to check the file's structure and its home-page discovery links. No account is needed.
 
 [Open the validator](/llms-txt-validator)
 
@@ -2847,14 +2852,14 @@ Fix the problems affecting buyers first. The table separates a correction made a
 | Order | Finding | Checks moved | Correction at the edge | Correction at the source | Edge hours | Source hours |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | F1 product data on all three surfaces | None, manual | Correct the JSON-LD Product node on every product page from the fields the page renders, and run the whole-catalog acceptance script | Fix the plugin mapping and the API price visibility so the origin publishes the right data itself | 4 | 2,5 |
-| 2 | F2 markdown next to HTML | markdownNegotiation | Edge worker with the acceptance list in F2 | None | 4 | 0 |
-| 3 | F3 llms.txt, Link header, security.txt | linkHeaders | Serve llms.txt and /.well-known/security.txt, and add the describedby and alternate Link relations | Read and approve the llms.txt text, D3. A company decision, not implementation work | 1,5 | 0,5 |
-| 4 | F4 sitemap content | None, manual | Serve a sitemap index over a product sitemap generated from the API and a content sitemap, the CMS sitemap without the two template pages | Four plugin settings so the origin sitemap is right on its own | 0,5 | 0,5 |
-| 5 | F5 robots.txt | robotsTxtAiRules, contentSignals | Serve the file | Decide the preference, D2. A company decision, not implementation work | 0,5 | 0 |
-| 6 | F6 api-catalog and real 404s | apiCatalog | Serve the linkset and the 404s | None | 0,5 | 0 |
-| 7 | F7 DNSSEC, the DNS-AID record waits | None in this round. dnsAid waits for an agent registry | None. DNS is not served by the edge | Enable DNSSEC in the DNS zone and at the registrar. The _index._agents record waits until the company publishes an agent registry for it to point at | 0 | 0,5 |
-| 8 | F8 commerce | None, on purpose | None | Decision D5 | 0 | 0 |
-| 9 | F9 the old address | None, manual | Add the current address to the Organization node | Remove or update the 2022 price list PDF. Ask the directory to correct its listing, which is a third party's own action | 0,5 | 1 |
+| 2 | F9 the old address | None, manual | Add the current address to the Organization node | Remove or update the 2022 price list PDF. Ask the directory to correct its listing, which is a third party's own action | 0,5 | 1 |
+| 3 | F2 markdown next to HTML | markdownNegotiation | Edge worker with the acceptance list in F2 | None | 4 | 0 |
+| 4 | F3 llms.txt, Link header, security.txt | linkHeaders | Serve llms.txt and /.well-known/security.txt, and add the describedby and alternate Link relations | Read and approve the llms.txt text, D3. A company decision, not implementation work | 1,5 | 0,5 |
+| 5 | F4 sitemap content | None, manual | Serve a sitemap index over a product sitemap generated from the API and a content sitemap, the CMS sitemap without the two template pages | Four plugin settings so the origin sitemap is right on its own | 0,5 | 0,5 |
+| 6 | F5 robots.txt | robotsTxtAiRules, contentSignals | Serve the file | Decide the preference, D2. A company decision, not implementation work | 0,5 | 0 |
+| 7 | F6 api-catalog and real 404s | apiCatalog | Serve the linkset and the 404s | None | 0,5 | 0 |
+| 8 | F7 DNSSEC, the DNS-AID record waits | None in this round. dnsAid waits for an agent registry | None. DNS is not served by the edge | Enable DNSSEC in the DNS zone and at the registrar. The _index._agents record waits until the company publishes an agent registry for it to point at | 0 | 0,5 |
+| 9 | F8 commerce | None, on purpose | None | Decision D5 | 0 | 0 |
 
 Edge total for F1 to F7 and F9: about eleven and a half hours. Source total: about five hours, of which the largest is the plugin work behind F1. Both totals are inside the fix list, and D1 decides who makes them.
 
@@ -2979,13 +2984,14 @@ The surfaces the scanner does not score, read by hand on 2026-09-03 and 2026-09-
 | First response as a bot | Every page returns its full HTML on the first response. No script shell, no prerender. | No finding. The content is there, it is only expensive to read. |
 | JSON-LD, product pages | Product node on all 138 pages: price 0.00, priceCurrency EUR, availability InStock. The 19 products with variants publish one node for the whole product and nothing per variant. The 12 products priced per box of 100 carry no unit. | F1 |
 | JSON-LD, home and category pages | Organization node with name and logo, no address, no taxID, no sameAs. WebSite node present. No BreadcrumbList. | F9 adds the address. The rest is recorded, no fix in this round. Completeness, not correctness. |
-| Head metadata and Open Graph | Title and description present on all seven pages read. og:image missing on the five product pages. | Recorded, no fix in this round. |
+| Head metadata and Open Graph | Title and description present on all seven pages read. og:image missing on the five product pages. | Recorded, no fix in this round. The missing image changes how a shared link looks, and every fact on the page is right. |
 | HTTP response headers | Content-Type correct. No Link, no RateLimit-Policy, no security headers except HSTS. | F3 adds the Link relations. Security headers are in the internet.nl reading below. |
 | /.well-known/ | Empty. Every path under it returns the HTML 404 page with status 200. | F3 and F6 populate it. The soft 404 is F6's first line. |
 | robots.txt | The CMS default. One wildcard group, Disallow: /wp-admin/, no Sitemap line, no AI crawler, no Content-Signal. | F5 |
 | sitemap.xml | 14 URLs. The front page, eleven content pages and two template pages titled Sample Page and Privacy Policy Draft. No product page. | F4 |
 | ai.txt and llms.txt | Neither exists. | F3 publishes llms.txt. ai.txt is not published: the norm it followed has merged into robots.txt Content Signals. |
 | REST API | /wp-json/wc/store/v1/products, the WooCommerce Store API v1, answers publicly, 100 products per page, two pages, X-WP-Total 138. As the Store API does by default, the listing leaves the variations out. Every row has prices.price as an empty string and is_purchasable true. The other stock fields show 90 rows in stock with no backorder, is_on_backorder true on 41 and is_in_stock false on 7. No field in the response carries a price basis. | F1 corrects the data, F6 declares the API. |
+| OpenAPI description | None. The index at /wp-json/ lists its routes in WordPress's own JSON format, which is not an OpenAPI document, and the site publishes no OpenAPI file. | F6 declares the REST index. An OpenAPI description is added under F6 when the company asks for one. |
 | Old documents still served | /wp-content/uploads/2022/hinnasto-2022.pdf is a 2022 price list with the company's previous Tampere address on its cover, linked from nowhere on the site and indexed by two search engines. | F9 |
 
 ## What the assistants answered
@@ -3006,7 +3012,7 @@ Every material error has a cited source on the site or off it, a follow-up in th
 
 What is recorded and is not an error. Two category answers cited a distributor's price list page as markdown. That is an observation about the distributor's site and this report draws no conclusion from it about Northwind's. One category answer named no Finnish source at all. Nothing in this run shows why any assistant chose the sources it chose, and the report does not guess.
 
-What this measures. Whether an assistant names the company when a buyer describes the need, and whether it gets the facts right when it does. It does not measure ranking, and nothing in this report predicts how the run reads after the fixes. The same 15 questions are run again at the retest under the same conditions, and the two tables are printed side by side.
+What this measures. Whether an assistant names the company when a buyer describes the need, and whether it gets the facts right when it does. It does not measure ranking, and nothing in this report predicts how the run reads after the fixes. The same 15 questions are run again at the retest under the same conditions, and the two tables are printed side by side. Each question is put once to each assistant, and an assistant can answer the same question differently on another day for reasons that have nothing to do with the site. A changed answer at the retest is therefore recorded as an observation next to the fix, and the report does not read it as proof that the fix caused it.
 
 ## Public security checks
 
@@ -3020,7 +3026,7 @@ Run on 2026-09-04, recorded so that the client can re-run them without turva.dev
 
 ## The findings in detail
 
-Nine findings. Each one shows the evidence, why it matters, the correction, the owner and the check used to confirm the result. Observed effects and possible effects are labelled separately. The order is by impact on a buyer first and on the score second.
+Nine findings. Each one shows the evidence, why it matters, the correction, the owner and the check used to confirm the result. Observed effects and possible effects are labelled separately. The findings are numbered by impact on a buyer first and on the score second. F9 is the exception: the AI run raised it after the technical findings were numbered, so it comes last here, and the fix table above puts it second in the order of work, right after F1.
 
 ### F1. Product prices and availability disagree across the page, structured data and API
 
@@ -3069,6 +3075,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 - Canonicals. The .md twin carries Link: rel="canonical" pointing at the HTML page, and the HTML page carries rel="alternate" type="text/markdown" pointing at the twin, so search engines see one page and not two.
 - HTTP statuses. A page the origin serves with 404 is 404 in markdown. A 301 from the origin is passed through as a 301, not converted. An origin 500 is passed through as 500 and is never cached as markdown.
 - Scope. /cart/, /checkout/, /my-account/, /wp-admin/, /wp-login.php, every /wp-json/ route and every response that sets a cookie or carries a session are passed through untouched and never converted or cached. Checked by requesting each with Accept: text/markdown and reading the response unchanged.
+- Content. On every checked product page the markdown form carries the same price, price basis, availability and lead time as the HTML page and the confirmed product record from F1. [markdown-parity-check](/markdown-parity-check), run with a selector for the product content, reports no missing or changed block in that content. A conversion that drops one of these facts fails this line even when the format is right.
 - The scanner. markdownNegotiation reads PASS on the next full scan.
 
 **Guide.** [Serving Markdown to AI clients](/guides/markdown-for-agents).
@@ -3129,7 +3136,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **Why it matters.** One scored check now, and the cheapest step in the category. Observed: the API answers and nothing announces it, and every well-known probe gets a 200 with an HTML body. Possible and not observed: an agent that finds the API reads the catalog as data instead of scraping HTML, which is only worth anything once F1 has made the data right.
 
-**What to change.** Publish /.well-known/api-catalog, one JSON linkset that names the /wp-json/ base URL and its description, with the content type application/linkset+json. Return a real 404 with a plain text body for every path under /.well-known/ that the edge does not serve, which here is every path except this linkset and the security.txt that F3 publishes in the same directory. A path published on purpose keeps answering with its own content and its own content type. The other eight checks in the category need an authentication story or an MCP server and are not declared until one exists: a server card that points at no server is a false claim, and this report does not recommend one.
+**What to change.** Publish /.well-known/api-catalog, one JSON linkset that names the /wp-json/ base URL and its description, with the content type application/linkset+json. Return a real 404 with a plain text body for every path under /.well-known/ that the edge does not serve, which here is every path except this linkset and the security.txt that F3 publishes in the same directory. A path published on purpose keeps answering with its own content and its own content type. The other eight checks in the category need an authentication story or an MCP server and are not declared until one exists: a server card that points at no server is a false claim, and this report does not recommend one. If the company wants its API described in OpenAPI too, the implementer decision D1 names publishes an OpenAPI document for the Store API routes the catalog uses and adds it to the linkset as a second service-desc, and the retest reads it against live responses. It is not part of this finding's minimum, because apiCatalog passes on the REST index alone.
 
 **Who does it and estimated effort.** turva.dev or the company's developer, at the edge. About half an hour.
 
@@ -3195,7 +3202,7 @@ Three routes, and the report is written so that any of them works.
 - turva.dev makes every correction on the fix list, in both columns, for the fixed price on the services page, bought together with the audit. That price needs the access listed under What each party delivers, arranged in writing before the work starts. Without that access the add-on is not sold, and the report still carries every instruction.
 - Nothing is done, and the report stands as a dated record of where the site was on 2026-09-03.
 
-In every case the retest is the same, and it is included in the audit price: once within 30 days of this report, so by 2026-10-08, on the day the company names, the scanner is run again with the same profile, the whole-catalog script from F1 is run again, the 15 questions are put to the same four assistants under the same conditions, and the readings are printed next to the ones above with the versions from F7 stated. One round of written follow-up questions is open until 2026-09-22.
+In every case the retest is the same, and it is included in the audit price: once within 30 days of this report, so by 2026-10-08, or within 30 days of the delivered corrections when turva.dev makes them under the second route, on the day the company names, the scanner is run again with the same profile, the whole-catalog script from F1 is run again, the 15 questions are put to the same four assistants under the same conditions, and the readings are printed next to the ones above with the versions from F7 stated. One round of written follow-up questions is open until 2026-09-22.
 
 ## Scope limits
 
@@ -3216,6 +3223,15 @@ Chain 1, F1, one row of the whole-catalog test.
 | Observation | Three surfaces, three answers: 0,42 EUR with a six week lead time, 0,00 EUR in stock, and no price at all but purchasable |
 | Change | JSON-LD from the page's own price and stock elements at the edge. Plugin mapping and API price visibility at the source. Availability from is_on_backorder true, so BackOrder with deliveryLeadTime 6 weeks |
 | Acceptance reading | JSON-LD "price": "0.42", "availability": "https://schema.org/BackOrder", "deliveryLeadTime": 6 weeks. API "price": "42", "is_on_backorder": true. The confirmed product record gives 0,42 EUR per piece, on backorder with a six week lead time, so the row is ALIGNED on all three surfaces and with the record, and the script's total line reads 170 of 170 price rows and 180 of 180 availability rows aligned, which are the counts of a catalog where decision D4 kept all ten exception products published. The API column reads right here because the source row of F1 was corrected as well, which is what the fix list covers. The origin's own JSON-LD for the page, read by the method agreed with the company, carries the same node, so the source correction is shown on the origin and not only at the edge |
+
+The acceptance script from F1 is delivered as a file with the report. Its output for the same product at the retest:
+
+| Surface | Price | Availability | Lead time | Result |
+| --- | --- | --- | --- | --- |
+| Visible page | 0,42 EUR per piece | On backorder | 6 weeks | ALIGNED |
+| JSON-LD | "0.42", EUR | BackOrder | 6 weeks | ALIGNED |
+| Store API | "42" in minor units | is_on_backorder true | Not published | ALIGNED on the fields it carries |
+| Confirmed product record | 0,42 EUR per piece | On backorder | 6 weeks | Reference |
 
 Chain 2, F2, markdown negotiation on the home page.
 
@@ -3261,6 +3277,13 @@ Questions by name, 3.
 - Mitä Northwind Fasteners myy?
 - What does Northwind Fasteners sell and where is the company located?
 - Paljonko DIN 933 M12x40 A2 maksaa Northwind Fastenersilta?
+
+The delivered report carries every one of the 60 answers as a row of this form. Two rows are shown here, the two errors named in the table of material errors:
+
+| Question | Assistant | Time, EEST | Answer, excerpt | Northwind named | Correct where named | Source cited |
+| --- | --- | --- | --- | --- | --- | --- |
+| What does Northwind Fasteners sell and where is the company located? | A | 2026-09-04 09:41 | "Northwind Fasteners is a Tampere wholesaler of industrial fasteners, located at [the address the company left in 2023]." | Yes | No, the address | A business directory listing |
+| Paljonko DIN 933 M12x40 A2 maksaa Northwind Fastenersilta? | B | 2026-09-04 10:18 | "Tuote on Northwindin verkkokaupassa ilmainen, hinta 0,00 EUR." | Yes | No, the price | The product page /products/din-933-m12x40-a2/ |
 
 ## About this sample
 
@@ -3345,13 +3368,21 @@ The table compares the product, variant, price, currency, availability and polic
 | Merino Base Layer, M | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, unavailable | Mismatch, variant eligibility |
 | Camp Mug, green | 18,50 EUR, in stock | 18,50 EUR, in stock | 18,50 EUR, in stock | 18,50 EUR, in stock | Aligned |
 
+Each row compares one variant. The three tool interfaces returned the same product title and the same variant ID for it, and the catalog preview showed the same title and option:
+
+| Product and variant | Variant ID | Title returned |
+| --- | --- | --- |
+| Trail Bottle 750 ml, blue | gid://shopify/ProductVariant/100000000001 | Trail Bottle 750 ml |
+| Merino Base Layer, M | gid://shopify/ProductVariant/100000000002 | Merino Base Layer |
+| Camp Mug, green | gid://shopify/ProductVariant/100000000003 | Camp Mug |
+
 The 30 day return window, free shipping above 80 EUR and the delivery estimate of two to four working days matched across the storefront, the WebMCP policy tool and the Storefront MCP policy response. The Agentic Catalog preview has no policy fields, so their absence is not a mismatch.
 
-The price difference was reproduced at 11:20 and 14:05 EEST. The variant's eligibility was checked against the merchant's redacted settings screenshot. No settings were changed during the test.
+The price difference was reproduced at 11:20 and 14:05 EEST. The merchant's redacted settings screenshot shows the M variant's Agentic eligibility switched off. According to the merchant's written note at the kickoff, every product in scope was meant to be sellable in that channel. No settings were changed during the test.
 
 ## The shopping journey
 
-Each row records the tool, the input, the result and the cart state for the five buyer searches and the cart test. It also shows exactly where testing stopped.
+Each row records the tool, the input, the result and the cart state for the five buyer searches and the cart test, with the remote reads and the catalog preview between them. It also shows exactly where testing stopped.
 
 | Step | Tool and input | Observed result | Cart state | Status |
 | --- | --- | --- | --- | --- |
@@ -3360,6 +3391,10 @@ Each row records the tool, the input, the result and the cart state for the five
 | Search 3, "camp mug green" | WebMCP search_catalog | Camp Mug returned, green variant listed | Empty | Aligned |
 | Search 4, "waterproof jacket" | WebMCP search_catalog | Two jackets returned, both outside the scope, no claim recorded | Empty | Observed |
 | Search 5, "return policy" | WebMCP search_shop_policies_and_faqs | 30 day return window returned, matches the storefront policy page | Empty | Aligned |
+| Remote catalog search | Storefront MCP search_catalog on the UCP catalog endpoint, "trail bottle", Finland EUR | Trail Bottle 750 ml returned first, blue variant at 31,90 EUR, in stock | Empty | Mismatch, remote price |
+| Remote product read | Storefront MCP get_product, Trail Bottle, blue variant | Same title and variant ID as the storefront, 31,90 EUR | Empty | Mismatch, remote price |
+| Remote policy read | Storefront MCP search_shop_policies_and_faqs, "return policy" | 30 day return window, matches the storefront policy page | Empty | Aligned |
+| Agentic Catalog preview | Catalog search preview for the three products, from the merchant's redacted screenshots | Trail Bottle and Camp Mug sellable, Merino Base Layer M unavailable | Empty | Mismatch, variant eligibility |
 | Product detail | WebMCP get_product and show_variant, Trail Bottle blue | Material, volume, price 29,90 EUR and stock matched the storefront page | Empty | Aligned |
 | Add to cart | WebMCP update_cart, one blue Trail Bottle | Cart line created, quantity 1, line price 29,90 EUR | One line, 29,90 EUR | Aligned |
 | Cart read | WebMCP get_cart | One line, 29,90 EUR, matches the visible storefront cart drawer | One line, 29,90 EUR | Aligned |
@@ -3386,7 +3421,7 @@ This plan contains three changes, ordered by their effect on the buyer. Each has
 
 ### C2. Make the M variant available in the Agentic Catalog
 
-**What was found.** The Merino Base Layer in size M is available on the other tested interfaces but marked unavailable in the Agentic Catalog preview. An AI channel using that catalog may omit it.
+**What was found.** The Merino Base Layer in size M is available on the other tested interfaces but marked unavailable in the Agentic Catalog preview. An AI channel using that catalog may omit it. The settings screenshot shows the variant's eligibility switched off, and the kickoff note says no product in scope was meant to be left out, so the change below restores the intended setting.
 
 **Who makes the change.** The merchant's Agentic settings and catalog-mapping owner.
 
@@ -3696,7 +3731,7 @@ The audit is delivered within two weeks of the agreed written kickoff. You recei
 
 Your team can implement the report. If you want me to do it, the €499 add-on covers the diagnosis's complete fix list when bought with the diagnosis and when the required access is arranged in advance.
 
-The fixed price covers the whole list, whatever the number of corrections. Work outside that list is agreed separately at the day rate.
+The fixed price covers the whole list, whatever the number of corrections. Work outside that list is agreed separately at the day rate. When the add-on is bought, the included retest or re-scan window starts on the day the corrections are delivered, so the check reads the finished work.
 
 For a Shopify check, I need collaborator access to the store. For an audit, I need an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. If the required access cannot be arranged, the add-on is not sold. Your team still receives the correction instructions.
 
@@ -3853,9 +3888,9 @@ I compare information across your pages, structured data and API. The report sho
 
 ### What do AI assistants say about your product?
 
-I ask a recorded set of questions across selected assistants. You receive the answers, the date and the conditions of the test.
+I ask a recorded set of questions across selected assistants. You receive the answers, the date and the conditions of the test. Each question is asked once per assistant, and an assistant can answer differently from one day to the next, so a changed answer after the fixes is reported as an observation.
 
-The audit covers large sites in full. If a tool quota limits the checks, I raise the quota rather than reduce coverage.
+On a large site, structured data, prices and availability are read on every page reachable from the sitemap and the API, as the sample report does for all 138 of its product pages. Head metadata and response headers are read on a sample of page templates, and the report lists every page it read. If a tool quota limits the checks, I raise the quota rather than reduce coverage.
 
 ### Technical coverage
 
@@ -3874,7 +3909,7 @@ A written report that answers four questions:
 - What should your team fix first?
 - How can the correction be checked?
 
-You also receive the recorded AI questions and answers, one round of written follow-up questions, and one re-scan within 30 days of the report.
+You also receive the recorded AI questions and answers, one round of written follow-up questions, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.
 
 Each finding includes correction instructions and, where available, a link to the relevant guide. The order reflects the effect on users and agent behaviour, with effort and scanner effects recorded separately.
 
@@ -3888,7 +3923,7 @@ I run the checks. I complete the scan, manual review and AI questions, recording
 
 You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. One round of written follow-up questions is included.
 
-After the corrections, you choose the day for the included re-scan within 30 days of the report. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again using the same question set. The follow-up shows both readings and any changes in the method.
+After the corrections, you choose the day for the included re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again using the same question set. The follow-up shows both readings and any changes in the method.
 
 ## If you want help with the fixes
 
@@ -3976,15 +4011,17 @@ No customer details are entered. No payment is submitted and no order is placed.
 
 The 48-hour clock starts at the agreed written kickoff, after the preflight, payment and your settings evidence are complete. You do not need to respond during the delivery window.
 
+The check is paid by bank transfer against an invoice sent once the scope is agreed, before the kickoff.
+
 If the public preflight cannot find an observable agent-commerce interface suitable for controlled testing, I do not sell or invoice the check.
 
-If I do not send the four-item package within 48 elapsed hours, the fee is refunded. The included retest follows its own 14-day window, which starts on the day that package is delivered, and is not part of its deadline.
+If I do not send the four-item package within 48 elapsed hours, the fee is refunded. The included retest follows its own 14-day window, which starts on the day that package is delivered, or on the day the corrections are delivered when the add-on is bought, and is not part of its deadline.
 
 ## Help with the corrections
 
 Your team can use the plan directly. For an additional €499, bought together with the check, I implement the complete correction list.
 
-This requires collaborator access to the store, agreed in writing before work starts. With access in place, the fixed price covers every correction on the plan. If access cannot be arranged, the add-on is not sold and your team still receives the instructions.
+This requires collaborator access to the store, agreed in writing before work starts. With access in place, the fixed price covers every correction on the plan. If access cannot be arranged, the add-on is not sold and your team still receives the instructions. With the add-on, the 14-day retest window starts on the day the corrections are delivered.
 
 Work outside the plan is scoped separately at €1,500 per day.
 
@@ -4062,6 +4099,7 @@ The report records what I checked and what I observed, so your team can understa
 - **Business ID:** 3600281-7
 - **VAT ID:** FI36002817
 - **Location:** Tampere, Pirkanmaa, Finland
+- **Postal address:** On every invoice, and sent on request
 - **Register:** https://tietopalvelu.ytj.fi/yritys/3600281-7
 - **Source code:** https://github.com/erekola
 
@@ -4150,6 +4188,7 @@ Check the fingerprint before you use the key. A fingerprint shown on this page r
 - **Business ID:** 3600281-7
 - **Register:** https://tietopalvelu.ytj.fi/yritys/3600281-7
 - **Location:** Tampere, Finland. Services are delivered remotely worldwide.
+- **Postal address:** On every invoice, and sent on request
 - **Agent registration:** https://turva.dev/auth.md
 `,
 
@@ -4163,6 +4202,8 @@ turva.dev is operated by Erik Rekola, a sole proprietor registered in Finland. V
 
 Business ID: 3600281-7.
 
+Postal address: on every invoice, and sent on request. There are no public premises, because the work is done remotely and in writing.
+
 Contact: <mailto:info@turva.dev>
 
 ## Engagement terms
@@ -4173,11 +4214,13 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 **Deliverables.** An audit produces a written report. The Shopify agent storefront check includes the five written deliverables listed on its [service page](/shopify-agent-storefront-check). Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a Shopify store, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it.
 
-**Payment.** Payment is due within fourteen days unless agreed otherwise in writing. The Shopify agent storefront check is paid before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
+**Payment.** Payment is due within fourteen days unless agreed otherwise in writing. The Shopify agent storefront check is paid by bank transfer against an invoice before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
 
-**Confidentiality.** Information shared during the work is confidential. Your own non-disclosure agreement is signed as it stands, at no charge, before material is shared. The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work.
+**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge.
 
-**Liability.** Liability is limited to the value of the engagement. turva.dev is not liable for indirect or consequential damages.
+**Confidentiality.** Information shared during the work is confidential. Your own non-disclosure agreement is signed as it stands, at no charge, before material is shared. If the work gives turva.dev access to personal data you control, turva.dev acts as your processor, and your data processing agreement is signed before that data is shared. The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work.
+
+**Liability.** Liability is limited to the value of the engagement, including any add-on bought with it. For monthly advisory, that value is the fees paid in the twelve months before the claim. turva.dev is not liable for indirect or consequential damages. Neither limit applies when turva.dev causes damage intentionally or through gross negligence. Where a signed non-disclosure agreement sets its own remedies for a breach of confidentiality, those remedies apply to that breach.
 
 **Intellectual property.** You own the deliverables produced for you. turva.dev retains its generic methods, templates and reusable code.
 
@@ -4187,17 +4230,21 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 The site does not use analytics cookies, tracking pixels or third-party scripts.
 
-**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. Retention follows Cloudflare's standard policy.
+**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data, a legal obligation for accounting records and legitimate interest for outreach. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
+
+**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/).
 
 **Email.** Email is stored for as long as needed to deliver the work and to meet accounting obligations under Finnish law. Invoice records are retained for six years.
 
-**Client material.** Client material is stored only on systems needed for the work. It is deleted within thirty days of the engagement closing unless the law requires retention. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, unless the law requires retention. Three kinds of copy follow their own rules. Email and its attachments follow the email rule above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy for as long as each backup is kept, and a backup is never restored for any other purpose. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
 **Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
-**AI tools.** AI tools are used in the work, on a local workspace holding the files a task needs. Those files are processed by the provider of the tool in use. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
+**Outreach records.** When turva.dev writes to a company, it records the company, the business contact it wrote to, the public page where that contact was found and the date. Keeping it stops the same company from being contacted twice and lets the promised rescan be sent. The lawful basis is legitimate interest, and the record is shown or removed on request.
 
-No data is sold. Third-party processing is limited to the providers needed for the work: hosting, email, encrypted backup storage and the AI tool in use.
+**AI tools.** The AI tool used in the work is Claude, from Anthropic, PBC, in the United States. It works on a local workspace holding the files a task needs, and Anthropic processes those files under its [privacy policy](https://www.anthropic.com/legal/privacy). Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
+
+No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic, PBC in the United States provides the AI tool. A card payment made through a payment link is processed by Stripe. A new provider is added to this list before it receives client material.
 
 ## Data rights
 
@@ -4213,8 +4260,8 @@ This site sets no cookies of its own. Cloudflare may set cookies required for bo
 
 This page is updated when the terms change. The current version applies to engagements started after the date below.
 
-- **Terms last updated:** 2026-09-11
-- **Privacy last updated:** 2026-09-03
+- **Terms last updated:** 2026-09-25
+- **Privacy last updated:** 2026-09-25
 `,
 
   "/guides/open-knowledge-format": `# Open Knowledge Format explained
@@ -4435,7 +4482,7 @@ llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt.
 
 ## Validate your file
 
-A validator reads the file the way a client would. It checks that the H1 is present, that the links resolve to pages that exist, and that the grouping under each heading is well formed. Running one before publishing catches a malformed link before an agent does.
+A validator reads the file the way a client would. It checks that the H1 is present, that each link is a well-formed absolute address and that the grouping under each heading is well formed. The free validator on this site does not fetch the pages the links point to, so request each one once before publishing to confirm that it still answers.
 
 Check any site's llms.txt structure with the [free validator](/llms-txt-validator), which reads the file and the home page without signing up.
 
@@ -4580,11 +4627,11 @@ When an agent requests a paid resource, the server responds with 402 and a manif
 
 ## x402, AP2 and a2a-x402 are separate specifications
 
-x402 belongs to a small family of agent payment standards, and its relationship to AP2 is worth stating precisely. They are separate specifications. AP2 defines the mandates and receipts that authorize a payment, and x402 defines an HTTP 402 payment flow that a separate extension, a2a-x402, carries into agent-to-agent work. As of September 2026 the AP2 project ships x402 scenarios among its own [samples](https://github.com/google-agentic-commerce/AP2/tree/main/code/samples/python/scenarios/a2a/human-present/x402), and the [a2a-x402 extension](https://github.com/google-agentic-commerce/a2a-x402) carries its own specification, so a site treats them as protocols it may support side by side rather than as one finished stack.
+x402 belongs to a small family of agent payment standards, and its relationship to AP2 is worth stating precisely. They are separate specifications. AP2 defines the mandates that authorize a payment and the receipts that record whether it was accepted, and x402 defines an HTTP 402 payment flow that a separate extension, a2a-x402, carries into agent-to-agent work. As of September 2026 the AP2 project ships x402 scenarios among its own [samples](https://github.com/google-agentic-commerce/AP2/tree/main/code/samples/python/scenarios/a2a/human-present/x402), and the [a2a-x402 extension](https://github.com/google-agentic-commerce/a2a-x402) carries its own specification, so a site treats them as protocols it may support side by side rather than as one finished stack.
 
 ## Declaration, acceptance and settlement are different states
 
-A 402 response with a manifest is a declaration that a resource can be bought this way, and nothing more. An agent that signs a payload and retries has made an accepted payment attempt, which is a second, later state. Settlement, where the server or its facilitator confirms the funds moved, is a third state that can trail the first two by an interval the site should be able to name. Treating these three as one event hides the point where a purchase can still fail after the agent believes it has paid, so a site's own record keeps them apart rather than collapsing a declaration into a completed sale.
+A 402 response with a manifest is a declaration that a resource can be bought this way, and nothing more. An agent that signs a payload and retries has submitted a payment attempt, and the server's verification of that payload decides whether it is accepted. Acceptance is a second, later state. Settlement, where the server or its facilitator confirms the funds moved, is a third state that can trail the first two by an interval the site should be able to name. Treating these three as one event hides the point where a purchase can still fail after the agent believes it has paid, so a site's own record keeps them apart rather than collapsing a declaration into a completed sale.
 
 ## Why a declared payment surface matters
 
@@ -5229,13 +5276,13 @@ Every finding in the report rests on one of three kinds of evidence. A technical
 
 ## Deliverables
 
-A written report that lists each check, what was found, and a concrete fix for each gap, ordered by priority. The result is verifiable. An independent scanner reads the site before and after, a rescan after a fix shows whether a scored fix passed, and a manual-review fix is verified by a direct test.
+A written report that lists each check, what was found, and a concrete fix for each gap it asks you to close, ordered by priority, and the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan after a fix shows whether a scored fix passed, and a manual-review fix is verified by a direct test.
 
 The two fixed-scope diagnoses on the [services page](/services) are the website and API audit at €4,300 within two weeks of the agreed written kickoff and the Shopify agent storefront check at €999 within 48 hours of the agreed written kickoff. Implementing a diagnosis's own complete fix list is a €499 add-on when it is bought with that diagnosis and the required access is arranged in advance: collaborator access to the store for a Shopify check, and an edge runtime, deployment access and any other access the listed fixes need for an audit. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions.
 
 ## Follow-up checks
 
-The audit and the Shopify check both include a retest window, and the windows differ. The audit includes one re-scan after the fixes, within 30 days of the report. The Shopify check includes a retest of up to two corrected items within 14 days of the first package being delivered. Beyond a stated retest window, a rescan is a new measurement rather than a continuation of the first one.
+The audit and the Shopify check both include a retest window, and the windows differ. The audit includes one re-scan after the fixes, within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The Shopify check includes a retest of up to two corrected items within 14 days of the first package being delivered, or of the delivered corrections when its add-on is bought. Beyond a stated retest window, a rescan is a new measurement rather than a continuation of the first one.
 
 ## Frequently asked
 
@@ -5253,7 +5300,7 @@ A fixed-scope audit is delivered within two weeks of the agreed written kickoff.
 
 **What do you get from an agent-readiness audit?**
 
-A written report that lists each check, what the scanner found, and a concrete fix for each gap, ordered by priority. The result is verifiable. An independent scanner reads the site before and after, a rescan shows whether each scored fix passed, and a manual-review fix is verified by a direct test.
+A written report that lists each check, what the scanner found, and a concrete fix for each gap it asks you to close, ordered by priority, and the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan shows whether each scored fix passed, and a manual-review fix is verified by a direct test.
 
 **How do I make my site agent-ready?**
 
@@ -6102,7 +6149,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.169.1",
+    "version": "3.170.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6374,7 +6421,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.169.1",
+  "version": "3.170.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7266,6 +7313,7 @@ var META_BY_PATH = {
     description: "One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.",
     date: "2026-09-03",
     kind: "Research",
+    modified: "2026-09-25",
     image: "/og-website-agent-readiness-567-sites.jpg",
     imageAlt: "turva.dev blog card: 567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, Finnish and foreign sites alike.",
   },
@@ -7376,7 +7424,7 @@ var META_BY_PATH = {
     description: "A scan of sixteen selected Finnish B2B sites records gaps in agent-readiness. This historical sample leads into the later study of 567 sites.",
     date: "2026-07-07",
     kind: "Research",
-    modified: "2026-07-17",
+    modified: "2026-09-25",
     image: "/og-agent-readiness-finnish-b2b.jpg",
     imageAlt: "turva.dev blog card: I ran an independent scanner over sixteen Finnish B2B sites. Almost every one landed at isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere."
   },
@@ -11757,8 +11805,8 @@ ${cardPageNav("/llms-txt-validator")}
 <main id="main">
   ${mdPageStart("/llms-txt-validator")}
   <form class="vform" method="get" action="/llms-txt-validator">
-    <label for="vurl">Domain to check</label>
-    <input type="text" id="vurl" name="url" placeholder="example.com" value="${escapeHtml(validatorEcho(typed, raw))}" aria-label="Domain to check" required>
+    <label for="vurl">Domain or llms.txt address to check</label>
+    <input type="text" id="vurl" name="url" placeholder="example.com" value="${escapeHtml(validatorEcho(typed, raw))}" aria-label="Domain or llms.txt address to check" required>
     <button type="submit">Check llms.txt</button>
   </form>
   <p class="fine"><a href="/llms-txt-validator?url=turva.dev">Try it with turva.dev</a></p>
