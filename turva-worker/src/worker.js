@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.179.0 - the site's own Markdown parity, round 3 (Tek-488, 2026-09-26): the home page reads as its twin, so every checkable page passes. The scan board and the twin carry the same lines: the scan and its date, the scanner, one row per category in the form Label: 100/100., and the summary, and the board and the twin spell each category by its facts.json label, which both board gates read. The finding card shows the twin's label line and its rows as list items, the two readings in conflict say so in the twin too, the offers are list items linked on their names, the work and step cards are the twin's Title. Body. paragraphs with the step number as a CSS counter, and the hero shows the twin's agent-readiness sentence. The key-value rows on /company and /contact are list items that carry the twin's colon. The live evidence twin gate reads the facts.json template like the static one.
 // turva.dev worker v3.178.0 - the site's own Markdown parity, round 2 (Tek-488, 2026-09-26): the /blog and /guides cards and the /services offer cards read as the same blocks in HTML and Markdown. Each /blog twin row carries the card's date, kind and summary, and each card is a list item with the link on its title; each /guides twin entry is a ### heading that links the guide, with its one-sentence description under it, and the card shows the same heading and sentence; the /services offer cards are list items that read as their twin rows, and the See the check and See the audit lines are gone because the offer name is the link; price lines show the twin's sentence with its periods instead of middle dots. Every card stays clickable as a whole through a stretched link. The hosted parity check passes 70 of 71 pages.
 // turva.dev worker v3.177.0 - the site's own Markdown parity, round 1 (Tek-488, 2026-09-26): the home, /services and Shopify pages show the twin's own Frequently asked heading; the /blog twin carries the page's Browse all articles heading and its article count; every table is served once and stacks below 640 px, so the wide tables lose their second copy in details; inline code renders as code, and the sample report's JSON excerpts and the AP2 URI are code in the twins, so the Markdown no longer links what the HTML leaves as text; the line above a twin's H1 is the page's eyebrow and the sample and /services button rows are read from the twin, linking headings by their own slug; the home page shows its Markdown views note, reworded to hold in both versions; the redundant .post[hidden] rule is gone.
 // turva.dev worker v3.176.0 - the tool retest fixes (Tek-487, 2026-09-26): the card pages carry a global [hidden]{display:none !important} rule, so Copy JSON, Save JSON and Fill in an example really hide (.copy-btn set its own display and beat the browser rule for [hidden], the same trap as .post in v3.148.0); the rate limit post keeps its H1 in META_BY_PATH title and a short titleTag for the <title> element, so the /blog card, og:title and the feed carry the heading the page carries (Tek-364); three /blog twin lines no longer read two periods before the date; the llms.txt validator names an entered path it does not use in an information line, its page no longer invites a file address, and its summary warning names the line of a blockquote that comes after other text.
@@ -3608,11 +3609,13 @@ We work in writing. I reply within one business day. [Scope and pricing](/servic
 
 Technical agent-readiness of turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
 
+Example from a fictional audit, finding F1.
+
 ## One product. Three different answers.
 
 - Visible product page: 0,42 EUR per piece · VAT 0 % · Lead time six weeks
-- Structured product data: 0,00 EUR · InStock
-- Product API: Empty price · Marked purchasable
+- Structured product data: 0,00 EUR · InStock · conflict
+- Product API: Empty price · Marked purchasable · conflict
 
 An assistant may find a different price or availability depending on which source it reads.
 
@@ -3641,7 +3644,17 @@ Research. Read what I measured across company websites and AI assistants. Each s
 
 My own site. I use turva.dev to put this work into practice. You can inspect the source code and the published checks. The [public scanner](https://isitagentready.com/) link opens the scanner's start page, where you can run a new check of your own. That page does not show the recorded result below. You can also [read the source](https://github.com/erekola/turva-worker).
 
-Scanner: isitagentready.com (third party, Cloudflare). Discoverability, Content Accessibility, Bot Access Control, and API, Auth, MCP and A2A Discovery: 100/100. Commerce: 100/100. Verified 100/100, Level 5, Agent-Native.
+Independent agent-readiness scan of turva.dev. Measured 2026-09-23.
+
+Scanner: isitagentready.com, third party, Cloudflare.
+
+- Discoverability: 100/100.
+- Content Accessibility: 100/100.
+- Bot Access Control: 100/100.
+- API, Auth, MCP & A2A: 100/100.
+- Commerce: 100/100.
+
+Verified 100/100, Level 5, Agent-Native.
 
 I also publish the site's security checks. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. Measured 2026-09-23.
 
@@ -6285,7 +6298,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.178.0",
+    "version": "3.179.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6557,7 +6570,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.178.0",
+  "version": "3.179.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8746,11 +8759,12 @@ function mdKvsCard(path, heading, extra) {
   // The space between key and value is for text readers: in the .kvs grid the .kv rows are
   // display:contents, so a whitespace-only text node adds no grid item and nothing moves on
   // screen, while an agent that reads the text gets "Business ID 3600281-7" instead of
-  // "Business ID3600281-7" (Tek-482).
-  const kv = rows.map((r) => `    <div class="kv"><span class="k">${escapeHtml(r.k)}</span> ${cell(r.v)}</div>`).join("\n");
-  return `<div class="scard"><h2>${renderInline(heading)}</h2><div class="kvs">
+  // "Business ID3600281-7" (Tek-482). Since Tek-488 round 3 a row is a list item that carries the
+  // twin's colon, so the HTML row and the Markdown row "- Key: value" are the same list item.
+  const kv = rows.map((r) => `    <li class="kv"><span class="k">${escapeHtml(r.k)}:</span> ${cell(r.v)}</li>`).join("\n");
+  return `<div class="scard"><h2>${renderInline(heading)}</h2><ul class="kvs">
 ${kv}
-  </div>${extra || ""}</div>`;
+  </ul>${extra || ""}</div>`;
 }
 function contactSignalQr() {
   // The Signal row resolves on a desktop, where signal.me opens the app. On a
@@ -9686,6 +9700,9 @@ function serveHomeHtml(canonicalUrl) {
   if (!lead.eyebrow) throw new Error("the home twin carries no eyebrow line above its H1");
   // The measured date comes from the twin's own agent-readiness sentence, so the hero row and
   // the markdown agree by construction and the Measured-date gate in verify.mjs reads one copy.
+  // Tek-488 round 3: the lead carries five paragraphs, the two ledes, the service note, the
+  // agent-readiness sentence and the label of the finding card, and the page shows all five.
+  if (lead.paras.length !== 5) throw new Error("home lead carries " + lead.paras.length + " paragraphs, want 5");
   const evMeasured = ((lead.paras[3] || "").match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
   if (!evMeasured) throw new Error("home lead carries no Measured date for the scan row");
   // The hero H1 is the twin's title. The words "AI assistants" are the one green highlight the
@@ -9701,13 +9718,13 @@ function serveHomeHtml(canonicalUrl) {
   const offerParas = mdParas("/", "Choose the check you need", 2);
   const offerRaw = mdSection("/", "Choose the check you need").split("\n").filter((l) => l.startsWith("- "));
   if (offerRaw.length !== 2) throw new Error("home starting-point list does not carry exactly two offers: " + offerRaw.length);
-  const OFFER_LINK = { "/shopify-agent-storefront-check": "See the Shopify check", "/agent-readiness-audit": "See the audit" };
   const offerCards = offerRaw.map((line) => {
     const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)(?: (One retest [^.]+\.))?$/);
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
     const [, name, href, price, covers, when, retest] = m;
-    if (!OFFER_LINK[href]) throw new Error("home offer has no link label for " + href);
-    return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span> <span class="offer-price">${escapeHtml(price)}</span></span> <span class="offer-covers">${escapeHtml(covers)}</span> <span class="offer-when">${escapeHtml(when)}</span>${retest ? ` <span class="offer-when">${escapeHtml(retest)}</span>` : ""} <span class="offer-link">${OFFER_LINK[href]}</span></a>`;
+    // Tek-488 round 3: the card reads as the row, with the link on the offer name and a
+    // stretched link over the card, as on /services.
+    return `<li class="offer"><span class="offer-top"><span class="offer-name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="offer-price">${escapeHtml(price)}.</span></span> <span class="offer-covers">${escapeHtml(covers)}</span> <span class="offer-when">${escapeHtml(when)}</span>${retest ? ` <span class="offer-when">${escapeHtml(retest)}</span>` : ""}</li>`;
   }).join("\n      ");
   // The hero card is one finding from the synthetic sample report (2026-09-08 brief, point 1).
   // Its text is the twin section "One product. Three different answers.": three "Source:
@@ -9722,18 +9739,33 @@ function serveHomeHtml(canonicalUrl) {
     if (c < 0) throw new Error("home finding row has no label: " + r);
     // The page is the reference reading; the other two disagree with it. The word carries the
     // meaning and the colour only repeats it (brief: colour never carries meaning alone).
-    // A space separates the value from the flag, so a reader of the text does not get one glued
-    // word such as "InStockconflict" (Tek-486).
-    const flag = k === 0 ? "" : ' <span class="rc-flag">conflict</span>';
-    return `<div class="rc-row${k === 0 ? "" : " rc-bad"}"><dt>${r.slice(0, c)}</dt><dd>${r.slice(c + 2)}${flag}</dd></div>`;
+    // Since Tek-488 round 3 the twin's row ends in "· conflict" for the two readings that
+    // disagree, and the row is one list item with the twin's own words, the flag included.
+    const v = r.slice(c + 2);
+    const bad = / · conflict$/.test(v);
+    if (bad !== (k !== 0)) throw new Error("home finding row " + (k + 1) + (k === 0 ? " is the reference reading and carries no conflict: " : " does not end in · conflict: ") + r);
+    return `<li class="rc-row${bad ? " rc-bad" : ""}"><span class="rc-k">${r.slice(0, c + 1)}</span> <span class="rc-v">${bad ? v.replace(/ conflict$/, "") : v}</span>${bad ? ' <span class="rc-flag">conflict</span>' : ""}</li>`;
   }).join("\n          ");
   const findLink = findParas[4].match(/^<a href="([^"]+)">([^<]+)<\/a>$/);
   if (!findLink) throw new Error("home finding card does not end in a link line");
-  const work = mdParas("/", "See what the work looks like", 5);
-  const workCards = work.slice(0, 3).map((t) => titled(t, "inspect")).map((c) => `<div class="svc"><div class="svc-h"><span class="svc-t">${c.t}</span></div><p>${c.b}</p></div>`).join("\n      ");
-  const secList = mdLists("/", "See what the work looks like")[0].map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      ");
+  // Tek-488 round 3: the section carries the three work cards, the scan board's three lines and
+  // the security paragraph, and the board's five category rows are its first list. The board
+  // itself stays hand-written HTML: its head, scanner and summary lines are bound to the twin
+  // here and its rows are counted, and the static and live board gates in verify.mjs bind every
+  // cell to facts.json, which the evidence twin gate binds the twin's rows to.
+  const work = mdParas("/", "See what the work looks like", 7);
+  const boardHead = "Independent agent-readiness scan of turva.dev. Measured " + evMeasured + ".";
+  if (work[3] !== boardHead || work[4] !== "Scanner: isitagentready.com, third party, Cloudflare." || work[5] !== "Verified 100/100, Level 5, Agent-Native.") throw new Error("home scan board lines differ from the twin");
+  const boardRows = mdLists("/", "See what the work looks like")[0] || [];
+  if (boardRows.length !== 5) throw new Error("home scan board twin does not carry five category rows: " + boardRows.length);
+  // Tek-488 round 3: a titled card is one paragraph, the title and its period first, so the card
+  // reads as the twin's "Title. Body." paragraph.
+  const workCards = work.slice(0, 3).map((t) => titled(t, "inspect")).map((c) => `<div class="svc"><p><span class="svc-t">${c.t}.</span> ${c.b}</p></div>`).join("\n      ");
+  const secList = mdLists("/", "See what the work looks like")[1].map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      ");
   const proc = mdParas("/", "How we work", 4);
-  const procCards = proc.slice(0, 3).map((t, i) => titled(t, "process")).map((c, i) => `<div class="step"><span class="step-n">0${i + 1}</span> <span class="step-t">${c.t}</span><p>${c.b}</p></div>`).join("\n      ");
+  // The step numbers are a CSS counter: the order is the twin's paragraph order, and the number
+  // only repeats it (Tek-488 round 3).
+  const procCards = proc.slice(0, 3).map((t, i) => titled(t, "process")).map((c) => `<div class="step"><p><span class="step-t">${c.t}.</span> ${c.b}</p></div>`).join("\n      ");
   const contact = mdParasCta("/", "Tell me what you want to understand", 2, "cta-row", ["cta-btn", "mail-link"]);
   const body = `<!doctype html>
 <html lang="en">
@@ -9780,14 +9812,13 @@ main{max-width:none;margin:0;padding:0;}
 .svcnote a{color:#C9D1CE;border-bottom:1px solid rgba(255,255,255,0.25);}
 .svcnote a:hover{color:#5DF18F;border-color:#5DF18F;text-decoration:none;}
 .rcard{box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:24px;color:#C9D1CE;box-shadow:0 18px 40px rgba(0,0,0,0.28);}
-.rc-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 12px;margin:0 0 14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
-.rc-tag{color:#5DF18F;border:1px solid rgba(93,241,143,0.35);border-radius:999px;padding:.1rem .55rem;text-transform:none;letter-spacing:.02em;}
+.rc-top{display:block;margin:0 0 14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
 .rcard h2.rc-title{margin:0 0 14px;font-size:1.25rem;line-height:1.25;letter-spacing:-0.01em;font-weight:700;color:#F2F4F3;}
-.rc-cmp{margin:0 0 14px;border-top:1px solid #2D3D3D;}
+.rc-cmp{list-style:none;padding:0;margin:0 0 14px;border-top:1px solid #2D3D3D;}
 .rc-row{padding:8px 0;border-bottom:1px solid #2D3D3D;}
-.rc-row dt{margin:0 0 2px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;}
-.rc-row dd{margin:0;font-size:.95rem;line-height:1.4;color:#F2F4F3;overflow-wrap:anywhere;}
-.rc-bad dd{color:#F2F4F3;}
+.rc-row .rc-k{display:block;margin:0 0 2px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;}
+.rc-row .rc-v{margin:0;font-size:.95rem;line-height:1.4;color:#F2F4F3;overflow-wrap:anywhere;}
+.rc-bad .rc-v{color:#F2F4F3;}
 .rc-flag{display:inline-block;margin-left:8px;vertical-align:baseline;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:#F1B27F;border:1px solid rgba(241,178,127,0.45);border-radius:999px;padding:.05rem .5rem;}
 .rc-impact{margin:0 0 10px;font-size:.98rem;line-height:1.45;color:#F2F4F3;font-weight:600;}
 .rc-fix{margin:0 0 8px;font-size:.88rem;line-height:1.5;color:#C9D1CE;}
@@ -9796,49 +9827,49 @@ main{max-width:none;margin:0;padding:0;}
 .rc-more{display:inline-block;margin:16px 0 0;font-size:.9rem;font-weight:600;color:#5DF18F;border-bottom:1px solid rgba(93,241,143,0.4);padding:.1rem 0;}
 .rc-more:hover{border-color:#5DF18F;text-decoration:none;}
 .offers{max-width:68rem;margin:0 auto;padding:2.2rem clamp(24px,5vw,72px) 2rem;border-top:0;box-sizing:content-box;}
-.offer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px);margin:.4rem 0 1.4rem;}
-.offer{display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:22px 24px;color:#C9D1CE;text-decoration:none;transition:border-color .15s ease;}
+.offer-grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px);margin:.4rem 0 1.4rem;}
+.offer{position:relative;display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:22px 24px;color:#C9D1CE;text-decoration:none;transition:border-color .15s ease;}
 .offer:hover{border-color:#5DF18F;text-decoration:none;}
-.offer:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
+.offer:focus-within{outline:2px solid #5DF18F;outline-offset:3px;}
+.offer-name a{color:inherit;text-decoration:none;outline:none;}
+.offer-name a::after{content:"";position:absolute;inset:0;border-radius:10px;}
 .offer-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px;}
 .offer-name{font-size:1.15rem;font-weight:700;color:#F2F4F3;}
 .offer-price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
 .offer-covers{font-size:.95rem;line-height:1.55;color:#C9D1CE;}
 .offer-when{font-size:.95rem;line-height:1.55;color:#C9D1CE;}.offer-covers+.offer-when{border-top:1px solid #2D3D3D;padding-top:10px;}
-.offer-link{margin-top:auto;padding-top:6px;font-size:.9rem;font-weight:600;color:#5DF18F;}
 .muted{font-size:.9rem;color:#9AA3A0;}
 .mail-link{display:inline-block;margin-left:14px;color:#F2F4F3;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.3);padding:.15rem 0;}
 .mail-link:hover{color:#5DF18F;border-color:#5DF18F;text-decoration:none;}
 .board{margin:1.2rem 0 1.4rem;}
 .board{margin:0 0 1rem;border:1px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.25rem;}
 .board-top{display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline;justify-content:space-between;margin:0 0 .9rem;}
+.board-top p{margin:0;}
 .board-head{font-size:.92rem;color:#F2F4F3;font-weight:600;}
 .board-head .bh-date{color:#9AA3A0;font-weight:400;}
-.board-src{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;color:#9AA3A0;text-decoration:none;}
-.board-src:hover{color:#5DF18F;}
-.board-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:0 0 1rem;}
+.board-src{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;color:#9AA3A0;}
+.board-grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:0 0 1rem;}
 .cell{background:rgba(93,241,143,0.06);border:1px solid rgba(93,241,143,0.18);border-radius:9px;padding:.6rem .65rem;transition:border-color .15s ease,transform .15s ease;}
 .cell:hover{border-color:rgba(93,241,143,0.45);transform:translateY(-1px);}
 .cell .cat{display:block;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .25rem;}
 .cell .val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.02rem;color:#5DF18F;font-weight:700;}
-.board-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}
+.board-sum{display:block;margin:0;line-height:1.9;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:#C9D1CE;border-top:1px solid rgba(255,255,255,0.1);padding-top:.85rem;}
 .board-sum b{color:#5DF18F;}
-.pill{background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
+.pill{display:inline-block;line-height:1.4;background:#5DF18F;color:#06100F;font-weight:700;border-radius:6px;padding:.1rem .5rem;}
 .sec{padding:1.9rem 0;border-top:0.5px solid rgba(255,255,255,0.07);}
 ${FAQ_CSS}
 .evlist{margin:0 0 1.05rem;padding:0 0 0 1.2rem;color:#C9D1CE;}
 .evlist li{margin:0 0 .5rem;font-size:.92rem;}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:.7rem;margin:.2rem 0 1.3rem;}
+.steps{counter-reset:step;display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:.7rem;margin:.2rem 0 1.3rem;}
 .step{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:1rem;transition:border-color .15s ease,transform .15s ease;}
 .step:hover{border-color:rgba(93,241,143,0.38);transform:translateY(-1px);}
-.step-n{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#5DF18F;font-weight:700;margin:0 0 .3rem;}
+.step::before{counter-increment:step;content:counter(step,decimal-leading-zero);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#5DF18F;font-weight:700;margin:0 0 .3rem;}
 .step-t{display:block;font-size:1rem;font-weight:700;color:#F2F4F3;margin:0 0 .45rem;}
 .step p{font-size:.86rem;margin:0;color:#9AA3A0;line-height:1.55;}
 .svcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:.7rem;margin:.2rem 0 0;}
 .svc{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:1.05rem 1.05rem 1.1rem;transition:border-color .15s ease,transform .15s ease;}
 .svc:hover{border-color:rgba(93,241,143,0.4);transform:translateY(-1px);}
-.svc-h{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;margin:0 0 .45rem;}
-.svc-t{display:block;font-size:1.05rem;font-weight:700;color:#5DF18F;margin:0;min-width:0;}
+.svc-t{display:block;font-size:1.05rem;font-weight:700;color:#5DF18F;margin:0 0 .45rem;min-width:0;}
 .svc p{font-size:.86rem;margin:0;color:#9AA3A0;line-height:1.55;}
 .contact{border-top:1px solid rgba(93,241,143,0.2);}
 .cta-row{margin:1.25rem 0 0;}
@@ -9879,13 +9910,14 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
         <p class="lede">${renderInline(lead.paras[1])}</p>
         ${lead.cta}
         <p class="svcnote">${renderInline(lead.paras[2])}</p>
+        <p class="svcnote">${renderInline(lead.paras[3])}</p>
       </div>
       <div class="rcard" role="group" aria-label="One finding from the synthetic sample audit report">
-        <div class="rc-top"><span>Example from a fictional audit</span> <span class="rc-tag">Finding F1</span></div>
+        <p class="rc-top">${renderInline(lead.paras[4])}</p>
         <h2 class="rc-title">${renderInline(findHead)}</h2>
-        <dl class="rc-cmp">
+        <ul class="rc-cmp">
           ${findRowHtml}
-        </dl>
+        </ul>
         <p class="rc-impact">${findParas[0]}</p>
         <p class="rc-fix">${findParas[1].replace(/^What to fix:/, "<b>What to fix:</b>")}</p>
         <p class="rc-fix">${findParas[2].replace(/^How to check:/, "<b>How to check:</b>")}</p>
@@ -9896,9 +9928,9 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
   </section>
   <section class="sec offers">
     <h2>Choose the check you need</h2>
-    <div class="offer-grid">
+    <ul class="offer-grid">
       ${offerCards}
-    </div>
+    </ul>
     <p class="muted">${offerParas[0]}</p>
     <p>${offerParas[1]}</p>
   </section>
@@ -9910,19 +9942,19 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
     </div>
   <section class="board" aria-label="agent-readiness scan result">
     <div class="board-top">
-      <span class="board-head">independent agent-readiness scan of turva.dev <span class="bh-date">&middot; measured ${evMeasured}</span></span>
-      <a class="board-src" href="https://isitagentready.com/">scanner: isitagentready.com &middot; 3rd-party &middot; Cloudflare &middot; run your own check</a>
+      <p class="board-head">Independent agent-readiness scan of turva.dev. <span class="bh-date">Measured ${evMeasured}.</span></p>
+      <p class="board-src">Scanner: isitagentready.com, third party, Cloudflare.</p>
     </div>
-    <div class="board-grid">
-      <div class="cell"><span class="cat">discoverability</span> <span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">content</span> <span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">bot access control</span> <span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">api, auth, mcp &amp; a2a</span> <span class="val">100/100</span></div>
-      <div class="cell"><span class="cat">commerce</span> <span class="val">100/100</span></div>
-    </div>
-    <div class="board-sum"><span>verified</span> <b>100/100</b> <span class="pill">Level 5</span> <span class="pill">Agent-Native</span></div>
+    <ul class="board-grid">
+      <li class="cell"><span class="cat">Discoverability:</span> <span class="val">100/100.</span></li>
+      <li class="cell"><span class="cat">Content Accessibility:</span> <span class="val">100/100.</span></li>
+      <li class="cell"><span class="cat">Bot Access Control:</span> <span class="val">100/100.</span></li>
+      <li class="cell"><span class="cat">API, Auth, MCP &amp; A2A:</span> <span class="val">100/100.</span></li>
+      <li class="cell"><span class="cat">Commerce:</span> <span class="val">100/100.</span></li>
+    </ul>
+    <p class="board-sum">Verified <b>100/100</b>, <span class="pill">Level 5</span>, <span class="pill">Agent-Native</span>.</p>
   </section>
-    <p>${work[4]}</p>
+    <p>${work[6]}</p>
     <ul class="evlist">
       ${secList}
     </ul>
@@ -10120,8 +10152,9 @@ ul.cards{list-style:none;padding:0;}
 .card .btn{margin-top:auto;align-self:flex-start;min-height:48px;}
 @media (max-width:640px){.card{padding:20px;}.card .btn{align-self:stretch;}}
 ${SCARD_CSS}
-.kvs{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.55rem .9rem;align-items:baseline;}
-.kv{display:contents;}
+.kvs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.55rem .9rem;align-items:baseline;}
+.kvs .kv{display:contents;font-size:inherit;line-height:inherit;color:inherit;}
+.kvs .kv::before{content:none;}
 .kv .k{color:#9AA3A0;font-size:.9rem;}
 .kv .v{color:#F2F4F3;font-weight:600;word-break:break-word;}
 a.v,.kv a.v{color:#5DF18F;}

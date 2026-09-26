@@ -1787,9 +1787,11 @@ const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
   // reader gets "content 100/100" and not "content100/100". The separator is whitespace either way;
   // the label, the value, their order and the count are compared exactly as before.
   const virheet = [];
-  const gridM = lahde.match(/<div class="board-grid">([\s\S]*?)<\/div>\s*<div class="board-sum">([\s\S]*?)<\/div>/);
+  // Since Tek-488 round 3 the board is a list whose cells read as the twin's rows, "Label: 100/100.",
+  // so the colon and the period are part of the shape and the label and the value are read between them.
+  const gridM = lahde.match(/<ul class="board-grid">([\s\S]*?)<\/ul>\s*<p class="board-sum">([\s\S]*?)<\/p>/);
   if (!gridM) return ['board-grid / board-sum not found in worker.js source'];
-  const cells = [...gridM[1].matchAll(/<div class="cell"><span class="cat">([^<]*)<\/span>\s*<span class="val">([^<]*)<\/span><\/div>/g)]
+  const cells = [...gridM[1].matchAll(/<li class="cell"><span class="cat">([^<]*):<\/span>\s*<span class="val">([^<]*)\.<\/span><\/li>/g)]
     .map((m) => ({ cat: twDecode(m[1]).trim(), val: twDecode(m[2]).trim() }));
   const want = (Array.isArray(kategoriat) ? kategoriat : []);
   if (!want.length) virheet.push('facts.json declares no categories, so the board would be compared against nothing');
@@ -1806,8 +1808,8 @@ const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
     const w = (byLabel.get(c.cat) || {}).score;
     if (typeof w !== 'string' || !w.trim() || c.val !== w) virheet.push(`cell "${c.cat}" reads ${JSON.stringify(c.val)}, facts.json says ${JSON.stringify(w)}`);
   }
-  const sum = twSquash(twDecode(gridM[2].replace(/<[^>]+>/g, ' ')));
-  const wantSum = `verified ${kokonaispiste} ${taso} Agent-Native`;
+  const sum = twSquash(twDecode(gridM[2].replace(/<[^>]+>/g, '')));
+  const wantSum = `Verified ${kokonaispiste}, ${taso}, Agent-Native.`;
   if (sum !== wantSum) virheet.push(`board summary reads ${JSON.stringify(sum)}, want ${JSON.stringify(wantSum)}`);
   return virheet;
 };
@@ -1818,8 +1820,8 @@ const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
   // whose result does not depend on what is on disk, and the control set is asymmetric
   // on purpose: the surface drifting from the data, and the data losing its value.
   const kSarja = (rivit, summa) =>
-    `<div class="board-grid">${rivit}</div>\n<div class="board-sum"><span>verified</span> <b>${summa}</b> <span class="pill">Level 5</span> <span class="pill">Agent-Native</span></div>`;
-  const kCell = (cat, val) => `<div class="cell"><span class="cat">${cat}</span> <span class="val">${val}</span></div>`;
+    `<ul class="board-grid">${rivit}</ul>\n<p class="board-sum">Verified <b>${summa}</b>, <span class="pill">Level 5</span>, <span class="pill">Agent-Native</span>.</p>`;
+  const kCell = (cat, val) => `<li class="cell"><span class="cat">${cat}:</span> <span class="val">${val}.</span></li>`;
   const kCats = [{ id: 'a', label: 'alpha', score: '100/100' }, { id: 'b', label: 'beta', score: '90/100' }];
   const kHyva = kSarja(kCell('alpha', '100/100') + kCell('beta', '90/100'), '100/100');
   const kAjautunut = kSarja(kCell('alpha', '100/100') + kCell('beta', '80/100'), '100/100');   // pinta ajautui datasta
@@ -2259,10 +2261,10 @@ if (LIVE) {
   // to equal the other would change the page to suit the gate.
   try {
     const homeHtml = await (await fetch(base + '/')).text();
-    const gridM = homeHtml.match(/<div class="board-grid">([\s\S]*?)<\/div>\s*<div class="board-sum">([\s\S]*?)<\/div>/);
+    const gridM = homeHtml.match(/<ul class="board-grid">([\s\S]*?)<\/ul>\s*<p class="board-sum">([\s\S]*?)<\/p>/);
     if (!gridM) bad('board: board-grid / board-sum not found in the served homepage');
     else {
-      const cells = [...gridM[1].matchAll(/<div class="cell"><span class="cat">([^<]*)<\/span>\s*<span class="val">([^<]*)<\/span><\/div>/g)]
+      const cells = [...gridM[1].matchAll(/<li class="cell"><span class="cat">([^<]*):<\/span>\s*<span class="val">([^<]*)\.<\/span><\/li>/g)]
         .map((m) => ({ cat: twDecode(m[1]).trim(), val: twDecode(m[2]).trim() }));
       const wantLabels = CATS.map((c) => c.label);
       // Both sides can go empty at once, and then two empty joins compare equal. The
@@ -2292,8 +2294,8 @@ if (LIVE) {
       // whole string rather than as two independent substring searches: "100/100" and
       // "Level 5" both appearing somewhere in the block does not prove they are the
       // claim the block makes.
-      const sum = twSquash(twDecode(gridM[2].replace(/<[^>]+>/g, ' ')));
-      const wantSum = `verified ${iar.score} ${lvl} Agent-Native`;
+      const sum = twSquash(twDecode(gridM[2].replace(/<[^>]+>/g, '')));
+      const wantSum = `Verified ${iar.score}, ${lvl}, Agent-Native.`;
       check(sum === wantSum, `board summary reads "${wantSum}" (saw "${sum}")`);
     }
   } catch (e) { bad('board: ' + (e.code || e.message)); }
@@ -2322,8 +2324,12 @@ if (LIVE) {
     const md = await (await fetch(base + '/', { headers: { accept: 'text/markdown' } })).text();
     const sp = CATS.map((c) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase()));
     const sc = iar.score.toLowerCase(), lv = lvl.toLowerCase();
-    const want = `scanner: isitagentready.com (third party, cloudflare). ${sp[0][0]}, ${sp[1][1]}, ${sp[2][0]}, and ${sp[3][1]}: ${sc}. ${sp[4][0]}: ${sc}. verified ${sc}, ${lv}, agent-native.`;
-    const i = md.toLowerCase().replace(/\s+/g, ' ').indexOf('scanner: isitagentready.com');
+    // Since Tek-488 round 3 the served twin is built from the same facts.json template as the static
+    // one, so the two gates cannot drift into two sentence shapes.
+    const ET = (iar.surfaceWording || {}).evidenceTwin || {};
+    const want = String(ET.template || '').replace(/\{(\d)\}/g, (_, k) => (ET.spellingIndex || []).map((ix, n) => sp[n][ix])[Number(k)])
+      .replace(/\{score\}/g, sc).replace(/\{level\}/g, lv) + 'agent-native.';
+    const i = md.toLowerCase().replace(/\s+/g, ' ').indexOf(String(ET.spanFrom || '\u0000').toLowerCase());
     const gotMd = i < 0 ? '' : md.toLowerCase().replace(/\s+/g, ' ').slice(i, i + want.length);
     check(CATS.length === 5 && gotMd === want,
       `served markdown twin states the set and both scores${gotMd === want ? '' : `\n        want: "${want}"\n        got:  "${gotMd}"`}`);

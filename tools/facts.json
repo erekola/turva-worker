@@ -3,7 +3,7 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.178.0",
+    "site": "3.179.0",
     "mcp": "1.6.1"
   },
   "mtaSts": {
@@ -98,27 +98,27 @@
       "categories": [
         {
           "id": "discoverability",
-          "label": "discoverability",
+          "label": "Discoverability",
           "score": "100/100",
           "prose": []
         },
         {
           "id": "content",
-          "label": "content",
+          "label": "Content Accessibility",
           "score": "100/100",
           "prose": [
-            "content accessibility"
+            "content"
           ]
         },
         {
           "id": "bot_access_control",
-          "label": "bot access control",
+          "label": "Bot Access Control",
           "score": "100/100",
           "prose": []
         },
         {
           "id": "api_auth_mcp_a2a_discovery",
-          "label": "api, auth, mcp & a2a",
+          "label": "API, Auth, MCP & A2A",
           "score": "100/100",
           "prose": [
             "api, auth, mcp and a2a discovery",
@@ -128,7 +128,7 @@
         },
         {
           "id": "commerce",
-          "label": "commerce",
+          "label": "Commerce",
           "score": "100/100",
           "prose": []
         }
@@ -136,16 +136,16 @@
       "_surfaceWordingComment": "Added 2026-08-16 (Tek-225, round 8 section 2). On three surfaces the gate OWNED the wording: the sentence shape was hardcoded in tools/verify.mjs and read from nowhere, so verify.mjs was both the rule and the only record of the rule. Published wording belongs next to the published data, the same way category.label does. verify.mjs now reads these fields and fails if one is missing, so this is not a second copy of a value: it is the only copy, and the gate is the reader.",
       "surfaceWording": {
         "evidenceTwin": {
-          "spanFrom": "Scanner: isitagentready.com (third party, Cloudflare).",
+          "spanFrom": "Scanner: isitagentready.com, third party, Cloudflare.",
           "spanTo": "Agent-Native.",
           "spellingIndex": [
             0,
-            1,
             0,
-            1,
+            0,
+            0,
             0
           ],
-          "template": "scanner: isitagentready.com (third party, cloudflare). {0}, {1}, {2}, and {3}: {score}. {4}: {score}. verified {score}, {level}, "
+          "template": "scanner: isitagentready.com, third party, cloudflare. - {0}: {score}. - {1}: {score}. - {2}: {score}. - {3}: {score}. - {4}: {score}. verified {score}, {level}, "
         },
         "auditGuide": {
           "introVerb": "covers",

@@ -464,3 +464,44 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
   assert.ok(md.includes("48 hours. Fixed scope.**") && html.includes('<span class="terms">48 hours. Fixed scope.</span>'), "the price line is the twin's sentence");
   assert.ok(!html.includes("&middot; Fixed scope"), "no middle dot in place of the twin's period");
 });
+
+// ---- Tek-488: round 3, the home page ----
+
+test("Tek-488: the home, company and contact pages pass in full, with no warning", async () => {
+  for (const p of ["/", "/company", "/contact"]) {
+    const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
+    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code + " " + (f.before || ""))));
+    assert.equal(r.summary.warnings, 0, p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code)));
+  }
+  const html = (await served("/company", "text/html")).body;
+  assert.ok(html.includes('<ul class="kvs">') && html.includes('<li class="kv"><span class="k">Business ID:</span> '), "a key-value row is the twin's list item, colon included");
+});
+
+test("Tek-488: the scan board shows the twin's own rows, and its labels are the facts.json labels", async () => {
+  const facts = JSON.parse(readFileSync(new URL("../../tools/facts.json", import.meta.url), "utf8"));
+  const cats = facts.agentReadiness.isitagentready.categories;
+  const md = (await served("/", "text/markdown")).body.replace(/\r\n/g, "\n");
+  const html = (await served("/", "text/html")).body;
+  const rows = [...md.matchAll(/\n- ([^:\n]+): (\d+\/100)\.(?=\n)/g)].filter((m) => cats.some((c) => c.label === m[1]));
+  assert.deepEqual(rows.map((m) => m[1]), cats.map((c) => c.label), "the twin lists every category by its label, in order");
+  for (const [, label, score] of rows) {
+    assert.ok(html.includes('<li class="cell"><span class="cat">' + esc(label) + ':</span> <span class="val">' + score + ".</span></li>"), label);
+  }
+  assert.ok(md.includes("\nVerified 100/100, Level 5, Agent-Native.\n") && html.includes('<p class="board-sum">Verified <b>100/100</b>, <span class="pill">Level 5</span>, <span class="pill">Agent-Native</span>.</p>'), "the summary line is the twin's");
+});
+
+test("Tek-488: the finding card, the offers, the work cards and the steps read as the twin's blocks", async () => {
+  const md = (await served("/", "text/markdown")).body.replace(/\r\n/g, "\n");
+  const html = (await served("/", "text/html")).body;
+  const dot = String.fromCharCode(183);
+  assert.ok(md.includes("\n\nExample from a fictional audit, finding F1.\n\n## One product.") && html.includes('<p class="rc-top">Example from a fictional audit, finding F1.</p>'), "the card label is the twin's line above its heading");
+  const bad = [...md.matchAll(new RegExp("\\n- ([^:\\n]+): ([^\\n]+) " + dot + " conflict(?=\\n)", "g"))];
+  assert.equal(bad.length, 2, "two readings in conflict");
+  for (const [, k, v] of bad) assert.ok(html.includes('<span class="rc-k">' + k + ':</span> <span class="rc-v">' + v + " " + dot + '</span> <span class="rc-flag">conflict</span></li>'), k);
+  assert.ok(!html.includes("See the Shopify check") && !html.includes("See the audit") && html.includes('<span class="offer-name"><a href="/agent-readiness-audit">'), "the offer name is the link");
+  for (const t of ["Sample reports", "Research", "My own site"]) assert.ok(html.includes('<p><span class="svc-t">' + t + ".</span> "), t);
+  assert.ok(!html.includes('class="step-n"') && html.includes("counter(step,decimal-leading-zero)"), "the step number is a CSS counter, not text the twin lacks");
+  for (const t of ["Tell me what you need to understand", "Receive the report", "Make and check the changes"]) {
+    assert.ok(md.includes("\n\n" + t + ". ") && html.includes('<p><span class="step-t">' + t + ".</span> "), t);
+  }
+});
