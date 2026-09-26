@@ -883,20 +883,19 @@ const twConverted = {
   // board is rendered by hand INSIDE the twin's "Work you can inspect" section, the report
   // card and the measurement row are hero markup with no paragraph over 80 characters, and
   // the two prose exceptions (the curl demo intro and the contact lead) left with their text.
-  // h2: the home page renders two twin sections under their own display headings (Tek-357);
-  // the rendered-order check (5b) maps the display text back to the twin heading.
-  '/': { fn: 'serveHomeHtml', mdOnly: ['Markdown views', 'More', 'Guides'], hand: [], prose: [],
-         h2: { 'Questions before you start': 'Frequently asked' } },
-  '/blog':    { fn: 'serveBlogHtml',    mdOnly: [], hand: ['All posts'], h2: { 'Browse all articles': 'All posts' } }, // All posts is the dated list, rendered by blogPostLinks() from META_BY_PATH (2026-09-03); the rendered heading reads "Browse all articles" (round 19, G2-1/G2-2), so h2 is what still lets the hand heading be verified present
+  // Since Tek-488 the home page shows the twin's own FAQ heading and renders its Markdown views
+  // section, so no display alias is left (Tek-357 had two).
+  '/': { fn: 'serveHomeHtml', mdOnly: ['More', 'Guides'], hand: [], prose: [] },
+  '/blog':    { fn: 'serveBlogHtml',    mdOnly: [], hand: ['Browse all articles'] }, // the dated list, rendered by blogPostLinks() from META_BY_PATH (2026-09-03); since Tek-488 the twin carries the heading the page shows (round 19, G2-1/G2-2) and its count line
   '/llms-txt-validator': { fn: 'serveLlmsValidatorHtml', mdOnly: [], hand: ['How to use it'], prose: ['The two v2 discovery checks are informational'] }, // the result note repeats the twin's own sentence under the check list (Tek-358)
   '/markdown-parity-check': { fn: 'serveParityHtml', mdOnly: [], hand: [] }, // the form and the result come from parityFormHtml and parityResultHtml; every twin section renders through mdOpenSec (v3.154.0)
-  '/services': { fn: 'serveServicesHtml', mdOnly: [], hand: [], h2: { 'Before we start': 'Frequently asked' } },
+  '/services': { fn: 'serveServicesHtml', mdOnly: [], hand: [] },
   '/tools':   { fn: 'serveToolsHtml',   mdOnly: ['Related'] },
   '/badge':   { fn: 'serveBadgeHtml',   mdOnly: [] },
   '/contact': { fn: 'serveContactHtml', mdOnly: [] },
   '/company': { fn: 'serveCompanyHtml', mdOnly: [] },
   '/legal':   { fn: 'serveLegalHtml',   mdOnly: [] },
-  '/shopify-agent-storefront-check': { fn: 'serveShopifyHtml', mdOnly: [], h2: { 'Two common questions': 'Frequently asked' } },
+  '/shopify-agent-storefront-check': { fn: 'serveShopifyHtml', mdOnly: [] },
   // The audit product page: since the 2026-09-09 text round every rendered heading is the
   // twin's own, so no display alias is needed and the page carries no FAQ section.
   '/agent-readiness-audit': { fn: 'serveAuditHtml', mdOnly: [] },
@@ -924,8 +923,8 @@ for (const [path, cfg] of Object.entries(twConverted)) {
   // vanish from the page with nothing red. mdOnly still means what it says: the twin
   // may carry a heading the HTML never shows. hand means the opposite: the page renders
   // it by hand, sometimes under a different literal string than the twin's own words
-  // (cfg.h2 names that string when it differs, as /blog's "Browse all articles" does for
-  // the twin's "All posts"), and that string must still be found in the source.
+  // (cfg.h2 names that string when it differs; since Tek-488 no page needs one, because
+  // every rendered heading is the twin's own), and that string must still be found in the source.
   const twcH2Rev = Object.fromEntries(Object.entries(cfg.h2 || {}).map(([shown, twin]) => [twin, shown]));
   for (const h of heads) {
     if (cfg.mdOnly.includes(h)) continue;
@@ -1372,7 +1371,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   console.log('\nBlog index, three homes (B1-19)');
   // LLMS_TXT, the /blog twin and META_BY_PATH each carry the post list. The twin's
   // "## " headings are not empty (it carries two today, Start with the research and
-  // All posts, round 19 G2-P4), so this is not a comparison against nothing; it is
+  // Browse all articles, round 19 G2-P4), so this is not a comparison against nothing; it is
   // still needed because it checks the DATED list, which the heading comparison above
   // does not read.
   {
@@ -1454,7 +1453,15 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     seqSame('PAGE_MARKDOWN blog keys', pmKeys, blogWant);
     seqSame('META_BY_PATH blog keys', metaKeys, blogWant);
     seqSame('LLMS_TXT Blog section', links(section(llms, 'Blog'), /\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/blog\/[a-z0-9-]+)\.md\)/g), blogWant);
-    seqSame('/blog twin All posts', links((twMdTwin('/blog') || '').replace(/\r\n/g, '\n'), /\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\.? \d{4}-\d{2}-\d{2}\./g), blogWant);
+    seqSame('/blog twin Browse all articles', links((twMdTwin('/blog') || '').replace(/\r\n/g, '\n'), /\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\.? \d{4}-\d{2}-\d{2}\./g), blogWant);
+    // Tek-488: the twin states the count the page shows over the list, so a new post that adds
+    // its row without raising the count, or the reverse, fails here.
+    {
+      const bt = (twMdTwin('/blog') || '').replace(/\r\n/g, '\n');
+      const cnt = (bt.match(/\n## Browse all articles\n\n(\d+) articles?\.\n/) || [])[1];
+      check(cnt !== undefined && Number(cnt) === blogWant.length,
+        `/blog twin count line under Browse all articles says ${cnt} and the list carries ${blogWant.length} posts`);
+    }
     const smRows = [...region('var SITEMAP_ENTRIES = [', '\n];').matchAll(/\["([^"]+)"/g)].map((m) => m[1]);
     seqSame('SITEMAP_ENTRIES blog rows (the literal; sitemap.xml sorts by siteRank at runtime and is checked in routes.test.mjs)', smRows.filter((p) => p.startsWith('/blog/')), blogWant);
     seqSame('SITEMAP_ENTRIES guide rows (the literal)', smRows.filter((p) => p.startsWith('/guides/')), guideWant);

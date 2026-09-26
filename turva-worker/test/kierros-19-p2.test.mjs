@@ -459,9 +459,10 @@ test("K6-P4: replaceExactlyOnce replaces a single occurrence and throws on zero 
   assert.throws(() => fn("ab", "-", "+"), /occurs 0 times/);
   assert.throws(() => fn("a-b-c", "-", "+"), /occurs 2 times/);
 
-  // The one live call site: the Shopify page's FAQ heading is renamed by exactly this call, and
-  // the page must still build (200) and show the new heading, not the old one.
-  assert.ok(workerSrc.includes('replaceExactlyOnce(mdFaqSec("/shopify-agent-storefront-check"'), "the Shopify FAQ heading rename must go through replaceExactlyOnce");
+  // The live call site since Tek-488: a sample report's button row, read from its twin, replaces
+  // the paragraph markdownToHtml made of it exactly once. The Shopify FAQ heading rename that
+  // used it before is gone, because the page now shows the twin's own heading.
+  assert.ok(workerSrc.includes("replaceExactlyOnce(withSample, `<p>${renderInline(cut.row)}</p>`"), "the sample button row must go through replaceExactlyOnce");
 });
 
 // ---- K6-P5: the two prefilled mailto links no longer hand-type &amp; ----

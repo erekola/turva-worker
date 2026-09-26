@@ -301,18 +301,27 @@ test("parity route: methods and preflight name POST, and a POST that asks for Ma
 });
 
 // Tek-484: the button rows the HTML carries inside <main> are read from the twin, so the parity
-// check finds each of them in the Markdown. Rows that point at an anchor on the same page stay
-// HTML only, because the Markdown view has no such anchor. The count per page is pinned, so a
-// row that silently stops rendering fails here too.
-test("Tek-484: every button row on the five pages is a links-only paragraph of the twin, in order", async () => {
-  const want = { "/": 2, "/services": 1, "/company": 1, "/agent-readiness-audit": 3, "/shopify-agent-storefront-check": 2 };
+// check finds each of them in the Markdown. Since Tek-488 a row that points at a place on the
+// same page links the heading's own slug, so no row stays HTML only, and the fragment must name
+// an id in the HTML and a heading of the Markdown. The count per page is pinned, so a row that
+// silently stops rendering fails here too.
+test("Tek-484: every button row on the seven pages is a links-only paragraph of the twin, in order", async () => {
+  const want = { "/": 2, "/services": 2, "/company": 1, "/agent-readiness-audit": 3, "/shopify-agent-storefront-check": 2, "/samples/audit-report": 1, "/samples/shopify-agent-storefront-check": 1 };
+  const slug = (h) => h.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   for (const [path, count] of Object.entries(want)) {
     const html = (await served(path, "text/html")).body;
     const main = html.slice(html.indexOf('<main id="main"'), html.indexOf("</main>"));
     const rows = [...main.matchAll(/<div class="cta(?:-row)?">([\s\S]*?)<\/div>/g)]
-      .map((m) => [...m[1].matchAll(/<a [^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>/g)].map((a) => "[" + a[2] + "](" + a[1].replace(/&amp;/g, "&") + ")").join(" "))
-      .filter((row) => !row.includes("](#"));
-    assert.equal(rows.length, count, path + ": button rows outside in-page anchors");
+      .map((m) => [...m[1].matchAll(/<a [^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>/g)].map((a) => "[" + a[2] + "](" + a[1].replace(/&amp;/g, "&") + ")").join(" "));
+    assert.equal(rows.length, count, path + ": button rows");
+    const mdText = (await served(path, "text/markdown")).body.replace(/\r\n/g, "\n");
+    const mdSlugs = [...mdText.matchAll(/^#{1,6} (.+)$/gm)].map((m) => slug(m[1]));
+    for (const row of rows) {
+      for (const f of row.matchAll(/\]\(#([^)]+)\)/g)) {
+        assert.ok(main.includes('id="' + f[1] + '"'), path + ": the HTML carries the id #" + f[1]);
+        assert.ok(mdSlugs.includes(f[1]), path + ": a Markdown heading has the slug #" + f[1]);
+      }
+    }
     const md = (await served(path, "text/markdown")).body.replace(/\r\n/g, "\n");
     const paras = md.split(/\n{2,}/).map((b) => b.trim());
     let from = 0;
@@ -331,4 +340,76 @@ test("Tek-484: a block without a links-only paragraph fails the page build inste
   assert.throws(() => fn(["Some prose.", "More prose with a [link](/x) inside."], "t"), /no links-only paragraph/);
   assert.equal(fn(["Prose.", "[A](/a) [B](/b)", "Fine print."], "t").at, 1);
   assert.equal(fn(["[A](/a)", "Prose.", "[B](/b)"], "t").row, "[B](/b)", "the last links-only paragraph is the row");
+});
+
+// ---- Tek-488: every checkable page passes for the right reason, round 1 ----
+
+test("Tek-488: the two sample reports, the Shopify page and the commerce guide pass in full", async () => {
+  for (const p of ["/samples/audit-report", "/samples/shopify-agent-storefront-check", "/shopify-agent-storefront-check", "/guides/agent-commerce-discovery"]) {
+    const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
+    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code + " " + (f.before || ""))));
+  }
+});
+
+test("Tek-488: the FAQ heading on the home, services and Shopify pages is the twin's own", async () => {
+  for (const p of ["/", "/services", "/shopify-agent-storefront-check"]) {
+    const html = (await served(p, "text/html")).body;
+    assert.ok(html.includes("<h2>Frequently asked</h2>"), p);
+    for (const old of ["Questions before you start", "Before we start", "Two common questions"]) assert.ok(!html.includes(old), p + " still shows " + old);
+  }
+});
+
+test("Tek-488: a table is served once, and every table stacks on a narrow screen", async () => {
+  for (const p of ["/samples/audit-report", "/samples/shopify-agent-storefront-check"]) {
+    const html = (await served(p, "text/html")).body;
+    const tables = [...html.matchAll(/<table class="([^"]*)"/g)].map((m) => m[1]);
+    assert.ok(tables.length >= 2, p + " has tables");
+    assert.ok(tables.every((c) => / stack$/.test(c)), p + " " + tables.join(", "));
+    assert.ok(!html.includes("tbl-list") && !html.includes("Read this table as a list"), p + " carries a second copy");
+  }
+});
+
+test("Tek-488: inline code renders as code, is never linked, and leaves the FAQPage text plain", async () => {
+  const p = "/guides/agent-commerce-discovery";
+  const uri = "https://github.com/google-agentic-commerce/ap2/tree/v0.1";
+  const html = (await served(p, "text/html")).body;
+  assert.ok(html.includes("<code>" + uri + "</code>"), "the AP2 URI is code in the HTML");
+  assert.ok(!html.includes('href="' + uri + '"'), "the AP2 URI is not a link (R15 P1a-1)");
+  const md = (await served(p, "text/markdown")).body;
+  assert.ok(md.includes(String.fromCharCode(96) + uri + String.fromCharCode(96)), "the Markdown writes the URI as code, so GFM does not link it");
+  const ld = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1]).join("\n");
+  assert.ok(ld.includes(uri) && !ld.includes(String.fromCharCode(96)), "the FAQPage answer carries the URI without backticks");
+});
+
+test("Tek-488: the eyebrow over the H1 is the twin's line above its H1", async () => {
+  for (const p of ["/", "/samples/audit-report", "/samples/shopify-agent-storefront-check"]) {
+    const md = (await served(p, "text/markdown")).body.replace(/\r\n/g, "\n");
+    const m = md.match(/^([^#\n][^\n]*)\n\n# /);
+    assert.ok(m, p + ": the twin opens with a line above its H1");
+    const html = (await served(p, "text/html")).body;
+    assert.ok(html.includes('<p class="eyebrow">' + m[1] + "</p>"), p + ": the HTML eyebrow is " + m[1]);
+  }
+});
+
+test("Tek-488: the blog index shows the count its twin states", async () => {
+  const md = (await served("/blog", "text/markdown")).body.replace(/\r\n/g, "\n");
+  const n = (md.match(/\n## Browse all articles\n\n(\d+) articles\.\n/) || [])[1];
+  assert.ok(n, "the twin carries a count line under its list heading");
+  const rows = (md.slice(md.indexOf("\n## Browse all articles\n")).match(/\n- \[/g) || []).length;
+  assert.equal(Number(n), rows, "the count is the number of rows");
+  const html = (await served("/blog", "text/html")).body;
+  assert.ok(html.includes("<h2>Browse all articles</h2>") && html.includes('aria-live="polite">' + n + " articles.</p>"), "the page shows the same heading and count");
+});
+
+test("Tek-488: a brief with a code span and an escaped hash in one paragraph renders, and keeps both", async () => {
+  // briefHoldEscapes turns an escaped # into U+E000 before renderInline runs; the code marker
+  // once shared that range, and "\#7\#" next to a code span made the page answer 500.
+  const bs = String.fromCharCode(92);
+  const rec = { id: "tek488-brief", yritys: "Test Oy", kieli: "en", otsikko: "t", json: { a: 1 },
+    md: ["# A brief", "", "It has `a code span` and " + bs + "#7" + bs + "# in one paragraph.", ""].join("\n") };
+  const env = { BRIEFIT: { get: async (k) => (k === rec.id ? rec : null) } };
+  const res = await worker.fetch(new Request("https://turva.dev/brief/" + rec.id, { headers: { accept: "text/html" } }), env);
+  assert.equal(res.status, 200);
+  const html = await res.text();
+  assert.ok(html.includes("It has <code>a code span</code> and #7# in one paragraph."), "the code span renders and the escaped hashes come back as text");
 });

@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.177.0 - the site's own Markdown parity, round 1 (Tek-488, 2026-09-26): the home, /services and Shopify pages show the twin's own Frequently asked heading; the /blog twin carries the page's Browse all articles heading and its article count; every table is served once and stacks below 640 px, so the wide tables lose their second copy in details; inline code renders as code, and the sample report's JSON excerpts and the AP2 URI are code in the twins, so the Markdown no longer links what the HTML leaves as text; the line above a twin's H1 is the page's eyebrow and the sample and /services button rows are read from the twin, linking headings by their own slug; the home page shows its Markdown views note, reworded to hold in both versions; the redundant .post[hidden] rule is gone.
 // turva.dev worker v3.176.0 - the tool retest fixes (Tek-487, 2026-09-26): the card pages carry a global [hidden]{display:none !important} rule, so Copy JSON, Save JSON and Fill in an example really hide (.copy-btn set its own display and beat the browser rule for [hidden], the same trap as .post in v3.148.0); the rate limit post keeps its H1 in META_BY_PATH title and a short titleTag for the <title> element, so the /blog card, og:title and the feed carry the heading the page carries (Tek-364); three /blog twin lines no longer read two periods before the date; the llms.txt validator names an entered path it does not use in an information line, its page no longer invites a file address, and its summary warning names the line of a blockquote that comes after other text.
 // turva.dev worker v3.175.0 - the hosted parity fixes (Tek-486, 2026-09-26): the badge preview and the Signal code are read from image lines in their twins, a list label written as ### in the twin renders as the same h3 label, the blog index twin links its RSS feed and the lead renders it in the feed style, and the home report card puts a space between a value and its conflict flag, so the hosted parity check passes 63 of 71 pages. The two tool pages get a refusal of their own and the check page says it does not check them, Fill in an example puts the other options back to their defaults and hides the old result, and Copy JSON and Save JSON leave while a new check runs. The hosted route runs markdown-parity-check 0.2.11, where a selector that picks a heading, list item, table or pre keeps that block type.
 // turva.dev worker v3.174.0 - the button rows read from the Markdown twin, and the audit ACP session names its re-scan (Tek-484, 2026-09-26): the home, /services, /company, audit and Shopify pages render nine button rows from a links-only paragraph of their twin through mdLeadCta, mdParasCta, mdOpenCtaSec and the new row arguments of mdPageStart, so the Markdown carries every link a button offers and the hosted parity check passes 61 of 71 pages; rows that point at an anchor on the same page stay HTML only. The audit line item of the ACP checkout session includes the re-scan and its correction add-on exception, and the parity post records the new figures.
@@ -726,6 +727,8 @@ Corrected 2026-09-26. The same run now passes 59 of the 71 pages and reports 208
 Corrected again 2026-09-26. The same run now passes 61 of the 71 pages and reports 199 findings. Nine button rows on five pages are now read from a paragraph of links in the Markdown, so both versions carry the same links in the same order. The company and audit pages now pass. Three rows stay in the HTML only, because their first button points to a place on the same page, and the Markdown view has no anchor for it.
 
 Corrected a third time 2026-09-26. The same run now passes 63 of the 71 pages and reports 188 findings. The badge preview and the Signal code are image lines in the Markdown, a label over a list is a heading in both versions, and the blog index Markdown links its RSS feed. Most of what still fails is the checker's own reading. The largest cause is that it takes a row of card links as one block. It also matches a link by its text alone, so the same address under a different label reads as lost on one side and added on the other.
+
+Corrected a fourth time 2026-09-26. The same run now passes 67 of the 71 pages and reports 151 findings. The two sample reports pass, and so do the Shopify check page and the commerce guide. A wide table used to appear twice. The second copy was a list for narrow screens, and now every table turns into cards on a narrow screen instead, so its text is on the page once, as it is in the Markdown. Both versions now write the JSON excerpts and the AP2 address as code, which neither links. The three rows that stayed in the HTML only now point at a heading both versions carry. Four pages still fail, the home page, the services page, the blog index and the guides index, and most of their findings come from cards.
 
 ## Related
 
@@ -2449,7 +2452,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 - [What four AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit): fifty buyer questions, 193 answers, one day's conditions.
 - [Thirty-day follow-up: 201 comparable site readings](/blog/thirty-days-after-the-brief): a 210-site cohort, 201 comparable readings, four changed level, and no effect from the briefs established.
 
-## All posts
+## Browse all articles
+
+34 articles.
 
 - [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25.
 - [Five rounds before the agent signed anything](/blog/five-rounds-before-the-agent-signed). 2026-09-20.
@@ -2790,7 +2795,9 @@ Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). F
 - [Authentication and authorisation for AI agents](/guides/agent-authentication)
 - [What agents.json describes](/guides/agents-json)
 `,
-  "/samples/audit-report": `# A sample website and API audit
+  "/samples/audit-report": `Fictional example
+
+# A sample website and API audit
 
 Northwind Fasteners Oy and all readings in this report are invented. The example shows what a client receives: the finding, its evidence, who makes the correction and how the result is checked.
 
@@ -2804,6 +2811,8 @@ Illustrative report date: 8 September 2026, which is the delivery date in the en
 - **Owner:** Implementation owner agreed with the client, and the source-data responsibilities remain explicit.
 - **Acceptance:** Compare the corrected page, structured data and API against the same product record across the catalog.
 - **Scanner effect:** This finding does not change the sample's scanner score.
+
+[Read the evidence](#f1-product-prices-and-availability-disagree-across-the-page-structured-data-and-api) [View audit scope and pricing](/agent-readiness-audit#scope)
 
 ## The main findings
 
@@ -3050,7 +3059,7 @@ Nine findings. Each one shows the evidence, why it matters, the correction, the 
 
 **Category and scanner effect.** Structured data. Manual review, not scored.
 
-**What was found.** GET /products/din-933-m12x40-a2/ on 2026-09-03 returns a JSON-LD Product node with "price": "0.00", "priceCurrency": "EUR" and "availability": "https://schema.org/InStock". The visible page shows 0,42 EUR per piece, VAT 0 %, and a lead time of six weeks. The same node shape appears on all 138 product pages, read by fetching both pages of /wp-json/wc/store/v1/products, following every product URL and reading the price field of each. The API returns prices.price as an empty string and is_purchasable true for every product. Its stock fields show 90 products in stock with no backorder, is_on_backorder true for 41 and is_in_stock false for 7. The 19 products that come in several thread lengths show a price per variant on the page and publish one Product node for all of them. The 12 products sold by the box of 100 show the box price on the page and publish no unit at all, in JSON-LD or in the API, so nothing on either surface says which quantity a price belongs to.
+**What was found.** GET /products/din-933-m12x40-a2/ on 2026-09-03 returns a JSON-LD Product node with \`"price": "0.00"\`, \`"priceCurrency": "EUR"\` and \`"availability": "https://schema.org/InStock"\`. The visible page shows 0,42 EUR per piece, VAT 0 %, and a lead time of six weeks. The same node shape appears on all 138 product pages, read by fetching both pages of /wp-json/wc/store/v1/products, following every product URL and reading the price field of each. The API returns prices.price as an empty string and is_purchasable true for every product. Its stock fields show 90 products in stock with no backorder, is_on_backorder true for 41 and is_in_stock false for 7. The 19 products that come in several thread lengths show a price per variant on the page and publish one Product node for all of them. The 12 products sold by the box of 100 show the box price on the page and publish no unit at all, in JSON-LD or in the API, so nothing on either surface says which quantity a price belongs to.
 
 **Why it matters.** No scanner points, and the highest impact in this report. Observed in this run: one by-name answer on 2026-09-04 told a buyer the catalog is free and cited the product page. That page carries two prices, 0,42 EUR in its text and 0.00 in its JSON-LD, and the zero price is a technical finding of its own. Nothing recorded shows which part of the page the assistant used, so the link between the two is an interpretation. Possible and not observed: an agent that reads the API as data gets an empty price and a purchasable flag. A second effect belongs to later rather than now: a box price published without its unit may be read as the price of one piece, making the quoted per-piece price one hundred times the actual per-piece price. That is why price and price basis are two separate rules below. In this sample, correcting the product facts takes priority because one recorded answer already repeats a wrong price claim.
 
@@ -3235,12 +3244,12 @@ Chain 1, F1, one row of the whole-catalog test.
 | Step | Content |
 | --- | --- |
 | Request | GET /products/din-933-m12x40-a2/ on the host northwind-fasteners.example with Accept: text/html, 2026-09-03 |
-| Response excerpt | Visible: 0,42 EUR / kpl, alv 0 %, toimitusaika 6 viikkoa. JSON-LD: "@type": "Product", "offers": {"price": "0.00", "priceCurrency": "EUR", "availability": "https://schema.org/InStock"} |
+| Response excerpt | Visible: 0,42 EUR / kpl, alv 0 %, toimitusaika 6 viikkoa. JSON-LD: \`"@type": "Product", "offers": {"price": "0.00", "priceCurrency": "EUR", "availability": "https://schema.org/InStock"}\` |
 | Second request | GET /wp-json/wc/store/v1/products?slug=din-933-m12x40-a2 on the same host |
 | Response excerpt | "prices": {"price": "", "currency_code": "EUR", "currency_minor_unit": 2}, "is_purchasable": true, "is_in_stock": true, "is_on_backorder": true |
 | Observation | Three surfaces, three answers: 0,42 EUR with a six week lead time, 0,00 EUR in stock, and no price at all but purchasable |
 | Change | JSON-LD from the page's own price and stock elements at the edge. Plugin mapping and API price visibility at the source. Availability from is_on_backorder true, so BackOrder with deliveryLeadTime 6 weeks |
-| Acceptance reading | JSON-LD "price": "0.42", "availability": "https://schema.org/BackOrder", "deliveryLeadTime": 6 weeks. API "price": "42", "is_on_backorder": true. The confirmed product record gives 0,42 EUR per piece, on backorder with a six week lead time, so the row is ALIGNED on all three surfaces and with the record, and the script's total line reads 170 of 170 price rows and 180 of 180 availability rows aligned, which are the counts of a catalog where decision D4 kept all ten exception products published. The API column reads right here because the source row of F1 was corrected as well, which is what the fix list covers. The origin's own JSON-LD for the page, read by the method agreed with the company, carries the same node, so the source correction is shown on the origin and not only at the edge |
+| Acceptance reading | JSON-LD \`"price": "0.42"\`, \`"availability": "https://schema.org/BackOrder"\`, \`"deliveryLeadTime"\` 6 weeks. API \`"price": "42"\`, \`"is_on_backorder": true\`. The confirmed product record gives 0,42 EUR per piece, on backorder with a six week lead time, so the row is ALIGNED on all three surfaces and with the record, and the script's total line reads 170 of 170 price rows and 180 of 180 availability rows aligned, which are the counts of a catalog where decision D4 kept all ten exception products published. The API column reads right here because the source row of F1 was corrected as well, which is what the fix list covers. The origin's own JSON-LD for the page, read by the method agreed with the company, carries the same node, so the source correction is shown on the origin and not only at the edge |
 
 The acceptance script from F1 is delivered as a file with the report. Its output for the same product at the retest:
 
@@ -3310,7 +3319,9 @@ Every figure on this page is invented. The check names, the categories and the s
 The audit is described on the [services page](/services). To start one, [email info@turva.dev](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) with the site or API URL and what the audit should answer. The Shopify agent storefront check has its own [sample report](/samples/shopify-agent-storefront-check).
 `,
 
-  "/samples/shopify-agent-storefront-check": `# A sample Shopify storefront check
+  "/samples/shopify-agent-storefront-check": `Fictional example
+
+# A sample Shopify storefront check
 
 Northstar Outdoor and every observation in this report are invented. This example shows how product comparisons, shopping-journey evidence and a correction plan are presented.
 
@@ -3328,6 +3339,8 @@ Illustrative report date: 6 September 2026, the delivery date in the engagement 
 Two of the three tested products need attention. The remote catalog shows one price 2 EUR higher than the storefront. The Agentic preview marks one variant unavailable even though the storefront sells it.
 
 The browser cart worked in the agreed anonymous session, and the checkout handoff reached the right store. No customer details were entered, no payment was submitted and no order was created.
+
+[View the product comparison](#product-information-compared) [View Shopify check scope](/shopify-agent-storefront-check)
 
 ## Contents
 
@@ -3555,7 +3568,7 @@ An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that 
 
 **What is the correct AP2 extension URI?**
 
-For the AP2 v0.1 Agent Card extension, the URI is "https://github.com/google-agentic-commerce/ap2/tree/v0.1" (lowercase, version v0.1), exactly as that version specifies. This is a compatibility declaration for clients and scanners that implement v0.1, not a requirement of the current AP2 v0.2, which has no Agent Card extension. The isitagentready scanner reads the v0.1 form as of 2026-09-05. Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject.
+For the AP2 v0.1 Agent Card extension, the URI is \`https://github.com/google-agentic-commerce/ap2/tree/v0.1\` (lowercase, version v0.1), exactly as that version specifies. This is a compatibility declaration for clients and scanners that implement v0.1, not a requirement of the current AP2 v0.2, which has no Agent Card extension. The isitagentready scanner reads the v0.1 form as of 2026-09-05. Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject.
 
 **Why does an AP2 declaration fail validation?**
 
@@ -3579,7 +3592,9 @@ A UCP profile at /.well-known/ucp names the merchant, the services it offers wit
 - [The /.well-known directory for agent discovery](/guides/well-known-for-agents)
 - [How to choose an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
 `,
-  "/": `# Know what AI assistants can find out about your product
+  "/": `Independent agent-readiness audits
+
+# Know what AI assistants can find out about your product
 
 I'm Erik. I check what AI assistants can read on your website or API, where the information disagrees, and what they say about your product. You get a written report explaining what I found, what to fix first, and how to check the changes.
 
@@ -3674,11 +3689,11 @@ I'll reply within one business day and explain the next step.
 
 ## Markdown views
 
-You are reading the markdown view of this page. Every page on this
-site has one, and there are two ways to it: the page URL with .md
-appended, which is what llms.txt v2 asks for, or the page URL itself
-with Accept: text/markdown. Both return this same document, at a
-fraction of the token cost of the HTML.
+Every page on this site has a Markdown version, and there are two ways
+to it: the page URL with .md appended, which is what llms.txt v2 asks
+for, or the page URL itself with Accept: text/markdown. This home
+page's version is at [/index.md](/index.md). Both ways return the same
+document, at a fraction of the token cost of the HTML.
 
 ## More
 - [Services](https://turva.dev/services)
@@ -3721,6 +3736,8 @@ fraction of the token cost of the HTML.
 Start with the question you need answered. I can check a Shopify store, audit a website or API, help implement the findings, or support your team over time.
 
 You work directly with me, in writing. I reply within one business day. All prices exclude VAT.
+
+[Choose a starting point](#choose-a-starting-point) [Read a sample audit report](/samples/audit-report)
 
 ## Choose a starting point
 
@@ -6185,7 +6202,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.176.0",
+    "version": "3.177.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6457,7 +6474,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.176.0",
+  "version": "3.177.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7884,7 +7901,7 @@ var SCHEMA_HOME = `<script type="application/ld+json">
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 ${SCHEMA_SERVICE},
 {"@type":"FAQPage","@id":"https://turva.dev/#faq","inLanguage":"en","mainEntity":[
-${jsonLdSafe(mdFaqBlocks("/", "Frequently asked").pairs.map((p) => `{"@type":"Question","name":${JSON.stringify(p.q)},"acceptedAnswer":{"@type":"Answer","text":${JSON.stringify(p.a)}}}`).join(",\n"))}
+${jsonLdSafe(mdFaqBlocks("/", "Frequently asked").pairs.map((p) => `{"@type":"Question","name":${JSON.stringify(mdFaqPlain(p.q))},"acceptedAnswer":{"@type":"Answer","text":${JSON.stringify(mdFaqPlain(p.a))}}}`).join(",\n"))}
 ]}
 ]}
 <\/script>`;
@@ -8369,7 +8386,19 @@ function jsonLdSafe(s) {
 }
 
 function renderInline(text) {
-  let out = escapeHtml(text);
+  // Inline code since Tek-488: a span between single backticks renders as <code>, its text
+  // escaped and nothing inside it linked or bolded, the way GFM reads it. A JSON excerpt and an
+  // identifier that must not become a link (the AP2 URI, R15 P1a-1) are written this way, so
+  // the Markdown does not autolink what the HTML shows as text. The span waits behind a
+  // private-use marker while the link and bold rules run. The marker is U+E0F0, outside the
+  // U+E000 to U+E007 placeholders briefHoldEscapes puts into a brief before it gets here: sharing
+  // them made a brief with a code span and an escaped "#7#" answer 500 (independent review,
+  // Tek-488). A text that already carries the marker gets no inline code at all, and a marker
+  // pair that names no stored span is left as it is.
+  const code = [];
+  const mark = String.fromCharCode(0xE0F0);
+  const src = typeof text === "string" && !text.includes(mark) ? text.replace(/`([^`]+)`/g, (m, c) => { code.push(c); return mark + (code.length - 1) + mark; }) : text;
+  let out = escapeHtml(src);
   out = out.replace(/&lt;mailto:(.+?)&gt;/g, (m, a) => { const v = stripBidi(a); return '<a href="mailto:' + v + '">' + v + "</a>"; });
   out = out.replace(/&lt;(https?:\/\/.+?)&gt;/g, (m, a) => { const v = stripBidi(a); return '<a href="' + v + '">' + v + "</a>"; });
   out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, label, href) => {
@@ -8416,6 +8445,7 @@ function renderInline(text) {
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
     return pre + '<a href="https://' + stripBidi(url) + '">' + stripBidi(url) + '</a>' + tail;
   }));
+  if (code.length) out = out.replace(new RegExp(mark + "([0-9]+)" + mark, "g"), (m, i) => (Number(i) < code.length ? "<code>" + escapeHtml(code[Number(i)]) + "</code>" : m));
   return out;
 }
 
@@ -8515,23 +8545,19 @@ function markdownToHtml(md) {
       html.push(`<pre><code>${escapeHtml(mdCodeText(rawLines.map((l) => l.slice(4)).join("\n")))}</code></pre>`);
     } else if (tl.length >= 2 && tl[0].startsWith("|") && /^\|[\s:|-]+\|$/.test(tl[1])) {
       const cells = (l) => l.replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => renderInline(c.trim()));
-      // Since v3.133.0 (Tek-358) every cell carries its column name as data-label, the
-      // table sits in a bounded, keyboard-focusable scroll box, and a table of up to four
-      // columns stacks into one named card per row below 640 px, so no cell is hidden and
-      // the document never scrolls sideways. Wider tables keep the scroll box.
+      // Since v3.133.0 (Tek-358) every cell carries its column name as data-label and the
+      // table sits in a bounded, keyboard-focusable scroll box. Since Tek-488 every table, of
+      // any width, stacks into one named card per row below 640 px, so no cell is hidden and
+      // the document never scrolls sideways.
       const headCells = cells(tl[0]);
       const labels = headCells.map((c) => stripTags(c).replace(/"/g, "&quot;"));
       const head = headCells.map((c) => `<th>${c}</th>`).join("");
       const rows = tl.slice(2).filter((l) => l.startsWith("|")).map((l) => `<tr>${cells(l).map((c, i) => `<td data-label="${labels[i] || ""}">${c}</td>`).join("")}</tr>`).join("");
       const tableHtml = (cls) => `<table class="cols-${headCells.length}${cls}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
-      if (headCells.length <= 4) {
-        html.push(`<div class="tbl" tabindex="0">${tableHtml(" stack")}</div>`);
-      } else {
-        // A wide table keeps its columns in the scroll box and is offered a second time as a
-        // list of named cards from the same cells (v3.134.0, Tek-360), so every value can be
-        // read vertically without hiding a column or shrinking the text.
-        html.push(`<div class="tbl" tabindex="0">${tableHtml("")}</div>\n<details class="tbl-list"><summary>Read this table as a list</summary>${tableHtml(" stacked")}</details>`);
-      }
+      // A table wider than four columns used to be offered a second time inside <details> as
+      // a list of the same cells (v3.134.0, Tek-360), so <main> carried its text twice while
+      // the Markdown carries it once. The stacked cards replace that copy: do not bring it back.
+      html.push(`<div class="tbl" tabindex="0">${tableHtml(" stack")}</div>`);
     } else if (/^-{3,}$/.test(trimmed)) {
       // Horizontal rule. Added 2026-08-24 (Tek-269). It came in for the brief page, but a
       // brief no longer writes a horizontal rule into its markdown: the style pass's R6 read
@@ -8583,9 +8609,12 @@ function mdLead(path) {
   const md = mdTwin(path);
   const cut = md.indexOf("\n## ");
   const blocks = (cut === -1 ? md : md.slice(0, cut)).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+  // A line directly above the H1 is the page's eyebrow (Tek-488): the Markdown carries the label
+  // the HTML shows over the heading, in the same place.
+  const eyebrow = blocks.length > 1 && !blocks[0].startsWith("#") && blocks[1].startsWith("# ") ? blocks.shift() : "";
   const title = blocks.length && blocks[0].startsWith("# ") ? blocks[0].slice(2).trim() : "";
   const paras = blocks.slice(1).filter((b) => !/^[-|>#]|^ {4}/.test(b));
-  return { title, paras };
+  return { eyebrow, title, paras };
 }
 function mdSection(path, heading) {
   const md = mdTwin(path);
@@ -8605,7 +8634,7 @@ function mdPageStart(path, ctaCls, ctaLinks) {
   const lead = ctaCls ? mdLeadCta(path, ctaCls, ctaLinks) : mdLead(path);
   // A lead paragraph that is only the feed link keeps the feed style (/blog, Tek-486).
   const intro = lead.paras.map((p, i) => `<p${i === 0 ? ' class="intro"' : /^\[RSS feed\]\(\/[^)]+\)$/.test(p) ? ' class="feed"' : ""}>${renderInline(p)}</p>`).join("\n  ");
-  return `<h1>${renderInline(lead.title)}</h1>
+  return `${lead.eyebrow ? `<p class="eyebrow">${renderInline(lead.eyebrow)}</p>\n  ` : ""}<h1>${renderInline(lead.title)}</h1>
   ${intro}${lead.cta ? "\n  " + lead.cta : ""}`;
 }
 function mdCard(path, heading) {
@@ -8689,6 +8718,11 @@ function mdFaqBlocks(path, heading) {
     if (!p.a) throw new Error("mdFaqBlocks: " + path + " " + heading + ": no answer follows the question " + JSON.stringify(p.q));
   }
   return { pairs, tail };
+}
+// A question or answer as FAQPage text: inline code keeps its text and drops its backticks, as
+// the HTML shows it (Tek-488), so the published answer stays the text the reader sees.
+function mdFaqPlain(s) {
+  return s.replace(/`([^`]+)`/g, "$1");
 }
 function mdFaqRows(path, heading) {
   return mdFaqBlocks(path, heading).pairs.map((p) => `    <p class="q">${renderInline(p.q)}</p>
@@ -8868,8 +8902,9 @@ function mdOpenSec(path, heading, id, extra, listOnly, dropRow) {
 // stays a paragraph (the audit page's evidence link is one), so a lone link cannot become a
 // button by accident. Each helper takes the LAST links-only paragraph of its block and throws
 // when there is none, so a row removed from the twin breaks the page build instead of vanishing
-// from the HTML unnoticed. Rows whose links point at an anchor on the same page (#start on
-// /services, #f1 on the samples) stay in the HTML only: the Markdown view has no such anchor.
+// from the HTML unnoticed. A button that points at a place on the same page links the heading's
+// own slug, which the Markdown view's heading carries as well, so since Tek-488 no row stays in
+// the HTML only (/services and the two samples were the last three).
 function mdCtaSplit(blocks, where) {
   let at = -1;
   blocks.forEach((b, i) => { if (/^(?:\[[^\]]+\]\([^)\s]+\)[ \t]*)+$/.test(b.trim())) at = i; });
@@ -8884,7 +8919,7 @@ function mdCtaHtml(row, divCls, linkCls) {
 function mdLeadCta(path, divCls, linkCls) {
   const lead = mdLead(path);
   const cut = mdCtaSplit(lead.paras, path + " lead");
-  return { title: lead.title, paras: cut.rest, cta: mdCtaHtml(cut.row, divCls, linkCls) };
+  return { eyebrow: lead.eyebrow, title: lead.title, paras: cut.rest, cta: mdCtaHtml(cut.row, divCls, linkCls) };
 }
 function mdParasCta(path, heading, count, divCls, linkCls) {
   const blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean).filter((b) => !/^[-|>]|^ {4}/.test(b));
@@ -9031,8 +9066,8 @@ function buildGuidesFaqJsonLd() {
     "inLanguage": "en",
     "mainEntity": mdFaqBlocks("/guides", "Frequently asked").pairs.map((item) => ({
       "@type": "Question",
-      "name": item.q,
-      "acceptedAnswer": { "@type": "Answer", "text": item.a }
+      "name": mdFaqPlain(item.q),
+      "acceptedAnswer": { "@type": "Answer", "text": mdFaqPlain(item.a) }
     }))
   };
   const json = jsonLdSafe(JSON.stringify(faq));
@@ -9103,8 +9138,8 @@ function buildGuidePageFaqJsonLd(pathname, canonicalUrl) {
     "inLanguage": "en",
     "mainEntity": items.map((item) => ({
       "@type": "Question",
-      "name": item.q,
-      "acceptedAnswer": { "@type": "Answer", "text": item.a }
+      "name": mdFaqPlain(item.q),
+      "acceptedAnswer": { "@type": "Answer", "text": mdFaqPlain(item.a) }
     }))
   };
   const json = jsonLdSafe(JSON.stringify(faq));
@@ -9290,8 +9325,8 @@ function footerHtml(kieli) { const fi = kieli === "fi"; return `<footer class="t
 // services page; a guide about a free tool or about Shopify points at that instead. Short
 // lines by design: the twin gate reads any paragraph over 80 characters as prose.
 var SAMPLE_HEAD = {
-  "/samples/audit-report": { eyebrow: "Fictional example", after: "what-to-fix-first", primary: ["Read the evidence", "#f1"], secondary: ["View audit scope and pricing", "/agent-readiness-audit#scope"] },
-  "/samples/shopify-agent-storefront-check": { eyebrow: "Fictional example", after: "what-to-fix-first", primary: ["View the product comparison", "#product-information-compared"], secondary: ["View Shopify check scope", "/shopify-agent-storefront-check"] }
+  "/samples/audit-report": { cta: "What to fix first" },
+  "/samples/shopify-agent-storefront-check": { cta: "What to fix first" }
 };
 // Kierros 4 (2026-09-06, worker-02): Tek-362 renamed headings in three guides and the id is
 // derived from the heading, so ten fragment addresses that had been served stopped resolving.
@@ -9429,22 +9464,21 @@ function serveGuideHtml(pathname, canonicalUrl) {
     ? `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${h2s.map((h) => `<li><a href="#${h.id}">${h.text}</a></li>`).join("")}</ul></nav>`
     : "";
   const withToc = toc ? withChecked.replace(/(<\/p>\n)(?=<h2 )/, `$1${toc}\n`) : withChecked;
-  // Sample reports (Tek-360): the synthetic label stands above the H1, and two actions follow
-  // the introduction. Both come from SAMPLE_HEAD; labels are short by design.
-  // Since 2026-09-08 the two actions follow the section SAMPLE_HEAD.after names (The first
-  // decision), and the twin's "Illustrative report date" line renders as a date line. Both
-  // fail closed: a sample whose section or date line is missing does not render.
+  // Sample reports (Tek-360): the synthetic label stands above the H1, and two actions close the
+  // section SAMPLE_HEAD.cta names, and the twin's "Illustrative report date" line renders as a
+  // date line. Since Tek-488 the label is the twin's line above the H1 and the actions are the
+  // links-only paragraph that closes that section (the Tek-484 row), so the Markdown carries
+  // both. All three fail closed: a sample whose label, row or date line is missing does not render.
   const sample = SAMPLE_HEAD[pathname];
   let withSample = withToc;
   if (sample) {
-    const afterTag = `<h2 id="${sample.after}">`;
-    const a0 = withToc.indexOf(afterTag);
-    if (a0 < 0) throw new Error("sample section missing: " + pathname + "#" + sample.after);
-    const a1 = withToc.indexOf("\n<h2 ", a0 + afterTag.length);
-    if (a1 < 0) throw new Error("sample section is the last section: " + pathname + "#" + sample.after);
-    const ctaHtml = `\n<div class="cta"><a class="btn" href="${sample.primary[1]}">${sample.primary[0]}</a> <a class="btn-ghost" href="${sample.secondary[1]}">${sample.secondary[0]}</a></div>`;
-    withSample = withToc.slice(0, a1) + ctaHtml + withToc.slice(a1);
-    withSample = withSample.replace(/^<h1>/, `<p class="eyebrow">${sample.eyebrow}</p>\n<h1>`);
+    const blocks = mdSection(pathname, sample.cta).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+    const cut = mdCtaSplit(blocks, pathname + " " + sample.cta);
+    if (cut.at !== blocks.length - 1) throw new Error("the sample's button row must close " + pathname + " " + sample.cta);
+    withSample = replaceExactlyOnce(withSample, `<p>${renderInline(cut.row)}</p>`, mdCtaHtml(cut.row, "cta", ["btn", "btn-ghost"]));
+    const eyebrowRe = /^<p>([^<\n]+)<\/p>\n<h1>/;
+    if (!eyebrowRe.test(withSample)) throw new Error("sample carries no eyebrow line above its H1: " + pathname);
+    withSample = withSample.replace(eyebrowRe, '<p class="eyebrow">$1</p>\n<h1>');
     const dateRe = /<p>(Illustrative report date: [^<]+)<\/p>/;
     if (!dateRe.test(withSample)) throw new Error("sample carries no illustrative report date line: " + pathname);
     withSample = withSample.replace(dateRe, '<p class="date">$1</p>');
@@ -9500,11 +9534,6 @@ ${TOC_SUB_CSS}
 .btn-ghost{color:#F2F4F3;font-weight:600;border:1px solid rgba(255,255,255,0.24);}
 .btn-ghost:hover{border-color:#5DF18F;color:#5DF18F;text-decoration:none;}
 @media (max-width:560px){.cta{flex-direction:column;}.btn,.btn-ghost{width:100%;}}
-.tbl-list{margin:-.4rem 0 1.2rem;}
-.tbl-list summary{cursor:pointer;color:#C9D1CE;font-size:.9rem;padding:.4rem 0;}
-.tbl-list summary:hover{color:#5DF18F;}
-.tbl-list[open] summary{margin-bottom:.6rem;}
-table.stacked{display:block;border:0;min-width:0;width:100%;}table.stacked thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stacked tbody,table.stacked tr{display:block;}table.stacked tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stacked td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stacked td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stacked td:first-child{color:#F2F4F3;font-weight:600;}
 .crumb{margin:0 0 1.2rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;}
 .crumb a{color:#9AA3A0;text-decoration:none;}
 .crumb a:hover{color:#5DF18F;text-decoration:none;}
@@ -9570,6 +9599,7 @@ var HOME_MARKDOWN = (function () {
 function serveHomeHtml(canonicalUrl) {
   const metaBlock = buildMetaBlock("/", canonicalUrl);
   const lead = mdLeadCta("/", "cta", ["btn", "btn-ghost"]);
+  if (!lead.eyebrow) throw new Error("the home twin carries no eyebrow line above its H1");
   // The measured date comes from the twin's own agent-readiness sentence, so the hero row and
   // the markdown agree by construction and the Measured-date gate in verify.mjs reads one copy.
   const evMeasured = ((lead.paras[3] || "").match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
@@ -9759,7 +9789,7 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
   <section class="hero">
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">Independent agent-readiness audits</p>
+        <p class="eyebrow">${renderInline(lead.eyebrow)}</p>
         <h1>${heroH1}</h1>
         <p class="lede">${renderInline(lead.paras[0])}</p>
         <p class="lede">${renderInline(lead.paras[1])}</p>
@@ -9823,7 +9853,7 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
   </section>
 
   <section class="sec">
-    <h2>Questions before you start</h2>
+    <h2>Frequently asked</h2>
     <div class="faq">
 ${mdFaqRows("/", "Frequently asked")}
     </div>
@@ -9836,6 +9866,7 @@ ${mdFaqRows("/", "Frequently asked")}
     ${contact.cta}
     <p class="muted">${contact.paras[1]}</p>
   </section>
+  ${mdOpenSec("/", "Markdown views", "markdown-views")}
   </div>
 </main>
 ${footerHtml()}
@@ -9868,9 +9899,8 @@ function serveServicesHtml(canonicalUrl) {
   const body = `${head}
 ${cardPageNav("/services")}
 <main id="main">
-  ${mdPageStart("/services")}
-  <div class="cta"><a class="btn" href="#start">Choose a starting point</a> <a class="btn-ghost" href="/samples/audit-report">Read a sample audit report</a></div>
-  <section class="sec" id="start"><h2>Choose a starting point</h2>
+  ${mdPageStart("/services", "cta", ["btn", "btn-ghost"])}
+  <section class="sec" id="choose-a-starting-point"><h2>Choose a starting point</h2>
     <div class="cards">
       ${offers}
     </div>
@@ -9883,7 +9913,7 @@ ${cardPageNav("/services")}
   ${mdOpenSec("/services", "Agent operations")}
   ${mdOpenSec("/services", "MCP server design")}
   ${mdOpenSec("/services", "Work you can inspect", "how-the-method-is-measured")}
-  ${mdFaqSec("/services", "Frequently asked", "questions").replace("<h2>Frequently asked</h2>", "<h2>Before we start</h2>")}
+  ${mdFaqSec("/services", "Frequently asked", "questions")}
   <div class="start" id="how-to-start">
     <h2>Tell me what you need</h2>
     <p>${start.paras[0]}</p>
@@ -10017,7 +10047,6 @@ ${FAQ_CSS}
 ${TOC_SUB_CSS}
 .post{display:flex;flex-direction:column;gap:6px;box-sizing:border-box;min-width:0;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;padding:18px 22px;margin:0 0 .75rem;text-decoration:none;transition:border-color .15s ease;}
 .post:hover{border-color:#5DF18F;text-decoration:none;}
-.post[hidden]{display:none;}
 [hidden]{display:none !important;}
 .post .pt{display:block;color:#F2F4F3;font-weight:700;font-size:1.1rem;line-height:1.3;letter-spacing:-0.01em;}
 .post .pm{display:flex;flex-wrap:wrap;gap:.3rem .8rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}
@@ -10079,10 +10108,6 @@ ${TOC_SUB_CSS}
 .pform .copy-btn{margin:0;min-height:44px;background:transparent;color:#F2F4F3;border:1px solid rgba(255,255,255,0.24);font-weight:600;}
 .pform .copy-btn:hover{border-color:#5DF18F;color:#5DF18F;}
 ${TBL_CSS}
-.tbl-list{margin:-.4rem 0 1.2rem;}
-.tbl-list summary{cursor:pointer;color:#C9D1CE;font-size:.9rem;padding:.4rem 0;}
-.tbl-list summary:hover{color:#5DF18F;}
-table.stacked{display:block;border:0;min-width:0;width:100%;}table.stacked thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stacked tbody,table.stacked tr{display:block;}table.stacked tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stacked td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stacked td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stacked td:first-child{color:#F2F4F3;font-weight:600;}
 @media (max-width:360px){main{padding-left:20px;padding-right:20px;}}`;
 
 function cardPageHead(metaBlock, jsonLd, canonicalUrl, extraHead) {
@@ -10492,7 +10517,7 @@ ${cardPageNav("/shopify-agent-storefront-check")}
   ${mdOpenSec("/shopify-agent-storefront-check", "See a sample", "sample-report")}
   ${mdOpenSec("/shopify-agent-storefront-check", "What this check does not establish", "limits-and-exclusions")}
   ${mdOpenSec("/shopify-agent-storefront-check", "Background to the check", "public-preflight-evidence")}
-  ${replaceExactlyOnce(mdFaqSec("/shopify-agent-storefront-check", "Frequently asked", "questions"), "<h2>Frequently asked</h2>", "<h2>Two common questions</h2>")}
+  ${mdFaqSec("/shopify-agent-storefront-check", "Frequently asked", "questions")}
   <div class="start" id="how-to-start">
     <h2>Tell me about your store</h2>
     <p>${start.paras[0]}</p>
@@ -12572,7 +12597,7 @@ function blogFilterHtml() {
         ${buttons}
       </div>
     </div>
-    <p class="bcount" id="bcount" role="status" aria-live="polite">${n === 1 ? "1 article" : n + " articles"}</p>
+    <p class="bcount" id="bcount" role="status" aria-live="polite">${n === 1 ? "1 article." : n + " articles."}</p>
     <p class="bempty" id="bempty" hidden>No articles match your search.</p>
     <button type="button" class="bclear" id="bclear" hidden>Clear search and filters</button>`;
 }
@@ -12597,7 +12622,7 @@ var BLOG_FILTER_JS = `(function () {
       p.hidden = !ok;
       if (ok) n++;
     });
-    count.textContent = n === 1 ? "1 article" : n + " articles";
+    count.textContent = n === 1 ? "1 article." : n + " articles.";
     empty.hidden = n !== 0;
     clear.hidden = !(q || kind);
   }
