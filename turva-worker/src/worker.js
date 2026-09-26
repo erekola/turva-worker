@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.176.0 - the tool retest fixes (Tek-487, 2026-09-26): the card pages carry a global [hidden]{display:none !important} rule, so Copy JSON, Save JSON and Fill in an example really hide (.copy-btn set its own display and beat the browser rule for [hidden], the same trap as .post in v3.148.0); the rate limit post keeps its H1 in META_BY_PATH title and a short titleTag for the <title> element, so the /blog card, og:title and the feed carry the heading the page carries (Tek-364); three /blog twin lines no longer read two periods before the date; the llms.txt validator names an entered path it does not use in an information line, its page no longer invites a file address, and its summary warning names the line of a blockquote that comes after other text.
 // turva.dev worker v3.175.0 - the hosted parity fixes (Tek-486, 2026-09-26): the badge preview and the Signal code are read from image lines in their twins, a list label written as ### in the twin renders as the same h3 label, the blog index twin links its RSS feed and the lead renders it in the feed style, and the home report card puts a space between a value and its conflict flag, so the hosted parity check passes 63 of 71 pages. The two tool pages get a refusal of their own and the check page says it does not check them, Fill in an example puts the other options back to their defaults and hides the old result, and Copy JSON and Save JSON leave while a new check runs. The hosted route runs markdown-parity-check 0.2.11, where a selector that picks a heading, list item, table or pre keeps that block type.
 // turva.dev worker v3.174.0 - the button rows read from the Markdown twin, and the audit ACP session names its re-scan (Tek-484, 2026-09-26): the home, /services, /company, audit and Shopify pages render nine button rows from a links-only paragraph of their twin through mdLeadCta, mdParasCta, mdOpenCtaSec and the new row arguments of mdPageStart, so the Markdown carries every link a button offers and the hosted parity check passes 61 of 71 pages; rows that point at an anchor on the same page stay HTML only. The audit line item of the ACP checkout session includes the re-scan and its correction add-on exception, and the parity post records the new figures.
 // turva.dev worker v3.173.0 - the site's own Markdown parity, second batch, and a gate on the retest window (Tek-482, 2026-09-26): six posts link in the Markdown the addresses the HTML already linked, the Markdown writes info@turva.dev as a normal link in nine places on the eight measured pages, the key-value rows of /company and /contact and the offer cards carry a space between adjacent elements, /contact links erik@turva.dev, /tools renders the Related section its Markdown already had, and the post HTML and Markdown can disagree records the new figures; turva-worker/tools/verify.mjs now reads back the correction add-on exception of every sentence that names a retest window start.
@@ -2195,7 +2196,7 @@ For an audit of the whole surface an agent sees, not just this one file, contact
 
   "/llms-txt-validator": `# Free llms.txt validator
 
-Enter a domain, or the address of its llms.txt file, to check the file and the discovery links on its home page. No signup is needed.
+Enter a domain to check its llms.txt file and the discovery links on its home page. No signup is needed.
 
 This checks the file's structure. It does not give your site an agent-readiness score.
 
@@ -2216,7 +2217,7 @@ Eight checks examine the file:
 - It exists at /llms.txt and returns HTTP 200.
 - It is plain text, not an HTML error page.
 - It starts with an H1 title.
-- It includes the recommended blockquote summary after the title.
+- It includes the recommended blockquote summary directly after the title. A blockquote that comes later but before the first H2 heading gets the same warning with its line number.
 - H2 headings group the content.
 - Markdown links parse and use absolute URLs.
 - The file is small enough to read cheaply. A file over 50 KB gets a warning, and one over 256 KB is read truncated. With --strict, a warning fails the run.
@@ -2239,7 +2240,7 @@ The [website and API audit](/agent-readiness-audit) measures agent readiness wit
 
 ## What is fetched
 
-The validator requests two documents: /llms.txt and the home page. Redirects are followed only to the same host or its www counterpart. The rest of the site is not crawled.
+The validator requests two documents: /llms.txt and the home page. A path in the address you enter is not used, and the report names it in an information line. Redirects are followed only to the same host or its www counterpart. The rest of the site is not crawled.
 
 Fetched content is checked and discarded. The response uses a no-store header.
 
@@ -2359,7 +2360,7 @@ Start with a small check, inspect turva.dev's public MCP interface, or read the 
 
 ## Check an llms.txt file
 
-Enter a domain or the address of its llms.txt file to check the file's structure and its home-page discovery links. No account is needed.
+Enter a domain to check the structure of its llms.txt file and its home-page discovery links. No account is needed.
 
 [Open the validator](/llms-txt-validator)
 
@@ -2460,7 +2461,7 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 - [What four AI assistants call an agent readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit). 2026-09-03.
 - [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites). 2026-09-03.
 - [TRACE signs how an agent ran, not what it was allowed to reach](/blog/trace-runtime-attestation). 2026-08-30.
-- [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts). 2026-08-22.
+- [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts) 2026-08-22.
 - [It would be cheating to keep the old price](/blog/cheating-to-keep-the-old-price). 2026-08-21.
 - [I thought it was a small job](/blog/i-thought-it-was-a-small-job). 2026-08-16.
 - [My gate could not see a sixth](/blog/my-gate-could-not-see-a-sixth). 2026-08-04.
@@ -2468,8 +2469,8 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 - [The checks that pass for the wrong reason](/blog/checks-that-pass-for-the-wrong-reason). 2026-07-29.
 - [Finishing the optional commerce checks](/blog/finishing-the-optional-commerce-checks). 2026-07-20.
 - [The twin is the page](/blog/the-twin-is-the-page). 2026-07-19.
-- [Every response promised a rate limit. Nothing enforced it.](/blog/enforcing-the-rate-limit-i-advertised). 2026-07-18.
-- [Microsoft said the patches would get bigger. I measured how much bigger.](/blog/measuring-the-ai-patch-surge). 2026-07-15.
+- [Every response promised a rate limit. Nothing enforced it.](/blog/enforcing-the-rate-limit-i-advertised) 2026-07-18.
+- [Microsoft said the patches would get bigger. I measured how much bigger.](/blog/measuring-the-ai-patch-surge) 2026-07-15.
 - [Reducing secret exposure in coding-agent workflows](/blog/agent-secret-hygiene). 2026-07-12.
 - [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b). 2026-07-07.
 - [When honesty and the checker disagree](/blog/honesty-and-the-checker). 2026-07-06.
@@ -6184,7 +6185,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.175.0",
+    "version": "3.176.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6456,7 +6457,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.175.0",
+  "version": "3.176.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7430,7 +7431,8 @@ var META_BY_PATH = {
     imageAlt: "turva.dev blog card: Ten card pages now render their prose from the markdown twin. What the parity gate caught before it retired and the check that replaced it."
   },
   "/blog/enforcing-the-rate-limit-i-advertised": {
-    title: "Every response promised a rate limit · turva.dev",
+    title: "Every response promised a rate limit. Nothing enforced it. · turva.dev",
+    titleTag: "Every response promised a rate limit · turva.dev",
     description: "A response header advertised a request limit that no code enforced. The investigation separates a published policy, the code and what a probe can show.",
     date: "2026-07-18",
     kind: "Build notes",
@@ -10016,6 +10018,7 @@ ${TOC_SUB_CSS}
 .post{display:flex;flex-direction:column;gap:6px;box-sizing:border-box;min-width:0;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;padding:18px 22px;margin:0 0 .75rem;text-decoration:none;transition:border-color .15s ease;}
 .post:hover{border-color:#5DF18F;text-decoration:none;}
 .post[hidden]{display:none;}
+[hidden]{display:none !important;}
 .post .pt{display:block;color:#F2F4F3;font-weight:700;font-size:1.1rem;line-height:1.3;letter-spacing:-0.01em;}
 .post .pm{display:flex;flex-wrap:wrap;gap:.3rem .8rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}
 .post .pk{color:#5DF18F;}
@@ -10606,6 +10609,20 @@ function normalizeHostInput(raw) {
   return typedHost.length > 1 && typedHost.endsWith(".") ? typedHost.slice(0, -1) : typedHost;
 }
 
+// The path of the address as typed, when it is neither the root nor /llms.txt. The fetch stays pinned
+// to https://<host>/llms.txt, because a fixed path is part of its guard against use as a fetch proxy
+// (THREAT_MODEL T10), so a typed /docs/llms.txt used to be dropped without a word while the report
+// described the root file (ChatGPT retest 2026-09-26, Tek-487). The report now names the unused path in
+// an information line. The case of the path is kept, and the query and fragment are never shown.
+function enteredPath(raw) {
+  let s = String(raw || "").trim();
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) s = "https://" + s;
+  let u;
+  try { u = new URL(s); } catch { return ""; }
+  const path = u.pathname;
+  return path === "/" || path === "" || path === "/llms.txt" ? "" : path;
+}
+
 function isValidPublicHost(host) {
   if (!host || host.length > 253) return false;
   if (host.startsWith("[") || /^\d+\.\d+\.\d+\.\d+$/.test(host)) return false;
@@ -10886,7 +10903,19 @@ function validateLlmsTxt(f) {
   if (afterH1.trim().startsWith("> ")) {
     add("summary", "pass", "Blockquote summary after the title", JSON.stringify(cut(afterH1.trim(), 80)));
   } else {
-    add("summary", "warn", "Blockquote summary after the title", "recommended by the format (> one-line summary), not required");
+    // A blockquote further down, before the first H2, is a summary in the wrong place and not a
+    // missing one, and the detail says which (ChatGPT retest 2026-09-26, Tek-487). The status is
+    // warn either way, because the format places the summary directly after the title.
+    const fence = fenceMask(lines);
+    let late = -1;
+    for (let i = firstIdx + 1; i < lines.length; i++) {
+      if (fence[i]) continue;
+      if (/^ {0,3}## /.test(lines[i])) break;
+      if (/^ {0,3}> /.test(lines[i])) { late = i; break; }
+    }
+    add("summary", "warn", "Blockquote summary after the title", late === -1
+      ? "recommended by the format (> one-line summary), not required"
+      : "the blockquote at line " + (late + 1) + " comes after other text, and the format places the summary directly after the title");
   }
   // Headings are read outside fences only, and with the same indentation the H1 check and
   // listItemHasLink have allowed since 2026-08-29. Until 2026-09-10 this one line still
@@ -11870,6 +11899,10 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
       }
     }
   }
+  // A path in the typed address is not used, and the report says so first (Tek-487). Information
+  // moves no result: summarizeChecks reads fail and warn only.
+  const unusedPath = result ? enteredPath(raw) : "";
+  if (unusedPath) result.checks.unshift({ id: "input-path", status: "info", label: "Path in the address you entered", detail: cut(unusedPath, 120) + " is not used, because the validator always reads /llms.txt at the root of the host" });
   // Text quoted from the fetched file leaves without bidirectional controls (round 19, V6-U1): a
   // site's own H1 or summary could otherwise read in another order here and in the JSON answer.
   if (result) result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripBidi(c.detail) }) : c));
@@ -11913,8 +11946,8 @@ ${cardPageNav("/llms-txt-validator")}
 <main id="main">
   ${mdPageStart("/llms-txt-validator")}
   <form class="vform" method="get" action="/llms-txt-validator">
-    <label for="vurl">Domain or llms.txt address to check</label>
-    <input type="text" id="vurl" name="url" placeholder="example.com" value="${escapeHtml(validatorEcho(typed, raw))}" aria-label="Domain or llms.txt address to check" required>
+    <label for="vurl">Domain or website address to check</label>
+    <input type="text" id="vurl" name="url" placeholder="example.com" value="${escapeHtml(validatorEcho(typed, raw))}" aria-label="Domain or website address to check" required>
     <button type="submit">Check llms.txt</button>
   </form>
   <p class="fine"><a href="/llms-txt-validator?url=turva.dev">Try it with turva.dev</a></p>

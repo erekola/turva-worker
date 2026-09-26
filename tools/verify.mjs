@@ -1383,13 +1383,36 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // links and the gate would have passed on two empty sets.
     const a = [...llms.matchAll(/\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/blog\/[a-z0-9-]+)(?:\.md)?\)/g)].map((m) => m[1]);
     const twin = (twMdTwin('/blog') || '').replace(/\r\n/g, '\n');
-    const b = [...twin.matchAll(/\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\. (\d{4}-\d{2}-\d{2})\./g)];
+    const b = [...twin.matchAll(/\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\.? (\d{4}-\d{2}-\d{2})\./g)];
     const meta = [...w.slice(w.indexOf('var META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)].map((m) => m[1]);
     setSame('LLMS_TXT blog list vs META_BY_PATH', a, meta);
     setSame('/blog twin list vs META_BY_PATH', b.map((m) => m[1]), meta);
     const wrong = b.filter((m) => !w.includes(`"${m[1]}": {`) || !region(`  "${m[1]}": {`, '\n  },').includes(`date: "${m[2]}"`));
     check(b.length > 0 && wrong.length === 0,
       `every /blog index date matches META_BY_PATH${wrong.length ? ' :: ' + wrong.map((m) => m[1] + ' says ' + m[2]).join(', ') : ''}`);
+    // A title that ends in . ? or ! takes no separator period before the date and every other title
+    // takes one, so no line reads two sentence ends or none. Three lines read "card.. 2026-08-22."
+    // once the link syntax was gone until 2026-09-26 (ChatGPT retest, Tek-487).
+    const punctOff = [...twin.matchAll(/\n- \[([^\]]*)\]\((\/blog\/[a-z0-9-]+)\)(\.?) \d{4}-\d{2}-\d{2}\./g)]
+      .filter((m) => /[.?!]$/.test(m[1]) === (m[3] === '.')).map((m) => m[2]);
+    check(b.length > 0 && punctOff.length === 0,
+      `every /blog twin line ends its title once before the date${punctOff.length ? ' :: ' + punctOff.join(', ') : ''}`);
+    // Tek-364: META_BY_PATH title carries the heading the page itself carries, and a short titleTag
+    // goes to the <title> element only, so the /blog card, og:title and the feed say what the H1 says.
+    // One post carried a shortened title and no titleTag until 2026-09-26, and its card read
+    // differently from its H1 (ChatGPT retest, Tek-487).
+    const titleOff = meta.filter((p) => {
+      const title = (region(`  "${p}": {`, '\n  },').match(/\n    title: "([^"]*)"/) || [])[1];
+      const h1 = ((twMdTwin(p) || '').match(/^# (.+)$/m) || [])[1];
+      return !title || !h1 || title.replace(/ [|\u00B7] turva\.dev$/, '') !== h1.trim();
+    });
+    check(meta.length > 20 && titleOff.length === 0,
+      `every blog post's META_BY_PATH title is its H1, ${meta.length} posts (Tek-364)${titleOff.length ? ' :: ' + titleOff.join(', ') : ''}`);
+    // Every hidden attribute on the card pages hides for real. A class that sets its own display
+    // beats the browser's rule for [hidden] (.post until v3.148.0, .copy-btn until v3.176.0), so the
+    // card-page CSS carries one global rule with !important instead of an override per class (Tek-487).
+    check(/(^|\n)\[hidden\]\{display:none !important;\}\r?\n/.test(region('var CARDPAGE_CSS = `', '`;')),
+      'CARDPAGE_CSS carries the global [hidden]{display:none !important} rule (Tek-487)');
   }
 
   console.log('\nOne site order (2026-09-04, Tek-336)');
@@ -1431,7 +1454,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     seqSame('PAGE_MARKDOWN blog keys', pmKeys, blogWant);
     seqSame('META_BY_PATH blog keys', metaKeys, blogWant);
     seqSame('LLMS_TXT Blog section', links(section(llms, 'Blog'), /\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/blog\/[a-z0-9-]+)\.md\)/g), blogWant);
-    seqSame('/blog twin All posts', links((twMdTwin('/blog') || '').replace(/\r\n/g, '\n'), /\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\. \d{4}-\d{2}-\d{2}\./g), blogWant);
+    seqSame('/blog twin All posts', links((twMdTwin('/blog') || '').replace(/\r\n/g, '\n'), /\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\.? \d{4}-\d{2}-\d{2}\./g), blogWant);
     const smRows = [...region('var SITEMAP_ENTRIES = [', '\n];').matchAll(/\["([^"]+)"/g)].map((m) => m[1]);
     seqSame('SITEMAP_ENTRIES blog rows (the literal; sitemap.xml sorts by siteRank at runtime and is checked in routes.test.mjs)', smRows.filter((p) => p.startsWith('/blog/')), blogWant);
     seqSame('SITEMAP_ENTRIES guide rows (the literal)', smRows.filter((p) => p.startsWith('/guides/')), guideWant);
