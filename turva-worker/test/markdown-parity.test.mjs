@@ -413,3 +413,54 @@ test("Tek-488: a brief with a code span and an escaped hash in one paragraph ren
   const html = await res.text();
   assert.ok(html.includes("It has <code>a code span</code> and #7# in one paragraph."), "the code span renders and the escaped hashes come back as text");
 });
+
+// ---- Tek-488: round 2, the card lists read as the same blocks ----
+
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
+test("Tek-488: /blog, /guides and /services pass in full, with no warning", async () => {
+  for (const p of ["/blog", "/guides", "/services"]) {
+    const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
+    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code + " " + (f.before || ""))));
+    assert.equal(r.summary.warnings, 0, p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code)));
+  }
+});
+
+test("Tek-488: a blog card and its twin row say the same sentence, with the link on the title", async () => {
+  const md = (await served("/blog", "text/markdown")).body.replace(/\r\n/g, "\n");
+  const html = (await served("/blog", "text/html")).body;
+  const rows = [...md.slice(md.indexOf("\n## Browse all articles\n")).matchAll(/\n- \[([^\]]+)\]\((\/blog\/[a-z0-9-]+)\)(\.?) (\d{4}-\d{2}-\d{2})\. ([^.\n]+)\. ([^\n]+)/g)];
+  const dated = (md.slice(md.indexOf("\n## Browse all articles\n")).match(/\n- \[/g) || []).length;
+  assert.ok(rows.length > 30 && rows.length === dated, "every row of the twin carries its kind and summary: " + rows.length + " of " + dated);
+  for (const [, title, path, sep, date, kind, summary] of rows) {
+    const card = '<span class="pt"><a href="' + path + '">' + esc(title) + "</a>" + sep + '</span> <span class="pm"><span class="pd">' + date + '</span>. <span class="pk">' + esc(kind) + '</span>.</span> <span class="ps">' + esc(summary) + "</span></li>";
+    assert.ok(html.includes(card), path);
+  }
+  assert.ok(html.includes('<ul class="posts">') && !html.includes('<a class="post"'), "the cards are list items, not links around the whole card");
+});
+
+test("Tek-488: a guide card is the twin's ### heading and the guide's own description", async () => {
+  const md = (await served("/guides", "text/markdown")).body.replace(/\r\n/g, "\n");
+  const html = (await served("/guides", "text/html")).body;
+  const heads = [...md.matchAll(/\n### \[([^\]]+)\]\((?:https:\/\/turva\.dev)?(\/guides\/[a-z0-9-]+)\)\n\n([^\n]+)/g)];
+  assert.ok(heads.length >= 27, "every guide in the twin is a heading with a sentence under it: " + heads.length);
+  for (const [, name, path, desc] of heads) {
+    assert.ok(html.includes('<div class="card gcard"><h3><a href="' + path + '">' + esc(name) + "</a></h3><p>" + esc(desc) + "</p></div>"), path);
+    const page = (await served(path, "text/html")).body;
+    assert.ok(page.includes('<meta name="description" content="' + esc(desc) + '"'), path + ": the sentence is the guide's own description");
+  }
+});
+
+test("Tek-488: an offer card reads as its twin row, and a price line keeps the twin's periods", async () => {
+  const md = (await served("/services", "text/markdown")).body.replace(/\r\n/g, "\n");
+  const html = (await served("/services", "text/html")).body;
+  const sec = md.slice(md.indexOf("\n## Choose a starting point\n"), md.indexOf("\n## ", md.indexOf("\n## Choose a starting point\n") + 4));
+  const rows = [...sec.matchAll(/\n- \[([^\]]+)\]\(([^)]+)\)\. (\S+)\. /g)];
+  assert.equal(rows.length, 2, "two offers");
+  for (const [, name, href, price] of rows) {
+    assert.ok(html.includes('<span class="name"><a href="' + href + '">' + esc(name) + '</a>.</span> <span class="price">' + esc(price) + ".</span></span>"), href);
+  }
+  assert.ok(!html.includes("See the Shopify check") && !html.includes("See the audit"), "the offer name is the link, no second label");
+  assert.ok(md.includes("48 hours. Fixed scope.**") && html.includes('<span class="terms">48 hours. Fixed scope.</span>'), "the price line is the twin's sentence");
+  assert.ok(!html.includes("&middot; Fixed scope"), "no middle dot in place of the twin's period");
+});

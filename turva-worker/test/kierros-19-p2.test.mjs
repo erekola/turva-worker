@@ -414,7 +414,8 @@ test("K5-P5: mdOfferCards and mdToolCards wrap their href in escapeHtml() before
   // Safety net: today's offer and tool hrefs are plain internal paths with nothing escapeHtml
   // would change, so the rendered bytes are the same on both builds.
   const services = await (await get("/services")).text();
-  assert.match(services, /<a class="card"[^>]* href="\/shopify-agent-storefront-check">/);
+  // Since Tek-488 round 2 the offer card is a list item and its link sits on the offer name.
+  assert.match(services, /<li class="card ocard"[^>]*><span class="card-top"><span class="name"><a href="\/shopify-agent-storefront-check">/);
   const tools = await (await get("/tools")).text();
   assert.match(tools, /<a class="go" href="\/llms-txt-validator">/);
 });

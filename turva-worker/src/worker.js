@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.178.0 - the site's own Markdown parity, round 2 (Tek-488, 2026-09-26): the /blog and /guides cards and the /services offer cards read as the same blocks in HTML and Markdown. Each /blog twin row carries the card's date, kind and summary, and each card is a list item with the link on its title; each /guides twin entry is a ### heading that links the guide, with its one-sentence description under it, and the card shows the same heading and sentence; the /services offer cards are list items that read as their twin rows, and the See the check and See the audit lines are gone because the offer name is the link; price lines show the twin's sentence with its periods instead of middle dots. Every card stays clickable as a whole through a stretched link. The hosted parity check passes 70 of 71 pages.
 // turva.dev worker v3.177.0 - the site's own Markdown parity, round 1 (Tek-488, 2026-09-26): the home, /services and Shopify pages show the twin's own Frequently asked heading; the /blog twin carries the page's Browse all articles heading and its article count; every table is served once and stacks below 640 px, so the wide tables lose their second copy in details; inline code renders as code, and the sample report's JSON excerpts and the AP2 URI are code in the twins, so the Markdown no longer links what the HTML leaves as text; the line above a twin's H1 is the page's eyebrow and the sample and /services button rows are read from the twin, linking headings by their own slug; the home page shows its Markdown views note, reworded to hold in both versions; the redundant .post[hidden] rule is gone.
 // turva.dev worker v3.176.0 - the tool retest fixes (Tek-487, 2026-09-26): the card pages carry a global [hidden]{display:none !important} rule, so Copy JSON, Save JSON and Fill in an example really hide (.copy-btn set its own display and beat the browser rule for [hidden], the same trap as .post in v3.148.0); the rate limit post keeps its H1 in META_BY_PATH title and a short titleTag for the <title> element, so the /blog card, og:title and the feed carry the heading the page carries (Tek-364); three /blog twin lines no longer read two periods before the date; the llms.txt validator names an entered path it does not use in an information line, its page no longer invites a file address, and its summary warning names the line of a blockquote that comes after other text.
 // turva.dev worker v3.175.0 - the hosted parity fixes (Tek-486, 2026-09-26): the badge preview and the Signal code are read from image lines in their twins, a list label written as ### in the twin renders as the same h3 label, the blog index twin links its RSS feed and the lead renders it in the feed style, and the home report card puts a space between a value and its conflict flag, so the hosted parity check passes 63 of 71 pages. The two tool pages get a refusal of their own and the check page says it does not check them, Fill in an example puts the other options back to their defaults and hides the old result, and Copy JSON and Save JSON leave while a new check runs. The hosted route runs markdown-parity-check 0.2.11, where a selector that picks a heading, list item, table or pre keeps that block type.
@@ -2456,40 +2457,41 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 34 articles.
 
-- [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25.
-- [Five rounds before the agent signed anything](/blog/five-rounds-before-the-agent-signed). 2026-09-20.
-- [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree). 2026-09-12.
-- [I rebuilt turva.dev around the report](/blog/i-rebuilt-turva-dev-around-the-report). 2026-09-07.
-- [What 19 identity vendors publish for agents](/blog/agent-readiness-identity-vendors). 2026-09-05.
-- [Two files called auth.md, and they disagree on the field names](/blog/two-auth-md-dialects). 2026-09-04.
-- [Thirty-day follow-up: 201 comparable readings from 210 sites](/blog/thirty-days-after-the-brief). 2026-09-03.
-- [What four AI assistants call an agent readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit). 2026-09-03.
-- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites). 2026-09-03.
-- [TRACE signs how an agent ran, not what it was allowed to reach](/blog/trace-runtime-attestation). 2026-08-30.
-- [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts) 2026-08-22.
-- [It would be cheating to keep the old price](/blog/cheating-to-keep-the-old-price). 2026-08-21.
-- [I thought it was a small job](/blog/i-thought-it-was-a-small-job). 2026-08-16.
-- [My gate could not see a sixth](/blog/my-gate-could-not-see-a-sixth). 2026-08-04.
-- [A red reading that measured my own client](/blog/red-reading-that-measured-my-own-client). 2026-07-30.
-- [The checks that pass for the wrong reason](/blog/checks-that-pass-for-the-wrong-reason). 2026-07-29.
-- [Finishing the optional commerce checks](/blog/finishing-the-optional-commerce-checks). 2026-07-20.
-- [The twin is the page](/blog/the-twin-is-the-page). 2026-07-19.
-- [Every response promised a rate limit. Nothing enforced it.](/blog/enforcing-the-rate-limit-i-advertised) 2026-07-18.
-- [Microsoft said the patches would get bigger. I measured how much bigger.](/blog/measuring-the-ai-patch-surge) 2026-07-15.
-- [Reducing secret exposure in coding-agent workflows](/blog/agent-secret-hygiene). 2026-07-12.
-- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b). 2026-07-07.
-- [When honesty and the checker disagree](/blog/honesty-and-the-checker). 2026-07-06.
-- [Four AI agents re-checked the guides](/blog/re-checking-the-guides). 2026-07-04.
-- [The page grew, the agent bill did not](/blog/cheaper-pages-revisited). 2026-07-04.
-- [Moving the source from GitHub to Codeberg](/blog/moving-source-to-codeberg). 2026-07-04.
-- [A free llms.txt validator](/blog/free-llms-txt-validator). 2026-07-02.
-- [Agent access is now a setting](/blog/agent-access-is-now-a-setting). 2026-07-02.
-- [Publishing an ai-catalog.json for agentic discovery](/blog/publishing-an-ai-catalog). 2026-06-29.
-- [What the Open Knowledge Format is, and what it is not](/blog/open-knowledge-format). 2026-06-27.
-- [What an agent pays to read your site](/blog/cheaper-pages-for-agents). 2026-06-26.
-- [When an agent can prove it is Claude](/blog/verifiable-agent-identity). 2026-06-25.
-- [What makes an AI agent's decisions reliable](/blog/reliable-agent-decisions). 2026-06-22.
-- [Owning your fediverse identity](/blog/owning-your-fediverse-identity). 2026-06-21.
+- [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25. Build notes. Plain local files give each Claude Code session what the earlier sessions learned. A count of that memory, and why it now reads like a private language.
+- [Five rounds before the agent signed anything](/blog/five-rounds-before-the-agent-signed). 2026-09-20. Build notes. An agent moved tokens on Ethereum Sepolia after five fix rounds, each answering an independent review. Three attempts stopped before any signature.
+- [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree). 2026-09-12. Build notes. A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.
+- [I rebuilt turva.dev around the report](/blog/i-rebuilt-turva-dev-around-the-report). 2026-09-07. Build notes. The updated site puts sample reports beside the services they describe, with evidence, correction owners and acceptance checks visible before purchase.
+- [What 19 identity vendors publish for agents](/blog/agent-readiness-identity-vendors). 2026-09-05. Research. A dated scan of 19 identity vendors examines what their public sites expose for agents, and what the results cannot say about the products behind them.
+- [Two files called auth.md, and they disagree on the field names](/blog/two-auth-md-dialects). 2026-09-04. Protocol notes. Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.
+- [Thirty-day follow-up: 201 comparable readings from 210 sites](/blog/thirty-days-after-the-brief). 2026-09-03. Research. A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.
+- [What four AI assistants call an agent readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit). 2026-09-03. Research. Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organisational AI adoption.
+- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites). 2026-09-03. Research. One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.
+- [TRACE signs how an agent ran, not what it was allowed to reach](/blog/trace-runtime-attestation). 2026-08-30. Protocol notes. This article examines what a TRACE Trust Record attests to, and why runtime evidence does not itself establish the right permissions or correct decisions.
+- [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts) 2026-08-22. Research. Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.
+- [It would be cheating to keep the old price](/blog/cheating-to-keep-the-old-price). 2026-08-21. Build notes. A dated account of pricing changes and the work behind them. Historical prices remain in the article, with the current service prices linked separately.
+- [I thought it was a small job](/blog/i-thought-it-was-a-small-job). 2026-08-16. Build notes. A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that work.
+- [My gate could not see a sixth](/blog/my-gate-could-not-see-a-sixth). 2026-08-04. Build notes. A passing validation gate missed elements it never expected. The investigation shows why checking required members differs from checking the complete set.
+- [A red reading that measured my own client](/blog/red-reading-that-measured-my-own-client). 2026-07-30. Build notes. An MCP request seemed to expose a server regression but selected the wrong compatibility path. The article records how request and response were told apart.
+- [The checks that pass for the wrong reason](/blog/checks-that-pass-for-the-wrong-reason). 2026-07-29. Build notes. A link can resolve successfully and still point to the wrong version. This investigation examines checks that pass while validating the wrong target.
+- [Finishing the optional commerce checks](/blog/finishing-the-optional-commerce-checks). 2026-07-20. Build notes. A dated implementation note separates discoverable payment declarations from settlement. The scanner checks changed, the settlement boundary did not.
+- [The twin is the page](/blog/the-twin-is-the-page). 2026-07-19. Build notes. Two separately maintained versions of the same content drifted apart. This build note explains the move to shared content and the limits of the checks on it.
+- [Every response promised a rate limit. Nothing enforced it.](/blog/enforcing-the-rate-limit-i-advertised) 2026-07-18. Build notes. A response header advertised a request limit that no code enforced. The investigation separates a published policy, the code and what a probe can show.
+- [Microsoft said the patches would get bigger. I measured how much bigger.](/blog/measuring-the-ai-patch-surge) 2026-07-15. Research. A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.
+- [Reducing secret exposure in coding-agent workflows](/blog/agent-secret-hygiene). 2026-07-12. Build notes. Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.
+- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b). 2026-07-07. Research. A scan of sixteen selected Finnish B2B sites records gaps in agent-readiness. This historical sample leads into the later study of 567 sites.
+- [When honesty and the checker disagree](/blog/honesty-and-the-checker). 2026-07-06. Build notes. An optional credential was both declared and denied in the same metadata. The repair made the description consistent without claiming access it did not grant.
+- [Four AI agents re-checked the guides](/blog/re-checking-the-guides). 2026-07-04. Build notes. A dated review of the guides found that source specifications and local claims had moved. The article records corrections and the limits of automated checks.
+- [The page grew, the agent bill did not](/blog/cheaper-pages-revisited). 2026-07-04. Build notes. A July measurement compared the token counts of the homepage's HTML and Markdown representations. The result describes that page and measurement date.
+- [Moving the source from GitHub to Codeberg](/blog/moving-source-to-codeberg). 2026-07-04. Build notes. The source moved to Codeberg and later returned to GitHub. This dated incident log preserves the sequence and links readers to the current public source.
+- [A free llms.txt validator](/blog/free-llms-txt-validator). 2026-07-02. Build notes. The launch note for turva.dev's llms.txt validator explains its original checks. The live tool page carries the current interface and supported checks.
+- [Agent access is now a setting](/blog/agent-access-is-now-a-setting). 2026-07-02. Protocol notes. A July product update illustrates how crawler access, discovery and payment controls can sit at the network edge, before the site's content is reached.
+- [Publishing an ai-catalog.json for agentic discovery](/blog/publishing-an-ai-catalog). 2026-06-29. Build notes. A dated implementation log records adding an AI Catalog discovery manifest. Later ARD conventions are explained in the current resource-discovery guide.
+- [What the Open Knowledge Format is, and what it is not](/blog/open-knowledge-format). 2026-06-27. Protocol notes. An early reading of Open Knowledge Format version 0.1 separates the file structure it defines from the semantic promises it leaves open.
+- [What an agent pays to read your site](/blog/cheaper-pages-for-agents). 2026-06-26. Build notes. This article examines the publisher's influence on the content a text-based client receives, using a dated HTML-versus-Markdown comparison.
+- [When an agent can prove it is Claude](/blog/verifiable-agent-identity). 2026-06-25. Protocol notes. Signed requests can give evidence of a sender's identity. This dated article separates that evidence from trusting a user-agent string or granting an action.
+- [What makes an AI agent's decisions reliable](/blog/reliable-agent-decisions). 2026-06-22. Protocol notes. Usable inputs and explicit operating limits matter for agent decisions, alongside model uncertainty. The article asks where control and verification belong.
+- [Owning your fediverse identity](/blog/owning-your-fediverse-identity). 2026-06-21. Build notes. A build note on separating a public identity domain from the server that hosts the account, and the dependencies that still remain.
+
 `,
   "/blog/agent-access-is-now-a-setting": `# Agent access is now a setting
 
@@ -4383,53 +4385,134 @@ Every guide here is re-read against its primary sources at least once a month, a
 
 ## Start here
 
-- [What an agent-readiness audit covers](/guides/agent-readiness-audit)
-- [How to choose an audit](/guides/choosing-an-agent-readiness-audit)
-- [How technical readiness differs from AI visibility](/guides/agent-readiness-aeo-geo)
+### [What an agent-readiness audit covers](/guides/agent-readiness-audit)
+
+A technical scan, manual review and observed AI answers reveal different problems.
+
+### [How to choose an audit](/guides/choosing-an-agent-readiness-audit)
+
+Compare an audit by its scope, evidence, deliverables and follow-up checks. See how the website and API audit differs from a focused Shopify check.
+
+### [How technical readiness differs from AI visibility](/guides/agent-readiness-aeo-geo)
+
+These labels describe overlapping work around discovery, answers and automated use.
+
 
 ## Audit, visibility and priorities
 
 What an audit measures, how to choose one, and how technical readiness differs from AI visibility.
 
-- [What a website and API agent-readiness audit covers](https://turva.dev/guides/agent-readiness-audit)
-- [How to choose an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
-- [Make your website easier for AI assistants to find and cite](https://turva.dev/guides/get-cited-by-ai-assistants)
-- [SEO and agent-readiness: overlap and differences](https://turva.dev/guides/seo-vs-agent-readiness)
-- [Agent-readiness, AEO and GEO](https://turva.dev/guides/agent-readiness-aeo-geo)
-- [Measure agent-readiness with evidence](https://turva.dev/guides/measurement-led-agent-readiness)
-- [Common agent-readiness gaps in a measured sample](https://turva.dev/guides/agent-readiness-gaps)
+### [What a website and API agent-readiness audit covers](https://turva.dev/guides/agent-readiness-audit)
+
+A technical scan, manual review and observed AI answers reveal different problems.
+
+### [How to choose an agent-readiness audit](https://turva.dev/guides/choosing-an-agent-readiness-audit)
+
+Compare an audit by its scope, evidence, deliverables and follow-up checks. See how the website and API audit differs from a focused Shopify check.
+
+### [Make your website easier for AI assistants to find and cite](https://turva.dev/guides/get-cited-by-ai-assistants)
+
+Clear, accessible content and consistent facts help retrieval systems understand a site.
+
+### [SEO and agent-readiness: overlap and differences](https://turva.dev/guides/seo-vs-agent-readiness)
+
+SEO, AI-answer visibility and technical agent access overlap, but they answer different questions.
+
+### [Agent-readiness, AEO and GEO](https://turva.dev/guides/agent-readiness-aeo-geo)
+
+These labels describe overlapping work around discovery, answers and automated use.
+
+### [Measure agent-readiness with evidence](https://turva.dev/guides/measurement-led-agent-readiness)
+
+A scan is one source of evidence. Combine it with direct technical checks and observed AI answers, and record the method and date behind every conclusion.
+
+### [Common agent-readiness gaps in a measured sample](https://turva.dev/guides/agent-readiness-gaps)
+
+A prospecting sample of 567 company sites revealed recurring technical gaps.
+
 
 ## Content and crawl access
 
 What a text-based client can read on a site, and what the files at the root tell a crawler.
 
-- [llms.txt explained](https://turva.dev/guides/llms-txt)
-- [Serving Markdown to AI clients](https://turva.dev/guides/markdown-for-agents)
-- [Open Knowledge Format explained](https://turva.dev/guides/open-knowledge-format)
-- [Sitemaps, robots.txt and AI crawler access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
-- [Response headers for AI clients](https://turva.dev/guides/response-headers-for-agents)
-- [When AI clients cannot read rendered pages](https://turva.dev/guides/prerendering-for-agents)
-- [JSON-LD and structured data for AI clients](https://turva.dev/guides/json-ld-structured-data)
+### [llms.txt explained](https://turva.dev/guides/llms-txt)
+
+An llms.txt file offers a curated map of a site for clients that choose to read it. Learn its structure, discovery links and limits.
+
+### [Serving Markdown to AI clients](https://turva.dev/guides/markdown-for-agents)
+
+A Markdown representation can make published content easier for text-based clients to consume. Keep its facts and links aligned with the HTML page.
+
+### [Open Knowledge Format explained](https://turva.dev/guides/open-knowledge-format)
+
+Open Knowledge Format describes knowledge as linked Markdown documents.
+
+### [Sitemaps, robots.txt and AI crawler access](https://turva.dev/guides/sitemaps-and-robots-for-agents)
+
+Sitemaps describe published URLs, while robots.txt communicates crawler rules. Neither file guarantees retrieval or replaces access control.
+
+### [Response headers for AI clients](https://turva.dev/guides/response-headers-for-agents)
+
+Response headers describe formats, discovery links and request policy. Check both what a header declares and whether the server behaves accordingly.
+
+### [When AI clients cannot read rendered pages](https://turva.dev/guides/prerendering-for-agents)
+
+Some clients read the initial HTTP response without running a browser.
+
+### [JSON-LD and structured data for AI clients](https://turva.dev/guides/json-ld-structured-data)
+
+Structured data makes page facts explicit, but those facts must agree with the visible page and underlying source.
+
 
 ## Discovery and authentication
 
 How a client finds an interface, and how the service decides what it may access.
 
-- [MCP server cards and discovery](https://turva.dev/guides/mcp-server-card)
-- [What agents.json describes](https://turva.dev/guides/agents-json)
-- [The /.well-known directory for agent discovery](https://turva.dev/guides/well-known-for-agents)
-- [Agentic Resource Discovery and resource catalogs](https://turva.dev/guides/agentic-resource-discovery)
-- [Authentication and authorisation for AI agents](https://turva.dev/guides/agent-authentication)
+### [MCP server cards and discovery](https://turva.dev/guides/mcp-server-card)
+
+A server card describes an MCP endpoint for clients that support the relevant discovery convention.
+
+### [What agents.json describes](https://turva.dev/guides/agents-json)
+
+agents.json is one pattern for describing actions and endpoints for automated clients.
+
+### [The /.well-known directory for agent discovery](https://turva.dev/guides/well-known-for-agents)
+
+Well-known URLs give clients predictable places to look for specific metadata.
+
+### [Agentic Resource Discovery and resource catalogs](https://turva.dev/guides/agentic-resource-discovery)
+
+Resource catalogs describe the agent-facing interfaces a site exposes.
+
+### [Authentication and authorisation for AI agents](https://turva.dev/guides/agent-authentication)
+
+Authentication identifies a client, authorisation determines what it may access or do.
+
 
 ## Commerce and agent operations
 
 Payment flows, commerce discovery, and the limits an agent operates within.
 
-- [x402 and HTTP payment flows](https://turva.dev/guides/x402-agent-payments)
-- [Agent commerce discovery: A2A, AP2, ACP and UCP](https://turva.dev/guides/agent-commerce-discovery)
-- [Agentic commerce readiness](https://turva.dev/guides/agentic-commerce-readiness)
-- [Define what an agent may do with your data](https://turva.dev/guides/letting-agents-act-on-data)
-- [AI agent use cases and their operating limits](https://turva.dev/guides/ai-agent-use-cases)
+### [x402 and HTTP payment flows](https://turva.dev/guides/x402-agent-payments)
+
+x402 describes an HTTP-based payment flow. A payment declaration, an accepted payment and settlement are different states and should be documented separately.
+
+### [Agent commerce discovery: A2A, AP2, ACP and UCP](https://turva.dev/guides/agent-commerce-discovery)
+
+Commerce discovery describes the interfaces and payment-related capabilities a service supports.
+
+### [Agentic commerce readiness](https://turva.dev/guides/agentic-commerce-readiness)
+
+Agent commerce involves product information, permitted actions and a supported checkout path.
+
+### [Define what an agent may do with your data](https://turva.dev/guides/letting-agents-act-on-data)
+
+Reliable agent operations depend on usable inputs, explicit permissions and observable outcomes.
+
+### [AI agent use cases and their operating limits](https://turva.dev/guides/ai-agent-use-cases)
+
+Explore examples of agents reading data and taking permitted actions.
+
 
 ## Frequently asked
 
@@ -6202,7 +6285,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.177.0",
+    "version": "3.178.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6474,7 +6557,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.177.0",
+  "version": "3.178.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8857,12 +8940,12 @@ function mdSecBodyHtml(path, heading, listOnly, dropRow) {
     const lines = b.split("\n");
     const head = i === 0 ? b.trim().match(/^\*\*(.+)\*\*$/) : null;
     if (head) {
-      const segs = head[1].replace(/\.$/, "").split(". ");
-      let price = segs[0];
-      let meta = segs.slice(1);
-      const pm = price.match(/^(€[\d,]+)\s+(.+)$/);
-      if (pm) { price = pm[1]; meta = [pm[2], ...meta]; }
-      parts.push(`<p class="price-line"><span class="price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span> <span class="terms">${meta.map((m) => escapeHtml(m)).join(" &middot; ")}</span></p>`);
+      // Tek-488: the line shows the twin's own sentence, the price first and the terms after it,
+      // so the HTML and the Markdown carry the same words and the same periods.
+      const pm = head[1].match(/^(€[\d,]+\.?)\s+(.+)$/);
+      const price = pm ? pm[1] : head[1];
+      const terms = pm ? pm[2] : "";
+      parts.push(`<p class="price-line"><span class="price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span>${terms ? ` <span class="terms">${escapeHtml(terms)}</span>` : ""}</p>`);
     } else if ((/:$/.test(lines[0].trim()) || /^### \S/.test(lines[0])) && lines.slice(1).some((l) => l.startsWith("- "))) {
       // "### Label" over the list is the twin's heading form of the same label, so the Markdown
       // carries the heading the page renders (Tek-486).
@@ -8947,7 +9030,7 @@ function mdKvsSec(path, heading, extra) {
     ${grid}${extra || ""}
   </section>`;
 }
-function mdOfferCards(path, heading, linkLabel, idFor) {
+function mdOfferCards(path, heading, idFor) {
   // The same row shape as the home page offers: "- [name](href). €price. covers Delivered ... [One retest ...]".
   // idFor carries an old section anchor onto the card that replaced that section, so a link
   // written before the section became a card still lands on the same offer (/services#shopify).
@@ -8957,10 +9040,11 @@ function mdOfferCards(path, heading, linkLabel, idFor) {
     const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)(?: (One retest [^.]+\.))?$/);
     if (!m) throw new Error("offer line does not parse: " + line.slice(0, 60));
     const [, name, href, price, covers, when, retest] = m;
-    const label = linkLabel[href];
-    if (!label) throw new Error("offer has no link label for " + href);
     const cardId = (idFor && idFor[href]) ? ` id="${idFor[href]}"` : "";
-    return `<a class="card"${cardId} href="${escapeHtml(href)}"><span class="card-top"><span class="name">${escapeHtml(name)}</span> <span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span>${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""} <span class="go">${label}</span></a>`;
+    // Tek-488: the card reads as the row, "Name. €999. Covers. Delivered ... One retest ...", with
+    // the link on the name and a stretched link over the card, so the HTML list item and the
+    // Markdown list item carry the same text and the same one link.
+    return `<li class="card ocard"${cardId}><span class="card-top"><span class="name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="price">${escapeHtml(price)}.</span></span> <span class="cov">${escapeHtml(covers)}</span> <span class="when">${escapeHtml(when)}</span>${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""}</li>`;
   }).join("\n      ");
 }
 function mdActionCards(path, headings) {
@@ -9894,16 +9978,16 @@ function serveServicesHtml(canonicalUrl) {
     `\n<script type="application/ld+json">\n{"@context":"https://schema.org","@graph":[\n${SCHEMA_SERVICE}\n]}\n<\/script>`;
   const head = cardPageHead(metaBlock, jsonLd, canonicalUrl);
   const start = mdParasCta("/services", "Tell me what you need", 3, "cta-row", ["cta-btn"]);
-  const offers = mdOfferCards("/services", "Choose a starting point", { "/shopify-agent-storefront-check": "See the Shopify check", "/agent-readiness-audit": "See the audit" });
+  const offers = mdOfferCards("/services", "Choose a starting point");
   const offerParas = mdParas("/services", "Choose a starting point", 1);
   const body = `${head}
 ${cardPageNav("/services")}
 <main id="main">
   ${mdPageStart("/services", "cta", ["btn", "btn-ghost"])}
   <section class="sec" id="choose-a-starting-point"><h2>Choose a starting point</h2>
-    <div class="cards">
+    <ul class="cards">
       ${offers}
-    </div>
+    </ul>
     <p>${offerParas[0]}</p>
   </section>
   ${mdOpenSec("/services", "Shopify agent storefront check", "shopify")}
@@ -10010,11 +10094,25 @@ ${NAV_CORE_CSS}
 .card{display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:24px;color:#C9D1CE;text-decoration:none;transition:border-color .15s ease;}
 a.card:hover{border-color:#5DF18F;text-decoration:none;}
 a.card:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
+.gcard{position:relative;}
+.gcard:hover{border-color:#5DF18F;}
+.gcard:focus-within{outline:2px solid #5DF18F;outline-offset:3px;}
+.gcard h3 a{color:inherit;text-decoration:none;outline:none;}
+.gcard h3 a::after{content:"";position:absolute;inset:0;border-radius:10px;}
 .card-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px;}
 .card h2,.card h3,.card .name{font-size:1.15rem;line-height:1.3;font-weight:700;color:#F2F4F3;margin:0;}
 .card .price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
 .card p{font-size:.97rem;line-height:1.55;color:#C9D1CE;margin:0;}
 .card .when{font-size:.97rem;line-height:1.55;color:#C9D1CE;}.card p+.when{border-top:1px solid #2D3D3D;padding-top:10px;}
+ul.cards{list-style:none;padding:0;}
+.cards .ocard{position:relative;padding:24px;margin:0;font-size:inherit;line-height:inherit;}
+.cards .ocard::before{content:none;}
+@media (max-width:640px){.cards .ocard{padding:20px;}}
+.cards .ocard:hover{border-color:#5DF18F;}
+.cards .ocard:focus-within{outline:2px solid #5DF18F;outline-offset:3px;}
+.ocard .name a{color:inherit;text-decoration:none;outline:none;}
+.ocard .name a::after{content:"";position:absolute;inset:0;border-radius:10px;}
+.ocard .cov{font-size:.97rem;line-height:1.55;color:#C9D1CE;}.ocard .cov+.when{border-top:1px solid #2D3D3D;padding-top:10px;}
 .card .go{margin-top:auto;padding-top:6px;font-size:.92rem;font-weight:600;color:#5DF18F;}
 .card ul{list-style:none;margin:0;padding:0;}
 .card li{position:relative;padding:0 0 0 1.4rem;margin:0 0 .4rem;font-size:.95rem;line-height:1.5;color:#C9D1CE;}
@@ -10045,13 +10143,18 @@ ${FAQ_CSS}
 .dl .term{color:#F2F4F3;font-weight:700;}
 .toc{margin:0 0 1.4rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;}
 ${TOC_SUB_CSS}
-.post{display:flex;flex-direction:column;gap:6px;box-sizing:border-box;min-width:0;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;padding:18px 22px;margin:0 0 .75rem;text-decoration:none;transition:border-color .15s ease;}
-.post:hover{border-color:#5DF18F;text-decoration:none;}
+.posts{list-style:none;margin:0;padding:0;}
+.posts .post{display:block;position:relative;box-sizing:border-box;min-width:0;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;padding:18px 22px;margin:0 0 .75rem;transition:border-color .15s ease;}
+.posts .post::before{content:none;}
+.posts .post:hover{border-color:#5DF18F;}
+.posts .post:focus-within{outline:2px solid #5DF18F;outline-offset:3px;}
 [hidden]{display:none !important;}
 .post .pt{display:block;color:#F2F4F3;font-weight:700;font-size:1.1rem;line-height:1.3;letter-spacing:-0.01em;}
-.post .pm{display:flex;flex-wrap:wrap;gap:.3rem .8rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}
+.post .pt a{color:inherit;text-decoration:none;outline:none;}
+.post .pt a::after{content:"";position:absolute;inset:0;border-radius:10px;}
+.post .pm{display:block;margin-top:6px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;letter-spacing:.04em;color:#9AA3A0;}
 .post .pk{color:#5DF18F;}
-.post .ps{color:#C9D1CE;font-size:.95rem;line-height:1.5;}
+.post .ps{display:block;margin-top:6px;color:#C9D1CE;font-size:.95rem;line-height:1.5;}
 .bfilter{margin:0 0 .9rem;}
 .blabel{display:block;font-size:.95rem;font-weight:600;color:#F2F4F3;margin:0 0 .45rem;}
 #bsearch{display:block;width:100%;max-width:34rem;box-sizing:border-box;min-height:48px;background:#07110D;border:1px solid #2D3D3D;border-radius:7px;padding:10px 14px;color:#F2F4F3;font:inherit;font-size:16px;margin:0 0 .8rem;}
@@ -10548,7 +10651,7 @@ function serveAuditHtml(canonicalUrl) {
   const priceRe = /<p>(€[\d,]+) plus VAT\. ([^.<]+)\. ([^.<]+)\.<\/p>/;
   const pageStart = mdPageStart("/agent-readiness-audit", "cta", ["btn", "btn-ghost"]);
   if (!priceRe.test(pageStart)) throw new Error("audit page lead carries no price sentence");
-  const startHtml = pageStart.replace(priceRe, (m, price, a, b) => `<p class="price-line"><span class="price">${price.replace(/€/g, "&#8364;")}</span> <span class="terms">plus VAT &middot; ${a} &middot; ${b}</span></p>`);
+  const startHtml = pageStart.replace(priceRe, (m, price, a, b) => `<p class="price-line"><span class="price">${price.replace(/€/g, "&#8364;")}</span> <span class="terms">plus VAT. ${a}. ${b}.</span></p>`);
   const body = `${head}
 ${cardPageNav("/agent-readiness-audit")}
 <main id="main">
@@ -12525,18 +12628,27 @@ var PARITY_JS = `(function () {
 
 function mdGuideGroupSec(path, h) {
   const blocks = mdSection(path, h).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
-  const lead = blocks.filter((b) => !b.startsWith("- ")).map((b) => `<p>${renderInline(b)}</p>`).join("");
-  // One card per guide: the title from the twin's link, the one-sentence description
-  // from META_BY_PATH, so the index says what the guide's own head says.
-  const items = mdLists(path, h)[0].map((x) => {
-    const m = x.match(/^<a href="(?:https:\/\/turva\.dev)?(\/guides\/[a-z0-9-]+)">(.+?)<\/a>$/);
-    if (!m) throw new Error("guide list item does not parse: " + x.slice(0, 60));
-    const d = (META_BY_PATH[m[1]] || {}).description || "";
-    return `<a class="card" href="${m[1]}"><span class="name">${m[2]}</span>${d ? `<p>${escapeHtml(d)}</p>` : ""}</a>`;
-  }).join("\n      ");
+  const first = blocks.findIndex((b) => b.startsWith("### "));
+  if (first === -1) throw new Error("guide section has no guide: " + h);
+  // A list row before the first guide heading is a guide the page would show as a paragraph,
+  // so the build fails instead.
+  if (blocks.slice(0, first).some((b) => b.startsWith("- "))) throw new Error("guide section keeps a list row: " + h);
+  const lead = blocks.slice(0, first).map((b) => `<p>${renderInline(b)}</p>`).join("");
+  // One card per guide (Tek-488): the twin gives each guide a ### heading that links it and,
+  // under it, the guide's one-sentence description, and the card shows that heading and that
+  // sentence with the link on the heading. The HTML and the Markdown then read as the same
+  // heading, the same paragraph and the same link; the stretched link keeps the whole card
+  // clickable. verify binds each sentence to the guide's META_BY_PATH description.
+  const items = [];
+  for (let i = first; i < blocks.length; i++) {
+    const m = blocks[i].match(/^### \[([^\]]+)\]\((?:https:\/\/turva\.dev)?(\/guides\/[a-z0-9-]+)\)$/);
+    if (!m) throw new Error("guide heading does not parse: " + blocks[i].slice(0, 60));
+    const d = i + 1 < blocks.length && !blocks[i + 1].startsWith("### ") ? blocks[++i] : "";
+    items.push(`<div class="card gcard"><h3><a href="${m[2]}">${escapeHtml(m[1])}</a></h3>${d ? `<p>${renderInline(d)}</p>` : ""}</div>`);
+  }
   return `<section class="sec" id="${mdSlug(h)}"><h2>${renderInline(h)}</h2>${lead}
   <div class="cards">
-    ${items}
+    ${items.join("\n    ")}
   </div>
 </section>`;
 }
@@ -12574,7 +12686,11 @@ function blogPostLinks() {
   return posts.map(({ path, meta }) => {
     const title = (meta.title || "").replace(/ [|\u00B7] turva\.dev$/, "");
     const search = (title + " " + (meta.description || "")).toLowerCase();
-    return `  <a class="post" href="${path}" data-kind="${escapeHtml(meta.kind || "")}" data-search="${escapeHtml(search)}"><span class="pt">${escapeHtml(title)}</span> <span class="pm"><span class="pd">${meta.date}</span>${meta.kind ? ` <span class="pk">${escapeHtml(meta.kind)}</span>` : ""}</span>${meta.description ? ` <span class="ps">${escapeHtml(meta.description)}</span>` : ""}</a>`;
+    // Tek-488: the card reads as the twin's row, "Title. 2026-09-25. Build notes. Summary.", with
+    // the link on the title and a stretched link over the card, so the HTML list item and the
+    // Markdown list item carry the same text and the same link.
+    const sep = /[.?!]$/.test(title) ? "" : ".";
+    return `  <li class="post" data-kind="${escapeHtml(meta.kind || "")}" data-search="${escapeHtml(search)}"><span class="pt"><a href="${path}">${escapeHtml(title)}</a>${sep}</span> <span class="pm"><span class="pd">${meta.date}</span>.${meta.kind ? ` <span class="pk">${escapeHtml(meta.kind)}</span>.` : ""}</span>${meta.description ? ` <span class="ps">${escapeHtml(meta.description)}</span>` : ""}</li>`;
   }).join("\n");
 }
 // The four filters of the blog index, in display order. Every post's kind has to be one of
@@ -12653,9 +12769,9 @@ ${cardPageNav("/blog")}
   ${mdOpenSec("/blog", "Start with the research", "research")}
   <section class="sec" id="all-posts"><h2>Browse all articles</h2>
     ${blogFilterHtml()}
-    <div class="posts">
+    <ul class="posts">
 ${blogPostLinks()}
-    </div>
+    </ul>
   </section>
 </main>
 ${footerHtml()}

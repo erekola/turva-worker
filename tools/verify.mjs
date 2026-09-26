@@ -1273,13 +1273,18 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // markdownToHtml knows ##, ### (since v3.133.0, Tek-358), paragraphs, "- " lists, tables
   // and four-space code. A numbered list, a fenced block or a wrapped list item renders as
   // literal markup on a published page, and node --check, node --test and this file all stay
-  // green. The card pages use the md* helpers instead and are excluded by name, not by guess.
+  // green. The card pages were skipped by name until Tek-489 (2026-09-26): their "- " lists reach
+  // the same markdownToHtml through mdBodyHtml, so a wrapped item vanishes there too. A headed
+  // checklist ("Label:" or "### Label" over "- " items), which mdSecBodyHtml and mdPcard read and
+  // whose continuation line they join to its item, does not open with "- " and is not flagged.
   {
     const cards = new Set(Object.keys(twConverted));
     const keys = [...w.slice(twPmStart).matchAll(/\n  "(\/[^"]*)": `/g)].map((m) => m[1]);
     check(keys.length > 20, `PAGE_MARKDOWN twins found (${keys.length})`);
+    const cardKeys = keys.filter((k) => cards.has(k));
+    check(cardKeys.length >= 10, `the dropped-construct check reads the card pages too, ${cardKeys.length} of ${keys.length} twins (Tek-489)`);
     const probs = [];
-    for (const k of keys.filter((k) => !cards.has(k))) {
+    for (const k of keys) {
       const md = (twMdTwin(k) || '').replace(/\r\n/g, '\n');
       if (/^\d+\. /m.test(md)) probs.push(k + ': numbered list');
       if (/^```/m.test(md)) probs.push(k + ': fenced code block');
@@ -1396,6 +1401,21 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       .filter((m) => /[.?!]$/.test(m[1]) === (m[3] === '.')).map((m) => m[2]);
     check(b.length > 0 && punctOff.length === 0,
       `every /blog twin line ends its title once before the date${punctOff.length ? ' :: ' + punctOff.join(', ') : ''}`);
+    // Tek-488 round 2: after the date each row carries the kind and the one-sentence summary from
+    // META_BY_PATH, the sentence the /blog card shows, so the card and the row read as the same
+    // list item in the parity check. A new post whose row stops at the date fails here: the
+    // pattern takes every dated row, the tail after the date included when it is empty, and the
+    // count must equal the dated rows read above. A JS string value may carry an escaped quote.
+    const metaStr = (r, key) => { const v = (r.match(new RegExp('\\n    ' + key + ': "((?:\\\\.|[^"\\\\])*)"')) || [])[1]; return v === undefined ? undefined : v.replace(/\\(.)/g, '$1'); };
+    const rows = [...twin.matchAll(/\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\.? \d{4}-\d{2}-\d{2}\.([^\n]*)/g)];
+    const rowOff = rows.filter((m) => {
+      const r = region(`  "${m[1]}": {`, '\n  },');
+      const kind = metaStr(r, 'kind');
+      const desc = metaStr(r, 'description');
+      return !kind || !desc || m[2] !== ' ' + kind + '. ' + desc;
+    }).map((m) => m[1]);
+    check(b.length > 0 && rows.length === b.length && rowOff.length === 0,
+      `every /blog twin line carries its card's kind and summary from META_BY_PATH (Tek-488)${rowOff.length ? ' :: ' + rowOff.join(', ') : ''}`);
     // Tek-364: META_BY_PATH title carries the heading the page itself carries, and a short titleTag
     // goes to the <title> element only, so the /blog card, og:title and the feed say what the H1 says.
     // One post carried a shortened title and no titleTag until 2026-09-26, and its card read
@@ -1439,6 +1459,15 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const guideWant = links(guidesTwin, /\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g);
     check(guideWant.length >= 20 && guideWant[0] === '/guides/agent-readiness-audit' && guideWant[1] === '/guides/choosing-an-agent-readiness-audit',
       `/guides twin lists ${guideWant.length} guides, the two buyer guides first`);
+    // Tek-488 round 2: every guide in the /guides twin is a ### heading that links it, with the
+    // guide's META_BY_PATH description as the paragraph under it, the heading and the sentence its
+    // card shows. A guide link anywhere else in the twin fails, so a plain list row cannot return.
+    const gHeads = [...guidesTwin.matchAll(/\n### \[[^\]]+\]\((?:https:\/\/turva\.dev)?(\/guides\/[a-z0-9-]+)\)\n\n([^\n]*)/g)];
+    const gLinks = (guidesTwin.match(/\]\((?:https:\/\/turva\.dev)?\/guides\/[a-z0-9-]+\)/g) || []).length;
+    const metaStr = (r, key) => { const v = (r.match(new RegExp('\\n    ' + key + ': "((?:\\\\.|[^"\\\\])*)"')) || [])[1]; return v === undefined ? undefined : v.replace(/\\(.)/g, '$1'); };
+    const gOff = gHeads.filter((m) => (metaStr(region(`  "${m[1]}": {`, '\n  },'), 'description') || '') !== m[2]).map((m) => m[1]);
+    check(gHeads.length >= 20 && gHeads.length === gLinks && gOff.length === 0,
+      `every /guides twin guide is a ### heading with its META_BY_PATH description under it, ${gHeads.length} of ${gLinks} guide links (Tek-488)${gOff.length ? ' :: ' + gOff.join(', ') : ''}`);
     seqSame('LLMS_TXT Guides section', links(section(llms, 'Guides'), /\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\.md\)/g), guideWant);
     seqSame('home twin Guides section', links(section((twMdTwin('/') || '').replace(/\r\n/g, '\n'), 'Guides'), /\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g), guideWant);
     // 2. the primary pages in llms.txt: one Services block, tools before company, badge last, no Tools section after the blog
