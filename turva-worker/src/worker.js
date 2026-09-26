@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.173.0 - the site's own Markdown parity, second batch, and a gate on the retest window (Tek-482, 2026-09-26): six posts link in the Markdown the addresses the HTML already linked, the Markdown writes info@turva.dev as a normal link in nine places on the eight measured pages, the key-value rows of /company and /contact and the offer cards carry a space between adjacent elements, /contact links erik@turva.dev, /tools renders the Related section its Markdown already had, and the post HTML and Markdown can disagree records the new figures; turva-worker/tools/verify.mjs now reads back the correction add-on exception of every sentence that names a retest window start.
 // turva.dev worker v3.172.0 - the retest window's short statements (Tek-481, 2026-09-25): the home and /services offer cards, the two /services sections, three places on the Shopify page, the audit-choice guide's answer, the services skill, the JSON-LD offers and services, the ACP checkout session and the audit sample's agreed-work table now say that the included retest or re-scan window starts on the day the corrections are delivered when the correction add-on is bought (Tek-479 P8); turva-mcp 1.6.1 says the same in get_services, which moves the version in the signed MCP server card.
 // turva.dev worker v3.171.0 - the site's own Markdown parity and the traffic analyses (Tek-479 P14 and O2, 2026-09-25): the article frame sits outside <main>, with the back link and the frame's dates in a page head above it and a guide's next step after it, a post keeps the twin's bare date line under the H1 and shows the author in the page head, the contents list is a second <nav> labelled by its heading, twenty-six adjacent card elements gain a space (twenty-five on served pages, one in the unused mdPcard) so a text reader gets separate words, the hosted parity check passes 51 of 71 pages instead of none, the post HTML and Markdown can disagree records the before and after figures, and /legal says a traffic-spike analysis keeps the network operator and the request counts without the addresses. Nothing a page says about a price, a service or the score changed.
 // turva.dev worker v3.170.0 - the outside read of 2026-09-25 (Tek-479): /legal names its providers, the roles and lawful bases, the Worker log retention, when the thirty-day deletion starts and which copies it does not cover, cancellation and refunds, the liability exceptions and where the postal address is given; /company and /contact state the postal address rule; the Shopify check says it is paid by invoice and both add-on pages say the retest window starts when the corrections are delivered; the audit page qualifies large-site coverage and single-run AI answers; the two sample reports gain answer records, script output, an OpenAPI row, a Markdown content line, the merchant's intent and the remote reads; the validator page, the llms.txt, x402 and choosing guides and two research posts correct wording that said more than the tools or the data do.
@@ -645,9 +646,9 @@ Because the interesting part of agent readiness is not the file you publish. It 
 
 A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.
 
-My own tools page gave the checker something to report. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown version that the HTML page leaves out. The comparison returned five errors. That dated result is recorded in the [tool's README](https://github.com/erekola/markdown-parity-check#command-line-and-hosted-page).
+My own tools page gave the checker something to report. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown version that the HTML page left out. The comparison returned five errors. That dated result is recorded in the [tool's README](https://github.com/erekola/markdown-parity-check#command-line-and-hosted-page).
 
-The difference is structural rather than missing content. The HTML page links to the same four destinations from its tool cards, so nothing was unreachable, but the Markdown reader gets a Related section the HTML reader never sees. Neither version looked broken on its own.
+The difference was structural rather than missing content. The HTML page linked to the same four destinations from its tool cards, so nothing was unreachable, but the Markdown reader got a Related section the HTML reader never saw. Neither version looked broken on its own.
 
 ## Which differences actually matter?
 
@@ -699,7 +700,7 @@ The hosted page pins a release and applies smaller limits. Its report includes a
 
 JavaScript is not executed by the checker. It compares the HTML as received, so content added later in a browser needs a separate check. Block matching is heuristic too. A clean report means the implemented checks found nothing to reject. It does not prove that the two versions mean the same thing, or that either version is factually correct.
 
-The Related section on my tools page is the kind of finding I want this to expose: a difference I can locate in both versions and decide about before the next release.
+The Related section on my tools page was the kind of finding I want this to expose: a difference I could locate in both versions and decide about. I decided to show the section on the HTML page too.
 
 ## Frequently asked
 
@@ -716,6 +717,8 @@ Yes, from the command line. The package takes any public address with --url and 
 The differences that change what a reader is told: a condition that is missing, a number that moved, a link whose target is not the one in the other version. I read the ordering and punctuation warnings too, but they rarely change a release. The tool reports quantities and does not decide which difference matters to your business.
 
 Corrected 2026-09-25. This post used my tools page as the example of what the checker finds. A run on 25 September over every page the hosted check accepts, 71 of them, failed all 71 with 836 findings. Of those, 552 came from the page frame: the back link, the date line, the contents list and the next-step box sat inside the main element, which the checker reads as the content. The frame now sits outside it, and the contents list is a navigation element. After that change the same run passes 51 pages and reports 271 findings: 166 on the hand-built service and company pages, where cards, calls to action and email links differ from the Markdown, 71 on the two index pages, 23 on the two sample reports and 11 on seven articles, ten of which are links the HTML makes from a bare address that the Markdown leaves as plain text.
+
+Corrected 2026-09-26. The same run now passes 59 of the 71 pages and reports 208 findings. In six articles the Markdown now links the addresses that the HTML already linked. The email address in the Markdown is a normal link on eight pages, where it used to show as mailto text. The company and contact pages have a space between each label and its value in the HTML text, and the tools page shows its Related section. What still fails stays for a stated reason. Each index page shows a summary card for every guide or post, and the Markdown keeps a plain list. The two sample reports repeat each wide table in a second, stacked view for narrow screens, and the Markdown carries the table once. The home page has a score board and a worked example, and it sets each step title apart where the Markdown runs it into the paragraph. Two pages carry an image whose description the Markdown does not repeat. The service pages have buttons that repeat an address or a link the text already gives, and they turn a few labels into headings. One guide names a protocol identifier that the HTML does not link on purpose.
 
 ## Related
 
@@ -1092,7 +1095,7 @@ In this sample, four levels separate the typical site from a site an agent can r
 
 ## How to read your own site
 
-Run isitagentready.com on your domain and read the level, then read which checks failed. The free llms.txt validator at turva.dev/llms-txt-validator reads the llms.txt part in more detail. If you want the whole surface read and the fixes listed in priority order, the agent-readiness audit is described at turva.dev/services, and the way to start is an email to info@turva.dev with the domain.
+Run isitagentready.com on your domain and read the level, then read which checks failed. The free llms.txt validator at [turva.dev/llms-txt-validator](https://turva.dev/llms-txt-validator) reads the llms.txt part in more detail. If you want the whole surface read and the fixes listed in priority order, the agent-readiness audit is described at [turva.dev/services](https://turva.dev/services), and the way to start is an email to info@turva.dev with the domain.
 
 ## Frequently asked
 
@@ -1200,7 +1203,7 @@ A 403 answer is a refusal, not evidence that a file is absent. Where the count b
 
 ## What was measured, and what was not
 
-The scanner reads a public web surface. It does not log in, and it does not see a repository. Origin itself sits behind a Cursor paid plan, so the reading describes cursor.com and its marketing page for Origin, not the forge. Four targets redirected somewhere else, GitLab to its marketing site and Azure DevOps to a Microsoft product page, so GitLab was measured a second time from the application at gitlab.com/explore. Both readings landed at Level 1, with different checks passing on each.
+The scanner reads a public web surface. It does not log in, and it does not see a repository. Origin itself sits behind a Cursor paid plan, so the reading describes cursor.com and its marketing page for Origin, not the forge. Four targets redirected somewhere else, GitLab to its marketing site and Azure DevOps to a Microsoft product page, so GitLab was measured a second time from the application at [gitlab.com/explore](https://gitlab.com/explore). Both readings landed at Level 1, with different checks passing on each.
 
 One host is missing from the count. savannah.gnu.org did not answer on two attempts, once with a network error and once with a 502, and an unreachable site is not a zero.
 
@@ -1210,9 +1213,9 @@ For scale, my own site reads Level 5 of 5 on the same scanner on the same day. T
 
 | Host | Level | Passed |
 |---|---|---|
-| cursor.com/origin | 1/5 | 3 |
+| [cursor.com/origin](https://cursor.com/origin) | 1/5 | 3 |
 | gitlab.com marketing | 1/5 | 4 |
-| gitlab.com/explore | 1/5 | 4 |
+| [gitlab.com/explore](https://gitlab.com/explore) | 1/5 | 4 |
 | sourceforge.net | 1/5 | 3 |
 | forgejo.org | 1/5 | 3 |
 | dev.azure.com | 1/5 | 3 |
@@ -1247,7 +1250,7 @@ An agent that lands on a code host today can read the marketing copy. It cannot 
 
 The fixes are small and mostly mechanical. A server card is a JSON file at a known path. An API catalog is a linkset. A Link header is one line of response configuration. None of it requires rebuilding a forge, and none of it had been done on any of the fourteen surfaces I measured.
 
-If you want to check a site yourself, the scanner is public and the free llms.txt validator is at turva.dev/llms-txt-validator. The audit and advisory work is at turva.dev.
+If you want to check a site yourself, the scanner is public and the free llms.txt validator is at [turva.dev/llms-txt-validator](https://turva.dev/llms-txt-validator). The audit and advisory work is at turva.dev.
 
 ## Frequently asked
 
@@ -1641,7 +1644,7 @@ Scope is agreed in writing before any of the three is paid. That is what the ter
 
 ## The rule, again
 
-A green check is worth something only when it reflects what an agent actually finds. Commerce is optional, so none of this moved the headline number. It moved whether the payment surface is real and discoverable for the moment agents start to pay, which is the part that will matter. The worker that produces these results is open source at github.com/erekola/turva-worker, readable line by line.
+A green check is worth something only when it reflects what an agent actually finds. Commerce is optional, so none of this moved the headline number. It moved whether the payment surface is real and discoverable for the moment agents start to pay, which is the part that will matter. The worker that produces these results is open source at [github.com/erekola/turva-worker](https://github.com/erekola/turva-worker), readable line by line.
 
 For an agent-readiness audit that reports measured results, contact info@turva.dev.
 
@@ -1974,7 +1977,7 @@ The encouraging part is that the fixes are mostly known and mechanical. Serve ma
 
 For the larger sample, a later post ran the same scanner across [567 company sites](/blog/website-agent-readiness-567-sites).
 
-To check where a site stands, the free llms.txt validator is at turva.dev/llms-txt-validator, and the agent-readiness audit and advisory work is at turva.dev.
+To check where a site stands, the free llms.txt validator is at [turva.dev/llms-txt-validator](https://turva.dev/llms-txt-validator), and the agent-readiness audit and advisory work is at turva.dev.
 
 Corrected 2026-09-25. Three passages said more than the scan measured. The token figures were an estimate from a scanner this site no longer uses, and they are now labelled as reported and estimated. Two sentences drew what an agent can answer and whether a business appears in an answer from configuration checks, and a third said most of these sites rank fine in search, which was never measured. They now say what the scan read. The counts did not change.
 
@@ -2093,7 +2096,7 @@ For an audit that measures what agents pay to read your site, contact info@turva
 
 The source moved to Codeberg and later returned to GitHub. This dated incident log preserves the sequence and links readers to the current public source.
 
-Status, July 26: the source is on GitHub only, at github.com/erekola. This post is the dated log of a move that later reversed, and the three updates at the end record each step in order. The account of the incident itself stands as written.
+Status, July 26: the source is on GitHub only, at [github.com/erekola](https://github.com/erekola). This post is the dated log of a move that later reversed, and the three updates at the end record each step in order. The account of the incident itself stands as written.
 
 The company page of this site tells a buyer they can read every line before hiring me. That promise depends on the source being reachable, and for two weeks it was not, in a way I could not see. This is the log of what broke and why the source moved to Codeberg.
 
@@ -2420,7 +2423,7 @@ The image is 216 by 36 pixels, has a dark background and is under one kilobyte.
 
 ## Want to know where your site stands?
 
-An audit shows what needs attention and what to fix first. Services and prices are on the [services page](/services). Email <mailto:info@turva.dev> and you get a reply within one business day.
+An audit shows what needs attention and what to fix first. Services and prices are on the [services page](/services). Email [info@turva.dev](mailto:info@turva.dev) and you get a reply within one business day.
 
 All free tools on this site are collected on [the tools page](/tools).
 `,
@@ -2534,7 +2537,7 @@ An ai-catalog.json is easy to misread as another search file. It is not. It inde
 
 ## Honest about adoption
 
-In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at github.com/erekola/turva-worker.
+In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at [github.com/erekola/turva-worker](https://github.com/erekola/turva-worker).
 
 For an audit of a site's discovery surface, contact info@turva.dev.
 
@@ -3612,9 +3615,9 @@ Scanner: isitagentready.com (third party, Cloudflare). Discoverability, Content 
 
 I also publish the site's security checks. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. Measured 2026-09-23.
 
-- Hardenize: all 24 categories passed. https://www.hardenize.com/report/turva.dev
-- Internet.nl website test: 98/100. https://internet.nl/site/turva.dev/
-- Internet.nl email test: 90/100. https://internet.nl/mail/turva.dev/
+- Hardenize: all 24 categories passed. [hardenize.com/report/turva.dev](https://www.hardenize.com/report/turva.dev)
+- Internet.nl website test: 98/100. [internet.nl/site/turva.dev](https://internet.nl/site/turva.dev/)
+- Internet.nl email test: 90/100. [internet.nl/mail/turva.dev](https://internet.nl/mail/turva.dev/)
 
 ## How we work
 
@@ -3652,7 +3655,7 @@ The audit does not require production credentials. Any access needed for separat
 
 Send your website, API or Shopify store URL and the question you have. If you're unsure which service fits, describe the problem in your own words.
 
-[Request an audit](/contact). Email: <mailto:info@turva.dev>.
+[Request an audit](/contact). Email: [info@turva.dev](mailto:info@turva.dev).
 
 I'll reply within one business day and explain the next step.
 
@@ -3845,7 +3848,7 @@ Full detail is in the [terms and data handling](/legal).
 
 ## Tell me what you need
 
-Email <mailto:info@turva.dev> with the URL and your question. I'll reply within one business day with a proposed scope, price and start date.
+Email [info@turva.dev](mailto:info@turva.dev) with the URL and your question. I'll reply within one business day with a proposed scope, price and start date.
 
 We work in writing. There are no calls or calendar links.
 
@@ -3943,7 +3946,7 @@ Ongoing monitoring is available through the separate advisory service.
 
 ## Tell me what you want to understand
 
-Send your site or API URL and your question to <mailto:info@turva.dev>. I reply within one business day.
+Send your site or API URL and your question to [info@turva.dev](mailto:info@turva.dev). I reply within one business day.
 
 We work in writing, with no calls or meetings.
 
@@ -4059,7 +4062,7 @@ You receive the same report, with the matching results recorded. The plan explai
 
 ## Tell me about your store
 
-Email <mailto:info@turva.dev> with your storefront URL, .myshopify.com domain, primary market and up to three priority products.
+Email [info@turva.dev](mailto:info@turva.dev) with your storefront URL, .myshopify.com domain, primary market and up to three priority products.
 
 I reply within one business day with the preflight and a fixed quote. The work is handled in writing.
 
@@ -4104,8 +4107,8 @@ The report records what I checked and what I observed, so your team can understa
 - **VAT ID:** FI36002817
 - **Location:** Tampere, Pirkanmaa, Finland
 - **Postal address:** On every invoice, and sent on request
-- **Register:** https://tietopalvelu.ytj.fi/yritys/3600281-7
-- **Source code:** https://github.com/erekola
+- **Register:** [tietopalvelu.ytj.fi/yritys/3600281-7](https://tietopalvelu.ytj.fi/yritys/3600281-7)
+- **Source code:** [github.com/erekola](https://github.com/erekola)
 
 ## Invoicing
 
@@ -4115,7 +4118,7 @@ VAT is added according to Finnish law. Reverse charge applies to EU B2B customer
 
 ## Tell me about your project
 
-Send the URL and the question you want answered to <mailto:info@turva.dev>. I reply within one business day. Everything is handled in writing, and you can also use the [contact page](/contact).
+Send the URL and the question you want answered to [info@turva.dev](mailto:info@turva.dev). I reply within one business day. Everything is handled in writing, and you can also use the [contact page](/contact).
 `,
 
   "/contact": `# Tell me what you want to understand
@@ -4138,7 +4141,7 @@ Include your storefront URL, .myshopify.com domain, primary market and up to thr
 
 ## Or write your own message
 
-Email <mailto:info@turva.dev>. Existing scanner results are welcome, but you do not need them to get started.
+Email [info@turva.dev](mailto:info@turva.dev). Existing scanner results are welcome, but you do not need them to get started.
 
 The buttons above open a draft in your email app. You can edit it before sending, or write the same details in a plain email.
 
@@ -4167,7 +4170,7 @@ The audit does not require production credentials. Any deployment, DNS, Shopify 
 
 ## Optional encrypted email
 
-You can send OpenPGP-encrypted email to erik@turva.dev. Encryption is optional, and an ordinary message receives the same reply time.
+You can send OpenPGP-encrypted email to [erik@turva.dev](mailto:erik@turva.dev). Encryption is optional, and an ordinary message receives the same reply time.
 
 The public key is at https://turva.dev/pgp-key.asc. It is also published through Web Key Directory, so a mail client that supports WKD can look it up from the address alone.
 
@@ -4190,10 +4193,10 @@ Check the fingerprint before you use the key. A fingerprint shown on this page r
 ## Business details
 
 - **Business ID:** 3600281-7
-- **Register:** https://tietopalvelu.ytj.fi/yritys/3600281-7
+- **Register:** [tietopalvelu.ytj.fi/yritys/3600281-7](https://tietopalvelu.ytj.fi/yritys/3600281-7)
 - **Location:** Tampere, Finland. Services are delivered remotely worldwide.
 - **Postal address:** On every invoice, and sent on request
-- **Agent registration:** https://turva.dev/auth.md
+- **Agent registration:** [turva.dev/auth.md](https://turva.dev/auth.md)
 `,
 
   "/legal": `# Terms, privacy and data handling
@@ -4208,7 +4211,7 @@ Business ID: 3600281-7.
 
 Postal address: on every invoice, and sent on request. There are no public premises, because the work is done remotely and in writing.
 
-Contact: <mailto:info@turva.dev>
+Contact: [info@turva.dev](mailto:info@turva.dev)
 
 ## Engagement terms
 
@@ -4252,7 +4255,7 @@ No data is sold. Client material and correspondence reach only the providers nee
 
 ## Data rights
 
-You can request access to, correction of or deletion of personal data held about you. Send the request to <mailto:info@turva.dev>.
+You can request access to, correction of or deletion of personal data held about you. Send the request to [info@turva.dev](mailto:info@turva.dev).
 
 The supervisory authority in Finland is the Data Protection Ombudsman (tietosuojavaltuutettu.fi).
 
@@ -6153,7 +6156,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.172.0",
+    "version": "3.173.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6425,7 +6428,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.172.0",
+  "version": "3.173.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7084,7 +7087,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-25";
+var SITEMAP_LASTMOD = "2026-09-26";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -7264,7 +7267,7 @@ var META_BY_PATH = {
     description: "A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.",
     date: "2026-09-12",
     kind: "Build notes",
-    modified: "2026-09-25",
+    modified: "2026-09-26",
     image: "/og-html-and-markdown-can-disagree.jpg",
     imageAlt: "turva.dev blog card: HTML and Markdown can disagree, the parity check that compares what the two versions of a page actually contain.",
   },
@@ -8595,7 +8598,11 @@ function mdKvsCard(path, heading, extra) {
     }
     return `<span class="v">${escapeHtml(v)}</span>`;
   };
-  const kv = rows.map((r) => `    <div class="kv"><span class="k">${escapeHtml(r.k)}</span>${cell(r.v)}</div>`).join("\n");
+  // The space between key and value is for text readers: in the .kvs grid the .kv rows are
+  // display:contents, so a whitespace-only text node adds no grid item and nothing moves on
+  // screen, while an agent that reads the text gets "Business ID 3600281-7" instead of
+  // "Business ID3600281-7" (Tek-482).
+  const kv = rows.map((r) => `    <div class="kv"><span class="k">${escapeHtml(r.k)}</span> ${cell(r.v)}</div>`).join("\n");
   return `<div class="scard"><h2>${renderInline(heading)}</h2><div class="kvs">
 ${kv}
   </div>${extra || ""}</div>`;
@@ -8828,7 +8835,7 @@ function mdOfferCards(path, heading, linkLabel, idFor) {
     const label = linkLabel[href];
     if (!label) throw new Error("offer has no link label for " + href);
     const cardId = (idFor && idFor[href]) ? ` id="${idFor[href]}"` : "";
-    return `<a class="card"${cardId} href="${escapeHtml(href)}"><span class="card-top"><span class="name">${escapeHtml(name)}</span> <span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span>${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""}<span class="go">${label}</span></a>`;
+    return `<a class="card"${cardId} href="${escapeHtml(href)}"><span class="card-top"><span class="name">${escapeHtml(name)}</span> <span class="price">${escapeHtml(price)}</span></span><p>${escapeHtml(covers)}</p><span class="when">${escapeHtml(when)}</span>${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""} <span class="go">${label}</span></a>`;
   }).join("\n      ");
 }
 function mdActionCards(path, headings) {
@@ -9496,7 +9503,7 @@ function serveHomeHtml(canonicalUrl) {
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
     const [, name, href, price, covers, when, retest] = m;
     if (!OFFER_LINK[href]) throw new Error("home offer has no link label for " + href);
-    return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span> <span class="offer-price">${escapeHtml(price)}</span></span> <span class="offer-covers">${escapeHtml(covers)}</span> <span class="offer-when">${escapeHtml(when)}</span>${retest ? ` <span class="offer-when">${escapeHtml(retest)}</span>` : ""}<span class="offer-link">${OFFER_LINK[href]}</span></a>`;
+    return `<a class="offer" href="${href}"><span class="offer-top"><span class="offer-name">${escapeHtml(name)}</span> <span class="offer-price">${escapeHtml(price)}</span></span> <span class="offer-covers">${escapeHtml(covers)}</span> <span class="offer-when">${escapeHtml(when)}</span>${retest ? ` <span class="offer-when">${escapeHtml(retest)}</span>` : ""} <span class="offer-link">${OFFER_LINK[href]}</span></a>`;
   }).join("\n      ");
   // The hero card is one finding from the synthetic sample report (2026-09-08 brief, point 1).
   // Its text is the twin section "One product. Three different answers.": three "Source:
@@ -10487,6 +10494,7 @@ ${cardPageNav("/tools")}
   </div>
   ${mdOpenSec("/tools", "For developers", "technical-details")}
   ${mdOpenSec("/tools", "Need the whole picture?", "services")}
+  ${mdOpenSec("/tools", "Related", "related")}
 </main>
 ${footerHtml()}
 </body>

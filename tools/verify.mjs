@@ -1970,6 +1970,41 @@ console.log('\nAutolink: bare hosts in the served markdown (kierros 18, S5-1)');
   }
 }
 
+console.log('\nRetest window: the correction add-on exception (Tek-481, Tek-482)');
+// Tek-481 gave every served sentence that names the start day of an included retest
+// window the exception for the correction add-on: when it is bought, the window starts on
+// the day the corrections are delivered, not on the report or first-package day. Twenty
+// sentences carry it, written by hand across the home and /services cards, the product
+// pages, a guide, the services skill, the JSON-LD offers and the ACP session. Nothing read
+// it back, and the same promise had drifted between two repos once already (the PROMISES
+// comment below, 2026-09-10). This gate reads every sentence of worker.js that names a
+// window start and fails when one of them lacks the exception, and it fails when fewer
+// sentences than the measured floor name a start at all, so a rewording that slips past
+// the pattern is loud rather than silently unread. The Shopify sample's dated window
+// (/samples/shopify-agent-storefront-check, "Until 2026-09-20" and "due by 2026-09-20")
+// names a date, not a start day, so it does not match the pattern and needs no exception:
+// in that fictional engagement the add-on was not bought.
+{
+  const START = /re-scan within 30 days of the report|within 14 days of (that|the) (first )?(package|delivery)|within 14 days of the day the first four arrive/i;
+  const EXC = /delivered corrections|corrections are delivered/i;
+  const FLOOR = 20; // measured 2026-09-26 on v3.173.0: 20 sentences, all carrying the exception
+  const found = [];
+  const missing = [];
+  src.worker.text.replace(/\r\n/g, '\n').split('\n').forEach((line, i) => {
+    if (!START.test(line)) return;
+    for (const s of line.split(/(?<=[.!?])\s+(?=[A-Z"\[])/)) {
+      if (!START.test(s)) continue;
+      found.push(i + 1);
+      if (!EXC.test(s)) missing.push(`line ${i + 1}: ${s.trim().slice(0, 90)}`);
+    }
+  });
+  check(found.length >= FLOOR,
+    `at least ${FLOOR} sentences in worker.js name the start day of an included retest window (saw ${found.length})`);
+  check(missing.length === 0,
+    'every sentence naming a retest window start also names the delivered corrections of the correction add-on'
+    + (missing.length ? ' :: ' + missing.slice(0, 3).join(' | ') : ''));
+}
+
 console.log('\nx402 amounts derive from facts.json eurUsdc (kierros 18, S6-1)');
 // The three x402 offers carry a USDC amount that is the euro price times a rate. The
 // rate was baked into the number and named on no served surface, so it aged invisibly.
@@ -3072,6 +3107,9 @@ if (LIVE) {
           ['advisory', /quarterly summary/i, 'the quarterly summary'],
           ['shopify', /within 48 hours of the agreed written kickoff/i, 'the 48 hour first package'],
           ['shopify', /within 14 days of that first package/i, 'the day the 14 day retest counts from'],
+          // Tek-481 added the correction add-on exception to both retest windows; Tek-482 reads it back.
+          ['audit', /or within 30 days of the delivered corrections when the correction add-on is bought/i, 'the re-scan window of the correction add-on'],
+          ['shopify', /or of the delivered corrections when the correction add-on is bought/i, 'the retest window of the correction add-on'],
         ];
         for (const [id, re, what] of PROMISES) {
           const one = (svc.services || []).find((x) => x.id === id);
