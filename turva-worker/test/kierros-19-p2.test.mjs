@@ -464,20 +464,22 @@ test("K6-P4: replaceExactlyOnce replaces a single occurrence and throws on zero 
   assert.ok(workerSrc.includes('replaceExactlyOnce(mdFaqSec("/shopify-agent-storefront-check"'), "the Shopify FAQ heading rename must go through replaceExactlyOnce");
 });
 
-// ---- K6-P5: the two prefilled mailto constants no longer hand-type &amp; ----
+// ---- K6-P5: the two prefilled mailto links no longer hand-type &amp; ----
 
-test("K6-P5: the two prefilled mailto constants carry a plain & and are escaped with escapeHtml where used", () => {
-  const shopifyIdx = workerSrc.indexOf('const mailto = "mailto:info@turva.dev?subject=Shopify');
-  assert.notEqual(shopifyIdx, -1);
-  const shopifyLine = workerSrc.slice(shopifyIdx, workerSrc.indexOf(";", shopifyIdx));
-  assert.ok(shopifyLine.includes("&body="), shopifyLine);
-  assert.ok(!shopifyLine.includes("&amp;"), "the constant must no longer hand-type &amp;: " + shopifyLine);
-
-  const auditIdx = workerSrc.indexOf('const mailto = "mailto:info@turva.dev?subject=Agent-readiness');
-  assert.notEqual(auditIdx, -1);
-  const auditLine = workerSrc.slice(auditIdx, workerSrc.indexOf(";", auditIdx));
-  assert.ok(auditLine.includes("&body="), auditLine);
-  assert.ok(!auditLine.includes("&amp;"), "the constant must no longer hand-type &amp;: " + auditLine);
+test("K6-P5: the two prefilled mailto links carry a plain & in the twin rows the buttons are read from (Tek-484)", () => {
+  // The constants moved into the twins in v3.174.0: every button row is a links-only paragraph
+  // of its page's Markdown, and escapeHtml turns the & into &amp; when the row is rendered.
+  for (const [path, subject, rows] of [["/shopify-agent-storefront-check", "Shopify", 2], ["/agent-readiness-audit", "Agent-readiness", 3]]) {
+    const at = workerSrc.indexOf('"' + path + '": `');
+    assert.notEqual(at, -1, path);
+    const twin = workerSrc.slice(at, workerSrc.indexOf("\n`,", at));
+    const links = twin.match(new RegExp("\\(mailto:info@turva\\.dev\\?subject=" + subject + "[^)]*\\)", "g")) || [];
+    assert.equal(links.length, rows, path + ": one prefilled link per button row");
+    for (const l of links) {
+      assert.ok(l.includes("&body="), l);
+      assert.ok(!l.includes("&amp;"), "the twin must not hand-type &amp;: " + l);
+    }
+  }
 });
 
 // Passes on both builds, safety net: escapeHtml(mailto) on the new plain-& constant produces

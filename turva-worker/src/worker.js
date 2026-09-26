@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.174.0 - the button rows read from the Markdown twin, and the audit ACP session names its re-scan (Tek-484, 2026-09-26): the home, /services, /company, audit and Shopify pages render nine button rows from a links-only paragraph of their twin through mdLeadCta, mdParasCta, mdOpenCtaSec and the new row arguments of mdPageStart, so the Markdown carries every link a button offers and the hosted parity check passes 61 of 71 pages; rows that point at an anchor on the same page stay HTML only. The audit line item of the ACP checkout session includes the re-scan and its correction add-on exception, and the parity post records the new figures.
 // turva.dev worker v3.173.0 - the site's own Markdown parity, second batch, and a gate on the retest window (Tek-482, 2026-09-26): six posts link in the Markdown the addresses the HTML already linked, the Markdown writes info@turva.dev as a normal link in nine places on the eight measured pages, the key-value rows of /company and /contact and the offer cards carry a space between adjacent elements, /contact links erik@turva.dev, /tools renders the Related section its Markdown already had, and the post HTML and Markdown can disagree records the new figures; turva-worker/tools/verify.mjs now reads back the correction add-on exception of every sentence that names a retest window start.
 // turva.dev worker v3.172.0 - the retest window's short statements (Tek-481, 2026-09-25): the home and /services offer cards, the two /services sections, three places on the Shopify page, the audit-choice guide's answer, the services skill, the JSON-LD offers and services, the ACP checkout session and the audit sample's agreed-work table now say that the included retest or re-scan window starts on the day the corrections are delivered when the correction add-on is bought (Tek-479 P8); turva-mcp 1.6.1 says the same in get_services, which moves the version in the signed MCP server card.
 // turva.dev worker v3.171.0 - the site's own Markdown parity and the traffic analyses (Tek-479 P14 and O2, 2026-09-25): the article frame sits outside <main>, with the back link and the frame's dates in a page head above it and a guide's next step after it, a post keeps the twin's bare date line under the H1 and shows the author in the page head, the contents list is a second <nav> labelled by its heading, twenty-six adjacent card elements gain a space (twenty-five on served pages, one in the unused mdPcard) so a text reader gets separate words, the hosted parity check passes 51 of 71 pages instead of none, the post HTML and Markdown can disagree records the before and after figures, and /legal says a traffic-spike analysis keeps the network operator and the request counts without the addresses. Nothing a page says about a price, a service or the score changed.
@@ -719,6 +720,8 @@ The differences that change what a reader is told: a condition that is missing, 
 Corrected 2026-09-25. This post used my tools page as the example of what the checker finds. A run on 25 September over every page the hosted check accepts, 71 of them, failed all 71 with 836 findings. Of those, 552 came from the page frame: the back link, the date line, the contents list and the next-step box sat inside the main element, which the checker reads as the content. The frame now sits outside it, and the contents list is a navigation element. After that change the same run passes 51 pages and reports 271 findings: 166 on the hand-built service and company pages, where cards, calls to action and email links differ from the Markdown, 71 on the two index pages, 23 on the two sample reports and 11 on seven articles, ten of which are links the HTML makes from a bare address that the Markdown leaves as plain text.
 
 Corrected 2026-09-26. The same run now passes 59 of the 71 pages and reports 208 findings. In six articles the Markdown now links the addresses that the HTML already linked. The email address in the Markdown is a normal link on eight pages, where it used to show as mailto text. The company and contact pages have a space between each label and its value in the HTML text, and the tools page shows its Related section. What still fails stays for a stated reason. Each index page shows a summary card for every guide or post, and the Markdown keeps a plain list. The two sample reports repeat each wide table in a second, stacked view for narrow screens, and the Markdown carries the table once. The home page has a score board and a worked example, and it sets each step title apart where the Markdown runs it into the paragraph. Two pages carry an image whose description the Markdown does not repeat. The service pages have buttons that repeat an address or a link the text already gives, and they turn a few labels into headings. One guide names a protocol identifier that the HTML does not link on purpose.
+
+Corrected again 2026-09-26. The same run now passes 61 of the 71 pages and reports 199 findings. Nine button rows on five pages are now read from a paragraph of links in the Markdown, so both versions carry the same links in the same order. The company and audit pages now pass. Three rows stay in the HTML only, because their first button points to a place on the same page, and the Markdown view has no anchor for it.
 
 ## Related
 
@@ -3574,6 +3577,8 @@ I'm Erik. I check what AI assistants can read on your website or API, where the 
 
 For Shopify stores, I offer a focused check of product information and the shopping journey before payment.
 
+[Request an audit](/contact) [Read a sample report](/samples/audit-report)
+
 We work in writing. I reply within one business day. [Scope and pricing](/services).
 
 Technical agent-readiness of turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
@@ -3655,7 +3660,7 @@ The audit does not require production credentials. Any access needed for separat
 
 Send your website, API or Shopify store URL and the question you have. If you're unsure which service fits, describe the problem in your own words.
 
-[Request an audit](/contact). Email: [info@turva.dev](mailto:info@turva.dev).
+[Request an audit](/contact) [info@turva.dev](mailto:info@turva.dev)
 
 I'll reply within one business day and explain the next step.
 
@@ -3852,6 +3857,8 @@ Email [info@turva.dev](mailto:info@turva.dev) with the URL and your question. I'
 
 We work in writing. There are no calls or calendar links.
 
+[Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
+
 All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
 `,
 
@@ -3864,6 +3871,8 @@ I check what your website and API make available, whether the facts agree, and w
 €4,300 plus VAT. Delivered within two weeks of the agreed written kickoff. Fixed scope.
 
 We agree the work in writing before it starts. The audit uses public information and does not require production credentials.
+
+[Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) [Read the sample report](/samples/audit-report)
 
 ## When this helps
 
@@ -3922,6 +3931,8 @@ Each finding includes correction instructions and, where available, a link to th
 
 A synthetic [sample report](/samples/audit-report) shows the format: the per-check scanner readings, the manual review, the AI visibility run, nine findings with their owners and acceptance tests, and the decisions the company makes. It is not a report on a real client.
 
+[Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
+
 ## How the two weeks work
 
 We agree the work. Send the URL and your question. I confirm the scope, price and start date in writing.
@@ -3950,6 +3961,8 @@ Send your site or API URL and your question to [info@turva.dev](mailto:info@turv
 
 We work in writing, with no calls or meetings.
 
+[Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) [info@turva.dev](mailto:info@turva.dev)
+
 All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
 `,
 
@@ -3962,6 +3975,8 @@ I compare selected products, prices and availability across your store's agent-s
 €999 plus VAT. One store. One market. Up to three product and variant pairs.
 
 You receive four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows, within 14 days of that first package, or of the delivered corrections when the correction add-on is bought.
+
+[Request a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A) [Read the sample report](/samples/shopify-agent-storefront-check)
 
 ## What you will learn
 
@@ -4066,6 +4081,8 @@ Email [info@turva.dev](mailto:info@turva.dev) with your storefront URL, .myshopi
 
 I reply within one business day with the preflight and a fixed quote. The work is handled in writing.
 
+[Request a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A)
+
 All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
 `,
 
@@ -4119,6 +4136,8 @@ VAT is added according to Finnish law. Reverse charge applies to EU B2B customer
 ## Tell me about your project
 
 Send the URL and the question you want answered to [info@turva.dev](mailto:info@turva.dev). I reply within one business day. Everything is handled in writing, and you can also use the [contact page](/contact).
+
+[Discuss a project](/contact)
 `,
 
   "/contact": `# Tell me what you want to understand
@@ -6156,7 +6175,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.173.0",
+    "version": "3.174.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6428,7 +6447,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.173.0",
+  "version": "3.174.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8569,11 +8588,13 @@ function mdSection(path, heading) {
 function mdBodyHtml(path, heading) {
   return markdownToHtml(mdSection(path, heading)).replace(/href="https:\/\/turva\.dev\//g, 'href="/');
 }
-function mdPageStart(path) {
-  const lead = mdLead(path);
+function mdPageStart(path, ctaCls, ctaLinks) {
+  // ctaCls and ctaLinks: the lead closes with the page's button row, read from the twin
+  // (mdLeadCta) and rendered after the intro paragraphs.
+  const lead = ctaCls ? mdLeadCta(path, ctaCls, ctaLinks) : mdLead(path);
   const intro = lead.paras.map((p, i) => `<p${i === 0 ? ' class="intro"' : ""}>${renderInline(p)}</p>`).join("\n  ");
   return `<h1>${renderInline(lead.title)}</h1>
-  ${intro}`;
+  ${intro}${lead.cta ? "\n  " + lead.cta : ""}`;
 }
 function mdCard(path, heading) {
   return `<div class="scard"><h2>${renderInline(heading)}</h2>
@@ -8767,14 +8788,16 @@ function mdLists(path, heading) {
 function mdSlug(text) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
-function mdSecBodyHtml(path, heading, listOnly) {
+function mdSecBodyHtml(path, heading, listOnly, dropRow) {
   // Like mdPcard's body: an opening **price. meta.** block becomes the price line, a
   // "Label:" block followed by "- items" becomes a labelled checklist, and everything
   // else is markdown. Continuation lines of a list item (indented) join the item.
   // listOnly: the paragraphs are rendered elsewhere in the same section (the /contact
   // Signal block, kierros 4 E-01: the twin says it once, the HTML said it twice).
-  const blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.replace(/\s+$/, "")).filter(Boolean)
+  let blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.replace(/\s+$/, "")).filter(Boolean)
     .filter((b) => !listOnly || b.trim().startsWith("- "));
+  // dropRow: the section's button row is rendered by mdOpenCtaSec, so it is not a paragraph here.
+  if (dropRow) blocks = mdCtaSplit(blocks, path + " " + heading).rest;
   const parts = [];
   blocks.forEach((b, i) => {
     const lines = b.split("\n");
@@ -8804,10 +8827,48 @@ function mdSecBodyHtml(path, heading, listOnly) {
   });
   return parts.join("\n    ");
 }
-function mdOpenSec(path, heading, id, extra, listOnly) {
+function mdOpenSec(path, heading, id, extra, listOnly, dropRow) {
   return `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
-    ${mdSecBodyHtml(path, heading, listOnly)}${extra || ""}
+    ${mdSecBodyHtml(path, heading, listOnly, dropRow)}${extra || ""}
   </section>`;
+}
+// Button rows read from the twin (Tek-484). A row's links sit in the twin as one paragraph
+// made only of markdown links, in the order and with the texts the buttons show, so an agent
+// reading the Markdown finds every link a person can press on the HTML page. Only the builders
+// that call these helpers treat such a paragraph as a row: anywhere else a links-only paragraph
+// stays a paragraph (the audit page's evidence link is one), so a lone link cannot become a
+// button by accident. Each helper takes the LAST links-only paragraph of its block and throws
+// when there is none, so a row removed from the twin breaks the page build instead of vanishing
+// from the HTML unnoticed. Rows whose links point at an anchor on the same page (#start on
+// /services, #f1 on the samples) stay in the HTML only: the Markdown view has no such anchor.
+function mdCtaSplit(blocks, where) {
+  let at = -1;
+  blocks.forEach((b, i) => { if (/^(?:\[[^\]]+\]\([^)\s]+\)[ \t]*)+$/.test(b.trim())) at = i; });
+  if (at === -1) throw new Error("mdCta: no links-only paragraph in " + where);
+  return { rest: blocks.filter((_, i) => i !== at), row: blocks[at].trim(), at };
+}
+function mdCtaHtml(row, divCls, linkCls) {
+  const links = [...row.matchAll(/\[([^\]]+)\]\(([^)\s]+)\)/g)];
+  if (links.length > linkCls.length) throw new Error("mdCta: " + links.length + " links for " + linkCls.length + " button classes: " + row);
+  return `<div class="${divCls}">` + links.map((m, i) => `<a class="${linkCls[i]}" href="${escapeHtml(m[2])}">${escapeHtml(m[1])}</a>`).join(" ") + "</div>";
+}
+function mdLeadCta(path, divCls, linkCls) {
+  const lead = mdLead(path);
+  const cut = mdCtaSplit(lead.paras, path + " lead");
+  return { title: lead.title, paras: cut.rest, cta: mdCtaHtml(cut.row, divCls, linkCls) };
+}
+function mdParasCta(path, heading, count, divCls, linkCls) {
+  const blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean).filter((b) => !/^[-|>]|^ {4}/.test(b));
+  const cut = mdCtaSplit(blocks, path + " " + heading);
+  const paras = cut.rest.map((b) => renderInline(b.replace(/\s*\n\s*/g, " ")));
+  if (paras.length !== count) throw new Error("mdParasCta: " + path + " " + heading + " has " + paras.length + " blocks, expected " + count);
+  return { paras, cta: mdCtaHtml(cut.row, divCls, linkCls) };
+}
+function mdOpenCtaSec(path, heading, id, divCls, linkCls) {
+  const blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+  const cut = mdCtaSplit(blocks, path + " " + heading);
+  if (cut.at !== blocks.length - 1) throw new Error("mdOpenCtaSec: the button row must close " + path + " " + heading);
+  return mdOpenSec(path, heading, id, "\n    " + mdCtaHtml(cut.row, divCls, linkCls), false, true);
 }
 function mdFaqSec(path, heading, id) {
   return `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2><div class="faq">
@@ -9479,7 +9540,7 @@ var HOME_MARKDOWN = (function () {
 
 function serveHomeHtml(canonicalUrl) {
   const metaBlock = buildMetaBlock("/", canonicalUrl);
-  const lead = mdLead("/");
+  const lead = mdLeadCta("/", "cta", ["btn", "btn-ghost"]);
   // The measured date comes from the twin's own agent-readiness sentence, so the hero row and
   // the markdown agree by construction and the Measured-date gate in verify.mjs reads one copy.
   const evMeasured = ((lead.paras[3] || "").match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
@@ -9528,7 +9589,7 @@ function serveHomeHtml(canonicalUrl) {
   const secList = mdLists("/", "See what the work looks like")[0].map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      ");
   const proc = mdParas("/", "How we work", 4);
   const procCards = proc.slice(0, 3).map((t, i) => titled(t, "process")).map((c, i) => `<div class="step"><span class="step-n">0${i + 1}</span> <span class="step-t">${c.t}</span><p>${c.b}</p></div>`).join("\n      ");
-  const contact = mdParas("/", "Tell me what you want to understand", 3);
+  const contact = mdParasCta("/", "Tell me what you want to understand", 2, "cta-row", ["cta-btn", "mail-link"]);
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -9671,10 +9732,7 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
         <h1>${heroH1}</h1>
         <p class="lede">${renderInline(lead.paras[0])}</p>
         <p class="lede">${renderInline(lead.paras[1])}</p>
-        <div class="cta">
-          <a class="btn" href="/contact">Request an audit</a>
-          <a class="btn-ghost" href="/samples/audit-report">Read a sample report</a>
-        </div>
+        ${lead.cta}
         <p class="svcnote">${renderInline(lead.paras[2])}</p>
       </div>
       <div class="rcard" role="group" aria-label="One finding from the synthetic sample audit report">
@@ -9743,9 +9801,9 @@ ${mdFaqRows("/", "Frequently asked")}
 
   <section class="sec contact">
     <h2>Tell me what you want to understand</h2>
-    <p>${contact[0]}</p>
-    <div class="cta-row"><a class="cta-btn" href="/contact">Request an audit</a> <a class="mail-link" href="mailto:info@turva.dev">info@turva.dev</a></div>
-    <p class="muted">${contact[2]}</p>
+    <p>${contact.paras[0]}</p>
+    ${contact.cta}
+    <p class="muted">${contact.paras[1]}</p>
   </section>
   </div>
 </main>
@@ -9773,7 +9831,7 @@ function serveServicesHtml(canonicalUrl) {
     // search reads machine-readable prices instead of prose and FAQ answers only.
     `\n<script type="application/ld+json">\n{"@context":"https://schema.org","@graph":[\n${SCHEMA_SERVICE}\n]}\n<\/script>`;
   const head = cardPageHead(metaBlock, jsonLd, canonicalUrl);
-  const start = mdParas("/services", "Tell me what you need", 3);
+  const start = mdParasCta("/services", "Tell me what you need", 3, "cta-row", ["cta-btn"]);
   const offers = mdOfferCards("/services", "Choose a starting point", { "/shopify-agent-storefront-check": "See the Shopify check", "/agent-readiness-audit": "See the audit" });
   const offerParas = mdParas("/services", "Choose a starting point", 1);
   const body = `${head}
@@ -9797,10 +9855,10 @@ ${cardPageNav("/services")}
   ${mdFaqSec("/services", "Frequently asked", "questions").replace("<h2>Frequently asked</h2>", "<h2>Before we start</h2>")}
   <div class="start" id="how-to-start">
     <h2>Tell me what you need</h2>
-    <p>${start[0]}</p>
-    <p>${start[1]}</p>
-    <div class="cta-row"><a class="cta-btn" href="mailto:info@turva.dev?subject=Agent-readiness%20audit&amp;body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A">Request an audit</a></div>
-    <p class="fine">${start[2]}</p>
+    <p>${start.paras[0]}</p>
+    <p>${start.paras[1]}</p>
+    ${start.cta}
+    <p class="fine">${start.paras[2]}</p>
   </div>
 </main>
 ${footerHtml()}
@@ -10320,7 +10378,7 @@ ${cardPageNav("/company")}
   ${mdOpenSec("/company", "How we work", "how-i-work")}
   ${mdKvsSec("/company", "Business details")}
   ${mdOpenSec("/company", "Invoicing")}
-  ${mdOpenSec("/company", "Tell me about your project", "discuss", '\n    <div class="cta"><a class="btn" href="/contact">Discuss a project</a></div>')}
+  ${mdOpenCtaSec("/company", "Tell me about your project", "discuss", "cta", ["btn"])}
 </main>
 ${footerHtml()}
 </body>
@@ -10387,13 +10445,11 @@ function serveShopifyHtml(canonicalUrl) {
       buildShopifyServiceJsonLd(canonicalUrl) + "\n" +
       buildGuidePageFaqJsonLd("/shopify-agent-storefront-check", canonicalUrl),
     canonicalUrl);
-  const start = mdParas("/shopify-agent-storefront-check", "Tell me about your store", 3);
-  const mailto = "mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A";
+  const start = mdParasCta("/shopify-agent-storefront-check", "Tell me about your store", 3, "cta-row", ["cta-btn"]);
   const body = `${head}
 ${cardPageNav("/shopify-agent-storefront-check")}
 <main id="main">
-  ${mdPageStart("/shopify-agent-storefront-check")}
-  <div class="cta"><a class="btn" href="${escapeHtml(mailto)}">Request a Shopify check</a> <a class="btn-ghost" href="/samples/shopify-agent-storefront-check">Read the sample report</a></div>
+  ${mdPageStart("/shopify-agent-storefront-check", "cta", ["btn", "btn-ghost"])}
   ${mdOpenSec("/shopify-agent-storefront-check", "What you will learn")}
   ${mdOpenSec("/shopify-agent-storefront-check", "What you receive")}
   ${mdOpenSec("/shopify-agent-storefront-check", "What is included", "fixed-scope")}
@@ -10407,10 +10463,10 @@ ${cardPageNav("/shopify-agent-storefront-check")}
   ${replaceExactlyOnce(mdFaqSec("/shopify-agent-storefront-check", "Frequently asked", "questions"), "<h2>Frequently asked</h2>", "<h2>Two common questions</h2>")}
   <div class="start" id="how-to-start">
     <h2>Tell me about your store</h2>
-    <p>${start[0]}</p>
-    <p>${start[1]}</p>
-    <div class="cta-row"><a class="cta-btn" href="${escapeHtml(mailto)}">Request a Shopify check</a></div>
-    <p class="fine">${start[2]}</p>
+    <p>${start.paras[0]}</p>
+    <p>${start.paras[1]}</p>
+    ${start.cta}
+    <p class="fine">${start.paras[2]}</p>
   </div>
 </main>
 ${footerHtml()}
@@ -10429,32 +10485,29 @@ function serveAuditHtml(canonicalUrl) {
     buildGuideJsonLd("/agent-readiness-audit", canonicalUrl) + "\n" +
       buildAuditServiceJsonLd(canonicalUrl),
     canonicalUrl);
-  const start = mdParas("/agent-readiness-audit", "Tell me what you want to understand", 3);
-  const mailto = "mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A";
-  const request = `<div class="cta-row"><a class="cta-btn" href="${escapeHtml(mailto)}">Request an audit</a></div>`;
+  const start = mdParasCta("/agent-readiness-audit", "Tell me what you want to understand", 3, "cta-row", ["cta-btn", "mail-plain"]);
   // The twin's price sentence renders as the price line the other sections use; fail closed
   // if the sentence moves, so the page never shows a plain paragraph where the price belongs.
   const priceRe = /<p>(€[\d,]+) plus VAT\. ([^.<]+)\. ([^.<]+)\.<\/p>/;
-  const pageStart = mdPageStart("/agent-readiness-audit");
+  const pageStart = mdPageStart("/agent-readiness-audit", "cta", ["btn", "btn-ghost"]);
   if (!priceRe.test(pageStart)) throw new Error("audit page lead carries no price sentence");
   const startHtml = pageStart.replace(priceRe, (m, price, a, b) => `<p class="price-line"><span class="price">${price.replace(/€/g, "&#8364;")}</span> <span class="terms">plus VAT &middot; ${a} &middot; ${b}</span></p>`);
   const body = `${head}
 ${cardPageNav("/agent-readiness-audit")}
 <main id="main">
   ${startHtml}
-  <div class="cta"><a class="btn" href="${escapeHtml(mailto)}">Request an audit</a> <a class="btn-ghost" href="/samples/audit-report">Read the sample report</a></div>
   ${mdOpenSec("/agent-readiness-audit", "When this helps", "when-this-audit-is-useful")}
   ${mdOpenSec("/agent-readiness-audit", "One example: the price is wrong", "a-finding-that-changes-the-fix-order")}
   ${mdOpenSec("/agent-readiness-audit", "What I check", "scope")}
-  ${mdOpenSec("/agent-readiness-audit", "What you receive", "deliverables", request)}
+  ${mdOpenCtaSec("/agent-readiness-audit", "What you receive", "deliverables", "cta-row", ["cta-btn"])}
   ${mdOpenSec("/agent-readiness-audit", "How the two weeks work")}
   ${mdOpenSec("/agent-readiness-audit", "If you want help with the fixes", "implementation")}
   <div class="start" id="how-to-start">
     <h2>Tell me what you want to understand</h2>
-    <p>${start[0]}</p>
-    <p>${start[1]}</p>
-    <div class="cta-row"><a class="cta-btn" href="${escapeHtml(mailto)}">Request an audit</a> <a class="mail-plain" href="mailto:info@turva.dev">info@turva.dev</a></div>
-    <p class="fine">${start[2]}</p>
+    <p>${start.paras[0]}</p>
+    <p>${start.paras[1]}</p>
+    ${start.cta}
+    <p class="fine">${start.paras[2]}</p>
   </div>
 </main>
 ${footerHtml()}
@@ -12523,7 +12576,7 @@ var X402_ROUTES = {
 
 var ACP_SERVICES = {
   shopify: { item: "shopify", name: "Shopify agent storefront check", amount: 99900, description: "Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store across browser WebMCP, remote MCP and Catalog and Agentic channels." },
-  audit: { item: "audit", name: "Agent-readiness audit", amount: 430000, description: "Fixed scope, delivered within two weeks of the agreed written kickoff. Independent scanner sweep, manual review, written report with prioritized fixes." },
+  audit: { item: "audit", name: "Agent-readiness audit", amount: 430000, description: "Fixed scope, delivered within two weeks of the agreed written kickoff. Independent scanner sweep, manual review, written report with prioritized fixes. Includes one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought." },
   advisory: { item: "advisory", name: "Continuous advisory", amount: 300000, description: "Monthly re-scan, score delta report, written review, roadmap input. Minimum three months." },
   implementation: { item: "implementation", name: "Implementation day", amount: 150000, description: "Hands-on work at your edge, scoped per task." }
 };

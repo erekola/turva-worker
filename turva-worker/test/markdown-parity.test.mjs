@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import worker from "../src/worker.js";
 import { run, renderJson, TOOL_VERSION } from "markdown-parity-check";
 
@@ -293,4 +294,37 @@ test("parity route: methods and preflight name POST, and a POST that asks for Ma
   assert.equal(other.status, 405, "no other page accepts POST");
   const upper = await worker.fetch(new Request("https://turva.dev/Markdown-Parity-Check", { method: "POST", headers: { "content-type": "application/json" }, body: "{}" }), {});
   assert.equal(upper.status, 405, "the method gate and the route agree on the exact path");
+});
+
+// Tek-484: the button rows the HTML carries inside <main> are read from the twin, so the parity
+// check finds each of them in the Markdown. Rows that point at an anchor on the same page stay
+// HTML only, because the Markdown view has no such anchor. The count per page is pinned, so a
+// row that silently stops rendering fails here too.
+test("Tek-484: every button row on the five pages is a links-only paragraph of the twin, in order", async () => {
+  const want = { "/": 2, "/services": 1, "/company": 1, "/agent-readiness-audit": 3, "/shopify-agent-storefront-check": 2 };
+  for (const [path, count] of Object.entries(want)) {
+    const html = (await served(path, "text/html")).body;
+    const main = html.slice(html.indexOf('<main id="main"'), html.indexOf("</main>"));
+    const rows = [...main.matchAll(/<div class="cta(?:-row)?">([\s\S]*?)<\/div>/g)]
+      .map((m) => [...m[1].matchAll(/<a [^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>/g)].map((a) => "[" + a[2] + "](" + a[1].replace(/&amp;/g, "&") + ")").join(" "))
+      .filter((row) => !row.includes("](#"));
+    assert.equal(rows.length, count, path + ": button rows outside in-page anchors");
+    const md = (await served(path, "text/markdown")).body.replace(/\r\n/g, "\n");
+    const paras = md.split(/\n{2,}/).map((b) => b.trim());
+    let from = 0;
+    for (const row of rows) {
+      const at = paras.indexOf(row, from);
+      assert.notEqual(at, -1, path + ": the twin carries the row " + row + " after paragraph " + from);
+      from = at + 1;
+    }
+  }
+});
+
+test("Tek-484: a block without a links-only paragraph fails the page build instead of dropping the row", () => {
+  const src = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  const at = src.indexOf("function mdCtaSplit(");
+  const fn = new Function("return (" + src.slice(at, src.indexOf("\nfunction mdCtaHtml(", at)) + ");")();
+  assert.throws(() => fn(["Some prose.", "More prose with a [link](/x) inside."], "t"), /no links-only paragraph/);
+  assert.equal(fn(["Prose.", "[A](/a) [B](/b)", "Fine print."], "t").at, 1);
+  assert.equal(fn(["[A](/a)", "Prose.", "[B](/b)"], "t").row, "[B](/b)", "the last links-only paragraph is the row");
 });

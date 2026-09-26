@@ -1089,7 +1089,20 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   const w = src.worker.text;
   const PRICED = (facts.services || []).filter((s) => s.priceKey);
   const euroOf = (k) => '€' + facts.prices[k].toLocaleString('en-US');
-  const today = new Date().toISOString().slice(0, 10);
+  // The calendar day in Helsinki, where every date in this repo is written. The UTC day made a
+  // release dated today read as "in the future" between midnight and 03.00 Helsinki time, and
+  // the checked dates below had the same window. Intl with a named zone gives the same answer
+  // on a UTC CI runner as on the workspace machine. VERIFY_NOW (an ISO instant) pins the clock,
+  // so the static mutation run can prove that 00.30 Helsinki time passes and the UTC day fails.
+  const nowPin = process.env.VERIFY_NOW;
+  const now = nowPin ? new Date(nowPin) : new Date();
+  if (Number.isNaN(now.getTime())) {
+    console.error(`VERIFY_NOW is not a valid instant: ${nowPin}`);
+    process.exit(2);
+  }
+  const today = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Europe/Helsinki', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(now);
   const days = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
   const constOf = (name) => (w.match(new RegExp('var ' + name + ' = "([^"]*)"')) || [])[1];
   // A missing end anchor used to slice to the end of the file, silently handing a
@@ -1973,7 +1986,7 @@ console.log('\nAutolink: bare hosts in the served markdown (kierros 18, S5-1)');
 console.log('\nRetest window: the correction add-on exception (Tek-481, Tek-482)');
 // Tek-481 gave every served sentence that names the start day of an included retest
 // window the exception for the correction add-on: when it is bought, the window starts on
-// the day the corrections are delivered, not on the report or first-package day. Twenty
+// the day the corrections are delivered, not on the report or first-package day. Twenty-one
 // sentences carry it, written by hand across the home and /services cards, the product
 // pages, a guide, the services skill, the JSON-LD offers and the ACP session. Nothing read
 // it back, and the same promise had drifted between two repos once already (the PROMISES
@@ -1987,7 +2000,7 @@ console.log('\nRetest window: the correction add-on exception (Tek-481, Tek-482)
 {
   const START = /re-scan within 30 days of the report|within 14 days of (that|the) (first )?(package|delivery)|within 14 days of the day the first four arrive/i;
   const EXC = /delivered corrections|corrections are delivered/i;
-  const FLOOR = 20; // measured 2026-09-26 on v3.173.0: 20 sentences, all carrying the exception
+  const FLOOR = 21; // measured 2026-09-26 on v3.174.0: 21 sentences, all carrying the exception (the audit ACP session joined, Tek-484)
   const found = [];
   const missing = [];
   src.worker.text.replace(/\r\n/g, '\n').split('\n').forEach((line, i) => {
