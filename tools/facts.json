@@ -3,7 +3,7 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.179.0",
+    "site": "3.180.0",
     "mcp": "1.6.1"
   },
   "mtaSts": {

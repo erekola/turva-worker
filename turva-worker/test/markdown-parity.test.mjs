@@ -87,19 +87,77 @@ test("parity check: the JSON answer is run() from the package over the bytes the
   }
 });
 
-test("parity check: every published page can be checked within the hosted limits", async () => {
+// Tek-490: every page in the sitemap passes its own parity check, so a new post or a page change that
+// breaks parity fails the tests and with them the ship. The pages the hosted check refuses on purpose
+// get exactly their refusal: /auth.md is an agent document served as Markdown only, and the two tool
+// pages are refused because a check never starts a check. The refused list is pinned against the
+// sitemap in both directions, so a new refusal cannot pass silently and a gone page cannot linger.
+const PARITY_REFUSED = {
+  "/markdown-parity-check": [403, /one of turva\.dev's two tool pages/],
+  "/llms-txt-validator": [403, /one of turva\.dev's two tool pages/],
+  "/auth.md": [400, /must be the HTML page/],
+};
+
+// A page passes when the report says pass with no error and no warning. A warning does not fail the
+// hosted check, but every checkable page reached zero warnings in Tek-488, so a new one is a
+// regression here. Informational notes are not counted.
+function parityProblem(r) {
+  const s = r.summary || {};
+  if (s.result === "pass" && s.errors === 0 && s.warnings === 0) return null;
+  const top = (r.findings || []).slice(0, 3).map((f) => f.code + " " + String(f.before || (f.html && f.html.excerpt) || "").slice(0, 60));
+  return s.result + ", " + s.errors + " errors, " + s.warnings + " warnings " + JSON.stringify(top);
+}
+
+test("Tek-490: every page in the sitemap passes its own parity check with no error and no warning", async () => {
   const sitemap = await (await get("/sitemap.xml")).text();
-  const paths = [...sitemap.matchAll(/<loc>https:\/\/turva\.dev([^<]*)<\/loc>/g)].map((m) => m[1] || "/").filter((p) => p !== "/markdown-parity-check" && p !== "/llms-txt-validator" && p !== "/auth.md");
-  // /auth.md is an agent document served as Markdown only, not a page with an HTML version, and the
-  // two tool pages are refused on purpose (a check never starts a check).
+  const paths = [...sitemap.matchAll(/<loc>https:\/\/turva\.dev([^<]*)<\/loc>/g)].map((m) => m[1] || "/");
   assert.ok(paths.length > 60, "sitemap read " + paths.length + " paths");
   const bad = [];
+  const refused = [];
   for (const p of paths) {
     const res = await post({ url: "https://turva.dev" + p });
     const r = JSON.parse(await res.text());
-    if (res.status !== 200 || r.summary.result === "error") bad.push(`${p}: ${res.status} ${r.summary.error || ""}`);
+    if (Object.hasOwn(PARITY_REFUSED, p)) {
+      const [status, re] = PARITY_REFUSED[p];
+      refused.push(p);
+      if (res.status !== status || r.summary.result !== "error" || !re.test(r.summary.error || "")) bad.push(p + ": expected the refusal " + status + ", got " + res.status + " " + (r.summary.error || r.summary.result));
+      continue;
+    }
+    const problem = res.status === 200 ? parityProblem(r) : "HTTP " + res.status + " " + (r.summary.error || "");
+    if (problem) bad.push(p + ": " + problem);
   }
   assert.deepEqual(bad, []);
+  assert.deepEqual(refused.sort(), Object.keys(PARITY_REFUSED).sort(), "every refused path is in the sitemap");
+});
+
+test("Tek-490: the page gate fails a page whose HTML carries one paragraph its twin lacks", async () => {
+  // The hosted check renders a page in process, so a mutation cannot reach it from outside the module.
+  // The package's run() over the same served bytes is the hosted answer (pinned above), so the gate is
+  // tested on run() over one page with one paragraph added to its HTML only.
+  const p = "/company";
+  const url = "https://turva.dev" + p;
+  const h = await served(p, "text/html");
+  const m = await served(p, "text/markdown");
+  const input = (s, body, accept) => ({ meta: { kind: "url", url, requestedUrl: url, status: s.status, contentType: s.contentType, accept, redirects: 0, bytes: new TextEncoder().encode(body).length, baseUrl: url }, body, base: url });
+  const check = (html) => strip(run(input(h, html, "text/html"), input(m, m.body, "text/markdown"), { strict: false, mode: "url", frontMatter: "keep" }));
+  assert.equal(parityProblem(check(h.body)), null, "the page as served passes the gate");
+  const open = h.body.indexOf('<main id="main"');
+  assert.ok(open > 0, "the page has its main element");
+  const at = h.body.indexOf(">", open) + 1;
+  const mutated = h.body.slice(0, at) + "<p>This paragraph is in the HTML only, and the twin does not carry it.</p>" + h.body.slice(at);
+  const problem = parityProblem(check(mutated));
+  assert.notEqual(problem, null, "one HTML-only paragraph fails the gate");
+  assert.match(problem, /HTML only/, "the finding quotes the added paragraph: " + problem);
+  // A warning alone leaves the hosted result at pass, so the gate's own warning clause is tested with
+  // a heading one level lower in the HTML than in the twin.
+  const h2 = h.body.indexOf("<h2>", at);
+  assert.ok(h2 > 0, "the page has an h2 inside main");
+  const close = h.body.indexOf("</h2>", h2);
+  const lower = h.body.slice(0, h2) + "<h3>" + h.body.slice(h2 + 4, close) + "</h3>" + h.body.slice(close + 5);
+  const warned = check(lower);
+  assert.equal(warned.summary.result, "pass", "a warning alone does not fail the hosted check");
+  assert.ok(warned.summary.warnings > 0 && warned.summary.errors === 0, "the lower heading is a warning, not an error");
+  assert.match(parityProblem(warned) || "", /HEADING_LEVEL_CHANGED/, "the gate fails a page with one warning");
 });
 
 test("parity check: no guide or post carries its page frame as content (Tek-479 P14)", async () => {
