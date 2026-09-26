@@ -1,6 +1,6 @@
 {
   "name": "turva-worker",
-  "version": "3.174.0",
+  "version": "3.175.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,7 +10,7 @@
     "start": "wrangler dev"
   },
   "dependencies": {
-    "markdown-parity-check": "0.2.10"
+    "markdown-parity-check": "0.2.11"
   },
   "devDependencies": {
     "wrangler": "^4.141.0"

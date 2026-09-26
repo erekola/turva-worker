@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.175.0 - the hosted parity fixes (Tek-486, 2026-09-26): the badge preview and the Signal code are read from image lines in their twins, a list label written as ### in the twin renders as the same h3 label, the blog index twin links its RSS feed and the lead renders it in the feed style, and the home report card puts a space between a value and its conflict flag, so the hosted parity check passes 63 of 71 pages. The two tool pages get a refusal of their own and the check page says it does not check them, Fill in an example puts the other options back to their defaults and hides the old result, and Copy JSON and Save JSON leave while a new check runs. The hosted route runs markdown-parity-check 0.2.11, where a selector that picks a heading, list item, table or pre keeps that block type.
 // turva.dev worker v3.174.0 - the button rows read from the Markdown twin, and the audit ACP session names its re-scan (Tek-484, 2026-09-26): the home, /services, /company, audit and Shopify pages render nine button rows from a links-only paragraph of their twin through mdLeadCta, mdParasCta, mdOpenCtaSec and the new row arguments of mdPageStart, so the Markdown carries every link a button offers and the hosted parity check passes 61 of 71 pages; rows that point at an anchor on the same page stay HTML only. The audit line item of the ACP checkout session includes the re-scan and its correction add-on exception, and the parity post records the new figures.
 // turva.dev worker v3.173.0 - the site's own Markdown parity, second batch, and a gate on the retest window (Tek-482, 2026-09-26): six posts link in the Markdown the addresses the HTML already linked, the Markdown writes info@turva.dev as a normal link in nine places on the eight measured pages, the key-value rows of /company and /contact and the offer cards carry a space between adjacent elements, /contact links erik@turva.dev, /tools renders the Related section its Markdown already had, and the post HTML and Markdown can disagree records the new figures; turva-worker/tools/verify.mjs now reads back the correction add-on exception of every sentence that names a retest window start.
 // turva.dev worker v3.172.0 - the retest window's short statements (Tek-481, 2026-09-25): the home and /services offer cards, the two /services sections, three places on the Shopify page, the audit-choice guide's answer, the services skill, the JSON-LD offers and services, the ACP checkout session and the audit sample's agreed-work table now say that the included retest or re-scan window starts on the day the corrections are delivered when the correction add-on is bought (Tek-479 P8); turva-mcp 1.6.1 says the same in get_services, which moves the version in the signed MCP server card.
@@ -722,6 +723,8 @@ Corrected 2026-09-25. This post used my tools page as the example of what the ch
 Corrected 2026-09-26. The same run now passes 59 of the 71 pages and reports 208 findings. In six articles the Markdown now links the addresses that the HTML already linked. The email address in the Markdown is a normal link on eight pages, where it used to show as mailto text. The company and contact pages have a space between each label and its value in the HTML text, and the tools page shows its Related section. What still fails stays for a stated reason. Each index page shows a summary card for every guide or post, and the Markdown keeps a plain list. The two sample reports repeat each wide table in a second, stacked view for narrow screens, and the Markdown carries the table once. The home page has a score board and a worked example, and it sets each step title apart where the Markdown runs it into the paragraph. Two pages carry an image whose description the Markdown does not repeat. The service pages have buttons that repeat an address or a link the text already gives, and they turn a few labels into headings. One guide names a protocol identifier that the HTML does not link on purpose.
 
 Corrected again 2026-09-26. The same run now passes 61 of the 71 pages and reports 199 findings. Nine button rows on five pages are now read from a paragraph of links in the Markdown, so both versions carry the same links in the same order. The company and audit pages now pass. Three rows stay in the HTML only, because their first button points to a place on the same page, and the Markdown view has no anchor for it.
+
+Corrected a third time 2026-09-26. The same run now passes 63 of the 71 pages and reports 188 findings. The badge preview and the Signal code are image lines in the Markdown, a label over a list is a heading in both versions, and the blog index Markdown links its RSS feed. Most of what still fails is the checker's own reading. The largest cause is that it takes a row of card links as one block. It also matches a link by its text alone, so the same address under a different label reads as lost on one side and added on the other.
 
 ## Related
 
@@ -2282,7 +2285,7 @@ The check compares what the two versions say. It does not score the page. A pass
 
 ## What this version checks
 
-This hosted version checks the published pages of turva.dev. The site's own Worker renders both versions of the page, so a check sends no request over the network.
+This hosted version checks the published pages of turva.dev. The site's own Worker renders both versions of the page, so a check sends no request over the network. It does not check the site's two tool pages, this page and the llms.txt validator, because a check must never start another check or a fetch.
 
 To check another site, run the same comparison on your own machine:
 
@@ -2418,6 +2421,8 @@ turva.dev does not police its use. Anyone can run the public scanner against a s
 
 ## Add the badge
 
+![agent-ready. Criteria at turva.dev/badge](/badge.svg)
+
 If your site is eligible, copy the complete HTML below into your page.
 
     <a href="https://turva.dev/badge"><img src="https://turva.dev/badge.svg" alt="agent-ready. Criteria at turva.dev/badge" width="216" height="36" loading="lazy"></a>
@@ -2434,6 +2439,8 @@ All free tools on this site are collected on [the tools page](/tools).
   "/blog": `# Research and field notes
 
 Dated studies, technical investigations and build notes from turva.dev. Each article explains what was observed, how it was checked and what the result does not establish.
+
+[RSS feed](/blog/feed.xml)
 
 ## Start with the research
 
@@ -3757,7 +3764,7 @@ I deploy an edge worker in front of your origin. It changes what the site serves
 
 Cloudflare Workers is the default. Other supported edge runtimes can be agreed when we scope the work, including Fastly Compute, Akamai EdgeWorkers, AWS Lambda@Edge, Netlify and Vercel.
 
-Typical work includes:
+### Typical work includes
 - Head metadata and /.well-known/ files.
 - AI crawler rules, Content Signals and a Web Bot Auth directory.
 - Markdown responses alongside the existing HTML pages.
@@ -3781,7 +3788,7 @@ After the three-month minimum the retainer runs month to month, and either party
 
 Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next.
 
-You receive:
+### You receive
 - A monthly re-scan with the same scanner and profile, shown beside the previous result.
 - A monthly repeat of the AI question set across the same assistants.
 - Written review of agent-readiness changes your team ships, within one business day.
@@ -3798,7 +3805,7 @@ Each review explains what changed and what the evidence supports. If the method 
 
 I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over.
 
-The work can cover:
+### The work can cover
 - Where data can be lost, delayed or misread.
 - The actions the agent is allowed to take.
 - Thresholds that require a human decision.
@@ -3991,7 +3998,7 @@ I record restricted, unavailable and untestable parts of the journey as well as 
 
 ## What you receive
 
-The first four items arrive together within 48 hours:
+### The first four items arrive together within 48 hours
 - A map of the three interfaces: what was available, restricted, unavailable or not tested.
 - A product comparison: titles, variants, prices, currencies, availability and policy facts.
 - A record of the shopping journey: the tool, input, result, cart state and exact stopping point.
@@ -4172,6 +4179,8 @@ The buttons above open a draft in your email app. You can edit it before sending
 Signal works for short questions. Send longer documents by email. You can open Signal directly or use the QR code.
 
 Signal is end-to-end encrypted. Scanning the code shares no account of yours.
+
+[![Signal QR code for the username turva.19. Scan it with a phone to start a Signal chat.](/signal-qr.png)](https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK) @turva.19
 
 ## Reply time and languages
 
@@ -6175,7 +6184,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.174.0",
+    "version": "3.175.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6447,7 +6456,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.174.0",
+  "version": "3.175.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8592,7 +8601,8 @@ function mdPageStart(path, ctaCls, ctaLinks) {
   // ctaCls and ctaLinks: the lead closes with the page's button row, read from the twin
   // (mdLeadCta) and rendered after the intro paragraphs.
   const lead = ctaCls ? mdLeadCta(path, ctaCls, ctaLinks) : mdLead(path);
-  const intro = lead.paras.map((p, i) => `<p${i === 0 ? ' class="intro"' : ""}>${renderInline(p)}</p>`).join("\n  ");
+  // A lead paragraph that is only the feed link keeps the feed style (/blog, Tek-486).
+  const intro = lead.paras.map((p, i) => `<p${i === 0 ? ' class="intro"' : /^\[RSS feed\]\(\/[^)]+\)$/.test(p) ? ' class="feed"' : ""}>${renderInline(p)}</p>`).join("\n  ");
   return `<h1>${renderInline(lead.title)}</h1>
   ${intro}${lead.cta ? "\n  " + lead.cta : ""}`;
 }
@@ -8636,15 +8646,21 @@ function contactSignalQr() {
   // once and this function adds structure only. The plate is light on purpose:
   // an inverted code is closer to the site's palette but some readers refuse
   // to decode one.
-  const paras = mdSection("/contact", "Other ways to reach me").split("\n\n").map((b) => b.trim()).filter((b) => b && !b.startsWith("- "));
+  const blocks = mdSection("/contact", "Other ways to reach me").split("\n\n").map((b) => b.trim()).filter((b) => b && !b.startsWith("- "));
+  // The code itself is the twin's linked image line, so its alt text, target and user name are
+  // read from the Markdown and both versions carry the same block (Tek-486).
+  const qrRe = /^\[!\[([^\]]+)\]\((\/[a-z0-9._-]+)\)\]\((https:\/\/signal\.me\/[^)\s]+)\) (@\S+)$/;
+  const qr = blocks.map((b) => b.match(qrRe)).find(Boolean);
+  if (!qr) throw new Error("contactSignalQr: no linked QR image line in the twin");
+  const paras = blocks.filter((b) => !qrRe.test(b));
   return `
     <div class="sigqr">
       <div class="sigqr-txt">
 ${paras.map((t, i) => `        <p${i ? ' class="hint"' : ""}>${renderInline(t)}</p>`).join("\r\n")}
       </div>
       <div>
-        <a class="sigqr-plate" href="https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK"><img src="/signal-qr.png" width="147" height="147" alt="Signal QR code for the username turva.19. Scan it with a phone to start a Signal chat."></a>
-        <span class="sigqr-user">@turva.19</span>
+        <a class="sigqr-plate" href="${escapeHtml(qr[3])}"><img src="${escapeHtml(qr[2])}" width="147" height="147" alt="${escapeHtml(qr[1])}"></a>
+        <span class="sigqr-user">${escapeHtml(qr[4])}</span>
       </div>
     </div>`;
 }
@@ -8788,6 +8804,8 @@ function mdLists(path, heading) {
 function mdSlug(text) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
+// The drawn size of every image a twin section renders through mdSecBodyHtml (Tek-486).
+var MD_IMG_SIZE = { "/badge.svg": [216, 36] };
 function mdSecBodyHtml(path, heading, listOnly, dropRow) {
   // Like mdPcard's body: an opening **price. meta.** block becomes the price line, a
   // "Label:" block followed by "- items" becomes a labelled checklist, and everything
@@ -8809,8 +8827,10 @@ function mdSecBodyHtml(path, heading, listOnly, dropRow) {
       const pm = price.match(/^(€[\d,]+)\s+(.+)$/);
       if (pm) { price = pm[1]; meta = [pm[2], ...meta]; }
       parts.push(`<p class="price-line"><span class="price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span> <span class="terms">${meta.map((m) => escapeHtml(m)).join(" &middot; ")}</span></p>`);
-    } else if (/:$/.test(lines[0].trim()) && lines.slice(1).some((l) => l.startsWith("- "))) {
-      const label = lines[0].trim().replace(/:$/, "");
+    } else if ((/:$/.test(lines[0].trim()) || /^### \S/.test(lines[0])) && lines.slice(1).some((l) => l.startsWith("- "))) {
+      // "### Label" over the list is the twin's heading form of the same label, so the Markdown
+      // carries the heading the page renders (Tek-486).
+      const label = lines[0].trim().replace(/^### /, "").replace(/:$/, "");
       const items = [];
       for (const l of lines.slice(1)) {
         if (l.startsWith("- ")) items.push(l.slice(2).trim());
@@ -8821,6 +8841,13 @@ function mdSecBodyHtml(path, heading, listOnly, dropRow) {
       parts.push(`<ul class="${cls}">
       ${items.map((it) => `<li>${renderInline(it)}</li>`).join("\n      ")}
     </ul>`);
+    } else if (/^!\[[^\]]+\]\(\/[a-z0-9._-]+\)$/.test(b.trim())) {
+      // A lone image line: the twin carries the image and its alt text, and the page renders it
+      // at the size it was drawn, so the layout does not shift (Tek-486).
+      const im = b.trim().match(/^!\[([^\]]+)\]\((\/[a-z0-9._-]+)\)$/);
+      const size = MD_IMG_SIZE[im[2]];
+      if (!size) throw new Error("mdSecBodyHtml: no drawn size for image " + im[2]);
+      parts.push(`<p><img src="${escapeHtml(im[2])}" alt="${escapeHtml(im[1])}" width="${size[0]}" height="${size[1]}"></p>`);
     } else {
       parts.push(markdownToHtml(b).replace(/href="https:\/\/turva\.dev\//g, 'href="/'));
     }
@@ -9579,7 +9606,9 @@ function serveHomeHtml(canonicalUrl) {
     if (c < 0) throw new Error("home finding row has no label: " + r);
     // The page is the reference reading; the other two disagree with it. The word carries the
     // meaning and the colour only repeats it (brief: colour never carries meaning alone).
-    const flag = k === 0 ? "" : '<span class="rc-flag">conflict</span>';
+    // A space separates the value from the flag, so a reader of the text does not get one glued
+    // word such as "InStockconflict" (Tek-486).
+    const flag = k === 0 ? "" : ' <span class="rc-flag">conflict</span>';
     return `<div class="rc-row${k === 0 ? "" : " rc-bad"}"><dt>${r.slice(0, c)}</dt><dd>${r.slice(c + 2)}${flag}</dd></div>`;
   }).join("\n          ");
   const findLink = findParas[4].match(/^<a href="([^"]+)">([^<]+)<\/a>$/);
@@ -10525,7 +10554,6 @@ ${cardPageNav("/badge")}
   ${mdOpenSec("/badge", "Who can use it?", "eligibility")}
   ${mdOpenSec("/badge", "What the badge means", "not-a-certification")}
   <section class="sec" id="use-the-badge"><h2>Add the badge</h2>
-    <p><img src="/badge.svg" alt="agent-ready. Criteria at turva.dev/badge" width="216" height="36"></p>
     ${mdSecBodyHtml("/badge", "Add the badge")}
   </section>
   ${mdOpenSec("/badge", "Want to know where your site stands?", "if-your-site-is-not-there-yet")}
@@ -12078,6 +12106,15 @@ function paritySelfPathAllowed(pathname) {
   return Object.prototype.hasOwnProperty.call(PAGE_MARKDOWN, base);
 }
 
+// The two tool pages are published pages that this version declines to check, so they get a
+// refusal of their own instead of the one for an address that is not a page (Tek-486).
+function parityToolPage(pathname) {
+  let base = String(pathname).toLowerCase();
+  base = base.endsWith(".html.md") ? base.slice(0, -8) : base.endsWith(".md") ? base.slice(0, -3) : base;
+  if (base.length > 1 && base.endsWith("/")) base = base.slice(0, -1);
+  return base === PARITY_PATH || base === "/llms-txt-validator";
+}
+
 async function paritySource(requested, final, res, accept, redirects) {
   const cap = accept === "text/html" ? PARITY_MAX_HTML_BYTES : PARITY_MAX_MARKDOWN_BYTES;
   const read = await parityReadCapped(res.body, cap);
@@ -12101,6 +12138,7 @@ async function parityFetchSelf(start, accept, env) {
     if (visited.has(url.href)) throw new ParityError("redirect_loop", 422, "Redirect loop at " + mpcMaskUrl(url.href) + ".");
     visited.add(url.href);
     if (!parityIsSelf(url)) throw new ParityError("off_host", 422, "The address redirects to another host, " + mpcMaskUrl(url.href) + ". Redirects are followed within the same site only.");
+    if (!paritySelfPathAllowed(url.pathname) && parityToolPage(url.pathname)) throw new ParityError("tool_page", 403, mpcMaskUrl(url.href) + " is one of turva.dev's two tool pages. This version does not check them, because a check must never start another check or a fetch.", "url");
     if (!paritySelfPathAllowed(url.pathname)) throw new ParityError("not_published", 403, mpcMaskUrl(url.href) + " is not one of turva.dev's published pages, so this version does not check it.", "url");
     const res = await handleRequest(new Request(url.href, { method: "GET", headers: { accept } }), env);
     if (res.status >= 300 && res.status < 400) {
@@ -12360,6 +12398,8 @@ var PARITY_JS = `(function () {
   var example = document.getElementById("mpc-example");
   var label = submit ? submit.textContent : "Check";
   function reset() {
+    if (pre && copy) copy.hidden = false;
+    if (pre && save) save.hidden = false;
     if (!submit) return;
     submit.removeAttribute("aria-disabled");
     submit.textContent = label;
@@ -12369,7 +12409,17 @@ var PARITY_JS = `(function () {
     example.hidden = false;
     example.addEventListener("click", function () {
       url.value = example.getAttribute("data-url") || "";
-      if (status) status.textContent = "The example address is in the Page URL field. Press Check to run it.";
+      var md = document.getElementById("mpc-markdownUrl");
+      var sel = document.getElementById("mpc-selector");
+      var strict = document.getElementById("mpc-strict");
+      var keep = document.getElementById("mpc-fm-keep");
+      var result = document.getElementById("result");
+      if (md) md.value = "";
+      if (sel) sel.value = "";
+      if (strict) strict.checked = false;
+      if (keep) keep.checked = true;
+      if (result) result.hidden = true;
+      if (status) status.textContent = "The example address is in the Page URL field, and the other options are back to their defaults. Press Check to run it.";
     });
   }
   form.addEventListener("submit", function (event) {
@@ -12378,6 +12428,10 @@ var PARITY_JS = `(function () {
     submit.setAttribute("aria-disabled", "true");
     submit.textContent = "Checking";
     if (status) status.textContent = "Checking. Both versions are being read and compared.";
+    // The report on the page belongs to the previous check until the new page loads.
+    if (copy) copy.hidden = true;
+    if (save) save.hidden = true;
+    tell("");
   });
   var pre = document.getElementById("mpc-json");
   var note = document.getElementById("mpc-json-status");
@@ -12538,7 +12592,6 @@ function serveBlogHtml(canonicalUrl) {
 ${cardPageNav("/blog")}
 <main id="main">
   ${mdPageStart("/blog")}
-  <p class="feed"><a href="/blog/feed.xml">RSS feed</a></p>
   ${mdOpenSec("/blog", "Start with the research", "research")}
   <section class="sec" id="all-posts"><h2>Browse all articles</h2>
     ${blogFilterHtml()}
