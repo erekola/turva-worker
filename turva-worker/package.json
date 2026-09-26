@@ -13,11 +13,11 @@
     "markdown-parity-check": "0.2.10"
   },
   "devDependencies": {
-    "wrangler": "^4.140.0"
+    "wrangler": "^4.141.0"
   },
   "allowScripts": {
     "esbuild@0.28.1": true,
     "sharp@0.35.4": true,
-    "workerd@1.20260923.1": true
+    "workerd@1.20260925.1": true
   }
 }
