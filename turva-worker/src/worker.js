@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.187.0 - fixes from reports 22 and 21 of the hostile audit round of 2026-09-26, phase 4 item 3 (Tek-500): the services skill no longer lists MCP servers under the day rate, the AP2, MPP and agent registration contact blocks list English and Finnish, the OpenAPI order operations say they answer 402 and the A2A message:send operation documents its request body, the x402 manifest states the EUR to USDC rate and the day it was read, and three blog posts name their release unit, drop an unmeasured ranking phrase and close the parity count at 71 of 71. turva-mcp 1.6.4: get_contact asks for the domain and the question.
 // turva.dev worker v3.186.0 - fixes from report 34 of the hostile audit round of 2026-09-26, phase 4 item 2 (Tek-499): agentic-commerce-readiness says where its own commerce path stops before payment, agent-authentication names public read-only data as the case that needs no auth, llms-txt opens How clients find it with the answer and says why its own agent endpoints are plain addresses, and markdown, llms.txt and llms-full.txt responses carry Content-Language: en. MCP card version 1.6.3.
 // turva.dev worker v3.185.0 - guide corrections from the hostile audit round of 2026-09-26, phase 4 item 1 (Tek-498): fifteen claims that both independent readers of the guides flagged are narrowed to what their primary sources say, in seo-vs-agent-readiness, agent-readiness-gaps, markdown-for-agents, llms-txt, open-knowledge-format, response-headers-for-agents, json-ld-structured-data, agent-authentication, x402-agent-payments, agent-commerce-discovery, agentic-commerce-readiness and letting-agents-act-on-data, which also lists its UCP and AP2 sources (2026-09-27)
 // turva.dev worker v3.184.0 - fixes from the hostile audit round of 2026-09-26 (Tek-496): the pre-deploy and live signature checks require the exact four-path signed set instead of only a count; the llms.txt validator's blockquote-summary check reads up to three leading spaces the way CommonMark does, so an indented code block no longer passes as a summary; ACP checkout rejects an item quantity that is present and not exactly 1 and an explicit null item id, and its OpenAPI descriptions and the complete operation's response say so (422, not 200); www + mixed-case now redirects straight to the final lower-case path in one hop; the llms.txt validator trims before cutting the typed address to 300 characters; a cleaned-up brief address's redirect carries Cache-Control: private, no-store; OPTIONS on /security.txt, /ai.txt, /api-catalog and /blog/feed.xml now preflights like their .well-known twins; static assets get a public/_headers file with the site's security headers; the character-entities table names its package, version and license (THIRD-PARTY-NOTICES.md added) and the footer's Mastodon icon names Boxicons 2.0.8; package.json states license MIT; the README's /tools parity example states the current pass instead of an old fail.
@@ -479,7 +480,7 @@ var PAGE_MARKDOWN = {
 
 2026-09-26
 
-GitHub counts 544 commits in nine of my repositories for September, and the month still has four days to go. My website alone shipped 54 releases between 6 and 26 September, seven of them today. I sell audits of how ready a website is for AI agents, and my own site is the one piece of proof I can hand a buyer. [Its code is public](https://github.com/erekola/turva-worker), so anyone can read every line and every release in its history.
+GitHub counts 544 commits in nine of my repositories for September, and the month still has four days to go. My website alone shipped 54 minor versions between 6 and 26 September, seven of them today, and 15 patch releases besides. I sell audits of how ready a website is for AI agents, and my own site is the one piece of proof I can hand a buyer. [Its code is public](https://github.com/erekola/turva-worker), so anyone can read every line and every release in its history.
 
 ## Why does my own site change this often?
 
@@ -805,6 +806,8 @@ Corrected again 2026-09-26. The same run now passes 61 of the 71 pages and repor
 Corrected a third time 2026-09-26. The same run now passes 63 of the 71 pages and reports 188 findings. The badge preview and the Signal code are image lines in the Markdown, a label over a list is a heading in both versions, and the blog index Markdown links its RSS feed. Most of what still fails is the checker's own reading. The largest cause is that it takes a row of card links as one block. It also matches a link by its text alone, so the same address under a different label reads as lost on one side and added on the other.
 
 Corrected a fourth time 2026-09-26. The same run now passes 67 of the 71 pages and reports 151 findings. The two sample reports pass, and so do the Shopify check page and the commerce guide. A wide table used to appear twice. The second copy was a list for narrow screens, and now every table turns into cards on a narrow screen instead, so its text is on the page once, as it is in the Markdown. Both versions now write the JSON excerpts and the AP2 address as code, which neither links. The three rows that stayed in the HTML only now point at a heading both versions carry. Four pages still fail, the home page, the services page, the blog index and the guides index, and most of their findings come from cards.
+
+Corrected a fifth time 2026-09-27. Two more releases on 2026-09-26 took the same run to 71 of 71 pages with no errors and no warnings, and [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work) tells how. Since then every page in the sitemap has to pass this check with no error and no warning before my site can ship.
 
 ## Related
 
@@ -2045,7 +2048,7 @@ range, not as a causal claim about readiness.
 
 On the isitagentready Level scale almost all of the sixteen landed at Level 1 of 5, the floor an ordinary CMS site reaches, a couple sat at Level 0, and only one reached Level 2. None reached Level 3 or above.
 
-To be clear about what that means, these are not broken websites. They load, they rank, a person can use them without trouble. The scanner measures something else, whether an AI agent can read the site and act on it.
+That does not mean these are broken websites. They load, and a person can use them without trouble. The scanner measures something else, whether an AI agent can read the site and act on it.
 
 ## The three gaps that showed up almost everywhere
 
@@ -2066,6 +2069,8 @@ For the larger sample, a later post ran the same scanner across [567 company sit
 To check where a site stands, the free llms.txt validator is at [turva.dev/llms-txt-validator](https://turva.dev/llms-txt-validator), and the agent-readiness audit and advisory work is at turva.dev.
 
 Corrected 2026-09-25. Three passages said more than the scan measured. The token figures were an estimate from a scanner this site no longer uses, and they are now labelled as reported and estimated. Two sentences drew what an agent can answer and whether a business appears in an answer from configuration checks, and a third said most of these sites rank fine in search, which was never measured. They now say what the scan read. The counts did not change.
+
+Corrected again 2026-09-27. One more sentence still said these sites rank in search, which was not measured either. It now says only that they load and that a person can use them.
 
 ## Related
 
@@ -2534,7 +2539,7 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 35 articles.
 
-- [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work). 2026-09-26. Build notes. Why my site shipped 54 releases in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.
+- [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work). 2026-09-26. Build notes. Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.
 - [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25. Build notes. Plain local files give each Claude Code session what the earlier sessions learned. A count of that memory, and why it now reads like a private language.
 - [Five rounds before the agent signed anything](/blog/five-rounds-before-the-agent-signed). 2026-09-20. Build notes. An agent moved tokens on Ethereum Sepolia after five fix rounds, each answering an independent review. Three attempts stopped before any signature.
 - [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree). 2026-09-12. Build notes. A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.
@@ -6379,7 +6384,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.186.0",
+    "version": "3.187.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6393,7 +6398,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "paths": {
     "/api/agent/audit": {
       "post": {
-        "summary": "Order an agent-readiness audit",
+        "summary": "Agent-readiness audit. Answers 402: the order is agreed by email and a written scope",
         "operationId": "orderAudit",
         "x-payment-info": {
           "intent": "charge",
@@ -6409,7 +6414,7 @@ var OPENAPI_SPEC = JSON.stringify({
     },
     "/api/agent/advisory": {
       "post": {
-        "summary": "Subscribe to monthly advisory",
+        "summary": "Monthly advisory. Answers 402: the engagement is agreed by email and a written scope",
         "operationId": "subscribeAdvisory",
         "x-payment-info": {
           "intent": "charge",
@@ -6455,7 +6460,7 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/api-catalog": { "get": { "summary": "API catalog", "operationId": "getApiCatalog", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/ard.json": { "get": { "summary": "ARD manifest (v0.91)", "operationId": "getArdManifest", "responses": { "200": { "description": "Agentic Resource Discovery manifest, same entries as ai-catalog.json with the MCP Server Card media type on the MCP entry", "content": { "application/json": {} } } } } },
     "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok" } } } },
-    "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "responses": { "200": { "description": "ok" }, "400": { "description": "invalid params, or more than 32 parts" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
+    "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with message.metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["message"], "properties": { "message": { "type": "object", "required": ["parts"], "properties": { "role": { "type": "string" }, "parts": { "type": "array", "maxItems": 32, "items": { "type": "object", "properties": { "kind": { "type": "string" }, "text": { "type": "string", "description": "Read for skill names when metadata.skillId is absent" } } } }, "metadata": { "type": "object", "properties": { "skillId": { "type": "string", "enum": ["services", "contact-info", "company-info"] } } } } } } }, "example": { "message": { "role": "user", "parts": [{ "kind": "text", "text": "What does turva.dev sell?" }], "metadata": { "skillId": "services" } } } } } }, "responses": { "200": { "description": "ok" }, "400": { "description": "invalid params, or more than 32 parts" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
     "/.well-known/agent-card.json": { "get": { "summary": "A2A Agent Card", "operationId": "getAgentCard", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/security.txt": { "get": { "summary": "Security", "operationId": "getSecurity", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/oauth-authorization-server": { "get": { "summary": "OAuth Authorization Server Metadata", "operationId": "getOauthDiscovery", "responses": { "200": { "description": "ok" } } } },
@@ -6489,7 +6494,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"bcqBRyykZ_ETvC7B4ZV0gP3ESuHQ5iRdKeNG9Lpm8k9WXQKy0ZpH39SQiZOE1JcSaEvsSlWhYRmFKSvrJ5mhDw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-LpH7H9KbulkB3sp6kxS10kFGAwkSAy_pH0TYGOwtDrV8USM42-LI2G0WAG0GuSSa1AkYV9V3uPbgtxHst7AAA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"i4dG_an1OQKoemqsLwPwLYuL_NRuTL79VNFmCnSmTeggQuOEkw5h3HjMJr-0zrIiGk7Wb3qVgCTnQsZVzQ9HDA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-LpH7H9KbulkB3sp6kxS10kFGAwkSAy_pH0TYGOwtDrV8USM42-LI2G0WAG0GuSSa1AkYV9V3uPbgtxHst7AAA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6504,7 +6509,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6513,7 +6518,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.3",
+    "version": "1.6.4",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -6619,7 +6624,7 @@ var AP2_MANIFEST = JSON.stringify({
       { "type": "email", "value": "mailto:info@turva.dev?subject=Quote%20request" },
       { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" }
     ],
-    "languages": ["en"],
+    "languages": ["en", "fi"],
     "typical_response_time": "P1D"
   }
 }, null, 2);
@@ -6651,7 +6656,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.186.0",
+  "version": "3.187.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6807,6 +6812,7 @@ var X402_MANIFEST = JSON.stringify({
   "network": "eip155:8453",
   "asset": "USDC",
   "scheme": "exact",
+  "priceNote": "The USDC amounts are the EUR list prices converted at 1.1404 USDC per EUR, the rate read on 2026-07-01, and they do not follow the market. The written quote sets the amount and the currency that are settled.",
   "accepts": [
     {
       "scheme": "exact",
@@ -6957,7 +6963,7 @@ var MPP_MANIFEST = JSON.stringify({
       { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" }
     ],
     "typical_response_time": "P1D",
-    "languages": ["en"]
+    "languages": ["en", "fi"]
   },
   "pricing": {
     "currency": "EUR",
@@ -7038,7 +7044,7 @@ function buildAgentAuthInstruction(action) {
     ],
     "engagement_model": "async-only",
     "typical_response_time": "P1D",
-    "languages": ["en"],
+    "languages": ["en", "fi"],
     "note": "turva.dev is a sole-proprietorship advisory practice. Agent registration, claim and revocation are handled out-of-band via email by design (async-only engagement model). This endpoint exists so machine clients can discover the contact pathway."
   }, null, 2);
 }
@@ -7079,7 +7085,7 @@ Use this skill to learn which services turva.dev offers, and which of them carry
 - **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought.
 - **Audit.** €4,300. Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, minimum 3 months. Async-only. Ongoing review, score tracking and a monthly AI-visibility delta across several AI platforms.
-- **Implementation.** €1,500 / day. Scoped per task. Edge workers, MCP servers, well-known manifests, JSON-LD.
+- **Implementation.** €1,500 / day. Scoped per task. Edge workers, well-known manifests, JSON-LD.
 - **Agent operations.** On request. The data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
 - **MCP server design.** On request. Read-only discovery tools and streamable HTTP transport.
 
@@ -7472,7 +7478,7 @@ function getCanonicalForPath(pathname) {
 var META_BY_PATH = {
   "/blog/my-own-site-is-my-proof-of-work": {
     title: "My own site is my proof of work · turva.dev",
-    description: "Why my site shipped 54 releases in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.",
+    description: "Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.",
     date: "2026-09-26",
     kind: "Build notes",
     image: "/og-my-own-site-is-my-proof-of-work.jpg",
@@ -8405,7 +8411,7 @@ async function serveA2AMessageSend(request) {
         skills: chosen,
         note: matched.length
           ? undefined
-          : "No skill was named, so every skill this card declares is returned. Name one with metadata.skillId."
+          : "No skill was named, so every skill this card declares is returned. Name one with message.metadata.skillId."
       }
     }
   });

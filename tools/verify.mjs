@@ -2122,6 +2122,10 @@ console.log('\nx402 amounts derive from facts.json eurUsdc (kierros 18, S6-1)');
           `the ${key} offer description states \u20ac${eur.toLocaleString('en-US')} / ${want} USDC`);
       }
     }
+    // The manifest names the rate and the day it was read (Tek-500), so a reader can tell a stale
+    // conversion from a price. Both come from facts.json, which keeps the prose one copy of the rate.
+    check(src.worker.text.includes(`converted at ${eu.rate} USDC per EUR, the rate read on ${eu.measuredAt}`),
+      `x402 manifest priceNote states the facts.json rate ${eu.rate} and its date ${eu.measuredAt}`);
   }
 }
 
