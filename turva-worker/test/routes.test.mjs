@@ -1064,7 +1064,24 @@ test("R16 S2-2 and C5-11: the OpenAPI document and the API catalog name /api/v1 
 test("R16 S4-1: no live brief address and no prospect name sits in the source", async () => {
   const src = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
   assert.ok(!/\/brief\/[a-z0-9]+-[a-z0-9]{13}\b/.test(src), "a real brief address (name-13 random chars) must not appear in the source");
-  assert.ok(!/Lecklen|Eduhouse/i.test(src), "prospect names stay out of the public source");
+  // The guarded names are held as SHA-256 digests of the lowercased name, so this public
+  // test does not itself carry the names it keeps out of the source. Every substring of
+  // a word with a guarded length is hashed, so a name glued to other text is caught too.
+  const guarded = new Map([
+    ["dca936b1bca2be5bc00de4e9db8343da4abefb2615b9c0d783d35962eb53d444", 7],
+    ["e6a5f064895df65519a7346f562dfabdbae880e5c0046fdfbe79c8b0a46ce658", 8],
+  ]);
+  const lengths = new Set(guarded.values());
+  const words = new Set(src.toLowerCase().match(/[a-z0-9]+/g));
+  const hits = [];
+  for (const w of words) {
+    for (const n of lengths) {
+      for (let i = 0; i + n <= w.length; i++) {
+        if (guarded.has(createHash("sha256").update(w.slice(i, i + n)).digest("hex"))) hits.push(w);
+      }
+    }
+  }
+  assert.equal(hits.length, 0, "prospect names stay out of the public source");
 });
 
 // One site order (2026-09-04, Tek-336). Round 17 found llms-full.txt opening with 22 blog
