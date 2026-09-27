@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.186.0 - fixes from report 34 of the hostile audit round of 2026-09-26, phase 4 item 2 (Tek-499): agentic-commerce-readiness says where its own commerce path stops before payment, agent-authentication names public read-only data as the case that needs no auth, llms-txt opens How clients find it with the answer and says why its own agent endpoints are plain addresses, and markdown, llms.txt and llms-full.txt responses carry Content-Language: en. MCP card version 1.6.3.
 // turva.dev worker v3.185.0 - guide corrections from the hostile audit round of 2026-09-26, phase 4 item 1 (Tek-498): fifteen claims that both independent readers of the guides flagged are narrowed to what their primary sources say, in seo-vs-agent-readiness, agent-readiness-gaps, markdown-for-agents, llms-txt, open-knowledge-format, response-headers-for-agents, json-ld-structured-data, agent-authentication, x402-agent-payments, agent-commerce-discovery, agentic-commerce-readiness and letting-agents-act-on-data, which also lists its UCP and AP2 sources (2026-09-27)
 // turva.dev worker v3.184.0 - fixes from the hostile audit round of 2026-09-26 (Tek-496): the pre-deploy and live signature checks require the exact four-path signed set instead of only a count; the llms.txt validator's blockquote-summary check reads up to three leading spaces the way CommonMark does, so an indented code block no longer passes as a summary; ACP checkout rejects an item quantity that is present and not exactly 1 and an explicit null item id, and its OpenAPI descriptions and the complete operation's response say so (422, not 200); www + mixed-case now redirects straight to the final lower-case path in one hop; the llms.txt validator trims before cutting the typed address to 300 characters; a cleaned-up brief address's redirect carries Cache-Control: private, no-store; OPTIONS on /security.txt, /ai.txt, /api-catalog and /blog/feed.xml now preflights like their .well-known twins; static assets get a public/_headers file with the site's security headers; the character-entities table names its package, version and license (THIRD-PARTY-NOTICES.md added) and the footer's Mastodon icon names Boxicons 2.0.8; package.json states license MIT; the README's /tools parity example states the current pass instead of an old fail.
 // turva.dev worker v3.183.0 - the llms.txt validator reads the format the way CommonMark does, and the hosted Markdown parity check runs markdown-parity-check 0.2.13 (2026-09-27, Tek-496): an H1 with two spaces or a tab after the marker passes and one with no text fails, a link inside code, behind an escaped bracket or in an image is no link while an ordered list, a tab after the marker, a title and an angle target are, a heading before the first H2 or a second H1 warns, a link target has to parse as an http or https URL, the media type is compared whole, localhost.localdomain is refused, the discovery targets are masked and cleared of control characters and a head read in part says so, and the validator page and /legal say that the Worker logs hold the address entered and that Cloudflare passes the visitor's IP address to a checked site outside Cloudflare.
@@ -4695,13 +4696,13 @@ llms.txt is a plain text file that tells AI agents and language models what a si
 
 ## File structure
 
-The file opens with the site name as an H1, then a short summary as a blockquote, then the key pages and resources as markdown links grouped under H2 headings. Only the H1 is required. Everything after it, the summary, the headings, and the grouped links, is recommended rather than mandatory, and a minimal file with just the name is still a valid one. Some sites also publish llms-full.txt, a single file that bundles the full text of the site so an agent can read everything in one request instead of crawling many pages.
+The file opens with the site name as an H1, then a short summary as a blockquote, then the key pages and resources as markdown links grouped under H2 headings. Only the H1 is required. Everything after it, the summary, the headings, and the grouped links, is recommended rather than mandatory, and a minimal file with just the name is still a valid one. Some sites also publish llms-full.txt, a single file that bundles the full text of the site so an agent can read everything in one request instead of crawling many pages. The llms.txt of turva.dev lists its agent endpoints as plain addresses rather than links, because two of them answer a plain GET with something other than 200 by design, the MCP endpoint with 405 and the x402 endpoint with 402, and a link checker reads that as a broken link.
 
 The proposal reached v2 in August 2026 and the file format did not change. What changed is how an agent finds the machine-readable forms. A page now names them with two standard link relations, rel="alternate" type="text/markdown" for the markdown version of the page and rel="describedby" for the llms.txt that covers it, given either as HTML link elements or as an HTTP Link header. v2 also accepts both address forms for a markdown version, page.html.md and page.md, and it drops the context expansion tooling that v1 described, so the Optional section is a convention for secondary links and carries no mechanical meaning any more.
 
 ## How clients find it
 
-The reason it matters is cost and clarity. A normal HTML page carries navigation, scripts, and styling that an agent has to wade through, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a fraction of the HTML, which lowers the chance that a long page runs past a reading tool's content limit and arrives cut short. turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. Whether a client fetches any of it depends on the client. A clear llms.txt serves the clients that read it, and no assistant is obliged to be one of them.
+A client finds llms.txt at the root of the site, /llms.txt, or through the rel="describedby" link a page names, and it finds the markdown version of a page through rel="alternate" or by asking for text/markdown. The file is worth publishing for cost and clarity. A normal HTML page carries navigation, scripts, and styling that an agent has to wade through, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a fraction of the HTML, which lowers the chance that a long page runs past a reading tool's content limit and arrives cut short. turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. Whether a client fetches any of it depends on the client. A clear llms.txt serves the clients that read it, and no assistant is obliged to be one of them.
 
 ## What it does not replace
 
@@ -5191,7 +5192,7 @@ A short auth description, sometimes published as an auth.md, gives an agent a hu
 
 ## Why scoped, discoverable auth matters
 
-The reason this matters is trust and blast radius. A site that exposes capability without scoped, discoverable auth either stays closed to agents or invites unsafe workarounds. Proper discovery lets an agent request the least access it needs, and lets the site grant capability without handing over a password the agent should never see. Together with OAuth discovery it answers the agent's first question about any action, which is how to get permission to do it safely.
+Scoped, discoverable auth keeps trust and blast radius small. A site that lets an agent act for a user or read private data without it either stays closed to agents or invites unsafe workarounds. Public read-only data is the exception and needs no auth at all, which is how the turva.dev MCP server answers. Proper discovery lets an agent request the least access it needs, and lets the site grant capability without handing over a password the agent should never see. Together with OAuth discovery it answers the agent's first question about any action, which is how to get permission to do it safely.
 
 turva.dev publishes OAuth discovery, a protected resource description and an agent registration entry point, and the audit never requests production credentials, and access for purchased implementation is agreed separately and limited to the work. For an audit of a site's authentication surface, contact info@turva.dev.
 
@@ -5203,7 +5204,7 @@ An agent proves who it is through discoverable standards such as OAuth discovery
 
 **Why does scoped, discoverable auth matter?**
 
-A site that exposes capability without scoped auth either stays closed to agents or invites unsafe workarounds. Proper discovery lets an agent request the least access it needs without handling a password it should never see.
+A site that lets an agent act for a user or read private data without scoped auth either stays closed to agents or invites unsafe workarounds. Public read-only data needs no auth at all. Proper discovery lets an agent request the least access it needs without handling a password it should never see.
 
 **What does an agent need to discover before it can authenticate?**
 
@@ -5633,7 +5634,7 @@ Most catalogs lose the agent before checkout. A price that lives only in rendere
 
 ## Readiness is testable
 
-Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built and verified its own agent commerce surface this way, across A2A, AP2, ACP and x402, checked by an independent scanner.
+Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built its own agent commerce surface this way, across A2A, AP2, ACP and x402, and an independent scanner checks its discovery files. The path stops on purpose before payment: the ACP checkout answers not_ready_for_payment and the x402 endpoint answers 402 whether or not a payment is sent, because turva.dev sells on a written quote. The test shows where the path stops. It does not show a payment accepted or settled automatically.
 
 For a Shopify store, the [Shopify agent storefront check](/shopify-agent-storefront-check) reads selected products across the browser WebMCP tools, the Storefront and UCP MCP and the Agentic Catalog, records the buyer journey up to the stop before payment, and delivers a correction plan. For a website or API, the [audit](/agent-readiness-audit) covers the commerce surfaces among the rest.
 
@@ -6378,7 +6379,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.185.0",
+    "version": "3.186.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6488,7 +6489,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"QRpOoKynnDjRZxkqYAx4OR1aSwHEfoOJHir11GFL8c1pvBZ3ZC62ZUwMrLoJpyfzpFkqKPfotqjCnAoFyACVAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-LpH7H9KbulkB3sp6kxS10kFGAwkSAy_pH0TYGOwtDrV8USM42-LI2G0WAG0GuSSa1AkYV9V3uPbgtxHst7AAA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"bcqBRyykZ_ETvC7B4ZV0gP3ESuHQ5iRdKeNG9Lpm8k9WXQKy0ZpH39SQiZOE1JcSaEvsSlWhYRmFKSvrJ5mhDw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-LpH7H9KbulkB3sp6kxS10kFGAwkSAy_pH0TYGOwtDrV8USM42-LI2G0WAG0GuSSa1AkYV9V3uPbgtxHst7AAA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6503,7 +6504,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6512,7 +6513,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.2",
+    "version": "1.6.3",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -6650,7 +6651,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.185.0",
+  "version": "3.186.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8409,12 +8410,15 @@ async function serveA2AMessageSend(request) {
     }
   });
 }
-function serveStatic(body, contentType, kind) {
+// lang names the language of a text body. Markdown is always English prose here, and the
+// two llms files pass "en" themselves; tokens, keys and JSON carry no language header.
+function serveStatic(body, contentType, kind, lang) {
   const headers = new Headers({
     "content-type": contentType,
     "cache-control": "public, max-age=3600",
     "access-control-allow-origin": "*"
   });
+  if (lang || contentType.startsWith("text/markdown")) headers.set("content-language", lang || "en");
   appendAgentLinks(headers);
   applySecurityHeaders(headers, kind || "agent-api");
   return new Response(body, { status: 200, headers });
@@ -8502,6 +8506,7 @@ function serveMarkdown(body, canonicalUrl) {
     "cache-control": "public, max-age=3600",
     "access-control-allow-origin": "*",
     "vary": "Accept",
+    "content-language": "en",
     "x-markdown-words": String(tokens)
   });
   if (canonicalUrl) {
@@ -13881,8 +13886,8 @@ async function handleRequest(request, env) {
   }
   if (pathLower === "/sitemap.xml") return serveStatic(getSitemapXml(), "application/xml; charset=utf-8", "agent-api");
   if (pathLower === "/blog/feed.xml") return serveStatic(getBlogFeedXml(), "application/rss+xml; charset=utf-8", "agent-api");
-  if (pathLower === "/llms.txt") return serveStatic(LLMS_TXT, "text/plain; charset=utf-8", "agent-api");
-  if (pathLower === "/llms-full.txt") return serveStatic(getLlmsFullTxt(), "text/plain; charset=utf-8", "agent-api");
+  if (pathLower === "/llms.txt") return serveStatic(LLMS_TXT, "text/plain; charset=utf-8", "agent-api", "en");
+  if (pathLower === "/llms-full.txt") return serveStatic(getLlmsFullTxt(), "text/plain; charset=utf-8", "agent-api", "en");
   if (pathLower === "/.well-known/ai.txt" || pathLower === "/ai.txt") {
     return serveStatic(AI_TXT, "text/plain; charset=utf-8", "agent-api");
   }
