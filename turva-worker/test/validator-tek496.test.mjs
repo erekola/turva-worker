@@ -45,6 +45,20 @@ test("Tek-496, H1: whitespace after the marker is allowed, a heading with no tex
   assert.equal(status(await check(base.replace("# Example", "#Example")), "h1-title"), "fail");
 });
 
+// F08 (Tek-496 audit round): the summary check used to trim the line before testing it, which
+// erases the difference between a blockquote and an indented code block. Four spaces or a tab
+// makes the line a code block under CommonMark, not a summary, and up to three spaces is still
+// a blockquote, the same boundary the H1 check above already allows.
+test("Tek-496, summary: an indented code block is not a blockquote summary", async () => {
+  for (const line of ["    > this is an indented code block", "\t> tab-indented, also a code block"]) {
+    const body = await check(base.replace("> Summary.", line));
+    assert.equal(status(body, "summary"), "warn", line);
+  }
+  for (const line of ["> Summary.", "   > three spaces is still a blockquote"]) {
+    assert.equal(status(await check(base.replace("> Summary.", line)), "summary"), "pass", line);
+  }
+});
+
 test("Tek-496, links: code, an escaped bracket and an image are not links", async () => {
   for (const line of ["- `[Guide](https://example.com/guide)`", "- " + BS + "[Guide](https://example.com/guide)", "- ![Guide](https://example.com/guide)", "- ``[Guide](https://example.com/guide)``"]) {
     const body = await check(base.replace("- [Guide](https://example.com/guide)", line));

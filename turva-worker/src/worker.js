@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.184.0 - fixes from the hostile audit round of 2026-09-26 (Tek-496): the pre-deploy and live signature checks require the exact four-path signed set instead of only a count; the llms.txt validator's blockquote-summary check reads up to three leading spaces the way CommonMark does, so an indented code block no longer passes as a summary; ACP checkout rejects an item quantity that is present and not exactly 1 and an explicit null item id, and its OpenAPI descriptions and the complete operation's response say so (422, not 200); www + mixed-case now redirects straight to the final lower-case path in one hop; the llms.txt validator trims before cutting the typed address to 300 characters; a cleaned-up brief address's redirect carries Cache-Control: private, no-store; OPTIONS on /security.txt, /ai.txt, /api-catalog and /blog/feed.xml now preflights like their .well-known twins; static assets get a public/_headers file with the site's security headers; the character-entities table names its package, version and license (THIRD-PARTY-NOTICES.md added) and the footer's Mastodon icon names Boxicons 2.0.8; package.json states license MIT; the README's /tools parity example states the current pass instead of an old fail.
 // turva.dev worker v3.183.0 - the llms.txt validator reads the format the way CommonMark does, and the hosted Markdown parity check runs markdown-parity-check 0.2.13 (2026-09-27, Tek-496): an H1 with two spaces or a tab after the marker passes and one with no text fails, a link inside code, behind an escaped bracket or in an image is no link while an ordered list, a tab after the marker, a title and an angle target are, a heading before the first H2 or a second H1 warns, a link target has to parse as an http or https URL, the media type is compared whole, localhost.localdomain is refused, the discovery targets are masked and cleared of control characters and a head read in part says so, and the validator page and /legal say that the Worker logs hold the address entered and that Cloudflare passes the visitor's IP address to a checked site outside Cloudflare.
 // turva.dev worker v3.182.0 - the hosted Markdown parity check runs markdown-parity-check 0.2.12 (2026-09-27): URL secrets that GFM links on its own, query values holding parentheses or quotes and special schemes without slashes are masked in the report, numbers and links compare in linear time, and IPv6 blocks the IANA registry marks not globally reachable are refused by the package address policy. Every canonical page still passes its own check. Nothing a page says changed.
 // turva.dev worker v3.181.1 - a paragraph that follows a group of labelled paragraphs gets the same space above it as any other paragraph (2026-09-27): on /legal the sentence after the AI tools entry began directly under it, because the rule that spaces a paragraph after a .dl group existed only inside a card. Nothing a page says changed.
@@ -6374,7 +6375,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.183.0",
+    "version": "3.184.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6461,9 +6462,9 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok" } } } },
     "/api/v1": { "get": { "summary": "Agent endpoint index", "operationId": "getApiIndex", "description": "Free JSON index of every agent surface this site serves. No payment, no authentication.", "responses": { "200": { "description": "ok" } } } },
-    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id }] } with id one of audit, advisory, implementation, shopify. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session" }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, or an unknown item id" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
+    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id, quantity }] } with id one of audit, advisory, implementation, shopify (omit id for the default service, but id must not be null) and quantity, if present, exactly 1. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session" }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, an item id is null, an item quantity is present and not exactly 1, or an unknown item id" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
     "/api/acp/checkout_sessions/{session_id}": { "get": { "summary": "Retrieve an ACP checkout session", "operationId": "acpGetCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "session" }, "404": { "description": "unknown session id" }, "405": { "description": "GET only" } } } },
-    "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Always answers intervention_required: scope is agreed in writing before payment, no API completes it.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "intervention_required" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } },
+    "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Scope is agreed in writing before payment; no API completes it. The response is 422 intervention_required, never 200.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "422": { "description": "intervention_required: human confirmation in writing is required before this session can complete" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } },
     "/api/acp/checkout_sessions/{session_id}/cancel": { "post": { "summary": "Cancel an ACP checkout session", "operationId": "acpCancelCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "canceled" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } }
   }
 }, null, 2);
@@ -6484,7 +6485,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oePJ7PJxhab2T0Q8N4FUo9F_FHpWiyuNHQkxF-ut2MuU51sgFtLWdj2AjOILodtjq2OuJAYM8nF1UIq8CDJPDA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-LpH7H9KbulkB3sp6kxS10kFGAwkSAy_pH0TYGOwtDrV8USM42-LI2G0WAG0GuSSa1AkYV9V3uPbgtxHst7AAA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"QRpOoKynnDjRZxkqYAx4OR1aSwHEfoOJHir11GFL8c1pvBZ3ZC62ZUwMrLoJpyfzpFkqKPfotqjCnAoFyACVAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-LpH7H9KbulkB3sp6kxS10kFGAwkSAy_pH0TYGOwtDrV8USM42-LI2G0WAG0GuSSa1AkYV9V3uPbgtxHst7AAA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6499,7 +6500,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6508,7 +6509,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.1",
+    "version": "1.6.2",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -6646,7 +6647,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.183.0",
+  "version": "3.184.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8139,6 +8140,21 @@ function redirectTo(location, status, pathLower, kind) {
   return new Response(null, { status: status, headers: headers });
 }
 
+// Round 19, P1 (Erik 2026-09-23), reused by the www redirect since HTTP-02 (Tek-496 audit
+// round): a page or its markdown twin asked for in another letter case answers 301 to the
+// lower-case path, as every agent surface here already answers any case. Only a path that
+// lower-cases to a served page moves, so any other path keeps its honest 404, and a brief
+// keeps its exact address, because its id is lower case by construction. Returns null when
+// no case redirect applies, or { lowerPath, twin } when it does.
+function caseNormalizedTarget(pathname, pathLower) {
+  if (pathname === pathLower || pathLower.startsWith("/brief/")) return null;
+  const lowerPath = pathLower.length > 1 && pathLower.endsWith("/") ? pathLower.slice(0, -1) : pathLower;
+  const twinBase = lowerPath.endsWith(".html.md") ? lowerPath.slice(0, -8) : lowerPath.endsWith(".md") ? lowerPath.slice(0, -3) : null;
+  const twin = lowerPath === "/index.md" || lowerPath === "/index.html.md" || (twinBase !== null && !!PAGE_MARKDOWN[twinBase]);
+  if (PAGE_MARKDOWN[lowerPath] || twin) return { lowerPath: lowerPath, twin: twin };
+  return null;
+}
+
 // An entity tag on every cacheable 200, so an agent or a crawler that already holds the bytes can
 // ask again with If-None-Match and get 304 without the body (round 19, P1-P1). The tag is the
 // SHA-256 of the exact body, so it moves when one byte moves, and it is weak, because Cloudflare
@@ -9496,6 +9512,9 @@ var FAQ_CSS = `.faq .q{color:#F2F4F3;font-weight:700;font-size:1rem;margin:1.15r
 // A function, not a constant: on Workers the clock in global scope reads the epoch, so a
 // year computed while the module loads served "1970" live (2026-09-02). Read the clock per
 // request, where it is real.
+// E03 (Tek-496 audit round): the Mastodon icon path in the footer HTML below matches Boxicons
+// 2.0.8's bxl-mastodon.svg (three numeric differences). That version's own README states its
+// SVG license as CC BY 4.0 and also states that attribution is not required.
 function footerHtml(kieli) { const fi = kieli === "fi"; return `<footer class="tv-foot">
   <div class="foot-brand">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle><path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
@@ -11273,7 +11292,7 @@ function validateLlmsTxt(f) {
     add("h1-title", "fail", "Starts with an H1 title", "the first non-empty line should be a markdown H1 (# Site name)");
   }
   const afterH1 = lines.slice(firstIdx + 1).find((l) => l.trim() !== "") || "";
-  if (afterH1.trim().startsWith("> ")) {
+  if (/^ {0,3}> /.test(afterH1)) {
     add("summary", "pass", "Blockquote summary after the title", JSON.stringify(cut(afterH1.trim(), 80)));
   } else {
     // A blockquote further down, before the first H2, is a summary in the wrong place and not a
@@ -11499,6 +11518,9 @@ var C1_REPLACEMENTS = {
 // also decodes without its ";", "name=hex" one that needs it, and several code points are
 // separated by ",". Generated 2026-09-12 from the character-entities package, with every value
 // and every legacy name checked against the decoder of the entities package.
+// E01 (Tek-496 audit round): character-entities 2.0.2, https://github.com/wooorm/character-entities,
+// MIT, Copyright (c) 2015 Titus Wormer <tituswormer@gmail.com>. Full MIT text in
+// THIRD-PARTY-NOTICES.md at the repo root.
 var NAMED_REFERENCE_DATA =
   "AElig!c6 AMP!26 Aacute!c1 Abreve=102 Acirc!c2 Acy=410 Afr=1d504 Agrave!c0 Alpha=391 Amacr=100 " +
   "And=2a53 Aogon=104 Aopf=1d538 ApplyFunction=2061 Aring!c5 Ascr=1d49c Assign=2254 Atilde!c3 " +
@@ -12248,7 +12270,11 @@ function summarizeChecks(checks) {
 async function serveLlmsValidatorHtml(request, canonicalUrl) {
   const reqUrl = new URL(request.url);
   const typed = reqUrl.searchParams.get("url") || "";
-  const raw = cut(typed, 300);
+  // 18-F02 (Tek-496 audit round): trim before cutting to 300, not after. A long run of
+  // leading whitespace used to fill the whole 300-unit window and be discarded only by
+  // normalizeHostInput's own trim, which happens after the cut, so it could shift a
+  // different host into the checked window than the one actually typed.
+  const raw = cut(typed.trim(), 300);
   let result = null;
   let error = null;
   if (raw) {
@@ -13195,6 +13221,13 @@ async function serveAcpCheckout(request, pathLower) {
         if (!it || typeof it !== "object" || Array.isArray(it)) {
           return new Response(JSON.stringify({ "type": "invalid_request", "code": "invalid_item", "message": "Each entry in items must be an object with an id." }, null, 2), { status: 400, headers: acpHeaders() });
         }
+        // F09 (Tek-496 audit round): one checkout session is one unit of one service.
+        // An absent quantity keeps that default; a quantity present and not exactly 1
+        // used to be accepted and silently rewritten to 1, which answers a buyer's
+        // "ten" or "minus one" as if it meant "one" instead of rejecting the request.
+        if (it.quantity !== undefined && it.quantity !== 1) {
+          return new Response(JSON.stringify({ "type": "invalid_request", "code": "invalid_quantity", "message": "quantity must be exactly 1 when present. One checkout session buys one unit of one service." }, null, 2), { status: 400, headers: acpHeaders() });
+        }
       }
       if (reqBody.items.length > 1) {
         return new Response(JSON.stringify({ "type": "invalid_request", "code": "too_many_items", "message": "One service per checkout session. Send a single item and create another session for the second service." }, null, 2), { status: 400, headers: acpHeaders() });
@@ -13214,7 +13247,13 @@ async function serveAcpCheckout(request, pathLower) {
     const rawItemId = Array.isArray(reqBody.items) && reqBody.items[0]
       ? reqBody.items[0].id
       : undefined;
-    if (rawItemId !== undefined && rawItemId !== null) {
+    // F09 (Tek-496 audit round): an explicit id: null is a distinct, invalid input,
+    // not the same as an absent id. Absent keeps the "audit" default below; null is
+    // rejected rather than silently treated as if nothing had been sent.
+    if (rawItemId === null) {
+      return new Response(JSON.stringify({ "type": "invalid_request", "code": "invalid_item", "message": "id must not be null. Omit id to use the default service, or provide a valid item id." }, null, 2), { status: 400, headers: acpHeaders() });
+    }
+    if (rawItemId !== undefined) {
       serviceId = typeof rawItemId === "string" ? rawItemId.toLowerCase() : "";
     }
     if (!["audit", "advisory", "implementation", "shopify"].includes(serviceId)) {
@@ -13454,6 +13493,14 @@ async function handleRequest(request, env) {
   }
 
   if (hostname === "www.turva.dev") {
+    // HTTP-02 (Tek-496 audit round): fold the case-normalization hop into this one when it
+    // would fire on the apex anyway, so www + mixed case reaches the final page in one redirect.
+    const wwwCaseTarget = caseNormalizedTarget(pathname, pathLower);
+    if (wwwCaseTarget) {
+      const moved = redirectTo("https://turva.dev" + wwwCaseTarget.lowerPath + url.search, 301, pathLower, wwwCaseTarget.twin ? "agent-api" : null);
+      if (wwwCaseTarget.twin) moved.headers.set("access-control-allow-origin", "*");
+      return moved;
+    }
     return redirectTo("https://turva.dev" + pathname + url.search, 301, pathLower);
   }
 
@@ -13466,7 +13513,10 @@ async function handleRequest(request, env) {
   // agent-api JSON and text surface now answers 204. The fediverse aliases stay out because
   // they redirect to social.turva.dev, and /v1/message:send keeps its own POST-only preflight.
   const fediPath = pathLower === "/.well-known/host-meta" || pathLower === "/.well-known/webfinger" || pathLower === "/.well-known/nodeinfo";
-  const preflightPath = pathLower === "/x402" || pathLower === "/x402/" || pathLower === "/api" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token" || pathLower === "/openapi.json" || pathLower === "/llms.txt" || pathLower === "/llms-full.txt" || pathLower === "/auth.md" || pathLower === "/robots.txt" || pathLower === "/sitemap.xml" || pathLower === "/markdown-parity-check" || (pathLower.startsWith("/.well-known/") && !fediPath);
+  // F16 (Tek-496 audit round): these four root aliases serve agent-api JSON/text with
+  // ACAO * on GET (see their .well-known twins a few lines below), so their OPTIONS must
+  // preflight the same way instead of falling through to the generic 204 with no CORS headers.
+  const preflightPath = pathLower === "/x402" || pathLower === "/x402/" || pathLower === "/api" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token" || pathLower === "/openapi.json" || pathLower === "/llms.txt" || pathLower === "/llms-full.txt" || pathLower === "/auth.md" || pathLower === "/robots.txt" || pathLower === "/sitemap.xml" || pathLower === "/markdown-parity-check" || pathLower === "/security.txt" || pathLower === "/ai.txt" || pathLower === "/api-catalog" || pathLower === "/blog/feed.xml" || (pathLower.startsWith("/.well-known/") && !fediPath);
   // METHOD GATE, round 16 (S1-1 to S1-4, C1-2, C5-20, C7-2, measured 2026-09-03). GET and
   // OPTIONS are allowed everywhere; HEAD arrives here as GET (worker_default). POST is
   // allowed only where a handler or the OpenAPI document knows it: the A2A transport, the
@@ -13549,15 +13599,13 @@ async function handleRequest(request, env) {
   // answers 301 to the lower-case path, as every agent surface here already answers any case.
   // Only a path that lower-cases to a served page moves, so any other path keeps its honest 404,
   // and a brief keeps its exact address, because its id is lower case by construction.
-  if (pathname !== pathLower && !pathLower.startsWith("/brief/")) {
-    const lowerPath = pathLower.length > 1 && pathLower.endsWith("/") ? pathLower.slice(0, -1) : pathLower;
-    const twinBase = lowerPath.endsWith(".html.md") ? lowerPath.slice(0, -8) : lowerPath.endsWith(".md") ? lowerPath.slice(0, -3) : null;
-    const twin = lowerPath === "/index.md" || lowerPath === "/index.html.md" || (twinBase !== null && !!PAGE_MARKDOWN[twinBase]);
-    if (PAGE_MARKDOWN[lowerPath] || twin) {
+  {
+    const caseTarget = caseNormalizedTarget(pathname, pathLower);
+    if (caseTarget) {
       // A browser agent's cross-origin fetch checks every hop, so a twin's redirect carries the
       // same agent-api headers and origin grant as the twin itself (round 19 review).
-      const moved = redirectTo("https://turva.dev" + lowerPath + url.search, 301, pathLower, twin ? "agent-api" : null);
-      if (twin) moved.headers.set("access-control-allow-origin", "*");
+      const moved = redirectTo("https://turva.dev" + caseTarget.lowerPath + url.search, 301, pathLower, caseTarget.twin ? "agent-api" : null);
+      if (caseTarget.twin) moved.headers.set("access-control-allow-origin", "*");
       return moved;
     }
   }
@@ -13611,6 +13659,9 @@ async function handleRequest(request, env) {
   if (briefSiivous) {
     var briefSiivousHeaders = new Headers({ Location: "https://turva.dev" + briefSiivous + url.search, "X-Robots-Tag": "noindex, nofollow" });
     applySecurityHeaders(briefSiivousHeaders, "default");
+    // 18-F03 (Tek-496 audit round): a brief's access token can travel in this path, so this
+    // redirect must never be cached, matching the actual brief's own Cache-Control below.
+    briefSiivousHeaders.set("Cache-Control", "private, no-store");
     return new Response(null, { status: 301, headers: briefSiivousHeaders });
   }
 

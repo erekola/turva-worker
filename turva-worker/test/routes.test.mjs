@@ -619,6 +619,9 @@ test("brief: loppuvalimerkki ohjataan pois, ei 404, Tek-323", async () => {
     assert.equal(r.status, 301, polku + " ohjataan");
     assert.equal(r.headers.get("location"), "https://turva.dev" + kohde, polku + " ohjautuu oikeaan");
     assert.match(r.headers.get("x-robots-tag") || "", /noindex/, polku + " ohjaus kantaa noindexin");
+    // 18-F03 (Tek-496 audit round): an access token can travel in this path, so the cleanup
+    // redirect must never be cached.
+    assert.equal(r.headers.get("cache-control"), "private, no-store", polku + " ohjaus ei mene valimuistiin");
   }
 });
 
@@ -940,7 +943,7 @@ test("R15 P4-2: OPTIONS answers 204 with preflight headers on every agent-api su
   // no access-control-allow-methods header. The preflight branch in src/worker.js now
   // covers them; /v1/message:send keeps its own POST-only preflight and the fediverse
   // aliases keep redirecting.
-  for (const path of ["/api", "/openapi.json", "/llms.txt", "/llms-full.txt", "/auth.md", "/robots.txt", "/.well-known/ai-plugin.json", "/.well-known/mcp/server-card.json", "/.well-known/agent-card.json", "/.well-known/x402", "/.well-known/api-catalog", "/x402", "/api/v1", "/oauth/token", "/oauth/authorize"]) {
+  for (const path of ["/api", "/openapi.json", "/llms.txt", "/llms-full.txt", "/auth.md", "/robots.txt", "/.well-known/ai-plugin.json", "/.well-known/mcp/server-card.json", "/.well-known/agent-card.json", "/.well-known/x402", "/.well-known/api-catalog", "/x402", "/api/v1", "/oauth/token", "/oauth/authorize", "/security.txt", "/ai.txt", "/api-catalog", "/blog/feed.xml"]) {
     const r = await worker.fetch(new Request("https://turva.dev" + path, { method: "OPTIONS" }), env, {});
     assert.equal(r.status, 204, path + " must answer 204 to OPTIONS");
     // Round 16 (S1-4): the preflight advertises the methods the route honours, so a GET-only
@@ -1162,6 +1165,43 @@ test("A10-2: the ACP checkout reads every item, not only the first", async () =>
   assert.equal((await json(one)).line_items[0].item.id, "shopify");
 });
 
+// F09 (Tek-496 audit round): one checkout session buys one unit of one service. A quantity
+// present and not exactly 1 used to be silently rewritten to 1, and an explicit id: null used
+// to be treated the same as an absent id (the default "audit" service), instead of being
+// rejected as the distinct invalid input it is.
+test("F09: ACP checkout rejects a quantity other than 1 and an explicit null id", async () => {
+  const post = (body) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
+  for (const body of ['{"items":[{"id":"implementation","quantity":10}]}', '{"items":[{"id":"shopify","quantity":-1}]}', '{"items":[{"id":"audit","quantity":0}]}', '{"items":[{"id":"audit","quantity":1.5}]}']) {
+    const r = await post(body);
+    assert.equal(r.status, 400, body + " must be refused, not rewritten to quantity 1");
+    assert.equal((await json(r)).code, "invalid_quantity");
+  }
+  const nullId = await post('{"items":[{"id":null}]}');
+  assert.equal(nullId.status, 400, "an explicit id: null must not fall back to the default service");
+  assert.equal((await json(nullId)).code, "invalid_item");
+  const absentId = await post('{"items":[{"quantity":1}]}');
+  assert.equal(absentId.status, 201, "an absent id still keeps the default service");
+  assert.equal((await json(absentId)).line_items[0].item.id, "audit");
+  const okQty = await post('{"items":[{"id":"audit","quantity":1}]}');
+  assert.equal(okQty.status, 201, "an explicit quantity of exactly 1 is unchanged");
+});
+
+// F10 (Tek-496 audit round): the OpenAPI document declared 200 intervention_required for the
+// complete operation while the handler always answered 422. The document now names the real
+// status and shape.
+test("F10: ACP checkout complete answers 422, matching the OpenAPI document", async () => {
+  const create = await worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body: '{"items":[{"id":"audit"}]}' }), env, {});
+  const session = await json(create);
+  const complete = await worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions/" + session.id + "/complete", { method: "POST" }), env, {});
+  assert.equal(complete.status, 422, "complete always answers 422, never 200");
+  assert.equal((await json(complete)).code, "intervention_required");
+  const openapi = await worker.fetch(new Request("https://turva.dev/openapi.json"), env, {});
+  const spec = await json(openapi);
+  const responses = spec.paths["/api/acp/checkout_sessions/{session_id}/complete"].post.responses;
+  assert.ok(responses["422"], "the OpenAPI document declares the 422 response");
+  assert.ok(!responses["200"], "the OpenAPI document no longer declares a misleading 200");
+});
+
 // The hosted validator and the npm package are one implementation in two files and they
 // answer identically by rule. These are the same cases the package's own suite runs
 // (llms-txt-validator/test/validate.test.mjs, Astra 2026-09-10 F1).
@@ -1277,6 +1317,14 @@ const streamOf = (text, chunk = 4096) => {
 const postBody = (path, body, extraEnv) => worker.fetch(new Request("https://turva.dev" + path, typeof body === "string"
   ? { method: "POST", headers: { "content-type": "application/json" }, body }
   : { method: "POST", headers: { "content-type": "application/json" }, body, duplex: "half" }), extraEnv || env, {});
+// F13 (Tek-496 audit round): postBody above never sets Content-Length itself, so a test that
+// claims to cover "with and without Content-Length" was really covering "without" twice. This
+// variant sets the header explicitly, either to the real byte length or to a deliberately too
+// small one, so the byte-cap enforcement is proven against a header instead of only against a
+// bodyless Request object.
+const postBodyWithLength = (path, body, contentLength, extraEnv) => worker.fetch(new Request("https://turva.dev" + path, {
+  method: "POST", headers: { "content-type": "application/json", "content-length": String(contentLength) }, body
+}), extraEnv || env, {});
 
 test("F05: A2A and ACP answer 413 to a body over 16 KB, with and without Content-Length", async () => {
   const bodies = {
@@ -1299,6 +1347,23 @@ test("F05: A2A and ACP answer 413 to a body over 16 KB, with and without Content
     assert.equal(at.status, path === "/v1/message:send" ? 200 : 201, path + " at the limit");
     const over = await postBody(path, pad(16385));
     assert.equal(over.status, 413, path + " one byte over");
+  }
+});
+
+test("F13: the byte cap is enforced against the actual stream, not the declared Content-Length", async () => {
+  const bodies = {
+    "/v1/message:send": (n) => JSON.stringify({ message: { parts: [{ kind: "text", text: "x".repeat(n) }] } }),
+    "/api/acp/checkout_sessions": (n) => JSON.stringify({ items: [{ id: "audit" }], padding: "x".repeat(n) })
+  };
+  for (const [path, make] of Object.entries(bodies)) {
+    const huge = make(1024 * 1024);
+    // A correct Content-Length still hits the cap.
+    const withCorrectLength = await postBodyWithLength(path, huge, huge.length);
+    assert.equal(withCorrectLength.status, 413, path + " with a correct Content-Length");
+    // A deliberately too-small Content-Length (as if the client undercounted or lied) must not
+    // let an oversized body slip past the cap: the check reads and counts the real stream.
+    const withTooSmallLength = await postBodyWithLength(path, huge, 10);
+    assert.equal(withTooSmallLength.status, 413, path + " with a too-small Content-Length");
   }
 });
 

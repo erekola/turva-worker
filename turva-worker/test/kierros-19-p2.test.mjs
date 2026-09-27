@@ -86,6 +86,21 @@ test("P1: another letter case of a served page or its .md twin answers 301 to th
   assert.equal(withQuery.headers.get("location"), "https://turva.dev/services?ref=x&y=1", "the query string must survive the redirect");
 });
 
+// HTTP-02 (Tek-496 audit round): www plus mixed case used to redirect to the apex with the
+// original case, and only the apex's own case-normalization branch then redirected a second
+// time to the lower-case path. Both hops now land on the same final page, but in one redirect.
+test("HTTP-02: www plus mixed case redirects straight to the final lower-case path in one hop", async () => {
+  const wwwCase = await worker.fetch(new Request("https://www.turva.dev/Services?ref=x", { method: "GET" }), env);
+  assert.equal(wwwCase.status, 301);
+  assert.equal(wwwCase.headers.get("location"), "https://turva.dev/services?ref=x", "one hop straight to the lower-case apex path, query string kept");
+  const wwwSame = await worker.fetch(new Request("https://www.turva.dev/services", { method: "GET" }), env);
+  assert.equal(wwwSame.status, 301);
+  assert.equal(wwwSame.headers.get("location"), "https://turva.dev/services", "same-case www still redirects to the apex, unchanged");
+  const wwwUnknown = await worker.fetch(new Request("https://www.turva.dev/Nope-Upper", { method: "GET" }), env);
+  assert.equal(wwwUnknown.status, 301);
+  assert.equal(wwwUnknown.headers.get("location"), "https://turva.dev/Nope-Upper", "an unrecognized path keeps its original case, same final destination as the old two-hop hand-off");
+});
+
 // Passes on both builds, safety net: an outright-unknown path was always a plain 404, and a
 // brief's own /brief/ prefix check is case-sensitive on both builds too, for different reasons
 // (v3.164.0 has no case-redirect at all; this build's case-redirect explicitly excludes /brief/).
@@ -143,6 +158,25 @@ test("P2: a JSON parity POST is an agent-api resource (ACAO *, CORP cross-origin
   assert.equal(formLimited.headers.get("cache-control"), "no-store");
 });
 
+// ---- 18-F02: leading whitespace must not shift a different host into the checked window ----
+
+// 18-F02 (Tek-496 audit round): the typed address was cut to 300 characters before being
+// trimmed, so 291 leading spaces plus a real host filled the whole window and the real host
+// past character 300 was silently dropped. Trimming first closes that gap.
+test("18-F02: leading whitespace before a long address does not shift the checked host", async () => {
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async () => { throw new Error("must not be called for a refused host"); };
+  try {
+    const padded = " ".repeat(291) + "turva.dev.invalid";
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(padded), { headers: { accept: "application/json" } }), {});
+    assert.equal(res.status, 400, "a long padded invalid host must be refused, not silently truncated to something valid");
+    const body = JSON.parse(await res.text());
+    assert.match(body.error, /does not look like a public domain/, "the untruncated host is read and refused");
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
 // ---- P3, K7-P5: isValidPublicHost refuses arpa/onion, normalizeHostInput accepts a trailing dot ----
 
 test("P3, K7-P5: the validator refuses arpa and onion hosts without fetching, and reads a trailing dot as the same host", async () => {
@@ -167,6 +201,13 @@ test("P3, K7-P5: the validator refuses arpa and onion hosts without fetching, an
       return new Response("# Example\n\n> A summary.\n", { status: 200, headers: { "content-type": "text/plain; charset=utf-8" } });
     }
     if (u === "https://example.com/") return new Response("", { status: 404 });
+    // F14 (Tek-496 audit round): the last assertion below used to run after fetch was
+    // restored to the real network, so it measured example.org reachability rather than
+    // isValidPublicHost. example.org is stubbed here too, so the whole test stays offline.
+    if (u === "https://example.org/llms.txt") {
+      return new Response("# Example org\n\n> A summary.\n", { status: 200, headers: { "content-type": "text/plain; charset=utf-8" } });
+    }
+    if (u === "https://example.org/") return new Response("", { status: 404 });
     throw new Error("unexpected fetch to " + u);
   };
   try {
@@ -174,14 +215,14 @@ test("P3, K7-P5: the validator refuses arpa and onion hosts without fetching, an
     assert.equal(res.status, 200);
     const body = JSON.parse(await res.text());
     assert.equal(body.target, "https://example.com/llms.txt", "a trailing dot must be read as example.com, not refused or fetched with the dot");
+
+    const accepted = await get("/llms-txt-validator?url=turva.dev");
+    assert.equal(accepted.status, 200);
+    const goodHost = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.org", { headers: { accept: "application/json" } }), {});
+    assert.notEqual(goodHost.status, 400, "an ordinary public host must still be accepted (isValidPublicHost is not over-broadened)");
   } finally {
     globalThis.fetch = realFetch;
   }
-
-  const accepted = await get("/llms-txt-validator?url=turva.dev");
-  assert.equal(accepted.status, 200);
-  const goodHost = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.org", { headers: { accept: "application/json" } }), {});
-  assert.notEqual(goodHost.status, 400, "an ordinary public host must still be accepted (isValidPublicHost is not over-broadened)");
 });
 
 // ---- P1-P1: a weak ETag on every cacheable text 200, 304 on a matching If-None-Match ----

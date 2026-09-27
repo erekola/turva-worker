@@ -55,6 +55,10 @@ const RATE_WAIT_MAX_S = 65;
 // mta-sts.turva.dev joined the set in round 19 (gotchas.md 2026-09-23 (jatko 10)): the
 // live MTA-STS check fetches it too, and it answers from the same site-wide limiter.
 const OWN_HOSTS = new Set(['turva.dev', 'mcp.turva.dev', 'mta-sts.turva.dev']);
+// F06 (Tek-496 audit round): the exact set of paths that must carry a valid signature.
+// A path missing from SIGNATURES_JSON, an extra path, or a query-string alias of a
+// signed path must all fail here, not just a changed count (mds/gotchas.md, portti-mittaa-vain-mita-mittaa).
+const REQUIRED_SIGNED_PATHS = new Set(['/llms.txt', '/.well-known/agent.json', '/.well-known/ai-plugin.json', '/.well-known/mcp/server-card.json']);
 let rateWaits = 0;
 const fetch = async (input, init = {}) => {
   const r = await timedFetch(input, init);
@@ -2159,6 +2163,15 @@ try {
   const keyByKid = Object.fromEntries(jwksLocal.keys.map((k) => [k.kid, jwkToKey(k)]));
   const preDeployCount = Object.keys(sigsLocal.signatures).length;
   check(preDeployCount > 0, `worker.js SIGNATURES_JSON declares at least one surface to check pre-deploy (saw ${preDeployCount})`);
+  // F06: count equality alone passes a dropped path paired with an added query-variant
+  // alias of another signed path. Check the exact required set instead.
+  {
+    const gotPaths = new Set(Object.keys(sigsLocal.signatures));
+    const missing = [...REQUIRED_SIGNED_PATHS].filter((x) => !gotPaths.has(x));
+    const extra = [...gotPaths].filter((x) => !REQUIRED_SIGNED_PATHS.has(x));
+    check(missing.length === 0 && extra.length === 0,
+      `pre-deploy: SIGNATURES_JSON carries exactly the required signed-path set (missing: ${missing.join(', ') || 'none'}; extra: ${extra.join(', ') || 'none'})`);
+  }
   // Same technique as 5b above, not a plain file:// import of worker.js. e16portti.mjs runs
   // this file inside a sandbox copy that deliberately excludes node_modules, with NODE_PATH
   // pointed at the real one instead (ebportti.mjs copies turva-worker the same way, but its
@@ -2918,6 +2931,15 @@ if (LIVE) {
       const gotSigCount = Object.keys(sigs.signatures).length;
       check(wantSigCount !== null && wantSigCount > 0 && gotSigCount === wantSigCount,
         `/.well-known/signatures.json carries the same number of entries as worker.js SIGNATURES_JSON (want ${wantSigCount}, saw ${gotSigCount})`);
+      // F06: also require the exact documented set of four paths, live, so a dropped
+      // path paired with an added query-variant alias cannot hide behind equal counts.
+      {
+        const gotPaths = new Set(Object.keys(sigs.signatures));
+        const missing = [...REQUIRED_SIGNED_PATHS].filter((x) => !gotPaths.has(x));
+        const extra = [...gotPaths].filter((x) => !REQUIRED_SIGNED_PATHS.has(x));
+        check(missing.length === 0 && extra.length === 0,
+          `live: /.well-known/signatures.json carries exactly the required signed-path set (missing: ${missing.join(', ') || 'none'}; extra: ${extra.join(', ') || 'none'})`);
+      }
     }
     for (const [p, s] of Object.entries(sigs.signatures)) {
       const body = await fetchBytes(p);
