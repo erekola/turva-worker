@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.189.1 - the service note link, which draws its own underline as a bottom border, is left out of the running-text underline of 3.189.0, so it no longer shows two lines (Tek-503), and the audit and measurement-led guides say, as the home page already does, that the scanner's public link opens its start page and does not keep the recorded result (Tek-504), and the two sample reports link the address alone and not the word email.
 // turva.dev worker v3.189.0 - fixes from reports 26, 19, 31, 30 and the rest of 08 of the hostile audit round of 2026-09-26, phase 4 item 5 (Tek-503): the envelope guide and post say an allowed action can still be wrong, the services page names the audit and the Shopify check instead of a diagnosis, the parity tool page says every page passes, six posts narrow a sentence and carry a dated correction, the gaps guide says which gaps can need a rebuild, the sample report gives each waiting check its own reason, the share texts of seven pages and four OG cards match their pages, links inside running text are underlined at rest and the three input fields get a border with 3:1 contrast.
 // turva.dev worker v3.188.0 - fixes from reports 16, 36 and 08 F08 and F15 of the hostile audit round of 2026-09-26, phase 4 item 4 (Tek-502): thirteen blog posts narrow a sentence that claimed more than its evidence and each carries a dated correction note, the code-hosts post counts thirteen hosts on fourteen surfaces, the patch-surge post compares July with July at 2,2 times and names the AI attribution as Microsoft's, the audit guides say scored against the published checks of an independent scanner instead of current standards, and the home page names what Hardenize and Internet.nl each check.
 // turva.dev worker v3.187.0 - fixes from reports 22 and 21 of the hostile audit round of 2026-09-26, phase 4 item 3 (Tek-500): the services skill no longer lists MCP servers under the day rate, the AP2, MPP and agent registration contact blocks list English and Finnish, the OpenAPI order operations say they answer 402 and the A2A message:send operation documents its request body, the x402 manifest states the EUR to USDC rate and the day it was read, and three blog posts name their release unit, drop an unmeasured ranking phrase and close the parity count at 71 of 71. turva-mcp 1.6.4: get_contact asks for the domain and the question.
@@ -3441,7 +3442,7 @@ The delivered report carries every one of the 60 answers as a row of this form. 
 
 Every figure on this page is invented. The check names, the categories and the statuses are the scanner's real vocabulary as read on 2026-09-23, the draft name in F7 is the real IETF draft, and the four assistants in appendix B are the four the published measurement used, so that the sample shows how a real report reads. The site, the readings, the assistants' answers, the addresses and the security scores are fiction. A real report carries the raw scanner output, the request and response logs, the whole-catalog script and its output and the 60 AI answers with the assistant named on each.
 
-The audit is described on the [services page](/services). To start one, [email info@turva.dev](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) with the site or API URL and what the audit should answer. The Shopify agent storefront check has its own [sample report](/samples/shopify-agent-storefront-check).
+The audit is described on the [services page](/services). To start one, email [info@turva.dev](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) with the site or API URL and what the audit should answer. The Shopify agent storefront check has its own [sample report](/samples/shopify-agent-storefront-check).
 `,
 
   "/samples/shopify-agent-storefront-check": `Fictional example
@@ -3629,7 +3630,7 @@ The store, products, prices and results are fictional. The interface names, stat
 
 A real report includes timestamped tool calls and the merchant's redacted settings evidence.
 
-The check is described on its [product page](/shopify-agent-storefront-check). To start one, [email info@turva.dev](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A) with the storefront URL, the .myshopify.com domain, the primary market and up to three priority products. The agent-readiness audit has its own [sample report](/samples/audit-report).
+The check is described on its [product page](/shopify-agent-storefront-check). To start one, email [info@turva.dev](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A) with the storefront URL, the .myshopify.com domain, the primary market and up to three priority products. The agent-readiness audit has its own [sample report](/samples/audit-report).
 `,
 
   "/guides/agent-commerce-discovery": `# Agent commerce discovery: A2A, AP2, ACP and UCP
@@ -4704,7 +4705,7 @@ A separate question from both of the above is what an AI assistant actually says
 
 The result of an audit is a list. Each check passes or fails, and each failure comes with a concrete fix instruction and, where this site has a guide for that surface, a link to it. The report is written so your own team can do the work, which means implementation is something you buy if you want it rather than something the report forces on you.
 
-turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. That is one scan on one day against one named scanner, and it does not stand in for manual review or for how an assistant answers a buyer's question, so it counts as one input among the three above rather than a summary of all of them. A rescan after a fix shows whether that specific fix passed. The audit a client receives runs the same three kinds of check against their site.
+turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. That is one scan on one day against one named scanner, and it does not stand in for manual review or for how an assistant answers a buyer's question, so it counts as one input among the three above rather than a summary of all of them. A rescan after a fix shows whether that specific fix passed. The audit a client receives runs the same three kinds of check against their site.
 
 ## Frequently asked
 
@@ -5291,7 +5292,7 @@ Asking a named assistant a buyer's question and recording what it says is a thir
 
 ## Recording the method and the date
 
-Each conclusion should say which of the three it rests on and when it was taken. This is the standard turva.dev applies to its own site. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the categories the report named are the ones a later scan is checked against. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
+Each conclusion should say which of the three it rests on and when it was taken. This is the standard turva.dev applies to its own site. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the categories the report named are the ones a later scan is checked against. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
 
 For an audit that reports measured results, naming the method behind each one, contact info@turva.dev.
 
@@ -6424,7 +6425,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.189.0",
+    "version": "3.189.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6696,7 +6697,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.189.0",
+  "version": "3.189.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9532,7 +9533,7 @@ function buildValidatorAppJsonLd(canonicalUrl) {
 // none of them read right on Erik's displays in three browsers. The whole site reads the full
 // 68rem frame (Tek-360 stands). READ_CSS stays as an empty hook so the templates need no change.
 var READ_CSS = ``;
-var FOOTER_CSS = `${READ_CSS}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
+var FOOTER_CSS = `${READ_CSS}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover),main .svcnote a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:3rem clamp(24px,5vw,72px);display:flex;flex-direction:column;gap:1.5rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:10px;}.tv-foot .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}.tv-foot .nv-word b{color:#5DF18F;}
 .tv-foot .foot-brand svg{display:block;width:34px;height:34px;}
