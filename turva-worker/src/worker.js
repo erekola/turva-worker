@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.189.0 - fixes from reports 26, 19, 31, 30 and the rest of 08 of the hostile audit round of 2026-09-26, phase 4 item 5 (Tek-503): the envelope guide and post say an allowed action can still be wrong, the services page names the audit and the Shopify check instead of a diagnosis, the parity tool page says every page passes, six posts narrow a sentence and carry a dated correction, the gaps guide says which gaps can need a rebuild, the sample report gives each waiting check its own reason, the share texts of seven pages and four OG cards match their pages, links inside running text are underlined at rest and the three input fields get a border with 3:1 contrast.
 // turva.dev worker v3.188.0 - fixes from reports 16, 36 and 08 F08 and F15 of the hostile audit round of 2026-09-26, phase 4 item 4 (Tek-502): thirteen blog posts narrow a sentence that claimed more than its evidence and each carries a dated correction note, the code-hosts post counts thirteen hosts on fourteen surfaces, the patch-surge post compares July with July at 2,2 times and names the AI attribution as Microsoft's, the audit guides say scored against the published checks of an independent scanner instead of current standards, and the home page names what Hardenize and Internet.nl each check.
 // turva.dev worker v3.187.0 - fixes from reports 22 and 21 of the hostile audit round of 2026-09-26, phase 4 item 3 (Tek-500): the services skill no longer lists MCP servers under the day rate, the AP2, MPP and agent registration contact blocks list English and Finnish, the OpenAPI order operations say they answer 402 and the A2A message:send operation documents its request body, the x402 manifest states the EUR to USDC rate and the day it was read, and three blog posts name their release unit, drop an unmeasured ranking phrase and close the parity count at 71 of 71. turva-mcp 1.6.4: get_contact asks for the domain and the question.
 // turva.dev worker v3.186.0 - fixes from report 34 of the hostile audit round of 2026-09-26, phase 4 item 2 (Tek-499): agentic-commerce-readiness says where its own commerce path stops before payment, agent-authentication names public read-only data as the case that needs no auth, llms-txt opens How clients find it with the answer and says why its own agent endpoints are plain addresses, and markdown, llms.txt and llms-full.txt responses carry Content-Language: en. MCP card version 1.6.3.
@@ -552,7 +553,7 @@ I run turva.dev with Claude Code sessions and a memory made of plain files on my
 
 ## What does agent memory give a session?
 
-It gives a new session everything the earlier sessions learned. The session starts with 476 numbered decisions and 662 recorded traps in reach, and its 22 procedures load when a task needs them.
+It lets a new session look up what the earlier sessions recorded. The session starts with 476 numbered decisions and 662 recorded traps in reach, and its 22 procedures load when a task needs them.
 
 A Claude Code session remembers nothing from yesterday. Without the files every session would be a capable stranger, and I would explain the same things again and watch the same mistakes happen again. With them, a session already knows how I publish and which mistakes were made once before. A mistake becomes an entry in the trap log and usually a rule. A rule that matters becomes a gate that stops the next session before it repeats the mistake, and the gates have written 713 entries into their log.
 
@@ -582,7 +583,7 @@ Every session trusts what it reads. An out of date fact steers the next session 
 
 Every session that changes something ends with a documentation round, and each kind of information has one home file. A hook stops a session once at the end if it changed work files and wrote nothing down. Closed facts move to the archive so that the index lists only what is still live, and the session log is rotated into an archive file when it grows.
 
-Audits read the whole workspace against the disk. The latest one used 178 agents and produced 220 findings, and one or two further agents tried to refute each finding.
+Audits check what the documents in the workspace say against the files and code they describe. The latest one used 178 agents and produced 220 findings, and one or two further agents tried to refute each finding.
 
 A sync tool once put 1 380 files back to an older state, 52 of them in the memory folder with the index among them. The next session would have read old facts as current ones. A script restored all 1 380 the same evening. Every project in the folder stands on this upkeep, and I count it as part of the work itself.
 
@@ -649,6 +650,8 @@ Almost all of it was written by AI agent sessions as the last step of their own 
 **Why not delete most of it?**
 
 The scripts and gates check new work against the old entries. A shorter log would be easier to read and harder to check, and a decision that was later replaced still records why the first way failed.
+
+Corrected 2026-09-27. One sentence said a new session gets everything the earlier sessions learned. It can look up what they recorded, so the sentence, the summary and the card now say that. A second sentence now names what the audits compare. No number changed.
 
 ## Related
 
@@ -931,7 +934,7 @@ The scanner has a group for API, auth, MCP and A2A discovery, nine checks in all
 
 Two of the 19 serve no robots.txt at all. A third serves one with no wildcard rule, so the file exists and says nothing about most crawlers. Content Signals, the line where a site declares whether it wants its text used for AI training, appeared exactly once in the set. That company says ai-train=no and search=yes. Markdown content negotiation worked on one company as well, though that is a single reading and I have not repeated it. The same check moved on me within one day on a different site, from 406 to 200 to 200, so I treat it as provisional.
 
-Seven of the 19 have an llms.txt an agent can fetch, and one of those seven is a redirect to a file parked on a marketing platform host. Twelve have nothing there. One of the seven announces in its own first line that a SEO plugin generated it, which makes it the publishing system talking rather than a decision anyone made. Seven of the 19 serve no JSON-LD at all on the front page.
+Seven of the 19 have an llms.txt an agent can fetch, and one of those seven is a redirect to a file parked on a marketing platform host. Twelve have nothing there. One of the seven announces in its own first line that an SEO plugin generated it, which makes it the publishing system talking rather than a decision anyone made. Seven of the 19 serve no JSON-LD at all on the front page.
 
 ## One site where 200 means nothing
 
@@ -1041,7 +1044,7 @@ Corrected 2026-09-06. The answer to the last question said this site issues no c
 
 A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.
 
-Every brief I send, a short written reading of one company's website that goes out unasked, carries the same promise. Thirty days later I run the same scanner on the same site again and send back what changed, whether or not anyone answered. Between 19 August and 3 September that promise came due for 210 sites, first measured between 18 July and 6 August, and this is the first time the rescans are read as one set.
+Every brief I send, a short written reading of one company's website that goes out unasked, carries the same promise. Thirty days later I run the same scanner on the same site again and send back what changed, whether or not anyone answered. Between 19 August and 3 September that promise came due for 210 sites. Each due date is counted from the day that site's brief was sent, not from its first measurement, and the first measurements were taken between 18 July and 6 August, and this is the first time the rescans are read as one set.
 
 ## What was measured
 
@@ -1089,6 +1092,8 @@ Corrected 2026-09-04. The version served for the first seven hours said the firs
 Corrected 2026-09-06. Two sentences said the promise was kept for 210 sites and that 2,0 percent was a fact about 210 sites. The first now excludes the two sites that were not rescanned, and the second names the 201 comparable sites the percentage is computed from. The counts did not change.
 
 Corrected 2026-09-27. Two sentences called ordinary maintenance the likelier cause of the three sites that moved up. The cause was not measured, so both now call it one plausible explanation. No number changed.
+
+Corrected again 2026-09-27. The post did not say which day the thirty days are counted from. It now says the day each brief was sent. No number changed.
 
 ## Related
 
@@ -1165,7 +1170,7 @@ In July I wrote up sixteen Finnish B2B sites. Since then the same measurement ha
 
 ## What website agent readiness means
 
-The phrase agent readiness is used for two different things, and AI assistants currently answer the question with the other one. Ask an assistant what an agent-readiness audit is and the answer describes an organisation: its data, its governance, whether its teams are ready to deploy AI agents. That is a real question, and it is a different one.
+The phrase agent readiness is used for two different things, and AI assistants often answer the question with the other one. Ask an assistant what an agent-readiness audit is and the answer often describes an organisation: its data, its governance, whether its teams are ready to deploy AI agents. In [a measurement of 41 such answers](/blog/what-ai-assistants-call-an-agent-readiness-audit) on the day I published this post, 18 read the term that way and 13 read it as a website. That is a real question, and it is a different one.
 
 Website agent readiness is a property of a site or an API. It asks whether a machine reading on someone's behalf can find the site, read its pages without a browser, learn what the company sells, and act on that through a declared interface. An independent scanner can measure it, and the result is a number a third party can check. That is the measurement below.
 
@@ -1210,6 +1215,8 @@ Run the scanner on your domain and read the level, then read which checks failed
 Corrected 2026-09-25. Three sentences said more than the data shows. Two described the typical company site and where most company sites sit, and they now describe this sample. A third gave a reason for the shared floor that no measurement supports, and it is now marked as my reading. I also named the check the scanner added. The counts did not change.
 
 Corrected 2026-09-27. Three places said the Finnish and the non-Finnish subsets read the same. Their Level 1 shares are 3,4 percentage points apart, so they now say both land on the same floor. The Level 1 notes now name the 485 sites they come from. No number changed.
+
+Corrected again 2026-09-27. The opening said an assistant's answer describes an organisation. A measurement of 41 answers found that reading in 18 and the website reading in 13, so the opening now says often and links that count. No number in this post changed.
 
 ## Related
 
@@ -1330,7 +1337,7 @@ For almost every host the passing checks were the same two, a robots.txt the sca
 
 ## GitHub runs an MCP server. Nothing on github.com says so.
 
-This is the finding I keep coming back to. GitHub operates a production MCP server, and I used it on the same day I ran these scans. It works. But github.com serves no MCP server card, no API catalog and no Link header pointing at either, so an agent that arrives without being told about the server has no way to discover it. The capability exists and the announcement does not.
+This is the finding I keep coming back to. GitHub operates a production MCP server, and I used it on the same day I ran these scans. It works. But github.com serves no MCP server card, no API catalog and no Link header pointing at either, so an agent that arrives at github.com without being told about the server finds none of the pointers this scan looks for. The capability exists and the announcement does not.
 
 The same shape repeats across the sample. What follows is a reading of how these products are sold, which the scan does not measure. Several of them are sold as the place where agents work on code, and on every one of them the way in is a docs page written for a person.
 
@@ -1365,6 +1372,8 @@ So that an agent arriving at the domain can learn that a server exists, where it
 Run the same public scanner against the domain and read the group named API, Auth, MCP & A2A Discovery. The result is a snapshot of that day, mine included, because these specifications move month to month.
 
 Corrected 2026-09-27. The title said fourteen code hosts. The table has fourteen surfaces from thirteen hosts, because GitLab was read twice, so the title now says thirteen hosts. A sentence also said every integration has to be hard-coded, and it now keeps to the paths this scan read. No reading changed.
+
+Corrected again 2026-09-27. A sentence said an agent has no way to discover GitHub's MCP server. The scan read named discovery paths and not documentation or search results, so the sentence now keeps to those paths. No reading changed.
 
 ## Related
 
@@ -1479,7 +1488,7 @@ That is the honest ledger. A week of work with nothing billable in it.
 
 ## What it bought
 
-The base is now audited file by file, and it is not audited by me remembering that I checked it. Seven deterministic gates run on my machine as editor hooks and block the action rather than warn about it. They stop the edit tool in this workspace, git in the agent shell, generated files written to the workspace root, and repo edits made before the trap log has been read. Two of them run after a write and check for NUL bytes, changed line endings and a size collapse.
+The base is now audited file by file, and it is not audited by me remembering that I checked it. Seven deterministic gates run on my machine as editor hooks. The ones that run before an action block it rather than warn about it. They stop the edit tool in this workspace, git in the agent shell, generated files written to the workspace root, and repo edits made before the trap log has been read. Two of them run after a write, so they cannot undo it. They check for NUL bytes, changed line endings and a size collapse and report a failure to the agent at once, before its next step.
 
 Twenty-three gate scripts sit in the toolchain and run on demand or on ship. Three of them run on every release, and between them they perform 314 mechanical checks with no network and 567 when the live URLs and the manifest signatures are included. None of those numbers is a target. They are just what the scripts count when they run.
 
@@ -1509,7 +1518,7 @@ Seven days, for 2 307 text files and 28 826 789 bytes, roughly 8 million tokens.
 
 **Do automated gates remove the need to read the code?**
 
-No. Seven gates run as editor hooks and block the action rather than warn. 23 more run on demand or on ship, and three of those perform 314 mechanical checks offline, 567 with live URLs included. A green gate tells you only what it checked.
+No. Seven gates run as editor hooks. Those that run before an action block it rather than warn, and the two that run after a write report what they found at once. 23 more run on demand or on ship, and three of those perform 314 mechanical checks offline, 567 with live URLs included. A green gate tells you only what it checked.
 
 **What should a quality gate do when it finds a problem?**
 
@@ -1518,6 +1527,8 @@ Block the action. The gates here stop the edit tool, git in the agent shell, gen
 **Does a file by file audit prove the workspace is correct?**
 
 No. It proves that 367 specific things were read and classified, and that each was either fixed or written down as a decision with a reason. Whether the week was worth it depends on whether the next audit is better, and that is not known yet.
+
+Corrected 2026-09-27. Two passages said all seven editor gates block the action. Two of them run after a write and cannot undo it, so both passages now say they report what they found. No number changed.
 
 ## Related
 
@@ -2416,9 +2427,9 @@ A missing Markdown version is a failure and never a pass. When the Markdown requ
 
 JavaScript is not run. Content that a page builds in the browser is compared as the server sent it.
 
-Not every turva.dev page passes. The HTML adds buttons, cards and forms. Some pages also leave out the Related list that the Markdown carries, and the report names each of these differences.
+Every page in the turva.dev sitemap that this check accepts passes with no error and no warning, and the site's release checks stop a release while any of them fails. [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work) tells how the pages got there.
 
-The example address is turva.dev's own tools page. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown that the HTML page leaves out, and returned five errors. The same four targets are links inside the HTML cards, so the difference is structural and no target is out of reach. [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree) reads that finding in full.
+The example address is turva.dev's own tools page. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown that the HTML page leaves out, and returned five errors. The same four targets are links inside the HTML cards, so the difference is structural and no target is out of reach. [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree) reads that finding in full. That page passes now.
 
 The [website and API audit](/agent-readiness-audit) measures agent readiness with an independent public scanner, published security scans and a manual review.
 
@@ -2559,7 +2570,7 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 35 articles.
 
 - [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work). 2026-09-26. Build notes. Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.
-- [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25. Build notes. Plain local files give each Claude Code session what the earlier sessions learned. A count of that memory, and why it now reads like a private language.
+- [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25. Build notes. Plain local files let each Claude Code session look up what the earlier sessions recorded. A count of that memory, and why it now reads like a private language.
 - [Five rounds before the agent signed anything](/blog/five-rounds-before-the-agent-signed). 2026-09-20. Build notes. An agent moved tokens on Ethereum Sepolia after five fix rounds, each answering an independent review. Three attempts stopped before any signature.
 - [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree). 2026-09-12. Build notes. A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.
 - [I rebuilt turva.dev around the report](/blog/i-rebuilt-turva-dev-around-the-report). 2026-09-07. Build notes. The updated site puts sample reports beside the services they describe, with evidence, correction owners and acceptance checks visible before purchase.
@@ -2829,9 +2840,9 @@ The decision an agent reaches is bounded by the data that reaches the agent. In 
 
 The agent did not get worse. Its inputs did. Most of the reliability of an autonomous decision lives in the unglamorous layer below the model, where data either arrives in order and on time or it does not. A site or a system that wants an agent to act on live data has to earn that layer first.
 
-## The right decision is the one the settings allow
+## The settings decide what is allowed
 
-A correct decision is not an agent doing whatever it infers. It is an agent acting inside an envelope that was defined for it. The settings are the decision, made ahead of time by a person who knew the stakes. Draw the envelope loosely and a capable agent will still do something, just not the thing you wanted. Draw it well and the same agent can be left alone for longer, once its record inside that envelope has been checked.
+A correct decision is not an agent doing whatever it infers. It starts with an envelope that was defined for the agent, with its settings chosen ahead of time by a person who knew the stakes. Staying inside the envelope makes an action allowed, and an allowed action can still be wrong for the task. Draw the envelope loosely and a capable agent will still do something, just not the thing you wanted. Draw it well and the same agent can be left alone for longer, once its record inside that envelope has been checked.
 
 This is the part that gets skipped when people picture autonomy. They imagine judgment appearing from nowhere. In practice the judgment is front-loaded into permissions and thresholds, and into an explicit list of what the agent may touch and what it may not. Good autonomy looks less like a clever model and more like a well-set boundary.
 
@@ -2853,7 +2864,7 @@ For an agent-readiness audit, or a conversation about letting agents act on your
 
 **What limits the reliability of an AI agent's decisions?**
 
-Not always the model. Two things sit below it. The data that reaches the agent, and the envelope of settings it is allowed to act inside. A decision is bounded by its inputs, and a correct decision is the one the settings allowed.
+Not always the model. Two things sit below it. The data that reaches the agent, and the envelope of settings it is allowed to act inside. A decision is bounded by its inputs and by the settings. The settings decide which actions are allowed, and an allowed action can still be wrong for the task.
 
 **Why does the network layer decide whether an agent can act?**
 
@@ -2864,6 +2875,8 @@ A link drops as a crane passes over it, a satellite hop adds the better part of 
 A well-set boundary rather than a clever model. The judgment is front-loaded into permissions, thresholds and an explicit list of what the agent may touch. Draw the envelope loosely and a capable agent still does something, just not what you wanted.
 
 Corrected 2026-09-27. One sentence said a well-drawn envelope makes an agent one you can leave alone. Nothing in this post measures that, so the sentence now ties it to the agent's checked record.
+
+Corrected again 2026-09-27. A heading and two passages said a correct decision is the one the settings allowed. An allowed action can still be wrong for the task, so they now say the settings decide what is allowed and not what is right.
 
 ## Related
 
@@ -3275,7 +3288,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **Why it matters.** One scored check now, and the cheapest step in the category. Observed: the API answers and nothing announces it, and every well-known probe gets a 200 with an HTML body. Possible and not observed: an agent that finds the API reads the catalog as data instead of scraping HTML, which is only worth anything once F1 has made the data right.
 
-**What to change.** Publish /.well-known/api-catalog, one JSON linkset that names the /wp-json/ base URL and its description, with the content type application/linkset+json. Return a real 404 with a plain text body for every path under /.well-known/ that the edge does not serve, which here is every path except this linkset and the security.txt that F3 publishes in the same directory. A path published on purpose keeps answering with its own content and its own content type. The other eight checks in the category need an authentication story or an MCP server and are not declared until one exists: a server card that points at no server is a false claim, and this report does not recommend one. If the company wants its API described in OpenAPI too, the implementer decision D1 names publishes an OpenAPI document for the Store API routes the catalog uses and adds it to the linkset as a second service-desc, and the retest reads it against live responses. It is not part of this finding's minimum, because apiCatalog passes on the REST index alone.
+**What to change.** Publish /.well-known/api-catalog, one JSON linkset that names the /wp-json/ base URL and its description, with the content type application/linkset+json. Return a real 404 with a plain text body for every path under /.well-known/ that the edge does not serve, which here is every path except this linkset and the security.txt that F3 publishes in the same directory. A path published on purpose keeps answering with its own content and its own content type. The other eight checks in the category wait, each for the reason its row in the check table above gives: no agent needs to log in here, there is no MCP server or agent for a card to describe, and browser tools are worth a look only after the data is right. A server card that points at no server is a false claim, and this report does not recommend one. If the company wants its API described in OpenAPI too, the implementer decision D1 names publishes an OpenAPI document for the Store API routes the catalog uses and adds it to the linkset as a second service-desc, and the retest reads it against live responses. It is not part of this finding's minimum, because apiCatalog passes on the REST index alone.
 
 **Who does it and estimated effort.** turva.dev or the company's developer, at the edge. About half an hour.
 
@@ -3888,9 +3901,9 @@ The audit is delivered within two weeks of the agreed written kickoff. You recei
 
 ## Implementation
 
-**€1,500 per day, scoped separately. €499 for the complete fix list from a diagnosis, bought with that diagnosis.**
+**€1,500 per day, scoped separately. €499 for the complete fix list from an audit or a Shopify check, bought with that service.**
 
-Your team can implement the report. If you want me to do it, the €499 add-on covers the diagnosis's complete fix list when bought with the diagnosis and when the required access is arranged in advance.
+Your team can implement the report. If you want me to do it, the €499 add-on covers the complete fix list from the audit or the Shopify check when bought with that service and when the required access is arranged in advance.
 
 The fixed price covers the whole list, whatever the number of corrections. Work outside that list is agreed separately at the day rate. When the add-on is bought, the included retest or re-scan window starts on the day the corrections are delivered, so the check reads the finished work.
 
@@ -3916,7 +3929,7 @@ Cloudflare Workers is the default. Other supported edge runtimes can be agreed w
 - Signed content and agent authentication patterns.
 - Discovery cards for an MCP or agent-to-agent server that already runs.
 
-A separately scoped day does not include DNS changes, tool declarations inside your application, agent payment flows or building the MCP server itself. These need their own scope. This day-rate boundary does not reduce the complete fix list covered by an agreed €499 diagnosis add-on.
+A separately scoped day does not include DNS changes, tool declarations inside your application, agent payment flows or building the MCP server itself. These need their own scope. This day-rate boundary does not reduce the complete fix list covered by an agreed €499 add-on.
 
 Repository write access is limited to the task. There is no retainer.
 
@@ -4041,7 +4054,7 @@ An assistant may quote different information depending on which source it reads.
 
 ## What I check
 
-Three kinds of evidence, kept apart in the report because they fail differently.
+Three kinds of evidence, kept apart in the report so that you can see what each check found.
 
 ### Can an automated client find and read your information?
 
@@ -4184,7 +4197,7 @@ The 48-hour clock starts at the agreed written kickoff, after the preflight, pay
 
 The check is paid by bank transfer against an invoice sent once the scope is agreed, before the kickoff.
 
-If the public preflight cannot find an observable agent-commerce interface suitable for controlled testing, I do not sell or invoice the check.
+If the public preflight finds no agent-shopping interface that I can test under controlled conditions, I do not sell or invoice the check.
 
 If I do not send the four-item package within 48 elapsed hours, the fee is refunded. The included retest follows its own 14-day window, which starts on the day that package is delivered, or on the day the corrections are delivered when the add-on is bought, and is not part of its deadline.
 
@@ -4320,7 +4333,7 @@ The buttons above open a draft in your email app. You can edit it before sending
 
 Signal works for short questions. Send longer documents by email. You can open Signal directly or use the QR code.
 
-Signal is end-to-end encrypted. Scanning the code shares no account of yours.
+Signal encrypts messages end to end. Scanning the code opens my contact in Signal.
 
 [![Signal QR code for the username turva.19. Scan it with a phone to start a Signal chat.](/signal-qr.png)](https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK) @turva.19
 
@@ -4330,7 +4343,7 @@ Signal is end-to-end encrypted. Scanning the code shares no account of yours.
 - LinkedIn: no set reply time
 - Weekends: no guaranteed response time
 
-You can write in English or Finnish. Reports are in English unless we agree on Finnish in the written scope. A brief I send unasked arrives in the language of the company it is about.
+You can write in English or Finnish. Reports are in English unless we agree on Finnish in the written scope. An unrequested brief is written in the language of the company it is about.
 
 ## Confidential material
 
@@ -4646,7 +4659,7 @@ An agent-readiness audit measures how well an AI agent can discover, read, and a
 
 **Do I need llms.txt on my site?**
 
-llms.txt gives a curated map of what matters to the clients that fetch it, and no assistant is obliged to be one of them. It does not replace robots.txt or a sitemap, it complements them.
+llms.txt gives a curated map of what matters to the clients that fetch it, and no assistant is obliged to be one of them. It does not replace robots.txt or a sitemap, and both keep their own jobs.
 
 **How do I get my site cited by AI assistants?**
 
@@ -4750,7 +4763,7 @@ Check any site's llms.txt structure with the [free validator](/llms-txt-validato
 
 **What is llms.txt?**
 
-llms.txt is a plain text file that tells AI agents and language models what a site contains and where the important content lives. It sits at the root of a site or at any path inside it, where it covers the pages under that path. It does not replace robots.txt or a sitemap, it complements them.
+llms.txt is a plain text file that tells AI agents and language models what a site contains and where the important content lives. It sits at the root of a site or at any path inside it, where it covers the pages under that path. It does not replace robots.txt or a sitemap, and both keep their own jobs.
 
 **Does llms.txt help with search ranking?**
 
@@ -5489,7 +5502,7 @@ Capability is usually undeclared. The site may have an API or a useful action, b
 
 ## Verification
 
-None of these gaps require a rebuild. The work is mostly at the edge and in a few small files, and the result shows up in a scanner on the next run against the version of the site that is live then. A site does not have to change its structure to become legible to agents, it has to publish what agents already look for and verify with a fresh scan that the fix landed.
+The discovery and content gaps rarely need a rebuild. That work is mostly at the edge and in a few small files, and the result shows up in a scanner on the next run against the version of the site that is live then. Rendering and data correctness can reach into the application or the system the data comes from, so their effort is estimated site by site. For discovery, a site does not have to change its structure. It has to publish what agents already look for and verify with a fresh scan that the fix landed.
 
 turva.dev runs this exact review and reports each gap with a concrete fix. For an audit, contact info@turva.dev.
 
@@ -5501,7 +5514,7 @@ Client-side rendering that returns an empty shell to non-browser agents, no llms
 
 **Are agent-readiness gaps hard to fix?**
 
-Not usually. The work is mostly at the edge and in a few small files, and the result shows up in a scanner on the next run. A site does not have to change its structure to become legible to agents, it has to publish what agents already look for.
+It depends on the gap. Discovery and content fixes are mostly at the edge and in a few small files, and the result shows up in a scanner on the next run. Rendering and data correctness can reach into the application or the system the data comes from, so their effort is estimated site by site.
 
 **Which gap costs a marketing site the most?**
 
@@ -5710,7 +5723,7 @@ An agent's decision is bounded by the data that reaches it. In a clean environme
 
 ## Allowed actions
 
-A correct decision is not an agent doing whatever it infers. It is an agent acting inside an envelope defined for it, the permissions, the thresholds and the explicit list of what it may touch and what it may not. The judgment is front-loaded into that boundary by a person who knew the stakes. Draw the boundary loosely and a capable agent still does something, just not what you wanted.
+A correct decision is not an agent doing whatever it infers. It starts with an envelope defined for the agent, the permissions, the thresholds and the explicit list of what it may touch and what it may not. The judgment is front-loaded into that boundary by a person who knew the stakes. Staying inside it makes an action allowed, and an allowed action can still be wrong for the task, which is why the data the agent acts on matters as much as the boundary. Draw the boundary loosely and a capable agent still does something, just not what you wanted.
 
 Commerce protocols are one place where the boundary is written down in a specification. The Universal Commerce Protocol carries a checkout state called requires_escalation, which means the agent has reached the edge of what it may finish alone and a person has to complete the step. AP2 does the same on the payment side, where a mandate records the limits the user agreed to before the agent acted. Both encode a decision somebody made in advance. Decision envelope is the name this guide gives that pattern, and neither specification uses the term, so do not go looking for it in either document. Neither decides for you where the line sits, and that is a judgment about which actions are reversible and who carries the cost when one is not.
 
@@ -5730,7 +5743,7 @@ For a review of the data path, the decision envelope and where a human stays in 
 
 **What is a decision envelope?**
 
-The permissions, the thresholds and the explicit list of what an agent may touch and what it may not. The judgment is front-loaded into that boundary by a person who knew the stakes, so a correct decision is the one the envelope allowed.
+The permissions, the thresholds and the explicit list of what an agent may touch and what it may not. The judgment is front-loaded into that boundary by a person who knew the stakes, so the envelope decides which actions are allowed. An allowed action can still be wrong for the task.
 
 **Where is the decision envelope written down in a protocol?**
 
@@ -6411,7 +6424,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.188.0",
+    "version": "3.189.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6683,7 +6696,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.188.0",
+  "version": "3.189.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7514,11 +7527,12 @@ var META_BY_PATH = {
   },
   "/blog/local-agent-memory": {
     title: "What agent memory in local files gets me · turva.dev",
-    description: "Plain local files give each Claude Code session what the earlier sessions learned. A count of that memory, and why it now reads like a private language.",
+    description: "Plain local files let each Claude Code session look up what the earlier sessions recorded. A count of that memory, and why it now reads like a private language.",
     date: "2026-09-25",
+    modified: "2026-09-27",
     kind: "Build notes",
     image: "/og-local-agent-memory.jpg",
-    imageAlt: "turva.dev blog card: what agent memory in local files gets me, 1 419 122 words of rules and logs that let each Claude Code session start where the last one stopped.",
+    imageAlt: "turva.dev blog card: what agent memory in local files gets me. Plain local files let each Claude Code session look up what the earlier sessions recorded.",
   },
   "/blog/five-rounds-before-the-agent-signed": {
     title: "Five rounds before the agent signed anything · turva.dev",
@@ -7572,7 +7586,7 @@ var META_BY_PATH = {
     kind: "Research",
     modified: "2026-09-27",
     image: "/og-thirty-days-after-the-brief.jpg",
-    imageAlt: "turva.dev blog card: 210 sites rescanned thirty days after an unsolicited brief: 197 unchanged, three up, one down, and none of the three that improved had replied.",
+    imageAlt: "turva.dev blog card: thirty days after the brief, four of 201 sites moved: 197 unchanged, three up, one down, and none of the three that improved had replied.",
   },
   "/blog/what-ai-assistants-call-an-agent-readiness-audit": {
     title: "What four AI assistants call an agent readiness audit · turva.dev",
@@ -7624,6 +7638,7 @@ var META_BY_PATH = {
     title: "I thought it was a small job · turva.dev",
     description: "A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that work.",
     date: "2026-08-16",
+    modified: "2026-09-27",
     kind: "Build notes",
     image: "/og-i-thought-it-was-a-small-job.jpg",
     imageAlt: "turva.dev blog card: I read my own workspace file by file. Seven days, 367 findings across 2 307 text files, and nothing billable shipped that week.",
@@ -7764,15 +7779,15 @@ var META_BY_PATH = {
   },
   "/markdown-parity-check": {
     title: "Markdown parity check for HTML pages · turva.dev",
-    description: "Compare the main content of a page's HTML and Markdown versions. Lists missing, added and changed blocks with their source lines. Free, no signup.",
+    description: "Compare the main content of a turva.dev page's HTML and Markdown versions. For other sites, run the open-source package. Free, no signup.",
     image: "/og-markdown-parity-check.jpg",
-    imageAlt: "turva.dev tools card: the Markdown parity check compares a page's HTML and Markdown versions and lists every difference with its source line."
+    imageAlt: "turva.dev tools card: HTML and Markdown compared block by block, with the line where each difference sits."
   },
   "/badge": {
     title: "Agent-ready badge: criteria and embed code · turva.dev",
     description: "A self-declared badge for sites meeting public criteria: a turva.dev audit or 100/100 on the named public scanner. Not a certification. Criteria and embed code.",
     image: "/og-badge.jpg",
-    imageAlt: "turva.dev badge card: the embeddable agent-ready badge, a self-declared claim against public criteria that anyone can re-check by running the same scanner."
+    imageAlt: "turva.dev badge card: the agent-ready badge, a self-declared claim for sites that completed a turva.dev audit or score 100/100 on a public agent-readiness scanner."
   },
   "/blog": {
     title: "Agent-readiness research and field notes · turva.dev",
@@ -7864,7 +7879,7 @@ var META_BY_PATH = {
   "/": {
     title: "Agent-readiness audits for websites, APIs and Shopify · turva.dev",
     description: "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.",
-    imageAlt: "turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com"
+    imageAlt: "turva.dev: Agent-readiness audits and advisory. 100/100 and Level 5, Agent-Native, on isitagentready.com, with all five categories at 100."
   },
   "/services": {
     title: "Agent-readiness services and pricing · turva.dev",
@@ -7912,7 +7927,7 @@ var META_BY_PATH = {
     title: "Terms, privacy and data handling · turva.dev",
     description: "Terms for working with turva.dev, how information is handled and where to send a privacy request. Finnish law applies. No tracking or third-party scripts.",
     image: "/og-legal.jpg",
-    imageAlt: "turva.dev legal card: terms, privacy and GDPR in plain language, Finnish law, no tracking and no cookies."
+    imageAlt: "turva.dev legal card: terms, privacy and GDPR in plain language. Finnish law applies, with no tracking cookies, analytics cookies or third-party scripts."
   },
   "/guides": {
     title: "Practical agent-readiness guides · turva.dev",
@@ -8002,7 +8017,7 @@ var META_BY_PATH = {
     checked: "2026-09-15",
     description: "Some clients read the initial HTTP response without running a browser.",
     image: "/og-guide-prerendering-for-agents.jpg",
-    imageAlt: "turva.dev guide card: JavaScript-rendered sites return an empty shell to agents, so the content never arrives."
+    imageAlt: "turva.dev guide card: prerendering, and why some agents see empty pages. A client that does not run JavaScript can get only the loading shell of a rendered page."
   },
   "/guides/sitemaps-and-robots-for-agents": {
     title: "Sitemaps, robots.txt and AI crawler access · turva.dev",
@@ -9517,7 +9532,7 @@ function buildValidatorAppJsonLd(canonicalUrl) {
 // none of them read right on Erik's displays in three browsers. The whole site reads the full
 // 68rem frame (Tek-360 stands). READ_CSS stays as an empty hook so the templates need no change.
 var READ_CSS = ``;
-var FOOTER_CSS = `${READ_CSS}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
+var FOOTER_CSS = `${READ_CSS}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:3rem clamp(24px,5vw,72px);display:flex;flex-direction:column;gap:1.5rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:10px;}.tv-foot .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}.tv-foot .nv-word b{color:#5DF18F;}
 .tv-foot .foot-brand svg{display:block;width:34px;height:34px;}
@@ -10353,7 +10368,7 @@ ${TOC_SUB_CSS}
 .post .ps{display:block;margin-top:6px;color:#C9D1CE;font-size:.95rem;line-height:1.5;}
 .bfilter{margin:0 0 .9rem;}
 .blabel{display:block;font-size:.95rem;font-weight:600;color:#F2F4F3;margin:0 0 .45rem;}
-#bsearch{display:block;width:100%;max-width:34rem;box-sizing:border-box;min-height:48px;background:#07110D;border:1px solid #2D3D3D;border-radius:7px;padding:10px 14px;color:#F2F4F3;font:inherit;font-size:16px;margin:0 0 .8rem;}
+#bsearch{display:block;width:100%;max-width:34rem;box-sizing:border-box;min-height:48px;background:#07110D;border:1px solid #5A6B68;border-radius:7px;padding:10px 14px;color:#F2F4F3;font:inherit;font-size:16px;margin:0 0 .8rem;}
 #bsearch::placeholder{color:#6F7A77;}
 .bkinds{display:flex;flex-wrap:wrap;gap:8px;}
 .bkind{min-height:44px;padding:0 16px;border:1px solid rgba(255,255,255,0.24);border-radius:999px;background:transparent;color:#C9D1CE;font:600 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;}
@@ -10377,7 +10392,7 @@ ${TOC_SUB_CSS}
 .copy-btn:hover{border-color:#5DF18F;color:#5DF18F;}
 .vform{display:flex;flex-wrap:wrap;gap:10px;margin:.6rem 0 .4rem;}
 .vform label{flex-basis:100%;font-size:.95rem;color:#F2F4F3;font-weight:600;}
-.vform input{flex:1 1 16rem;min-width:0;min-height:50px;background:#07110D;border:1px solid #2D3D3D;border-radius:7px;padding:10px 14px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:16px;}
+.vform input{flex:1 1 16rem;min-width:0;min-height:50px;background:#07110D;border:1px solid #5A6B68;border-radius:7px;padding:10px 14px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:16px;}
 .vform button{min-height:50px;background:#5DF18F;color:#06100F;border:0;border-radius:7px;padding:10px 22px;font-weight:700;cursor:pointer;font-size:15px;}
 @media (max-width:560px){.vform input,.vform button{flex-basis:100%;width:100%;}.cta{flex-direction:column;}.btn,.btn-ghost,.cta-btn{width:100%;}}
 .result-sum,.sec .result-sum{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin:0 0 1rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#C9D1CE;}
@@ -10392,7 +10407,7 @@ ${TOC_SUB_CSS}
 .popts>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:600;color:#F2F4F3;}
 .popts[open]{padding-bottom:14px;}
 .popts label{display:block;font-size:.95rem;color:#F2F4F3;font-weight:600;margin:.8rem 0 .35rem;}
-.popts input[type=url],.popts input[type=text]{display:block;width:100%;box-sizing:border-box;min-height:50px;background:#07110D;border:1px solid #2D3D3D;border-radius:7px;padding:10px 14px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:16px;}
+.popts input[type=url],.popts input[type=text]{display:block;width:100%;box-sizing:border-box;min-height:50px;background:#07110D;border:1px solid #5A6B68;border-radius:7px;padding:10px 14px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:16px;}
 .pcheck{display:flex;align-items:center;gap:10px;min-height:44px;margin:.4rem 0;}
 .popts .pcheck label{display:inline;margin:0;font-weight:500;}
 .pcheck input{width:22px;height:22px;min-height:0;padding:0;margin:0;flex:none;accent-color:#5DF18F;}

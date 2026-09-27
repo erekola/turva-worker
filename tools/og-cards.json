@@ -36,9 +36,9 @@
     "white": "Coding agents run with your shell."
   },
   "og-badge.jpg": {
-    "green": "a claim anyone can re-check",
+    "green": "a self-declared claim",
     "kicker": "Badge",
-    "subhead": "For sites that completed an audit or score 100/100 on a public agent-readiness scanner.",
+    "subhead": "For sites that completed a turva.dev audit or score 100/100 on a public agent-readiness scanner.",
     "white": "The agent-ready badge,"
   },
   "og-blog.jpg": {
@@ -216,10 +216,10 @@
     "white": "Open Knowledge Format"
   },
   "og-guide-prerendering-for-agents.jpg": {
-    "green": "empty pages",
+    "green": "see empty pages",
     "kicker": "Guide",
-    "subhead": "JavaScript-rendered sites return an empty shell to agents, so the content never arrives.",
-    "white": "Prerendering, and why agents see"
+    "subhead": "A client that does not run JavaScript can get only the loading shell of a rendered page.",
+    "white": "Prerendering, and why some agents"
   },
   "og-guide-response-headers-for-agents.jpg": {
     "green": "that help agents",
@@ -284,7 +284,7 @@
   "og-legal.jpg": {
     "green": "in plain language",
     "kicker": "Legal",
-    "subhead": "Finnish law applies. No tracking, no cookies, no analytics.",
+    "subhead": "Finnish law applies. No tracking cookies, analytics cookies or third-party scripts.",
     "white": "Terms, privacy and GDPR"
   },
   "og-llms-txt-validator.jpg": {
@@ -296,7 +296,7 @@
   "og-local-agent-memory.jpg": {
     "green": "in local files gets me",
     "kicker": "Blog",
-    "subhead": "Plain local files give each Claude Code session what the earlier sessions learned.",
+    "subhead": "Plain local files let each Claude Code session look up what the earlier sessions recorded.",
     "white": "What agent memory"
   },
   "og-markdown-parity-check.jpg": {
