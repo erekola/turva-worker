@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.181.0 - /legal, /company and /contact after the external hostile audit round of 2026-09-26 (Tek-494, 2026-09-27): the postal address from the Finnish business register and the place of business, Tampere, replace the address sent on request. /legal says the services are sold only to businesses, names the legal basis of server logs and traffic analysis, names the transfer mechanism of each provider outside the EEA, states the Accounting Act rule for vouchers, the backup rotation of ten copies, 24 months for outreach records and the exclusion list, the full list of data rights and the complaint right, and what a cookie check on 27 September 2026 found. Both update dates move to 2026-09-27.
 // turva.dev worker v3.180.0 - new Build notes post /blog/my-own-site-is-my-proof-of-work (Tek-491, 2026-09-26): My own site is my proof of work, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 35, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.179.0 - the site's own Markdown parity, round 3 (Tek-488, 2026-09-26): the home page reads as its twin, so every checkable page passes. The scan board and the twin carry the same lines: the scan and its date, the scanner, one row per category in the form Label: 100/100., and the summary, and the board and the twin spell each category by its facts.json label, which both board gates read. The finding card shows the twin's label line and its rows as list items, the two readings in conflict say so in the twin too, the offers are list items linked on their names, the work and step cards are the twin's Title. Body. paragraphs with the step number as a CSS counter, and the hero shows the twin's agent-readiness sentence. The key-value rows on /company and /contact are list items that carry the twin's colon. The live evidence twin gate reads the facts.json template like the static one.
 // turva.dev worker v3.178.0 - the site's own Markdown parity, round 2 (Tek-488, 2026-09-26): the /blog and /guides cards and the /services offer cards read as the same blocks in HTML and Markdown. Each /blog twin row carries the card's date, kind and summary, and each card is a list item with the link on its title; each /guides twin entry is a ### heading that links the guide, with its one-sentence description under it, and the card shows the same heading and sentence; the /services offer cards are list items that read as their twin rows, and the See the check and See the audit lines are gone because the offer name is the link; price lines show the twin's sentence with its periods instead of middle dots. Every card stays clickable as a whole through a stretched link. The hosted parity check passes 70 of 71 pages.
@@ -4231,7 +4232,7 @@ The report records what I checked and what I observed, so your team can understa
 - **Business ID:** 3600281-7
 - **VAT ID:** FI36002817
 - **Location:** Tampere, Pirkanmaa, Finland
-- **Postal address:** On every invoice, and sent on request
+- **Postal address:** c/o turva.dev, P.O. Box 999, 42011 YRITYSLOKERO, Finland
 - **Register:** [tietopalvelu.ytj.fi/yritys/3600281-7](https://tietopalvelu.ytj.fi/yritys/3600281-7)
 - **Source code:** [github.com/erekola](https://github.com/erekola)
 
@@ -4324,7 +4325,7 @@ Check the fingerprint before you use the key. A fingerprint shown on this page r
 - **Business ID:** 3600281-7
 - **Register:** [tietopalvelu.ytj.fi/yritys/3600281-7](https://tietopalvelu.ytj.fi/yritys/3600281-7)
 - **Location:** Tampere, Finland. Services are delivered remotely worldwide.
-- **Postal address:** On every invoice, and sent on request
+- **Postal address:** c/o turva.dev, P.O. Box 999, 42011 YRITYSLOKERO, Finland
 - **Agent registration:** [turva.dev/auth.md](https://turva.dev/auth.md)
 `,
 
@@ -4338,13 +4339,13 @@ turva.dev is operated by Erik Rekola, a sole proprietor registered in Finland. V
 
 Business ID: 3600281-7.
 
-Postal address: on every invoice, and sent on request. There are no public premises, because the work is done remotely and in writing.
+The business operates from Tampere, Finland. Postal address: c/o turva.dev, P.O. Box 999, 42011 YRITYSLOKERO, Finland. There are no public premises, because the work is done remotely and in writing.
 
 Contact: [info@turva.dev](mailto:info@turva.dev)
 
 ## Engagement terms
 
-These terms apply to Shopify checks, audits, advisory, implementation, agent operations and MCP server design unless a written agreement replaces them.
+These terms apply to Shopify checks, audits, advisory, implementation, agent operations and MCP server design unless a written agreement replaces them. The services are sold only to businesses and other organisations acting in their trade or profession, not to consumers.
 
 **Scope.** We agree the scope in writing before work starts. Changes need a new written agreement and may affect the price and schedule.
 
@@ -4364,19 +4365,21 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 ## Privacy
 
-The site does not use analytics cookies, tracking pixels or third-party scripts.
+The site does not use analytics cookies, tracking pixels or third-party scripts. Cookies are described under Cookies below.
 
-**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data, a legal obligation for accounting records and legitimate interest for outreach. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
+**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, and the analysis of a traffic spike rest on legitimate interest. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
-**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses, and those earlier versions remain in turva.dev's private version history and encrypted backups for as long as each is kept. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/).
+**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. The earlier versions remain in turva.dev's private version history, and in backups until the backup rotation described below replaces them. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/).
 
-**Email.** Email is stored for as long as needed to deliver the work and to meet accounting obligations under Finnish law. Invoice records are retained for six years.
+**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. Anthropic, PBC in the United States states that it relies on adequacy decisions or the EU standard contractual clauses for transfers out of the EEA. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection.
 
-**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, unless the law requires retention. Three kinds of copy follow their own rules. Email and its attachments follow the email rule above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy for as long as each backup is kept, and a backup is never restored for any other purpose. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Email.** Email is stored for as long as needed to deliver the work and to meet accounting obligations under Finnish law. Invoices and other accounting vouchers are kept for six years from the end of the year in which the financial year ended, as the Finnish Accounting Act requires.
+
+**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, unless the law requires retention. Three kinds of copy follow their own rules. Email and its attachments follow the email rule above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies and replaces the oldest with the newest, and a backup is never restored for any other purpose. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
 **Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
-**Outreach records.** When turva.dev writes to a company, it records the company, the business contact it wrote to, the public page where that contact was found and the date. Keeping it stops the same company from being contacted twice and lets the promised rescan be sent. The lawful basis is legitimate interest, and the record is shown or removed on request.
+**Outreach records.** When turva.dev writes to a company, it records the company, the business contact it wrote to, the public page where that contact was found and the date. Keeping it stops the same company from being contacted twice and lets the promised rescan be sent. The lawful basis is legitimate interest, and the record is shown or removed on request. The record is kept for 24 months from the latest contact. A company that asks not to be contacted stays on an exclusion list for as long as that request stands, so that the request can be honoured. You can object to this processing at any time, and an objection stops further contact.
 
 **AI tools.** The AI tool used in the work is Claude, from Anthropic, PBC, in the United States. It works on a local workspace holding the files a task needs, and Anthropic processes those files under its [privacy policy](https://www.anthropic.com/legal/privacy). Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
@@ -4384,20 +4387,20 @@ No data is sold. Client material and correspondence reach only the providers nee
 
 ## Data rights
 
-You can request access to, correction of or deletion of personal data held about you. Send the request to [info@turva.dev](mailto:info@turva.dev).
+Send a request for access to, correction of, deletion of or restriction of personal data held about you to [info@turva.dev](mailto:info@turva.dev). The same address takes a request for a portable copy of data you gave for an engagement. An objection to processing based on legitimate interest, which includes outreach, can be made at any time.
 
-The supervisory authority in Finland is the Data Protection Ombudsman (tietosuojavaltuutettu.fi).
+The supervisory authority in Finland is the Data Protection Ombudsman (tietosuojavaltuutettu.fi). You can lodge a complaint with it or with the supervisory authority of the EU country where you live or work.
 
 ## Cookies
 
-This site sets no cookies of its own. Cloudflare may set cookies required for bot management and security. These are technical cookies and do not require consent under EU law.
+This site sets no cookies of its own. A check of the home page, this page and the contact page on 27 September 2026 received no cookie. If Cloudflare's bot protection is triggered, it can set its own security cookie for that purpose only. Such a cookie is strictly necessary and does not require consent under EU law.
 
 ## Updates
 
 This page is updated when the terms change. The current version applies to engagements started after the date below.
 
-- **Terms last updated:** 2026-09-25
-- **Privacy last updated:** 2026-09-25
+- **Terms last updated:** 2026-09-27
+- **Privacy last updated:** 2026-09-27
 `,
 
   "/guides/open-knowledge-format": `# Open Knowledge Format explained
@@ -6366,7 +6369,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.180.0",
+    "version": "3.181.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6638,7 +6641,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.180.0",
+  "version": "3.181.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
