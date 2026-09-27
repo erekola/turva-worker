@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.185.0 - guide corrections from the hostile audit round of 2026-09-26, phase 4 item 1 (Tek-498): fifteen claims that both independent readers of the guides flagged are narrowed to what their primary sources say, in seo-vs-agent-readiness, agent-readiness-gaps, markdown-for-agents, llms-txt, open-knowledge-format, response-headers-for-agents, json-ld-structured-data, agent-authentication, x402-agent-payments, agent-commerce-discovery, agentic-commerce-readiness and letting-agents-act-on-data, which also lists its UCP and AP2 sources (2026-09-27)
 // turva.dev worker v3.184.0 - fixes from the hostile audit round of 2026-09-26 (Tek-496): the pre-deploy and live signature checks require the exact four-path signed set instead of only a count; the llms.txt validator's blockquote-summary check reads up to three leading spaces the way CommonMark does, so an indented code block no longer passes as a summary; ACP checkout rejects an item quantity that is present and not exactly 1 and an explicit null item id, and its OpenAPI descriptions and the complete operation's response say so (422, not 200); www + mixed-case now redirects straight to the final lower-case path in one hop; the llms.txt validator trims before cutting the typed address to 300 characters; a cleaned-up brief address's redirect carries Cache-Control: private, no-store; OPTIONS on /security.txt, /ai.txt, /api-catalog and /blog/feed.xml now preflights like their .well-known twins; static assets get a public/_headers file with the site's security headers; the character-entities table names its package, version and license (THIRD-PARTY-NOTICES.md added) and the footer's Mastodon icon names Boxicons 2.0.8; package.json states license MIT; the README's /tools parity example states the current pass instead of an old fail.
 // turva.dev worker v3.183.0 - the llms.txt validator reads the format the way CommonMark does, and the hosted Markdown parity check runs markdown-parity-check 0.2.13 (2026-09-27, Tek-496): an H1 with two spaces or a tab after the marker passes and one with no text fails, a link inside code, behind an escaped bracket or in an image is no link while an ordered list, a tab after the marker, a title and an angle target are, a heading before the first H2 or a second H1 warns, a link target has to parse as an http or https URL, the media type is compared whole, localhost.localdomain is refused, the discovery targets are masked and cleared of control characters and a head read in part says so, and the validator page and /legal say that the Worker logs hold the address entered and that Cloudflare passes the visitor's IP address to a checked site outside Cloudflare.
 // turva.dev worker v3.182.0 - the hosted Markdown parity check runs markdown-parity-check 0.2.12 (2026-09-27): URL secrets that GFM links on its own, query values holding parentheses or quotes and special schemes without slashes are masked in the report, numbers and links compare in linear time, and IPv6 blocks the IANA registry marks not globally reachable are refused by the package address policy. Every canonical page still passes its own check. Nothing a page says changed.
@@ -3589,7 +3590,7 @@ The check is described on its [product page](/shopify-agent-storefront-check). T
 
 Commerce discovery describes the interfaces and payment-related capabilities a service supports. This guide separates the named protocols and the versions used in each example.
 
-Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Four machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration, an ACP discovery document, and a UCP profile. Each answers a different question, and an agent reads them before it sends a single commerce request.
+Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Four machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration, an ACP discovery document, and a UCP profile. Each answers a different question. An agent reads the declaration for the protocol it uses, which may be one of the four rather than all of them, and some integrations reach the same information through a registry or direct configuration instead.
 
 | Protocol | Where it lives | What it declares | Question it answers |
 | --- | --- | --- | --- |
@@ -4429,7 +4430,7 @@ What version 0.2 does not fix is meaning. The format does not say what a metric 
 
 ## Version and status
 
-Google Cloud published version 0.1 in June 2026 and version 0.2 in July 2026. This guide describes version 0.2 as published. A team evaluating OKF should check which version a given bundle or tool targets before comparing it against the description here, because the required field, the reserved filenames and the frontmatter keys have already changed once between 0.1 and 0.2.
+Google Cloud published version 0.1 in June 2026 and version 0.2 in July 2026. This guide describes version 0.2 as published. A team evaluating OKF should check which version a given bundle or tool targets before comparing it against the description here, because the frontmatter keys have already changed once between 0.1 and 0.2, when the concept timestamp became generated.at and the body citations list became sources. The required field and the two reserved filenames carried forward unchanged.
 
 ## Where OKF fits with agent-readiness
 
@@ -4700,7 +4701,7 @@ The proposal reached v2 in August 2026 and the file format did not change. What 
 
 ## How clients find it
 
-The reason it matters is cost and clarity. A normal HTML page carries navigation, scripts, and styling that an agent has to wade through, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a fraction of the HTML, which is the difference between an agent reading the page reliably and an agent truncating it. turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. Whether a client fetches any of it depends on the client. A clear llms.txt serves the clients that read it, and no assistant is obliged to be one of them.
+The reason it matters is cost and clarity. A normal HTML page carries navigation, scripts, and styling that an agent has to wade through, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a fraction of the HTML, which lowers the chance that a long page runs past a reading tool's content limit and arrives cut short. turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. Whether a client fetches any of it depends on the client. A clear llms.txt serves the clients that read it, and no assistant is obliged to be one of them.
 
 ## What it does not replace
 
@@ -4861,7 +4862,7 @@ A 402 response with a manifest is a declaration that a resource can be bought th
 
 ## Why a declared payment surface matters
 
-Checkout is one of the places agent commerce stalls today. An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A declared payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search, though checkout is one obstacle among several and not the whole of what agent commerce still needs. A site that publishes these signals tells agents it is open for automated business, and in the case of an open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
+Checkout is one of the places agent commerce stalls today. An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search once the site verifies and settles the payment, though checkout is one obstacle among several and not the whole of what agent commerce still needs. A site that publishes these signals tells agents it is open for automated business, and in the case of an open peer pricelist model, it can be shown alongside other options at the moment an agent decides where to spend.
 
 turva.dev's own x402 surface is a declaration only. Its manifest states that no facilitator is configured, that the payment header is not verified and that the resource answers 402 regardless of payment, so sending funds achieves nothing, and settlement happens out of band against a written scope after a quote. That is the boundary this guide recommends stating on any site whose x402 surface is not wired to a facilitator: say which of the three states the site actually implements.
 
@@ -4873,11 +4874,11 @@ x402 is a way for a site to ask an agent to pay before it returns a resource, us
 
 **Why does agent commerce need a payment surface like x402?**
 
-Checkout is one of the places agent commerce stalls today. An agent can find a product and compare options, then stall at a checkout flow built for a person. A declared payment surface lets the agent complete the purchase the same way it completed the search.
+Checkout is one of the places agent commerce stalls today. An agent can find a product and compare options, then stall at a checkout flow built for a person. A payment surface that the site verifies and settles lets the agent complete the purchase the same way it completed the search. A declaration alone executes no payment and delivers nothing, so a site should say which of the three states it implements.
 
 **What stops an agent from completing a purchase today?**
 
-Checkout is one common stopping point. An agent can find a product and compare options, then stall at a flow built for a person entering card details. A declared payment surface removes that particular stop, and other gaps in agent commerce stay separate problems with their own fixes.
+Checkout is one common stopping point. An agent can find a product and compare options, then stall at a flow built for a person entering card details. A payment surface that the site verifies and settles removes that particular stop, and other gaps in agent commerce stay separate problems with their own fixes.
 
 ## Sources
 
@@ -4901,11 +4902,11 @@ Response headers are the metadata a server sends with every page, and the right 
 
 ## Content type
 
-Content-Language and a clean content type remove ambiguity about what the client is reading. A response that states its language and its exact content type leaves no guesswork about how to parse it or which version of a page it received.
+Content-Language and a clean content type tell the client what it is reading. The content type names the media type, so the client knows how to parse the body. Content-Language names the language of the intended audience, which RFC 9110 keeps separate from every language the text may contain, so it is a hint rather than a guarantee. Neither header identifies which version of a page arrived. An ETag or a Last-Modified date does that.
 
 ## Link and Vary
 
-A Link header can point a client straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the client finds them without crawling. A Vary header that includes Accept tells caches and clients that the site can return different formats for the same URL, which is what makes markdown content negotiation reliable. A missing Vary header breaks content negotiation, because a cache can then serve the wrong format to the next client that asks. A Cache-Control immutable directive set on the wrong response can also stop a client from seeing an update.
+A Link header can point a client straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the client finds them without crawling. A Vary header that includes Accept tells caches that the site can return different formats for the same URL, so a cached markdown response does not reach a client that asked for HTML, or the other way round. The server can still negotiate without it. Where a shared cache stores the response, a missing Vary: Accept can let that cache serve the wrong format to the next client that asks, so check the cache settings and Cache-Control alongside it. A Cache-Control immutable directive set on the wrong response can also stop a client from seeing an update.
 
 ## Rate limits
 
@@ -4919,15 +4920,15 @@ As of July 2026 the [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-htt
 
 **Which response headers help AI agents?**
 
-A Link header points an agent at machine-readable resources such as an API catalog or a markdown version of the page. A Vary header that includes Accept makes markdown content negotiation reliable. A RateLimit-Policy header, and a RateLimit header where the server tracks a per-client allowance, let a well-behaved agent throttle itself, and Content-Language with a clean content type removes ambiguity.
+A Link header points an agent at machine-readable resources such as an API catalog or a markdown version of the page. A Vary header that includes Accept keeps a cache from serving the wrong format when the same URL answers in both markdown and HTML. A RateLimit-Policy header, and a RateLimit header where the server tracks a per-client allowance, let a well-behaved agent throttle itself, and Content-Language with a clean content type tells the client the intended audience language and the media type it received.
 
 **Why do response headers matter to agents?**
 
 An agent reads the status and headers before the body and decides what to do from them. If the headers already say where the structured data is and what formats are available, the agent can skip parsing a page built for human display.
 
-**Which header makes markdown content negotiation reliable?**
+**Which header keeps a cache from mixing up markdown and HTML?**
 
-A Vary header that includes Accept. It is what keeps the negotiation reliable when the same URL can return more than one representation of the page.
+A Vary header that includes Accept. It tells a cache that the same URL can return more than one representation of the page, so the cache does not hand a markdown response to a client that asked for HTML, or the other way round.
 
 ## Sources
 
@@ -4957,7 +4958,7 @@ The terms above blur together because people use one word, visibility, for four 
 
 | Outcome | What it means | What gets measured |
 | --- | --- | --- |
-| Indexing | A crawler can fetch and parse the page | Crawl access, sitemap, robots.txt |
+| Indexing | A crawler has fetched the page and the search engine has stored it in its index | Crawl access, sitemap and robots.txt, then the engine's own index coverage report |
 | Search match | The page ranks for a query a person typed | Position on a results page |
 | Source citation | An AI answer names the page as its source | Whether an assistant's answer links back to it |
 | API action | An agent calls an endpoint to do something | Whether the call resolves and returns a usable result |
@@ -5017,7 +5018,7 @@ The opposite failure is data that parses and is wrong. A product page that publi
 
 ## Validation
 
-Three separate questions get asked here, and each has its own answer. Syntax validity asks whether the JSON-LD parses as the declared type with the required fields present, and a validator answers that from the markup alone. Semantic correctness asks whether the values in that valid structure match the page a person sees and the system that feeds it, and a validator cannot answer that, a person has to compare the two. AI source selection asks whether an assistant picks this page as the source for an answer at all, which depends on the assistant, the query and the moment, and neither syntax nor semantic correctness settles it on its own. A guide's own sample report shows a case where a price of 0 passed every syntax check and one assistant then cited it as the reason the whole catalog was free, in the [sample audit report, finding F1](/samples/audit-report#f1-every-product-publishes-a-price-of-0-and-an-availability-of-instock-on-all-three-surfaces).
+Three separate questions get asked here, and each has its own answer. Syntax validity asks whether the JSON-LD parses and whether the declared type carries the fields a named consumer requires, such as Google's rich result rules, because JSON-LD itself makes no property mandatory and schema.org leaves that to each consumer. A validator answers that from the markup alone, and a report should name which rules it checked. Semantic correctness asks whether the values in that valid structure match the page a person sees and the system that feeds it, and a validator cannot answer that, a person has to compare the two. AI source selection asks whether an assistant picks this page as the source for an answer at all, which depends on the assistant, the query and the moment, and neither syntax nor semantic correctness settles it on its own. The fictional example in the [sample audit report, finding F1](/samples/audit-report#f1-every-product-publishes-a-price-of-0-and-an-availability-of-instock-on-all-three-surfaces) illustrates the gap: a price of 0 passes every syntax check, and an invented assistant answer then calls the whole catalog free. The example is made up for illustration and is not evidence of how any assistant behaves.
 
 ## Limits
 
@@ -5182,11 +5183,11 @@ The pattern follows existing standards. OAuth discovery at a well-known path tel
 
 ## What an agent must discover before it acts
 
-Discovery answers two questions: where to request access, and what scopes exist. OAuth discovery at a well-known path answers both, so an agent can request a token tied to one named permission instead of a blanket login. A protected resource description names what the resource actually needs, so the agent asks for that scope and nothing wider. The service still decides at request time whether to grant it, and discovery only describes the route, it does not grant anything by itself.
+Discovery answers two questions: where to request access, and what scopes exist. OAuth discovery at a well-known path answers both, so an agent can request a token tied to one named permission instead of a blanket login. A protected resource description lists the scopes the resource supports, and that list can be incomplete, so it is not the same as what one operation needs. The scope a request requires comes from the service's own challenge, such as the scope value in a WWW-Authenticate response, or from its documentation, and the agent asks for that scope and nothing wider. The service still decides at request time whether to grant it, and discovery only describes the route, it does not grant anything by itself.
 
 ## The written entry point, and its two dialects
 
-A short auth description, sometimes published as an auth.md, gives an agent a human-readable entry point to the same flow. It is a convention rather than a standard, and as of September 2026 it is two conventions: the recipe the isitagentready.com scanner publishes and the open protocol WorkOS publishes name three of the same fields differently, read in full in the [post linked below](/blog/two-auth-md-dialects). The OAuth metadata documents define the machine-readable discovery and say nothing about a written page or a registration route, so an agent follows only the endpoints a site advertises for itself.
+A short auth description, sometimes published as an auth.md, gives an agent a human-readable entry point to the same flow. It is a convention rather than a standard, and as of September 2026 it is two conventions: the recipe the isitagentready.com scanner publishes and the open protocol WorkOS publishes name three of the same fields differently, read in full in the [post linked below](/blog/two-auth-md-dialects). The OAuth metadata documents define the machine-readable discovery. They can point to a human-readable documentation page and, in RFC 8414, to an OAuth client registration endpoint, but they do not define the auth.md format or an account sign-up flow for the agent's user, so an agent follows only the endpoints a site advertises for itself.
 
 ## Why scoped, discoverable auth matters
 
@@ -5392,7 +5393,7 @@ Content negotiation lets a client ask for the markdown form directly. A client s
 
 ## Direct markdown URLs
 
-Since v2 of the llms.txt proposal, the markdown form also has its own address. A plain page URL takes .md appended, a URL ending in .html has that suffix replaced, and a directory-style URL takes an index form. The page can also carry a link relation of type alternate for text/markdown, so a client that never sends an Accept header can still find the address by reading the page's own links. A site can also publish llms-full.txt, a single file that bundles the whole site as text, so a client can read everything in one request instead of fetching many pages.
+The llms.txt proposal gives the markdown form its own address. Its first version appended .md to the full page URL, so page.html became page.html.md and a directory-style URL took an index form. Version 2, from August 2026, also allows replacing the .html suffix, as in page.md, and it names a link relation of type alternate for text/markdown that the page can carry, so a client that never sends an Accept header can still find the address by reading the page's own links. A site can also publish llms-full.txt, a single file that bundles the whole site as text, so a client can read everything in one request instead of fetching many pages.
 
 ## Content parity
 
@@ -5412,7 +5413,7 @@ An HTML page is built for a browser, and an agent that reads it pays for all the
 
 **How does an agent request the markdown version?**
 
-Through content negotiation. An agent sends an Accept header asking for text/markdown and the server returns the markdown form at the same URL. Since v2 of the llms.txt proposal the markdown form also has its own address, the page URL with .md appended, which a client can fetch without sending any header. A site can also publish llms-full.txt to bundle the whole site as text in one request.
+Through content negotiation. An agent sends an Accept header asking for text/markdown and the server returns the markdown form at the same URL. The llms.txt proposal also gives the markdown form its own address, which a client can fetch without sending any header. Version 1 appended .md to the full page URL, as in page.html.md, and version 2, from August 2026, also allows replacing the extension, as in page.md. A site can also publish llms-full.txt to bundle the whole site as text in one request.
 
 **What does an agent pay for when it reads an HTML page?**
 
@@ -5447,11 +5448,11 @@ No llms.txt and a thin or missing sitemap leave an agent with nothing to read bu
 
 ## Content
 
-Only HTML is offered, with no markdown form, so an agent spends its budget on markup and truncates the page. This is a cost problem rather than a discovery problem: the agent found the page, but reading it took more of its budget than the content was worth.
+The site offers only HTML, with no markdown form, so an agent spends part of its budget on markup, and a long page can exceed the reading tool's content limit and arrive cut short. Whether that happens depends on the tool's text extraction, the page's size and the limit it applies. This is a cost problem rather than a discovery problem: the agent found the page, but reading it can take more of its budget than the content is worth.
 
 ## Data correctness
 
-Capability is usually undeclared. The site may have an API or a useful action, but with no server card or OAuth discovery, an agent cannot find or use it. Among the 439 Level 1 sites with a note, robots.txt appears in 72, structured data in 49 and an MCP server in 35. Structured data is often missing too, so prices and facts are left for the agent to infer from layout instead of reading them from a declared source.
+Capability is usually undeclared. The site may have an API or a useful action, but with no server card or OAuth discovery, an agent has nothing to find it from on its own. An integration configured by hand with the endpoint and its credentials can still work, so what the site loses is automatic discovery rather than the API itself. Among the 439 Level 1 sites with a note, robots.txt appears in 72, structured data in 49 and an MCP server in 35. Structured data is often missing too, so prices and facts are left for the agent to infer from layout instead of reading them from a declared source.
 
 ## Verification
 
@@ -5616,7 +5617,7 @@ Automatic purchasing is one authorized path among several, not the default behav
 
 ## What an agent needs to buy
 
-An agent needs three things in machine-readable form. It needs to find the offer, with a price and currency it can parse rather than infer from a layout. It needs a checkout it can drive through a protocol, not a page built for a mouse. And it needs the purchase to behave predictably from the same starting state, so a repeated call with the same idempotency key returns the same result instead of creating a second order, and a price or balance that changes between the quote and the confirmation comes back as a fresh quote rather than a silent substitution. A catalog that looks perfect to a person can still be opaque to an agent on all three counts.
+An agent needs three things in machine-readable form. It needs to find the offer, with a price and currency it can parse rather than infer from a layout. An agent that works through an API needs a checkout it can drive through a protocol, since a page built for a mouse gives it nothing to call. A browser agent can fill in the same form a person uses, at the cost of reading a layout that can change under it. And it needs the purchase to behave predictably from the same starting state, so a repeated call with the same idempotency key returns the same result instead of creating a second order, and a price or balance that changes between the quote and the confirmation comes back as a fresh quote rather than a silent substitution. A catalog that looks perfect to a person can still be opaque to an agent on all three counts.
 
 ## The protocols in play
 
@@ -5640,7 +5641,7 @@ For a Shopify store, the [Shopify agent storefront check](/shopify-agent-storefr
 
 **What does an AI shopping agent need in order to buy?**
 
-An offer with a price and currency it can parse rather than infer from a layout, a checkout it can drive through a protocol instead of a page built for a mouse, and a purchase that behaves predictably from the same starting state, so a repeated call with the same idempotency key does not create a second order and a changed price or balance comes back as a fresh quote.
+An offer with a price and currency it can parse rather than infer from a layout, a checkout it can drive, through a protocol for an API agent or through the page's own form for a browser agent, and a purchase that behaves predictably from the same starting state, so a repeated call with the same idempotency key does not create a second order and a changed price or balance comes back as a fresh quote.
 
 **What does requires_escalation mean in UCP?**
 
@@ -5678,7 +5679,7 @@ An agent's decision is bounded by the data that reaches it. In a clean environme
 
 A correct decision is not an agent doing whatever it infers. It is an agent acting inside an envelope defined for it, the permissions, the thresholds and the explicit list of what it may touch and what it may not. The judgment is front-loaded into that boundary by a person who knew the stakes. Draw the boundary loosely and a capable agent still does something, just not what you wanted.
 
-Commerce is the first place the boundary got written down. The Universal Commerce Protocol carries a checkout state called requires_escalation, which means the agent has reached the edge of what it may finish alone and a person has to complete the step. AP2 does the same on the payment side, where a mandate records the limits the user agreed to before the agent acted. Both encode a decision somebody made in advance. Decision envelope is the name this guide gives that pattern, and neither specification uses the term, so do not go looking for it in either document. Neither decides for you where the line sits, and that is a judgment about which actions are reversible and who carries the cost when one is not.
+Commerce protocols are one place where the boundary is written down in a specification. The Universal Commerce Protocol carries a checkout state called requires_escalation, which means the agent has reached the edge of what it may finish alone and a person has to complete the step. AP2 does the same on the payment side, where a mandate records the limits the user agreed to before the agent acted. Both encode a decision somebody made in advance. Decision envelope is the name this guide gives that pattern, and neither specification uses the term, so do not go looking for it in either document. Neither decides for you where the line sits, and that is a judgment about which actions are reversible and who carries the cost when one is not.
 
 ## Human handoff
 
@@ -5700,7 +5701,7 @@ The permissions, the thresholds and the explicit list of what an agent may touch
 
 **Where is the decision envelope written down in a protocol?**
 
-In commerce first. UCP carries a checkout state called requires_escalation, where the agent has reached the edge of what it may finish alone. AP2 does the same on the payment side, where a mandate records the limits the user agreed to beforehand.
+Commerce protocols give concrete examples. UCP carries a checkout state called requires_escalation, where the agent has reached the edge of what it may finish alone. AP2 does the same on the payment side, where a mandate records the limits the user agreed to beforehand.
 
 **What makes an acting agent auditable?**
 
@@ -5710,6 +5711,8 @@ A log of what it decided and why, an envelope that is explicit rather than impli
 
 - [Model Context Protocol specification, 2026-07-28 revision](https://modelcontextprotocol.io/specification/2026-07-28)
 - [A2A protocol specification](https://a2a-protocol.org/latest/specification/)
+- [Agent Payments Protocol (AP2) repository](https://github.com/google-agentic-commerce/AP2)
+- [Universal Commerce Protocol (UCP)](https://ucp.dev/)
 
 ## Related
 
@@ -6375,7 +6378,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.184.0",
+    "version": "3.185.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6647,7 +6650,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.184.0",
+  "version": "3.185.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
