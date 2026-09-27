@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.182.0 - the hosted Markdown parity check runs markdown-parity-check 0.2.12 (2026-09-27): URL secrets that GFM links on its own, query values holding parentheses or quotes and special schemes without slashes are masked in the report, numbers and links compare in linear time, and IPv6 blocks the IANA registry marks not globally reachable are refused by the package address policy. Every canonical page still passes its own check. Nothing a page says changed.
 // turva.dev worker v3.181.1 - a paragraph that follows a group of labelled paragraphs gets the same space above it as any other paragraph (2026-09-27): on /legal the sentence after the AI tools entry began directly under it, because the rule that spaces a paragraph after a .dl group existed only inside a card. Nothing a page says changed.
 // turva.dev worker v3.181.0 - /legal, /company and /contact after the external hostile audit round of 2026-09-26 (Tek-494, 2026-09-27): the postal address from the Finnish business register and the place of business, Tampere, replace the address sent on request. /legal says the services are sold only to businesses, names the legal basis of server logs and traffic analysis, names the transfer mechanism of each provider outside the EEA, states the Accounting Act rule for vouchers, the backup rotation of ten copies, 24 months for outreach records and the exclusion list, the full list of data rights and the complaint right, and what a cookie check on 27 September 2026 found. Both update dates move to 2026-09-27.
 // turva.dev worker v3.180.0 - new Build notes post /blog/my-own-site-is-my-proof-of-work (Tek-491, 2026-09-26): My own site is my proof of work, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 35, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
@@ -6370,7 +6371,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.181.1",
+    "version": "3.182.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6642,7 +6643,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.181.1",
+  "version": "3.182.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
