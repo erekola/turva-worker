@@ -1746,9 +1746,10 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 
     // V6-U1 (round 19): a validator check's detail can quote a third-party llms.txt
     // verbatim, so a bidirectional control character in that quoted text must not reach
-    // the answer.
-    check(w.includes('result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripBidi(c.detail) }) : c));'),
-      'every validator check detail is passed through stripBidi before it reaches the JSON or HTML answer');
+    // the answer. Since v3.183.0 (Tek-496) the same map also removes C0 and C1 control
+    // characters, so the line carries stripControls around stripBidi.
+    check(w.includes('result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripControls(stripBidi(c.detail)) }) : c));'),
+      'every validator check detail is passed through stripBidi and stripControls before it reaches the JSON or HTML answer');
 
     // K1-1 (round 19): the bare Response.redirect() carries only Location, so a redirect
     // built with it skips applySecurityHeaders; redirectTo() is the one replacement.
@@ -1808,7 +1809,7 @@ const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
     const w = (byLabel.get(c.cat) || {}).score;
     if (typeof w !== 'string' || !w.trim() || c.val !== w) virheet.push(`cell "${c.cat}" reads ${JSON.stringify(c.val)}, facts.json says ${JSON.stringify(w)}`);
   }
-  const sum = twSquash(twDecode(gridM[2].replace(/<[^>]+>/g, '')));
+  const sum = twSquash(twDecode(h1Strip(gridM[2])));
   const wantSum = `Verified ${kokonaispiste}, ${taso}, Agent-Native.`;
   if (sum !== wantSum) virheet.push(`board summary reads ${JSON.stringify(sum)}, want ${JSON.stringify(wantSum)}`);
   return virheet;
@@ -2294,7 +2295,7 @@ if (LIVE) {
       // whole string rather than as two independent substring searches: "100/100" and
       // "Level 5" both appearing somewhere in the block does not prove they are the
       // claim the block makes.
-      const sum = twSquash(twDecode(gridM[2].replace(/<[^>]+>/g, '')));
+      const sum = twSquash(twDecode(h1Strip(gridM[2])));
       const wantSum = `Verified ${iar.score}, ${lvl}, Agent-Native.`;
       check(sum === wantSum, `board summary reads "${wantSum}" (saw "${sum}")`);
     }
