@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.188.0 - fixes from reports 16, 36 and 08 F08 and F15 of the hostile audit round of 2026-09-26, phase 4 item 4 (Tek-502): thirteen blog posts narrow a sentence that claimed more than its evidence and each carries a dated correction note, the code-hosts post counts thirteen hosts on fourteen surfaces, the patch-surge post compares July with July at 2,2 times and names the AI attribution as Microsoft's, the audit guides say scored against the published checks of an independent scanner instead of current standards, and the home page names what Hardenize and Internet.nl each check.
 // turva.dev worker v3.187.0 - fixes from reports 22 and 21 of the hostile audit round of 2026-09-26, phase 4 item 3 (Tek-500): the services skill no longer lists MCP servers under the day rate, the AP2, MPP and agent registration contact blocks list English and Finnish, the OpenAPI order operations say they answer 402 and the A2A message:send operation documents its request body, the x402 manifest states the EUR to USDC rate and the day it was read, and three blog posts name their release unit, drop an unmeasured ranking phrase and close the parity count at 71 of 71. turva-mcp 1.6.4: get_contact asks for the domain and the question.
 // turva.dev worker v3.186.0 - fixes from report 34 of the hostile audit round of 2026-09-26, phase 4 item 2 (Tek-499): agentic-commerce-readiness says where its own commerce path stops before payment, agent-authentication names public read-only data as the case that needs no auth, llms-txt opens How clients find it with the answer and says why its own agent endpoints are plain addresses, and markdown, llms.txt and llms-full.txt responses carry Content-Language: en. MCP card version 1.6.3.
 // turva.dev worker v3.185.0 - guide corrections from the hostile audit round of 2026-09-26, phase 4 item 1 (Tek-498): fifteen claims that both independent readers of the guides flagged are narrowed to what their primary sources say, in seo-vs-agent-readiness, agent-readiness-gaps, markdown-for-agents, llms-txt, open-knowledge-format, response-headers-for-agents, json-ld-structured-data, agent-authentication, x402-agent-payments, agent-commerce-discovery, agentic-commerce-readiness and letting-agents-act-on-data, which also lists its UCP and AP2 sources (2026-09-27)
@@ -279,7 +280,7 @@ Final price is confirmed in writing after scope is agreed.
 - [What four AI assistants call an agent readiness audit](https://turva.dev/blog/what-ai-assistants-call-an-agent-readiness-audit.md)
 - [Website agent readiness, measured on 567 company sites](https://turva.dev/blog/website-agent-readiness-567-sites.md)
 - [TRACE signs how an agent ran, not what it was allowed to reach](https://turva.dev/blog/trace-runtime-attestation.md)
-- [I scanned fourteen code hosts. Not one served an MCP server card.](https://turva.dev/blog/agent-readiness-code-hosts.md)
+- [I scanned thirteen code hosts. Not one served an MCP server card.](https://turva.dev/blog/agent-readiness-code-hosts.md)
 - [It would be cheating to keep the old price](https://turva.dev/blog/cheating-to-keep-the-old-price.md)
 - [I thought it was a small job](https://turva.dev/blog/i-thought-it-was-a-small-job.md)
 - [My gate could not see a sixth](https://turva.dev/blog/my-gate-could-not-see-a-sixth.md)
@@ -518,7 +519,7 @@ Most of them sit on the floor. Between 28 June and 3 September 2026 I measured [
 
 I work with AI agents every day. Claude Code writes the changes behind those 544 commits under rules I wrote: a session reads the rules, makes the change, runs the gates and hands me the result to review. I know what they can do because I watch it release after release. In one of my projects an agent [signed a real transfer on a test network](/blog/five-rounds-before-the-agent-signed) after five rounds of review.
 
-Then I look at the 567 sites. An agent that reads one of them today gets what an ordinary CMS gives it, and little of what the scanner looks for above Level 1. When I describe the distance between what agents already do and what those sites give them, people do not believe me. That is the hardest part of this work for me. It is also why every number in this post is one you can check yourself: the commits are on GitHub, the parity check runs on my site for anyone, and the scanner is public.
+Then I look at the 567 sites. An agent that reads one of them today gets what an ordinary CMS gives it, and little of what the scanner looks for above Level 1. When I describe the distance between what agents already do and what those sites give them, people do not believe me. That is the hardest part of this work for me. It is also why most numbers in this post are ones you can check yourself: the commits are on GitHub, the parity check runs on my site for anyone, and the scanner is public. The Cloudflare traffic figures are the exception, because they come from my own dashboard.
 
 ## Frequently asked
 
@@ -533,6 +534,8 @@ The site is the proof a buyer reads before hiring me, and its code is public. A 
 **Can I run the parity check on my own site?**
 
 Yes. The hosted check on turva.dev covers turva.dev pages only. For your own site, run the open source package markdown-parity-check with npx on your own machine.
+
+Corrected 2026-09-27. One sentence said every number in this post is one you can check yourself. The Cloudflare traffic figures come from my own dashboard and cannot be checked that way, so the sentence now says so. No number changed.
 
 ## Related
 
@@ -940,7 +943,7 @@ I read front pages and root paths and nothing else, so none of it is a statement
 
 ## Why the companies are not named
 
-The finding is not that one company forgot a file. All 19 landed on zero in the same column, which makes this a property of the category rather than of anyone's diligence. I have also not contacted any of them, and a list of names published before that would be a different kind of document than the one I wanted to write. I should be straight about the limit of this though. Every reading above comes from a public surface, so a reader who guesses the set and runs the same scan will work out who is who. Withholding the names is not protection, it is a statement about what the piece is for.
+The finding is not that one company forgot a file. All 19 landed on zero in the same column. In a sample of 19 read on one day, that points at the category rather than at anyone's diligence, though it does not prove the same of every identity vendor. I have also not contacted any of them, and a list of names published before that would be a different kind of document than the one I wanted to write. I should be straight about the limit of this though. Every reading above comes from a public surface, so a reader who guesses the set and runs the same scan will work out who is who. Withholding the names is not protection, it is a statement about what the piece is for.
 
 ## One last thing, and it cuts against me
 
@@ -960,9 +963,11 @@ Because the thing being sold is machine to machine trust, and a machine that arr
 
 If you are in this set and want your own reading, email me and I will send you the scanner output for your own domain. That is the whole promise, one scan and the raw result, and it is not the paid work.
 
+Corrected 2026-09-27. One sentence called the zero column a property of the category. A sample of 19 read on one day supports less than that, and the sentence now says so. No reading changed.
+
 ## Related
 
-- [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts)
+- [I scanned thirteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts)
 - [Well-known files for agents](/guides/well-known-for-agents)
 - [Publishing an MCP server card](/guides/mcp-server-card)
 `,
@@ -1051,7 +1056,7 @@ The scanner is isitagentready.com, which grades a site from Level 0 to Level 5, 
 
 Three went up. A site whose sitemap answered 404 in July answers 200 now, and reads Level 1 instead of Level 0. A site whose robots.txt redirected to itself and whose sitemap returned 500 has both working, Level 0 to Level 1. A site that now declares Content Signals in its robots.txt reads Level 2 instead of Level 1. One went down: its sitemap answered in July and answers 404 now, Level 1 to Level 0, confirmed with a request outside the scanner so that a scanner artefact is ruled out.
 
-None of the three that moved up had replied to the brief. So the brief cannot claim them, and I am not going to. The likelier explanation is ordinary maintenance, a CMS update or a plugin that started generating a sitemap, and that is worth writing down because a rescan series is the exact place where a consultant is tempted to count every improvement as an effect.
+None of the three that moved up had replied to the brief. So the brief cannot claim them, and I am not going to. I did not measure what moved them. Ordinary maintenance, a CMS update or a plugin that started generating a sitemap, is one plausible explanation, and the limit is worth writing down because a rescan series is the exact place where a consultant is tempted to count every improvement as an effect.
 
 ## The scanner moved too
 
@@ -1073,7 +1078,7 @@ Every brief turva.dev sends says that the same scanner will be run on the same s
 
 **Did the briefs change anything in thirty days?**
 
-Four of 201 comparable sites changed level, three up and one down, and none of the three that moved up had replied to the brief, so the change cannot be attributed to it. Ordinary maintenance is the likelier cause.
+Four of 201 comparable sites changed level, three up and one down, and none of the three that moved up had replied to the brief, so the change cannot be attributed to it. What caused it was not measured, and ordinary maintenance is one plausible explanation.
 
 **Why could nine sites not be compared?**
 
@@ -1082,6 +1087,8 @@ Two hosts answered the scanner with 403 and one with 500, four runs did not sett
 Corrected 2026-09-04. The version served for the first seven hours said the first measurements began on 13 July, described the nine unreadable sites less precisely, and claimed the promise "can be kept at this volume". The earliest first measurement was 18 July, the nine are now broken down as measured, and the claim is limited to these 210 sites. The counts did not change.
 
 Corrected 2026-09-06. Two sentences said the promise was kept for 210 sites and that 2,0 percent was a fact about 210 sites. The first now excludes the two sites that were not rescanned, and the second names the 201 comparable sites the percentage is computed from. The counts did not change.
+
+Corrected 2026-09-27. Two sentences called ordinary maintenance the likelier cause of the three sites that moved up. The cause was not measured, so both now call it one plausible explanation. No number changed.
 
 ## Related
 
@@ -1152,7 +1159,7 @@ In July I wrote up sixteen Finnish B2B sites. Since then the same measurement ha
 
 - 567 company sites, 407 Finnish and 160 from elsewhere, one independent scanner.
 - Level 1 of 5: 485 sites, 85,5 percent. Level 0: 74 sites, 13,1 percent. Level 2: 7 sites, 1,2 percent. One site read Level 5.
-- The Finnish and the non-Finnish subsets read the same: 86,5 and 83,1 percent at Level 1.
+- The Finnish and the non-Finnish subsets land on the same floor: 86,5 and 83,1 percent at Level 1.
 - In my own first-fix notes for the Level 0 sites, robots.txt and the sitemap are the two most frequent subjects.
 - No company is named here. Every level is the reading on the day I wrote to that company.
 
@@ -1166,7 +1173,7 @@ Website agent readiness is a property of a site or an API. It asks whether a mac
 
 Of the 567 sites, 485 read Level 1 of 5. Level 1 is the floor an ordinary CMS site reaches. Seventy-four sites read Level 0, below that floor. Seven read Level 2, and one read Level 5.
 
-The Finnish subset is 407 sites, and 352 of them, 86,5 percent, read Level 1. The 160 sites from outside Finland read 83,1 percent at Level 1 and 14,4 percent at Level 0. The two subsets read the same, so the floor is not a Finnish trait.
+The Finnish subset is 407 sites, and 352 of them, 86,5 percent, read Level 1. The 160 sites from outside Finland read 83,1 percent at Level 1 and 14,4 percent at Level 0. Those two shares are 3,4 percentage points apart and both subsets land on Level 1, so the floor is not a Finnish trait.
 
 The scanner added one check to its set during these ten weeks, Agentic Resource Discovery, which reads /.well-known/ai-catalog.json, so the two ends of the period are not measured on an identical instrument. The level scale did not change. On the one site I measured on both sides of the change, the passing checks and the level stayed the same. The thirty-day rescans I promise each company are a separate series and are not in these figures.
 
@@ -1174,7 +1181,7 @@ The scanner added one check to its set during these ten weeks, Agentic Resource 
 
 For each site I wrote down the single sharpest finding, the thing I would fix first. Sixty-eight of the 74 Level 0 sites have such a note. Robots.txt appears in 45 of those notes and the sitemap in 38, and 29 notes mention both. The pattern in those 29 is a robots.txt the CMS shipped by default and a sitemap that is either missing at every standard address or never announced in robots.txt, so an agent that follows the rules gets no list of pages to read. These sites work for a person. A person does not start from the sitemap.
 
-The 439 Level 1 sites with a note are more varied. The sitemap appears in 102 notes, llms.txt in 99, robots.txt in 72, structured data in 49 and an MCP server in 35. Level 1 is where the site can be found and the rest is missing, and the rest is where the work is.
+Of the 485 Level 1 sites, 439 have such a note, and those notes are more varied. The sitemap appears in 102 notes, llms.txt in 99, robots.txt in 72, structured data in 49 and an MCP server in 35. Level 1 is where the site can be found and the rest is missing, and the rest is where the work is.
 
 ## Why the level is the useful number
 
@@ -1192,7 +1199,7 @@ Run isitagentready.com on your domain and read the level, then read which checks
 
 No. They load and a person can use them without trouble. The level measures something else, whether a machine reading on someone's behalf can find the site, read it without a browser, learn what the company sells and act on it. Level 1 is where most sites in this sample sat on the day I wrote to them.
 
-**Why do Finnish and other sites read the same?**
+**Why do Finnish and other sites land on the same floor?**
 
 Because Level 1 is what a CMS ships by default: a robots.txt, a sitemap and HTML pages. Nothing in that default was built for agents. My reading is that this is why the Finnish sites and the others land on the same floor, and that reading is not measured: the data has no country-by-country split and no record of which CMS each site runs.
 
@@ -1201,6 +1208,8 @@ Because Level 1 is what a CMS ships by default: a robots.txt, a sitemap and HTML
 Run the scanner on your domain and read the level, then read which checks failed. The free llms.txt validator on this site reads the llms.txt part in detail. The audit reads the whole surface and lists the fixes in priority order, and it starts with an email carrying the domain.
 
 Corrected 2026-09-25. Three sentences said more than the data shows. Two described the typical company site and where most company sites sit, and they now describe this sample. A third gave a reason for the shared floor that no measurement supports, and it is now marked as my reading. I also named the check the scanner added. The counts did not change.
+
+Corrected 2026-09-27. Three places said the Finnish and the non-Finnish subsets read the same. Their Level 1 shares are 3,4 percentage points apart, so they now say both land on the same floor. The Level 1 notes now name the 485 sites they come from. No number changed.
 
 ## Related
 
@@ -1272,13 +1281,13 @@ Sources: [Linux Foundation press release, 25 August 2026](https://www.linuxfound
 - [Authentication and authorisation for AI agents](/guides/agent-authentication)
 - [Define what an agent may do with your data](/guides/letting-agents-act-on-data)
 `,
-  "/blog/agent-readiness-code-hosts": `# I scanned fourteen code hosts. Not one served an MCP server card.
+  "/blog/agent-readiness-code-hosts": `# I scanned thirteen code hosts. Not one served an MCP server card.
 
 2026-08-22
 
 Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.
 
-Cursor launched Origin on August 17 and calls it a Git forge for the agentic era. I ran an independent agent-readiness scanner over its public surface and over thirteen other code hosts on August 22. Not one of them reached Level 2 of 5.
+Cursor launched Origin on August 17 and calls it a Git forge for the agentic era. I ran an independent agent-readiness scanner over its public surface and over twelve other code hosts on August 22, one of them on two surfaces. Not one of them reached Level 2 of 5.
 
 A 403 answer is a refusal, not evidence that a file is absent. Where the count below reads zero, some of those checks got no answer at all rather than a confirmed absence, and that qualification applies directly to the headline claim above.
 
@@ -1335,7 +1344,7 @@ The sample is fourteen surfaces I picked by hand. It is not a random draw and it
 
 ## Why any of this matters
 
-An agent that lands on a code host today can read the marketing copy. It cannot ask the site what it is able to do, because nothing on the site answers that question in a format an agent parses. Every integration therefore has to be hard-coded by a human who already knows the endpoint exists.
+An agent that lands on a code host today can read the marketing copy. On the paths this scan read, nothing on the site told it what the site is able to do in a format an agent parses. An agent that needs one of those capabilities therefore depends on a human who already knows the endpoint exists.
 
 The fixes are small and mostly mechanical. A server card is a JSON file at a known path. An API catalog is a linkset. A Link header is one line of response configuration. None of it requires rebuilding a forge, and none of it had been done on any of the fourteen surfaces I measured.
 
@@ -1354,6 +1363,8 @@ So that an agent arriving at the domain can learn that a server exists, where it
 **How do I check a host myself?**
 
 Run the same public scanner against the domain and read the group named API, Auth, MCP & A2A Discovery. The result is a snapshot of that day, mine included, because these specifications move month to month.
+
+Corrected 2026-09-27. The title said fourteen code hosts. The table has fourteen surfaces from thirteen hosts, because GitLab was read twice, so the title now says thirteen hosts. A sentence also said every integration has to be hard-coded, and it now keeps to the paths this scan read. No reading changed.
 
 ## Related
 
@@ -1398,9 +1409,9 @@ Across every session recorded on this machine the raw sum is 7 197 173 453 token
 
 That spend is mine. It produced no invoice and it was never billable. What it produced is the file that means the next audit does not repeat it. Keeping the old price and the old clock would mean charging a client for work that is already done.
 
-## Why the accuracy does not drop
+## What the checklist found
 
-The obvious reading of a lower price and a shorter clock is that something got smaller. What happened is the opposite, and the checklist proved it on me before it proved it on anyone else.
+The obvious reading of a lower price and a shorter clock is that something got smaller. The first thing the checklist did was find a gap in my own material, before it ran on anyone else's.
 
 Writing the checklist out found a hole in my own material. The scanner scores a check called ard, the capability manifest at /.well-known/ai-catalog.json. My own recipe index named 21 checks and that one was not among them, and no recipe covered it. My own gate did not catch it either, because the gate reads the checks a recipe claims and has nothing to say about a check with no recipe at all. An audit run from that index would have skipped a scored check and still looked complete.
 
@@ -1436,11 +1447,13 @@ No. The scanner is the same one, the manual checks over it are the same, and the
 
 Two weeks from the agreed written kickoff. It was two to three weeks, and the shorter window also leaves the specifications less time to move underneath the report.
 
-**How do you know the accuracy held?**
+**What did writing the checklist find?**
 
 Writing the checklist out immediately found a scored check, ard, that was missing from my own fix recipe index and from my own gate. That is the kind of hole the list exists to catch, and it caught it on me first.
 
 Corrected 2026-09-03. Three sentences in this post read as if a client had already paid the old price. None had: the audit had not sold at €6,500. They now say what the old price charged for. Nothing else in the post changed.
+
+Corrected 2026-09-27. A heading and a question said the accuracy does not drop. That was not measured, and one check found missing in my own material does not show it, so both now say what the checklist found. No price or number changed.
 
 ## Related
 
@@ -1616,7 +1629,7 @@ That is the part worth stopping on. A compatibility lane is built to be invisibl
 
 There is one and it costs a single request. If initialize answers, you are on the legacy lane, and whatever you conclude next is a statement about your client. A server serving 2026-07-28 does not offer initialize on the new lane at all, so a working handshake is evidence about the caller.
 
-## What the four requests returned
+## What the five requests returned
 
 - Without the version header, server/discover returns HTTP 200, framed as an event stream, carrying -32601 Method not found. The same request sent as initialize with protocol version 2025-06-18 returns 200 and the server's identity.
 - With the version header and no _meta, HTTP 400 and -32602, and the message says the header names revision 2026-07-28 while the request is missing the required per-request envelope key _meta.
@@ -1638,6 +1651,8 @@ Yesterday it was a green check reading a lane the server no longer serves. Today
 So the habit, for anything with a compatibility layer beneath it. Before reading the result, work out which lane answered. If the protocol will not tell you, put the discriminator in the request yourself and check that the answer moves.
 
 None of this is visible to an agent-readiness scanner. Scanners do not speak MCP, so a passing readiness level says nothing about whether an MCP endpoint serves the current revision. That one belongs to whoever runs the server.
+
+Corrected 2026-09-27. The heading above the results said four requests. The first row covers two, so it now says five.
 
 ## Related
 
@@ -1839,9 +1854,11 @@ The fix shipped yesterday: RateLimit-Limit is gone and RateLimit-Policy stays. T
 
 ## What to take from it
 
-A declared limit is a claim about behavior, and claims about behavior rot silently, because nothing breaks when they do. The check that catches this class of defect is reading the code. Probing the endpoint cannot do it, because on an eventually consistent platform the probe returns the same comfortable 200s for a working guard, for a missing one and for one that has failed open. If a header on your site promises something, the interesting question is not whether the value looks sensible. It is which line of code makes it true.
+A declared limit is a claim about behavior, and claims about behavior rot silently, because nothing breaks when they do. The check that catches this class of defect is reading the code. A small probe cannot do it, because on an eventually consistent platform it returns the same comfortable 200s for a working guard, for a missing one and for one that has failed open. A large parallel burst can draw refusals, as the runs above did, and it still does not show which line of code refused. If a header on your site promises something, the interesting question is not whether the value looks sensible. It is which line of code makes it true.
 
 If you want your own agent-facing claims read the way a skeptic would read them, an audit is what I do. Email info@turva.dev.
+
+Corrected 2026-09-27. A sentence said probing the endpoint cannot catch this defect. The larger bursts in this post did draw refusals, so it now says a small probe cannot, and that a burst still does not show which code refused. No number changed.
 
 ## Related
 
@@ -1904,7 +1921,7 @@ The obvious objection is that volume without quality is just a bigger pile. If A
 | Remote code execution | 42 | 165 |
 | Elevation of privilege | 58 | 256 |
 
-Three times the volume, and the median CVE is a full point more severe. The Moderate band collapsed from a third of the package to under five per cent. Remote code execution roughly quadrupled.
+More than twice the volume of the same month a year earlier, and the median CVE is a full point more severe. The Moderate band collapsed from a third of the package to under five per cent. Remote code execution roughly quadrupled.
 
 One caveat, stated plainly. The share of CVEs Microsoft did not assign a CVSS score to rose from 5 % to 38 %. Those are likely Chromium-inherited Edge issues, which Microsoft does not usually score itself. The severity claim above holds for what Microsoft scored. I cannot speak for the rest, and neither can anyone who has not opened the file.
 
@@ -1932,7 +1949,7 @@ That has a consequence worth sitting with. Access to Mythos is controlled by Ant
 
 In January 2026 the curl project shut down its bug bounty. Twenty reports arrived in the first twenty-one days of the year. Not one was valid. Daniel Stenberg described it as being DDoSed. HackerOne submissions rose 76 % year over year through March, and roughly three quarters of them were noise. Google stopped taking AI-generated submissions to its open-source reward programme. GitHub tightened its requirements.
 
-So in the same six months, one organisation used AI to ship 1150 real CVEs and another was driven out of the bounty business by AI reports that were worth nothing.
+So in the same six months, one organisation shipped 1150 real CVEs and credited AI-assisted discovery for the rise, and another was driven out of the bounty business by AI reports that were worth nothing.
 
 Same technology. The difference is the prove pipeline. Microsoft built one, with dedicated cloud infrastructure behind it. curl is volunteers, and volunteers cannot fund a filter, so the only move left was to close the door.
 
@@ -1957,6 +1974,8 @@ A vendor made a qualitative claim: volume will go up. The receipt was public, ma
 That is what measurement is for. Not to catch anyone out. Microsoft's post is accurate, and the data supports the direction it describes more strongly than the post itself does. The point is that "higher volume" and "3,0 times, and the median CVE gained a full point of severity" are different sentences, and only one of them can be checked.
 
 Agent-readiness works the same way. A site can assert it is ready for AI agents. A scanner reads the site and returns a number. One of those is an opinion.
+
+Note added September 27: two sentences went further than the numbers. The severity table compares July 2026 with July 2025, 1150 against 527, which is 2,2 times and not three. Three times is the multiple against the eight-month baseline. The bounty section said the organisation used AI to ship the 1150 CVEs, which is Microsoft's own attribution and not something this post measured, as the capacity section already says. Both sentences now say what this post measured. No CVE count changed.
 
 ## Related
 
@@ -2550,7 +2569,7 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 - [What four AI assistants call an agent readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit). 2026-09-03. Research. Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organisational AI adoption.
 - [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites). 2026-09-03. Research. One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.
 - [TRACE signs how an agent ran, not what it was allowed to reach](/blog/trace-runtime-attestation). 2026-08-30. Protocol notes. This article examines what a TRACE Trust Record attests to, and why runtime evidence does not itself establish the right permissions or correct decisions.
-- [I scanned fourteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts) 2026-08-22. Research. Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.
+- [I scanned thirteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts) 2026-08-22. Research. Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.
 - [It would be cheating to keep the old price](/blog/cheating-to-keep-the-old-price). 2026-08-21. Build notes. A dated account of pricing changes and the work behind them. Historical prices remain in the article, with the current service prices linked separately.
 - [I thought it was a small job](/blog/i-thought-it-was-a-small-job). 2026-08-16. Build notes. A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that work.
 - [My gate could not see a sixth](/blog/my-gate-could-not-see-a-sixth). 2026-08-04. Build notes. A passing validation gate missed elements it never expected. The investigation shows why checking required members differs from checking the complete set.
@@ -2638,9 +2657,11 @@ An ai-catalog.json is easy to misread as another search file. It is not. It inde
 
 ## Honest about adoption
 
-In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft and adoption is near zero. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at [github.com/erekola/turva-worker](https://github.com/erekola/turva-worker).
+In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft, and that check covered the named contributors only, not adoption across the web. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at [github.com/erekola/turva-worker](https://github.com/erekola/turva-worker).
 
 For an audit of a site's discovery surface, contact info@turva.dev.
+
+Corrected 2026-09-27. A sentence said adoption is near zero. The June check covered only the companies named as contributors, so it now says that. No reading changed.
 
 ## Related
 
@@ -2706,7 +2727,7 @@ On turva.dev the homepage as markdown costs roughly a third of the HTML, a coupl
 
 ## What it buys you
 
-A cheaper page is a more reliable one. When the content fits comfortably inside the agent's budget, the agent reads all of it instead of stopping halfway, so it quotes your real price and your real terms rather than a guess. For anything that ends in a transaction, that is the difference between a completed action and a wrong one.
+A cheaper page is easier to read in full. When the content fits comfortably inside the agent's budget, the agent can read all of it instead of stopping halfway, so it is more likely to quote your real price and your real terms rather than a guess. For anything that ends in a transaction, that can be the difference between a completed action and a wrong one. This post measures page size, not whether an agent completed a task.
 
 It also widens who can reach you. The assistants that answer questions and cite sources read better from clean text, so your pages are more likely to be used in full and represented accurately. The work an agent does against your site gets cheaper for whoever runs it, which makes you the easier site to integrate with when an agent is choosing where to act.
 
@@ -2731,6 +2752,8 @@ On this site the homepage as markdown costs roughly a third of the HTML, a coupl
 **Does serving markdown mean duplicating the site?**
 
 No. It is content negotiation. The site keeps serving HTML to browsers, and when an agent asks for the markdown form of a page it gets the same content with the markup stripped out. One URL answers in the format the client asked for.
+
+Corrected 2026-09-27. A paragraph said a cheaper page is a more reliable one. This post measures page size and not task success, so it now says a cheaper page is easier to read in full. No number changed.
 
 ## Related
 
@@ -2808,7 +2831,7 @@ The agent did not get worse. Its inputs did. Most of the reliability of an auton
 
 ## The right decision is the one the settings allow
 
-A correct decision is not an agent doing whatever it infers. It is an agent acting inside an envelope that was defined for it. The settings are the decision, made ahead of time by a person who knew the stakes. Draw the envelope loosely and a capable agent will still do something, just not the thing you wanted. Draw it well and the same agent is one you can leave alone.
+A correct decision is not an agent doing whatever it infers. It is an agent acting inside an envelope that was defined for it. The settings are the decision, made ahead of time by a person who knew the stakes. Draw the envelope loosely and a capable agent will still do something, just not the thing you wanted. Draw it well and the same agent can be left alone for longer, once its record inside that envelope has been checked.
 
 This is the part that gets skipped when people picture autonomy. They imagine judgment appearing from nowhere. In practice the judgment is front-loaded into permissions and thresholds, and into an explicit list of what the agent may touch and what it may not. Good autonomy looks less like a clever model and more like a well-set boundary.
 
@@ -2840,6 +2863,8 @@ A link drops as a crane passes over it, a satellite hop adds the better part of 
 
 A well-set boundary rather than a clever model. The judgment is front-loaded into permissions, thresholds and an explicit list of what the agent may touch. Draw the envelope loosely and a capable agent still does something, just not what you wanted.
 
+Corrected 2026-09-27. One sentence said a well-drawn envelope makes an agent one you can leave alone. Nothing in this post measures that, so the sentence now ties it to the agent's checked record.
+
 ## Related
 
 - [Letting agents act on data](/guides/letting-agents-act-on-data)
@@ -2870,9 +2895,11 @@ The profile links to turva.dev, and turva.dev links back to the profile with a r
 
 ## The principle
 
-For me, identity is infrastructure. Because mine lives on a domain I own, I can change servers, change hosts, or self-host later without changing my address or losing my followers. Renting the frontier is fine. Renting my name is not.
+For me, identity is infrastructure. Because mine lives on a domain I own, I can change servers, change hosts or self-host later without changing my address. Taking the followers along is still Mastodon's own account move, and the domain only means that the move does not cost me the name too. Renting the frontier is fine. Renting my name is not.
 
 Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). For an agent-readiness audit, contact info@turva.dev.
+
+Corrected 2026-09-27. One sentence said the domain lets me change servers without losing my followers. Moving followers takes Mastodon's own account move, so the sentence now says that.
 
 ## Related
 
@@ -3738,7 +3765,7 @@ Scanner: isitagentready.com, third party, Cloudflare.
 
 Verified 100/100, Level 5, Agent-Native.
 
-I also publish the site's security checks. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. Measured 2026-09-23.
+I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. Measured 2026-09-23.
 
 - Hardenize: all 24 categories passed. [hardenize.com/report/turva.dev](https://www.hardenize.com/report/turva.dev)
 - Internet.nl website test: 98/100. [internet.nl/site/turva.dev](https://internet.nl/site/turva.dev/)
@@ -4670,7 +4697,7 @@ turva.dev applies the same standard to its own site. Measured by an independent 
 
 **What is an agent-readiness audit?**
 
-An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API. It is a technical review of the surfaces automated clients use, scored against current standards rather than opinion.
+An agent-readiness audit measures how well an AI agent can discover, read, and act on a website or an API. It is a technical review of the surfaces automated clients use, scored against the published checks of an independent scanner rather than opinion.
 
 **What does an agent-readiness audit check?**
 
@@ -4678,7 +4705,7 @@ It checks the surfaces an agent reaches first, covering discoverability, content
 
 **What does an agent-readiness audit produce?**
 
-A pass or fail on each check, and a concrete fix instruction for every failure, with a link to the guide on this site for that surface where there is one. Your own team can do the work from the report. Scored checks are verified by the scanner before and after, manual-review fixes by a direct test, and the scoring is against current standards rather than opinion.
+A pass or fail on each check, and a concrete fix instruction for every failure, with a link to the guide on this site for that surface where there is one. Your own team can do the work from the report. Scored checks are verified by the scanner before and after, manual-review fixes by a direct test, and the score comes from the scanner's published checks rather than opinion.
 
 ## Sources
 
@@ -5235,7 +5262,7 @@ A scan is one source of evidence. Combine it with direct technical checks and ob
 
 Agent-readiness is a property you can measure, so it should be measured rather than claimed. Three kinds of evidence answer three different questions, and a credible conclusion names which one it rests on. A technical scan reads what a defined set of checks finds on the live site at a point in time. A manual review reads what the scan does not score, the parts that need a person to look, such as whether a page's markdown twin actually matches its HTML or whether a manifest is internally consistent. Observed AI answers read what a named assistant says today when asked a buyer's question, which depends on that assistant's own retrieval and can change between sessions.
 
-The difference between a scan and a self-assessment shows up the moment something changes. A header gets dropped in a deploy, or a manifest starts returning the wrong content type. A checklist filled in by hand still reads as done, because nobody re-ticked the box. A scan reads the live site and the category drops, which is the only signal that matches what an agent experiences. Neither replaces the other: a scan tells you what a defined check found, and a manual review catches what the check set does not cover.
+The difference between a scan and a self-assessment shows up the moment something changes. A header gets dropped in a deploy, or a manifest starts returning the wrong content type. A checklist filled in by hand still reads as done, because nobody re-ticked the box. A scan reads the live site and the category drops, so the record changes when the site does. Neither replaces the other: a scan tells you what a defined check found, and a manual review catches what the check set does not cover.
 
 ## What a technical scan checks
 
@@ -5521,7 +5548,7 @@ The audit and the Shopify check both include a retest window, and the windows di
 
 **Who provides agent-readiness audits?**
 
-turva.dev provides independent agent-readiness audits and advisory for product teams. It is a registered business in Tampere, Finland, business ID 3600281-7, run by Erik Rekola. The audit measures a site or API against current standards using an independent public scanner plus published security scans, then returns a written report with prioritized fixes.
+turva.dev provides independent agent-readiness audits and advisory for product teams. It is a registered business in Tampere, Finland, business ID 3600281-7, run by Erik Rekola. The audit measures a site or API with an independent public scanner plus published security scans, then returns a written report with prioritized fixes.
 
 **What does an agent-readiness audit cost?**
 
@@ -6384,7 +6411,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.187.0",
+    "version": "3.188.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6494,7 +6521,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"i4dG_an1OQKoemqsLwPwLYuL_NRuTL79VNFmCnSmTeggQuOEkw5h3HjMJr-0zrIiGk7Wb3qVgCTnQsZVzQ9HDA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"-LpH7H9KbulkB3sp6kxS10kFGAwkSAy_pH0TYGOwtDrV8USM42-LI2G0WAG0GuSSa1AkYV9V3uPbgtxHst7AAA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"i4dG_an1OQKoemqsLwPwLYuL_NRuTL79VNFmCnSmTeggQuOEkw5h3HjMJr-0zrIiGk7Wb3qVgCTnQsZVzQ9HDA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"hMjeO9M8I6SDAZ8nfd5TiciSQG1DseXH4ZR2uimhlEQQPUh0f_7Qq1s2ffXQeMFBNYJofvyEOUixmjWgwvACDA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6656,7 +6683,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.187.0",
+  "version": "3.188.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7480,6 +7507,7 @@ var META_BY_PATH = {
     title: "My own site is my proof of work · turva.dev",
     description: "Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.",
     date: "2026-09-26",
+    modified: "2026-09-27",
     kind: "Build notes",
     image: "/og-my-own-site-is-my-proof-of-work.jpg",
     imageAlt: "turva.dev blog card: my own site is my proof of work, so nothing on it waits. What gets fixed the same day, and what it cost when a change broke my own tools.",
@@ -7521,6 +7549,7 @@ var META_BY_PATH = {
     title: "What 19 identity vendors publish for agents · turva.dev",
     description: "A dated scan of 19 identity vendors examines what their public sites expose for agents, and what the results cannot say about the products behind them.",
     date: "2026-09-05",
+    modified: "2026-09-27",
     kind: "Research",
     image: "/og-agent-readiness-identity-vendors.jpg",
     imageAlt: "turva.dev blog card: 19 digital identity and trust vendors scanned, every one scored zero of nine on agent, API and MCP discovery.",
@@ -7541,7 +7570,7 @@ var META_BY_PATH = {
     description: "A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-09-06",
+    modified: "2026-09-27",
     image: "/og-thirty-days-after-the-brief.jpg",
     imageAlt: "turva.dev blog card: 210 sites rescanned thirty days after an unsolicited brief: 197 unchanged, three up, one down, and none of the three that improved had replied.",
   },
@@ -7559,7 +7588,7 @@ var META_BY_PATH = {
     description: "One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-09-25",
+    modified: "2026-09-27",
     image: "/og-website-agent-readiness-567-sites.jpg",
     imageAlt: "turva.dev blog card: 567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, Finnish and foreign sites alike.",
   },
@@ -7573,10 +7602,11 @@ var META_BY_PATH = {
     imageAlt: "turva.dev blog card: The Linux Foundation now governs TRACE. Its own documentation is where the limits are: three trust levels, and Level 0 records a privileged operator can forge.",
   },
   "/blog/agent-readiness-code-hosts": {
-    title: "I scanned fourteen code hosts. Not one served an MCP server card. · turva.dev",
-    titleTag: "Agent discovery on fourteen code hosts · turva.dev",
+    title: "I scanned thirteen code hosts. Not one served an MCP server card. · turva.dev",
+    titleTag: "Agent discovery on thirteen code hosts · turva.dev",
     description: "Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.",
     date: "2026-08-22",
+    modified: "2026-09-27",
     kind: "Research",
     image: "/og-agent-readiness-code-hosts.jpg",
     imageAlt: "turva.dev blog card: Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
@@ -7586,7 +7616,7 @@ var META_BY_PATH = {
     description: "A dated account of pricing changes and the work behind them. Historical prices remain in the article, with the current service prices linked separately.",
     date: "2026-08-21",
     kind: "Build notes",
-    modified: "2026-09-05",
+    modified: "2026-09-27",
     image: "/og-cheating-to-keep-the-old-price.jpg",
     imageAlt: "turva.dev blog card: The audit drops to 4,300 euros and two weeks. The part the old price charged for twice is now a written checklist.",
   },
@@ -7610,6 +7640,7 @@ var META_BY_PATH = {
     title: "A red reading that measured my own client · turva.dev",
     description: "An MCP request seemed to expose a server regression but selected the wrong compatibility path. The article records how request and response were told apart.",
     date: "2026-07-30",
+    modified: "2026-09-27",
     kind: "Build notes",
     image: "/og-red-reading-that-measured-my-own-client.jpg",
     imageAlt: "turva.dev blog card: My MCP server answered Method not found to the request its new revision requires, and the fault was in my request. What a compatibility lane hides."
@@ -7644,6 +7675,7 @@ var META_BY_PATH = {
     titleTag: "Every response promised a rate limit · turva.dev",
     description: "A response header advertised a request limit that no code enforced. The investigation separates a published policy, the code and what a probe can show.",
     date: "2026-07-18",
+    modified: "2026-09-27",
     kind: "Build notes",
     image: "/og-enforcing-the-rate-limit-i-advertised.jpg",
     imageAlt: "Every response promised a rate limit. Nothing enforced it."
@@ -7654,7 +7686,7 @@ var META_BY_PATH = {
     description: "A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.",
     date: "2026-07-15",
     kind: "Research",
-    modified: "2026-07-17",
+    modified: "2026-09-27",
     image: "/og-measuring-the-ai-patch-surge.jpg",
     imageAlt: "Measuring the AI patch surge from MSRC data"
   },
@@ -7760,6 +7792,7 @@ var META_BY_PATH = {
     title: "Publishing an ai-catalog.json for agentic discovery · turva.dev",
     description: "A dated implementation log records adding an AI Catalog discovery manifest. Later ARD conventions are explained in the current resource-discovery guide.",
     date: "2026-06-29",
+    modified: "2026-09-27",
     kind: "Build notes",
     image: "/og-publishing-an-ai-catalog.jpg",
     imageAlt: "turva.dev blog card: Google and a Linux Foundation group published Agentic Resource Discovery in 2026."
@@ -7776,6 +7809,7 @@ var META_BY_PATH = {
     title: "What an agent pays to read your site · turva.dev",
     description: "This article examines the publisher's influence on the content a text-based client receives, using a dated HTML-versus-Markdown comparison.",
     date: "2026-06-26",
+    modified: "2026-09-27",
     kind: "Build notes",
     image: "/og-cheaper-pages-for-agents.jpg",
     imageAlt: "turva.dev blog card: An agent pays to read your site in tokens, and an HTML-only page is expensive."
@@ -7813,6 +7847,7 @@ var META_BY_PATH = {
     title: "What makes an AI agent's decisions reliable · turva.dev",
     description: "Usable inputs and explicit operating limits matter for agent decisions, alongside model uncertainty. The article asks where control and verification belong.",
     date: "2026-06-22",
+    modified: "2026-09-27",
     kind: "Protocol notes",
     image: "/og-reliable-agent-decisions.jpg",
     imageAlt: "turva.dev blog card: What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do."
@@ -7821,6 +7856,7 @@ var META_BY_PATH = {
     title: "Owning your fediverse identity · turva.dev",
     description: "A build note on separating a public identity domain from the server that hosts the account, and the dependencies that still remain.",
     date: "2026-06-21",
+    modified: "2026-09-27",
     kind: "Build notes",
     image: "/og-owning-your-fediverse-identity.jpg",
     imageAlt: "turva.dev blog card: Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker."
@@ -7889,7 +7925,7 @@ var META_BY_PATH = {
     checked: "2026-09-15",
     description: "A technical scan, manual review and observed AI answers reveal different problems.",
     image: "/og-guide-agent-readiness-audit.jpg",
-    imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored against current standards by an independent scanner."
+    imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored by an independent scanner."
   },
   "/guides/llms-txt": {
     title: "llms.txt explained · turva.dev",
