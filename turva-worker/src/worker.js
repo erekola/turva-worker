@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.181.1 - a paragraph that follows a group of labelled paragraphs gets the same space above it as any other paragraph (2026-09-27): on /legal the sentence after the AI tools entry began directly under it, because the rule that spaces a paragraph after a .dl group existed only inside a card. Nothing a page says changed.
 // turva.dev worker v3.181.0 - /legal, /company and /contact after the external hostile audit round of 2026-09-26 (Tek-494, 2026-09-27): the postal address from the Finnish business register and the place of business, Tampere, replace the address sent on request. /legal says the services are sold only to businesses, names the legal basis of server logs and traffic analysis, names the transfer mechanism of each provider outside the EEA, states the Accounting Act rule for vouchers, the backup rotation of ten copies, 24 months for outreach records and the exclusion list, the full list of data rights and the complaint right, and what a cookie check on 27 September 2026 found. Both update dates move to 2026-09-27.
 // turva.dev worker v3.180.0 - new Build notes post /blog/my-own-site-is-my-proof-of-work (Tek-491, 2026-09-26): My own site is my proof of work, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 35, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.179.0 - the site's own Markdown parity, round 3 (Tek-488, 2026-09-26): the home page reads as its twin, so every checkable page passes. The scan board and the twin carry the same lines: the scan and its date, the scanner, one row per category in the form Label: 100/100., and the summary, and the board and the twin spell each category by its facts.json label, which both board gates read. The finding card shows the twin's label line and its rows as list items, the two readings in conflict say so in the twin too, the offers are list items linked on their names, the work and step cards are the twin's Title. Body. paragraphs with the step number as a CSS counter, and the hero shows the twin's agent-readiness sentence. The key-value rows on /company and /contact are list items that carry the twin's colon. The live evidence twin gate reads the facts.json template like the static one.
@@ -6369,7 +6370,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.181.0",
+    "version": "3.181.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6641,7 +6642,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.181.0",
+  "version": "3.181.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -10255,6 +10256,7 @@ ${FAQ_CSS}
 .dl{display:flex;flex-direction:column;gap:.85rem;}
 .dl p{margin:0;color:#C9D1CE;font-size:17px;line-height:1.6;}
 .dl .term{color:#F2F4F3;font-weight:700;}
+.sec .dl+p{margin-top:1rem;}
 .toc{margin:0 0 1.4rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;}
 ${TOC_SUB_CSS}
 .posts{list-style:none;margin:0;padding:0;}
