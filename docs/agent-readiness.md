@@ -14,33 +14,34 @@ SEO makes a page rank so a person will click it. Agent-readiness makes the same 
 
 ## The surfaces agents read
 
+Status below names, for the underlying mechanism, whether it is a ratified standard from a body such as the IETF or W3C, an actively versioned draft with its own issue process, a de facto convention with no ratifying body, or an early-stage pilot with limited adoption. A surface can combine more than one mechanism at different statuses; where it does, the table names the piece that status describes. Checked 2026-09-28 against each mechanism's own current page, cited in the Status column.
+
 ### Discovery and access
 
-**llms.txt.** A plain text file at the site root that tells an AI agent what the site contains and where its key content lives. It differs from robots.txt, which controls crawler access, and from a sitemap, which lists URLs. Full guide: https://turva.dev/guides/llms-txt
-
-**robots.txt and sitemap.** Together they decide whether an agent is allowed in and what it can find. Agent access also depends on explicit AI bot rules and Content Signals, and on a sitemap that is actually complete. Full guide: https://turva.dev/guides/sitemaps-and-robots-for-agents
-
-**The /.well-known directory.** The standard location where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to MCP server cards and OAuth metadata. Full guide: https://turva.dev/guides/well-known-for-agents
+| Surface | What it does | Status | Guide |
+| --- | --- | --- | --- |
+| llms.txt | A plain text file at the site root that tells an AI agent what the site contains and where its key content lives. It differs from robots.txt, which controls crawler access, and from a sitemap, which lists URLs. | Convention. [llmstxt.org](https://llmstxt.org/) is an independent community proposal with no IETF or W3C ratification. | https://turva.dev/guides/llms-txt |
+| robots.txt | Decides whether an agent is allowed in, and can name AI bot rules and Content Signals explicitly. | Standard. [RFC 9309](https://www.rfc-editor.org/rfc/rfc9309.html), IETF Standards Track. | https://turva.dev/guides/sitemaps-and-robots-for-agents |
+| sitemap | Lists the URLs a site wants an agent or crawler to find; a scan checks that the file exists and parses, not that it is complete. | Convention. The [Sitemaps protocol](https://www.sitemaps.org/protocol.html) is a cross-vendor convention with no IETF or W3C ratification. | https://turva.dev/guides/sitemaps-and-robots-for-agents |
+| The /.well-known directory | The standard location where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to MCP server cards and OAuth metadata. | Standard. [RFC 8615](https://www.rfc-editor.org/rfc/rfc8615.html), IETF Standards Track. | https://turva.dev/guides/well-known-for-agents |
 
 ### Reading the content
 
-**Prerendering.** A JavaScript-rendered site returns an empty shell to an agent that does not run scripts, so the content never arrives. Prerendering, or serving a static version, is the fix for the most common agent gap. Full guide: https://turva.dev/guides/prerendering-for-agents
-
-**Markdown for agents.** Serving a markdown version of a page through content negotiation gives an agent the content without the markup, at a fraction of the tokens. An llms-full.txt can carry the whole corpus in one file. Full guide: https://turva.dev/guides/markdown-for-agents
-
-**JSON-LD and structured data.** JSON-LD states a page's facts, such as prices, organisation details, and services, as data an agent can read without parsing prose. Full guide: https://turva.dev/guides/json-ld-structured-data
-
-**Response headers.** The right HTTP response headers let an agent work without parsing full HTML. Link, Vary, RateLimit, and content type headers each carry a signal an agent uses. Full guide: https://turva.dev/guides/response-headers-for-agents
+| Surface | What it does | Status | Guide |
+| --- | --- | --- | --- |
+| Prerendering | Serving a static version of a JavaScript-rendered page so an agent that does not run scripts still gets the content. | Not a specification. It is an implementation technique, so it carries no standards-body status. | https://turva.dev/guides/prerendering-for-agents |
+| Markdown for agents | Serving a markdown version of a page through content negotiation, at a fraction of the tokens an HTML page costs. | Standard for the mechanism. [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html), IETF Standards Track, defines content negotiation; the text/markdown media type itself is registered by [RFC 7763](https://www.rfc-editor.org/rfc/rfc7763.html), Informational rather than Standards Track. | https://turva.dev/guides/markdown-for-agents |
+| JSON-LD and structured data | States a page's facts, such as prices, organisation details, and services, as data an agent can read without parsing prose. | Standard. JSON-LD 1.1 is a [W3C Recommendation](https://www.w3.org/TR/json-ld11/). | https://turva.dev/guides/json-ld-structured-data |
+| Response headers | The right HTTP response headers let an agent work without parsing full HTML. | Mixed. Link ([RFC 8288](https://www.rfc-editor.org/rfc/rfc8288.html)) and Vary and content type (both in [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)) are IETF Standards Track; the RateLimit and RateLimit-Policy fields remain an active [IETF Internet-Draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/) rather than an RFC. | https://turva.dev/guides/response-headers-for-agents |
 
 ### Acting on the site
 
-**agents.json.** A manifest that declares the actions and endpoints an AI agent can use on a site, which turns a readable site into an operable one. Full guide: https://turva.dev/guides/agents-json
-
-**MCP server cards.** A JSON file that lets an agent discover a site's Model Context Protocol server and the tools it exposes. Full guide: https://turva.dev/guides/mcp-server-card
-
-**Agent authentication.** The surface that lets an automated client gain scoped access without a human login, through OAuth discovery, protected resource metadata, and agent registration. Full guide: https://turva.dev/guides/agent-authentication
-
-**x402 and agent payments.** x402 uses the HTTP 402 Payment Required status so an agent can discover a price, pay, and continue without a human checkout. Full guide: https://turva.dev/guides/x402-agent-payments
+| Surface | What it does | Status | Guide |
+| --- | --- | --- | --- |
+| agents.json | A manifest that declares the actions and endpoints an AI agent can use on a site, which turns a readable site into an operable one. | Pilot. The [specification](https://github.com/wild-card-ai/agents-json) has stayed at version 0.1.0 since early 2025, outside any standards body, with adoption shifting toward MCP since. | https://turva.dev/guides/agents-json |
+| MCP server cards | A JSON file that lets an agent discover a site's Model Context Protocol server and the tools it exposes. | Draft. The current form develops as an [experimental MCP extension](https://github.com/modelcontextprotocol/ext-server-card), [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), with its default location still unsettled. | https://turva.dev/guides/mcp-server-card |
+| Agent authentication | The surface that lets an automated client gain scoped access without a human login, through OAuth discovery, protected resource metadata, and agent registration. | Standard for OAuth discovery. [RFC 8414](https://www.rfc-editor.org/rfc/rfc8414.html), IETF Standards Track; the human-readable auth.md entry point is a convention with two rival field-naming schemes, not a ratified format. | https://turva.dev/guides/agent-authentication |
+| x402 and agent payments | x402 uses the HTTP 402 Payment Required status so an agent can discover a price, pay, and continue without a human checkout. | Pilot. [x402.org](https://x402.org/) is an open protocol led by its contributing companies, not an IETF or W3C specification; RFC 9110 reserves status code 402 but defines no payment protocol. | https://turva.dev/guides/x402-agent-payments |
 
 ## How agent-readiness should be measured
 

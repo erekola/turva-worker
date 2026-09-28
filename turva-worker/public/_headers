@@ -7,3 +7,18 @@
   Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(), bluetooth=(), hid=(), serial=(), idle-detection=(), browsing-topics=()
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-origin
+
+# A7 V08-25 (Tek-526): static images had no Cache-Control rule of their own and fell back
+# to the assets default, public, max-age=0, must-revalidate, measured live on /logo.png and
+# /signal-qr.png. These filenames are not content-hashed and do get replaced in place (the
+# blog OG cards change when a post is corrected), so the value is a day, not a year: long
+# enough to save a repeat fetch within a session, short enough that a replaced image is not
+# stale in a returning visitor's browser for long after the next deploy's cache purge.
+/*.png
+  Cache-Control: public, max-age=86400
+
+/*.jpg
+  Cache-Control: public, max-age=86400
+
+/*.svg
+  Cache-Control: public, max-age=86400

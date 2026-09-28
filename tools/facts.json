@@ -3,15 +3,15 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.189.1",
-    "mcp": "1.6.4"
+    "site": "3.190.0",
+    "mcp": "1.6.5"
   },
   "mtaSts": {
     "txtId": "20260910202321",
     "policySha256": "b056f5c25f57f294adb9e26a6b65f3734fa37ef965d3aa9b3095685f60e54199"
   },
   "released": {
-    "site": "2026-09-26"
+    "site": "2026-09-28"
   },
   "prices": {
     "shopify": 999,

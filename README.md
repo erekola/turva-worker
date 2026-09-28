@@ -15,7 +15,7 @@ curl -H "Accept: text/html" https://turva.dev/
 curl -H "Accept: text/markdown" https://turva.dev/
 ```
 
-In Windows PowerShell, use `curl.exe` if `curl` resolves to `Invoke-WebRequest`. You can also open [index.md](https://turva.dev/index.md) directly. The home page's Markdown is intentionally more concise than its HTML presentation.
+In Windows PowerShell, use `curl.exe` if `curl` resolves to `Invoke-WebRequest`. You can also open [index.md](https://turva.dev/index.md) directly.
 
 ## Command-line tools
 
@@ -33,7 +33,7 @@ npx --yes turva-llms-txt-validator example.com --json
 npx --yes markdown-parity-check --url https://example.com/page --format json
 ```
 
-The comparison requests both formats from the same URL. Add `--markdown-url https://example.com/page.md` if your Markdown has a separate address. Intentional differences, such as this site's shorter home-page Markdown, still appear in the comparison. See the [validator](https://github.com/erekola/llms-txt-validator) and [parity checker](https://github.com/erekola/markdown-parity-check) READMEs for exit codes and limits.
+The comparison requests both formats from the same URL. Add `--markdown-url https://example.com/page.md` if your Markdown has a separate address. See the [validator](https://github.com/erekola/llms-txt-validator) and [parity checker](https://github.com/erekola/markdown-parity-check) READMEs for exit codes and limits.
 
 This Worker also hosts both checks in the browser. The [llms.txt validator](https://turva.dev/llms-txt-validator) accepts any public domain. The [Markdown parity check](https://turva.dev/markdown-parity-check) checks turva.dev's own published pages only, so use the command above for another site.
 
@@ -58,6 +58,8 @@ The Worker also serves the hosted llms.txt validator, the hosted Markdown parity
 
 The [MCP server](https://github.com/erekola/turva-mcp#connect) runs separately. This repository publishes its discovery card and links to it. The [standalone validator](https://github.com/erekola/llms-txt-validator) provides a CLI and Node package.
 
+Signature coverage, the brief lifecycle and npm package provenance are documented where each already lives, not repeated here: the four signed manifests and their signatures are listed in [docs/endpoints.md](docs/endpoints.md), an unlisted client brief's retention is described on [the legal page](https://turva.dev/legal), and each npm package's own SECURITY.md states its publishing provenance ([turva-llms-txt-validator](https://github.com/erekola/llms-txt-validator/blob/main/SECURITY.md), [markdown-parity-check](https://github.com/erekola/markdown-parity-check/blob/main/SECURITY.md)).
+
 ## Hosted Markdown parity check
 
 `/markdown-parity-check` runs the comparison from the npm package [markdown-parity-check](https://github.com/erekola/markdown-parity-check). The Worker imports the package's library entry, which Wrangler bundles at deploy time. The version is pinned in [turva-worker/package.json](turva-worker/package.json) and its lockfile. The comparison code is the same one the command-line tool runs. Fetching and limits belong to this route:
@@ -68,7 +70,7 @@ The [MCP server](https://github.com/erekola/turva-mcp#connect) runs separately. 
 - The `PARITY_LIMITER` binding allows about 10 checks per minute per client IP at each Cloudflare location. Without the binding the route answers 503 and runs nothing.
 - Every response to a check carries `Cache-Control: no-store`, and the route does not write the target address or the report to its logs.
 
-The page states the turva.dev limit in its opening paragraph and again in the address field's own hint, so a reader sees it before typing an address. Fill in an example only writes turva.dev's tools page into the field, and Check is the separate step that runs the comparison. That example returned a fail on 2026-09-12, described in [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree): the Related heading and its four links were in the Markdown and not in the HTML, while the same four targets were links inside the HTML page's tool cards. That was fixed, and the example now returns a pass with the pinned markdown-parity-check 0.2.13 (verified 2026-09-27, 26/26 HTML and Markdown blocks matched, 0 errors, 0 warnings, 0 infos).
+The page states the turva.dev limit in its opening paragraph and again in the address field's own hint, so a reader sees it before typing an address. Fill in an example only writes turva.dev's tools page into the field, and Check is the separate step that runs the comparison. That example returned a fail on 2026-09-11, described in [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree): the Related heading and its four links were in the Markdown and not in the HTML, while the same four targets were links inside the HTML page's tool cards. That was fixed, and the example now returns a pass with the pinned markdown-parity-check 0.2.13 (verified 2026-09-27, 26/26 HTML and Markdown blocks matched, 0 errors, 0 warnings, 0 infos).
 
 The pinned release can be older than the latest npm release, and the report's `toolVersion` field names the one that ran. A newer package reaches the hosted page only through a site release.
 

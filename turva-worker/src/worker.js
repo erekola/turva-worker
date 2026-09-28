@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.190.0 - fixes from the verified Codex retest of 2026-09-28 (Tek-526): the hosted llms.txt validator strips tabs and other control characters before its 300 character cut, masks user information in an address without a host, reads a link that holds an image, decodes character references in link targets, reads reference links and a blockquote summary after a tab, and keeps a typed path or a CSS selector out of its error sentences; preflight answers for three more paths; images carry a Cache-Control; x402 answers carry the top-level resource object; the legal page names retention limits, the Cloudflare cookies, the lawful basis of the tools, the transfer mechanisms, Signal and LinkedIn, a closure fallback and a section on reporting a vulnerability that security.txt points at; eleven posts and eight guides narrow a claim and carry a dated correction; the MCP server card moves to 1.6.5.
 // turva.dev worker v3.189.1 - the service note link, which draws its own underline as a bottom border, is left out of the running-text underline of 3.189.0, so it no longer shows two lines (Tek-503), and the audit and measurement-led guides say, as the home page already does, that the scanner's public link opens its start page and does not keep the recorded result (Tek-504), and the two sample reports link the address alone and not the word email.
 // turva.dev worker v3.189.0 - fixes from reports 26, 19, 31, 30 and the rest of 08 of the hostile audit round of 2026-09-26, phase 4 item 5 (Tek-503): the envelope guide and post say an allowed action can still be wrong, the services page names the audit and the Shopify check instead of a diagnosis, the parity tool page says every page passes, six posts narrow a sentence and carry a dated correction, the gaps guide says which gaps can need a rebuild, the sample report gives each waiting check its own reason, the share texts of seven pages and four OG cards match their pages, links inside running text are underlined at rest and the three input fields get a border with 3:1 contrast.
 // turva.dev worker v3.188.0 - fixes from reports 16, 36 and 08 F08 and F15 of the hostile audit round of 2026-09-26, phase 4 item 4 (Tek-502): thirteen blog posts narrow a sentence that claimed more than its evidence and each carries a dated correction note, the code-hosts post counts thirteen hosts on fourteen surfaces, the patch-surge post compares July with July at 2,2 times and names the AI attribution as Microsoft's, the audit guides say scored against the published checks of an independent scanner instead of current standards, and the home page names what Hardenize and Internet.nl each check.
@@ -467,7 +468,7 @@ Both documents were read on 2026-09-04.
 - Async-only. No calls, no calendar links.
 - First reply in writing within one business day.
 - Production credentials are not requested.
-- No tracking, no analytics, no third-party scripts on this site.
+- No analytics cookies, tracking pixels or third-party scripts on this site, as the legal page describes; Cloudflare, the host, still keeps standard traffic logs.
 
 ## Related discovery
 
@@ -476,6 +477,8 @@ The two OAuth documents are named in Discovery above.
 - API catalog: https://turva.dev/.well-known/api-catalog
 - Security contact: https://turva.dev/.well-known/security.txt
 - Legal: https://turva.dev/legal
+
+Corrected 2026-09-28. The engagement principles said no tracking, no analytics, no third-party scripts. The site avoids analytics cookies, tracking pixels and third-party scripts of its own, but Cloudflare, the host, still keeps standard traffic logs, as the legal page describes, so the line now says that instead.
 `;
 
 var PAGE_MARKDOWN = {
@@ -939,7 +942,7 @@ Seven of the 19 have an llms.txt an agent can fetch, and one of those seven is a
 
 ## One site where 200 means nothing
 
-One company was different in a way worth describing. I asked for eight paths on that domain and all eight returned HTTP 200 with the same 3021 byte body and an identical sha256. The front page, a real subpage, a path I invented on the spot, llms.txt and four well-known addresses. So the agent addresses answer 200 with a page that is not what was asked for. I opened the site in a browser and the content renders fine, it just arrives after JavaScript has run. An agent that does not execute scripts cannot tell an existing page from one that does not exist. The other 18 answered 404 to the same addresses, which is the correct answer.
+One company was different in a way worth describing. I asked for eight paths on that domain and all eight returned HTTP 200 with the same 3021 byte body and an identical sha256. The front page, a real subpage, a path I invented on the spot, llms.txt and four well-known addresses. So the agent addresses answer 200 with a page that is not what was asked for. I opened the site in a browser and the content renders fine, it just arrives after JavaScript has run. An agent that does not execute scripts cannot tell an existing page from one that does not exist. Among the other 18, the invented path got a 404 in every case, which is the correct answer for a path that does not exist; not every one of those 18 also serves all seven of the other addresses, since seven of the 19 companies in this set have a fetchable llms.txt, as noted above.
 
 ## What this does not say
 
@@ -961,13 +964,15 @@ No, and nothing here measures the software. The scan reads what a website publis
 
 **Why would an identity vendor need an MCP server card or an agent card?**
 
-Because the thing being sold is machine to machine trust, and a machine that arrives at the site has no way to find the interfaces without one. The gap is not that the file is mandatory. The gap is that these nine addresses are where an agent looks first, and in this set they were empty every time.
+Because the thing being sold is machine to machine trust, and on the front pages and root paths this scan read, a machine had no way to find the interfaces without one. The gap is not that the file is mandatory. The gap is that these nine addresses are where an agent looks first, and in this set they were empty on 18 of the 19 companies, with one authMd check answering a 500 rather than a 404, a broken answer and not evidence of a missing file.
 
 **Can I get the reading for my own site?**
 
 If you are in this set and want your own reading, email me and I will send you the scanner output for your own domain. That is the whole promise, one scan and the raw result, and it is not the paid work.
 
 Corrected 2026-09-27. One sentence called the zero column a property of the category. A sample of 19 read on one day supports less than that, and the sentence now says so. No reading changed.
+
+Corrected 2026-09-28. Two sentences read as findings about every company in the sample. The FAQ's claim that the nine addresses were empty every time now says empty on 18 of the 19 companies, naming the one authMd check that answered a 500 rather than a 404, and the 404 comparison for the other 18 now keeps to the one invented control path rather than implying all eight addresses. No reading changed.
 
 ## Related
 
@@ -1045,7 +1050,7 @@ Corrected 2026-09-06. The answer to the last question said this site issues no c
 
 A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.
 
-Every brief I send, a short written reading of one company's website that goes out unasked, carries the same promise. Thirty days later I run the same scanner on the same site again and send back what changed, whether or not anyone answered. Between 19 August and 3 September that promise came due for 210 sites. Each due date is counted from the day that site's brief was sent, not from its first measurement, and the first measurements were taken between 18 July and 6 August, and this is the first time the rescans are read as one set.
+Every brief I send, a short written reading of one company's website that goes out unasked, carries the same promise. Thirty days later I run the same scanner on the same site again and send back what changed, whether or not anyone answered. Between 19 August and 3 September that promise came due for 210 sites. Each due date is counted from the day that site's brief was sent, not from its first measurement. Measurement and sending are separate steps with their own lag: first measurements for this cohort began 18 July, and sending followed once each site had been checked and written up, not on the day it was measured, which is why the two date ranges do not line up day for day. This is the first time the rescans are read as one set.
 
 ## What was measured
 
@@ -1070,7 +1075,7 @@ During the series the scanner added a check named ard to its API group. The twel
 
 The sample is my own prospecting list, sites I chose to write to, not a random draw. So 2,0 percent is a fact about these 201 comparable sites and not a rate for the web. Zero movement in thirty days is also the expected result when nobody has decided to act. The fixes are small, a sitemap line, a robots.txt group, a header, but they need a person who owns the website to schedule them, and one unsolicited email rarely does that inside a month.
 
-What the series does show is narrower and still useful. The promise has been kept for 208 of these 210 sites, and the two exceptions are named above. The scanner is stable enough to compare across a month for 201 of them, and where it is not, the reason can be named, on the host side for most of the nine and in my own records for the two that had no address. And the one site that went down is a reminder that agent readiness is not a state a site reaches once: a sitemap that disappears in an update takes the level with it, and nobody notices until something reads the site as a machine.
+What the series does show is narrower and still useful. The promise has been kept for 208 of these 210 sites, and the two exceptions are named above. The scanner is stable enough to compare across a month for 201 of them, and where it is not, the reason can be named: on the host side for three of the nine, unresolved among readings that never settled for four more, and in my own records for the two that had no address. And the one site that went down is a reminder that agent readiness is not a state a site reaches once: a sitemap that disappears in an update takes the level with it, and nobody notices until something reads the site as a machine.
 
 292 promises are still open, the next of them due on 9 September. When the set is larger the same reading will be repeated.
 
@@ -1095,6 +1100,8 @@ Corrected 2026-09-06. Two sentences said the promise was kept for 210 sites and 
 Corrected 2026-09-27. Two sentences called ordinary maintenance the likelier cause of the three sites that moved up. The cause was not measured, so both now call it one plausible explanation. No number changed.
 
 Corrected again 2026-09-27. The post did not say which day the thirty days are counted from. It now says the day each brief was sent. No number changed.
+
+Corrected 2026-09-28. Two sentences let two unrelated date ranges read as the same step. One now explains that measurement and sending are separate steps with their own lag, and the other replaces the phrase most of the nine with the exact split: three on the host side, four that never settled, and two in this site's own records. No number changed.
 
 ## Related
 
@@ -1211,13 +1218,15 @@ Because Level 1 is what a CMS ships by default: a robots.txt, a sitemap and HTML
 
 **How do I check my own site?**
 
-Run the scanner on your domain and read the level, then read which checks failed. The free llms.txt validator on this site reads the llms.txt part in detail. The audit reads the whole surface and lists the fixes in priority order, and it starts with an email carrying the domain.
+Run the scanner on your domain and read the level, then read which checks failed. The free llms.txt validator on this site reads the llms.txt part in detail. The audit reads the whole surface and lists the fixes in priority order, and it starts with an email that carries the domain you want read and the question you want answered.
 
 Corrected 2026-09-25. Three sentences said more than the data shows. Two described the typical company site and where most company sites sit, and they now describe this sample. A third gave a reason for the shared floor that no measurement supports, and it is now marked as my reading. I also named the check the scanner added. The counts did not change.
 
 Corrected 2026-09-27. Three places said the Finnish and the non-Finnish subsets read the same. Their Level 1 shares are 3,4 percentage points apart, so they now say both land on the same floor. The Level 1 notes now name the 485 sites they come from. No number changed.
 
 Corrected again 2026-09-27. The opening said an assistant's answer describes an organisation. A measurement of 41 answers found that reading in 18 and the website reading in 13, so the opening now says often and links that count. No number in this post changed.
+
+Corrected 2026-09-28. A sentence said the audit starts with an email that carries the domain. It now adds that the email also carries the question you want answered, matching how /contact and the MCP get_contact tool describe the same email. No reading changed.
 
 ## Related
 
@@ -1279,9 +1288,11 @@ The specification is a developer preview. Version 0.2 is current and the draft s
 
 The part that is already useful is the vocabulary. If you run agents against production data, the question to ask a vendor is not whether they support TRACE. Ask which level their records reach, whether their verification checks revocation, and what happens to the answer when the network is down. Those three questions are answerable today and they do not depend on the specification reaching v1.0.
 
-For EU buyers there is one more concrete hook. The project states that Level 0 does not satisfy the tamper-evident logging requirement of EU AI Act Article 12, and that DORA Article 9 needs Level 1 or above with transparency log anchoring. If someone shows you a compliance story built on software-only signing, that gap is written down in the specification's own limitations page.
+For EU buyers there is one more concrete hook, and it cuts against the easy reading. The project's own limitations page says Article 12 of the EU AI Act requires a logging capability but does not prescribe a TRACE level or format, and that neither a TRACE level nor transparency-log anchoring alone establishes compliance with the EU AI Act or DORA; deployment-specific obligations need a separate assessment. If someone shows you a compliance story that treats a TRACE level as satisfying DORA or the AI Act by itself, that gap is written down in the specification's own limitations page.
 
 Sources: [Linux Foundation press release, 25 August 2026](https://www.linuxfoundation.org/press/linux-foundation-welcomes-trace-to-advance-verifiable-runtime-evidence-for-ai-workloads), [TRACE v0.2 specification](https://trace.agentrust-io.com/spec/trace-v0.2/), [TRACE trust levels](https://trace.agentrust-io.com/docs/trust-levels/), [TRACE known limitations](https://trace.agentrust-io.com/LIMITATIONS/), [trace-spec on GitHub](https://github.com/agentrust-io/trace-spec).
+
+Corrected 2026-09-28. A paragraph paraphrased the project's limitations page as saying DORA needs Level 1 with transparency log anchoring. It now quotes the page's own wording, that neither a TRACE level nor log anchoring alone establishes compliance with the EU AI Act or DORA.
 
 ## Related
 
@@ -1352,9 +1363,9 @@ The sample is fourteen surfaces I picked by hand. It is not a random draw and it
 
 ## Why any of this matters
 
-An agent that lands on a code host today can read the marketing copy. On the paths this scan read, nothing on the site told it what the site is able to do in a format an agent parses. An agent that needs one of those capabilities therefore depends on a human who already knows the endpoint exists.
+An agent that lands on a code host today can read the marketing copy. On the paths this scan read, nothing on the site told it what the site is able to do in a format an agent parses. An agent that relies only on the paths this scan checked and needs one of those capabilities therefore depends on a human who already knows the endpoint exists.
 
-The fixes are small and mostly mechanical. A server card is a JSON file at a known path. An API catalog is a linkset. A Link header is one line of response configuration. None of it requires rebuilding a forge, and none of it had been done on any of the fourteen surfaces I measured.
+The fixes are small and mostly mechanical. A server card is a JSON file at a known path. An API catalog is a linkset. A Link header is one line of response configuration. None of it requires rebuilding a forge, and none of it was found published at the paths this scan checked on any of the fourteen surfaces I measured, GitLab's 403 answers included, which this scan recorded as a check that got no answer rather than a confirmed absence.
 
 If you want to check a site yourself, the scanner is public and the free llms.txt validator is at [turva.dev/llms-txt-validator](https://turva.dev/llms-txt-validator). The audit and advisory work is at turva.dev.
 
@@ -1375,6 +1386,8 @@ Run the same public scanner against the domain and read the group named API, Aut
 Corrected 2026-09-27. The title said fourteen code hosts. The table has fourteen surfaces from thirteen hosts, because GitLab was read twice, so the title now says thirteen hosts. A sentence also said every integration has to be hard-coded, and it now keeps to the paths this scan read. No reading changed.
 
 Corrected again 2026-09-27. A sentence said an agent has no way to discover GitHub's MCP server. The scan read named discovery paths and not documentation or search results, so the sentence now keeps to those paths. No reading changed.
+
+Corrected 2026-09-28. Two sentences read as findings about every possible discovery path rather than the ones this scan checked. Both now keep to the paths this scan read, and GitLab's 403 answers are named as checks that got no answer rather than confirmed absence. No reading changed.
 
 ## Related
 
@@ -1852,7 +1865,7 @@ There is also a slower path to the limit, and our first test walked toward it wi
 
 ## If you want to test it
 
-A slow loop tells you nothing here, and a hundred requests tell you nothing. Both come back all 200s whether the limit is enforced or absent. What reaches the limit is a parallel burst big enough to outrun the counters:
+A slow loop tells you nothing on this platform's eventually consistent counters, and a hundred requests tell you nothing either, because both stayed under the 130 and 300 request sizes this post measured. Both come back all 200s whether the limit is enforced or absent, on the Cloudflare binding measured here; a different limiter with different counters could draw a refusal at a different size. What reaches the limit is a parallel burst big enough to outrun the counters:
 
     seq 300 | xargs -P 10 -I{} curl -s -o /dev/null -w "%{http_code}\\n" https://turva.dev/ | sort | uniq -c
 
@@ -1866,11 +1879,13 @@ The fix shipped yesterday: RateLimit-Limit is gone and RateLimit-Policy stays. T
 
 ## What to take from it
 
-A declared limit is a claim about behavior, and claims about behavior rot silently, because nothing breaks when they do. The check that catches this class of defect is reading the code. A small probe cannot do it, because on an eventually consistent platform it returns the same comfortable 200s for a working guard, for a missing one and for one that has failed open. A large parallel burst can draw refusals, as the runs above did, and it still does not show which line of code refused. If a header on your site promises something, the interesting question is not whether the value looks sensible. It is which line of code makes it true.
+A declared limit is a claim about behavior, and claims about behavior rot silently, because nothing breaks when they do. The check that catches this class of defect is reading the code. A probe smaller than the burst sizes measured here cannot do it, because on an eventually consistent platform it returns the same comfortable 200s for a working guard, for a missing one and for one that has failed open. A large parallel burst can draw refusals, as the runs above did, and it still does not show which line of code refused. If a header on your site promises something, the interesting question is not whether the value looks sensible. It is which line of code makes it true.
 
 If you want your own agent-facing claims read the way a skeptic would read them, an audit is what I do. Email info@turva.dev.
 
 Corrected 2026-09-27. A sentence said probing the endpoint cannot catch this defect. The larger bursts in this post did draw refusals, so it now says a small probe cannot, and that a burst still does not show which code refused. No number changed.
+
+Corrected 2026-09-28. Two sentences said a slow loop or a small probe tells you nothing about this rate limit, worded as true of any limiter. Both now name the 130 and 300 request burst sizes this post measured and the platform's eventually consistent counters behind them. No number changed.
 
 ## Related
 
@@ -2101,7 +2116,7 @@ To check where a site stands, the free llms.txt validator is at [turva.dev/llms-
 
 Corrected 2026-09-25. Three passages said more than the scan measured. The token figures were an estimate from a scanner this site no longer uses, and they are now labelled as reported and estimated. Two sentences drew what an agent can answer and whether a business appears in an answer from configuration checks, and a third said most of these sites rank fine in search, which was never measured. They now say what the scan read. The counts did not change.
 
-Corrected again 2026-09-27. One more sentence still said these sites rank in search, which was not measured either. It now says only that they load and that a person can use them.
+Corrected 2026-09-27. One more sentence still said these sites rank in search, which was not measured either. It now says only that they load and that a person can use them.
 
 ## Related
 
@@ -2190,7 +2205,7 @@ For an audit that reads your agent-facing claims against the specifications they
 
 A July measurement compared the token counts of the homepage's HTML and Markdown representations. The result describes that page and measurement date.
 
-In late June this site published [a post on what an agent pays to read a page](/blog/cheaper-pages-for-agents), and the measurement in it said the homepage as markdown cost roughly a third of the HTML form. The most recent scan, as of 4 July 2026, reports the same homepage at 10,320 tokens as HTML and 1,723 as markdown. That is a sixth of the cost, an 83% saving, and nothing in the meantime was done to improve the number.
+In late June this site published [a post on what an agent pays to read a page](/blog/cheaper-pages-for-agents), and the measurement in it said the homepage as markdown cost roughly a third of the HTML form. The most recent scan, as of 4 July 2026, reports the same homepage at 10,320 tokens as HTML and 1,723 as markdown. That is a sixth of the cost, an 83% saving, and nothing in the meantime was done to improve the number. "Bill" in the title is this token count, not a measured invoice: the post tracks what each form costs to read in tokens, not what any agent's operator actually paid.
 
 ## Where the weight came from
 
@@ -2205,6 +2220,8 @@ The HTML form of a page carries everything a site accumulates: navigation, styli
 The token split is not self-reported. It comes from scanning both forms of the page, and this site logs the pair after every deploy. The June post carried the measurement of its day and this one carries the measurement of 4 July. If the pattern holds, a later post will quote a wider gap still, because the human surface keeps accumulating and the text does not.
 
 For an audit that measures what agents pay to read your site, contact info@turva.dev.
+
+Corrected 2026-09-28. The heading called the token count an agent bill. The post measures what each form costs to read in tokens, not a paid invoice, and the body now says so.
 
 ## Related
 
@@ -2669,11 +2686,13 @@ An ai-catalog.json is easy to misread as another search file. It is not. It inde
 
 ## Honest about adoption
 
-In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft, and that check covered the named contributors only, not adoption across the web. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at [github.com/erekola/turva-worker](https://github.com/erekola/turva-worker).
+In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft, and that check covered only the companies the announcement names as contributors, a small, named set whose exact count I did not record at the time, and not adoption across the web. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at [github.com/erekola/turva-worker](https://github.com/erekola/turva-worker).
 
 For an audit of a site's discovery surface, contact info@turva.dev.
 
 Corrected 2026-09-27. A sentence said adoption is near zero. The June check covered only the companies named as contributors, so it now says that. No reading changed.
+
+Corrected 2026-09-28. A sentence implied the June check covered a known number of contributor companies. It now says the check covered only the companies the announcement names as contributors, without stating that count, because it was not recorded at the time.
 
 ## Related
 
@@ -2725,7 +2744,7 @@ For an audit of how legibly AI agents read your site and the data behind it, con
 
 This article examines the publisher's influence on the content a text-based client receives, using a dated HTML-versus-Markdown comparison.
 
-When an AI agent visits your site to check a price or finish a task for someone, it pays to read the page. That cost is counted in tokens, and a normal HTML page is expensive. Navigation, styling, scripts and structured data all arrive whether the agent needs them or not. The agent either spends its budget getting past that markup or runs out of room and reads only part of the page. Both outcomes are yours to deal with, because they decide whether the agent gets your facts right.
+When an AI agent visits your site to check a price or finish a task for someone, it pays to read the page. That cost is counted in tokens, and a normal HTML page is expensive. Navigation, styling, scripts and structured data all arrive whether the agent needs them or not. The agent either spends its budget getting past that markup or runs out of room and reads only part of the page. Both outcomes are yours to deal with: a page an agent can read in full is more likely to give it your facts right, though this post measures page size rather than whether an agent completed a task or read a fact correctly.
 
 ## Your surface sets the cost
 
@@ -2766,6 +2785,8 @@ On this site the homepage as markdown costs roughly a third of the HTML, a coupl
 No. It is content negotiation. The site keeps serving HTML to browsers, and when an agent asks for the markdown form of a page it gets the same content with the markup stripped out. One URL answers in the format the client asked for.
 
 Corrected 2026-09-27. A paragraph said a cheaper page is a more reliable one. This post measures page size and not task success, so it now says a cheaper page is easier to read in full. No number changed.
+
+Corrected 2026-09-28. The opening sentence said a cheaper page decides whether an agent gets your facts right. It now says a page an agent can read in full is more likely to, and names that this post measures page size rather than task success.
 
 ## Related
 
@@ -2843,7 +2864,7 @@ The agent did not get worse. Its inputs did. Most of the reliability of an auton
 
 ## The settings decide what is allowed
 
-A correct decision is not an agent doing whatever it infers. It starts with an envelope that was defined for the agent, with its settings chosen ahead of time by a person who knew the stakes. Staying inside the envelope makes an action allowed, and an allowed action can still be wrong for the task. Draw the envelope loosely and a capable agent will still do something, just not the thing you wanted. Draw it well and the same agent can be left alone for longer, once its record inside that envelope has been checked.
+A correct decision is not an agent doing whatever it infers. It starts with an envelope that was defined for the agent, with its settings chosen ahead of time by a person who knew the stakes. Staying inside the envelope makes an action allowed, and an allowed action can still be wrong for the task. Draw the envelope loosely and a capable agent will still do something, just not the thing you wanted. Draw it well and the same agent can be left alone for longer on the task that envelope was built for, once its record on that specific task has been checked against a threshold set in advance. This post does not name a task, a threshold or a monitoring cadence, because none was measured here; a real deployment needs to name its own before making that call.
 
 This is the part that gets skipped when people picture autonomy. They imagine judgment appearing from nowhere. In practice the judgment is front-loaded into permissions and thresholds, and into an explicit list of what the agent may touch and what it may not. Good autonomy looks less like a clever model and more like a well-set boundary.
 
@@ -2879,6 +2900,8 @@ Corrected 2026-09-27. One sentence said a well-drawn envelope makes an agent one
 
 Corrected again 2026-09-27. A heading and two passages said a correct decision is the one the settings allowed. An allowed action can still be wrong for the task, so they now say the settings decide what is allowed and not what is right.
 
+Corrected 2026-09-28. A sentence said an agent can be left alone for longer once its record is checked, without naming what is checked or against what. It now ties that to the specific task's checked record against a threshold set in advance, and names that this post does not measure a task, a threshold or a cadence.
+
 ## Related
 
 - [Letting agents act on data](/guides/letting-agents-act-on-data)
@@ -2909,11 +2932,13 @@ The profile links to turva.dev, and turva.dev links back to the profile with a r
 
 ## The principle
 
-For me, identity is infrastructure. Because mine lives on a domain I own, I can change servers, change hosts or self-host later without changing my address. Taking the followers along is still Mastodon's own account move, and the domain only means that the move does not cost me the name too. Renting the frontier is fine. Renting my name is not.
+For me, identity is infrastructure. Because mine lives on a domain I own, I can move the same account to new infrastructure, a new machine or a self-hosted instance, without changing my address, the way Mastodon's own machine migration moves an installation and keeps its followers intact. Only a move to a genuinely different account needs Mastodon's separate account-move feature, which aliases the old account to the new one and carries followers across; the domain then means that move does not cost me the name too. Renting the frontier is fine. Renting my name is not.
 
 Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). For an agent-readiness audit, contact info@turva.dev.
 
 Corrected 2026-09-27. One sentence said the domain lets me change servers without losing my followers. Moving followers takes Mastodon's own account move, so the sentence now says that.
+
+Corrected 2026-09-28. A sentence said owning the domain alone lets me change servers without losing followers. Moving the same account to new infrastructure keeps its followers automatically, but moving to a different account still needs Mastodon's own separate account move feature, and the sentence now separates the two cases.
 
 ## Related
 
@@ -4006,7 +4031,7 @@ Yes. I sign your own NDA as it stands, at no charge, before material is shared.
 
 **How is our material handled?**
 
-Client material is kept only on systems needed for the work and deleted within thirty days of closure unless the law requires retention. The workstation uses full disk encryption. Credentials are stored in an encrypted vault, and backups are encrypted before upload.
+Client material is kept only on systems needed for the work and deleted within thirty days of closure unless the law requires retention. Four kinds of copy follow their own rules: email and its attachments, what the AI tool's provider keeps under its own terms, an encrypted backup copy until the rotation replaces it, and a private version-history copy that lasts as long as the backups. The legal page explains each. The workstation uses full disk encryption. Credentials are stored in an encrypted vault, and backups are encrypted before upload.
 
 **Do you use AI tools?**
 
@@ -4022,7 +4047,7 @@ We work in writing. There are no calls or calendar links.
 
 [Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
-All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
+All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.
 `,
 
   "/agent-readiness-audit": `# Website and API agent-readiness audit
@@ -4126,7 +4151,7 @@ We work in writing, with no calls or meetings.
 
 [Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) [info@turva.dev](mailto:info@turva.dev)
 
-All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
+All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.
 `,
 
   "/shopify-agent-storefront-check": `# Shopify agent storefront check
@@ -4246,7 +4271,7 @@ I reply within one business day with the preflight and a fixed quote. The work i
 
 [Request a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A)
 
-All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B, 0% for non-EU.
+All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.
 `,
 
   "/company": `# Work directly with Erik Rekola
@@ -4421,15 +4446,15 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 The site does not use analytics cookies, tracking pixels or third-party scripts. Cookies are described under Cookies below.
 
-**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, and the analysis of a traffic spike rest on legitimate interest. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
+**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, the llms.txt validator's forwarding of a visitor's IP address to the site named, the site's rate limit, and processing a client's own contact persons rest on legitimate interest. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
 **Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. The earlier versions remain in turva.dev's private version history, and in backups until the backup rotation described below replaces them. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
 
-**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. Anthropic, PBC in the United States states that it relies on adequacy decisions or the EU standard contractual clauses for transfers out of the EEA. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection.
+**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. Anthropic, PBC in the United States transfers data out of the EEA under the EU Standard Contractual Clauses, Module Two or Module Three, as its data processing addendum states. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. When the llms.txt validator's user names a site outside the EEA, forwarding that visitor's IP address to it rests on the user's own choice to enter that address, which is the transfer basis for that one request.
 
-**Email.** Email is stored for as long as needed to deliver the work and to meet accounting obligations under Finnish law. Invoices and other accounting vouchers are kept for six years from the end of the year in which the financial year ended, as the Finnish Accounting Act requires.
+**Email.** Email related to an engagement is kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. Invoices and other accounting vouchers follow the same six-year retention, as the Act requires.
 
-**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, unless the law requires retention. Three kinds of copy follow their own rules. Email and its attachments follow the email rule above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies and replaces the oldest with the newest, and a backup is never restored for any other purpose. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. Four kinds of copy follow their own rules. Email and its attachments follow the email rule above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies and replaces the oldest with the newest, and a backup is never restored for any other purpose. A private version-history copy of client material lasts as long as the backups: it is removed when the backup rotation replaces the corresponding backup. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
 **Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
@@ -4437,7 +4462,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **AI tools.** The AI tool used in the work is Claude, from Anthropic, PBC, in the United States. It works on a local workspace holding the files a task needs, and Anthropic processes those files under its [privacy policy](https://www.anthropic.com/legal/privacy). Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
-No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic, PBC in the United States provides the AI tool. A card payment made through a payment link is processed by Stripe. A new provider is added to this list before it receives client material.
+No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic, PBC in the United States provides the AI tool. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. A card payment made through a payment link is processed by Stripe. A new provider is added to this list before it receives client material.
 
 ## Data rights
 
@@ -4445,16 +4470,20 @@ Send a request for access to, correction of, deletion of or restriction of perso
 
 The supervisory authority in Finland is the Data Protection Ombudsman (tietosuojavaltuutettu.fi). You can lodge a complaint with it or with the supervisory authority of the EU country where you live or work.
 
+## Reporting a vulnerability
+
+Report a security issue to [info@turva.dev](mailto:info@turva.dev). The PGP key and the report's expiry date are at [/.well-known/security.txt](/.well-known/security.txt). A report is acknowledged within one business day.
+
 ## Cookies
 
-This site sets no cookies of its own. A check of the home page, this page and the contact page on 27 September 2026 received no cookie. If Cloudflare's bot protection is triggered, it can set its own security cookie for that purpose only. Such a cookie is strictly necessary and does not require consent under EU law.
+This site sets no cookies of its own. A check of the home page, this page and the contact page on 27 September 2026 received no cookie. If Cloudflare's bot protection is triggered, it can set one of its own security cookies, __cf_bm, which tells bot traffic apart from human visitors, or cf_clearance, which records that a challenge was passed, for that purpose only, as [Cloudflare's own cookie table](https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/) names them. Such a cookie is strictly necessary and does not require consent under EU law.
 
 ## Updates
 
 This page is updated when the terms change. The current version applies to engagements started after the date below.
 
-- **Terms last updated:** 2026-09-27
-- **Privacy last updated:** 2026-09-27
+- **Terms last updated:** 2026-09-28
+- **Privacy last updated:** 2026-09-28
 `,
 
   "/guides/open-knowledge-format": `# Open Knowledge Format explained
@@ -4467,7 +4496,7 @@ The Open Knowledge Format is an open specification from Google Cloud that repres
 
 A bundle is a folder of markdown files, and the unit inside it is a concept. A concept is anything worth capturing for an agent, such as a table, a dataset, a metric, a runbook or an API. Every concept is one UTF-8 markdown document with two parts, a YAML frontmatter block at the top fenced by a line of three dashes above and below, and a markdown body underneath.
 
-The format asks for exactly one field, type. Everything else is optional, including title, description, resource, tags and a generated block that records who last changed the concept and when. What types exist and what fields each carries is left to whoever produces the bundle. Concepts reference each other with ordinary markdown links, so the folder becomes a graph of related knowledge rather than a flat list of files.
+The format asks for exactly one field, type. Everything else is optional, including title, description, resource, tags and a generated block that records who last changed the concept and when. What types exist and what fields most of them carry is left to whoever produces the bundle, though a handful of OKF-defined types, such as Attested Computation, add their own required field on top of the one universal one. Concepts reference each other with ordinary markdown links, so the folder becomes a graph of related knowledge rather than a flat list of files.
 
 ## Structure versus meaning
 
@@ -4497,7 +4526,7 @@ An open specification from Google Cloud that represents a body of knowledge as a
 
 **What does OKF actually standardize?**
 
-The shape of the files, not yet their meaning. Version 0.2 fixes the folder of markdown files, the frontmatter, two reserved filenames and one required field. What a concept must contain is left to producers.
+The shape of the files, not yet their meaning. Version 0.2 fixes the folder of markdown files, the frontmatter, two reserved filenames and one required field. What a concept must contain beyond that field is left to producers at the general conformance level; OKF's own concept types can add their own required fields on top of that floor, for example an Attested Computation concept, where the specification itself makes the runtime field required.
 
 **Does OKF replace llms.txt?**
 
@@ -4685,7 +4714,7 @@ For an audit, contact info@turva.dev.
 
 A technical scan, manual review and observed AI answers reveal different problems. This guide explains what an audit should record and how a team can use the findings.
 
-Most sites are built for human readers and search crawlers. AI agents read differently. They look for machine-readable entry points such as llms.txt, a sitemap, response headers, structured data, and well-known manifests, and when those are missing the agent either guesses or gives up.
+Most sites are built for human readers and search crawlers. AI agents read differently. They look for machine-readable entry points such as llms.txt, a sitemap, response headers, structured data, and well-known manifests. When those are missing, an agent that cannot parse the page's rendered layout either guesses at the fact or gives up on the page, while an agent built with a fallback, such as a search result or a cached summary, may still complete the task another way.
 
 ## Technical checks
 
@@ -4949,7 +4978,7 @@ Response headers are the metadata a server sends with every page, and the right 
 
 ## Content type
 
-Content-Language and a clean content type tell the client what it is reading. The content type names the media type, so the client knows how to parse the body. Content-Language names the language of the intended audience, which RFC 9110 keeps separate from every language the text may contain, so it is a hint rather than a guarantee. Neither header identifies which version of a page arrived. An ETag or a Last-Modified date does that.
+Content-Language and a clean content type tell the client what it is reading. The content type names the media type, so the client knows how to parse the body. Content-Language names the language of the intended audience, which RFC 9110 keeps separate from every language the text may contain, so it is a hint rather than a guarantee. Neither header identifies which version of a page arrived. An ETag or a Last-Modified date supports comparison and revalidation, and a strong validator can confirm exact representation identity; a weak validator, marked with a W/ prefix, only supports semantic equivalence and does not by itself guarantee the client has the byte-for-byte same representation.
 
 ## Link and Vary
 
@@ -4957,7 +4986,7 @@ A Link header can point a client straight at a site's machine-readable resources
 
 ## Rate limits
 
-RateLimit-Policy states the quota a server enforces, and RateLimit adds the remaining allowance per client where the server tracks one, so a well-behaved client can throttle itself instead of guessing. Sending a RateLimit-Policy header does not by itself prove the server enforces the stated quota. Checking enforcement means sending requests past the stated limit and confirming the server responds accordingly, not reading the header alone. This site sends the policy header on every response and applies it with Cloudflare's rate-limiting binding. The binding keeps an approximate count per client IP in each Cloudflare location, so a burst can pass more requests than the policy states before the first 429. It answers only whether a request may pass and never how much of the quota remains, so the site sends no RateLimit header.
+RateLimit-Policy states the quota a server enforces, and RateLimit adds the remaining allowance per client where the server tracks one, so a well-behaved client can throttle itself instead of guessing. Sending a RateLimit-Policy header does not by itself prove the server enforces the stated quota. Checking enforcement means sending requests past the stated limit and confirming the server responds accordingly, not reading the header alone. This site sends the policy header on every response its Worker renders and applies it with Cloudflare's rate-limiting binding; a static asset served directly, such as an image, carries no RateLimit-Policy header. The binding keeps an approximate count per client IP in each Cloudflare location, so a burst can pass more requests than the policy states before the first 429. It answers only whether a request may pass and never how much of the quota remains, so the site sends no RateLimit header.
 
 ## Verification
 
@@ -5065,7 +5094,7 @@ The opposite failure is data that parses and is wrong. A product page that publi
 
 ## Validation
 
-Three separate questions get asked here, and each has its own answer. Syntax validity asks whether the JSON-LD parses and whether the declared type carries the fields a named consumer requires, such as Google's rich result rules, because JSON-LD itself makes no property mandatory and schema.org leaves that to each consumer. A validator answers that from the markup alone, and a report should name which rules it checked. Semantic correctness asks whether the values in that valid structure match the page a person sees and the system that feeds it, and a validator cannot answer that, a person has to compare the two. AI source selection asks whether an assistant picks this page as the source for an answer at all, which depends on the assistant, the query and the moment, and neither syntax nor semantic correctness settles it on its own. The fictional example in the [sample audit report, finding F1](/samples/audit-report#f1-every-product-publishes-a-price-of-0-and-an-availability-of-instock-on-all-three-surfaces) illustrates the gap: a price of 0 passes every syntax check, and an invented assistant answer then calls the whole catalog free. The example is made up for illustration and is not evidence of how any assistant behaves.
+Three separate questions get asked here, and each has its own answer. Syntax validity asks only whether the JSON-LD parses and the declared type is well-formed, because JSON-LD itself makes no property mandatory and schema.org leaves that to each consumer. Whether the declared type also carries the fields a named consumer requires, such as Google's rich result rules, is a separate, consumer-specific check: it can fail even when the syntax itself is perfectly valid, because that requirement comes from the consumer and not from JSON-LD or schema.org. A validator answers that from the markup alone, and a report should name which rules it checked. Semantic correctness asks whether the values in that valid structure match the page a person sees and the system that feeds it, and a validator cannot answer that, a person has to compare the two. AI source selection asks whether an assistant picks this page as the source for an answer at all, which depends on the assistant, the query and the moment, and neither syntax nor semantic correctness settles it on its own. The fictional example in the [sample audit report, finding F1](/samples/audit-report#f1-every-product-publishes-a-price-of-0-and-an-availability-of-instock-on-all-three-surfaces) illustrates the gap: a price of 0 passes every syntax check, and an invented assistant answer then calls the whole catalog free. The example is made up for illustration and is not evidence of how any assistant behaves.
 
 ## Limits
 
@@ -5081,7 +5110,7 @@ JSON-LD is a block of structured data in a page that states facts in a form a ma
 
 **Why does structured data matter for agents?**
 
-An agent reading raw HTML has to guess which number is a price and which is a shipping estimate. A JSON-LD Offer with a price and a currency removes the guess, and declared types let an agent place a page in context. Trust and citation stay decisions of the system that reads the page.
+An agent that parses raw HTML without a layout model has to guess which number is a price and which is a shipping estimate. A JSON-LD Offer with a price and a currency removes that guess for an agent that reads structured data first, and declared types let an agent place a page in context. Trust and citation stay decisions of the system that reads the page.
 
 **What should JSON-LD state on a page?**
 
@@ -5179,7 +5208,7 @@ The current specification defines the manifest itself as a JSON document holding
 
 ARD is a discovery layer, not a transport. It helps an agent find the right resource, which the agent then calls through that resource's own protocol, whether MCP, A2A or a plain API. Discovery comes first and invocation second. The catalog does not replace the manifests it points to, it indexes them, so a site keeps its server card, its agent card and its OpenAPI description, and adds one file that ties them together.
 
-llms.txt tells an agent where a site's content lives. An ai-catalog or ard manifest tells an agent which agentic resources the site exposes and how to reach them. The two are complementary, and neither is a ranking file. Google [has said publicly](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) that llms.txt does not affect its search results, and the same holds for a resource catalog. These files are read by agents that act, not by a search index.
+llms.txt tells an agent where a site's content lives. An ai-catalog or ard manifest tells an agent which agentic resources the site exposes and how to reach them. The two are complementary, and neither is a ranking file. Google [has said publicly](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) that llms.txt does not affect its search results, and the same holds for a resource catalog: neither changes ranking in Google Search. That is a statement about Google Search specifically. An ARD registry is a different kind of index: it crawls published catalogs and answers a capability query over them through its own required search API, so these files are read by agents that act and by the registries that index them for that purpose, not by a general web search index.
 
 ## Draft status and how to validate a manifest
 
@@ -5201,7 +5230,7 @@ An ai-catalog.json is a static JSON manifest at /.well-known/ai-catalog.json tha
 
 **Does Agentic Resource Discovery affect search ranking?**
 
-No. ARD is a discovery layer for AI agents, not a search file. It indexes the resources an agent can call through their own protocols. Google has said publicly that llms.txt does not affect its search results, the guide above links the statement, and the same applies to a resource catalog.
+No. ARD is a discovery layer for AI agents, not a web search ranking file, though an ARD registry does crawl and index published catalogs so an agent can query them. Google has said publicly that llms.txt does not affect its Google Search results, the guide above links the statement, and the same applies to a resource catalog's effect on Google Search ranking.
 
 **Where does an ai-catalog.json live?**
 
@@ -5280,7 +5309,7 @@ The difference between a scan and a self-assessment shows up the moment somethin
 
 ## What a technical scan checks
 
-A scan runs a fixed set of checks against the live site, such as whether llms.txt resolves, whether a sitemap lists the pages it should, and whether a response carries the content type it declares. Each check either passes or fails on the day it ran, against the version of the site live that day.
+A scan runs a fixed set of checks against the live site, such as whether llms.txt resolves, whether a sitemap exists and parses, and whether a response carries the content type it declares. A scan checks that the sitemap file is present and well-formed; whether it actually lists every page the site should publish is a completeness question a manual review answers, not the automated check. Each check either passes or fails on the day it ran, against the version of the site live that day.
 
 ## What a manual review adds
 
@@ -5379,7 +5408,7 @@ No. Serving a Markdown version of the page on request also works, and it skips r
 
 Sitemaps describe published URLs, while robots.txt communicates crawler rules. Neither file guarantees retrieval or replaces access control.
 
-robots.txt and the sitemap are the oldest machine-readable files on the web, and they still shape whether an agent is welcomed in and what it can find. A well-behaved agent reads robots.txt to learn the rules and the sitemap to learn the map before it reads any page. Not every client does either, so these files set the terms for the agents that follow them rather than for all traffic.
+robots.txt and the sitemap are the oldest machine-readable files on the web, and they still shape whether an agent is welcomed in and what it can find. A well-behaved agent reads robots.txt to learn the rules, and many read the sitemap to learn the map before they read any page, though RFC 9309 lists the sitemap directive as one a crawler may read rather than one it must. Not every client does either, so these files set the terms for the agents that follow them rather than for all traffic.
 
 ## Crawl preferences
 
@@ -5395,7 +5424,7 @@ A Content-Signal directive is a stated preference and not an enforcement mechani
 
 ## Checks to run
 
-Getting these files wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident stops that crawler from fetching the pages and can keep the content out of what it feeds, though it does not by itself remove the site from an assistant's answers, since an answer can still name a page through another source. A stale sitemap hides new pages. The files are small and the fix is fast, which is why they are the first thing a readiness review checks. In [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) finished in September 2026, robots.txt and the sitemap were the two most frequent first-fix subjects among the 74 sites that read Level 0, 45 and 38 of 68 notes, and 29 named both, usually a robots.txt the CMS shipped by default and a sitemap that was missing or never announced in it.
+Getting these files wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident stops that crawler from fetching the pages and can keep the content out of what it feeds, though it does not by itself remove the site from an assistant's answers, since an answer can still name a page through another source. A stale sitemap hides new pages from an agent that relies on it alone; a page can still be found through an ordinary link even when the sitemap has not caught up. The files are small and the fix is fast, which is why they are the first thing a readiness review checks. In [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) finished in September 2026, robots.txt and the sitemap were the two most frequent first-fix subjects among the 74 sites that read Level 0, 45 and 38 of 68 notes, and 29 named both, usually a robots.txt the CMS shipped by default and a sitemap that was missing or never announced in it.
 
 turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a complete sitemap. For an audit of a site's robots.txt, Content Signals and sitemap, contact info@turva.dev.
 
@@ -5403,7 +5432,7 @@ turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a co
 
 **How do robots.txt and the sitemap affect AI agents?**
 
-A well-behaved agent reads robots.txt to learn the rules and the sitemap to learn the map before it reads any page, though not every client does either. robots.txt can name AI crawlers explicitly, and the sitemap lists every canonical URL so an agent finds the real pages without inferring them from navigation.
+A well-behaved agent reads robots.txt to learn the rules, and many read the sitemap to learn the map before they read any page, though RFC 9309 lists the sitemap directive as one a crawler may read rather than one it must, and not every client reads either file. robots.txt can name AI crawlers explicitly, and the sitemap lists every canonical URL so an agent finds the real pages without inferring them from navigation.
 
 **What is a Content-Signal directive in robots.txt?**
 
@@ -5676,11 +5705,11 @@ UCP writes down the boundary between what an agent may finish alone and what a p
 
 ## Where sites fail the agent
 
-Most catalogs lose the agent before checkout. A price that lives only in rendered HTML, a CAPTCHA wall, a maintenance interstitial, or a discovery file that claims a capability the endpoint does not answer. Each one ends the purchase silently. The agent does not complain, it moves to a competitor whose path resolves. The failure looks like no traffic rather than a broken page, which is why it goes unmeasured.
+Most catalogs lose the agent before checkout. A price that lives only in rendered HTML stops an agent that does not render JavaScript, a CAPTCHA wall stops one with no way to solve it, a maintenance interstitial stops any agent mid-flow, and a discovery file that claims a capability the endpoint does not answer stops one that trusted the file. Each one ends the purchase silently for the agent it stops. The agent does not complain, it moves to a competitor whose path resolves. The failure looks like no traffic rather than a broken page, which is why it goes unmeasured.
 
 ## Readiness is testable
 
-Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built its own agent commerce surface this way, across A2A, AP2, ACP and x402, and an independent scanner checks its discovery files. The path stops on purpose before payment: the ACP checkout answers not_ready_for_payment and the x402 endpoint answers 402 whether or not a payment is sent, because turva.dev sells on a written quote. The test shows where the path stops. It does not show a payment accepted or settled automatically.
+Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built its own agent commerce surface this way, across A2A, AP2, ACP and x402, and an independent scanner checks its discovery files. The path stops on purpose before payment: the ACP checkout answers not_ready_for_payment and the x402 endpoint answers 402 whether or not a payment is sent, because turva.dev sells on a written quote. Tested 2026-09-28 by sending a POST to /api/acp/checkout_sessions and a GET to /x402: both answered exactly as described. The test shows where the path stops. It does not show a payment accepted or settled automatically.
 
 For a Shopify store, the [Shopify agent storefront check](/shopify-agent-storefront-check) reads selected products across the browser WebMCP tools, the Storefront and UCP MCP and the Agentic Catalog, records the buyer journey up to the stop before payment, and delivers a correction plan. For a website or API, the [audit](/agent-readiness-audit) covers the commerce surfaces among the rest.
 
@@ -6008,7 +6037,7 @@ Expires: 2027-05-28T00:00:00.000Z
 Encryption: https://turva.dev/pgp-key.asc
 Preferred-Languages: en
 Canonical: https://turva.dev/.well-known/security.txt
-Policy: https://turva.dev/legal
+Policy: https://turva.dev/legal#reporting-a-vulnerability
 `;
 
 var PGP_PUBLIC_KEY = `-----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -6425,7 +6454,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.189.1",
+    "version": "3.190.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6535,7 +6564,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"i4dG_an1OQKoemqsLwPwLYuL_NRuTL79VNFmCnSmTeggQuOEkw5h3HjMJr-0zrIiGk7Wb3qVgCTnQsZVzQ9HDA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"hMjeO9M8I6SDAZ8nfd5TiciSQG1DseXH4ZR2uimhlEQQPUh0f_7Qq1s2ffXQeMFBNYJofvyEOUixmjWgwvACDA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"NFDZMWGCTNA9CoSGbYM42TbF2SG7ksiw8KAg3Hm2ghGEqacH_sEUWI6Wbvcgedmz4HrgY3324yuPSp0ltDYqAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"hMjeO9M8I6SDAZ8nfd5TiciSQG1DseXH4ZR2uimhlEQQPUh0f_7Qq1s2ffXQeMFBNYJofvyEOUixmjWgwvACDA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6550,7 +6579,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6559,7 +6588,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.4",
+    "version": "1.6.5",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -6666,7 +6695,8 @@ var AP2_MANIFEST = JSON.stringify({
       { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" }
     ],
     "languages": ["en", "fi"],
-    "typical_response_time": "P1D"
+    "typical_response_time": "P1D",
+    "typical_response_time_note": "One business day, Monday to Friday; not calendar days."
   }
 }, null, 2);
 
@@ -6684,7 +6714,8 @@ var ACP_MANIFEST = JSON.stringify({
   "transports": ["rest"],
   "capabilities": {
     "services": ["checkout"],
-    "supported_currencies": ["eur"]
+    "supported_currencies": ["eur"],
+    "checkout_note": "Every checkout session answers not_ready_for_payment: the order is agreed by email and a written scope before any payment, as /api/agent/audit and /api/agent/advisory state in the OpenAPI spec."
   }
 }, null, 2);
 
@@ -6697,7 +6728,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.189.1",
+  "version": "3.190.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -6934,6 +6965,7 @@ var X402_MANIFEST = JSON.stringify({
 
 var X402_INDEX_402 = JSON.stringify({
   "x402Version": 2,
+  "resource": { "url": "https://turva.dev/x402", "description": "turva.dev x402 discovery probe.", "mimeType": "application/json" },
   "accepts": [
     {
       "scheme": "exact",
@@ -6960,6 +6992,7 @@ function build402Body(resource, label, amountUsdcMicro, amountEurCents, descript
   extra.settlement = X402_SETTLEMENT_NOTE;
   return JSON.stringify({
     "x402Version": 2,
+    "resource": { "url": resource, "description": description, "mimeType": "application/json" },
     "accepts": [
       {
         "scheme": "exact",
@@ -7004,6 +7037,7 @@ var MPP_MANIFEST = JSON.stringify({
       { "type": "signal", "value": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK" }
     ],
     "typical_response_time": "P1D",
+    "typical_response_time_note": "One business day, Monday to Friday; not calendar days.",
     "languages": ["en", "fi"]
   },
   "pricing": {
@@ -7130,7 +7164,7 @@ Use this skill to learn which services turva.dev offers, and which of them carry
 - **Agent operations.** On request. The data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do.
 - **MCP server design.** On request. Read-only discovery tools and streamable HTTP transport.
 
-Two implementation add-ons are sold only together with the diagnosis they follow, and neither can be bought on its own. Audit fix implementation, €499 fixed, is exactly the fixes the audit report lists and requires the audit. Shopify correction implementation, €499 fixed, is exactly the corrections the check's plan lists and requires the Shopify agent storefront check.
+Two implementation add-ons are sold only together with the diagnosis they follow, and neither can be bought on its own. Audit fix implementation, €499 fixed, is exactly the fixes the audit report lists and requires the audit. Shopify correction implementation, €499 fixed, is exactly the corrections the check's plan lists and requires the Shopify agent storefront check. Both require that the necessary access is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.
 
 Final price is confirmed in writing after scope is agreed.
 
@@ -7357,7 +7391,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-26";
+var SITEMAP_LASTMOD = "2026-09-28";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -7564,7 +7598,7 @@ var META_BY_PATH = {
     title: "What 19 identity vendors publish for agents · turva.dev",
     description: "A dated scan of 19 identity vendors examines what their public sites expose for agents, and what the results cannot say about the products behind them.",
     date: "2026-09-05",
-    modified: "2026-09-27",
+    modified: "2026-09-28",
     kind: "Research",
     image: "/og-agent-readiness-identity-vendors.jpg",
     imageAlt: "turva.dev blog card: 19 digital identity and trust vendors scanned, every one scored zero of nine on agent, API and MCP discovery.",
@@ -7585,7 +7619,7 @@ var META_BY_PATH = {
     description: "A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-09-27",
+    modified: "2026-09-28",
     image: "/og-thirty-days-after-the-brief.jpg",
     imageAlt: "turva.dev blog card: thirty days after the brief, four of 201 sites moved: 197 unchanged, three up, one down, and none of the three that improved had replied.",
   },
@@ -7603,7 +7637,7 @@ var META_BY_PATH = {
     description: "One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-09-27",
+    modified: "2026-09-28",
     image: "/og-website-agent-readiness-567-sites.jpg",
     imageAlt: "turva.dev blog card: 567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, Finnish and foreign sites alike.",
   },
@@ -7612,6 +7646,7 @@ var META_BY_PATH = {
     titleTag: "TRACE runtime attestation and its limits · turva.dev",
     description: "This article examines what a TRACE Trust Record attests to, and why runtime evidence does not itself establish the right permissions or correct decisions.",
     date: "2026-08-30",
+    modified: "2026-09-28",
     kind: "Protocol notes",
     image: "/og-trace-runtime-attestation.jpg",
     imageAlt: "turva.dev blog card: The Linux Foundation now governs TRACE. Its own documentation is where the limits are: three trust levels, and Level 0 records a privileged operator can forge.",
@@ -7621,7 +7656,7 @@ var META_BY_PATH = {
     titleTag: "Agent discovery on thirteen code hosts · turva.dev",
     description: "Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.",
     date: "2026-08-22",
-    modified: "2026-09-27",
+    modified: "2026-09-28",
     kind: "Research",
     image: "/og-agent-readiness-code-hosts.jpg",
     imageAlt: "turva.dev blog card: Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
@@ -7691,7 +7726,7 @@ var META_BY_PATH = {
     titleTag: "Every response promised a rate limit · turva.dev",
     description: "A response header advertised a request limit that no code enforced. The investigation separates a published policy, the code and what a probe can show.",
     date: "2026-07-18",
-    modified: "2026-09-27",
+    modified: "2026-09-28",
     kind: "Build notes",
     image: "/og-enforcing-the-rate-limit-i-advertised.jpg",
     imageAlt: "Every response promised a rate limit. Nothing enforced it."
@@ -7719,7 +7754,7 @@ var META_BY_PATH = {
     description: "A scan of sixteen selected Finnish B2B sites records gaps in agent-readiness. This historical sample leads into the later study of 567 sites.",
     date: "2026-07-07",
     kind: "Research",
-    modified: "2026-09-25",
+    modified: "2026-09-27",
     image: "/og-agent-readiness-finnish-b2b.jpg",
     imageAlt: "turva.dev blog card: I ran an independent scanner over sixteen Finnish B2B sites. Almost every one landed at isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere."
   },
@@ -7744,6 +7779,7 @@ var META_BY_PATH = {
     title: "The page grew, the agent bill did not · turva.dev",
     description: "A July measurement compared the token counts of the homepage's HTML and Markdown representations. The result describes that page and measurement date.",
     date: "2026-07-04",
+    modified: "2026-09-28",
     kind: "Build notes",
     image: "/og-cheaper-pages-revisited.jpg",
     imageAlt: "turva.dev blog card: The site kept growing after June's token-cost post. The 4 July scan reports an 83% token saving between the HTML and markdown forms."
@@ -7808,7 +7844,7 @@ var META_BY_PATH = {
     title: "Publishing an ai-catalog.json for agentic discovery · turva.dev",
     description: "A dated implementation log records adding an AI Catalog discovery manifest. Later ARD conventions are explained in the current resource-discovery guide.",
     date: "2026-06-29",
-    modified: "2026-09-27",
+    modified: "2026-09-28",
     kind: "Build notes",
     image: "/og-publishing-an-ai-catalog.jpg",
     imageAlt: "turva.dev blog card: Google and a Linux Foundation group published Agentic Resource Discovery in 2026."
@@ -7825,7 +7861,7 @@ var META_BY_PATH = {
     title: "What an agent pays to read your site · turva.dev",
     description: "This article examines the publisher's influence on the content a text-based client receives, using a dated HTML-versus-Markdown comparison.",
     date: "2026-06-26",
-    modified: "2026-09-27",
+    modified: "2026-09-28",
     kind: "Build notes",
     image: "/og-cheaper-pages-for-agents.jpg",
     imageAlt: "turva.dev blog card: An agent pays to read your site in tokens, and an HTML-only page is expensive."
@@ -7847,14 +7883,14 @@ var META_BY_PATH = {
   },
   "/guides/agentic-resource-discovery": {
     title: "Agentic Resource Discovery and resource catalogs · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-09-28",
     description: "Resource catalogs describe the agent-facing interfaces a site exposes.",
     image: "/og-guide-agentic-resource-discovery.jpg",
     imageAlt: "turva.dev guide card: Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation."
   },
   "/guides/open-knowledge-format": {
     title: "Open Knowledge Format explained · turva.dev",
-    checked: "2026-09-23",
+    checked: "2026-09-28",
     description: "Open Knowledge Format describes knowledge as linked Markdown documents.",
     image: "/og-guide-open-knowledge-format.jpg",
     imageAlt: "turva.dev guide card: What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness."
@@ -7863,7 +7899,7 @@ var META_BY_PATH = {
     title: "What makes an AI agent's decisions reliable · turva.dev",
     description: "Usable inputs and explicit operating limits matter for agent decisions, alongside model uncertainty. The article asks where control and verification belong.",
     date: "2026-06-22",
-    modified: "2026-09-27",
+    modified: "2026-09-28",
     kind: "Protocol notes",
     image: "/og-reliable-agent-decisions.jpg",
     imageAlt: "turva.dev blog card: What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do."
@@ -7872,7 +7908,7 @@ var META_BY_PATH = {
     title: "Owning your fediverse identity · turva.dev",
     description: "A build note on separating a public identity domain from the server that hosts the account, and the dependencies that still remain.",
     date: "2026-06-21",
-    modified: "2026-09-27",
+    modified: "2026-09-28",
     kind: "Build notes",
     image: "/og-owning-your-fediverse-identity.jpg",
     imageAlt: "turva.dev blog card: Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker."
@@ -7926,9 +7962,9 @@ var META_BY_PATH = {
   },
   "/legal": {
     title: "Terms, privacy and data handling · turva.dev",
-    description: "Terms for working with turva.dev, how information is handled and where to send a privacy request. Finnish law applies. No tracking or third-party scripts.",
+    description: "Terms for working with turva.dev, how information is handled and where to send a privacy request. No analytics or tracking scripts; Cloudflare logs traffic.",
     image: "/og-legal.jpg",
-    imageAlt: "turva.dev legal card: terms, privacy and GDPR in plain language. Finnish law applies, with no tracking cookies, analytics cookies or third-party scripts."
+    imageAlt: "turva.dev legal card: terms, privacy and GDPR in plain language. Finnish law applies, with no analytics cookies, tracking pixels or third-party scripts; Cloudflare keeps standard traffic logs."
   },
   "/guides": {
     title: "Practical agent-readiness guides · turva.dev",
@@ -7938,7 +7974,7 @@ var META_BY_PATH = {
   },
   "/guides/agent-readiness-audit": {
     title: "What a website and API agent-readiness audit covers · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-09-28",
     description: "A technical scan, manual review and observed AI answers reveal different problems.",
     image: "/og-guide-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored by an independent scanner."
@@ -7973,7 +8009,7 @@ var META_BY_PATH = {
   },
   "/guides/response-headers-for-agents": {
     title: "Response headers for AI clients · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-09-28",
     description: "Response headers describe formats, discovery links and request policy. Check both what a header declares and whether the server behaves accordingly.",
     image: "/og-guide-response-headers-for-agents.jpg",
     imageAlt: "turva.dev guide card: The right HTTP response headers let AI agents work without parsing full HTML."
@@ -7987,7 +8023,7 @@ var META_BY_PATH = {
   },
   "/guides/json-ld-structured-data": {
     title: "JSON-LD and structured data for AI clients · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-09-28",
     description: "Structured data makes page facts explicit, but those facts must agree with the visible page and underlying source.",
     image: "/og-guide-json-ld-structured-data.jpg",
     imageAlt: "turva.dev guide card: JSON-LD states a page's facts as data an AI agent can read without parsing prose."
@@ -8008,7 +8044,7 @@ var META_BY_PATH = {
   },
   "/guides/measurement-led-agent-readiness": {
     title: "Measure agent-readiness with evidence · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-09-28",
     description: "A scan is one source of evidence. Combine it with direct technical checks and observed AI answers, and record the method and date behind every conclusion.",
     image: "/og-guide-measurement-led-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: A hand-filled checklist records intentions. An independent scanner records what an agent actually finds."
@@ -8022,7 +8058,7 @@ var META_BY_PATH = {
   },
   "/guides/sitemaps-and-robots-for-agents": {
     title: "Sitemaps, robots.txt and AI crawler access · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-09-28",
     description: "Sitemaps describe published URLs, while robots.txt communicates crawler rules. Neither file guarantees retrieval or replaces access control.",
     image: "/og-guide-sitemaps-and-robots-for-agents.jpg",
     imageAlt: "turva.dev guide card: robots.txt and the sitemap decide whether an agent is allowed in and what it can find."
@@ -8043,7 +8079,7 @@ var META_BY_PATH = {
   },
   "/guides/agentic-commerce-readiness": {
     title: "Agentic commerce readiness · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-09-28",
     description: "Agent commerce involves product information, permitted actions and a supported checkout path.",
     image: "/og-guide-agentic-commerce-readiness.jpg",
     imageAlt: "turva.dev guide card: What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase."
@@ -10787,7 +10823,7 @@ ${footerHtml()}
 
 function serveLegalHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/legal", canonicalUrl), buildGuideJsonLd("/legal", canonicalUrl), canonicalUrl);
-  const secs = ["Operator", "Engagement terms", "Privacy", "Data rights", "Cookies", "Updates"];
+  const secs = ["Operator", "Engagement terms", "Privacy", "Data rights", "Reporting a vulnerability", "Cookies", "Updates"];
   const toc = `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${secs.map((h) => `<li><a href="#${mdSlug(h)}">${h}</a></li>`).join("")}</ul></nav>`;
   const terms = (h) => `<section class="sec" id="${mdSlug(h)}"><h2>${h}</h2>
     ${mdTermsHtml("/legal", h)}
@@ -10801,6 +10837,7 @@ ${cardPageNav("/legal")}
   ${terms("Engagement terms")}
   ${terms("Privacy")}
   ${mdOpenSec("/legal", "Data rights")}
+  ${mdOpenSec("/legal", "Reporting a vulnerability")}
   ${mdOpenSec("/legal", "Cookies")}
   ${mdOpenSec("/legal", "Updates")}
 </main>
@@ -10988,7 +11025,14 @@ function isValidPublicHost(host) {
 function maskLocation(href, base) {
   let u = null;
   try { u = new URL(href, base); } catch { u = null; }
-  if (u) {
+  // An opaque URL (no authority, e.g. "u:name@host/") parses without throwing but has no host,
+  // so clearing u.username/u.password is a silent no-op: WHATWG has nowhere to put them and the
+  // credential-shaped text stays in the opaque path untouched. Route it through the string
+  // branch below instead, the same one an unparseable target already uses. R1 (Tek-526): a
+  // redirect Location with a scheme this function has never treated as "special", such as a
+  // bare "u:", reached fetchLlmsTxt's "unsafe-target" answer unmasked. The package
+  // turva-llms-txt-validator mirrors this fix from 0.3.10.
+  if (u && u.host) {
     u.username = "";
     u.password = "";
     for (const key of Array.from(u.searchParams.keys())) u.searchParams.set(key, "***");
@@ -11107,20 +11151,25 @@ function isEscaped(s, i) {
   return n % 2 === 1;
 }
 
-// Inline code spans of one line, marked per character, so a link written inside backticks is
-// read as the code it is (outside audit 2026-09-26, Tek-496). A span opens with a run of
-// backticks and closes with the next run of the same length on the same line. An escaped first
-// backtick is literal and the rest of its run still opens, while a closing run is never escaped,
-// because a backslash inside a code span is literal. Runs are grouped by length and every group
-// is read with one forward pointer, so the scan stays linear on a line of unmatched runs.
-function codeSpanMask(line) {
-  const mask = new Uint8Array(line.length);
+// Inline code spans, marked per character across the whole document, so a link written inside
+// backticks is read as the code it is (outside audit 2026-09-26, Tek-496), including when the
+// span itself crosses a real line ending. V2 (Tek-526): a fenceless "`[a](b)\ncontinued`" was
+// masked only on its own line, so the second line escaped the mask and its bracket read as a
+// real link. A span opens with a run of backticks and closes with the next run of the same
+// length anywhere in the text; a pair whose interior holds a blank line (two line endings in a
+// row) is not a code span in CommonMark, so it is left unmasked and its backticks stay literal.
+// An escaped first backtick is literal and the rest of its run still opens, while a closing run
+// is never escaped, because a backslash inside a code span is literal. Runs are grouped by
+// length and every group is read with one forward pointer, so the scan stays linear on a
+// document of unmatched runs. The package turva-llms-txt-validator mirrors this from 0.3.10.
+function codeSpanMask(text) {
+  const mask = new Uint8Array(text.length);
   const runs = [];
-  for (let i = 0; i < line.length; ) {
-    if (line[i] !== "`") { i++; continue; }
+  for (let i = 0; i < text.length; ) {
+    if (text[i] !== "`") { i++; continue; }
     let j = i;
-    while (j < line.length && line[j] === "`") j++;
-    runs.push({ at: i, len: j - i, escaped: isEscaped(line, i) });
+    while (j < text.length && text[j] === "`") j++;
+    runs.push({ at: i, len: j - i, escaped: isEscaped(text, i) });
     i = j;
   }
   const byLen = new Map();
@@ -11136,29 +11185,60 @@ function codeSpanMask(line) {
     ptr.set(len, p);
     if (p === list.length) continue;
     const close = runs[list[p]];
-    mask.fill(1, r.escaped ? r.at + 1 : r.at, close.at + close.len);
+    const start = r.escaped ? r.at + 1 : r.at;
+    const end = close.at + close.len;
+    if (text.slice(start, end).indexOf("\n\n") === -1) mask.fill(1, start, end);
     k = list[p];
   }
   return mask;
+}
+
+// A CommonMark link reference label is matched without regard to case or the exact run of
+// whitespace inside it, so "[Guide]" and "[ guide ]" name the same definition.
+function normalizeLinkLabel(s) {
+  return s.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+// Link reference definitions, "[label]: target", read once per document so a reference link
+// such as "[text][label]" can resolve against one written anywhere else in the same file,
+// before or after its use, the way CommonMark allows. V2 (Tek-526). A title after the target is
+// not read, because nothing here compares it, and only the first definition of a given label
+// counts, per spec. A destination wrapped in angle brackets has them stripped.
+function collectLinkDefinitions(text) {
+  const defs = new Map();
+  for (const line of text.split("\n")) {
+    const m = /^ {0,3}\[([^\]]+)\]:[ \t]*(<[^<>\n]*>|\S+)/.exec(line);
+    if (!m) continue;
+    const label = normalizeLinkLabel(m[1]);
+    if (!label || defs.has(label)) continue;
+    let dest = m[2];
+    if (dest[0] === "<" && dest[dest.length - 1] === ">") dest = dest.slice(1, -1);
+    defs.set(label, dest);
+  }
+  return defs;
 }
 
 // Every markdown link in the prose, scanned once from left to right. A "[" inside a code span,
 // an escaped "\[" and the "![" of an image open no link, because none of them is a hyperlink
 // (all three counted until the outside audit of 2026-09-26, Tek-496). A target may be written in angle
 // brackets and may carry a title in quotes, as CommonMark allows; both were missed or misread
-// before. The scan carries no bound and no backtracking: the furthest failed plain target is
-// remembered as before, and the closing ">", quote and line end are looked up through a cache
-// that only moves forward, so a file that repeats "[a](" or "[a](x \"" stays linear.
-function collectLinks(text) {
+// before. An image nested in the link text, such as "[a ![i](x)](y)", is link content and is
+// skipped whole rather than ending the scan, so the outer hyperlink is still found; any other
+// nested "[" still ends the scan the way it always has, because CommonMark does not allow a
+// link inside a link. R2 (Tek-526): the previous scan gave up on the whole outer link the
+// moment any nested "[" appeared, image or not. A full or collapsed reference link,
+// "[text][label]" or "[text][]", resolves against collectLinkDefinitions; an unresolved label
+// is read as plain brackets, the way it always was. A resolved target is decoded for character
+// references ("&#58;", "&amp;", ...) the same way an HTML attribute value is, so a destination
+// written as "https://host&#58;99999/" is checked as what it resolves to and not as its literal
+// source spelling. V1 (Tek-526). The scan carries no bound and no backtracking: the furthest
+// failed plain target is remembered as before, and the closing ">", quote and line end are
+// looked up through a cache that only moves forward, so a file that repeats "[a](" or
+// "[a](x \"" stays linear.
+function collectLinks(text, defs) {
   const out = [];
-  const code = new Uint8Array(text.length);
-  {
-    let at = 0;
-    for (const line of text.split("\n")) {
-      code.set(codeSpanMask(line), at);
-      at += line.length + 1;
-    }
-  }
+  const code = codeSpanMask(text);
+  if (!defs) defs = collectLinkDefinitions(text);
   const cache = Object.create(null);
   const nextIdx = (c, from) => {
     const h = cache[c];
@@ -11209,17 +11289,53 @@ function collectLinks(text) {
     if (!found) failEnd = e;
     return found;
   };
+  // An image nested in the link text is skipped whole: k is the index of its own "[", right
+  // after an unescaped "!". Its alt text is not itself scanned for nested links or images, the
+  // first unescaped "]" closes it, and it is only skipped when a target follows; a malformed
+  // image (no closing "]", no "(target)") is left for the caller to treat as an ordinary
+  // nested bracket, the way one always was.
+  const skipImage = (k) => {
+    let m = k + 1;
+    while (m < text.length && text[m] !== "]" && text[m] !== "[") m += text[m] === "\\" ? 2 : 1;
+    if (m >= text.length || text[m] !== "]" || text[m + 1] !== "(") return null;
+    const t = readTarget(m + 2);
+    return t ? t.end + 1 : null;
+  };
   for (let i = 0; i < text.length; i++) {
     if (text[i] !== "[" || code[i] || isEscaped(text, i)) continue;
     if (i > 0 && text[i - 1] === "!" && !isEscaped(text, i - 1)) continue;
     let j = i + 1;
-    while (j < text.length && text[j] !== "]" && text[j] !== "[") j += text[j] === "\\" ? 2 : 1;
+    for (;;) {
+      while (j < text.length && text[j] !== "]" && text[j] !== "[") j += text[j] === "\\" ? 2 : 1;
+      if (j >= text.length || text[j] !== "[") break;
+      if (code[j] || text[j - 1] !== "!" || isEscaped(text, j - 1)) break;
+      const after = skipImage(j);
+      if (after === null) break;
+      j = after;
+    }
     if (j >= text.length) break;
     if (text[j] === "[") { i = j - 1; continue; }
-    if (text[j + 1] !== "(") { i = j; continue; }
-    const t = readTarget(j + 2);
-    if (t) { out.push({ name: text.slice(i + 1, j), target: t.target }); i = t.end; continue; }
-    i = j + 1;
+    if (text[j + 1] === "(") {
+      const t = readTarget(j + 2);
+      if (t) { out.push({ name: text.slice(i + 1, j), target: decodeAttributeValue(t.target), at: i }); i = t.end; continue; }
+      i = j + 1;
+      continue;
+    }
+    if (text[j + 1] === "[") {
+      let m = j + 2;
+      while (m < text.length && text[m] !== "]" && text[m] !== "\n") m += text[m] === "\\" ? 2 : 1;
+      if (m < text.length && text[m] === "]") {
+        const rawLabel = text.slice(j + 2, m);
+        const label = normalizeLinkLabel(rawLabel === "" ? text.slice(i + 1, j) : rawLabel);
+        const dest = label && defs.get(label);
+        if (dest !== undefined) {
+          out.push({ name: text.slice(i + 1, j), target: decodeAttributeValue(dest), at: i });
+          i = m;
+          continue;
+        }
+      }
+    }
+    i = j;
   }
   return out;
 }
@@ -11265,12 +11381,8 @@ function fenceMask(lines) {
 // and images count here exactly as they do in the links check. A bare CR, U+2028 and U+2029 stay
 // inside a line after split(/\r?\n/), and a link behind one has never counted, so the item is read
 // up to the first of them.
-function listItemHasLink(l) {
-  const m = /^ {0,3}(?:[-*+]|\d{1,9}[.)])[ \t]/.exec(l);
-  if (!m) return false;
-  const sep = l.slice(m[0].length).search(/[\r\u2028\u2029]/);
-  const body = sep === -1 ? l.slice(m[0].length) : l.slice(m[0].length, m[0].length + sep);
-  return collectLinks(body).length > 0;
+function listItemHasLink(l, hasLink) {
+  return !!hasLink && /^ {0,3}(?:[-*+]|\d{1,9}[.)])[ \t]/.test(l);
 }
 
 // The text of an ATX H1, or null when the line is not one. One to three leading spaces, a
@@ -11327,8 +11439,13 @@ function validateLlmsTxt(f) {
   // An accepted redirect is shown masked as well (round 19, K7-2). Until v3.164.0 only a refused
   // one was, so a query value or a fragment in a same-host Location reached this detail as sent.
   add("http-status", "pass", "File exists at /llms.txt", f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + " to " + maskLocation(f.finalUrl) : "HTTP 200");
+  // A leading byte-order mark is stripped the same way the fetch path already strips it: the
+  // TextDecoder in fetchLlmsTxt removes a BOM by default, so the direct API took a different
+  // document than the fetched one for the exact same bytes. V3 (Tek-526): the h1-title check saw
+  // the mark as part of the first line and failed a document that would pass when fetched.
+  const text = f.text.charCodeAt(0) === 0xFEFF ? f.text.slice(1) : f.text;
   const ct = (f.contentType || "").toLowerCase();
-  const looksHtml = /^\s*(<!doctype|<html|<head|<body)/i.test(f.text);
+  const looksHtml = /^\s*(<!doctype|<html|<head|<body)/i.test(text);
   if (looksHtml) {
     add("content-type", "fail", "Response is plain text", "the body looks like an HTML page, not an llms.txt file");
     return checks;
@@ -11341,7 +11458,7 @@ function validateLlmsTxt(f) {
   } else {
     add("content-type", "warn", "Response is plain text", "content-type is " + (ct.split(";")[0] || "missing") + ", text/plain or text/markdown is the convention");
   }
-  const lines = f.text.split(/\r?\n/);
+  const lines = text.split(/\r?\n/);
   const firstIdx = lines.findIndex((l) => l.trim() !== "");
   const firstRaw = firstIdx === -1 ? "" : lines[firstIdx];
   const first = firstRaw.trim();
@@ -11358,7 +11475,11 @@ function validateLlmsTxt(f) {
     add("h1-title", "fail", "Starts with an H1 title", "the first non-empty line should be a markdown H1 (# Site name)");
   }
   const afterH1 = lines.slice(firstIdx + 1).find((l) => l.trim() !== "") || "";
-  if (/^ {0,3}> /.test(afterH1)) {
+  // A blockquote marker is 0-3 leading spaces plus ">", optionally followed by one space that
+  // is then part of the marker and not the content; CommonMark reads ">Summary" and a tab the
+  // same way, and four or more leading spaces stay indented code, not a blockquote. N03
+  // (Tek-526): a literal space was required, so a tab or no space at all warned as missing.
+  if (/^ {0,3}>/.test(afterH1)) {
     add("summary", "pass", "Blockquote summary after the title", JSON.stringify(cut(afterH1.trim(), 80)));
   } else {
     // A blockquote further down, before the first H2, is a summary in the wrong place and not a
@@ -11369,7 +11490,7 @@ function validateLlmsTxt(f) {
     for (let i = firstIdx + 1; i < lines.length; i++) {
       if (fence[i]) continue;
       if (/^ {0,3}## /.test(lines[i])) break;
-      if (/^ {0,3}> /.test(lines[i])) { late = i; break; }
+      if (/^ {0,3}>/.test(lines[i])) { late = i; break; }
     }
     add("summary", "warn", "Blockquote summary after the title", late === -1
       ? "recommended by the format (> one-line summary), not required"
@@ -11380,6 +11501,29 @@ function validateLlmsTxt(f) {
   // demanded column zero, so a correct file indented by one to three spaces was reported as
   // having no sections at all while its list under the same indentation counted fine.
   const fenced = fenceMask(lines);
+  // Computed once for both the section-list scan below and the links check further down, so a
+  // reference link definition written anywhere in the prose resolves the same way for each. V2
+  // (Tek-526): "[text][label]" used to be recognized in the whole-document links check but not
+  // in the per-line section scan, which only ever saw one list item line.
+  const proseText = lines.filter((l, i) => !fenced[i]).join("\n");
+  const linkDefs = collectLinkDefinitions(proseText);
+  const proseLinks = collectLinks(proseText, linkDefs);
+  // Which original line each recognized link starts on, so the section scan below can ask "does
+  // this line carry a link" against the same whole-document result the links check itself uses,
+  // instead of re-finding links one isolated line at a time. V2 (Tek-526).
+  const linkedLineIdx = new Set();
+  {
+    const owners = [];
+    for (let i = 0; i < lines.length; i++) if (!fenced[i]) owners.push(i);
+    const starts = [];
+    let offset = 0;
+    for (const pl of proseText.split("\n")) { starts.push(offset); offset += pl.length + 1; }
+    for (const link of proseLinks) {
+      let idx = 0;
+      for (let k = 0; k < starts.length; k++) { if (starts[k] <= link.at) idx = k; else break; }
+      linkedLineIdx.add(owners[idx]);
+    }
+  }
   const h2Count = lines.filter((l, i) => !fenced[i] && /^ {0,3}## /.test(l)).length;
   // A section counts when it carries a file list. An H2 followed by a paragraph satisfied
   // this check until 2026-08-29, and the format puts each section's links in a list.
@@ -11396,7 +11540,7 @@ function validateLlmsTxt(f) {
       const h1 = /^ {0,3}#(?:[ \t]|$)/.test(l);
       if (misplaced === -1 && i > firstIdx && (h1 || (!seenH2 && /^ {0,3}#{3,6}(?:[ \t]|$)/.test(l)))) misplaced = i;
       if (h1) { inSection = false; continue; }
-      if (inSection && !counted && listItemHasLink(l)) { sectionsWithList++; counted = true; }
+      if (inSection && !counted && listItemHasLink(l, linkedLineIdx.has(i))) { sectionsWithList++; counted = true; }
     }
   }
   if (h2Count > 0 && sectionsWithList > 0) {
@@ -11412,8 +11556,9 @@ function validateLlmsTxt(f) {
     s.detail += "; the heading at line " + (misplaced + 1) + " is out of place, because the format has one H1 and no other heading before the first H2";
   }
   // Links are collected from the prose only, for the same reason the headings are: a link
-  // shown inside a code fence is an example of a link, not one an agent can follow.
-  const links = collectLinks(lines.filter((l, i) => !fenced[i]).join("\n"));
+  // shown inside a code fence is an example of a link, not one an agent can follow. Computed
+  // once above as proseLinks, reused here under its usual name.
+  const links = proseLinks;
   // An entry an agent can use has a name and a target with a host. An empty name and a
   // bare "https://" both counted as valid absolute links until 2026-08-29.
   const named = links.filter((m) => m.name.trim() !== "");
@@ -11437,7 +11582,7 @@ function validateLlmsTxt(f) {
   } else {
     add("size", "warn", "Small enough to be cheap to read", f.bytes + " bytes; consider moving detail to llms-full.txt");
   }
-  if (/<[a-z][a-z0-9-]*[\s>]/i.test(f.text)) {
+  if (/<[a-z][a-z0-9-]*[\s>]/i.test(text)) {
     add("no-html", "warn", "No HTML markup in the file", "HTML tags found; llms.txt should be plain markdown");
   } else {
     add("no-html", "pass", "No HTML markup in the file", "plain markdown");
@@ -12340,7 +12485,13 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
   // leading whitespace used to fill the whole 300-unit window and be discarded only by
   // normalizeHostInput's own trim, which happens after the cut, so it could shift a
   // different host into the checked window than the one actually typed.
-  const raw = cut(typed.trim(), 300);
+  // A1 V01 N01 (Tek-526): strip tab, CR and LF before that same cut, not only trim the ends.
+  // The URL parser removes those three from anywhere in the string, so a cut that runs
+  // through a long stretch of them can delete a suffix the parser would otherwise have
+  // kept: "https://turva.dev" + 283 tabs + ".invalid" used to lose ".invalid" to the cut
+  // and then validate turva.dev, because the tabs left in the 300-unit window vanished on
+  // their own once normalizeHostInput built a URL from it.
+  const raw = cut(typed.replace(/[\t\r\n]/g, "").trim(), 300);
   let result = null;
   let error = null;
   if (raw) {
@@ -12385,7 +12536,11 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
   // A path in the typed address is not used, and the report says so first (Tek-487). Information
   // moves no result: summarizeChecks reads fail and warn only.
   const unusedPath = result ? enteredPath(raw) : "";
-  if (unusedPath) result.checks.unshift({ id: "input-path", status: "info", label: "Path in the address you entered", detail: cut(unusedPath, 120) + " is not used, because the validator always reads /llms.txt at the root of the host" });
+  // Decision 19 (Tek-526): the typed path is not built into the sentence any more. It goes on
+  // its own field with the same 120 character cut it always had, and the sentence stays the
+  // same words for every address, so a JSON caller reads the raw value from one field instead
+  // of parsing it back out of a message meant for people.
+  if (unusedPath) result.checks.unshift({ id: "input-path", status: "info", label: "Path in the address you entered", value: cut(unusedPath, 120), detail: "This path is not used, because the validator always reads /llms.txt at the root of the host." });
   // Text quoted from the fetched file leaves without bidirectional controls (round 19, V6-U1): a
   // site's own H1 or summary could otherwise read in another order here and in the JSON answer.
   if (result) result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripControls(stripBidi(c.detail)) }) : c));
@@ -12413,7 +12568,10 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
   } else if (result) {
     const counts = ["pass", "warn", "fail", "info"].map((k) => `<span><b>${word[k]}</b> ${result.checks.filter((c) => c.status === k).length}</span>`).join("");
     const rows = result.checks.map((c) =>
-      `<div class="chk ${c.status}"><span class="s">${word[c.status] || escapeHtml(c.status)}</span> <span class="l">${escapeHtml(c.label)}</span> <span class="d">${escapeHtml(c.detail)}</span></div>`
+      // Decision 19 (Tek-526): a check's reflected value, when it has one, is escaped on its
+      // own and placed ahead of the generic sentence, the same position the old concatenated
+      // string put it in, so the page reads the same while the JSON field stays separate.
+      `<div class="chk ${c.status}"><span class="s">${word[c.status] || escapeHtml(c.status)}</span> <span class="l">${escapeHtml(c.label)}</span> <span class="d">${c.value !== undefined ? escapeHtml(c.value) + " " : ""}${escapeHtml(c.detail)}</span></div>`
     ).join("\n    ");
     resultHtml = `<section class="sec" id="result"><h2>Result: ${escapeHtml(summarizeChecks(result.checks))}</h2>
     <p class="aview-cmd">${escapeHtml(result.target)}</p>
@@ -12726,7 +12884,19 @@ async function parityRunCheck(input, env) {
       console.error("parity check failed unexpectedly:", err && err.name ? err.name : "unknown");
       message = "The comparison failed unexpectedly. Nothing about the page was stored.";
     }
-    return { status, report: mpcErrorReport(options, html ? html.meta : null, markdown ? markdown.meta : null, message), field };
+    // Decision 19 (Tek-526): the package's own selector-rejection message repeats the CSS
+    // selector inside the sentence. str() already capped it to PARITY_MAX_SELECTOR_CHARS on
+    // the way in (the cut below is defense in depth, not the limit itself), so the length was
+    // never the gap; the sentence was. The value moves to its own field and the sentence stays
+    // the same words for every selector.
+    let selectorValue;
+    if (field === "selector" && err instanceof MpcRunError) {
+      selectorValue = typeof options.selector === "string" ? cut(options.selector, PARITY_MAX_SELECTOR_CHARS) : "";
+      message = "The CSS selector could not be used to select content on the page.";
+    }
+    const report = mpcErrorReport(options, html ? html.meta : null, markdown ? markdown.meta : null, message);
+    if (selectorValue !== undefined) report.summary.value = selectorValue;
+    return { status, report, field };
   }
 }
 
@@ -13582,7 +13752,12 @@ async function handleRequest(request, env) {
   // F16 (Tek-496 audit round): these four root aliases serve agent-api JSON/text with
   // ACAO * on GET (see their .well-known twins a few lines below), so their OPTIONS must
   // preflight the same way instead of falling through to the generic 204 with no CORS headers.
-  const preflightPath = pathLower === "/x402" || pathLower === "/x402/" || pathLower === "/api" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token" || pathLower === "/openapi.json" || pathLower === "/llms.txt" || pathLower === "/llms-full.txt" || pathLower === "/auth.md" || pathLower === "/robots.txt" || pathLower === "/sitemap.xml" || pathLower === "/markdown-parity-check" || pathLower === "/security.txt" || pathLower === "/ai.txt" || pathLower === "/api-catalog" || pathLower === "/blog/feed.xml" || (pathLower.startsWith("/.well-known/") && !fediPath);
+  // A3 V01 N02 (Tek-526): /llms-txt-validator, /index.md and /services.md serve the same way
+  // and were missing from this list. serveMarkdown() already sends ACAO * on GET for every
+  // markdown twin, including /index.md and /services.md, and the validator's JSON branch does
+  // the same on GET; the METHOD GATE just below already answers GET-only for these three, the
+  // same set the preflight now advertises, so the allow list and the preflight list agree.
+  const preflightPath = pathLower === "/x402" || pathLower === "/x402/" || pathLower === "/api" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token" || pathLower === "/openapi.json" || pathLower === "/llms.txt" || pathLower === "/llms-full.txt" || pathLower === "/auth.md" || pathLower === "/robots.txt" || pathLower === "/sitemap.xml" || pathLower === "/markdown-parity-check" || pathLower === "/security.txt" || pathLower === "/ai.txt" || pathLower === "/api-catalog" || pathLower === "/blog/feed.xml" || pathLower === "/llms-txt-validator" || pathLower === "/index.md" || pathLower === "/services.md" || (pathLower.startsWith("/.well-known/") && !fediPath);
   // METHOD GATE, round 16 (S1-1 to S1-4, C1-2, C5-20, C7-2, measured 2026-09-03). GET and
   // OPTIONS are allowed everywhere; HEAD arrives here as GET (worker_default). POST is
   // allowed only where a handler or the OpenAPI document knows it: the A2A transport, the
