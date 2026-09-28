@@ -74,7 +74,8 @@ test("/services carries the same priced Service node as the home page, and both 
     const i = html.indexOf('"hasOfferCatalog"');
     assert.ok(i > 0, "hasOfferCatalog present");
     const block = html.slice(i, html.indexOf("</script>", i));
-    return [...block.matchAll(/\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)].map((m) => [m[1], Number(m[2])]);
+    // Top-level offers only: an addOn (Tek-528) is nested inside its base offer.
+    return [...block.matchAll(/(?<!"addOn":)\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)].map((m) => [m[1], Number(m[2])]);
   };
   const home = offersOf(await (await get("/")).text());
   const services = offersOf(await (await get("/services")).text());

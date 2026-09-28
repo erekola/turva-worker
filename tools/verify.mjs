@@ -1146,8 +1146,22 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // home page and /services render, so the price gate reads that constant and not SCHEMA_HOME.
     const home = region('var SCHEMA_SERVICE', '\nvar SCHEMA_HOME');
     const cat = region('"hasOfferCatalog"', '\nvar SCHEMA_HOME');
-    const offers = [...cat.matchAll(/\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)];
+    // An addOn offer (Tek-528, Y3) is nested inside its base offer and is not a catalog entry,
+    // so the catalog count reads top-level offers only and the add-ons get their own check.
+    const offers = [...cat.matchAll(/(?<!"addOn":)\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)];
     setSame('SCHEMA_HOME OfferCatalog', offers.map((m) => m[1]), PRICED.map((s) => s.name));
+    const bundled = Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : [];
+    const addOns = [...cat.matchAll(/"addOn":\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)];
+    setSame('SCHEMA_SERVICE addOn offers (Tek-528)', addOns.map((m) => m[1]), bundled.map((x) => x.name));
+    for (const x of bundled) {
+      const m = addOns.find((a) => a[1] === x.name);
+      check(!!m && m[2] === String(x.price), `SCHEMA_SERVICE addOn ${x.name} priced ${x.price} (saw ${JSON.stringify(m && m[2])})`);
+      // The add-on must sit under the offer of the service it requires: the last top-level
+      // offer that starts before it.
+      const parentName = ((facts.services || []).find((s) => s.id === x.requires) || {}).name;
+      const under = m ? offers.filter((o) => o.index < m.index).pop() : null;
+      check(!!under && under[1] === parentName, `SCHEMA_SERVICE addOn ${x.name} sits under ${parentName} (saw ${under ? under[1] : 'none'})`);
+    }
     for (const s of PRICED) {
       const got = (offers.find((m) => m[1] === s.name) || [])[2];
       check(got === String(facts.prices[s.priceKey]),
