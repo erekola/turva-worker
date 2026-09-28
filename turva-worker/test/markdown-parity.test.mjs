@@ -519,7 +519,10 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
     assert.ok(html.includes('<span class="name"><a href="' + href + '">' + esc(name) + '</a>.</span> <span class="price">' + esc(price) + ".</span></span>"), href);
   }
   assert.ok(!html.includes("See the Shopify check") && !html.includes("See the audit"), "the offer name is the link, no second label");
-  assert.ok(md.includes("48 hours. Fixed scope.**") && html.includes('<span class="terms">48 hours. Fixed scope.</span>'), "the price line is the twin's sentence");
+  // Tek-542 (2026-09-28, S-20a/S-20b): the twin's bold price line gained a third sentence,
+  // "Price valid until 2026-12-31.", so the exact-string check now reads the whole terms text
+  // instead of stopping after "Fixed scope."
+  assert.ok(md.includes("48 hours. Fixed scope. Price valid until 2026-12-31.**") && html.includes('<span class="terms">48 hours. Fixed scope. Price valid until 2026-12-31.</span>'), "the price line is the twin's sentence");
   assert.ok(!html.includes("&middot; Fixed scope"), "no middle dot in place of the twin's period");
 });
 

@@ -14,7 +14,7 @@ SEO makes a page rank so a person will click it. Agent-readiness makes the same 
 
 ## The surfaces agents read
 
-Status below names, for the underlying mechanism, whether it is a ratified standard from a body such as the IETF or W3C, an actively versioned draft with its own issue process, a de facto convention with no ratifying body, or an early-stage pilot with limited adoption. A surface can combine more than one mechanism at different statuses; where it does, the table names the piece that status describes. Checked 2026-09-28 against each mechanism's own current page, cited in the Status column.
+Status below names, for the underlying mechanism, whether it is a ratified standard from a body such as the IETF or W3C, an actively versioned draft with its own issue process, a de facto convention with no ratifying body, or an early-stage pilot with no ratifying body yet. Pilot here names that ratification state, not the mechanism's own claimed maturity or adoption, which a pilot-stage protocol may describe differently for itself. A surface can combine more than one mechanism at different statuses; where it does, the table names the piece that status describes. Checked 2026-09-28 against each mechanism's own current page, cited in the Status column.
 
 ### Discovery and access
 
@@ -41,11 +41,11 @@ Status below names, for the underlying mechanism, whether it is a ratified stand
 | agents.json | A manifest that declares the actions and endpoints an AI agent can use on a site, which turns a readable site into an operable one. | Pilot. The [specification](https://github.com/wild-card-ai/agents-json) has stayed at version 0.1.0 since early 2025, outside any standards body, with adoption shifting toward MCP since. | https://turva.dev/guides/agents-json |
 | MCP server cards | A JSON file that lets an agent discover a site's Model Context Protocol server and the tools it exposes. | Draft. The current form develops as an [experimental MCP extension](https://github.com/modelcontextprotocol/ext-server-card), [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), with its default location still unsettled. | https://turva.dev/guides/mcp-server-card |
 | Agent authentication | The surface that lets an automated client gain scoped access without a human login, through OAuth discovery, protected resource metadata, and agent registration. | Standard for OAuth discovery. [RFC 8414](https://www.rfc-editor.org/rfc/rfc8414.html), IETF Standards Track; the human-readable auth.md entry point is a convention with two rival field-naming schemes, not a ratified format. | https://turva.dev/guides/agent-authentication |
-| x402 and agent payments | x402 uses the HTTP 402 Payment Required status so an agent can discover a price, pay, and continue without a human checkout. | Pilot. [x402.org](https://x402.org/) is an open protocol led by its contributing companies, not an IETF or W3C specification; RFC 9110 reserves status code 402 but defines no payment protocol. | https://turva.dev/guides/x402-agent-payments |
+| x402 and agent payments | x402 uses the HTTP 402 Payment Required status so an agent can discover a price, pay, and continue without a human checkout. | Pilot. [x402.org](https://x402.org/) is an open protocol led by its contributing companies, not an IETF or W3C specification; RFC 9110 reserves status code 402 but defines no payment protocol. x402.org itself describes the protocol as production-ready and audited for security; this table's Pilot status is about ratification, not that claim. | https://turva.dev/guides/x402-agent-payments |
 
 ## How agent-readiness should be measured
 
-A hand-filled checklist records what a team intended to ship. An independent scanner records what an agent actually finds when it visits. Measured agent-readiness relies on the second, because the signals that matter are the ones present in the live response, not the ones noted in a plan. Full guide: https://turva.dev/guides/measurement-led-agent-readiness
+A hand-filled checklist records what a team intended to ship. An independent scanner records what an agent actually finds when it visits, against the checks it runs. Measured agent-readiness relies on the second, because the signals that matter are the ones present in the live response, not the ones noted in a plan. Full guide: https://turva.dev/guides/measurement-led-agent-readiness
 
 ## Common gaps on marketing sites
 
