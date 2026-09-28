@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.192.1 - the MCP server card's VAT note moves from inside _meta.pricing to _meta, so the pricing object lists only the four priced services and its currency fields.
 // turva.dev worker v3.192.0 - third Codex retest round (Tek-542): services and llms.txt separate a first reply within one business day from the content answer each service states; advisory adds a first-month cancellation right and cancellation is charged by the share of parts or fixes finished; legal adds a delay clause, a 90-day removal fallback after a post-kickoff cancellation, a perpetual code-use right, clarified traffic-analysis retention, the AI tools' two Anthropic agreement types and a tested PGP bundle-read command; eight guides narrow claims to their primary sources and thirteen blog posts correct measured claims, including “the agent token count did not”, with dated corrections; the audit report sample's Finnish list items carry lang="fi", the validator and parity input placeholders meet 4.5:1 contrast, OAuth metadata drops the unused refresh_token grant, and llms-full.txt states each guide's sources-checked date and author; the hosted llms.txt validator's link masking and link-definition parsing get five fixes mirrored to the llms-txt-validator package; the agent-readiness audit page names its AI visibility scope as 20 questions across three named assistants and states that the audit is invoiced on delivery, paid by the card link; the MCP server card moves to 1.6.7.
 // turva.dev worker v3.191.0 - service delivery terms (Tek-528): the services page states for implementation, advisory, agent operations and MCP server design what the buyer receives, what is included and excluded, what is needed, how the work runs, how the result is checked, the follow-up and the price; the legal page defines a business day and what is billed when an engagement is cancelled after kickoff; the two 499 euro add-ons are schema.org addOn offers under the audit and the Shopify check and a bundledImplementation field on the MCP server card; llms.txt, the services skill, UCP and OpenAPI mirror terms the services page already states; the hosted parity check runs markdown-parity-check 0.2.16; the MCP server card moves to 1.6.6.
 // turva.dev worker v3.190.0 - fixes from the verified Codex retest of 2026-09-28 (Tek-526): the hosted llms.txt validator strips tabs and other control characters before its 300 character cut, masks user information in an address without a host, reads a link that holds an image, decodes character references in link targets, reads reference links and a blockquote summary after a tab, and keeps a typed path or a CSS selector out of its error sentences; preflight answers for three more paths; images carry a Cache-Control; x402 answers carry the top-level resource object; the legal page names retention limits, the Cloudflare cookies, the lawful basis of the tools, the transfer mechanisms, Signal and LinkedIn, a closure fallback and a section on reporting a vulnerability that security.txt points at; eleven posts and eight guides narrow a claim and carry a dated correction; the MCP server card moves to 1.6.5.
@@ -6627,7 +6628,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.192.0",
+    "version": "3.192.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6737,7 +6738,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"SgL6gsCXvtOfOgHKLNwCDN72RA4HCGtzZ96CxLpnHLb6KiHJzbwbwf28GR8fC1-wlQ0DiXYFJU-tFL1TKXm-DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"76ujI4coaoI4SEyENzpz2JWgpa3U6G9WNAvwJoahmpnGsAPWlAe8FH_PTok9BWhv6zK5DJ1C33mbSYTJ6jg9Cg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"3HFuzV3Ock7si_hlsCJRXGqofvusxmdvMMuM7CzN2iS-5Oexij10l-JiH4P5DWlyW1jP7h4sHG0wUBjA0zQ3Cw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"76ujI4coaoI4SEyENzpz2JWgpa3U6G9WNAvwJoahmpnGsAPWlAe8FH_PTok9BWhv6zK5DJ1C33mbSYTJ6jg9Cg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6798,10 +6799,10 @@ var MCP_SERVER_CARD = JSON.stringify({
     "authMd": "https://turva.dev/auth.md",
     "contact": "info@turva.dev",
     "languages": ["en"],
+    "vatNote": "All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.",
     "pricing": {
       "currency": "EUR",
       "vatIncluded": false,
-      "vatNote": "All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.",
       "shopify": { "price": 999, "unit": "fixed", "duration": "48 hours" },
       "audit": { "price": 4300, "unit": "fixed", "duration": "2 weeks" },
       "advisory": { "price": 3000, "unit": "month", "minimumCommitment": "3 months" },
@@ -6907,7 +6908,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.192.0",
+  "version": "3.192.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
