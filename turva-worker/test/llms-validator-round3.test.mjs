@@ -140,3 +140,32 @@ test("VN2: a collapsed reference, \"[label][]\", still resolves (regression guar
   const { body } = await validate(text);
   assert.equal(byId(body.checks, "links").status, "pass");
 });
+
+// --- V13 D5-1: with no slash at all, a ":" ahead of the last @ is user:password and is masked;
+// an @ with no ":" ahead of it (an asset name) stays as given. worker.js does not export
+// maskLocation and no hosted route reaches this shape (a Location value is resolved against the
+// request URL first), so the function is read out of the source text and run as it stands.
+import { readFileSync } from "node:fs";
+
+function loadMaskLocation() {
+  const src = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  const start = src.indexOf("function maskLocation(href, base) {");
+  assert.ok(start >= 0, "maskLocation is in worker.js");
+  const close = /\n\}\r?\n/.exec(src.slice(start));
+  assert.ok(close, "maskLocation has a closing brace at column 0");
+  const body = src.slice(start, start + close.index + 2);
+  return new Function(body + "\nreturn maskLocation;")();
+}
+
+test("V13 D5-1: a slashless user:password@host is masked, path@2x.png is not", () => {
+  const maskLocation = loadMaskLocation();
+  assert.equal(maskLocation("user_name:demo-secret@example.com"), "***@example.com");
+  assert.equal(maskLocation("a_b:pw@example.com"), "***@example.com");
+  assert.equal(maskLocation("1user:pw@example.com"), "***@example.com");
+  assert.equal(maskLocation("user_name:pw@host?x=1"), "***@host?***");
+  for (const t of ["user_name:demo-secret@example.com", "a_b:pw@example.com", "user_name:pw@host?x=1"]) {
+    assert.doesNotMatch(maskLocation(t), /demo-secret|pw/, t);
+  }
+  assert.equal(maskLocation("path@2x.png"), "path@2x.png");
+  assert.equal(maskLocation("path/x@y"), "path/x@y");
+});

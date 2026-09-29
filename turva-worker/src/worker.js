@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.196.0 - sixth outside read: client material is processed only through the Anthropic API on Anthropic's commercial terms, advisory notice in the second or third month ends the retainer at the end of the three-month minimum, the audit guide's price answer names the first-month exit, the 499 euro add-on purchase window reads as three options on every surface, the rate-limit post scopes its failed-open sentence with a dated note, and the hosted validator masks a slashless user:password@host target.
 // turva.dev worker v3.195.0 - fifth outside read: /legal names Anthropic Ireland, Limited as the contracting party and separates the Claude Max and API routes, a missed-deadline refund on a service page prevails over the delivered-parts charge, the advisory first-month exit is one rule on every surface, the add-on purchase window is stated on every surface, two posts scope their claims to the runs measured, and the validator and parity pages state the JSON error shapes and the table limit exactly.
 // turva.dev worker v3.194.0 - fourth outside read: four posts corrected, /legal names Pro-plan analytics retention, the API scope of Anthropic's DPA, delivered parts for cancellation and plural validator requests, advisory first-month exit on the short machine surfaces, add-on purchase window everywhere, validator JSON and parity info findings described exactly.
 // turva.dev worker v3.193.2 - a 404 answers in markdown when the request asks for markdown or names a .md address, and Accept: text/x-markdown is read as text/markdown.
@@ -225,8 +226,8 @@ var LLMS_TXT = `# turva.dev
 - Audit: €4,300 (fixed scope, within two weeks of the agreed written kickoff)
 - Advisory: €3,000 / month (monthly retainer, three-month minimum, which can be ended by email during the first month, so that only the first month is charged)
 - Implementation: €1,500 / day (scoped per task)
-- Audit fix implementation: €499 (fixed, sold only with the audit, bought with its report or after it and before implementation starts, only when the required access is arranged in advance)
-- Shopify correction implementation: €499 (fixed, sold only with the Shopify agent storefront check, bought with its report or after it and before implementation starts, only when the required access is arranged in advance)
+- Audit fix implementation: €499 (fixed, sold only with the audit, bought together with it, with its report, or after the report and before implementation starts, only when the required access is arranged in advance)
+- Shopify correction implementation: €499 (fixed, sold only with the Shopify agent storefront check, bought together with it, with its report, or after the report and before implementation starts, only when the required access is arranged in advance)
 
 Final price is confirmed in writing after scope is agreed.
 
@@ -1946,7 +1947,7 @@ That is the exact defect this business sells finding. A declared surface that no
 
 Cloudflare's Workers rate limiting binding does the work now. The configuration is a block in wrangler.jsonc naming a limiter with a simple limit of 100 requests per 60 seconds, so the config carries the same numbers the header had been promising on its own. At the top of the fetch handler the Worker calls limit() keyed on the client IP, and past the limit it returns 429 with Retry-After: 60, built by the same security header function as every other response, so the rate limit header rides on the 429 itself.
 
-It fails open, deliberately. If the binding is missing or limit() throws, the request is served normally, because a limiter that takes the site down when its own plumbing breaks is a worse trade than a burst that gets through. That choice has a cost this post comes back to: from the outside, a guard that has failed open is indistinguishable from a guard doing its job, and only the logs can tell them apart.
+It fails open, deliberately. If the binding is missing or limit() throws, the request is served normally, because a limiter that takes the site down when its own plumbing breaks is a worse trade than a burst that gets through. That choice has a cost this post comes back to: under a probe that stays below the refusal threshold, a guard that has failed open and a guard doing its job both return 200, so from the outside they look the same, and only the logs or the code can tell them apart.
 
 The key is the client IP, and Cloudflare advises against that. Their best practices say it plainly: "It is not recommended to use IP addresses or locations (regions or countries), since these can be shared by many users in many valid cases." They are right. The identifiers they recommend are stable properties of a caller, an API key in an Authorization header or a user or tenant ID, and none of those exist here. This site is public documentation with no accounts and no login, so the IP is what is left, and the cost is real. Several agents behind one corporate proxy or one mobile NAT share a single budget of 100, and the one that gets refused may be the one that asked politely.
 
@@ -1997,6 +1998,8 @@ Corrected 2026-09-28. Two more sentences stated a general law rather than an obs
 Corrected 2026-09-29. One more sentence said 130 requests never reach the point where this platform starts refusing. It now says that is what happened in these runs.
 
 Corrected 2026-09-29. The test section stated the all-200 result for a slow loop and a hundred requests as a general rule. It now says that is what my slow loop and my burst of 130 returned, and that counters in your own location can differ. No number changed.
+
+Corrected 2026-09-29. A sentence said that from the outside a guard that has failed open is indistinguishable from a guard doing its job. It now says that under a probe that stays below the refusal threshold both return 200, so they look the same from the outside, and that the logs or the code tell them apart. No number changed.
 
 ## Related
 
@@ -4052,7 +4055,7 @@ The audit is delivered within two weeks of the agreed written kickoff. You recei
 
 ## Implementation
 
-**€1,500 per day, scoped separately. €499 for the complete fix list from an audit or a Shopify check, bought with that service or after its report, before implementation starts.**
+**€1,500 per day, scoped separately. €499 for the complete fix list from an audit or a Shopify check, bought together with that service, with its report, or after the report and before implementation starts.**
 
 Your team can implement the report. If you want me to do it, the €499 add-on covers the complete fix list from the audit or the Shopify check. It is sold only with that service and can be bought together with it, with its report, or after the report and before implementation starts. It applies when the required access is arranged in advance. Access counts as arranged when the named account works.
 
@@ -4112,7 +4115,7 @@ I include one round of implementation handover questions submitted within 14 cal
 
 **€3,000 per month. Minimum three months.**
 
-If you are not satisfied with the first month, you can end the retainer by email sent at any time during the first month, up to the day before the second month starts. The retainer then ends when the first month ends, and the second and third months are not charged. After the three-month minimum the retainer runs month to month, and either party can end it by email before the next month starts.
+If you are not satisfied with the first month, you can end the retainer by email sent at any time during the first month, up to the day before the second month starts. The retainer then ends when the first month ends, and the second and third months are not charged. Notice given in the second or third month ends the retainer at the end of the three-month minimum, and the months up to that end are charged. After the three-month minimum the retainer runs month to month, and either party can end it by email before the next month starts.
 
 Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next.
 
@@ -4368,7 +4371,7 @@ After the corrections, you choose the day for the included re-scan within 30 day
 
 ## If you want help with the fixes
 
-Your team can implement the report. Alternatively, a €499 add-on covers its complete fix list when bought with the audit report or after it and before implementation starts, and when the required access is arranged in advance.
+Your team can implement the report. Alternatively, a €499 add-on covers its complete fix list when bought together with the audit, with its report, or after the report and before implementation starts, and when the required access is arranged in advance.
 
 For this add-on, I need an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. Access is agreed in writing and limited to the work.
 
@@ -4673,7 +4676,7 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 **Payment.** Payment is due within fourteen days unless agreed otherwise in writing. The Shopify agent storefront check is paid by bank transfer against an invoice before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
 
-**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay takes precedence over this share. A missed-deadline refund that a service page states, such as the refund of the Shopify check fee when its four-item package is not sent within 48 elapsed hours, applies in place of the charge for delivered parts. Work billed by the day is charged by the hours worked, in half-hour steps. For MCP server design and agent operations, the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge.
+**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay takes precedence over this share. A missed-deadline refund that a service page states, such as the refund of the Shopify check fee when its four-item package is not sent within 48 elapsed hours, applies in place of the charge for delivered parts. Work billed by the day is charged by the hours worked, in half-hour steps. For MCP server design and agent operations, the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge.
 
 **Delay.** If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered, and it is not charged. A late advisory review is still delivered in full, and the delay is stated with it.
 
@@ -4693,7 +4696,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to seven days of security analytics and 24 hours of security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
 
-**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms and its consumer terms both name Anthropic Ireland, Limited as the contracting party. For the Anthropic API, Anthropic's data processing addendum incorporates the EU Standard Contractual Clauses, Module Two or Module Three, for data transferred out of the EEA, including to Anthropic, PBC in the United States. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA that is not hosted on Cloudflare, Cloudflare adds that visitor's IP address to the requests the check makes, and a Worker cannot remove it. If the site is in a country without an adequacy decision, no standard contractual clauses cover those requests: the address reaches the site only because the user entered it and started the check, and a user who does not want that can leave the check unrun.
+**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. For the Anthropic API, Anthropic's data processing addendum incorporates the EU Standard Contractual Clauses, Module Two or Module Three, for data transferred out of the EEA, including to Anthropic, PBC in the United States. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA that is not hosted on Cloudflare, Cloudflare adds that visitor's IP address to the requests the check makes, and a Worker cannot remove it. If the site is in a country without an adequacy decision, no standard contractual clauses cover those requests: the address reaches the site only because the user entered it and started the check, and a user who does not want that can leave the check unrun.
 
 **Email.** Email related to an engagement is kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. Invoices and other accounting vouchers follow the same six-year retention, as the Act requires.
 
@@ -4703,7 +4706,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Outreach records.** When turva.dev writes to a company, it records the company, the business contact it wrote to, the public page where that contact was found and the date. Keeping it stops the same company from being contacted twice and lets the promised rescan be sent. The lawful basis is legitimate interest, and the record is shown or removed on request. The record is kept for 24 months from the latest contact. A company that asks not to be contacted stays on an exclusion list for as long as that request stands, so that the request can be honoured. You can object to this processing at any time, and an objection stops further contact.
 
-**AI tools.** The AI tool used in the work is Claude. Anthropic Ireland, Limited is the contracting party under both agreements, and data can be transferred to Anthropic, PBC in the United States. The agreements are a Claude Max subscription on Anthropic's consumer terms and the Anthropic API on its commercial terms. Anthropic's data processing addendum and the standard contractual clauses named under International transfers apply to the API. Claude works on a local workspace holding the files a task needs. Files handled through the Claude Max subscription are processed under Anthropic's [privacy policy](https://www.anthropic.com/legal/privacy), and files sent through the Anthropic API under the commercial terms and the data processing addendum. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. The audit reads what the client's site serves publicly. If a client requires it, the engagement agreement can name another route for part of the work, such as Claude through Amazon Bedrock. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
+**AI tools.** The AI tool used in the work is Claude. Client material, including what is read from a client's public site, is processed only through the Anthropic API, on Anthropic's [commercial terms](https://www.anthropic.com/legal/commercial-terms), with Anthropic Ireland, Limited as the contracting party. Anthropic's [data processing addendum](https://www.anthropic.com/legal/data-processing-addendum) and the standard contractual clauses named under International transfers apply, and data can be transferred to Anthropic, PBC in the United States. Claude works on a local workspace holding the files a task needs. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. The audit reads what the client's site serves publicly. If a client requires it, the engagement agreement can name another route for part of the work, such as Claude through Amazon Bedrock. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
 No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic Ireland, Limited is the contracting party for the AI tool, and data can be transferred to Anthropic, PBC in the United States. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. A card payment made through a payment link is processed by Stripe. A new provider is added to this list before it receives client material.
 
@@ -5857,7 +5860,7 @@ turva.dev provides independent agent-readiness audits and advisory for product t
 
 **What does an agent-readiness audit cost?**
 
-turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. The Shopify agent storefront check is a separate fixed-scope diagnosis at €999, delivered within 48 hours of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, and implementation is €1,500 per day, scoped per task. Prices exclude VAT, and the scope is written before any payment.
+turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. The Shopify agent storefront check is a separate fixed-scope diagnosis at €999, delivered within 48 hours of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month, so that only the first month is charged, and implementation is €1,500 per day, scoped per task. Prices exclude VAT, and the scope is written before any payment.
 
 **How long does an agent-readiness audit take?**
 
@@ -6726,7 +6729,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.195.0",
+    "version": "3.196.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6836,7 +6839,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"UD9vZV-w8VsLA_Z4TYVrYIZJmIY5P4ltbyKKmPixAgMig0wJFpgyjVHn5QmzWjZwRNwLUIK5wkjdRzUIEs30Bg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"UD9vZV-w8VsLA_Z4TYVrYIZJmIY5P4ltbyKKmPixAgMig0wJFpgyjVHn5QmzWjZwRNwLUIK5wkjdRzUIEs30Bg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"l07CfK73RnnuAdIxi-AXge-GyuPpnOFQS1EZFbskMWl62_1n3zFXwkvBx3D3oN-WqTuXupweM4vfoJ01rqgFDw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"PBaoNn2IMZUsInmLCsX2-wzn5mUUOgT-qhPv9CDWh9wmUEI1726Gd7T6M0ZW0GT1N2i0EruVhJi3v_kjm-hNCA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"UD9vZV-w8VsLA_Z4TYVrYIZJmIY5P4ltbyKKmPixAgMig0wJFpgyjVHn5QmzWjZwRNwLUIK5wkjdRzUIEs30Bg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"UD9vZV-w8VsLA_Z4TYVrYIZJmIY5P4ltbyKKmPixAgMig0wJFpgyjVHn5QmzWjZwRNwLUIK5wkjdRzUIEs30Bg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8j-v-aXdWbKAoc1lyaraHlU8W6JuPdbyyVkKKZRKkiq0RZ0HF6m67F_ER6J6TGXZV14sNFbYR1hFY228ADpYAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"f3HO7tlnKT2i8vrYIFXV0oukM44EIaV-0PUDvGBmOEfEir9hFf_eBJRODhBljRJvyH3BhpFDVO8OxEsKhlWVAA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6851,7 +6854,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.9",
+  "version": "1.6.10",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6860,7 +6863,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.9",
+    "version": "1.6.10",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -7006,7 +7009,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.195.0",
+  "version": "3.196.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7442,7 +7445,7 @@ Use this skill to learn which services turva.dev offers, and which of them carry
 - **Agent operations.** On request. The data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do. This covers the controls around an agent, not building the agent itself or certifying that it is safe.
 - **MCP server design.** On request. Read-only discovery tools over Streamable HTTP, plus building the server. Authentication and an audit trail are added where the data and misuse risks call for them. Submission to one agreed MCP registry is included. Writes are scoped separately.
 
-Two implementation add-ons are sold only with the audit or Shopify check they follow, bought with its report or after it and before implementation starts, and neither can be bought on its own. Audit fix implementation, €499 fixed, is exactly the fixes the audit report lists and requires the audit. Shopify correction implementation, €499 fixed, is exactly the corrections the check's plan lists and requires the Shopify agent storefront check. Both require that the necessary access is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.
+Two implementation add-ons are sold only with the audit or Shopify check they follow, bought together with that service, with its report, or after the report and before implementation starts, and neither can be bought on its own. Audit fix implementation, €499 fixed, is exactly the fixes the audit report lists and requires the audit. Shopify correction implementation, €499 fixed, is exactly the corrections the check's plan lists and requires the Shopify agent storefront check. Both require that the necessary access is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.
 
 Final price is confirmed in writing after scope is agreed.
 
@@ -11387,12 +11390,20 @@ function maskLocation(href, base) {
   // path ("path@2x.png" stays unmasked below). But when an @ still appears before the first
   // /, the text ahead of it reads as userinfo even when the parser here does not recognise it
   // as a scheme (an underscore, a leading digit or space, a stray control character), so that
-  // shape is masked too instead of let through (VN1, round 3 Tek-542). The package
-  // turva-llms-txt-validator mirrors this fix from 0.3.11.
+  // shape is masked too instead of let through (VN1, round 3 Tek-542). With no slash at all
+  // the same holds when a ":" comes before the last @: "user_name:secret@example.com" is
+  // user:password and is masked, while "path@2x.png" has no ":" ahead of its @ and stays as
+  // given (outside review V13, D5-1: the slashless shape used to return early and print the
+  // password). The package turva-llms-txt-validator mirrors the VN1 fix from 0.3.11.
   if (!scheme && from - start < 2) {
     const firstSlash = s.indexOf("/");
     const firstAt = s.indexOf("@");
-    if (firstAt < 0 || firstSlash < 0 || firstAt > firstSlash) return s;
+    if (firstAt < 0) return s;
+    if (firstSlash < 0) {
+      if (!s.slice(0, s.lastIndexOf("@")).includes(":")) return s;
+    } else if (firstAt > firstSlash) {
+      return s;
+    }
   }
   // Nothing tells which @ of a refused target ends the user information, so everything up to the
   // last one is shown as ***. The mask is visible on purpose: three review rounds on 2026-09-22
