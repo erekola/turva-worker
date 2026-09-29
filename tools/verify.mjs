@@ -2273,7 +2273,7 @@ if (LIVE) {
       const cards = [...page.matchAll(/<div class="faq">([\s\S]*?)<\/div>/g)];
       check(cards.length === 1, `${p}: exactly one FAQ card on the page (saw ${cards.length})`);
       const vis = cards.length === 1
-        ? [...cards[0][1].matchAll(/<p class="q">([\s\S]*?)<\/p>\s*<p>([\s\S]*?)<\/p>/g)].map((m) => ({ q: twHtml(m[1]), a: twHtml(m[2]) }))
+        ? [...cards[0][1].matchAll(/<p class="q"[^>]*>([\s\S]*?)<\/p>\s*<p>([\s\S]*?)<\/p>/g)].map((m) => ({ q: twHtml(m[1]), a: twHtml(m[2]) }))
         : [];
       const jl = faqNodes(page);
       setSameLive(`${p}: questions on the page vs in the FAQPage`, vis.map((x) => x.q), jl.map((x) => x.q));

@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.192.2 - Codex retest round 3 follow-up (Tek-544): /legal names the basis for vulnerability reports and agent registration requests, points to Cloudflare's per-plan analytics retention and says rate-limit counts are not stored, names Signal's transfer in its own terms, and states the validator's IP forwarding without claiming a transfer basis; FAQ questions carry role=heading and aria-level=3 while the twin stays unchanged.
 // turva.dev worker v3.192.1 - the MCP server card's VAT note moves from inside _meta.pricing to _meta, so the pricing object lists only the four priced services and its currency fields.
 // turva.dev worker v3.192.0 - third Codex retest round (Tek-542): services and llms.txt separate a first reply within one business day from the content answer each service states; advisory adds a first-month cancellation right and cancellation is charged by the share of parts or fixes finished; legal adds a delay clause, a 90-day removal fallback after a post-kickoff cancellation, a perpetual code-use right, clarified traffic-analysis retention, the AI tools' two Anthropic agreement types and a tested PGP bundle-read command; eight guides narrow claims to their primary sources and thirteen blog posts correct measured claims, including “the agent token count did not”, with dated corrections; the audit report sample's Finnish list items carry lang="fi", the validator and parity input placeholders meet 4.5:1 contrast, OAuth metadata drops the unused refresh_token grant, and llms-full.txt states each guide's sources-checked date and author; the hosted llms.txt validator's link masking and link-definition parsing get five fixes mirrored to the llms-txt-validator package; the agent-readiness audit page names its AI visibility scope as 20 questions across three named assistants and states that the audit is invoiced on delivery, paid by the card link; the MCP server card moves to 1.6.7.
 // turva.dev worker v3.191.0 - service delivery terms (Tek-528): the services page states for implementation, advisory, agent operations and MCP server design what the buyer receives, what is included and excluded, what is needed, how the work runs, how the result is checked, the follow-up and the price; the legal page defines a business day and what is billed when an engagement is cancelled after kickoff; the two 499 euro add-ons are schema.org addOn offers under the audit and the Shopify check and a bundledImplementation field on the MCP server card; llms.txt, the services skill, UCP and OpenAPI mirror terms the services page already states; the hosted parity check runs markdown-parity-check 0.2.16; the MCP server card moves to 1.6.6.
@@ -4591,11 +4592,11 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 The site does not use analytics cookies, tracking pixels or third-party scripts. Cookies are described under Cookies below.
 
-**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, operating the llms.txt validator, meaning fetching and checking the documents it names, its forwarding of a visitor's IP address to the site named, the site's rate limit, and processing a client's own contact persons rest on legitimate interest. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
+**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, operating the llms.txt validator, meaning fetching and checking the documents it names, its forwarding of a visitor's IP address to the site named, the site's rate limit, and processing a client's own contact persons rest on legitimate interest. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender, and they are removed on request. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
-**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
+**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. Cloudflare keeps that analytics data for the period its plan sets for each dataset, as its [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) lists. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
 
-**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. Anthropic, PBC in the United States transfers data out of the EEA under the EU Standard Contractual Clauses, Module Two or Module Three, as its data processing addendum states. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. When the llms.txt validator's user names a site outside the EEA, forwarding that visitor's IP address to it rests on the user's own choice to enter that address, which is the transfer basis for that one request.
+**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. Anthropic, PBC in the United States transfers data out of the EEA under the EU Standard Contractual Clauses, Module Two or Module Three, as its data processing addendum states. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA that is not hosted on Cloudflare, Cloudflare adds that visitor's IP address to the one request the check makes, and a Worker cannot remove it. If the site is in a country without an adequacy decision, no standard contractual clauses cover that request: the address reaches the site only because the user entered it and started the check, and a user who does not want that can leave the check unrun.
 
 **Email.** Email related to an engagement is kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. Invoices and other accounting vouchers follow the same six-year retention, as the Act requires.
 
@@ -4628,7 +4629,7 @@ This site sets no cookies of its own. A check of the home page, this page and th
 This page is updated when the terms change. The current version applies to engagements started after the date below.
 
 - **Terms last updated:** 2026-09-28
-- **Privacy last updated:** 2026-09-28
+- **Privacy last updated:** 2026-09-29
 `,
 
   "/guides/open-knowledge-format": `# Open Knowledge Format explained
@@ -6628,7 +6629,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.192.1",
+    "version": "3.192.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6908,7 +6909,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.192.1",
+  "version": "3.192.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7571,7 +7572,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-28";
+var SITEMAP_LASTMOD = "2026-09-29";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9212,7 +9213,7 @@ function mdFaqPlain(s) {
   return s.replace(/`([^`]+)`/g, "$1");
 }
 function mdFaqRows(path, heading) {
-  return mdFaqBlocks(path, heading).pairs.map((p) => `    <p class="q">${renderInline(p.q)}</p>
+  return mdFaqBlocks(path, heading).pairs.map((p) => `    <p class="q" role="heading" aria-level="3">${renderInline(p.q)}</p>
     <p>${renderInline(p.a)}</p>`).join("\n");
 }
 function mdFaqCard(path, heading) {
