@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.193.0 - new Build notes post /blog/why-i-publish-every-guide (2026-09-29): Why I publish every guide for free, on why the guides are public and what moved in the specifications from July to September, with its Frequently asked section, its OG card, a new row on /blog and a new first Blog line in llms.txt, which is re-signed
 // turva.dev worker v3.192.4 - the hosted parity check recognises markdown-parity-check 0.2.17's 'Selector matched no element.' as a selector error again and returns the selector in summary.errorValue, the package's own field name; /legal keeps vulnerability reports and agent registration requests for 24 months from the latest message (Tek-544).
 // turva.dev worker v3.192.3 - the hosted /markdown-parity-check route moves to markdown-parity-check 0.2.17 (Tek-542 round 3 fixes: masking, integer option bounds, rowspan=0, raw HTML findings, hidden Starlight code, template checkboxes, selector in its own error field).
 // turva.dev worker v3.192.2 - Codex retest round 3 follow-up (Tek-544): /legal names the basis for vulnerability reports and agent registration requests, points to Cloudflare's per-plan analytics retention and says rate-limit counts are not stored, names Signal's transfer in its own terms, and states the validator's IP forwarding without claiming a transfer basis; FAQ questions carry role=heading and aria-level=3 while the twin stays unchanged.
@@ -278,6 +279,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Why I publish every guide for free](https://turva.dev/blog/why-i-publish-every-guide.md)
 - [My own site is my proof of work](https://turva.dev/blog/my-own-site-is-my-proof-of-work.md)
 - [What agent memory in local files gets me](https://turva.dev/blog/local-agent-memory.md)
 - [Five rounds before the agent signed anything](https://turva.dev/blog/five-rounds-before-the-agent-signed.md)
@@ -488,6 +490,79 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/why-i-publish-every-guide": `# Why I publish every guide for free
+
+2026-09-29
+
+My site carries 24 guides to the standards agents use to find and act on a site, and every one of them is free to read in full. People ask me why I give away the thing I sell. The guides are reading I have to do anyway, and I would rather be caught wrong in a free guide than in a client's work.
+
+## Why not keep the guides for paying clients?
+
+What a client pays for is my name on the result. The reading behind it is worth more in public.
+
+When I work for a client, I answer for the implementation and the result under my own name. turva.dev is a sole proprietorship, so no company name stands between the report and me. If a recommendation is wrong because a specification moved and I missed it, the mistake is mine and the client has already paid for it.
+
+A published guide puts the same reading in front of anyone before a client pays. Anyone can hold it up against the primary sources it cites, and a buyer can see how I understand a protocol before hiring me. I would rather a stranger find my error in a guide than a client find it on their site.
+
+## Why do I have to keep studying?
+
+The rules I measure sites against change faster than client work arrives. If I read a specification only when a client needed it, I would be reading it on their time.
+
+Writing a guide makes me read the primary text first, and keeping it true makes me read it again. A scheduled AI review re-reads all 24 guides against their sources on the 15th of every month, and a second run re-reads the fastest-moving ones on the 1st. A second check reads each finding against the source before anything on the site changes, and each guide page shows the date its sources were last checked.
+
+## What changed in the last two months?
+
+Three specifications I build my site on released new versions between late July and late August, and the review on 15 September found four more claims that had gone stale.
+
+On 28 July the Model Context Protocol released its 2026-07-28 revision, the largest breaking set it has had. It removed protocol sessions and the initialize handshake, made the protocol stateless, required servers to answer a new server/discover call and deprecated OAuth Dynamic Client Registration, which stays a supported fallback for now. I had built my own MCP server on a library path that would never serve the new revision, so the update was a rewrite and not a version bump. It went live the next morning. The next day I found that a request on the new revision needs its protocol version and method as headers, and on 1 August that a tool call needs the tool's name as a header too. I found both by measuring my own client, not by reading.
+
+On 10 August llms.txt published its second version. The file format did not change at all. What changed is discovery: a page can now name its Markdown version and the llms.txt that covers it, in the HTML head or in an HTTP Link header. On 24 August I made every page on my site answer at its own .md address and pointed every link in my llms.txt at those addresses.
+
+On 26 August the Agentic Resource Discovery draft, version 0.91, renamed its well-known file from ai-catalog.json to ard.json and said a conformant client must read the new path. The scanner I measure with still read the old path when I added the new one, so my site serves both.
+
+## What did the September review find?
+
+It found four claims in my guides that had moved since the previous read, and all four corrections are on the site.
+
+The ARD repository now carries a versioned draft, and a normative change starts as an issue. The x402 payment protocol's repository moved from Coinbase to the x402 Foundation, which sits under the Linux Foundation, and my x402 guide still linked the old address. Work on AP2, the agent payments protocol, continues in FIDO Alliance working groups. The Google page three of my guides cited no longer carried the sentence they attributed to it, and the same guidance now sits on another Google page, which the guides link instead.
+
+## What did the review get wrong?
+
+It flagged a fifth claim that was true. My agent commerce guide says that ACP's discovery document entered the released specification with the 2026-04-17 snapshot, and the review found ACP's own RFC file still marked as a proposal.
+
+I had already approved the correction. On the day it was to go in, the measurement read ACP's changelog for that snapshot and its published schema, and both show the discovery document released. Only the RFC file's status header had never been updated. Making the approved correction would have turned a true sentence on my site into a false one.
+
+## What happens when nothing has changed?
+
+The reading costs the same. The run on 1 September re-read the seven fastest-moving guides, found no errors and changed two date stamps. I only know nothing had moved because the reading was done.
+
+## What does this not show?
+
+It does not show that the guides are free of errors. The review is an AI run. In September it flagged a true sentence as false, and it can pass a false one as easily.
+
+These are the changes that touched my own site and guides. The field moved in more places than that, and a guide covers only what I chose to write about.
+
+## Frequently asked
+
+**Are the guides the same material you use in client work?**
+
+Yes. I write them from the primary sources I measure client sites against, and a guide is where that reading ends up in public. A client report adds what a guide cannot: the measurements of that one site, what to fix in which order, and who owns each fix.
+
+**How often are the guides checked?**
+
+Every guide is re-read against its primary sources once a month, and the fastest-moving ones get a second read at the start of each month. Each guide page shows the date of its last check.
+
+**What happens when a guide turns out to be wrong?**
+
+The guide is corrected, and the date of its last check moves. A blog post that was wrong gets a dated note at its end saying what was wrong and what changed.
+
+## Related
+
+- [Four AI agents re-checked the guides](/blog/re-checking-the-guides)
+- [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work)
+- [MCP server cards and discovery](/guides/mcp-server-card)
+- [Agent commerce discovery: A2A, AP2, ACP and UCP](/guides/agent-commerce-discovery)
+`,
   "/blog/my-own-site-is-my-proof-of-work": `# My own site is my proof of work
 
 2026-09-26
@@ -2609,8 +2684,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-35 articles.
+36 articles.
 
+- [Why I publish every guide for free](/blog/why-i-publish-every-guide). 2026-09-29. Build notes. I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.
 - [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work). 2026-09-26. Build notes. Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.
 - [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25. Build notes. Plain local files let each Claude Code session look up what the earlier sessions recorded. A count of that memory, and why it now reads like a private language.
 - [Five rounds before the agent signed anything](/blog/five-rounds-before-the-agent-signed). 2026-09-20. Build notes. An agent moved tokens on Ethereum Sepolia after five fix rounds, each answering an independent review. Three attempts stopped before any signature.
@@ -6631,7 +6707,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.192.4",
+    "version": "3.193.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6741,7 +6817,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"3HFuzV3Ock7si_hlsCJRXGqofvusxmdvMMuM7CzN2iS-5Oexij10l-JiH4P5DWlyW1jP7h4sHG0wUBjA0zQ3Cw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"76ujI4coaoI4SEyENzpz2JWgpa3U6G9WNAvwJoahmpnGsAPWlAe8FH_PTok9BWhv6zK5DJ1C33mbSYTJ6jg9Cg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"3HFuzV3Ock7si_hlsCJRXGqofvusxmdvMMuM7CzN2iS-5Oexij10l-JiH4P5DWlyW1jP7h4sHG0wUBjA0zQ3Cw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"WTKGQ1PevTsonzxJ-TYVsiofvGWd8VqVpmw589G-An1gaE_dkNlkrvviS6E5JFDOtJZvZjweJ5AoB4LZ3vFfDw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6911,7 +6987,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.192.4",
+  "version": "3.193.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7616,6 +7692,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/why-i-publish-every-guide", "monthly", "0.6"],
   ["/blog/my-own-site-is-my-proof-of-work", "monthly", "0.6"],
   ["/blog/local-agent-memory", "monthly", "0.6"],
   ["/blog/five-rounds-before-the-agent-signed", "monthly", "0.6"],
@@ -7724,7 +7801,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -7734,6 +7811,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/why-i-publish-every-guide": {
+    title: "Why I publish every guide for free · turva.dev",
+    description: "I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.",
+    date: "2026-09-29",
+    kind: "Build notes",
+    image: "/og-why-i-publish-every-guide.jpg",
+    imageAlt: "turva.dev blog card: why I publish every guide for free, because the rules move monthly and the reading has to be done before a client needs it.",
+  },
   "/blog/my-own-site-is-my-proof-of-work": {
     title: "My own site is my proof of work · turva.dev",
     description: "Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.",
@@ -9574,6 +9659,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/why-i-publish-every-guide": mdFaqBlocks("/blog/why-i-publish-every-guide", "Frequently asked").pairs,
   "/blog/my-own-site-is-my-proof-of-work": mdFaqBlocks("/blog/my-own-site-is-my-proof-of-work", "Frequently asked").pairs,
   "/blog/local-agent-memory": mdFaqBlocks("/blog/local-agent-memory", "Frequently asked").pairs,
   "/blog/five-rounds-before-the-agent-signed": mdFaqBlocks("/blog/five-rounds-before-the-agent-signed", "Frequently asked").pairs,
