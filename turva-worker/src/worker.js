@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.194.0 - fourth outside read: four posts corrected, /legal names Pro-plan analytics retention, the API scope of Anthropic's DPA, delivered parts for cancellation and plural validator requests, advisory first-month exit on the short machine surfaces, add-on purchase window everywhere, validator JSON and parity info findings described exactly.
 // turva.dev worker v3.193.2 - a 404 answers in markdown when the request asks for markdown or names a .md address, and Accept: text/x-markdown is read as text/markdown.
 // turva.dev worker v3.193.1 - /blog/why-i-publish-every-guide: the sentence that said the reading costs the same when nothing has changed now says every guide still gets a full read, because the review runs record no durations; a dated Corrected note and META_BY_PATH modified 2026-09-29 say so
 // turva.dev worker v3.193.0 - new Build notes post /blog/why-i-publish-every-guide (2026-09-29): Why I publish every guide for free, on why the guides are public and what moved in the specifications from July to September, with its Frequently asked section, its OG card, a new row on /blog and a new first Blog line in llms.txt, which is re-signed
@@ -221,10 +222,10 @@ var LLMS_TXT = `# turva.dev
 ## Pricing (EUR, VAT not included)
 - Shopify agent storefront check: €999 (fixed scope, 48 hours)
 - Audit: €4,300 (fixed scope, within two weeks of the agreed written kickoff)
-- Advisory: €3,000 / month (monthly retainer, minimum 3 months)
+- Advisory: €3,000 / month (monthly retainer, minimum 3 months, can end after the first month if not satisfied)
 - Implementation: €1,500 / day (scoped per task)
-- Audit fix implementation: €499 (fixed, sold only together with the audit, only when the required access is arranged in advance)
-- Shopify correction implementation: €499 (fixed, sold only together with the Shopify agent storefront check, only when the required access is arranged in advance)
+- Audit fix implementation: €499 (fixed, sold only with the audit, bought with its report or after it and before implementation starts, only when the required access is arranged in advance)
+- Shopify correction implementation: €499 (fixed, sold only with the Shopify agent storefront check, bought with its report or after it and before implementation starts, only when the required access is arranged in advance)
 
 Final price is confirmed in writing after scope is agreed.
 
@@ -571,7 +572,7 @@ Corrected 2026-09-29. One sentence said the reading costs the same when nothing 
 
 2026-09-26
 
-GitHub counts 544 commits in nine of my repositories for September, and the month still has four days to go. My website alone shipped 54 minor versions between 6 and 26 September, seven of them before this post shipped and an eighth counting it, and 15 patch releases besides. I sell audits of how ready a website is for AI agents, and my own site is the one piece of proof I can hand a buyer. [Its code is public](https://github.com/erekola/turva-worker), so anyone can read every line and every release in its history.
+GitHub counts 544 commits in nine of my repositories for September, and the month still has four days to go. My website alone shipped 54 minor versions between 6 and 26 September, seven of them on 26 September before this post shipped and an eighth counting it, and 15 patch releases besides. I sell audits of how ready a website is for AI agents, and my own site is the one piece of proof I can hand a buyer. [Its code is public](https://github.com/erekola/turva-worker), so anyone can read every line and every release in its history.
 
 ## Why does my own site change this often?
 
@@ -628,6 +629,8 @@ Yes. The hosted check on turva.dev covers turva.dev pages only. For your own sit
 Corrected 2026-09-27. One sentence said every number in this post is one you can check yourself. The Cloudflare traffic figures come from my own dashboard and cannot be checked that way, so the sentence now says so. No number changed.
 
 Corrected 2026-09-28. The opening paragraph counted seven minor versions today against the 54 version total for 6 to 26 September, but this post itself published on 26 September, so the two counts used different cutoffs. It now names the same cutoff for both, seven minor versions before this post shipped and an eighth counting it.
+
+Corrected 2026-09-29. The same sentence could be read as seven of the 54 minor versions coming before this post. It now says the seven shipped on 26 September, the day I published this post.
 
 ## Related
 
@@ -1555,7 +1558,7 @@ The scope is agreed in writing first. I reply by email within one business day.
 
 **Does a lower price mean a smaller audit?**
 
-No. The scanner is the same one, the manual checks over it are the same, and the report still names 3 to 10 fixes in order of impact with a re-scan that verifies them. What got shorter is the part where I work out from scratch what a passing check looks like, which is now a written checklist of 42 rows.
+No. The scanner is the same one, the manual checks over it are the same, and the report still names 3 to 10 fixes in order of impact, and the follow-up checks each one with the next scan or a direct test, or the report explains which tradeoff was kept on purpose. What got shorter is the part where I work out from scratch what a passing check looks like, which is now a written checklist of 42 rows.
 
 **What does an agent-readiness audit cost?**
 
@@ -1574,6 +1577,8 @@ Corrected 2026-09-03. Three sentences in this post read as if a client had alrea
 Corrected 2026-09-27. A heading and a question said the accuracy does not drop. That was not measured, and one check found missing in my own material does not show it, so both now say what the checklist found. No price or number changed.
 
 Corrected 2026-09-28. The either/or promise about the next scan did not name a direct test as a way to confirm a fix, though the engagement principles and the audit page already do. The sentence now names the same three outcomes, a higher reading, a direct test that confirms the fix or the report naming which tradeoff was kept on purpose.
+
+Corrected 2026-09-29. The answer on whether a lower price means a smaller audit still said a re-scan verifies the fixes. It now names the same three outcomes as the rest of the post: the next scan, a direct test or an explained tradeoff.
 
 ## Related
 
@@ -1946,7 +1951,7 @@ The key is the client IP, and Cloudflare advises against that. Their best practi
 
 Reading the code is what caught this. That finding needed no instrument: no limiter logic anywhere, nothing that could say 429. On the same morning a probe seemed to corroborate it, 130 requests in about six seconds, zero 429s back. I would have quoted the probe over the code reading in a heartbeat, because it has a number in it and numbers travel.
 
-The probe proves nothing, and that is now measured rather than suspected. I ran the same burst against the fixed site, enforcement live, from a network that had never touched it. 130 requests, ten in parallel, and all 130 came back 200 with not one 429. The identical result the broken site gave. In the larger burst below, not one of the first 130 requests was refused either. A hundred and thirty requests never reach the point where this platform starts refusing, so the working site and the absent limiter answer that probe in exactly the same voice.
+The probe proves nothing, and that is now measured rather than suspected. I ran the same burst against the fixed site, enforcement live, from a network that had never touched it. 130 requests, ten in parallel, and all 130 came back 200 with not one 429. The identical result the broken site gave. In the larger burst below, not one of the first 130 requests was refused either. In these runs, 130 requests did not reach the point where this platform started refusing, so the working site and the absent limiter answered that probe in the same voice.
 
 A test that returns the same answer whether or not the thing is broken is not weak evidence. It is not evidence. It is worse than no number at all, because a number gets quoted, and this one would have been quoted by me. The code reading found the defect. The curl agreed with it by coincidence.
 
@@ -1985,6 +1990,8 @@ Corrected 2026-09-27. A sentence said probing the endpoint cannot catch this def
 Corrected 2026-09-28. Two sentences said a slow loop or a small probe tells you nothing about this rate limit, worded as true of any limiter. Both now name the 130 and 300 request burst sizes this post measured and the platform's eventually consistent counters behind them. No number changed.
 
 Corrected 2026-09-28. Two more sentences stated a general law rather than an observation. One now says a probe smaller than the measured burst sizes did not catch the defect in these runs, and the other names the Retry-After value as the minimum wait RFC 9110 defines rather than a measured one. No number changed.
+
+Corrected 2026-09-29. One more sentence said 130 requests never reach the point where this platform starts refusing. It now says that is what happened in these runs.
 
 ## Related
 
@@ -2306,7 +2313,7 @@ For an audit that reads your agent-facing claims against the specifications they
 
 A July measurement compared the token counts of the homepage's HTML and Markdown representations. The result describes that page and measurement date.
 
-In late June this site published [a post on what an agent pays to read a page](/blog/cheaper-pages-for-agents), and the measurement in it said the homepage as markdown cost roughly a third of the HTML form. The most recent scan, as of 4 July 2026, reports the same homepage at 10,320 tokens as HTML and 1,723 as markdown. That is a sixth of the cost, an 83% saving, and nothing in the meantime was done to improve the number. "Bill" in the title is this token count, not a measured invoice: the post tracks what each form costs to read in tokens, not what any agent's operator actually paid.
+In late June this site published [a post on what an agent pays to read a page](/blog/cheaper-pages-for-agents), and the measurement in it said the homepage as markdown cost roughly a third of the HTML form. The most recent scan, as of 4 July 2026, reports the same homepage at 10,320 tokens as HTML and 1,723 as markdown. That is a sixth of the cost, an 83% saving, and nothing in the meantime was done to improve the number. The post tracks what each form costs to read in tokens, not what any agent's operator actually paid.
 
 ## Where the weight came from
 
@@ -2325,6 +2332,8 @@ For an audit that measures what agents pay to read your site, contact info@turva
 Corrected 2026-09-28. The heading called the token count an agent bill. The post measures what each form costs to read in tokens, not a paid invoice, and the body now says so.
 
 Corrected 2026-09-28. The heading, and the same words used elsewhere on the site for this post's title, still called the token count an agent bill after the body already said it was not. They now use the same words as the body, agent token count. A sentence also said the token split is not self-reported: it now says it is measured, not typed in by hand.
+
+Corrected 2026-09-29. The opening still explained the word bill in the title after the title had dropped it. That explanation is gone, and the sentence says what the post measures.
 
 ## Related
 
@@ -2490,7 +2499,7 @@ For JSON, request:
 
 The response contains the same checks and uses a no-store header.
 
-For CI, the open npm package turva-llms-txt-validator provides the llms-txt-validate command. Its --json output matches the web tool's JSON.
+For CI, the open npm package turva-llms-txt-validator provides the llms-txt-validate command. For a completed validation its --json output has the same target, summary and checks as the web tool's JSON. Errors are shaped differently: the command adds the masked target and, for a network error, a code.
 
 Run:
 
@@ -2536,6 +2545,7 @@ The page and the command run the same comparison code from the open npm package.
 - The HTML content comes from main, article or role="main". Without any of them the page body is used and the report warns about it. A CSS selector overrides the choice.
 - Headings, paragraphs, list items, tables, code blocks and links are compared block by block.
 - Missing and added blocks are errors. So are differences in text, numbers, tables and links.
+- A table with a rowspan or colspan cell and the numbering of a reversed list are not compared. They are reported as information findings, which never fail a check.
 - A change of order, heading level, case or punctuation is a warning.
 - Front matter at the top of the Markdown is kept and compared by default. Choose strip to remove it first.
 - Strict mode counts warnings as failures.
@@ -4097,7 +4107,7 @@ I include one round of implementation handover questions submitted within 14 cal
 
 **€3,000 per month. Minimum three months.**
 
-If you are not satisfied after the first month, you can end it by email before the second month starts, and the remaining months are not charged. After the three-month minimum the retainer runs month to month, and either party can end it by email before the next month starts.
+If you are not satisfied after the first month, you can end it by email before the second month starts, and the remaining months are not charged. That email can be sent at any time during the first month, up to the day before the second month starts. After the three-month minimum the retainer runs month to month, and either party can end it by email before the next month starts.
 
 Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next.
 
@@ -4353,7 +4363,7 @@ After the corrections, you choose the day for the included re-scan within 30 day
 
 ## If you want help with the fixes
 
-Your team can implement the report. Alternatively, a €499 add-on covers its complete fix list when bought with the audit and when the required access is arranged in advance.
+Your team can implement the report. Alternatively, a €499 add-on covers its complete fix list when bought with the audit report or after it and before implementation starts, and when the required access is arranged in advance.
 
 For this add-on, I need an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. Access is agreed in writing and limited to the work.
 
@@ -4658,7 +4668,7 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 **Payment.** Payment is due within fourteen days unless agreed otherwise in writing. The Shopify agent storefront check is paid by bank transfer against an invoice before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
 
-**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes finished. Work billed by the day is charged by the hours worked, in half-hour steps. For MCP server design and agent operations, the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge.
+**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay takes precedence over this share. Work billed by the day is charged by the hours worked, in half-hour steps. For MCP server design and agent operations, the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge.
 
 **Delay.** If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered, and it is not charged. A late advisory review is still delivered in full, and the delay is stated with it.
 
@@ -4676,9 +4686,9 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, operating the llms.txt validator, meaning fetching and checking the documents it names, its forwarding of a visitor's IP address to the site named, the site's rate limit, and processing a client's own contact persons rest on legitimate interest. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
-**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. Cloudflare keeps that analytics data for the period its plan sets for each dataset, as its [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) lists. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
+**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to seven days of security analytics and 24 hours of security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
 
-**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. Anthropic, PBC in the United States transfers data out of the EEA under the EU Standard Contractual Clauses, Module Two or Module Three, as its data processing addendum states. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA that is not hosted on Cloudflare, Cloudflare adds that visitor's IP address to the one request the check makes, and a Worker cannot remove it. If the site is in a country without an adequacy decision, no standard contractual clauses cover that request: the address reaches the site only because the user entered it and started the check, and a user who does not want that can leave the check unrun.
+**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For the Anthropic API, Anthropic, PBC in the United States transfers data out of the EEA under the EU Standard Contractual Clauses, Module Two or Module Three, as its data processing addendum states. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA that is not hosted on Cloudflare, Cloudflare adds that visitor's IP address to the requests the check makes, and a Worker cannot remove it. If the site is in a country without an adequacy decision, no standard contractual clauses cover those requests: the address reaches the site only because the user entered it and started the check, and a user who does not want that can leave the check unrun.
 
 **Email.** Email related to an engagement is kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. Invoices and other accounting vouchers follow the same six-year retention, as the Act requires.
 
@@ -4688,7 +4698,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Outreach records.** When turva.dev writes to a company, it records the company, the business contact it wrote to, the public page where that contact was found and the date. Keeping it stops the same company from being contacted twice and lets the promised rescan be sent. The lawful basis is legitimate interest, and the record is shown or removed on request. The record is kept for 24 months from the latest contact. A company that asks not to be contacted stays on an exclusion list for as long as that request stands, so that the request can be honoured. You can object to this processing at any time, and an objection stops further contact.
 
-**AI tools.** The AI tool used in the work is Claude, from Anthropic, PBC, in the United States, used under two agreements: a Claude Max subscription on Anthropic's consumer terms and the Anthropic API on its commercial terms. It works on a local workspace holding the files a task needs, and Anthropic processes those files under its [privacy policy](https://www.anthropic.com/legal/privacy). Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
+**AI tools.** The AI tool used in the work is Claude, from Anthropic, PBC, in the United States, used under two agreements: a Claude Max subscription on Anthropic's consumer terms and the Anthropic API on its commercial terms. Anthropic's data processing addendum and the standard contractual clauses named under International transfers apply to the API. Work through the Claude Max subscription falls under the consumer terms and Anthropic's privacy policy. It works on a local workspace holding the files a task needs, and Anthropic processes those files under its [privacy policy](https://www.anthropic.com/legal/privacy). Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
 No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic, PBC in the United States provides the AI tool. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. A card payment made through a payment link is processed by Stripe. A new provider is added to this list before it receives client material.
 
@@ -6711,7 +6721,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.193.2",
+    "version": "3.194.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6741,7 +6751,7 @@ var OPENAPI_SPEC = JSON.stringify({
     },
     "/api/agent/advisory": {
       "post": {
-        "summary": "Monthly advisory, minimum 3 months. Answers 402: the engagement is agreed by email and a written scope",
+        "summary": "Monthly advisory, minimum 3 months, can end after the first month if not satisfied. Answers 402: the engagement is agreed by email and a written scope",
         "operationId": "subscribeAdvisory",
         "x-payment-info": {
           "intent": "charge",
@@ -6811,7 +6821,7 @@ var AGENT_JSON = JSON.stringify({
   "name_for_human": "turva.dev",
   "name_for_model": "turva_dev",
   "description_for_human": "Agent-readiness audits and advisory for product teams.",
-  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Async-only engagement. Pricing (EUR, VAT not included): Shopify agent storefront check €999 (fixed, 48 hours), Audit €4,300 (fixed, within two weeks of the agreed written kickoff), Advisory €3,000/month (minimum 3 months), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
+  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Async-only engagement. Pricing (EUR, VAT not included): Shopify agent storefront check €999 (fixed, 48 hours), Audit €4,300 (fixed, within two weeks of the agreed written kickoff), Advisory €3,000/month (minimum 3 months, can end after the first month if not satisfied), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
   "contact_email": "info@turva.dev",
   "legal_info_url": "https://turva.dev/legal",
   "logo_url": "https://turva.dev/logo.png",
@@ -6821,7 +6831,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"IzJ3fbeXYlRhxRZ-yyRn-Wq-2jTf6vri4GKdlcrmNLFx7qx-bW_f7b7iqzsBdPGn7vNU5Rb8vGFmFeivleiQBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"3HFuzV3Ock7si_hlsCJRXGqofvusxmdvMMuM7CzN2iS-5Oexij10l-JiH4P5DWlyW1jP7h4sHG0wUBjA0zQ3Cw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"WTKGQ1PevTsonzxJ-TYVsiofvGWd8VqVpmw589G-An1gaE_dkNlkrvviS6E5JFDOtJZvZjweJ5AoB4LZ3vFfDw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"0xxxDXMfKtArFxmizN-hxR4N9lAsKbgjZbmIyb1YbsSyRbdQRkyn-Q3mtNvn-vWbTSenvdA2aAbe1Kq3DVJ4Ag\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"0xxxDXMfKtArFxmizN-hxR4N9lAsKbgjZbmIyb1YbsSyRbdQRkyn-Q3mtNvn-vWbTSenvdA2aAbe1Kq3DVJ4Ag\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"EKZua2w46krq_GqhwqDUsaVV2TpQCwnXnbaUaUqZiUR8-5hxVBWbp0YaxIH7cJYP9UA1pZvuCdjBygPBf6YCCQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"kB81-lqbDM1pu3FwdO0TB3KvO_1Fs3Llw6yh0ILxZhTv1YQl-feTAD7aGziY0D4TaA2gvpewkZbvGFh-IprHAA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6836,7 +6846,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6845,7 +6855,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.7",
+    "version": "1.6.8",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -6991,7 +7001,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.193.2",
+  "version": "3.194.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7427,7 +7437,7 @@ Use this skill to learn which services turva.dev offers, and which of them carry
 - **Agent operations.** On request. The data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do. This covers the controls around an agent, not building the agent itself or certifying that it is safe.
 - **MCP server design.** On request. Read-only discovery tools over Streamable HTTP, plus building the server. Authentication and an audit trail are added where the data and misuse risks call for them. Submission to one agreed MCP registry is included. Writes are scoped separately.
 
-Two implementation add-ons are sold only together with the audit or Shopify check they follow, and neither can be bought on its own. Audit fix implementation, €499 fixed, is exactly the fixes the audit report lists and requires the audit. Shopify correction implementation, €499 fixed, is exactly the corrections the check's plan lists and requires the Shopify agent storefront check. Both require that the necessary access is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.
+Two implementation add-ons are sold only with the audit or Shopify check they follow, bought with its report or after it and before implementation starts, and neither can be bought on its own. Audit fix implementation, €499 fixed, is exactly the fixes the audit report lists and requires the audit. Shopify correction implementation, €499 fixed, is exactly the corrections the check's plan lists and requires the Shopify agent storefront check. Both require that the necessary access is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.
 
 Final price is confirmed in writing after scope is agreed.
 
@@ -7828,7 +7838,7 @@ var META_BY_PATH = {
     title: "My own site is my proof of work · turva.dev",
     description: "Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.",
     date: "2026-09-26",
-    modified: "2026-09-28",
+    modified: "2026-09-29",
     kind: "Build notes",
     image: "/og-my-own-site-is-my-proof-of-work.jpg",
     imageAlt: "turva.dev blog card: my own site is my proof of work, so nothing on it waits. What gets fixed the same day, and what it cost when a change broke my own tools.",
@@ -7939,7 +7949,7 @@ var META_BY_PATH = {
     description: "A dated account of pricing changes and the work behind them. Historical prices remain in the article, with the current service prices linked separately.",
     date: "2026-08-21",
     kind: "Build notes",
-    modified: "2026-09-28",
+    modified: "2026-09-29",
     image: "/og-cheating-to-keep-the-old-price.jpg",
     imageAlt: "turva.dev blog card: The audit drops to 4,300 euros and two weeks. The part the old price charged for twice is now a written checklist.",
   },
@@ -7999,7 +8009,7 @@ var META_BY_PATH = {
     titleTag: "Every response promised a rate limit · turva.dev",
     description: "A response header advertised a request limit that no code enforced. The investigation separates a published policy, the code and what a probe can show.",
     date: "2026-07-18",
-    modified: "2026-09-28",
+    modified: "2026-09-29",
     kind: "Build notes",
     image: "/og-enforcing-the-rate-limit-i-advertised.jpg",
     imageAlt: "Every response promised a rate limit. Nothing enforced it."
@@ -8052,7 +8062,7 @@ var META_BY_PATH = {
     title: "The page grew, the agent token count did not · turva.dev",
     description: "A July measurement compared the token counts of the homepage's HTML and Markdown representations. The result describes that page and measurement date.",
     date: "2026-07-04",
-    modified: "2026-09-28",
+    modified: "2026-09-29",
     kind: "Build notes",
     image: "/og-cheaper-pages-revisited.jpg",
     imageAlt: "turva.dev blog card: The site kept growing after June's token-cost post. The 4 July scan reports an 83% token saving between the HTML and markdown forms."
@@ -13710,7 +13720,7 @@ var X402_ROUTES = {
 var ACP_SERVICES = {
   shopify: { item: "shopify", name: "Shopify agent storefront check", amount: 99900, description: "Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store across browser WebMCP, remote MCP and Catalog and Agentic channels." },
   audit: { item: "audit", name: "Agent-readiness audit", amount: 430000, description: "Fixed scope, delivered within two weeks of the agreed written kickoff. Independent scanner sweep, manual review, written report with prioritized fixes. Includes one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought." },
-  advisory: { item: "advisory", name: "Continuous advisory", amount: 300000, description: "Monthly re-scan, score delta report, written review, roadmap input. Minimum three months." },
+  advisory: { item: "advisory", name: "Continuous advisory", amount: 300000, description: "Monthly re-scan, score delta report, written review, roadmap input. Minimum three months, can end after the first month if not satisfied." },
   implementation: { item: "implementation", name: "Implementation day", amount: 150000, description: "Hands-on work at your edge, scoped per task." }
 };
 
