@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.192.4 - the hosted parity check recognises markdown-parity-check 0.2.17's 'Selector matched no element.' as a selector error again and returns the selector in summary.errorValue, the package's own field name; /legal keeps vulnerability reports and agent registration requests for 24 months from the latest message (Tek-544).
 // turva.dev worker v3.192.3 - the hosted /markdown-parity-check route moves to markdown-parity-check 0.2.17 (Tek-542 round 3 fixes: masking, integer option bounds, rowspan=0, raw HTML findings, hidden Starlight code, template checkboxes, selector in its own error field).
 // turva.dev worker v3.192.2 - Codex retest round 3 follow-up (Tek-544): /legal names the basis for vulnerability reports and agent registration requests, points to Cloudflare's per-plan analytics retention and says rate-limit counts are not stored, names Signal's transfer in its own terms, and states the validator's IP forwarding without claiming a transfer basis; FAQ questions carry role=heading and aria-level=3 while the twin stays unchanged.
 // turva.dev worker v3.192.1 - the MCP server card's VAT note moves from inside _meta.pricing to _meta, so the pricing object lists only the four priced services and its currency fields.
@@ -4593,7 +4594,7 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 The site does not use analytics cookies, tracking pixels or third-party scripts. Cookies are described under Cookies below.
 
-**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, operating the llms.txt validator, meaning fetching and checking the documents it names, its forwarding of a visitor's IP address to the site named, the site's rate limit, and processing a client's own contact persons rest on legitimate interest. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender, and they are removed on request. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
+**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, operating the llms.txt validator, meaning fetching and checking the documents it names, its forwarding of a visitor's IP address to the site named, the site's rate limit, and processing a client's own contact persons rest on legitimate interest. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
 **Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. Cloudflare keeps that analytics data for the period its plan sets for each dataset, as its [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) lists. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
 
@@ -6630,7 +6631,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.192.3",
+    "version": "3.192.4",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6910,7 +6911,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.192.3",
+  "version": "3.192.4",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -13145,7 +13146,7 @@ async function parityRunCheck(input, env) {
     } else if (err instanceof MpcRunError) {
       status = 422;
       message = err.message;
-      if (/^(Invalid selector|Selector ")/.test(message)) field = "selector";
+      if (/^(Invalid selector|Selector )/.test(message)) field = "selector";
     } else {
       // Unexpected: the name only, so no page content or address can reach a log.
       console.error("parity check failed unexpectedly:", err && err.name ? err.name : "unknown");
@@ -13161,8 +13162,9 @@ async function parityRunCheck(input, env) {
       selectorValue = typeof options.selector === "string" ? cut(options.selector, PARITY_MAX_SELECTOR_CHARS) : "";
       message = "The CSS selector could not be used to select content on the page.";
     }
-    const report = mpcErrorReport(options, html ? html.meta : null, markdown ? markdown.meta : null, message);
-    if (selectorValue !== undefined) report.summary.value = selectorValue;
+    // The value goes to summary.errorValue, the field the package itself uses since 0.2.17,
+    // so the hosted JSON and the CLI report name it the same way.
+    const report = mpcErrorReport(options, html ? html.meta : null, markdown ? markdown.meta : null, message, selectorValue);
     return { status, report, field };
   }
 }

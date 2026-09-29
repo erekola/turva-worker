@@ -96,5 +96,23 @@ test("Decision 19, T2-02: an invalid CSS selector on the parity check is not rep
   assert.equal(res.status, 422);
   const j = JSON.parse(await res.text());
   assert.ok(!j.summary.error.includes('[data-vv='), "the sentence must not carry the raw selector");
-  assert.equal(j.summary.value, '[data-vv="not a valid selector', "the raw selector belongs in its own field");
+  assert.equal(j.summary.errorValue, '[data-vv="not a valid selector', "the raw selector belongs in its own field");
+  assert.equal(j.summary.value, undefined, "the field carries the package's own name, errorValue");
+});
+
+test("Decision 19, T2-03: a valid selector that matches nothing is reported on the selector field, with its value apart", async () => {
+  const limiter = { async limit() { return { success: true }; } };
+  const res = await worker.fetch(
+    new Request("https://turva.dev/markdown-parity-check", {
+      method: "POST",
+      headers: { accept: "application/json", "content-type": "application/json", "cf-connecting-ip": "203.0.113.51" },
+      body: JSON.stringify({ url: "https://turva.dev/tools", selector: "#no-such-element-t2-03" })
+    }),
+    { PARITY_LIMITER: limiter },
+    {}
+  );
+  assert.equal(res.status, 422);
+  const j = JSON.parse(await res.text());
+  assert.equal(j.summary.error, "The CSS selector could not be used to select content on the page.");
+  assert.equal(j.summary.errorValue, "#no-such-element-t2-03");
 });
