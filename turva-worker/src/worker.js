@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.193.1 - /blog/why-i-publish-every-guide: the sentence that said the reading costs the same when nothing has changed now says every guide still gets a full read, because the review runs record no durations; a dated Corrected note and META_BY_PATH modified 2026-09-29 say so
 // turva.dev worker v3.193.0 - new Build notes post /blog/why-i-publish-every-guide (2026-09-29): Why I publish every guide for free, on why the guides are public and what moved in the specifications from July to September, with its Frequently asked section, its OG card, a new row on /blog and a new first Blog line in llms.txt, which is re-signed
 // turva.dev worker v3.192.4 - the hosted parity check recognises markdown-parity-check 0.2.17's 'Selector matched no element.' as a selector error again and returns the selector in summary.errorValue, the package's own field name; /legal keeps vulnerability reports and agent registration requests for 24 months from the latest message (Tek-544).
 // turva.dev worker v3.192.3 - the hosted /markdown-parity-check route moves to markdown-parity-check 0.2.17 (Tek-542 round 3 fixes: masking, integer option bounds, rowspan=0, raw HTML findings, hidden Starlight code, template checkboxes, selector in its own error field).
@@ -534,7 +535,7 @@ I had already approved the correction. On the day it was to go in, the measureme
 
 ## What happens when nothing has changed?
 
-The reading costs the same. The run on 1 September re-read the seven fastest-moving guides, found no errors and changed two date stamps. I only know nothing had moved because the reading was done.
+Every guide still gets a full read. The run on 1 September re-read the seven fastest-moving guides, found no errors and changed two date stamps. I only know nothing had moved because the reading was done.
 
 ## What does this not show?
 
@@ -555,6 +556,8 @@ Every guide is re-read against its primary sources once a month, and the fastest
 **What happens when a guide turns out to be wrong?**
 
 The guide is corrected, and the date of its last check moves. A blog post that was wrong gets a dated note at its end saying what was wrong and what changed.
+
+Corrected 2026-09-29. One sentence said the reading costs the same when nothing has changed. The review runs record no durations, so the sentence now says what they do record: every guide still gets a full read.
 
 ## Related
 
@@ -6707,7 +6710,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.193.0",
+    "version": "3.193.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6987,7 +6990,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.193.0",
+  "version": "3.193.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7815,6 +7818,7 @@ var META_BY_PATH = {
     title: "Why I publish every guide for free · turva.dev",
     description: "I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.",
     date: "2026-09-29",
+    modified: "2026-09-29",
     kind: "Build notes",
     image: "/og-why-i-publish-every-guide.jpg",
     imageAlt: "turva.dev blog card: why I publish every guide for free, because the rules move monthly and the reading has to be done before a client needs it.",
