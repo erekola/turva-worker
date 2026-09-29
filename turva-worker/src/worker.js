@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.193.2 - a 404 answers in markdown when the request asks for markdown or names a .md address, and Accept: text/x-markdown is read as text/markdown.
 // turva.dev worker v3.193.1 - /blog/why-i-publish-every-guide: the sentence that said the reading costs the same when nothing has changed now says every guide still gets a full read, because the review runs record no durations; a dated Corrected note and META_BY_PATH modified 2026-09-29 say so
 // turva.dev worker v3.193.0 - new Build notes post /blog/why-i-publish-every-guide (2026-09-29): Why I publish every guide for free, on why the guides are public and what moved in the specifications from July to September, with its Frequently asked section, its OG card, a new row on /blog and a new first Blog line in llms.txt, which is re-signed
 // turva.dev worker v3.192.4 - the hosted parity check recognises markdown-parity-check 0.2.17's 'Selector matched no element.' as a selector error again and returns the selector in summary.errorValue, the package's own field name; /legal keeps vulnerability reports and agent registration requests for 24 months from the latest message (Tek-544).
@@ -6710,7 +6711,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.193.1",
+    "version": "3.193.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6990,7 +6991,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.193.1",
+  "version": "3.193.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8560,7 +8561,23 @@ function serve405(allow, pathLower) {
   return new Response("405 Method Not Allowed. Allow: " + allow + "\n", { status: 405, headers });
 }
 
-function serve404(pathname) {
+// A client that asks for markdown, by the Accept header or by a .md address, gets the
+// 404 as markdown too. Cloudflare's AI Crawl Control counted every HTML 404 answered to
+// such a request as an unfulfilled markdown request. The path is not echoed here: the
+// HTML page escapes it, and markdown has no escaping that a reader of the raw text sees.
+function serve404(pathname, request) {
+  if ((request && wantsMarkdown(request)) || /\.md$/i.test(pathname || "")) {
+    const md = "# Page not found\n\nThis address does not exist on turva.dev. It may have moved.\n\nEvery page is listed in https://turva.dev/llms.txt, and the markdown version of each page is at its own address with .md added. Try the [home page](https://turva.dev/index.md), the [guides](https://turva.dev/guides.md) or the [blog](https://turva.dev/blog.md).\n";
+    const mdHeaders = new Headers({
+      "content-type": "text/markdown; charset=utf-8",
+      "cache-control": "no-store",
+      "content-language": "en",
+      "vary": "Accept"
+    });
+    appendAgentLinks(mdHeaders);
+    applySecurityHeaders(mdHeaders, "agent-api");
+    return new Response(md, { status: 404, headers: mdHeaders });
+  }
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -8623,7 +8640,8 @@ ${footerHtml()}
   const headers = new Headers({
     "content-type": "text/html; charset=utf-8",
     "cache-control": "no-store",
-    "content-language": "en"
+    "content-language": "en",
+    "vary": "Accept"
   });
   appendAgentLinks(headers);
   applySecurityHeaders(headers, "html");
@@ -8819,8 +8837,12 @@ function acceptRanking(request) {
   if (!accept) return ranking;
   for (const part of accept.split(",")) {
     const bits = part.trim().split(";");
-    const type = bits[0].trim();
+    let type = bits[0].trim();
     if (!type) continue;
+    // text/x-markdown is the unregistered name some clients still send; RFC 7763
+    // registered text/markdown. Reading it as the same type keeps those clients from
+    // getting HTML for a request that plainly asks for markdown.
+    if (type === "text/x-markdown") type = "text/markdown";
     let q = 1;
     for (const param of bits.slice(1)) {
       const m = param.trim().match(/^q=(\d+(?:\.\d+)?)$/);
@@ -11027,15 +11049,15 @@ async function serveBrief(route, pathname, env, request) {
   var kv = env && env.BRIEFIT;
   // Without the binding the route does not exist. This way the tests and the pre-deploy
   // state answer as they would for an unknown path, and a missing binding is not a 500.
-  if (!kv || typeof kv.get !== "function") return serve404(pathname);
+  if (!kv || typeof kv.get !== "function") return serve404(pathname, request);
   var rec = null;
   try {
     rec = await kv.get(route.id, { type: "json" });
   } catch (err) {
     console.error("brief KV error:", err && err.stack ? err.stack : String(err));
-    return serve404(pathname);
+    return serve404(pathname, request);
   }
-  if (!rec || typeof rec.md !== "string" || !rec.json) return serve404(pathname);
+  if (!rec || typeof rec.md !== "string" || !rec.json) return serve404(pathname, request);
   var canonicalUrl = "https://turva.dev/brief/" + route.id;
   // ACCEPT NEGOTIATION BELONGS HERE TOO. Measured live 2026-08-24: the suffix addresses
   // worked, but `Accept: text/markdown` to the brief's own address returned HTML.
@@ -14490,7 +14512,7 @@ async function handleRequest(request, env) {
   // Every page is rendered by the worker and static assets (og.jpg) come from
   // Workers Assets. Nothing is proxied to an origin any more, so an unmatched
   // path is a genuine 404 rendered by the worker. No origin sits behind it.
-  return serve404(pathname);
+  return serve404(pathname, request);
 }
 
 export {
