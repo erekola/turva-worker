@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.192.3 - the hosted /markdown-parity-check route moves to markdown-parity-check 0.2.17 (Tek-542 round 3 fixes: masking, integer option bounds, rowspan=0, raw HTML findings, hidden Starlight code, template checkboxes, selector in its own error field).
 // turva.dev worker v3.192.2 - Codex retest round 3 follow-up (Tek-544): /legal names the basis for vulnerability reports and agent registration requests, points to Cloudflare's per-plan analytics retention and says rate-limit counts are not stored, names Signal's transfer in its own terms, and states the validator's IP forwarding without claiming a transfer basis; FAQ questions carry role=heading and aria-level=3 while the twin stays unchanged.
 // turva.dev worker v3.192.1 - the MCP server card's VAT note moves from inside _meta.pricing to _meta, so the pricing object lists only the four priced services and its currency fields.
 // turva.dev worker v3.192.0 - third Codex retest round (Tek-542): services and llms.txt separate a first reply within one business day from the content answer each service states; advisory adds a first-month cancellation right and cancellation is charged by the share of parts or fixes finished; legal adds a delay clause, a 90-day removal fallback after a post-kickoff cancellation, a perpetual code-use right, clarified traffic-analysis retention, the AI tools' two Anthropic agreement types and a tested PGP bundle-read command; eight guides narrow claims to their primary sources and thirteen blog posts correct measured claims, including “the agent token count did not”, with dated corrections; the audit report sample's Finnish list items carry lang="fi", the validator and parity input placeholders meet 4.5:1 contrast, OAuth metadata drops the unused refresh_token grant, and llms-full.txt states each guide's sources-checked date and author; the hosted llms.txt validator's link masking and link-definition parsing get five fixes mirrored to the llms-txt-validator package; the agent-readiness audit page names its AI visibility scope as 20 questions across three named assistants and states that the audit is invoiced on delivery, paid by the card link; the MCP server card moves to 1.6.7.
@@ -6629,7 +6630,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.192.2",
+    "version": "3.192.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6909,7 +6910,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.192.2",
+  "version": "3.192.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
