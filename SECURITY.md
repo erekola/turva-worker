@@ -17,7 +17,7 @@ The deployed Worker carries third-party runtime code.
 Worker imports it for the hosted check at `/markdown-parity-check`, so wrangler
 bundles that package into the deployed script together with the code it uses
 from its own dependencies, such as `htmlparser2` and the `micromark` parsers.
-`turva-worker/package-lock.json` resolves the runtime tree to 79 packages,
+`turva-worker/package-lock.json` resolves the runtime tree to 69 packages,
 `markdown-parity-check` included.
 
 An advisory against a package in that tree can reach production, and it is
@@ -29,11 +29,18 @@ reaches the parsers. It does not make such an advisory irrelevant.
 `wrangler` is the only entry under `devDependencies`. Advisories against it
 and its own dependencies are in the build and test toolchain. They are still
 cleared as they appear, because this repository is a reference implementation
-people fork. `npm audit` found no advisories in either tree.
-Checked 2026-09-21.
+people fork. `npm audit --omit=dev` found no advisories in the runtime
+tree. The full tree, which adds wrangler, reported three vulnerable
+packages (`wrangler`, `miniflare` and `undici`). All three traced to
+`undici` 7.29.0, pulled in through `miniflare`, and `undici` 7.29.0
+carried ten advisories (two high, five moderate and three low).
+Updating wrangler to 4.145.0,
+which pulls in `undici` 7.29.1, cleared them, and `npm audit` now reports no
+advisories in the full tree either. None was in the runtime tree, so
+none reached the deployed Worker. Checked 2026-10-01.
 
 `esbuild` is in the toolchain only as a dependency of wrangler. Wrangler
-4.135.0 declares it at exactly `0.28.1`, the release that fixed
+4.145.0 declares it at exactly `0.28.1`, the release that fixed
 GHSA-g7r4-m6w7-qqqr, an arbitrary file read in the esbuild development server
 on Windows. `turva-worker/package-lock.json` resolves that version, and
 `turva-worker/package.json` does not override it.

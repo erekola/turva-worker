@@ -130,6 +130,15 @@ const TRANSIENT = new Set(['ETIMEOUT', 'ETIMEDOUT', 'ESERVFAIL', 'EAI_AGAIN', 'E
 // the name is the stable part of that exception, so it is what is matched.
 const timeoutName = (e) => (e && (e.name === 'TimeoutError' || (e.cause || {}).name === 'TimeoutError'))
   ? 'ETIMEDOUT' : null;
+// The reason to print for a failed call. fetch() hides its socket or TLS reason in e.cause, so
+// the old code-or-message form printed a bare "fetch failed" (186 such lines in ship-live.log, 2026-10-01).
+const errWhy = (e) => {
+  if (!e) return 'unknown error';
+  if (e.code) return String(e.code);
+  const c = e.cause;
+  const inner = c && [c.code, c.message].filter(Boolean).join(': ');
+  return inner ? e.message + ' (cause: ' + inner + ')' : String(e.message);
+};
 // An error's own string code wins over its cause: ENODATA wrapped around a timed-out inner call
 // is still an answer. Only an error without a code of its own is read through its cause.
 const transientCode = (e) => {
@@ -200,7 +209,7 @@ const retryTransient = async (fn) => {
 const readRecord = async (label, doh, system) => {
   try { return await doh(); } catch (e) {
     if (!transientCode(e)) throw e;
-    console.log(`  note  ${label}: DNS-over-HTTPS did not answer (${e.code || e.message}), falling back to this machine's own resolver`);
+    console.log(`  note  ${label}: DNS-over-HTTPS did not answer (${errWhy(e)}), falling back to this machine's own resolver`);
   }
   let last;
   for (let i = 0; i < 3; i++) {
@@ -2209,7 +2218,7 @@ try {
     const valid = res.ok && !!pub && edVerify(null, body, pub, Buffer.from(s.signature, 'base64url'));
     check(valid, `pre-deploy: this worker.js's own served bytes for ${p} still match its own stored signature`);
   }
-} catch (e) { bad('pre-deploy signature check: ' + (e.code || e.message)); }
+} catch (e) { bad('pre-deploy signature check: ' + (errWhy(e))); }
 
 if (LIVE) {
   console.log('\nLive (URLs + signatures)');
@@ -2221,11 +2230,11 @@ if (LIVE) {
     '/.well-known/ap2','/.well-known/acp','/.well-known/security.txt','/auth.md'];
   for (const p of paths) {
     try { const r = await fetch(base+p, {redirect:'follow'}); check(r.ok, `GET ${p} -> ${r.status}`); }
-    catch (e) { bad(`GET ${p} -> ${e.code||e.message}`); }
+    catch (e) { bad(`GET ${p} -> ${errWhy(e)}`); }
   }
   for (const u of [H.url, I.url, 'https://isitagentready.com/']) {
     try { const r = await fetch(u, {redirect:'follow'}); check(r.ok, `GET ${u} -> ${r.status}`); }
-    catch (e) { bad(`GET ${u} -> ${e.code||e.message}`); }
+    catch (e) { bad(`GET ${u} -> ${errWhy(e)}`); }
   }
 
   // Round 15 P4-2: a CORS preflight is part of the served contract of an agent-api surface.
@@ -2242,7 +2251,7 @@ if (LIVE) {
       const want = (p === '/api' || p === '/x402') ? 'GET, POST, OPTIONS' : 'GET, OPTIONS';
       check(r.status === 204 && r.headers.get('access-control-allow-methods') === want,
         `OPTIONS ${p} -> 204 with preflight headers (saw ${r.status} / ${r.headers.get('access-control-allow-methods')}, want ${want})`);
-    } catch (e) { bad(`OPTIONS ${p} -> ${e.code||e.message}`); }
+    } catch (e) { bad(`OPTIONS ${p} -> ${errWhy(e)}`); }
   }
 
   console.log('\nFAQ published where a reader can see it (B1-03)');
@@ -2269,7 +2278,7 @@ if (LIVE) {
     for (const p of faqPaths) {
       let page;
       try { page = await (await fetch(base + p)).text(); }
-      catch (e) { bad(`GET ${p} -> ${e.code || e.message}`); continue; }
+      catch (e) { bad(`GET ${p} -> ${errWhy(e)}`); continue; }
       const cards = [...page.matchAll(/<div class="faq">([\s\S]*?)<\/div>/g)];
       check(cards.length === 1, `${p}: exactly one FAQ card on the page (saw ${cards.length})`);
       const vis = cards.length === 1
@@ -2330,7 +2339,7 @@ if (LIVE) {
       const wantSum = `Verified ${iar.score}, ${lvl}, Agent-Native.`;
       check(sum === wantSum, `board summary reads "${wantSum}" (saw "${sum}")`);
     }
-  } catch (e) { bad('board: ' + (e.code || e.message)); }
+  } catch (e) { bad('board: ' + (errWhy(e))); }
 
   // --- A2A, WebMCP and the agent skills: three surfaces that SERVE data, none of
   // which was compared to anything before 2026-08-01. The MCP gate below proved that
@@ -2365,7 +2374,7 @@ if (LIVE) {
     const gotMd = i < 0 ? '' : md.toLowerCase().replace(/\s+/g, ' ').slice(i, i + want.length);
     check(CATS.length === 5 && gotMd === want,
       `served markdown twin states the set and both scores${gotMd === want ? '' : `\n        want: "${want}"\n        got:  "${gotMd}"`}`);
-  } catch (e) { bad('served markdown twin: ' + (e.code || e.message)); }
+  } catch (e) { bad('served markdown twin: ' + (errWhy(e))); }
 
   // EVERY canonical path's markdown twin, not just two of them. Added 2026-08-16 (Tek-237),
   // and this closes round 8 section 3's last open item together with the two checks above it.
@@ -2432,13 +2441,13 @@ if (LIVE) {
         const norm = (s) => h1Decode(h1Strip(s))
           .replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
         if (norm(mdH1) !== norm(htmlH1raw)) rikki.push(`${pth}: h1 differs, md "${norm(mdH1)}" vs html "${norm(htmlH1raw)}"`);
-      } catch (e) { rikki.push(`${pth}: ${e.code || e.message}`); }
+      } catch (e) { rikki.push(`${pth}: ${errWhy(e)}`); }
     }
     check(paths.length > 2 && rikki.length === 0 && rajoitettu.length === 0,
       `every canonical path serves a markdown twin whose h1 matches the HTML (${paths.length} paths`
       + `${rikki.length ? ', broken: ' + rikki.slice(0, 6).join('; ') + (rikki.length > 6 ? ` and ${rikki.length - 6} more` : '') : ''}`
       + `${rajoitettu.length ? `; RATE LIMITED on ${rajoitettu.length} paths, this run measured the limiter and not the twins, raise the pacing and re-run` : ''})`);
-  } catch (e) { bad('canonical markdown twins: ' + (e.code || e.message)); }
+  } catch (e) { bad('canonical markdown twins: ' + (errWhy(e))); }
   else if (LIVE) console.log('  skip  canonical markdown twins (add --twins; 114 paced requests, see the note above)');
 
   // A2A HTTP+JSON transport. The card declares three skills and the endpoint answers
@@ -2518,7 +2527,7 @@ if (LIVE) {
       `A2A returns one part per skill when none is named (saw ${all.parts.length} of ${cardSkills.length})`);
     const bogus = await a2a('trust-and-safety');
     check(bogus.status === 400, `A2A refuses an undeclared skillId with 400 (saw ${bogus.status})`);
-  } catch (e) { bad('A2A message:send: ' + (e.code || e.message)); }
+  } catch (e) { bad('A2A message:send: ' + (errWhy(e))); }
 
   // WebMCP in-page tools. Structurally these run in a browser, so a gate is tempted to
   // read WEBMCP_SCRIPT out of worker.js and call that proof. It is not: the CSP hash
@@ -2800,7 +2809,7 @@ if (LIVE) {
       check(bothProvided === viaProvide.length && bothRegistered === 0,
         `WebMCP registers through one interface only when both are present (provideContext ${bothProvided}, registerTool ${bothRegistered})`);
     }
-  } catch (e) { bad('WebMCP tools: ' + (e.code || e.message)); }
+  } catch (e) { bad('WebMCP tools: ' + (errWhy(e))); }
 
   // --- Published price lists. Five documents carry a catalogue of priced services, and until
   // 2026-08-09 nothing compared any of them to facts.json. The service set moved to four priced
@@ -2851,7 +2860,7 @@ if (LIVE) {
       priceList(path, names(p));
       for (const s of PRICED) check(amountOf(p, s.priceKey) === facts.prices[s.priceKey],
         `${path} prices ${s.name} at ${facts.prices[s.priceKey]} (saw ${JSON.stringify(amountOf(p, s.priceKey))})`);
-    } catch (e) { bad(`price list ${path}: ` + (e.code || e.message)); }
+    } catch (e) { bad(`price list ${path}: ` + (errWhy(e))); }
   }
   // The two signed plugin manifests state the price list as prose for a model to read, so the
   // enumeration is the count of euro amounts plus membership of every one of them. Prose cannot be
@@ -2866,7 +2875,7 @@ if (LIVE) {
         `${path} description_for_model states ${PRICED.length} prices (saw ${amounts.length}: [${amounts.join(', ')}])`);
       for (const s of PRICED) check(amounts.includes(euroOf(s.priceKey)),
         `${path} description_for_model prices ${s.name} at ${euroOf(s.priceKey)}`);
-    } catch (e) { bad(`plugin manifest ${path}: ` + (e.code || e.message)); }
+    } catch (e) { bad(`plugin manifest ${path}: ` + (errWhy(e))); }
   }
 
   // Agent skills. This surface has already served the wrong thing once: the services
@@ -2917,7 +2926,7 @@ if (LIVE) {
       const stray = [...body.matchAll(/\*\*Business ID[^*]*\*\*\s*(\S+)/g)].map((m) => m[1]).filter((v) => v !== facts.businessId);
       check(stray.length === 0, `agent-skills ${name} states no other Business ID${stray.length ? ' :: ' + stray.join(', ') : ''}`);
     }
-  } catch (e) { bad('agent skills: ' + (e.code || e.message)); }
+  } catch (e) { bad('agent skills: ' + (errWhy(e))); }
 
   const fetchBytesMcp = async (p) => Buffer.from(await (await fetch(base + p)).arrayBuffer());
   // Verify the four signed manifests against the published JWKS. Public-key
@@ -2965,7 +2974,7 @@ if (LIVE) {
       const valid = !!pub && edVerify(null, body, pub, Buffer.from(s.signature, 'base64url'));
       check(valid, `signature valid: ${p}`);
     }
-  } catch (e) { bad('signature verification: ' + (e.code||e.message)); }
+  } catch (e) { bad('signature verification: ' + (errWhy(e))); }
 
   // MCP parity: the signed server card must describe the server that is actually
   // running. Nothing else here can see this. The static checks read files, the
@@ -3011,10 +3020,20 @@ if (LIVE) {
       try { parsed = JSON.parse(line ? line[1] : t); } catch { parsed = null; }
       return { res: r, body: parsed || {}, raw: t };
     };
-    const card = JSON.parse((await fetchBytesMcp('/.well-known/mcp/server-card.json')).toString());
-    const disc = await rpc('server/discover');
-    const result = disc.body.result || {};
-    const liveInfo = (result._meta && result._meta[SERVER_INFO_KEY]) || {};
+    // Only the version reads are retried: a freshly deployed Worker or a cached card can lag by
+    // seconds. Three reads in all, 5 s apart, every wait printed; a version that is still wrong
+    // after the third read fails below as before.
+    let card, disc, result, liveInfo;
+    for (let tryN = 0; ; tryN++) {
+      card = JSON.parse((await fetchBytesMcp('/.well-known/mcp/server-card.json')).toString());
+      disc = await rpc('server/discover');
+      result = disc.body.result || {};
+      liveInfo = (result._meta && result._meta[SERVER_INFO_KEY]) || {};
+      const lagging = liveInfo.version !== facts.versions.mcp || ((card.serverInfo || {}).version !== facts.versions.mcp);
+      if (!lagging || tryN >= 2) break;
+      console.log(`  note  MCP version read differs from facts.json ${facts.versions.mcp} (live ${liveInfo.version}, card ${(card.serverInfo || {}).version}); reading again in 5 s (read ${tryN + 2} of 3)`);
+      await new Promise((r) => setTimeout(r, 5000));
+    }
 
     check(Array.isArray(result.supportedVersions) && result.supportedVersions.includes(REV),
       `server/discover advertises ${REV} (saw ${JSON.stringify(result.supportedVersions)})`);
@@ -3402,7 +3421,7 @@ if (LIVE) {
     const nameMismatch = await rpc('tools/call', { name: 'get_services', arguments: {} }, { 'mcp-name': 'get_principles' });
     check(nameMismatch.res.status === 400 && nameMismatch.body.error && nameMismatch.body.error.code === -32020,
       `Mcp-Name/body mismatch refused with 400 and -32020 (saw ${nameMismatch.res.status} / ${nameMismatch.body.error && nameMismatch.body.error.code})`);
-  } catch (e) { bad('MCP parity: ' + (e.code || e.message)); }
+  } catch (e) { bad('MCP parity: ' + (errWhy(e))); }
 
   // --- MTA-STS. The policy is mode: enforce, so a wrong MX list here does not produce an
   // error message, it stops inbound mail: a sender that cannot match the receiving MX against
