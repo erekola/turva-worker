@@ -1,7 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.js";
-import { createHash } from "node:crypto";
 
 // Regression tests for Tek-562 (outside reviews W26 to W35): the x402 EIP-712 name, the UCP key,
 // the closed ACP capabilities object, the A2A task routes, the server card CORS headers, the v6 key
@@ -11,6 +10,8 @@ import { createHash } from "node:crypto";
 const env = {};
 const get = (path, opts = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
+// The digests below pin public bytes, so they go through WebCrypto rather than a hash CodeQL reads as a password hash.
+const sha256Hex = async (bytes) => Buffer.from(await crypto.subtle.digest("SHA-256", bytes)).toString("hex");
 
 // ---------------------------------------------------------------- x402, UCP, ACP
 
@@ -123,7 +124,7 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
   assert.equal(b.length, 4244);
-  assert.equal(createHash("sha256").update(b).digest("hex"), "c8048f6ba505d47173a22e8d0a02e20f9fb86a1999eb613bda91524347bc6585");
+  assert.equal(await sha256Hex(b), "c8048f6ba505d47173a22e8d0a02e20f9fb86a1999eb613bda91524347bc6585");
 });
 
 // ---------------------------------------------------------------- PGP v6 key
@@ -135,7 +136,7 @@ test("PGP: the version 6 armor has no CRC24 footer and its binary key is the sam
   assert.ok(lines.includes("-----END PGP PUBLIC KEY BLOCK-----"));
   const bin = Buffer.from(lines.filter((l) => l && !l.startsWith("-----") && !l.includes(":")).join(""), "base64");
   assert.equal(bin.length, 13678);
-  assert.equal(createHash("sha256").update(bin).digest("hex"), "94c06baec8eadd24dc21b558fa1bdbfaad3d92db93aeba1731676327d6f0db22");
+  assert.equal(await sha256Hex(bin), "94c06baec8eadd24dc21b558fa1bdbfaad3d92db93aeba1731676327d6f0db22");
   const t4 = await (await get("/pgp-key.asc")).text();
   assert.ok(/\n=[A-Za-z0-9+/]{4}\n/.test(t4), "the version 4 block keeps its CRC footer");
 });
