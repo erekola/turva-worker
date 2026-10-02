@@ -1,6 +1,6 @@
 {
   "name": "turva-worker",
-  "version": "3.196.1",
+  "version": "3.196.2",
   "license": "MIT",
   "private": true,
   "type": "module",
@@ -14,11 +14,11 @@
     "markdown-parity-check": "0.2.17"
   },
   "devDependencies": {
-    "wrangler": "^4.145.0"
+    "wrangler": "^4.146.0"
   },
   "allowScripts": {
     "esbuild@0.28.1": true,
     "sharp@0.35.4": true,
-    "workerd@1.20260930.2": true
+    "workerd@1.20261001.1": true
   }
 }

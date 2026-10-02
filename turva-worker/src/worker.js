@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.196.2 - monthly fast-family source review: the checked date of the seven agent-commerce and MCP discovery guides moved to 2026-10-01, no guide text changed
 // turva.dev worker v3.196.1 - seventh outside read: client material is processed only through the Anthropic API unless the engagement agreement names another route at the client's request, stated once on /legal, and the advisory first-month exit carries its condition (the client is not satisfied with it) on every short surface.
 // turva.dev worker v3.196.0 - sixth outside read: client material is processed only through the Anthropic API on Anthropic's commercial terms, advisory notice in the second or third month ends the retainer at the end of the three-month minimum, the audit guide's price answer names the first-month exit, the 499 euro add-on purchase window reads as three options on every surface, the rate-limit post scopes its failed-open sentence with a dated note, and the hosted validator masks a slashless user:password@host target.
 // turva.dev worker v3.195.0 - fifth outside read: /legal names Anthropic Ireland, Limited as the contracting party and separates the Claude Max and API routes, a missed-deadline refund on a service page prevails over the delivered-parts charge, the advisory first-month exit is one rule on every surface, the add-on purchase window is stated on every surface, two posts scope their claims to the runs measured, and the validator and parity pages state the JSON error shapes and the table limit exactly.
@@ -6730,7 +6731,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.196.1",
+    "version": "3.196.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7010,7 +7011,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.196.1",
+  "version": "3.196.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7673,7 +7674,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-09-29";
+var SITEMAP_LASTMOD = "2026-10-01";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -8160,7 +8161,7 @@ var META_BY_PATH = {
   },
   "/guides/agent-commerce-discovery": {
     title: "Agent commerce discovery: A2A, AP2, ACP and UCP · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-01",
     description: "Commerce discovery describes the interfaces and payment-related capabilities a service supports.",
     image: "/og-guide-agent-commerce-discovery.jpg",
     imageAlt: "turva.dev guide card: A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint."
@@ -8175,7 +8176,7 @@ var META_BY_PATH = {
   },
   "/guides/agentic-resource-discovery": {
     title: "Agentic Resource Discovery and resource catalogs · turva.dev",
-    checked: "2026-09-28",
+    checked: "2026-10-01",
     description: "Resource catalogs describe the agent-facing interfaces a site exposes.",
     image: "/og-guide-agentic-resource-discovery.jpg",
     imageAlt: "turva.dev guide card: Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation."
@@ -8280,21 +8281,21 @@ var META_BY_PATH = {
   },
   "/guides/mcp-server-card": {
     title: "MCP server cards and discovery · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-01",
     description: "A server card describes an MCP endpoint for clients that support the relevant discovery convention.",
     image: "/og-guide-mcp-server-card.jpg",
     imageAlt: "turva.dev guide card: An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and connect to it."
   },
   "/guides/agents-json": {
     title: "What agents.json describes · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-01",
     description: "agents.json is one pattern for describing actions and endpoints for automated clients.",
     image: "/og-guide-agents-json.jpg",
     imageAlt: "turva.dev guide card: agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one."
   },
   "/guides/x402-agent-payments": {
     title: "x402 and HTTP payment flows · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-01",
     description: "x402 describes an HTTP-based payment flow. A payment declaration, an accepted payment and settlement are different states and should be documented separately.",
     image: "/og-guide-x402-agent-payments.jpg",
     imageAlt: "turva.dev guide card: x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout."
@@ -8322,7 +8323,7 @@ var META_BY_PATH = {
   },
   "/guides/well-known-for-agents": {
     title: "The /.well-known directory for agent discovery · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-01",
     description: "Well-known URLs give clients predictable places to look for specific metadata.",
     image: "/og-guide-well-known-for-agents.jpg",
     imageAlt: "turva.dev guide card: The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata."
@@ -8371,7 +8372,7 @@ var META_BY_PATH = {
   },
   "/guides/agentic-commerce-readiness": {
     title: "Agentic commerce readiness · turva.dev",
-    checked: "2026-09-28",
+    checked: "2026-10-01",
     description: "Agent commerce involves product information, permitted actions and a supported checkout path.",
     image: "/og-guide-agentic-commerce-readiness.jpg",
     imageAlt: "turva.dev guide card: What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase."
