@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.199.0 - outside reviews W4 to W7 applied (Tek-559): seven dated posts corrected with a Corrected 2026-10-02 note (secret storage, credential helpers, replay, the patch-surge sources, the validator and code-host details), the hosted llms.txt validator also reports self-closing tags without a space, closing tags and HTML comments, the ai-catalog MCP entry uses application/mcp-server-card+json, ard.json carries representativeQueries, the root security.txt names its own Canonical, the api-catalog Content-Type carries the RFC 9727 profile, and the terms state the cookie basis, sub-processors, the one month backup maximum, the separate email and bookkeeping retention, the correction procedure, the liability cap basis, one target per hostname and the 14 day payment term from the invoice date
 // turva.dev worker v3.198.0 - the audit covers up to two targets named in the written scope at the one fixed price, the follow-up question round has a 14 calendar day submission window and a five business day answer, the services page says the fixes take about two days, and the MCP service catalog (MCP 1.6.12) and the server card carry the new version.
 // turva.dev worker v3.197.1 - the get_agent_readiness tool description no longer promises verification links: the tool returns one link, the scanner start page, so the MCP tool description (MCP 1.6.11) and the server card tool list now say that, and the server card is re-signed.
 // turva.dev worker v3.197.0 - last outside read of the guides and the buying path: eleven guides corrected against their primary sources (x402 v2 PaymentRequired and settlement wording, UCP requires_escalation causes and quote checkouts, MCP tools optional and list caching, agents.json OpenAPI sources, ARD status and search indexing, scanner versus direct checks, client-side rendering, llms.txt file-list links, authentication versus discovery, audit surface groups, Google on llms.txt), and the audit page says its sample report shows a different question run. SITEMAP_LASTMOD moves to the day the page text changed.
@@ -1419,7 +1420,7 @@ A 403 answer is a refusal, not evidence that a file is absent. Where the count b
 - Highest reading was Level 1 of 5. Six surfaces reached it, belonging to Cursor Origin, GitLab, SourceForge, Forgejo and Azure DevOps. The other eight read Level 0.
 - The scanner group named API, Auth, MCP & A2A Discovery holds nine checks. Across the sample it ran 124 times and passed twice.
 - Zero MCP server cards, zero API catalogs, zero agent skills indexes, zero ARD manifests and zero auth.md files across all fourteen. GitLab answered 403 rather than 404 on most of those paths. The A2A card and WebMCP checks completed on thirteen, and both read zero there.
-- Both passes were OpenID Connect metadata, which is published so people can log in and not so agents can find anything.
+- Both passes were OAuth and OpenID Connect discovery metadata, which tells a client where to log in and request tokens. Neither announced an MCP server or any code host action, so no host passed a check for what an agent can do there.
 
 ## What was measured, and what was not
 
@@ -1493,6 +1494,8 @@ Corrected again 2026-09-27. A sentence said an agent has no way to discover GitH
 Corrected 2026-09-28. Two sentences read as findings about every possible discovery path rather than the ones this scan checked. Both now keep to the paths this scan read, and GitLab's 403 answers are named as checks that got no answer rather than confirmed absence. No reading changed.
 
 Corrected 2026-09-28. The H2 heading itself still generalised across the whole domain after the paragraph below it was narrowed to the paths this scan checked. The heading now names the same paths instead of all of github.com.
+
+Corrected 2026-10-02. A sentence said the two passes were metadata published so people can log in and not so agents can find anything. The scanner counts that check in its discovery group and OAuth discovery tells an agent where to request access. It now says: "Both passes were OAuth and OpenID Connect discovery metadata, which tells a client where to log in and request tokens. Neither announced an MCP server or any code host action, so no host passed a check for what an agent can do there."
 
 ## Related
 
@@ -2020,7 +2023,7 @@ A comparison of selected Microsoft security-update datasets examines changes in 
 
 On 9 July 2026 the head of Windows published a post about AI-powered vulnerability discovery. One line in it was a warning to customers: "As AI helps defenders discover more issues, customers will see a higher volume of security updates included in each security release."
 
-It does not say how much higher. The post runs about 1400 words and contains no numbers at all.
+It does not say how much higher. The post runs well over a thousand words and gives no figure for the increase.
 
 Five days later Microsoft shipped the July package: 1150 CVEs.
 
@@ -2087,13 +2090,13 @@ This explains capacity. It is not proof of cause. Microsoft's own post attribute
 
 MDASH is over a hundred agents, multi-model debate across model families, and a separate pipeline that proves candidates before a human ever sees them. Microsoft reports it at 88,45 % on [CyberGym](https://arxiv.org/abs/2506.02548), a benchmark for real-world vulnerability discovery, in its [12 May 2026 announcement](https://www.microsoft.com/en-us/security/blog/2026/05/12/defense-at-ai-speed-microsofts-new-multi-model-agentic-security-system-tops-leading-industry-benchmark/). Anthropic's gated frontier model, Claude Mythos, is reported at 83,1 % on the same benchmark; the same Microsoft post names that figure as the entry just below its own, and [GeekWire's coverage](https://www.geekwire.com/2026/microsofts-multi-agent-ai-system-tops-anthropics-mythos-on-cybersecurity-benchmark/) attributes it to Mythos.
 
-I am not going to tell you the harness beats the model. Those two figures come from two different parties. Microsoft names its side of the setup, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, but Anthropic's own evaluation conditions for Mythos are not published, and five points is well inside what a difference in evaluation setup can produce. What the pair does establish is an order of magnitude: an orchestration layer running an ensemble, distilled models included, lands in the same range as the most capable model anyone has built.
+I am not going to tell you the orchestration layer beats the model. Those two figures come from two different parties. Microsoft names its side of the setup, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, but Anthropic's system card gives only part of its setup for Mythos, pass@1 over the same 1507 tasks with no extended thinking, and does not name the CyberGym difficulty level, so the two scores are not shown to share a setup, and five points is well inside what a difference in evaluation setup can produce. What the pair does establish is an order of magnitude: an orchestration layer running an ensemble, distilled models included, lands in the same range as the most capable model anyone has built.
 
 That has a consequence worth sitting with. Access to Mythos is controlled by Anthropic under Project Glasswing. Orchestration is controlled by nobody, and it is described in a public blog post. If the scaffolding carries that much of the capability, the interesting question is not how far open weights trail the frontier model. It is how far an open harness trails MDASH. Scaffolding is cheaper to copy than a frontier model.
 
 ## The same technology closed a bug bounty
 
-In January 2026 the curl project shut down its bug bounty. Twenty reports arrived in the first twenty-one days of the year. Not one was valid. Daniel Stenberg described it as being DDoSed. HackerOne submissions rose 76 % year over year through March, and roughly three quarters of them were noise. Google stopped taking AI-generated submissions to its open-source reward programme. GitHub tightened its requirements.
+In January 2026 the curl project shut down its bug bounty. Twenty reports arrived in the first twenty-one days of the year, seven of them in one 16-hour window, and none was a real vulnerability, according to [Bugcrowd's account of the shutdown](https://www.bugcrowd.com/blog/hacker-opinion-piece-how-lazy-hacking-killed-curls-bug-bounty). Daniel Stenberg called such reports AI slop. HackerOne reported March 2026 submissions up 76 % year over year, with the share of valid findings steady at roughly 25 % ([HackerOne](https://www.hackerone.com/blog/continuous-threat-exposure-management-remediation-crisis)). Google raised the proof it requires in its open-source reward programme after a surge of low-quality reports ([Google's rule update](https://bughunters.google.com/blog/ossvrp-rule-updates-2026)). GitHub tightened its requirements.
 
 So in the same six months, one organisation shipped 1150 real CVEs and credited AI-assisted discovery for the rise, and another was driven out of the bounty business by AI reports that were worth nothing.
 
@@ -2125,6 +2128,8 @@ Note added September 27: two sentences went further than the numbers. The severi
 
 Corrected 2026-09-28. A sentence said the two benchmark figures came from conditions neither party published. Microsoft's own linked source names its side, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, and the sentence now says that, and that Anthropic's own conditions for Mythos are not published.
 
+Corrected 2026-10-02. Several sentences claimed more than their sources. The Mythos sentence said Anthropic's own evaluation conditions are not published, and the 2026-09-28 note above repeats it. Anthropic's system card publishes the task count, pass@1 scoring and sampling settings but does not name the CyberGym difficulty level, so it now says: "Microsoft names its side of the setup, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, but Anthropic's system card gives only part of its setup for Mythos, pass@1 over the same 1507 tasks with no extended thinking, and does not name the CyberGym difficulty level, so the two scores are not shown to share a setup, and five points is well inside what a difference in evaluation setup can produce." The Microsoft post is longer than about 1400 words and carries ordinary numerals, so the sentence now says it gives no figure for the increase. HackerOne's 76 % is March 2026 against March 2025, not a year through March, and HackerOne reports the valid share steady at roughly 25 %, so the noise claim is gone. The three-quarters-noise wording, the DDoS attribution and the claim that Google stopped taking AI-generated submissions are replaced by what the linked sources say.
+
 ## Related
 
 - [Measure agent-readiness with evidence](/guides/measurement-led-agent-readiness)
@@ -2147,13 +2152,13 @@ Here is the posture I would defend, the reasoning behind it, and one Windows tra
 
 The old habit is a token in a dotfile, a key in .npmrc, an unencrypted service account JSON sitting next to the code. It works because the file is only yours. An agent breaks that assumption. So does a leaked backup, a synced folder, or someone watching a screen-share.
 
-Move every secret into storage the operating system encrypts and scopes to your account. On Windows that is the Data Protection API. On macOS the Keychain. On Linux libsecret through the Secret Service. The value is encrypted at rest, only your logged-in account can decrypt it, and a copied file is useless to anyone else. Your scripts ask for the secret when they run instead of reading it off disk.
+Move every secret into storage the operating system encrypts and scopes to your account. On Windows that is the Data Protection API. On macOS the Keychain. On Linux libsecret through the Secret Service, whose backend usually encrypts the value at rest. The specification leaves access control to the implementation, so check what your keyring does when the machine is locked and which applications it lets read the value. Your scripts ask for the secret when they run instead of reading it off disk.
 
 ## Git credentials through a credential manager
 
 Most people still authenticate git with a personal access token pasted into a credentials file. Drop that. Use a credential manager that speaks OAuth, so the token lives in the OS store, refreshes on its own, and never lands in a file you can commit or copy by accident.
 
-One trap to know if you are on Windows and your forge is not GitHub. The common advice is git-credential-oauth with the wincred store. That store writes to Windows Credential Manager, which caps a single entry at 2560 bytes ([CRED_MAX_CREDENTIAL_BLOB_SIZE in the CREDENTIAL structure](https://learn.microsoft.com/en-us/windows/win32/api/wincred/ns-wincred-credentialw)). Some forges issue OAuth tokens well past that, and the write fails with a bare "CredWrite failed" while fetch still works, so nothing looks wrong until you notice every command re-authenticating. Git Credential Manager handles the large token by splitting it across entries and refreshes it silently. If a self-hosted GitLab, Gitea, or Forgejo keeps opening a browser prompt on push, this is usually why.
+One trap to know if you are on Windows and your forge is not GitHub. The common advice is git-credential-oauth with the wincred store. That store writes to Windows Credential Manager, which caps a single entry at 2560 bytes ([CRED_MAX_CREDENTIAL_BLOB_SIZE in the CREDENTIAL structure](https://learn.microsoft.com/en-us/windows/win32/api/wincred/ns-wincred-credentialw)). Some forges issue OAuth tokens well past that, and the write fails with a bare "CredWrite failed" while fetch still works, so nothing looks wrong until you notice every command re-authenticating. Git Credential Manager's Bitbucket provider splits a large token across entries. At [Git Credential Manager commit 9c3b25d](https://github.com/git-ecosystem/git-credential-manager/tree/9c3b25dcc030ae95bf489c5a3f9ec15b8914950d), its GitLab provider and the generic store path write the token as one entry, so the Windows size limit still applies there. If a self-hosted forge keeps opening a browser prompt on push, a token over the limit is one possible cause.
 
 ## A small vault for everything else
 
@@ -2183,7 +2188,9 @@ Because the file is no longer only yours. A coding agent reads your files and ru
 
 **Why does a git push keep asking for authentication on Windows?**
 
-Windows Credential Manager caps a single entry at 2560 bytes and some forges issue OAuth tokens past that. The write fails while fetch still works, so nothing looks wrong until every command re-authenticates. Git Credential Manager splits the token across entries.
+Windows Credential Manager caps a single entry at 2560 bytes and some forges issue OAuth tokens past that. The write fails while fetch still works, so nothing looks wrong until every command re-authenticates. Git Credential Manager's Bitbucket provider splits a large token across entries, but its GitLab provider and generic store write one entry, so a token over the limit can still fail there.
+
+Corrected 2026-10-02. Two sentences claimed more than their sources. The Linux sentence said the Secret Service encrypts the value and only your account can decrypt it. It now says: "On Linux libsecret through the Secret Service, whose backend usually encrypts the value at rest. The specification leaves access control to the implementation, so check what your keyring does when the machine is locked and which applications it lets read the value." The credential manager sentence said splitting a large token across entries is how Git Credential Manager handles it for self-hosted forges. At commit 9c3b25d, only the Bitbucket provider splits. It now says: "Git Credential Manager's Bitbucket provider splits a large token across entries. At Git Credential Manager commit 9c3b25d, its GitLab provider and the generic store path write the token as one entry, so the Windows size limit still applies there. If a self-hosted forge keeps opening a browser prompt on push, a token over the limit is one possible cause."
 
 ## Related
 
@@ -2330,7 +2337,7 @@ In late June this site published [a post on what an agent pays to read a page](/
 
 ## Where the weight came from
 
-Since that post went out the site has gained seven blog posts before this one, two tool pages, a feed, a share image for every page and related links at the end of every post. None of that was content negotiation work. It was ordinary growth, and it landed where growth always lands, on the human-facing page. Between the 1 July and 4 July scans alone the HTML form of the homepage went from 9,560 tokens to 10,320, about 8% heavier in three days. The markdown form went from 1,750 to 1,723. It got slightly smaller.
+Since that post went out the site has gained six blog posts before this one, two tool pages, a feed, a share image for every page and related links at the end of every post. None of that was content negotiation work. It was ordinary growth, and it landed where growth always lands, on the human-facing page. Between the 1 July and 4 July scans alone the HTML form of the homepage went from 9,560 tokens to 10,320, about 8% heavier in three days. The markdown form went from 1,750 to 1,723. It got slightly smaller.
 
 ## Two surfaces, two growth rates
 
@@ -2347,6 +2354,8 @@ Corrected 2026-09-28. The heading called the token count an agent bill. The post
 Corrected 2026-09-28. The heading, and the same words used elsewhere on the site for this post's title, still called the token count an agent bill after the body already said it was not. They now use the same words as the body, agent token count. A sentence also said the token split is not self-reported: it now says it is measured, not typed in by hand.
 
 Corrected 2026-09-29. The opening still explained the word bill in the title after the title had dropped it. That explanation is gone, and the sentence says what the post measures.
+
+Corrected 2026-10-02. One sentence said the site had gained seven blog posts since the earlier post. The blog index lists six, so it now says: "Since that post went out the site has gained six blog posts before this one."
 
 ## Related
 
@@ -2436,13 +2445,15 @@ The same URL answers JSON. Send Accept: application/json with a url parameter an
 
 ## One build note
 
-The first deploy failed its own self check. A Cloudflare Worker cannot fetch a URL served by a Worker on its own zone, so asking the validator about turva.dev started a request that could never return and timed out after eight seconds. The fix reads the same constant that serves /llms.txt instead of fetching it. External domains are fetched normally, and the validator was proven against the llmstxt.org file before this post went out.
+The first deploy failed its own self check. A Cloudflare Worker cannot fetch a same-zone URL that a Route serves, and turva.dev is served by a Route, so asking the validator about turva.dev started a request that could never return and timed out after eight seconds. The fix reads the same constant that serves /llms.txt instead of fetching it. External domains are fetched normally, and the validator was proven against the llmstxt.org file before this post went out.
 
 ## What it is not
 
 The validator reads one file and checks its shape. It does not measure whether agents can discover the site, read its pages as markdown, find its API or complete a purchase. That is audit territory, and an audit here runs a site against an independent scanner and manual review rather than one checklist.
 
 For an audit of the whole surface an agent sees, not just this one file, contact info@turva.dev.
+
+Corrected 2026-10-02. The build note stated the same-zone fetch limit for any Worker. Cloudflare documents it for Route targets, and turva.dev is served by a Route. It now says: "A Cloudflare Worker cannot fetch a same-zone URL that a Route serves, and turva.dev is served by a Route, so asking the validator about turva.dev started a request that could never return and timed out after eight seconds."
 
 ## Related
 
@@ -2779,9 +2790,11 @@ The Monetization Gateway waitlist points the same direction: charge for any page
 
 - Open your CDN's AI crawler list and compare it against your intent. A block you did not choose is configuration drift, and it overrides everything your pages declare.
 - Re-scan after any edge change. The public agent-readiness scanners read a site from outside, so a network-level block shows up as a dropped score before a buyer sees the gap.
-- If your content earns citations, look at the Pay Per Use programs. The reporting alone, which queries put your pages into AI answers, is visibility data you cannot get anywhere else today.
+- If your content earns citations, look at the Pay Per Use programs. The reporting alone, which queries put your pages into AI answers, is visibility data the Pay Per Use programs offer.
 
 For an agent-readiness audit that reads the edge configuration next to the content, contact info@turva.dev.
+
+Corrected 2026-10-02. A sentence said the Pay Per Use reporting is visibility data you cannot get anywhere else. That exclusivity was not checked, so it now says the reporting is visibility data the Pay Per Use programs offer.
 
 ## Related
 
@@ -2935,7 +2948,7 @@ A site that wants to let an AI agent act has a problem it rarely says out loud. 
 
 ## What the tag actually is
 
-Web Bot Auth is the piece that removes the guess. It comes from active work at the IETF and is already in production at Cloudflare, and it lets an agent prove who it is on every request. The agent generates a signing key and publishes the public half at a fixed location, /.well-known/http-message-signatures-directory. It then signs each request it sends. The receiving site, or Cloudflare at its edge, checks that signature against the published key. A match is a verifiable claim about the sender. Copying the header does not reproduce it, because only the holder of the private key can sign.
+Web Bot Auth is the piece that removes the guess. It comes from active work at the IETF and is already in production at Cloudflare, and it lets an agent prove who it is on every request. The agent generates a signing key and publishes the public half at a fixed location, /.well-known/http-message-signatures-directory. It then signs each request it sends. The receiving site, or Cloudflare at its edge, checks that signature against the published key. A match is a verifiable claim about the sender. Copying the header does not let anyone sign a new request, because only the holder of the private key can sign. A captured signed request can still be replayed until its expiry passes, and Cloudflare documents that it does not check nonces and relies on a short expires.
 
 Cloudflare calls the end-user-directed form of this a signed agent, and opened the program in August 2025 with a first cohort: ChatGPT agent, Goose, Browserbase, and Anchor Browser. The list lives in the public bots and agents directory on Cloudflare Radar, readable by anyone, customer or not. That public directory is the part that matters to me, because it makes the identity checkable by a third party instead of asserted by the agent itself.
 
@@ -2943,7 +2956,7 @@ Cloudflare calls the end-user-directed form of this a signed agent, and opened t
 
 Claude is not on the signed list yet, and the gap is not academic. A site that switches on Cloudflare's Block AI Bots rule can, right now, block Claude's own request to a server it was asked to reach. Operators have run into exactly that and had to add a manual exception to let Claude back through, which is why there is an open request to register Claude as a verified bot.
 
-I am writing this ahead of the fact rather than after it, because the mechanism is live and the direction is set. The day Claude carries a signed identity, the request a site has to guess about today becomes one it can verify in a millisecond at the edge. Nothing else about the site has to change for that to pay off.
+I am writing this ahead of the fact rather than after it, because the mechanism is live and the direction is set. The day Claude carries a signed identity, the request a site has to guess about today becomes one it can verify at the edge. Nothing else about the site has to change for that to pay off.
 
 ## Why this lands on my desk
 
@@ -2961,7 +2974,7 @@ For an agent-readiness audit that covers how your site recognizes and admits AI 
 
 **How can a site tell which AI agent is at the door?**
 
-With Web Bot Auth. The agent publishes the public half of a signing key at a fixed location and signs every request it sends, and the site or its edge checks that signature against the published key. Copying the header does not reproduce it.
+With Web Bot Auth. The agent publishes the public half of a signing key at a fixed location and signs every request it sends, and the site or its edge checks that signature against the published key. Copying the header does not let anyone sign a new request, though a captured one can be replayed until it expires.
 
 **Why is a user-agent string not enough to identify an agent?**
 
@@ -2970,6 +2983,8 @@ It is just text, and anything can send it. An IP range drifts as providers move 
 **Can a block-all bot rule block an agent the user asked for?**
 
 Yes. A site that switches on a rule that blocks AI bots can block a request that a person asked an agent to make, and operators have had to add a manual exception by hand to let it through.
+
+Corrected 2026-10-02. The post said copying the header does not reproduce a signature, which can be read as replay resistance. It now says: "Copying the header does not let anyone sign a new request, though a captured one can be replayed until it expires." A sentence also claimed a verification time of one millisecond that nobody measured. It now says a site can verify the request at the edge.
 
 ## Related
 
@@ -4266,7 +4281,7 @@ Sites that complete an audit, or score 100/100 on isitagentready.com, may displa
 
 **Do I need the audit before the Shopify check?**
 
-No. They are separate services. The Shopify check examines selected products and shopping interactions in one store. The audit covers up to two targets named in the written scope, each a website or an API, for example a Shopify store and a B2B site.
+No. They are separate services. The Shopify check examines selected products and shopping interactions in one store. The audit covers up to two targets named in the written scope, each a website or an API, for example a Shopify store and a B2B site. Each hostname named in the written scope is one target, so a site and its API on different hostnames are two targets and on the same hostname one.
 
 **Will you sign our NDA?**
 
@@ -4274,7 +4289,7 @@ Yes. I sign your own NDA as it stands, at no charge, before material is shared.
 
 **How is our material handled?**
 
-Client material is kept only on systems needed for the work and deleted within thirty days of closure, as the legal page defines closure, unless the law requires retention. Four kinds of copy follow their own rules: email and its attachments, what the AI tool's provider keeps under its own terms, an encrypted backup copy until the rotation replaces it, and a private version-history copy that lasts as long as the backups. The legal page explains each. The workstation uses full disk encryption. Credentials are stored in an encrypted vault, and backups are encrypted before upload.
+Client material is kept only on systems needed for the work and deleted within thirty days of closure, as the legal page defines closure, unless the law requires retention. Four kinds of copy follow their own rules: bookkeeping material, which is kept for six years, what the AI tool's provider keeps under its own terms, an encrypted backup copy until the rotation replaces it, and a private version-history copy that lasts as long as the backups. Every backup is overwritten within one month at most. Engagement email and its attachments are deleted under the same closing rule. The legal page explains each. The workstation uses full disk encryption. Credentials are stored in an encrypted vault, and backups are encrypted before upload.
 
 **Do you use AI tools?**
 
@@ -4323,7 +4338,7 @@ An assistant may quote different information depending on which source it reads.
 
 ## What I check
 
-The audit covers up to two targets named in the written scope, for example a Shopify store and a B2B site, at the one fixed price. The written scope splits the 20 recorded questions between them, and the scan and the re-scan run on each target.
+The audit covers up to two targets named in the written scope, for example a Shopify store and a B2B site, at the one fixed price. Each hostname named in the written scope is one target: a site and its API on different hostnames are two targets, and on the same hostname they are one. The written scope splits the 20 recorded questions between them, and the scan and the re-scan run on each target.
 
 Three kinds of evidence, kept apart in the report so that you can see what each check found.
 
@@ -4337,7 +4352,7 @@ I compare information across your pages, structured data and API. The report sho
 
 ### What do AI assistants say about your product?
 
-I ask 20 recorded questions across three assistants named in the written scope. The synthetic sample report shows a different run with 15 questions across four assistants, because it only illustrates the format. You receive the answers, the date and the conditions of the test. Each question is asked once per assistant, and an assistant can answer differently from one day to the next, so a changed answer after the fixes is reported as an observation.
+I ask 20 recorded questions across three assistants named in the written scope. The questions contain only the public product name and the question text, never client material. The synthetic sample report shows a different run with 15 questions across four assistants, because it only illustrates the format. You receive the answers, the date and the conditions of the test. Each question is asked once per assistant, and an assistant can answer differently from one day to the next, so a changed answer after the fixes is reported as an observation.
 
 On a large site, structured data, prices and availability are read on every page reachable from the sitemap and the API, as the sample report does for all 138 of its product pages. Head metadata and response headers are read on a sample of page templates, and the report lists every page it read. If a tool quota limits the checks, I raise the quota rather than reduce coverage.
 
@@ -4564,7 +4579,7 @@ The report records what I checked and what I observed, so your team can understa
 
 ## Invoicing
 
-Payment is due within fourteen days unless we agree otherwise in writing.
+Payment is due within fourteen days of the invoice date unless we agree otherwise in writing.
 
 VAT is added according to Finnish law. Reverse charge applies to EU B2B customers with a valid VAT ID. Non-EU customers are invoiced without VAT. turva.dev's own VAT ID is FI36002817.
 
@@ -4681,15 +4696,15 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 **Deliverables.** An audit produces a written report. The Shopify agent storefront check includes the five written deliverables listed on its [service page](/shopify-agent-storefront-check). Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a Shopify store, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it.
 
-**Payment.** Payment is due within fourteen days unless agreed otherwise in writing. The Shopify agent storefront check is paid by bank transfer against an invoice before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
+**Payment.** Payment is due within fourteen days of the invoice date unless agreed otherwise in writing. The Shopify agent storefront check is paid by bank transfer against an invoice before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
 
-**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay takes precedence over this share. A missed-deadline refund that a service page states, such as the refund of the Shopify check fee when its four-item package is not sent within 48 elapsed hours, applies in place of the charge for delivered parts. Work billed by the day is charged by the hours worked, in half-hour steps. For MCP server design and agent operations, the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge.
+**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay takes precedence over this share. A missed-deadline refund that a service page states, such as the refund of the Shopify check fee when its four-item package is not sent within 48 elapsed hours, applies in place of the charge for delivered parts. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
 
 **Delay.** If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered, and it is not charged. A late advisory review is still delivered in full, and the delay is stated with it.
 
-**Confidentiality.** Information shared during the work is confidential. Your own non-disclosure agreement is signed as it stands, at no charge, before material is shared. If the work gives turva.dev access to personal data you control, turva.dev acts as your processor, and your data processing agreement is signed before that data is shared. The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work.
+**Confidentiality.** Information shared during the work is confidential. Your own non-disclosure agreement is signed as it stands, at no charge, before material is shared. If the work gives turva.dev access to personal data you control, turva.dev acts as your processor, and your data processing agreement is signed before that data is shared. Sub-processor changes follow the terms of that agreement. The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work.
 
-**Liability.** Liability is limited to the value of the engagement, including any add-on bought with it. For monthly advisory, that value is the fees paid in the twelve months before the claim. turva.dev is not liable for indirect or consequential damages. Neither limit applies when turva.dev causes damage intentionally or through gross negligence. Where a signed non-disclosure agreement sets its own remedies for a breach of confidentiality, those remedies apply to that breach.
+**Liability.** Liability is limited to the fee for the engagement excluding VAT, including any add-on bought with it, as one aggregate limit for the whole engagement. For monthly advisory, that fee is the fees paid in the twelve months before the claim, excluding VAT. turva.dev is not liable for indirect or consequential damages. Neither limit applies when turva.dev causes damage intentionally or through gross negligence. Where a signed non-disclosure agreement sets its own remedies for a breach of confidentiality, those remedies apply to that breach. For data protection claims, the liability clause of a signed data processing agreement prevails where it differs from this paragraph.
 
 **Intellectual property.** You own the deliverables produced for you. turva.dev retains its generic methods, templates and reusable code. You get a perpetual right to use the delivered code, including any of turva.dev's own parts built into it.
 
@@ -4701,19 +4716,19 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, operating the llms.txt validator, meaning fetching and checking the documents it names, its forwarding of a visitor's IP address to the site named, the site's rate limit, and processing a client's own contact persons rest on legitimate interest. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
-**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to seven days of security analytics and 24 hours of security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
+**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to seven days of security analytics and 24 hours of security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within one month at most. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
 
 **International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. For the Anthropic API, Anthropic's data processing addendum incorporates the EU Standard Contractual Clauses, Module Two or Module Three, for data transferred out of the EEA, including to Anthropic, PBC in the United States. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA that is not hosted on Cloudflare, Cloudflare adds that visitor's IP address to the requests the check makes, and a Worker cannot remove it. If the site is in a country without an adequacy decision, no standard contractual clauses cover those requests: the address reaches the site only because the user entered it and started the check, and a user who does not want that can leave the check unrun.
 
-**Email.** Email related to an engagement is kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. Invoices and other accounting vouchers follow the same six-year retention, as the Act requires.
+**Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material.
 
-**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Email and its attachments follow the email rule above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies and replaces the oldest with the newest, and a backup is never restored for any other purpose. A private version-history copy of client material lasts as long as the backups: it is removed when the backup rotation replaces the corresponding backup. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies, each new copy replaces the oldest, and every backup, version history included, is overwritten within one month. A backup is never restored for any other purpose. Deleted client material has left every backup within one month at most. A private version-history copy of client material lasts as long as the backups: it is removed when the backup rotation replaces the corresponding backup, within the same month. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
 **Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
 **Outreach records.** When turva.dev writes to a company, it records the company, the business contact it wrote to, the public page where that contact was found and the date. Keeping it stops the same company from being contacted twice and lets the promised rescan be sent. The lawful basis is legitimate interest, and the record is shown or removed on request. The record is kept for 24 months from the latest contact. A company that asks not to be contacted stays on an exclusion list for as long as that request stands, so that the request can be honoured. You can object to this processing at any time, and an objection stops further contact.
 
-**AI tools.** The AI tool used in the work is Claude. Client material, including what is read from a client's public site, is processed only through the Anthropic API, unless the engagement agreement names another route for part of the work at the client's request, such as Claude through Amazon Bedrock. The API is used on Anthropic's [commercial terms](https://www.anthropic.com/legal/commercial-terms), with Anthropic Ireland, Limited as the contracting party. Anthropic's [data processing addendum](https://www.anthropic.com/legal/data-processing-addendum) and the standard contractual clauses named under International transfers apply, and data can be transferred to Anthropic, PBC in the United States. Claude works on a local workspace holding the files a task needs. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. The audit reads what the client's site serves publicly. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
+**AI tools.** The AI tool used in the work is Claude. Client material, including what is read from a client's public site, is processed only through the Anthropic API, unless the engagement agreement names another route for part of the work at the client's request, such as Claude through Amazon Bedrock. The recorded questions of an audit are put to the assistants named in the written scope in anonymous sessions and contain only the public product name and the question text, never client material. The API is used on Anthropic's [commercial terms](https://www.anthropic.com/legal/commercial-terms), with Anthropic Ireland, Limited as the contracting party. Anthropic's [data processing addendum](https://www.anthropic.com/legal/data-processing-addendum) and the standard contractual clauses named under International transfers apply, and data can be transferred to Anthropic, PBC in the United States. Claude works on a local workspace holding the files a task needs. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. The audit reads what the client's site serves publicly. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
 No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic Ireland, Limited is the contracting party for the AI tool, and data can be transferred to Anthropic, PBC in the United States. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. A card payment made through a payment link is processed by Stripe. A new provider is added to this list before it receives client material.
 
@@ -4729,13 +4744,13 @@ Report a security issue to [info@turva.dev](mailto:info@turva.dev). The PGP key 
 
 ## Cookies
 
-This site sets no cookies of its own. A check of the home page, this page and the contact page on 27 September 2026 received no cookie. If Cloudflare's bot protection is triggered, it can set one of its own security cookies, __cf_bm, which tells bot traffic apart from human visitors, or cf_clearance, which records that a challenge was passed, for that purpose only, as [Cloudflare's own cookie table](https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/) names them. __cf_bm is strictly necessary to tell bot traffic apart from human visitors, and cf_clearance is strictly necessary to record that a challenge was passed. Neither needs consent under EU law.
+This site sets no cookies of its own. A check of the home page, this page and the contact page on 27 September 2026 received no cookie. If Cloudflare's bot protection is triggered, it can set one of its own security cookies, __cf_bm, which tells bot traffic apart from human visitors, or cf_clearance, which records that a challenge was passed, for that purpose only, as [Cloudflare's own cookie table](https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/) names them. Cloudflare describes __cf_bm as necessary for its bot protection to work and cf_clearance as required to reach the origin after a challenge. turva.dev treats both as strictly necessary for security and does not ask for consent for them.
 
 ## Updates
 
 This page is updated when the terms change. The current version applies to engagements started on or after the date below.
 
-- **Terms last updated:** 2026-09-29
+- **Terms last updated:** 2026-10-02
 - **Privacy last updated:** 2026-09-29
 `,
 
@@ -6319,6 +6334,7 @@ Expires: 2027-05-28T00:00:00.000Z
 Encryption: https://turva.dev/pgp-key.asc
 Preferred-Languages: en
 Canonical: https://turva.dev/.well-known/security.txt
+Canonical: https://turva.dev/security.txt
 Policy: https://turva.dev/legal#reporting-a-vulnerability
 `;
 
@@ -6736,7 +6752,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.198.0",
+    "version": "3.199.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7016,7 +7032,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.198.0",
+  "version": "3.199.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7114,7 +7130,7 @@ var AI_CATALOG = JSON.stringify({
     {
       "identifier": "urn:air:turva.dev:mcp-server:turva-mcp",
       "displayName": "turva.dev MCP server",
-      "type": "application/mcp-server+json",
+      "type": "application/mcp-server-card+json",
       "url": "https://turva.dev/.well-known/mcp/server-card.json",
       "description": "Public read-only MCP server: service catalog, own agent-readiness scores, security evidence, engagement principles."
     },
@@ -7144,12 +7160,33 @@ var AI_CATALOG = JSON.stringify({
 
 // ARD v0.91 (ards-project/ard-spec, 2026-08-26) renamed the well-known file to ard.json and the
 // link relation to ard, and made those the ones a client MUST read; ai-catalog.json is the
-// predecessor a client MAY consult. Same entries, with the MCP entry's type set to the MCP Server Card media type (from the MCP ext-server-card spec, not ARD itself) for ard.json. AI_CATALOG
-// stays as it is because the isitagentready ard check and the experimental MCP Server Card
-// discovery document still read /.well-known/ai-catalog.json (Tek-349, 2026-09-05).
+// predecessor a client MAY consult.
+// Same entries as ai-catalog.json (both carry the MCP Server Card media type on the MCP entry since
+// the 2026-10-02 decision), plus representativeQueries on ard.json only (ARD v0.91 section 4.2, SHOULD, 2 to 5
+// examples). ai-catalog.json stays free of them because the isitagentready ard check reads it (Tek-349, 2026-09-05).
+// Each query is something the linked artifact really answers.
+var ARD_REPRESENTATIVE_QUERIES = {
+  "urn:air:turva.dev:mcp-server:turva-mcp": [
+    "What does turva.dev charge for an agent-readiness audit?",
+    "Which services does turva.dev offer?",
+    "How do I contact turva.dev?"
+  ],
+  "urn:air:turva.dev:agent:a2a": [
+    "What can the turva.dev agent card be asked over HTTP and JSON?",
+    "Which skills does turva.dev publish as read-only A2A skills?"
+  ],
+  "urn:air:turva.dev:api:openapi": [
+    "Which public endpoints does turva.dev expose?",
+    "How do I read turva.dev services and pricing as JSON?"
+  ],
+  "urn:air:turva.dev:skills:index": [
+    "Which agent skills does turva.dev publish?",
+    "Where is the skill that describes how to contact turva.dev?"
+  ]
+};
 var ARD_MANIFEST = JSON.stringify(Object.assign({}, JSON.parse(AI_CATALOG), {
   "entries": JSON.parse(AI_CATALOG).entries.map((e) => Object.assign({}, e,
-    e.type === "application/mcp-server+json" ? { "type": "application/mcp-server-card+json" } : {}))
+    ARD_REPRESENTATIVE_QUERIES[e.identifier] ? { "representativeQueries": ARD_REPRESENTATIVE_QUERIES[e.identifier] } : {}))
 }), null, 2);
 
 // A conformant x402 client reads the challenge body and acts on it. It never reads
@@ -7954,7 +7991,7 @@ var META_BY_PATH = {
     titleTag: "Agent discovery on thirteen code hosts · turva.dev",
     description: "Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.",
     date: "2026-08-22",
-    modified: "2026-09-28",
+    modified: "2026-10-02",
     kind: "Research",
     image: "/og-agent-readiness-code-hosts.jpg",
     imageAlt: "turva.dev blog card: Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
@@ -8035,7 +8072,7 @@ var META_BY_PATH = {
     description: "A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.",
     date: "2026-07-15",
     kind: "Research",
-    modified: "2026-09-28",
+    modified: "2026-10-02",
     image: "/og-measuring-the-ai-patch-surge.jpg",
     imageAlt: "Measuring the AI patch surge from MSRC data"
   },
@@ -8043,6 +8080,7 @@ var META_BY_PATH = {
     title: "Reducing secret exposure in coding-agent workflows · turva.dev",
     description: "Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.",
     date: "2026-07-12",
+    modified: "2026-10-02",
     kind: "Build notes",
     image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
@@ -8077,7 +8115,7 @@ var META_BY_PATH = {
     title: "The page grew, the agent token count did not · turva.dev",
     description: "A July measurement compared the token counts of the homepage's HTML and Markdown representations. The result describes that page and measurement date.",
     date: "2026-07-04",
-    modified: "2026-09-29",
+    modified: "2026-10-02",
     kind: "Build notes",
     image: "/og-cheaper-pages-revisited.jpg",
     imageAlt: "turva.dev blog card: The site kept growing after June's token-cost post. The 4 July scan reports an 83% token saving between the HTML and markdown forms."
@@ -8096,6 +8134,7 @@ var META_BY_PATH = {
     title: "A free llms.txt validator · turva.dev",
     description: "The launch note for turva.dev's llms.txt validator explains its original checks. The live tool page carries the current interface and supported checks.",
     date: "2026-07-02",
+    modified: "2026-10-02",
     kind: "Build notes",
     image: "/og-free-llms-txt-validator.jpg",
     imageAlt: "turva.dev blog card: turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored."
@@ -8134,6 +8173,7 @@ var META_BY_PATH = {
     title: "Agent access is now a setting · turva.dev",
     description: "A July product update illustrates how crawler access, discovery and payment controls can sit at the network edge, before the site's content is reached.",
     date: "2026-07-02",
+    modified: "2026-10-02",
     kind: "Protocol notes",
     image: "/og-agent-access-is-now-a-setting.jpg",
     imageAlt: "turva.dev blog card: Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration."
@@ -8175,6 +8215,7 @@ var META_BY_PATH = {
     title: "When an agent can prove it is Claude · turva.dev",
     description: "Signed requests can give evidence of a sender's identity. This dated article separates that evidence from trusting a user-agent string or granting an action.",
     date: "2026-06-25",
+    modified: "2026-10-02",
     kind: "Protocol notes",
     image: "/og-verifiable-agent-identity.jpg",
     imageAlt: "turva.dev blog card: Web Bot Auth gives an AI agent a verifiable, signed identity a site can check."
@@ -11995,7 +12036,7 @@ function validateLlmsTxt(f) {
   } else {
     add("size", "warn", "Small enough to be cheap to read", f.bytes + " bytes; consider moving detail to llms-full.txt");
   }
-  if (/<[a-z][a-z0-9-]*[\s>]/i.test(text)) {
+  if (/<\/?[a-z][a-z0-9-]*(?=[\s\/>])|<!--/i.test(text)) {
     add("no-html", "warn", "No HTML markup in the file", "HTML tags found; llms.txt should be plain markdown");
   } else {
     add("no-html", "pass", "No HTML markup in the file", "plain markdown");
@@ -12912,7 +12953,7 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
     if (!host || !isValidPublicHost(host)) {
       error = "That does not look like a public domain name. Enter a domain like example.com.";
     } else if (host === "turva.dev" || host === "www.turva.dev") {
-      // A Worker cannot fetch its own zone, so the site's own llms.txt is
+      // A Worker cannot fetch a same-zone Route target, so the site's own llms.txt is
       // validated directly from the same constant that serves /llms.txt.
       const ownHome = serveHomeHtml("https://turva.dev/");
       const ownHtml = await ownHome.text();
@@ -14420,7 +14461,7 @@ async function handleRequest(request, env) {
   }
   if (pathLower === "/robots.txt") return serveStatic(ROBOTS_TXT, "text/plain; charset=utf-8", "agent-api");
   if (pathLower === "/.well-known/api-catalog" || pathLower === "/api-catalog") {
-    return serveStatic(API_CATALOG, "application/linkset+json; charset=utf-8", "agent-api");
+    return serveStatic(API_CATALOG, "application/linkset+json; charset=utf-8; profile=\"https://www.rfc-editor.org/info/rfc9727\"", "agent-api");
   }
   if (pathLower === "/openapi.json" || pathLower === "/.well-known/openapi.json") {
     return serveStatic(OPENAPI_SPEC, "application/json; charset=utf-8", "agent-api");

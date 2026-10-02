@@ -2448,7 +2448,7 @@ if (LIVE) {
       + `${rikki.length ? ', broken: ' + rikki.slice(0, 6).join('; ') + (rikki.length > 6 ? ` and ${rikki.length - 6} more` : '') : ''}`
       + `${rajoitettu.length ? `; RATE LIMITED on ${rajoitettu.length} paths, this run measured the limiter and not the twins, raise the pacing and re-run` : ''})`);
   } catch (e) { bad('canonical markdown twins: ' + (errWhy(e))); }
-  else if (LIVE) console.log('  skip  canonical markdown twins (add --twins; 114 paced requests, see the note above)');
+  else if (LIVE) console.log('  skip  canonical markdown twins (add --twins; two paced requests per canonical page, see the note above)');
 
   // A2A HTTP+JSON transport. The card declares three skills and the endpoint answers
   // them, so the question is whether what it answers agrees with facts.json. The skill

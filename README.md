@@ -142,7 +142,7 @@ npm --prefix turva-worker test
 
 GitHub Actions runs the same install, the local tests and the documentation checks on Node.js 22 and 24. The repository's workflow does not deploy the site.
 
-The live variant contacts the declared public endpoints and the separate MCP server. It also verifies the four signed manifests against the published JWKS:
+The live variant contacts a fixed list of declared public endpoints and the separate MCP server. Adding `--twins` also fetches every canonical page and its Markdown twin. It also verifies the four signed manifests against the published JWKS:
 
 ```sh
 node tools/verify.mjs --live

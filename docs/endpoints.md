@@ -1,6 +1,6 @@
 # Endpoints
 
-Every route this Worker serves, copied from the repository README so the README can stay short. The Worker is the single source of truth: if a path is listed here it resolves in `src/worker.js`, and `node tools/verify.mjs --live` fetches every declared surface.
+Every route this Worker serves, copied from the repository README so the README can stay short. The Worker is the single source of truth: if a path is listed here it resolves in `src/worker.js`, and `node tools/verify.mjs --live` fetches a fixed list of public discovery surfaces. Adding `--twins` also fetches every canonical page and its Markdown twin (two paced requests per page). Routes outside that list, such as the PGP key and the MCP registry authentication files, are not fetched by `--live`.
 
 | Path | Purpose |
 |---|---|
