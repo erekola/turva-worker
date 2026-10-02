@@ -1,4 +1,6 @@
 // src/worker.js
+// turva.dev worker v3.198.0 - the audit covers up to two targets named in the written scope at the one fixed price, the follow-up question round has a 14 calendar day submission window and a five business day answer, the services page says the fixes take about two days, and the MCP service catalog (MCP 1.6.12) and the server card carry the new version.
+// turva.dev worker v3.197.1 - the get_agent_readiness tool description no longer promises verification links: the tool returns one link, the scanner start page, so the MCP tool description (MCP 1.6.11) and the server card tool list now say that, and the server card is re-signed.
 // turva.dev worker v3.197.0 - last outside read of the guides and the buying path: eleven guides corrected against their primary sources (x402 v2 PaymentRequired and settlement wording, UCP requires_escalation causes and quote checkouts, MCP tools optional and list caching, agents.json OpenAPI sources, ARD status and search indexing, scanner versus direct checks, client-side rendering, llms.txt file-list links, authentication versus discovery, audit surface groups, Google on llms.txt), and the audit page says its sample report shows a different question run. SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.196.2 - monthly fast-family source review: the checked date of the seven agent-commerce and MCP discovery guides moved to 2026-10-01, no guide text changed
 // turva.dev worker v3.196.1 - seventh outside read: client material is processed only through the Anthropic API unless the engagement agreement names another route at the client's request, stated once on /legal, and the advisory first-month exit carries its condition (the client is not satisfied with it) on every short surface.
@@ -3596,7 +3598,7 @@ The delivered report carries every one of the 60 answers as a row of this form. 
 
 ## About this sample
 
-Every figure on this page is invented. The check names, the categories and the statuses are the scanner's real vocabulary as read on 2026-09-23, the draft name in F7 is the real IETF draft, and the four assistants in appendix B are the four the published measurement used, so that the sample shows how a real report reads. The site, the readings, the assistants' answers, the addresses and the security scores are fiction. A real report carries the raw scanner output, the request and response logs, the whole-catalog script and its output and the 60 AI answers with the assistant named on each.
+Every figure on this page is invented. The check names, the categories and the statuses are the scanner's real vocabulary as read on 2026-09-23, the draft name in F7 is the real IETF draft, and the four assistants in appendix B are the four the published measurement used, so that the sample shows how a real report reads. The site, the readings, the assistants' answers, the addresses and the security scores are fiction. A real report carries the raw scanner output, the request and response logs, the whole-catalog script and its output and the 60 AI answers with the assistant named on each. The sample covers one target. A real audit covers up to two named in the written scope.
 
 The audit is described on the [services page](/services). To start one, email [info@turva.dev](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) with the site or API URL and what the audit should answer. The Shopify agent storefront check has its own [sample report](/samples/shopify-agent-storefront-check).
 `,
@@ -4054,7 +4056,7 @@ Four written deliverables within 48 hours of the agreed written kickoff, and a f
 
 A technical scan, a manual review of your website and API surfaces, and a recorded question set put to selected AI assistants. The report keeps the technical findings and the observed AI answers apart.
 
-The audit is delivered within two weeks of the agreed written kickoff. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. [Read the full scope and the deliverables](/agent-readiness-audit).
+The audit is delivered within two weeks of the agreed written kickoff. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. [Read the full scope and the deliverables](/agent-readiness-audit).
 
 ## Implementation
 
@@ -4066,11 +4068,11 @@ The fixed price covers the whole list, whatever the number of corrections. Work 
 
 For a Shopify check, I need collaborator access to the store. For an audit, I need an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. If the required access cannot be arranged, the add-on is not sold. Your team still receives the correction instructions.
 
-The fixes identified by an audit typically take about a day to implement, the kind of fixes the sample report lists. This is an estimate, not a fixed quote or a limit on the €499 add-on.
+The fixes identified by an audit typically take about two days to implement, the kind of fixes the sample report lists. This is an estimate, not a fixed quote or a limit on the €499 add-on.
 
 ### Separately scoped implementation days
 
-For website and API implementation, the audit comes first so the work is understood before the implementation day starts. A day can cover the identified fixes or new agent-ready infrastructure.
+For website and API implementation, the audit comes first, so I understand the work before implementation starts. The identified fixes usually take about two days. New agent-ready infrastructure is scoped in days too.
 
 I deploy an edge worker in front of your origin. It changes what the site serves without changing your application code. Deployment access must be ready before work starts.
 
@@ -4264,7 +4266,7 @@ Sites that complete an audit, or score 100/100 on isitagentready.com, may displa
 
 **Do I need the audit before the Shopify check?**
 
-No. They are separate services. The Shopify check examines selected products and shopping interactions in one store. The audit covers a whole website or API.
+No. They are separate services. The Shopify check examines selected products and shopping interactions in one store. The audit covers up to two targets named in the written scope, each a website or an API, for example a Shopify store and a B2B site.
 
 **Will you sign our NDA?**
 
@@ -4321,6 +4323,8 @@ An assistant may quote different information depending on which source it reads.
 
 ## What I check
 
+The audit covers up to two targets named in the written scope, for example a Shopify store and a B2B site, at the one fixed price. The written scope splits the 20 recorded questions between them, and the scan and the re-scan run on each target.
+
 Three kinds of evidence, kept apart in the report so that you can see what each check found.
 
 ### Can an automated client find and read your information?
@@ -4354,7 +4358,7 @@ A written report that answers four questions:
 - What should your team fix first?
 - How can the correction be checked?
 
-You also receive the recorded AI questions and answers, one round of written follow-up questions, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.
+You also receive the recorded AI questions and answers, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.
 
 Each finding includes correction instructions and, where available, a link to the relevant guide. The order reflects the effect on users and agent behaviour, with effort and scanner effects recorded separately.
 
@@ -4364,11 +4368,11 @@ A synthetic [sample report](/samples/audit-report) shows the format: the per-che
 
 ## How the two weeks work
 
-We agree the work. Send the URL and your question. I confirm the scope, price and start date in writing. The audit is invoiced when the report is delivered, and the card link pays that invoice.
+We agree the work. Send the URLs of up to two targets and your question. I confirm the scope, price and start date in writing. The audit is invoiced when the report is delivered, and the card link pays that invoice.
 
 I run the checks. I complete the scan, manual review and AI questions, recording the evidence and dates.
 
-You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. One round of written follow-up questions is included.
+You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. One round of written follow-up questions is included. Submit it within 14 calendar days of the report and I answer it within five business days.
 
 After the corrections, you choose the day for the included re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again using the same question set. The follow-up shows both readings and any changes in the method.
 
@@ -4388,7 +4392,7 @@ Corrected 2026-09-28. Named the monthly cadence and the continuous-monitoring ex
 
 ## Tell me what you want to understand
 
-Send your site or API URL and your question to [info@turva.dev](mailto:info@turva.dev). I reply within one business day.
+Send the URLs of up to two targets and your question to [info@turva.dev](mailto:info@turva.dev). I reply within one business day.
 
 We work in writing, with no calls or meetings.
 
@@ -6732,7 +6736,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.197.0",
+    "version": "3.198.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6842,7 +6846,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"8j-v-aXdWbKAoc1lyaraHlU8W6JuPdbyyVkKKZRKkiq0RZ0HF6m67F_ER6J6TGXZV14sNFbYR1hFY228ADpYAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qXnZ5tVwnZcbHCZODRIlyIkoVZ3gzmirn0bHoSWzKhPUrrpJTiTVreeVSq7k_MIF7Pr2OMFg3Ppsw8tRjN1vBw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Zssl5UzjNEpnfbHh-qwoWD_L-FFVGtTbJ24wwh7ExbhCVHodRR0q1FrBnLnbzfEYOprnL4yykozTYmMI7jsvAQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qXnZ5tVwnZcbHCZODRIlyIkoVZ3gzmirn0bHoSWzKhPUrrpJTiTVreeVSq7k_MIF7Pr2OMFg3Ppsw8tRjN1vBw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6857,7 +6861,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.10",
+  "version": "1.6.12",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6866,7 +6870,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.10",
+    "version": "1.6.12",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -6887,7 +6891,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   },
   "tools": [
     { "name": "get_services", "description": "Service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
-    { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, measurement date, and verification links." },
+    { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, measurement date, and a link to the scanner start page." },
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl site and mail), with the scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." },
     { "name": "get_contact", "description": "Who runs turva.dev, the official contact channels, the first-reply time and what access an audit needs." }
@@ -7012,7 +7016,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.197.0",
+  "version": "3.198.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8463,7 +8467,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 // second copy would be a second price list, and verify.mjs reads this one against facts.json.
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
 {"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"},"addOn":{"@type":"Offer","name":"Shopify correction implementation","description":"Exactly the corrections the check's plan lists. Sold only with the Shopify agent storefront check: bought with it, with its report, or after the report and before implementation starts, and only when collaborator access to the store is arranged in advance.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Shopify correction implementation"}}},
-{"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across the same assistants, written review of shipped work within one business day up to four reviews a month, roadmap input, a monthly written summary within five business days after the month ends and a quarterly summary of measurable progress within five business days after every third service month. Minimum three months, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, the retainer runs month to month and either party can end it by email before the next month starts. Corrected 2026-09-28. Added the month-to-month continuation, its email cancellation, the first-month cancellation and the monthly and quarterly summary deadlines.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. A separately scoped day excludes DNS changes, tool declarations inside your application and agent payment flows. An MCP server is a separate engagement. Corrected 2026-09-28. Added the day-rate exclusions.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}}`;
@@ -9816,7 +9820,7 @@ function buildAuditServiceJsonLd(canonicalUrl) {
     "serviceType": "Agent-readiness audit",
     "provider": { "@id": "https://turva.dev/#business" },
     "areaServed": { "@type": "Place", "name": "Worldwide" },
-    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.",
+    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.",
     "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
     "offers": {
       "@type": "Offer",
