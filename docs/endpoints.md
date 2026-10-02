@@ -31,6 +31,7 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/api` | x402 402 challenge. The free endpoint index moved to `/api/v1` in v3.51.0 |
 | `/api/v1` | API index JSON |
 | `POST /v1/message:send` | A2A HTTP+JSON transport, revision 0.3.0. Name a skill with `metadata.skillId` |
+| `GET /v1/tasks/{id}`, `POST /v1/tasks/{id}:cancel` | A2A task routes. `message:send` answers at once and never creates a task, so a GET on a task id and a cancel on a task id both answer -32001 task not found with status 404 |
 | `/api/agent/audit`, `/api/agent/advisory`, `/api/agent/implementation` | x402 payable service routes (HTTP 402, quote-on-request) |
 | `/api/acp/checkout_sessions` | ACP checkout sessions (stateless, buyer review before payment) |
 | `/.well-known/agent-skills/<name>/skill.md` | Individual agent skill files |

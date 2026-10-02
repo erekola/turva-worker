@@ -1729,6 +1729,29 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       `one USDC per EUR rate across all ${routes.length} amounts (${rates.map((x) => x.toFixed(4)).join(', ')}, spread ${(spread * 100).toFixed(3)} %)`);
   }
 
+  console.log('\nx402 EIP-712 name, UCP key and ACP capabilities (Tek-562)');
+  // The Base mainnet USDC contract names its EIP-712 domain "USD Coin" (name() measured on chain
+  // 2026-10-03). A client that signs with "USDC" derives another domain separator and the payment
+  // fails, so every extra.name that sits with the mainnet asset has to be the one constant. The
+  // UCP service key follows the profile schema, which allows no hyphen. ACP capabilities is a
+  // closed object, so the checkout_note property that once sat in it is not allowed back.
+  {
+    const nameConst = constOf('X402_USDC_NAME');
+    check(nameConst === 'USD Coin', `X402_USDC_NAME is "USD Coin" (saw ${JSON.stringify(nameConst)})`);
+    // Every place that writes the EIP-712 name next to a mainnet asset: the manifest entries and the
+    // 402 challenge helper. A literal in any of them, or a new entry that forgets the name, fails.
+    const extras = [...w.matchAll(/(?:"extra": |const extra = )\{ "name": ([^,]+),/g)].map((m) => m[1]);
+    const assets = (w.match(/"asset": X402_USDC_BASE,/g) || []).length;
+    check(extras.length >= 7 && extras.every((n) => n === 'X402_USDC_NAME') && !/"name": "USDC"/.test(w),
+      'every x402 extra.name is X402_USDC_NAME (' + extras.length + ' places, ' + assets + ' mainnet asset lines)');
+    check(extras.length === assets,
+      'x402: every entry with asset X402_USDC_BASE carries its own extra.name (' + assets + ' assets, ' + extras.length + ' names)');
+    check(w.includes('"dev.turva.agent_readiness": [') && !w.includes('"dev.turva.agent-readiness"'),
+      'UCP service key is dev.turva.agent_readiness and the hyphen form is gone');
+    const acpM = region('var ACP_MANIFEST', '\n// ====');
+    check(acpM.includes('"capabilities"') && !acpM.includes('checkout_note'), 'ACP_MANIFEST capabilities carries no checkout_note');
+  }
+
   console.log('\nStateless checkout says so (B1-10)');
   // The surface holds no state, which the 404 body explained and no successful response
   // did: cancel returned 200 "canceled" and the next GET on the same id returned
@@ -2252,11 +2275,27 @@ if (LIVE) {
       const r = await fetch(base+p, { method: 'OPTIONS', redirect: 'manual', headers: { origin: 'https://example.com', 'access-control-request-method': 'GET' } });
       // Round 16 (S1-4): the preflight advertises the methods the route honours, so a GET-only
       // surface says GET, OPTIONS and only the x402 roots add POST.
-      const want = (p === '/api' || p === '/x402') ? 'GET, POST, OPTIONS' : 'GET, OPTIONS';
+      const want = (p === '/api' || p === '/x402') ? 'GET, POST, OPTIONS' : (p === '/.well-known/mcp/server-card.json' ? 'GET' : 'GET, OPTIONS');
       check(r.status === 204 && r.headers.get('access-control-allow-methods') === want,
         `OPTIONS ${p} -> 204 with preflight headers (saw ${r.status} / ${r.headers.get('access-control-allow-methods')}, want ${want})`);
     } catch (e) { bad(`OPTIONS ${p} -> ${errWhy(e)}`); }
   }
+  // Tek-562: the server card is read cross-origin with a conditional request. The GET exposes ETag,
+  // the preflight allows If-None-Match, and the live x402 manifest names the mainnet asset "USD Coin".
+  try {
+    const g = await fetch(base + '/.well-known/mcp/server-card.json', { headers: { origin: 'https://example.com' } });
+    check(g.status === 200 && /(^|, *)etag(,|$)/i.test(g.headers.get('access-control-expose-headers') || ''),
+      `GET server card exposes ETag to browsers (saw ${g.status} / ${g.headers.get('access-control-expose-headers')})`);
+    check(g.headers.get('access-control-allow-methods') === 'GET' && g.headers.get('access-control-allow-headers') === 'Content-Type, If-None-Match',
+      `GET server card carries allow-methods GET and allow-headers Content-Type, If-None-Match (saw ${g.headers.get('access-control-allow-methods')} / ${g.headers.get('access-control-allow-headers')})`);
+    const o = await fetch(base + '/.well-known/mcp/server-card.json', { method: 'OPTIONS', headers: { origin: 'https://example.com', 'access-control-request-method': 'GET' } });
+    check(o.status === 204 && /if-none-match/i.test(o.headers.get('access-control-allow-headers') || '') && /etag/i.test(o.headers.get('access-control-expose-headers') || ''),
+      `OPTIONS server card allows If-None-Match and exposes ETag (saw ${o.status} / ${o.headers.get('access-control-allow-headers')} / ${o.headers.get('access-control-expose-headers')})`);
+    const x = JSON.parse(await (await fetch(base + '/.well-known/x402')).text());
+    const main = (x.accepts || []).filter((a) => a.network === 'eip155:8453' && /^0x833589fcd6edb6e08f4c7c32d4f71b54bda02913$/i.test(a.asset));
+    check(main.length > 0 && main.every((a) => (a.extra || {}).name === 'USD Coin'),
+      `live x402 manifest: ${main.length} mainnet USDC entries all carry extra.name "USD Coin"`);
+  } catch (e) { bad('server card CORS and x402 name: ' + errWhy(e)); }
 
   console.log('\nFAQ published where a reader can see it (B1-03)');
   // Read from the served page, not from worker.js: a gate that greps the source proves the

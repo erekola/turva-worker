@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.202.0 - outside reviews W26 to W35 applied (Tek-562): the x402 EIP-712 name of the Base mainnet USDC asset is USD Coin (X402_USDC_NAME, measured on chain), the UCP service key is dev.turva.agent_readiness, the ACP capabilities object loses checkout_note, the hosted llms.txt validator reads ## followed by a tab and a single-line setext H2 as headings, GET /v1/tasks/{id} and POST /v1/tasks/{id}:cancel answer -32001 task not found, the OpenAPI A2A message names messageId and kind, the MCP server card exposes ETag and answers a CORS preflight (its signed bytes are unchanged), the version 6 OpenPGP armor loses its CRC24 line, the sample pages carry their own revision dates and the 188 kB to 340 kB range, the services page says I reply within one business day, the legal page adds the re-scan and retest window to the remedy, and the validator page points to implementation.
 // turva.dev worker v3.201.0 - outside reviews W15 to W25 applied (Tek-561): the Hardenize report link is back with its own measurement date 2026-10-02 beside the Internet.nl date 2026-09-23, the hosted llms.txt validator form returns to its result and names a port in its own fixed sentence while the set of accepted addresses stays the same, the hosted parity check gives two fixed selector sentences (not valid, matched nothing) and runs markdown-parity-check 0.2.22, the sample audit and Shopify reports fix their counts, units, dates and attributions, the Privacy section states the Cloudflare security log retention of 31 days and a 24 month deletion rule for a question that does not lead to an engagement, the audit's follow-up round carries the written scope sentence its sibling services carry, the home business node is an Organization without priceRange, the MCP server card names MCP 1.6.14, and the published OpenPGP key is split so that /pgp-key.asc and WKD serve the Ed25519 version 4 key alone, which GnuPG imports, while the post-quantum version 6 key moves to its own block at /pgp-key-v6.asc.
 // turva.dev worker v3.200.0 - outside reviews W8 to W14 applied (Tek-560): the hosted llms.txt validator fixes nine wrong results (blank-line labels, escaped destinations, CR line endings, setext H1, continuation-line links, bare angle brackets, template comments, linear query masking, empty blockquote summaries), the mobile menu closes on Escape and when focus leaves it through /nav.js, the blog search placeholder meets 4.5:1, the five example code blocks on the two tool pages are focusable, the dead Hardenize report link is removed with the dated reading kept, the legal page names the encrypted report address, the scanner's input, the processor breach notice, the private repository rule and Privacy last updated 2026-10-02, the company page says no subcontractors, and dated corrections on five posts plus wording on the audit, services, Shopify and guide pages.
 // turva.dev worker v3.199.1 - the hosted Markdown parity check runs markdown-parity-check 0.2.21 (Tek-559 decisions 2 and 3): raw HTML inside the Markdown is held to the same nesting limit as the HTML side, and code blocks skip button, template, nav and role subtrees like the rest of the content; every sitemap page still passes its own check with no error and no warning
@@ -105,6 +106,10 @@ const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
 var X402_PAY_TO = "0x35a46b0b699864f8b7fff52c581fc83adb80fae1";
 var X402_USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+// The EIP-712 domain name of the Base mainnet USDC contract above. name() on that contract returns
+// "USD Coin" (measured on chain 2026-10-03), and a client that signs with another name derives a
+// different domain separator, so the signature fails. Base Sepolia USDC uses "USDC", not this asset.
+var X402_USDC_NAME = "USD Coin";
 
 var LEGACY_REDIRECTS = {
   "/en": "/", "/en/": "/",
@@ -2511,7 +2516,7 @@ There is no total and no percentage. Eight structural checks can honestly report
 
 It tells you that the file passed the structural checks. It does not show whether an assistant reads the file, mentions your site or answers correctly.
 
-The [website and API audit](/agent-readiness-audit) measures agent readiness with an independent public scanner, published security scans and a manual review. For background on the file itself, read [llms.txt explained](/guides/llms-txt).
+The [website and API audit](/agent-readiness-audit) measures agent readiness with an independent public scanner, published security scans and a manual review. If you want the findings fixed, [implementation](/services#implementation) is sold with the audit. For background on the file itself, read [llms.txt explained](/guides/llms-txt).
 
 ## What is fetched
 
@@ -2591,7 +2596,7 @@ JavaScript is not run. Content that a page builds in the browser is compared as 
 
 Every page in the turva.dev sitemap that this check accepts passes with no error and no warning, and the site's release checks stop a release while any of them fails. [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work) tells how the pages got there.
 
-The example address is turva.dev's own tools page. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown that the HTML page leaves out, and returned five errors. The same four targets are links inside the HTML cards, so the difference is structural and no target is out of reach. [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree) reads that finding in full. That page passes now.
+The example address is turva.dev's own tools page. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown that the HTML page leaves out, and returned five errors. The same four targets are links inside the HTML cards, so the difference is structural and no target is out of reach. [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree) reads that finding in full. That page passed again on 2 October 2026.
 
 The [website and API audit](/agent-readiness-audit) measures agent readiness with an independent public scanner, published security scans and a manual review.
 
@@ -3107,7 +3112,7 @@ Corrected 2026-09-28. Two more sentences overstated what the domain protects. Th
 
 Northwind Fasteners Oy and all readings in this report are invented. The example shows what a client receives: the finding, its evidence, who makes the correction and how the result is checked.
 
-Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 23 September 2026.
+Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 3 October 2026.
 
 ## What to fix first
 
@@ -3285,7 +3290,7 @@ These are the sample's readings from 2026-09-03. PASS and FAIL are the scanner's
 | Discoverability | sitemap | PASS | /sitemap.xml exists and parses, 14 URLs. | F4, a manual finding, the check stays green | Green with none of the 138 products in it. The check reads the file, not the catalog |
 | Discoverability | linkHeaders | FAIL | No Link header on any response. | F3 | Cheap, and it is how a page points at its own markdown twin and at llms.txt |
 | Discoverability | dnsAid | FAIL | No _index._agents record under the domain, DNSSEC not enabled. | F7 enables DNSSEC, the record waits | Needs the company's DNS and an agent registry for the record to point at. Northwind publishes none, so the check stays red after this round |
-| Content | markdownNegotiation | FAIL | Accept: text/markdown returns text/html, 217 kB on the home page. | F2 | The catalog and the delivery terms are what a buyer's assistant reads, and today it reads them as more than 200 kB of markup per page |
+| Content | markdownNegotiation | FAIL | Accept: text/markdown returns text/html, 217 kB on the home page. | F2 | A buyer's assistant reads the catalog and the delivery terms, and today each page weighs between 188 kB and 340 kB of markup |
 | Bot access control | robotsTxtAiRules | FAIL | No AI crawler named in robots.txt. | F5 | A stated preference the company has not stated. Decision D2 |
 | Bot access control | contentSignals | FAIL | No Content-Signal line in robots.txt. | F5 | Same file, same decision |
 | Bot access control | webBotAuth | INFO | No Web Bot Auth directory. Informational, not scored. | None | The company operates no bots that would sign requests |
@@ -3631,7 +3636,7 @@ The audit is described on the [services page](/services). To start one, email [i
 
 Northstar Outdoor and every observation in this report are invented. This example shows how product comparisons, shopping-journey evidence and a correction plan are presented.
 
-Illustrative report date: 6 September 2026, the delivery date in the engagement record below. Every other date in the example belongs to the same invented engagement. This page itself was last revised on 23 September 2026.
+Illustrative report date: 6 September 2026, the delivery date in the engagement record below. Every other date in the example belongs to the same invented engagement. This page itself was last revised on 2 October 2026.
 
 ## What to fix first
 
@@ -4055,7 +4060,7 @@ document, at a fraction of the token cost of the HTML.
 
 Start with the question you need answered. I can check a Shopify store, audit a website or API, help implement the findings, or support your team over time.
 
-You work directly with me, in writing. I acknowledge a new message within one business day. A full answer follows within the time each service states. All prices exclude VAT.
+You work directly with me, in writing. I reply within one business day. All prices exclude VAT.
 
 [Choose a starting point](#choose-a-starting-point) [Read a sample audit report](/samples/audit-report)
 
@@ -4707,7 +4712,7 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 **Payment.** Payment is due within fourteen days of the invoice date unless agreed otherwise in writing. The Shopify agent storefront check is paid by bank transfer against an invoice before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
 
-**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay takes precedence over this share. A missed-deadline refund that a service page states, such as the refund of the Shopify check fee when its four-item package is not sent within 48 elapsed hours, applies in place of the charge for delivered parts. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
+**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay takes precedence over this share. A missed-deadline refund that a service page states, such as the refund of the Shopify check fee when its four-item package is not sent within 48 elapsed hours, applies in place of the charge for delivered parts. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
 
 **Delay.** If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered, and it is not charged. A late advisory review is still delivered in full, and the delay is stated with it.
 
@@ -4759,7 +4764,7 @@ This site sets no cookies of its own. A check of the home page, this page and th
 
 This page is updated when the terms change. The current version applies to engagements started on or after the date below.
 
-- **Terms last updated:** 2026-10-02
+- **Terms last updated:** 2026-10-03
 - **Privacy last updated:** 2026-10-02
 `,
 
@@ -6657,7 +6662,6 @@ PilwRxKpvDQ2GvWF76imTnRmFX+6VDua2tbFP4jQwGCOpQiPSQ6EyxxBnd0iQSP7
 ENgeXd2hMzkO/Finl0NRCs1fNljT7348eqhm27oxonuj6W3tSN3NPjUT05kaoBOg
 eB+/a5/5UvnTr5CLhvlVkRdNqRVJjSWvTXFED71XNBPHFpO6w84eNjtnw+odX3J5
 f8nN+BcnPVNmfoW/2w09THiGxg+1zQAAAAAAAAAAAAAAAAAAAAAAAAULExwiJQ==
-=dThf
 -----END PGP PUBLIC KEY BLOCK-----
 `;
 
@@ -6772,7 +6776,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.201.0",
+    "version": "3.202.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6848,7 +6852,7 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/api-catalog": { "get": { "summary": "API catalog", "operationId": "getApiCatalog", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/ard.json": { "get": { "summary": "ARD manifest (v0.91)", "operationId": "getArdManifest", "responses": { "200": { "description": "Agentic Resource Discovery manifest, same entries as ai-catalog.json with the MCP Server Card media type on the MCP entry", "content": { "application/json": {} } } } } },
     "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok" } } } },
-    "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with message.metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["message"], "properties": { "message": { "type": "object", "required": ["parts"], "properties": { "role": { "type": "string" }, "parts": { "type": "array", "maxItems": 32, "items": { "type": "object", "properties": { "kind": { "type": "string" }, "text": { "type": "string", "description": "Read for skill names when metadata.skillId is absent" } } } }, "metadata": { "type": "object", "properties": { "skillId": { "type": "string", "enum": ["services", "contact-info", "company-info"] } } } } } } }, "example": { "message": { "role": "user", "parts": [{ "kind": "text", "text": "What does turva.dev sell?" }], "metadata": { "skillId": "services" } } } } } }, "responses": { "200": { "description": "ok" }, "400": { "description": "invalid params, or more than 32 parts" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
+    "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with message.metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["message"], "properties": { "message": { "type": "object", "required": ["parts"], "properties": { "messageId": { "type": "string", "description": "A unique identifier for the message, typically a UUID, generated by the sender." }, "kind": { "type": "string", "enum": ["message"] }, "role": { "type": "string" }, "parts": { "type": "array", "maxItems": 32, "items": { "type": "object", "properties": { "kind": { "type": "string" }, "text": { "type": "string", "description": "Read for skill names when metadata.skillId is absent" } } } }, "metadata": { "type": "object", "properties": { "skillId": { "type": "string", "enum": ["services", "contact-info", "company-info"] } } } } } } }, "example": { "message": { "kind": "message", "messageId": "3f8c1a52-7e4b-4d19-9a6e-5c0b2d7f8e41", "role": "user", "parts": [{ "kind": "text", "text": "What does turva.dev sell?" }], "metadata": { "skillId": "services" } } } } } }, "responses": { "200": { "description": "ok" }, "400": { "description": "invalid params, or more than 32 parts" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
     "/.well-known/agent-card.json": { "get": { "summary": "A2A Agent Card", "operationId": "getAgentCard", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/security.txt": { "get": { "summary": "Security", "operationId": "getSecurity", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/oauth-authorization-server": { "get": { "summary": "OAuth Authorization Server Metadata", "operationId": "getOauthDiscovery", "responses": { "200": { "description": "ok" } } } },
@@ -6858,7 +6862,7 @@ var OPENAPI_SPEC = JSON.stringify({
     "/.well-known/x402": { "get": { "summary": "x402 discovery manifest", "operationId": "getX402", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok" } } } },
     "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok" } } } },
-    "/api/v1": { "get": { "summary": "Agent endpoint index", "operationId": "getApiIndex", "description": "Free JSON index of every agent surface this site serves. No payment, no authentication.", "responses": { "200": { "description": "ok" } } } },
+    "/api/v1": { "get": { "summary": "Agent endpoint index", "operationId": "getApiIndex", "description": "Free JSON index of the main agent entrypoints, with links to the full catalogs. No payment, no authentication.", "responses": { "200": { "description": "ok" } } } },
     "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id, quantity }] } with id one of audit, advisory, implementation, shopify (omit id for the default service, but id must not be null) and quantity, if present, exactly 1. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session" }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, an item id is null, an item quantity is present and not exactly 1, or an unknown item id" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
     "/api/acp/checkout_sessions/{session_id}": { "get": { "summary": "Retrieve an ACP checkout session", "operationId": "acpGetCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "session" }, "404": { "description": "unknown session id" }, "405": { "description": "GET only" } } } },
     "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Scope is agreed in writing before payment; no API completes it. The response is 422 intervention_required, never 200.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "422": { "description": "intervention_required: human confirmation in writing is required before this session can complete" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } },
@@ -7038,8 +7042,7 @@ var ACP_MANIFEST = JSON.stringify({
   "transports": ["rest"],
   "capabilities": {
     "services": ["checkout"],
-    "supported_currencies": ["eur"],
-    "checkout_note": "Every checkout session answers not_ready_for_payment: the order is agreed by email and a written scope before any payment, as /api/agent/audit and /api/agent/advisory state in the OpenAPI spec."
+    "supported_currencies": ["eur"]
   }
 }, null, 2);
 
@@ -7052,7 +7055,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.201.0",
+  "version": "3.202.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7241,7 +7244,7 @@ var X402_MANIFEST = JSON.stringify({
       "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
       "asset": X402_USDC_BASE,
-      "extra": { "name": "USDC", "version": "2", "settlement": X402_SETTLEMENT_NOTE }
+      "extra": { "name": X402_USDC_NAME, "version": "2", "settlement": X402_SETTLEMENT_NOTE }
     },
     {
       "scheme": "exact",
@@ -7253,7 +7256,7 @@ var X402_MANIFEST = JSON.stringify({
       "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
       "asset": X402_USDC_BASE,
-      "extra": { "name": "USDC", "version": "2", "settlement": X402_SETTLEMENT_NOTE }
+      "extra": { "name": X402_USDC_NAME, "version": "2", "settlement": X402_SETTLEMENT_NOTE }
     },
     {
       "scheme": "exact",
@@ -7265,7 +7268,7 @@ var X402_MANIFEST = JSON.stringify({
       "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
       "asset": X402_USDC_BASE,
-      "extra": { "name": "USDC", "version": "2", "settlement": X402_SETTLEMENT_NOTE }
+      "extra": { "name": X402_USDC_NAME, "version": "2", "settlement": X402_SETTLEMENT_NOTE }
     },
     {
       "scheme": "exact",
@@ -7277,7 +7280,7 @@ var X402_MANIFEST = JSON.stringify({
       "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
       "asset": X402_USDC_BASE,
-      "extra": { "name": "USDC", "version": "2", "settlement": X402_SETTLEMENT_NOTE }
+      "extra": { "name": X402_USDC_NAME, "version": "2", "settlement": X402_SETTLEMENT_NOTE }
     },
     {
       "scheme": "exact",
@@ -7289,7 +7292,7 @@ var X402_MANIFEST = JSON.stringify({
       "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
       "asset": X402_USDC_BASE,
-      "extra": { "name": "USDC", "version": "2", "settlement": X402_SETTLEMENT_NOTE }
+      "extra": { "name": X402_USDC_NAME, "version": "2", "settlement": X402_SETTLEMENT_NOTE }
     }
   ],
   "resources": [
@@ -7322,14 +7325,14 @@ var X402_INDEX_402 = JSON.stringify({
       "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
       "asset": X402_USDC_BASE,
-      "extra": { "name": "USDC", "version": "2", "settlement": X402_SETTLEMENT_NOTE }
+      "extra": { "name": X402_USDC_NAME, "version": "2", "settlement": X402_SETTLEMENT_NOTE }
     }
   ],
   "error": "Payment required to access this resource"
 }, null, 2);
 
 function build402Body(resource, label, amountUsdcMicro, amountEurCents, description) {
-  const extra = { "name": "USDC", "version": "2", "label": label };
+  const extra = { "name": X402_USDC_NAME, "version": "2", "label": label };
   // /api is a discovery probe with no EUR equivalent. Writing "eurCents": 0 into the
   // body states a price of 0,00 EUR for a resource that is not free, so the field is
   // omitted instead.
@@ -7410,7 +7413,7 @@ var UCP_PROFILE = JSON.stringify({
       "contact": "mailto:info@turva.dev"
     },
     "services": {
-      "dev.turva.agent-readiness": [
+      "dev.turva.agent_readiness": [
         {
           "version": "2026-07-04",
           "spec": "https://turva.dev/services",
@@ -7736,7 +7739,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-02";
+var SITEMAP_LASTMOD = "2026-10-03";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -8803,6 +8806,22 @@ function a2aJson(body, status, allow) {
   appendAgentLinks(headers);
   applySecurityHeaders(headers, "agent-api");
   return new Response(JSON.stringify(body, null, 2), { status: status || 200, headers });
+}
+
+// GET /v1/tasks/{id} and POST /v1/tasks/{id}:cancel (Tek-562). message:send answers at once with a
+// message and never creates a task, so every task id is unknown. The routes exist so a client that
+// follows the A2A transport reads the protocol error for an unknown task (-32001) instead of the
+// generic method-not-found. The id is echoed, cut to 128 characters.
+function parseA2aTaskPath(pathname) {
+  const prefix = "/v1/tasks/";
+  if (!pathname.toLowerCase().startsWith(prefix)) return null;
+  let rest = pathname.slice(prefix.length);
+  const cancel = rest.endsWith(":cancel");
+  if (cancel) rest = rest.slice(0, -7);
+  if (rest === "" || rest.includes("/")) return null;
+  let id = rest;
+  try { id = decodeURIComponent(rest); } catch { id = rest; }
+  return { id: id.slice(0, 128), cancel };
 }
 
 function a2aError(code, message, data, status, allow) {
@@ -11903,10 +11922,33 @@ function decodeDestination(s) {
 // starts a block of its own (heading, blockquote, list item, fence) is not paragraph text, so it
 // never becomes a setext title. Only a one-line title is read; a title over several lines is not
 // (Tek-560).
-function isSetextH1(line, next) {
-  if (typeof next !== "string" || !/^ {0,3}=+[ \t]*$/.test(next)) return false;
+function isSetextText(line) {
   if (!/^ {0,3}\S/.test(line)) return false;
   return !/^ {0,3}(?:#|>|[-*+](?:[ \t]|$)|\d{1,9}[.)](?:[ \t]|$)|`{3,}|~{3,})/.test(line);
+}
+function isSetextH1(line, next) {
+  if (typeof next !== "string" || !/^ {0,3}=+[ \t]*$/.test(next)) return false;
+  return isSetextText(line);
+}
+
+// The one predicate for "is this line an H2" (Tek-562). An ATX H2 is "##" followed by a space or
+// a tab. A setext H2 is one line of paragraph text, with the line before it blank or the start of
+// the file, underlined by a run of hyphens on the next line. The text line follows the setext H1
+// rule (isSetextText) and is also not a thematic break. The underline belongs to the heading, so
+// a list item followed by "---" or "---" after a blank line is not an H2. A line inside a fence,
+// or an underline inside one, is never a heading, which the mask says.
+function isAtxH2(line) {
+  return /^ {0,3}##[ \t]/.test(line);
+}
+function isSetextH2(lines, i, mask) {
+  if (i + 1 >= lines.length || (mask && (mask[i] || mask[i + 1]))) return false;
+  if (!/^ {0,3}-+[ \t]*$/.test(lines[i + 1])) return false;
+  if (i > 0 && lines[i - 1].trim() !== "") return false;
+  if (/^ {0,3}([-*_])(?: *\1){2,} *$/.test(lines[i])) return false;
+  return isSetextText(lines[i]);
+}
+function isH2At(lines, i, mask) {
+  return !(mask && mask[i]) && (isAtxH2(lines[i]) || isSetextH2(lines, i, mask));
 }
 
 // The text of an ATX H1, or null when the line is not one. One to three leading spaces, a
@@ -12030,7 +12072,7 @@ function validateLlmsTxt(f) {
     let late = -1;
     for (let i = h1End + 1; i < lines.length; i++) {
       if (fence[i]) continue;
-      if (/^ {0,3}## /.test(lines[i])) break;
+      if (isH2At(lines, i, fence)) break;
       if (/^ {0,3}>[ \t]*\S/.test(lines[i])) { late = i; break; }
     }
     add("summary", "warn", "Blockquote summary after the title", late === -1
@@ -12072,7 +12114,7 @@ function validateLlmsTxt(f) {
       linkedLineIdx.add(idx);
     }
   }
-  const h2Count = lines.filter((l, i) => !fenced[i] && /^ {0,3}## /.test(l)).length;
+  const h2Count = lines.filter((l, i) => isH2At(lines, i, fenced)).length;
   // A section counts when it carries a file list. An H2 followed by a paragraph satisfied
   // this check until 2026-08-29, and the format puts each section's links in a list.
   // A heading between the title and the first H2, or a second H1 anywhere, is out of place,
@@ -12095,7 +12137,7 @@ function validateLlmsTxt(f) {
         if (itemOpen) afterFence = true;
         continue;
       }
-      if (/^ {0,3}## /.test(l)) { inSection = true; counted = false; seenH2 = true; itemOpen = false; continue; }
+      if (isH2At(lines, i, fenced)) { inSection = true; counted = false; seenH2 = true; itemOpen = false; if (!isAtxH2(l)) i++; continue; }
       const h1 = /^ {0,3}#(?:[ \t]|$)/.test(l);
       if (misplaced === -1 && i > firstIdx && (h1 || (!seenH2 && /^ {0,3}#{3,6}(?:[ \t]|$)/.test(l)))) misplaced = i;
       if (h1) { inSection = false; itemOpen = false; continue; }
@@ -14413,7 +14455,8 @@ async function handleRequest(request, env) {
   // other method on every other path answers 405 with an Allow header instead of the GET
   // body, and the preflight advertises the same set it will honour.
   const acpFamily = pathLower === "/api/acp/checkout_sessions" || pathLower.startsWith("/api/acp/checkout_sessions/");
-  const postAllowed = pathLower === "/v1/message:send" || pathLower === "/v1/message:send/"
+  const a2aTask = parseA2aTaskPath(pathname);
+  const postAllowed = pathLower === "/v1/message:send" || pathLower === "/v1/message:send/" || (a2aTask !== null && a2aTask.cancel)
     || pathLower === "/api" || pathLower === "/api/" || pathLower === "/x402" || pathLower === "/x402/"
     || !!X402_ROUTES[pathLower] || !!X402_ROUTES[pathLower.replace(/\/$/, "")]
     || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token"
@@ -14422,16 +14465,18 @@ async function handleRequest(request, env) {
     return serve405(postAllowed ? "GET, HEAD, POST, OPTIONS" : "GET, HEAD, OPTIONS", pathLower);
   }
   if (request.method === "OPTIONS" && preflightPath && pathLower !== "/v1/message:send" && pathLower !== "/v1/message:send/") {
+    const cardPath = pathLower === "/.well-known/mcp/server-card.json" || pathLower === "/.well-known/mcp.json";
     const headers = new Headers({
       "access-control-allow-origin": "*",
-      "access-control-allow-methods": (acpFamily || postAllowed) ? "GET, POST, OPTIONS" : "GET, OPTIONS",
-      "access-control-allow-headers": "Content-Type, Accept, X-PAYMENT",
+      "access-control-allow-methods": cardPath ? "GET" : (acpFamily || postAllowed) ? "GET, POST, OPTIONS" : "GET, OPTIONS",
+      "access-control-allow-headers": cardPath ? "Content-Type, If-None-Match" : "Content-Type, Accept, X-PAYMENT",
       "access-control-max-age": "86400"
     });
+    if (cardPath) headers.set("access-control-expose-headers", "ETag");
     applySecurityHeaders(headers, "agent-api");
     return new Response(null, { status: 204, headers });
   }
-  if (request.method === "OPTIONS" && pathLower !== "/v1/message:send" && pathLower !== "/v1/message:send/" && !fediPath && !LEGACY_REDIRECTS[pathname]) {
+  if (request.method === "OPTIONS" && pathLower !== "/v1/message:send" && pathLower !== "/v1/message:send/" && a2aTask === null && !fediPath && !LEGACY_REDIRECTS[pathname]) {
     // A page or an unknown path: answer the method question and nothing else. Until v3.115.0
     // OPTIONS / fell through to serveHomeHtml and returned the whole page. The fediverse
     // aliases and the legacy paths keep redirecting on OPTIONS, as they do on GET.
@@ -14662,7 +14707,13 @@ async function handleRequest(request, env) {
     return serveStatic(OPENAPI_SPEC, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/mcp/server-card.json" || pathLower === "/.well-known/mcp.json") {
-    return serveStatic(MCP_SERVER_CARD, "application/json; charset=utf-8", "agent-api");
+    // The card is fetched cross-origin with a conditional request, so a browser client needs to read
+    // the ETag (expose) and send If-None-Match (the preflight below). The body is signed and unchanged.
+    const cardRes = serveStatic(MCP_SERVER_CARD, "application/json; charset=utf-8", "agent-api");
+    cardRes.headers.set("access-control-expose-headers", "ETag");
+    cardRes.headers.set("access-control-allow-methods", "GET");
+    cardRes.headers.set("access-control-allow-headers", "Content-Type, If-None-Match");
+    return cardRes;
   }
   if (pathLower === "/.well-known/ard.json") {
     return serveStatic(ARD_MANIFEST, "application/json; charset=utf-8", "agent-api");
@@ -14694,13 +14745,29 @@ async function handleRequest(request, env) {
     }
     return serveA2AMessageSend(request);
   }
+  if (a2aTask !== null) {
+    if (request.method === "OPTIONS") {
+      const taskPreflight = new Headers({
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": a2aTask.cancel ? "POST, OPTIONS" : "GET, OPTIONS",
+        "access-control-allow-headers": "Content-Type",
+        "access-control-max-age": "86400"
+      });
+      applySecurityHeaders(taskPreflight, "agent-api");
+      return new Response(null, { status: 204, headers: taskPreflight });
+    }
+    if (a2aTask.cancel && request.method !== "POST") {
+      return a2aError(-32600, "invalid request: A2A tasks:cancel is POST only", null, 405, "POST, OPTIONS");
+    }
+    return a2aError(-32001, "task not found", { taskId: a2aTask.id }, 404);
+  }
   if (pathLower === "/v1" || pathLower.startsWith("/v1/")) {
     // An honest error on the A2A surface names what this transport implements, rather than
     // falling through to the HTML 404 the card's reader would have to parse. /v1/card is
     // deliberately NOT served: it is the authenticated extended card, this card declares no
     // supportsAuthenticatedExtendedCard, and the public card is at /.well-known/agent-card.json.
     return a2aError(-32601, "method not found on the A2A HTTP+JSON transport", {
-      supported: ["POST /v1/message:send"],
+      supported: ["POST /v1/message:send", "GET /v1/tasks/{id}", "POST /v1/tasks/{id}:cancel"],
       agentCard: "https://turva.dev/.well-known/agent-card.json"
     }, 404);
   }

@@ -260,7 +260,7 @@ test("A2A: wrong method, bad body, unknown skill and unknown method all answer a
   const nested = await a2aSend({ message: { role: "user", parts: [], messageId: "t", metadata: { skillId: deep } } });
   assert.equal(nested.status, 200, "a non-string skillId must not crash the handler");
 
-  const unknown = await get("/v1/tasks/get");
+  const unknown = await get("/v1/unknown-method");
   assert.equal(unknown.status, 404);
   const u = await unknown.json();
   assert.equal(u.error.code, -32601);
@@ -950,7 +950,9 @@ test("R15 P4-2: OPTIONS answers 204 with preflight headers on every agent-api su
     // Round 16 (S1-4): the preflight advertises the methods the route honours, so a GET-only
     // surface says GET, OPTIONS and only the x402 roots and payable routes add POST.
     const postRoute = path === "/api" || path === "/x402" || path.startsWith("/oauth/");
-    assert.equal(r.headers.get("access-control-allow-methods"), postRoute ? "GET, POST, OPTIONS" : "GET, OPTIONS", path);
+    // Tek-562: the server card preflight says GET and allows If-None-Match, see test/tek562.test.mjs.
+    const wantMethods = path === "/.well-known/mcp/server-card.json" ? "GET" : postRoute ? "GET, POST, OPTIONS" : "GET, OPTIONS";
+    assert.equal(r.headers.get("access-control-allow-methods"), wantMethods, path);
     assert.equal(r.headers.get("access-control-allow-origin"), "*", path);
     assert.ok(r.headers.get("access-control-max-age"), path + " carries access-control-max-age");
     assert.equal(r.headers.get("ratelimit-policy"), '"default";q=100;w=60', path + " preflight carries the security headers (round 16 S1-3)");
