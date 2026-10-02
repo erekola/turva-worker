@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.199.1 - the hosted Markdown parity check runs markdown-parity-check 0.2.21 (Tek-559 decisions 2 and 3): raw HTML inside the Markdown is held to the same nesting limit as the HTML side, and code blocks skip button, template, nav and role subtrees like the rest of the content; every sitemap page still passes its own check with no error and no warning
 // turva.dev worker v3.199.0 - outside reviews W4 to W7 applied (Tek-559): seven dated posts corrected with a Corrected 2026-10-02 note (secret storage, credential helpers, replay, the patch-surge sources, the validator and code-host details), the hosted llms.txt validator also reports self-closing tags without a space, closing tags and HTML comments, the ai-catalog MCP entry uses application/mcp-server-card+json, ard.json carries representativeQueries, the root security.txt names its own Canonical, the api-catalog Content-Type carries the RFC 9727 profile, and the terms state the cookie basis, sub-processors, the one month backup maximum, the separate email and bookkeeping retention, the correction procedure, the liability cap basis, one target per hostname and the 14 day payment term from the invoice date
 // turva.dev worker v3.198.0 - the audit covers up to two targets named in the written scope at the one fixed price, the follow-up question round has a 14 calendar day submission window and a five business day answer, the services page says the fixes take about two days, and the MCP service catalog (MCP 1.6.12) and the server card carry the new version.
 // turva.dev worker v3.197.1 - the get_agent_readiness tool description no longer promises verification links: the tool returns one link, the scanner start page, so the MCP tool description (MCP 1.6.11) and the server card tool list now say that, and the server card is re-signed.
@@ -6752,7 +6753,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.199.0",
+    "version": "3.199.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7032,7 +7033,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.199.0",
+  "version": "3.199.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
