@@ -40,7 +40,7 @@ advisories in the full tree either. None was in the runtime tree, so
 none reached the deployed Worker. Checked 2026-10-01.
 
 `esbuild` is in the toolchain only as a dependency of wrangler. Wrangler
-4.146.0 declares it at exactly `0.28.1`, the release that fixed
+4.147.0 declares it at exactly `0.28.1`, the release that fixed
 GHSA-g7r4-m6w7-qqqr, an arbitrary file read in the esbuild development server
 on Windows. `turva-worker/package-lock.json` resolves that version, and
 `turva-worker/package.json` does not override it.
