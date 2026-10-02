@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.201.0 - outside reviews W15 to W25 applied (Tek-561): the Hardenize report link is back with its own measurement date 2026-10-02 beside the Internet.nl date 2026-09-23, the hosted llms.txt validator form returns to its result and names a port in its own fixed sentence while the set of accepted addresses stays the same, the hosted parity check gives two fixed selector sentences (not valid, matched nothing) and runs markdown-parity-check 0.2.22, the sample audit and Shopify reports fix their counts, units, dates and attributions, the Privacy section states the Cloudflare security log retention of 31 days and a 24 month deletion rule for a question that does not lead to an engagement, the audit's follow-up round carries the written scope sentence its sibling services carry, the home business node is an Organization without priceRange, the MCP server card names MCP 1.6.14, and the published OpenPGP key is split so that /pgp-key.asc and WKD serve the Ed25519 version 4 key alone, which GnuPG imports, while the post-quantum version 6 key moves to its own block at /pgp-key-v6.asc.
 // turva.dev worker v3.200.0 - outside reviews W8 to W14 applied (Tek-560): the hosted llms.txt validator fixes nine wrong results (blank-line labels, escaped destinations, CR line endings, setext H1, continuation-line links, bare angle brackets, template comments, linear query masking, empty blockquote summaries), the mobile menu closes on Escape and when focus leaves it through /nav.js, the blog search placeholder meets 4.5:1, the five example code blocks on the two tool pages are focusable, the dead Hardenize report link is removed with the dated reading kept, the legal page names the encrypted report address, the scanner's input, the processor breach notice, the private repository rule and Privacy last updated 2026-10-02, the company page says no subcontractors, and dated corrections on five posts plus wording on the audit, services, Shopify and guide pages.
 // turva.dev worker v3.199.1 - the hosted Markdown parity check runs markdown-parity-check 0.2.21 (Tek-559 decisions 2 and 3): raw HTML inside the Markdown is held to the same nesting limit as the HTML side, and code blocks skip button, template, nav and role subtrees like the rest of the content; every sitemap page still passes its own check with no error and no warning
 // turva.dev worker v3.199.0 - outside reviews W4 to W7 applied (Tek-559): seven dated posts corrected with a Corrected 2026-10-02 note (secret storage, credential helpers, replay, the patch-surge sources, the validator and code-host details), the hosted llms.txt validator also reports self-closing tags without a space, closing tags and HTML comments, the ai-catalog MCP entry uses application/mcp-server-card+json, ard.json carries representativeQueries, the root security.txt names its own Canonical, the api-catalog Content-Type carries the RFC 9727 profile, and the terms state the cookie basis, sub-processors, the one month backup maximum, the separate email and bookkeeping retention, the correction procedure, the liability cap basis, one target per hostname and the 14 day payment term from the invoice date
@@ -3161,7 +3162,7 @@ Estimated edge work is about eleven hours for F1 to F7, or eleven and a half hou
 | Manual review | 2026-09-03 and 2026-09-04, whole catalog read through the API and the sitemap |
 | AI visibility run | 2026-09-04, 15 questions to four assistants, one anonymous run per question, conditions in appendix B |
 | Report delivered | 2026-09-08, fourteen days after the kickoff |
-| Written follow-up round | Open until 2026-09-22 |
+| Written follow-up round | Questions open until 2026-09-22, answered within five business days |
 | Re-scan | One, included, on a day the company names: within 30 days of the report, by 2026-10-08, or within 30 days of the delivered corrections when the correction add-on is bought, the second route under After the report |
 | Access used | Public surfaces only. No login, no credentials, no code repository |
 
@@ -3179,7 +3180,7 @@ The company needs to make five decisions. Each row shows which work depends on i
 
 ## Fixes, owners and estimated effort
 
-Fix the problems affecting buyers first. The table separates a correction made at the edge from a permanent correction at the source, because they are different pieces of work. Both columns are on this fix list. Decision D1 says who does them: the company's team from this report, or turva.dev for the fixed price on the services page, in which case the access each source row needs is arranged in writing first, as What each party delivers sets out. Two source cells are neither, and they are marked in the table: a decision belongs to the company, and a request to an outside directory belongs to the directory. The effort figures are estimates scoped to these findings, not a quote.
+Fix the problems affecting buyers first. The table separates a correction made at the edge from a permanent correction at the source, because they are different pieces of work. Both columns are on this fix list. Decision D1 says who does them: the company's team from this report, or turva.dev for the fixed price on the services page, in which case the access each source row needs is arranged in writing first, as What each party delivers sets out. Two kinds of entry in the source column are not implementation work, and they are marked in the table: a decision (F3, F5, F8) belongs to the company, and a request to an outside directory (F9) belongs to the directory. The effort figures are estimates scoped to these findings, not a quote.
 
 | Order | Finding | Checks moved | Correction at the edge | Correction at the source | Edge hours | Source hours |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -3284,7 +3285,7 @@ These are the sample's readings from 2026-09-03. PASS and FAIL are the scanner's
 | Discoverability | sitemap | PASS | /sitemap.xml exists and parses, 14 URLs. | F4, a manual finding, the check stays green | Green with none of the 138 products in it. The check reads the file, not the catalog |
 | Discoverability | linkHeaders | FAIL | No Link header on any response. | F3 | Cheap, and it is how a page points at its own markdown twin and at llms.txt |
 | Discoverability | dnsAid | FAIL | No _index._agents record under the domain, DNSSEC not enabled. | F7 enables DNSSEC, the record waits | Needs the company's DNS and an agent registry for the record to point at. Northwind publishes none, so the check stays red after this round |
-| Content | markdownNegotiation | FAIL | Accept: text/markdown returns text/html, 212 kB on the home page. | F2 | The catalog and the delivery terms are what a buyer's assistant reads, and today it reads them as 200 kB of markup per page |
+| Content | markdownNegotiation | FAIL | Accept: text/markdown returns text/html, 217 kB on the home page. | F2 | The catalog and the delivery terms are what a buyer's assistant reads, and today it reads them as more than 200 kB of markup per page |
 | Bot access control | robotsTxtAiRules | FAIL | No AI crawler named in robots.txt. | F5 | A stated preference the company has not stated. Decision D2 |
 | Bot access control | contentSignals | FAIL | No Content-Signal line in robots.txt. | F5 | Same file, same decision |
 | Bot access control | webBotAuth | INFO | No Web Bot Auth directory. Informational, not scored. | None | The company operates no bots that would sign requests |
@@ -3364,7 +3365,7 @@ Nine findings. Each one shows the evidence, why it matters, the correction, the 
 
 **Category and scanner effect.** Structured data. Manual review, not scored.
 
-**What was found.** GET /products/din-933-m12x40-a2/ on 2026-09-03 returns a JSON-LD Product node with \`"price": "0.00"\`, \`"priceCurrency": "EUR"\` and \`"availability": "https://schema.org/InStock"\`. The visible page shows 0,42 EUR per piece, VAT 0 %, and a lead time of six weeks. The same node shape appears on all 138 product pages, read by fetching both pages of /wp-json/wc/store/v1/products, following every product URL and reading the price field of each. The API returns prices.price as an empty string and is_purchasable true for every product. Its stock fields show 90 products in stock with no backorder, is_on_backorder true for 41 and is_in_stock false for 7. The 19 products that come in several thread lengths show a price per variant on the page and publish one Product node for all of them. The 12 products sold by the box of 100 show the box price on the page and publish no unit at all, in JSON-LD or in the API, so nothing on either surface says which quantity a price belongs to.
+**What was found.** GET /products/din-933-m12x40-a2/ on 2026-09-03 returns a JSON-LD Product node with \`"price": "0.00"\`, \`"priceCurrency": "EUR"\` and \`"availability": "https://schema.org/InStock"\`. The visible page shows 0,42 EUR per piece, excl. VAT, and a lead time of six weeks. The same node shape appears on all 138 product pages, read by fetching both pages of /wp-json/wc/store/v1/products, following every product URL and reading the price field of each. The API returns prices.price as an empty string and is_purchasable true for every product. Its stock fields show 90 products in stock with no backorder, is_on_backorder true for 41 and is_in_stock false for 7. The 19 products that come in several thread lengths show a price per variant on the page and publish one Product node for all of them. The 12 products sold by the box of 100 show the box price on the page and publish no unit at all, in JSON-LD or in the API, so nothing on either surface says which quantity a price belongs to.
 
 **Why it matters.** No scanner points, and the highest impact in this report. Observed in this run: one by-name answer on 2026-09-04 told a buyer the catalog is free and cited the product page. That page carries two prices, 0,42 EUR in its text and 0.00 in its JSON-LD, and the zero price is a technical finding of its own. Nothing recorded shows which part of the page the assistant used, so the link between the two is an interpretation. Possible and not observed: an agent that reads the API as data gets an empty price and a purchasable flag. A second effect belongs to later rather than now: a box price published without its unit may be read as the price of one piece, making the quoted per-piece price one hundred times the actual per-piece price. That is why price and price basis are two separate rules below. In this sample, correcting the product facts takes priority because one recorded answer already repeats a wrong price claim.
 
@@ -3375,7 +3376,7 @@ Nine findings. Each one shows the evidence, why it matters, the correction, the 
 - Availability from the stock state, not from the lead time text. In the Store API the stock state is two fields. BackOrder when is_on_backorder is true, OutOfStock when is_in_stock is false, InStock when is_in_stock is true and is_on_backorder is false. The schema notes that is_on_backorder also reads false when backorder notifications are turned off, so a product the confirmed record lists on backorder and the API shows only as in stock is a row to resolve, not a pass. PreOrder is not used: no product in this catalog has a release date, and a lead time on an existing product is a BackOrder with a deliveryLeadTime of six weeks, not a pre-order. The lead time is published in that field and in the page text, and it does not decide the availability value on its own.
 - Variants. The 19 variable products publish one offer per variant, 61 in all, with the variant's own price and stock state, matching the variation list the page shows. The Store API leaves variations out of its default listing, and the parent's variations array carries only each variant's id and attributes, so the 61 variant rows are read from /wp-json/wc/store/v1/products?type=variation, where each variant has its own prices, is_in_stock and is_on_backorder.
 
-Exceptions, listed so that the acceptance test does not read them as failures. Six products are priced on request: the page says so, and they carry no price in JSON-LD or in the API, only an availability from their stock state. The API marks them is_purchasable false. Four products are discontinued and still published: they carry availability Discontinued and no price, and the API marks them is_purchasable false as well. The Store API has no discontinued state, so the confirmed product record names the four. Neither group is then presented as purchasable on any of the three surfaces. Decision D4 says whether any of the ten stays published, and the acceptance run reads the published ones against these rules and the unpublished ones against the removal list. The exception is from the price rules, not from the run.
+Exceptions, listed so that the acceptance test does not read them as failures. Six products are priced on request: the page says so, and they carry no price in JSON-LD or in the API, only an availability from their stock state. After the fix the API marks them is_purchasable false. Four products are discontinued and still published: they carry availability Discontinued and no price, and after the fix the API marks them is_purchasable false as well. The Store API has no discontinued state, so the confirmed product record names the four. Neither group is then presented as purchasable on any of the three surfaces. Decision D4 says whether any of the ten stays published, and the acceptance run reads the published ones against these rules and the unpublished ones against the removal list. The exception is from the price rules, not from the run.
 
 **Who does it and estimated effort.** Two corrections, and the report keeps them apart. At the source, the catalog plugin's structured data mapping and the setting that hides prices from the API for anonymous readers: about two and a half hours in the CMS and its plugin. At the edge, the JSON-LD is corrected on the way through, on every product page, from the price, unit, variant and stock elements the page itself renders, so the served node is right from the day the worker goes live: about three hours, plus one hour for the whole-catalog acceptance script the company keeps. Both are on the fix list, and D1 decides who makes them. The edge cannot correct the API, because the API's empty price is the origin withholding data and there is nothing on the way through to correct it from, so the API rows are fixed in the origin's own setting whoever holds it. The acceptance below says which rows are read on which surface.
 
@@ -3383,7 +3384,7 @@ Exceptions, listed so that the acceptance test does not read them as failures. S
 
 It then checks that the API total of the default listing, the variant count at type=variation, the sitemap product count and the number of product pages agree with that list, and follows every published product URL. It compares four columns row by row: the visible page, the JSON-LD, the API and the confirmed product record. The record is the company's own list of products and variants with the price, currency, price basis and availability it confirms in writing, and the other three are read against it, because three surfaces can agree with each other on the same wrong price. The API column is read on price in minor units, currency, availability and is_purchasable. The price basis is read on the page, in the JSON-LD and in the record. The API column carries no price basis because the API has no field for it, and an empty basis there is the remaining limit the price basis rule names, not a failed row. Nothing is skipped in silence: a product on neither the published list nor the agreed removal list fails the run.
 
-The delivery is accepted when four things hold. Every price row and every availability row of the published catalog agrees on the three surfaces and with the confirmed product record, and the price basis of every row agrees on the page, in the JSON-LD and with the record. Each published price-on-request product carries no price, the availability its stock state gives and is_purchasable false. Each published discontinued product reads Discontinued, no price and is_purchasable false. Every product on the removal list is gone from the page, the sitemap and the API. Any row that still differs is listed with its product URL and the surface it differs on, not hidden inside a total. The finding closes at the retest, when the four columns agree on every value each of them carries. The retest report repeats the remaining limit, that the API publishes no price basis, so a closed F1 is not read as an API that states one. Appendix A, chain 1, shows one row of this test end to end.
+The delivery is accepted when four things hold. Every price row and every availability row of the published catalog agrees on the three surfaces and with the confirmed product record on every value each surface carries, and the price basis of every row agrees on the page, in the JSON-LD and with the record. Each published price-on-request product carries no price, the availability its stock state gives and is_purchasable false. Each published discontinued product reads is_purchasable false on the API and Discontinued on the page and in the JSON-LD, with no price. Every product on the removal list is gone from the page, the sitemap and the API. Any row that still differs is listed with its product URL and the surface it differs on, not hidden inside a total. The finding closes at the retest, when the four columns agree on every value each of them carries. The retest report repeats the remaining limit, that the API publishes no price basis, so a closed F1 is not read as an API that states one. Appendix A, chain 1, shows one row of this test end to end.
 
 **Guide.** [JSON-LD and structured data for AI clients](/guides/json-ld-structured-data).
 
@@ -3391,9 +3392,9 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **Category and scanner effect.** Content accessibility. Scored check markdownNegotiation.
 
-**What was found.** GET / with Accept: text/markdown on 2026-09-03 returns Content-Type text/html and a 212 kB body. The same request to /products/ and to a product page returns HTML of 340 kB and 188 kB. No .md address exists for any page. The markdown form of the home page, produced from the same HTML on 2026-09-03, is 9 kB.
+**What was found.** GET / with Accept: text/markdown on 2026-09-03 returns Content-Type text/html and a 217 kB body. The same request to /products/ and to a product page returns HTML of 340 kB and 188 kB. No .md address exists for any page. The markdown form of the home page, produced from the same HTML on 2026-09-03, is 9 kB.
 
-**Why it matters.** One scored check. Observed: the three page sizes above, and the 9 kB markdown form of the home page. Possible and not observed: an assistant with a fixed reading budget stops before the end of a 212 kB page. Nothing in the AI run of 2026-09-04 shows an assistant truncating a Northwind page, and the report does not claim it.
+**Why it matters.** One scored check. Observed: the three page sizes above, and the 9 kB markdown form of the home page. Possible and not observed: an assistant with a fixed reading budget stops before the end of a 217 kB page. Nothing in the AI run of 2026-09-04 shows an assistant truncating a Northwind page, and the report does not claim it.
 
 **What to change.** Put an edge worker in front of the origin that answers a text/markdown request with the markdown form of the page at the same address, and publishes each page at its .md address as well. The origin is not touched. The worker converts the rendered HTML on the way through and caches the result per URL. This is the worker every other edge finding in this report lives in, so its cost is paid once, and the acceptance list below is the acceptance list of the edge itself.
 
@@ -3403,7 +3404,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 - Content negotiation. A request with Accept: text/markdown returns Content-Type: text/markdown and a body that starts with the page title as a heading. A request with Accept: text/html, or with no Accept header, returns the origin's HTML page carrying the corrections this report agrees to and nothing else, which on a product page means the F1 JSON-LD and the F9 Organization address and every other byte as the origin served it. The markdown conversion changes no part of the HTML response. A request that lists both with a higher q on text/html gets HTML.
 - Separate caches. Every response the worker negotiates or converts carries Vary: Accept, so no cache serves the markdown form to a browser or the HTML form to an agent that asked for markdown. The routes named in the Scope line below are outside this, because the worker adds nothing to them. Checked by requesting the two forms in both orders from a cold cache.
-- Freshness. A price changed at the origin appears in the markdown form within ten minutes. The worker meets that by revalidating against the origin on every request, which is faster than the limit, or by caching the markdown for at most ten minutes. Checked with a controlled change: the price is changed at the origin at a recorded time, and both forms of the page are read once the ten minutes have passed. One comparison at a single moment does not measure a delay, so it does not settle this line.
+- Freshness. A price changed at the origin appears in the markdown form within ten minutes. The worker meets that by revalidating against the origin on every request, which is faster than the limit, or by caching the markdown for at most ten minutes. Checked with a controlled change: the price is changed at the origin at a recorded time, and both forms of the page are read at the recorded change time plus ten minutes, with the read time recorded. A fresh Markdown form at that read passes and a stale one fails. One comparison at a single moment does not measure a delay, so it does not settle this line.
 - Canonicals. The .md twin carries Link: rel="canonical" pointing at the HTML page, and the HTML page carries rel="alternate" type="text/markdown" pointing at the twin, so the HTML page is the declared preferred URL and the twin its alternate.
 - HTTP statuses. A page the origin serves with 404 is 404 in markdown. A 301 from the origin is passed through as a 301, not converted. An origin 500 is passed through as 500 and is never cached as markdown.
 - Scope. /cart/, /checkout/, /my-account/, /wp-admin/, /wp-login.php, every /wp-json/ route and every response that sets a cookie or carries a session are passed through untouched and never converted or cached. Checked by requesting each with Accept: text/markdown and reading the response unchanged.
@@ -3549,7 +3550,7 @@ Chain 1, F1, one row of the whole-catalog test.
 | Step | Content |
 | --- | --- |
 | Request | GET /products/din-933-m12x40-a2/ on the host northwind-fasteners.example with Accept: text/html, 2026-09-03 |
-| Response excerpt | Visible: 0,42 EUR / kpl, alv 0 %, toimitusaika 6 viikkoa. JSON-LD: \`"@type": "Product", "offers": {"price": "0.00", "priceCurrency": "EUR", "availability": "https://schema.org/InStock"}\` |
+| Response excerpt | Visible: 0,42 EUR / kpl, ilman alv:tä, toimitusaika 6 viikkoa. JSON-LD: \`"@type": "Product", "offers": {"price": "0.00", "priceCurrency": "EUR", "availability": "https://schema.org/InStock"}\` |
 | Second request | GET /wp-json/wc/store/v1/products?slug=din-933-m12x40-a2 on the same host |
 | Response excerpt | "prices": {"price": "", "currency_code": "EUR", "currency_minor_unit": 2}, "is_purchasable": true, "is_in_stock": true, "is_on_backorder": true |
 | Observation | Three surfaces, three answers: 0,42 EUR with a six week lead time, 0,00 EUR in stock, and no price at all but purchasable |
@@ -3571,7 +3572,7 @@ Chain 2, F2, markdown negotiation on the home page.
 | --- | --- |
 | Request | GET / on the host northwind-fasteners.example with Accept: text/markdown, 2026-09-03 |
 | Response excerpt | HTTP 200, Content-Type: text/html, Content-Length 217088, no Vary header, no Link header, body starts with the HTML doctype |
-| Observation | The origin ignores the Accept header. 212 kB of markup for a page whose markdown form is 9 kB |
+| Observation | The origin ignores the Accept header. 217 kB of markup for a page whose markdown form is 9 kB |
 | Change | Edge worker converts the rendered HTML on the way through and serves it at the same address and at /index.md, with the acceptance list in F2 |
 | Acceptance reading | HTTP 200, Content-Type: text/markdown, Vary: Accept, Link: rel="canonical" to the HTML page, body starts with the page title as a heading, 9 216 bytes. The same request to /cart/ passes through as HTML untouched. markdownNegotiation PASS on the retest scan |
 
@@ -3619,7 +3620,7 @@ The delivered report carries every one of the 60 answers as a row of this form. 
 
 ## About this sample
 
-Every figure on this page is invented. The check names, the categories and the statuses are the scanner's real vocabulary as read on 2026-09-23, the draft name in F7 is the real IETF draft, and the four assistants in appendix B are the four the published measurement used, so that the sample shows how a real report reads. The site, the readings, the assistants' answers, the addresses and the security scores are fiction. A real report carries the raw scanner output, the request and response logs, the whole-catalog script and its output and the 60 AI answers with the assistant named on each. The sample covers one target. A real audit covers up to two named in the written scope.
+Every figure on this page is invented. The check names, the categories and the statuses are the scanner's real vocabulary as read on 2026-09-23, the draft name in F7 is the real IETF draft, and the four assistants in appendix B are the four the published measurement used, so that the sample shows how a real report reads. The site, the readings, the assistants' answers, the addresses and the security scores are fiction. A real report carries the raw scanner output, the request and response logs, the list of every page read for metadata and headers, the whole-catalog script and its output and the 60 AI answers with the assistant named on each. The sample covers one target. A real audit covers up to two named in the written scope.
 
 The audit is described on the [services page](/services). To start one, email [info@turva.dev](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) with the site or API URL and what the audit should answer. The Shopify agent storefront check has its own [sample report](/samples/shopify-agent-storefront-check).
 `,
@@ -3712,7 +3713,7 @@ Each row compares one variant. The three tool interfaces returned the same produ
 | Merino Base Layer, M | gid://shopify/ProductVariant/100000000002 | Merino Base Layer |
 | Camp Mug, green | gid://shopify/ProductVariant/100000000003 | Camp Mug |
 
-The 30 day return window, free shipping above 80 EUR and the delivery estimate of two to four working days matched across the storefront, the WebMCP policy tool and the Storefront MCP policy response. The Agentic Catalog preview has no policy fields, so their absence is not a mismatch.
+The 30-day return window, free shipping above 80 EUR and the delivery estimate of two to four working days matched across the storefront, the WebMCP policy tool and the Storefront MCP policy response. The Agentic Catalog preview has no policy fields, so their absence is not a mismatch.
 
 The price difference was reproduced at 11:20 and 14:05 EEST. The merchant's redacted settings screenshot shows the M variant's Agentic eligibility switched off. According to the merchant's written note at the kickoff, every product in scope was meant to be sellable in that channel. No settings were changed during the test.
 
@@ -3726,10 +3727,12 @@ Each row records the tool, the input, the result and the cart state for the five
 | Search 2, "merino base layer size M" | WebMCP search_catalog | Merino Base Layer returned, M variant listed as in stock | Empty | Aligned |
 | Search 3, "camp mug green" | WebMCP search_catalog | Camp Mug returned, green variant listed | Empty | Aligned |
 | Search 4, "waterproof jacket" | WebMCP search_catalog | Two jackets returned, both outside the scope, no claim recorded | Empty | Observed |
-| Search 5, "return policy" | WebMCP search_shop_policies_and_faqs | 30 day return window returned, matches the storefront policy page | Empty | Aligned |
+| Search 5, "return and shipping policy" | WebMCP search_shop_policies_and_faqs | 30-day return window, free shipping above 80 EUR and a delivery estimate of two to four working days returned, matching the storefront policy page | Empty | Aligned |
 | Remote catalog search | Storefront MCP search_catalog on the UCP catalog endpoint, "trail bottle", Finland EUR | Trail Bottle 750 ml returned first, blue variant at 31,90 EUR, in stock | Empty | Mismatch, remote price |
 | Remote product read | Storefront MCP get_product, Trail Bottle, blue variant | Same title and variant ID as the storefront, 31,90 EUR | Empty | Mismatch, remote price |
-| Remote policy read | Storefront MCP search_shop_policies_and_faqs, "return policy" | 30 day return window, matches the storefront policy page | Empty | Aligned |
+| Remote policy read | Storefront MCP search_shop_policies_and_faqs, "return and shipping policy" | 30-day return window, free shipping above 80 EUR and a delivery estimate of two to four working days, matching the storefront policy page | Empty | Aligned |
+| Remote product read, Merino Base Layer M | Storefront MCP get_product, M variant | Same title and variant ID as the storefront, 79,00 EUR, in stock | Empty | Aligned |
+| Remote product read, Camp Mug green | Storefront MCP get_product, green variant | Same title and variant ID as the storefront, 18,50 EUR, in stock | Empty | Aligned |
 | Agentic Catalog preview | Catalog search preview for the three products, from the merchant's redacted screenshots | Trail Bottle and Camp Mug sellable, Merino Base Layer M unavailable | Empty | Mismatch, variant eligibility |
 | Product detail | WebMCP get_product and show_variant, Trail Bottle blue | Material, volume, price 29,90 EUR and stock matched the storefront page | Empty | Aligned |
 | Add to cart | WebMCP update_cart, one blue Trail Bottle | Cart line created, quantity 1, line price 29,90 EUR | One line, 29,90 EUR | Aligned |
@@ -3915,7 +3918,7 @@ Example from a fictional audit, finding F1.
 
 ## One product. Three different answers.
 
-- Visible product page: 0,42 EUR per piece · VAT 0 % · Lead time six weeks
+- Visible product page: 0,42 EUR per piece · excl. VAT · Lead time six weeks
 - Structured product data: 0,00 EUR · InStock · conflict
 - Product API: Empty price · Marked purchasable · conflict
 
@@ -3958,9 +3961,9 @@ Scanner: isitagentready.com, third party, Cloudflare.
 
 Verified 100/100, Level 5, Agent-Native.
 
-I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. Measured 2026-09-23.
+I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. I measured all three on 2026-09-23 and Hardenize again on 2026-10-02.
 
-- Hardenize: all 24 categories passed.
+- Hardenize, measured 2026-10-02: all 24 categories passed. [hardenize.com/report/turva.dev](https://www.hardenize.com/report/turva.dev)
 - Internet.nl website test: 98/100. [internet.nl/site/turva.dev](https://internet.nl/site/turva.dev/)
 - Internet.nl email test: 90/100. [internet.nl/mail/turva.dev](https://internet.nl/mail/turva.dev/)
 
@@ -4077,7 +4080,7 @@ Four written deliverables within 48 hours of the agreed written kickoff, and a f
 
 A technical scan, a manual review of your website and API surfaces, and a recorded question set put to selected AI assistants. The report keeps the technical findings and the observed AI answers apart.
 
-The audit is delivered within two weeks of the agreed written kickoff. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. [Read the full scope and the deliverables](/agent-readiness-audit).
+The audit is delivered within two weeks of the agreed written kickoff. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers. [Read the full scope and the deliverables](/agent-readiness-audit).
 
 ## Implementation
 
@@ -4379,7 +4382,7 @@ A written report that answers four questions:
 - What should your team fix first?
 - How can the correction be checked?
 
-You also receive the recorded AI questions and answers, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.
+You also receive the recorded AI questions and answers, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers.
 
 Each finding includes correction instructions and, where available, a link to the relevant guide. The order reflects the effect on users and agent behaviour, with effort and scanner effects recorded separately.
 
@@ -4393,7 +4396,7 @@ We agree the work. Send the URLs of up to two targets and your question. I confi
 
 I run the checks. I complete the scan, manual review and AI questions, recording the evidence and dates.
 
-You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. One round of written follow-up questions is included. Submit it within 14 calendar days of the report and I answer it within five business days.
+You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. One round of written follow-up questions is included. Submit it within 14 calendar days of the report and I answer it within five business days. The written scope agreed before kickoff sets how many questions that round covers.
 
 After the corrections, you choose the day for the included re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again using the same question set. The follow-up shows both readings and any changes in the method.
 
@@ -4649,21 +4652,21 @@ The audit does not require production credentials. Any deployment, DNS, Shopify 
 
 You can send OpenPGP-encrypted email to [erik@turva.dev](mailto:erik@turva.dev). Encryption is optional, and an ordinary message receives the same reply time.
 
-The public key is at https://turva.dev/pgp-key.asc. It is also published through Web Key Directory, so a mail client that supports WKD can look it up from the address alone.
+The version 4 key is at https://turva.dev/pgp-key.asc. It is also published through Web Key Directory, so a mail client that supports WKD can look it up from the address alone. The version 6 key is at https://turva.dev/pgp-key-v6.asc and is not published through Web Key Directory.
 
-Two keys are published for the same address. The first is an OpenPGP version 4 key, Ed25519 for signatures with a Curve25519 encryption subkey. The second is an OpenPGP version 6 key, ML-DSA-65+Ed25519 for signatures with an ML-KEM-768+X25519 encryption subkey, the post-quantum pair that carries the encryption when a client uses this key.
+Two keys are published for the same address. The first is an OpenPGP version 4 key, Ed25519 for signatures with a Curve25519 encryption subkey. The second is an OpenPGP version 6 key, ML-DSA-65+Ed25519 for signatures with an ML-KEM-768+X25519 encryption subkey, the post-quantum pair that carries the encryption when a client uses this key. The version 6 key is for clients that read OpenPGP version 6.
 
 Whether a client can use either key depends on whether it reads that key version and those algorithms, not on OpenPGP support in general, and version 6 support alone does not settle the second one, because the post-quantum algorithms are a separate extension to the format. Clients also differ in whether they look a key up through WKD at all, and which of the two keys a client uses depends on that client.
 
 I have not tested any particular mail client against these keys.
 
-A tested read of the Ed25519 key alone, with GnuPG 2.4.9: \`gpg --dearmor < pgp-key.asc | gpgsplit\` splits the published bundle into its packets, then \`cat 00000{1..5}-*.* | gpg --show-keys --with-fingerprint\` shows the key and its fingerprint. GnuPG 2.4.9 does not parse the version 6 key on its own.
+GnuPG 2.4.9 imported the version 4 key from /pgp-key.asc and refused the version 6 key. That was a test of the command-line tool and not of a mail client.
 
-Fingerprint of the Ed25519 key:
+Fingerprint of the version 4 Ed25519 key:
 
 96EA E8CF 3B99 FB0E 8E28 7426 C5E6 B20F 8FF0 7FC6
 
-Fingerprint of the post-quantum key:
+Fingerprint of the version 6 post-quantum key:
 
 43DA 21C6 8589 9321 BD1A 70C0 AD85 25CE B408 3B71 DF22 6EFC BE5C 737C BDDA 8DA7
 
@@ -4722,11 +4725,11 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, operating the llms.txt validator, meaning fetching and checking the documents it names, its forwarding of a visitor's IP address to the site named, the site's rate limit, and processing a client's own contact persons rest on legitimate interest. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
-**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to seven days of security analytics and 24 hours of security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within one month at most. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
+**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to 31 days of both security analytics and security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within one month at most. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
 
 **International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. For the Anthropic API, Anthropic's data processing addendum incorporates the EU Standard Contractual Clauses, Module Two or Module Three, for data transferred out of the EEA, including to Anthropic, PBC in the United States. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA that is not hosted on Cloudflare, Cloudflare adds that visitor's IP address to the requests the check makes, and a Worker cannot remove it. If the site is in a country without an adequacy decision, no standard contractual clauses cover those requests: the address reaches the site only because the user entered it and started the check, and a user who does not want that can leave the check unrun.
 
-**Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material.
+**Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. A question sent by email, Signal or LinkedIn that does not lead to an engagement is deleted 24 months after the latest message.
 
 **Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies, each new copy replaces the oldest, and every backup, version history included, is overwritten within one month. A backup is never restored for any other purpose. Deleted client material has left every backup within one month at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files exist only inside the backups and leave with them when the rotation replaces them, within the same month. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
@@ -6344,6 +6347,11 @@ Canonical: https://turva.dev/security.txt
 Policy: https://turva.dev/legal#reporting-a-vulnerability
 `;
 
+// Two published keys, two blocks (Tek-561, 2026-10-02). GnuPG imports nothing from one armored
+// block that holds a version 4 key followed by a version 6 key, so the Ed25519 version 4 key
+// is served alone at /pgp-key.asc and through WKD, and the post-quantum version 6 key has its
+// own block at /pgp-key-v6.asc. The two blocks are the packets of the earlier single block,
+// split at the second public-key packet, so the key material is unchanged.
 var PGP_PUBLIC_KEY = `-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 xjMEap73mBYJKwYBBAHaRw8BAQdAPcu7smgWgUwI5Kr4zi6vBx43kfeLkUlpPS9n
@@ -6357,293 +6365,299 @@ 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
-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
-u6VH46Stl3pA2M+JQStnd6cHUJkpLhJ4W9Vhm2pAsSJsfGOmDg87QvgV+35eP+ai
-pAeQ4bmggmN0Ya7bPa3BKkO7ViZ2YPefPL7hvk2ZyLKipGR4Q6ZAM0ewpBz/BNCK
-aMWi4HjE9PLk1SxU0U8u9xMi9IiJe41QEKtrGra83z7UjrXbUgCDOTKn3UGnIo4L
-lIXD8JnH78Oi8sGR9nwKPKUQrAh/01SULZeguYMjJywa1WOjCmOfOHVWedy3WNZy
-QeBc+tTC5HpFU9Hm3L6ZqcgTE7C3d4QLoA6ER8wEQcfRZmW4ymjVaO4cPEeqYavr
-rbLyjWrLKn6ytt5KR1JcX+To+zoXr+2bDyyDTzLtZqWLQKrUn3/Pzw5mRU+Zr+HW
-/l+IReIvieTopd6rOnkLz6+uAOiL1OZWARjyT8nmVK8NYQZ86uj5waPXSLJHMQMf
-5F2xQq4/1+YwWcXaCaHG9NmUPeM/ZpUDHt8GRuTiLtQhRzdKeppVZFGr3xEw9YD1
-G+zR0+bLrCwznGu9N3Lqsljn50COePqAkVc2J4RwMQiFNMbw/VMjPvaHcBWF0F2A
-HhKNd3QuQWmnvuphXmw8o/J+TxDbC09K9DhqynFfA6fGNwkJV+Xt2i34xUMzkU7O
-roEXS1m0/K8dDrV5AF9a+Wqx50j9ZgV3T55mYF0Mu0nw08SdF9fviA9XjSspQN5n
-+MAiEDzj8zag3SAlwbTkeLFyFsMZ24y+xMYzeEUJ4USxBTRRYK85XYTQQz5clJZ8
-uM/OP+1YPvJXWS2IrPmPBdrQTkYrA8Y0NA2upRgVP+mL4wWJiazyAfd+Sa0bTBby
-7HxoKEk1x6go0sdAjptjWd2bykuqw0jSK+37r8zc/aZROrUxJ7Ej6VXlXf32jqNd
-f5w0kIdD8xgLgUfnNsAPeHUWhsb3WlKHy+8jEd8p7qw/w6uROHrt24FzcM3I8xv8
-GGoUk/mIS/FLnSnslW+g0bjdOLFhzMA6SRlRWdHsUBOitkFuMFl2gT4FXWqppc2W
-qqDSf/ROVipt6xiny70hOddzeH7p7uJUEOE88A3eFiY9aa/2/5fVmB/t5Tex26DU
-q3sjHO/1oDhnpKMETJiqaaohMsAZNGbGsql5aewEuLPgGeCUJx+5FTFpwdtOBoUf
-SmyuOqXWMqCLI2lUGLUoE9BAl5R8OynbY1qqsx3sDd1x9Qcs5nd7i0VSD/EgAT0R
-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
-AAAAAAAAAAAAAAAABQsTHCIl
-=tTgd
+kJfHiSB/mxO2E6wWnrnS9UhVBws=
+=9mBy
+-----END PGP PUBLIC KEY BLOCK-----
+`;
+
+var PGP_PUBLIC_KEY_V6 = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+=dThf
 -----END PGP PUBLIC KEY BLOCK-----
 `;
 
@@ -6654,7 +6668,7 @@ AAAAAAAAAAAAAAAABQsTHCIl
 // address it looked up.
 var PGP_WKD_HASH = "agk5kn8g6dnzi4z7szws1t9ns6xgw14y";
 
-// WKD serves the raw key, not the armored block. Deriving the bytes from
+// WKD serves the raw version 4 key, not the armored block. Deriving the bytes from
 // PGP_PUBLIC_KEY keeps one source of truth: a replaced key cannot leave the
 // two surfaces disagreeing, because there is only one place to replace it.
 var pgpKeyBytes = null;
@@ -6758,7 +6772,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.200.0",
+    "version": "3.201.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6868,7 +6882,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"AS3IP_j1eiZAsISspyFtv6l_D5-lVqg10e6aazGZyPV-L0NgnbIwDGDYArBrOxBDYWIAwcF2hFsy09XkGdDvBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qXnZ5tVwnZcbHCZODRIlyIkoVZ3gzmirn0bHoSWzKhPUrrpJTiTVreeVSq7k_MIF7Pr2OMFg3Ppsw8tRjN1vBw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"3DCukUPu1TsO8GeD1liScU4ofTxw1MnG1u5jvEwABRUq2lAt1_Eqnb0yIT2TFyoOurVOOF2FhUn0t0E0eX2AAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qXnZ5tVwnZcbHCZODRIlyIkoVZ3gzmirn0bHoSWzKhPUrrpJTiTVreeVSq7k_MIF7Pr2OMFg3Ppsw8tRjN1vBw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6883,7 +6897,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.13",
+  "version": "1.6.14",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6892,7 +6906,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.13",
+    "version": "1.6.14",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -6914,7 +6928,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "tools": [
     { "name": "get_services", "description": "Service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
     { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, measurement date, and a link to the scanner start page." },
-    { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl site and mail), with the scan date." },
+    { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl site and mail), each with its scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." },
     { "name": "get_contact", "description": "Who runs turva.dev, the official contact channels, the first-reply time and what access an audit needs." }
   ],
@@ -7038,7 +7052,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.200.0",
+  "version": "3.201.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8514,14 +8528,14 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 // second copy would be a second price list, and verify.mjs reads this one against facts.json.
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
 {"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"},"addOn":{"@type":"Offer","name":"Shopify correction implementation","description":"Exactly the corrections the check's plan lists. Sold only with the Shopify agent storefront check: bought with it, with its report, or after the report and before implementation starts, and only when collaborator access to the store is arranged in advance.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Shopify correction implementation"}}},
-{"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across the same assistants, written review of shipped work within one business day up to four reviews a month, roadmap input, a monthly written summary within five business days after the month ends and a quarterly summary of measured changes within five business days after every third service month. Minimum three months, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, the retainer runs month to month and either party can end it by email before the next month starts. Corrected 2026-09-28. Added the month-to-month continuation, its email cancellation, the first-month cancellation and the monthly and quarterly summary deadlines.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. A separately scoped day excludes DNS changes, tool declarations inside your application and agent payment flows. An MCP server is a separate engagement. Corrected 2026-09-28. Added the day-rate exclusions.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}}`;
 
 var SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"ProfessionalService","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.","priceRange":"€€€","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
+{"@type":"Organization","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
 {"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 ${SCHEMA_SERVICE},
@@ -9874,7 +9888,7 @@ function buildAuditServiceJsonLd(canonicalUrl) {
     "serviceType": "Agent-readiness audit",
     "provider": { "@id": "https://turva.dev/#business" },
     "areaServed": { "@type": "Place", "name": "Worldwide" },
-    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.",
+    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers. Delivered within two weeks of the agreed written kickoff.",
     "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
     "offers": {
       "@type": "Offer",
@@ -11389,6 +11403,16 @@ function normalizeHostInput(raw) {
   // example.com instead of refused (round 19, K7-P5).
   const typedHost = u.hostname;
   return typedHost.length > 1 && typedHost.endsWith(".") ? typedHost.slice(0, -1) : typedHost;
+}
+
+// True when the typed address carries a port or a non-numeric port after the host, as in
+// https://turva.dev:invalid/ or turva.dev:8443. It only picks which fixed sentence the error shows,
+// so the set of accepted addresses is the one normalizeHostInput defines and nothing typed is echoed.
+function inputNamesPort(raw) {
+  const s = String(raw || "").trim().toLowerCase().replace(/^[a-z][a-z0-9+.-]*:\/\//, "");
+  const authority = s.split(/[\/?#]/)[0];
+  const host = authority.slice(authority.lastIndexOf("@") + 1);
+  return host.startsWith("[") ? /\]:/.test(host) : /^[^:\[\]]+:[a-z0-9_-]*$/.test(host);
 }
 
 // The path of the address as typed, when it is neither the root nor /llms.txt. The fetch stays pinned
@@ -13093,7 +13117,9 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
   if (raw) {
     const host = normalizeHostInput(raw);
     if (!host || !isValidPublicHost(host)) {
-      error = "That does not look like a public domain name. Enter a domain like example.com.";
+      error = !host && inputNamesPort(raw)
+        ? "That address names a port. Enter the domain alone, like example.com."
+        : "That does not look like a public domain name. Enter a domain like example.com.";
     } else if (host === "turva.dev" || host === "www.turva.dev") {
       // A Worker cannot fetch a same-zone Route target, so the site's own llms.txt is
       // validated directly from the same constant that serves /llms.txt.
@@ -13182,7 +13208,7 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
 ${cardPageNav("/llms-txt-validator")}
 <main id="main">
   ${mdPageStart("/llms-txt-validator")}
-  <form class="vform" method="get" action="/llms-txt-validator">
+  <form class="vform" method="get" action="/llms-txt-validator#result">
     <label for="vurl">Domain or website address to check</label>
     <input type="text" id="vurl" name="url" placeholder="example.com" value="${escapeHtml(validatorEcho(typed, raw))}" aria-label="Domain or website address to check" required>
     <button type="submit">Check llms.txt</button>
@@ -13483,12 +13509,14 @@ async function parityRunCheck(input, env) {
     // Decision 19 (Tek-526): the package's own selector-rejection message repeats the CSS
     // selector inside the sentence. str() already capped it to PARITY_MAX_SELECTOR_CHARS on
     // the way in (the cut below is defense in depth, not the limit itself), so the length was
-    // never the gap; the sentence was. The value moves to its own field and the sentence stays
-    // the same words for every selector.
+    // never the gap; the sentence was. The value moves to its own field and the sentence is one of
+    // two fixed ones (Tek-561), chosen by the package's own error text and never built from the input.
     let selectorValue;
     if (field === "selector" && err instanceof MpcRunError) {
       selectorValue = typeof options.selector === "string" ? cut(options.selector, PARITY_MAX_SELECTOR_CHARS) : "";
-      message = "The CSS selector could not be used to select content on the page.";
+      message = /^Invalid selector/.test(err.message)
+        ? "The CSS selector is not valid."
+        : "The CSS selector matched nothing on the page. Clear it to compare the default content.";
     }
     // The value goes to summary.errorValue, the field the package itself uses since 0.2.17,
     // so the hosted JSON and the CLI report name it the same way.
@@ -14727,6 +14755,9 @@ async function handleRequest(request, env) {
   }
   if (pathLower === "/pgp-key.asc" || pathLower === "/.well-known/pgp-key.asc") {
     return serveStatic(PGP_PUBLIC_KEY, "application/pgp-keys; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/pgp-key-v6.asc") {
+    return serveStatic(PGP_PUBLIC_KEY_V6, "application/pgp-keys; charset=utf-8", "agent-api");
   }
   // WKD direct method. The policy file must exist and may be empty; its
   // presence is what tells a client the domain supports WKD at all.

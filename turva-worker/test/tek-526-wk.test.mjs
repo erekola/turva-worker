@@ -113,6 +113,54 @@ test("Decision 19, T2-03: a valid selector that matches nothing is reported on t
   );
   assert.equal(res.status, 422);
   const j = JSON.parse(await res.text());
-  assert.equal(j.summary.error, "The CSS selector could not be used to select content on the page.");
+  assert.equal(j.summary.error, "The CSS selector matched nothing on the page. Clear it to compare the default content.");
   assert.equal(j.summary.errorValue, "#no-such-element-t2-03");
+});
+
+// Tek-561 (W20 F2b): a selector that is not valid CSS and one that matches nothing get two different fixed sentences.
+test("W20 F2b: an invalid selector is told apart from one that matches nothing, with the value apart", async () => {
+  const limiter = { async limit() { return { success: true }; } };
+  const res = await worker.fetch(
+    new Request("https://turva.dev/markdown-parity-check", {
+      method: "POST",
+      headers: { accept: "application/json", "content-type": "application/json", "cf-connecting-ip": "203.0.113.52" },
+      body: JSON.stringify({ url: "https://turva.dev/tools", selector: "[" })
+    }),
+    { PARITY_LIMITER: limiter },
+    {}
+  );
+  assert.equal(res.status, 422);
+  const j = JSON.parse(await res.text());
+  assert.equal(j.summary.error, "The CSS selector is not valid.");
+  assert.equal(j.summary.errorValue, "[");
+});
+
+// Tek-561 (W20 F2a): an address that names a port gets its own fixed sentence, in JSON and in the page, and the
+// set of accepted addresses does not change: a port other than 443 or 80 is still refused, 443 and 80 still pass.
+test("W20 F2a: an address with a port names the port, and no other rejection changes its sentence", async () => {
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async () => { throw new Error("must not be called for a refused host"); };
+  try {
+    for (const bad of ["https://turva.dev:invalid/", "turva.dev:8443", "https://example.com:8443/llms.txt", "user:pw@example.com:81"]) {
+      const j = await validatorJson("url=" + encodeURIComponent(bad));
+      assert.equal(j.status, 400, bad);
+      assert.equal(j.body.error, "That address names a port. Enter the domain alone, like example.com.", bad);
+      const html = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(bad), { headers: { accept: "text/html" } }), env, {})).text();
+      assert.ok(html.includes("That address names a port. Enter the domain alone, like example.com."), "the page carries the same sentence: " + bad);
+    }
+    for (const other of ["localhost", "user:pw@example.com", "foo..bar", "router.home.arpa"]) {
+      const j = await validatorJson("url=" + encodeURIComponent(other));
+      assert.equal(j.status, 400, other);
+      assert.equal(j.body.error, "That does not look like a public domain name. Enter a domain like example.com.", other);
+    }
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
+// Tek-561 (W20 F1): the form returns to the result, as the parity form does.
+test("W20 F1: the validator form submits to the result fragment", async () => {
+  const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator", { headers: { accept: "text/html" } }), env, {});
+  const html = await res.text();
+  assert.ok(html.includes('action="/llms-txt-validator#result"'));
 });

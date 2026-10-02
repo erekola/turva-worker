@@ -1430,3 +1430,58 @@ test("F04: the hosted validator masks a refused redirect target and a typed secr
   const plain = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent("not a domain")), env, {})).text();
   assert.ok(plain.includes('value="not a domain"'), "an entry without @, ? or # is repeated as typed");
 });
+test("PGP: /pgp-key.asc holds the version 4 key alone and /pgp-key-v6.asc holds the version 6 key alone", async () => {
+  const v4 = dearmor(await (await get("/pgp-key.asc")).text());
+  const r6 = await get("/pgp-key-v6.asc");
+  assert.equal(r6.status, 200);
+  assert.match(r6.headers.get("content-type"), /application\/pgp-keys/);
+  const r4 = await get("/pgp-key.asc");
+  assert.equal(r6.headers.get("cache-control"), r4.headers.get("cache-control"), "both key addresses carry the same cache header");
+  const text6 = await r6.text();
+  assert.match(text6, /^-----BEGIN PGP PUBLIC KEY BLOCK-----/);
+  assert.equal((text6.match(/-----END PGP PUBLIC KEY BLOCK-----/g) || []).length, 1, "one armored block");
+  assert.equal(/PRIVATE KEY/.test(text6), false, "a private key must never reach this route");
+  const v6 = dearmor(text6);
+  const pk4 = publicKeyPackets(v4);
+  const pk6 = publicKeyPackets(v6);
+  assert.deepEqual(pk4, [4], "the first block holds one public key and it is version 4");
+  assert.deepEqual(pk6, [6], "the second block holds one public key and it is version 6");
+});
+
+// Packet walk for the two published blocks: returns the version byte of every public-key packet.
+function publicKeyPackets(bytes) {
+  const out = [];
+  let i = 0;
+  while (i < bytes.length) {
+    const first = bytes[i];
+    assert.equal(first & 0x80, 0x80, "not an OpenPGP packet header");
+    let tag, hs, bl;
+    if (first & 0x40) {
+      tag = first & 0x3f;
+      const l = bytes[i + 1];
+      if (l < 192) { bl = l; hs = 2; }
+      else if (l < 224) { bl = ((l - 192) << 8) + bytes[i + 2] + 192; hs = 3; }
+      else { bl = bytes.readUInt32BE(i + 2); hs = 6; }
+    } else {
+      tag = (first >> 2) & 0x0f;
+      const lt = first & 0x03;
+      if (lt === 0) { bl = bytes[i + 1]; hs = 2; }
+      else if (lt === 1) { bl = bytes.readUInt16BE(i + 1); hs = 3; }
+      else { bl = bytes.readUInt32BE(i + 1); hs = 5; }
+    }
+    if (tag === 6) out.push(bytes[i + hs]);
+    i += hs + bl;
+  }
+  assert.equal(i, bytes.length, "the packet walk must end exactly at the end of the block");
+  return out;
+}
+
+test("PGP: the version 6 key address is not in the sitemap and not served through WKD", async () => {
+  const sm = await (await get("/sitemap.xml")).text();
+  assert.equal(sm.includes("pgp-key"), false);
+  const hash = zbase32(createHash("sha1").update("erik").digest());
+  const wkd = Buffer.from(await (await get("/.well-known/openpgpkey/hu/" + hash)).arrayBuffer());
+  const v6 = dearmor(await (await get("/pgp-key-v6.asc")).text());
+  assert.notDeepEqual(wkd, v6, "WKD serves the version 4 key");
+  assert.deepEqual(publicKeyPackets(wkd), [4]);
+});

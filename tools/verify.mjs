@@ -316,7 +316,7 @@ check(wm.length>0 && wm.every(d=>allowed.has(d)), `worker.js "Measured <date>" a
 // appears n=1 and agent-readiness n=3 (twin plus two guides).
 const arNear = [...src.worker.text.matchAll(/isitagentready\.com\. Measured (\d{4}-\d{2}-\d{2})/g)].map(m=>m[1]);
 check(arNear.length>=3 && arNear.every(d=>d===ar), `worker.js agent-readiness "Measured" all == ${ar} (saw ${[...new Set(arNear)].join(', ')||'none'}, n=${arNear.length})`);
-const secNear = [...src.worker.text.matchAll(/asserted\. Measured (\d{4}-\d{2}-\d{2})/g)].map(m=>m[1]);
+const secNear = [...src.worker.text.matchAll(/asserted\. I measured all three on (\d{4}-\d{2}-\d{2})/g)].map(m=>m[1]);
 check(secNear.length>=1 && secNear.every(d=>d===sec), `worker.js security "Measured" all == ${sec} (saw ${[...new Set(secNear)].join(', ')||'none'}, n=${secNear.length})`);
 const lvm = src.worker.text.match(/"lastVerified":\s*"(\d{4}-\d{2}-\d{2})"/);
 check(!!lvm && lvm[1]===ar, `worker.js HOME_JSON lastVerified == ${ar}`);
@@ -641,8 +641,11 @@ console.log('\nService set (facts.json owns which services exist)');
 
 console.log('\nSecurity evidence');
 const H = facts.security.hardenize, I = facts.security.internetnl;
-// Tek-560: the Hardenize report page no longer exists (302 to the start page, measured 2026-10-02), so no surface may link it; the dated reading stays as text.
-for (const k of Object.keys(src)) check(!/hardenize\.com\/report\/turva\.dev/.test(src[k].text), `${src[k].rel} does not link the retired Hardenize report URL`);
+for (const k of Object.keys(src)) check(src[k].text.includes(H.url), `${src[k].rel} links canonical Hardenize URL`);
+// Tek-561: Hardenize has its own measurement date, separate from facts.security.measuredAt (Internet.nl).
+check(/^\d{4}-\d{2}-\d{2}$/.test(String(H.measuredAt)), `facts.security.hardenize.measuredAt is an ISO date (saw ${JSON.stringify(H.measuredAt)})`);
+check(src.worker.text.includes(`and Hardenize again on ${H.measuredAt}.`) && src.worker.text.includes(`Hardenize, measured ${H.measuredAt}: `), `worker.js Hardenize bullet carries the Hardenize date ${H.measuredAt}`);
+check(src.readme.text.includes(`Measured on ${H.measuredAt}: all `), `README.md carries the Hardenize date ${H.measuredAt}`);
 for (const k of Object.keys(src)) check(containsAny(src[k].text, slashVariants(I.score)), `${src[k].rel} shows Internet.nl ${I.score}`);
 check(src.worker.text.includes(I.url), `Internet.nl URL in worker.js`);
 const IM = facts.security.internetnlMail;
@@ -2601,7 +2604,21 @@ if (LIVE) {
     // \b would also fire on data-src=, so the boundary is spelled out: start of the
     // attribute list, whitespace, a slash, or the quote that closed the previous value.
     const external = allScripts.filter((s) => /(?:^|[\s/"'])src\s*=/i.test(s.attrs));
-    check(external.length === 0, `served homepage loads no external script (saw ${external.length})`);
+    // One named exception (Tek-560): the same-origin /nav.js that closes the mobile menu on
+    // Escape and when focus leaves it. It is allowed only as exactly src="/nav.js" with an empty
+    // body, only once, only when the served file is byte-identical to NAV_JS in this repo and
+    // only when it never mentions modelContext, so every other external script still fails here.
+    const navTags = external.filter((s) => /^\s+src="\/nav\.js"\s+defer\s*$/.test(s.attrs) && s.body === '');
+    const otherExternal = external.filter((s) => !navTags.includes(s));
+    check(otherExternal.length === 0 && navTags.length <= 1, `served homepage loads no external script other than one /nav.js (saw ${otherExternal.length} other, ${navTags.length} /nav.js)`);
+    if (navTags.length === 1) {
+      const wNav = src.worker.text;
+      const navAt = wNav.indexOf('var NAV_JS = `');
+      const navEnd = navAt < 0 ? -1 : wNav.indexOf('`;', navAt);
+      const navSource = (navAt < 0 || navEnd < 0) ? null : wNav.slice(navAt + 'var NAV_JS = `'.length, navEnd).replace(/\r\n/g, '\n');
+      const navServed = await (await fetch(base + '/nav.js')).text();
+      check(!!navSource && navServed === navSource && !navServed.includes('modelContext'), `served /nav.js is byte-identical to NAV_JS in this repo and never mentions modelContext (source ${navSource ? navSource.length : 'n/a'} bytes, served ${navServed.length} bytes)`);
+    }
     const inline = allScripts.filter((s) => s.body.includes('modelContext')).map((s) => s.body);
     check(inline.length === 1, `served homepage carries exactly one script mentioning modelContext (saw ${inline.length})`);
 
@@ -3337,8 +3354,10 @@ if (LIVE) {
       const hzM = String(hz.result).match(/^(\d+)\/(\d+) categories passed$/);
       check(Number.isFinite(wantHz) && !!hzM && Number(hzM[1]) === wantHz && Number(hzM[2]) === wantHz,
         `get_security_evidence Hardenize reads ${wantHz}/${wantHz} categories passed (saw ${JSON.stringify(hz.result)})`);
-      check(hz.url === undefined,
-        `get_security_evidence Hardenize entry carries no report url (saw ${hz.url})`);
+      check(hz.url === facts.security.hardenize.url,
+        `get_security_evidence Hardenize url == facts.json (saw ${hz.url})`);
+      check(hz.measured_at === facts.security.hardenize.measuredAt,
+        `get_security_evidence Hardenize measured_at == facts.json ${facts.security.hardenize.measuredAt} (saw ${hz.measured_at})`);
       const inl = (secEv.scans || []).find((s) => s.provider === 'Internet.nl') || {};
       const wantInl = ints(facts.security.internetnl.score);
       check(Number.isFinite(wantInl[0]) && inl.score === wantInl[0],

@@ -123,7 +123,7 @@ The payment routes return x402 challenges and publish Stripe payment links. x402
 
 ## Web security
 
-Recorded on 2026-09-23: all 24 categories passed on Hardenize, 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
+Measured on 2026-09-23: 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/). Measured on 2026-10-02: all 24 categories passed on [Hardenize](https://www.hardenize.com/report/turva.dev).
 
 The website deduction concerned the key-exchange hash function in one HTTPS sub-test. Its IPv6, DNSSEC and RPKI checks passed in full. The email deduction concerned IPv6, because the receiving mail servers, operated by the mail provider, publish no IPv6 address. Its DNSSEC and RPKI checks passed in full. DMARC with DKIM and SPF, and STARTTLS with DANE, also passed.
 
