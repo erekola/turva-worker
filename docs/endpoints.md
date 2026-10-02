@@ -54,5 +54,6 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Public synthetic sample reports for the two fixed-scope diagnoses, invented sites, markdown twins at `.md` |
 | `/agent-readiness-audit` | Product page of the website and API audit (the guide at `/guides/agent-readiness-audit` stays a guide), markdown twin at `.md` |
 | `/blog-filter.js` | Same-origin script for the blog index search and kind filter, allowed by `script-src 'self'`; the index lists every post without it |
+| `/nav.js` | Same-origin script that closes the mobile menu on Escape and when focus leaves it, allowed by `script-src 'self'`; the menu opens and closes without it |
 
 Back to the [README](../README.md).

@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.200.0 - outside reviews W8 to W14 applied (Tek-560): the hosted llms.txt validator fixes nine wrong results (blank-line labels, escaped destinations, CR line endings, setext H1, continuation-line links, bare angle brackets, template comments, linear query masking, empty blockquote summaries), the mobile menu closes on Escape and when focus leaves it through /nav.js, the blog search placeholder meets 4.5:1, the five example code blocks on the two tool pages are focusable, the dead Hardenize report link is removed with the dated reading kept, the legal page names the encrypted report address, the scanner's input, the processor breach notice, the private repository rule and Privacy last updated 2026-10-02, the company page says no subcontractors, and dated corrections on five posts plus wording on the audit, services, Shopify and guide pages.
 // turva.dev worker v3.199.1 - the hosted Markdown parity check runs markdown-parity-check 0.2.21 (Tek-559 decisions 2 and 3): raw HTML inside the Markdown is held to the same nesting limit as the HTML side, and code blocks skip button, template, nav and role subtrees like the rest of the content; every sitemap page still passes its own check with no error and no warning
 // turva.dev worker v3.199.0 - outside reviews W4 to W7 applied (Tek-559): seven dated posts corrected with a Corrected 2026-10-02 note (secret storage, credential helpers, replay, the patch-surge sources, the validator and code-host details), the hosted llms.txt validator also reports self-closing tags without a space, closing tags and HTML comments, the ai-catalog MCP entry uses application/mcp-server-card+json, ard.json carries representativeQueries, the root security.txt names its own Canonical, the api-catalog Content-Type carries the RFC 9727 profile, and the terms state the cookie basis, sub-processors, the one month backup maximum, the separate email and bookkeeping retention, the correction procedure, the liability cap basis, one target per hostname and the 14 day payment term from the invoice date
 // turva.dev worker v3.198.0 - the audit covers up to two targets named in the written scope at the one fixed price, the follow-up question round has a 14 calendar day submission window and a five business day answer, the services page says the fixes take about two days, and the MCP service catalog (MCP 1.6.12) and the server card carry the new version.
@@ -526,7 +527,7 @@ Writing a guide makes me read the primary text first, and keeping it true makes 
 
 Three specifications I build my site on released new versions between late July and late August, and the review on 15 September found four more claims that had gone stale.
 
-On 28 July the Model Context Protocol released its 2026-07-28 revision, the largest breaking set it has had. It removed protocol sessions and the initialize handshake, made the protocol stateless, required servers to answer a new server/discover call and deprecated OAuth Dynamic Client Registration, which stays a supported fallback for now. I had built my own MCP server on a library path that would never serve the new revision, so the update was a rewrite and not a version bump. It went live the next morning. The next day I found that a request on the new revision needs its protocol version and method as headers, and on 1 August that a tool call needs the tool's name as a header too. I found both by measuring my own client, not by reading.
+On 28 July the Model Context Protocol released its 2026-07-28 revision, which removed protocol sessions and the initialize handshake, made the protocol stateless, required servers to answer a new server/discover call and deprecated OAuth Dynamic Client Registration, which stays a supported fallback for now. I had built my own MCP server on a library path that would never serve the new revision, so the update was a rewrite and not a version bump. It went live the next morning. The next day I found that a request on the new revision needs its protocol version and method as headers, and on 1 August that a tool call needs the tool's name as a header too. I found both by measuring my own client, not by reading.
 
 On 10 August llms.txt published its second version. The file format did not change at all. What changed is discovery: a page can now name its Markdown version and the llms.txt that covers it, in the HTML head or in an HTTP Link header. On 24 August I made every page on my site answer at its own .md address and pointed every link in my llms.txt at those addresses.
 
@@ -569,6 +570,8 @@ Every guide is re-read against its primary sources once a month, and the fastest
 The guide is corrected, and the date of its last check moves. A blog post that was wrong gets a dated note at its end saying what was wrong and what changed.
 
 Corrected 2026-09-29. One sentence said the reading costs the same when nothing has changed. The review runs record no durations, so the sentence now says what they do record: every guide still gets a full read.
+
+Corrected 2026-10-02. One sentence called this revision the largest breaking set the protocol has had. The changelog lists the changes but does not compare their size with earlier revisions, so the sentence now lists them without the comparison. No technical statement changed.
 
 ## Related
 
@@ -613,7 +616,7 @@ I set one rule for the repair: keep going until every page is right, or delete t
 
 ## Where are most sites?
 
-Most of them sit on the floor. Between 28 June and 3 September 2026 I measured [567 company sites](/blog/website-agent-readiness-567-sites) with the isitagentready scanner. Of those, 485 sites, 85,5 percent, read Level 1 of 5, which is what an ordinary CMS site reaches without anyone trying. Seventy-four read Level 0. Seven read Level 2, and one read Level 5. I know these numbers too well, because measuring a site before I write to its owner is how my outreach works.
+Most of them sit on the floor. Between 28 June and 3 September 2026 I measured [567 company sites](/blog/website-agent-readiness-567-sites) with the isitagentready scanner. Of those, 485 sites, 85,5 percent, read Level 1 of 5, which I read as the floor a default CMS ships. That is my reading and not a measurement, because the study did not record which CMS each site runs. Seventy-four read Level 0. Seven read Level 2, and one read Level 5. I know these numbers too well, because measuring a site before I write to its owner is how my outreach works.
 
 ## What do I see that I cannot get across?
 
@@ -640,6 +643,8 @@ Corrected 2026-09-27. One sentence said every number in this post is one you can
 Corrected 2026-09-28. The opening paragraph counted seven minor versions today against the 54 version total for 6 to 26 September, but this post itself published on 26 September, so the two counts used different cutoffs. It now names the same cutoff for both, seven minor versions before this post shipped and an eighth counting it.
 
 Corrected 2026-09-29. The same sentence could be read as seven of the 54 minor versions coming before this post. It now says the seven shipped on 26 September, the day I published this post.
+
+Corrected 2026-10-02. One sentence said Level 1 is what an ordinary CMS site reaches without anyone trying. That is my reading, and the study did not record which CMS each site runs, so the sentence now says so. No number changed.
 
 ## Related
 
@@ -2091,7 +2096,7 @@ This explains capacity. It is not proof of cause. Microsoft's own post attribute
 
 MDASH is over a hundred agents, multi-model debate across model families, and a separate pipeline that proves candidates before a human ever sees them. Microsoft reports it at 88,45 % on [CyberGym](https://arxiv.org/abs/2506.02548), a benchmark for real-world vulnerability discovery, in its [12 May 2026 announcement](https://www.microsoft.com/en-us/security/blog/2026/05/12/defense-at-ai-speed-microsofts-new-multi-model-agentic-security-system-tops-leading-industry-benchmark/). Anthropic's gated frontier model, Claude Mythos, is reported at 83,1 % on the same benchmark; the same Microsoft post names that figure as the entry just below its own, and [GeekWire's coverage](https://www.geekwire.com/2026/microsofts-multi-agent-ai-system-tops-anthropics-mythos-on-cybersecurity-benchmark/) attributes it to Mythos.
 
-I am not going to tell you the orchestration layer beats the model. Those two figures come from two different parties. Microsoft names its side of the setup, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, but Anthropic's system card gives only part of its setup for Mythos, pass@1 over the same 1507 tasks with no extended thinking, and does not name the CyberGym difficulty level, so the two scores are not shown to share a setup, and five points is well inside what a difference in evaluation setup can produce. What the pair does establish is an order of magnitude: an orchestration layer running an ensemble, distilled models included, lands in the same range as the most capable model anyone has built.
+I am not going to tell you the orchestration layer beats the model. Those two figures come from two different parties. Microsoft names its side of the setup, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, but Anthropic's system card gives only part of its setup for Mythos, pass@1 over the same 1507 tasks with no extended thinking, and does not name the CyberGym difficulty level, so the two scores cannot be assumed to share a setup, and a gap of 5,35 percentage points does not show that either approach is better. What the pair does establish is an order of magnitude: an orchestration layer running an ensemble, distilled models included, lands in the same range as the most capable model anyone has built.
 
 That has a consequence worth sitting with. Access to Mythos is controlled by Anthropic under Project Glasswing. Orchestration is controlled by nobody, and it is described in a public blog post. If the scaffolding carries that much of the capability, the interesting question is not how far open weights trail the frontier model. It is how far an open harness trails MDASH. Scaffolding is cheaper to copy than a frontier model.
 
@@ -2129,7 +2134,7 @@ Note added September 27: two sentences went further than the numbers. The severi
 
 Corrected 2026-09-28. A sentence said the two benchmark figures came from conditions neither party published. Microsoft's own linked source names its side, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, and the sentence now says that, and that Anthropic's own conditions for Mythos are not published.
 
-Corrected 2026-10-02. Several sentences claimed more than their sources. The Mythos sentence said Anthropic's own evaluation conditions are not published, and the 2026-09-28 note above repeats it. Anthropic's system card publishes the task count, pass@1 scoring and sampling settings but does not name the CyberGym difficulty level, so it now says: "Microsoft names its side of the setup, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, but Anthropic's system card gives only part of its setup for Mythos, pass@1 over the same 1507 tasks with no extended thinking, and does not name the CyberGym difficulty level, so the two scores are not shown to share a setup, and five points is well inside what a difference in evaluation setup can produce." The Microsoft post is longer than about 1400 words and carries ordinary numerals, so the sentence now says it gives no figure for the increase. HackerOne's 76 % is March 2026 against March 2025, not a year through March, and HackerOne reports the valid share steady at roughly 25 %, so the noise claim is gone. The three-quarters-noise wording, the DDoS attribution and the claim that Google stopped taking AI-generated submissions are replaced by what the linked sources say.
+Corrected 2026-10-02. Several sentences claimed more than their sources. The Mythos sentence said Anthropic's own evaluation conditions are not published, and the 2026-09-28 note above repeats it. Anthropic's system card publishes the task count, pass@1 scoring and sampling settings but does not name the CyberGym difficulty level, so it now says: "Microsoft names its side of the setup, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, but Anthropic's system card gives only part of its setup for Mythos, pass@1 over the same 1507 tasks with no extended thinking, and does not name the CyberGym difficulty level, so the two scores cannot be assumed to share a setup, and a gap of 5,35 percentage points does not show that either approach is better." The same sentence also said five points is well inside what a difference in evaluation setup can produce, which no cited source quantifies, so it now says the gap does not show either approach is better. The Microsoft post is longer than about 1400 words and carries ordinary numerals, so the sentence now says it gives no figure for the increase. HackerOne's 76 % is March 2026 against March 2025, not a year through March, and HackerOne reports the valid share steady at roughly 25 %, so the noise claim is gone. The three-quarters-noise wording, the DDoS attribution and the claim that Google stopped taking AI-generated submissions are replaced by what the linked sources say.
 
 ## Related
 
@@ -2175,13 +2180,13 @@ The vault only changes where a secret sits at rest. It does not by itself stop a
 
 I build this into my own setup because I sell the audit that checks for it. A prospect who asks for an NDA is asking a real question about whether you treat access seriously or leave keys lying around while an agent works next to them. The honest answer shows in how you work, before it shows in any report.
 
-None of this is exotic. It is one habit applied everywhere. The operating system holds the secret, encrypted and scoped to you, and the code asks for it when it needs it. An agent can then do its work in your repo without a key sitting in a plaintext file it can read at rest, which is a narrower claim than saying it never sees a key in the clear.
+None of this is exotic. It is one habit applied everywhere. The operating system holds the secret, encrypted and scoped to you as far as its keyring backend provides it, and the code asks for it when it needs it. An agent can then do its work in your repo without a key sitting in a plaintext file it can read at rest, which is a narrower claim than saying it never sees a key in the clear.
 
 ## Frequently asked
 
 **Where should secrets live if an AI agent works in your repo?**
 
-In storage the operating system encrypts and scopes to your account. The Data Protection API on Windows, the Keychain on macOS, libsecret on Linux. Scripts ask for the secret when they run instead of reading it off disk.
+In storage the operating system encrypts and scopes to your account. The Data Protection API on Windows, the Keychain on macOS, libsecret on Linux, with a Secret Service backend whose encryption and application access you should check. Scripts ask for the secret when they run instead of reading it off disk.
 
 **Why is a token in a plain file a bigger risk than it used to be?**
 
@@ -2191,7 +2196,7 @@ Because the file is no longer only yours. A coding agent reads your files and ru
 
 Windows Credential Manager caps a single entry at 2560 bytes and some forges issue OAuth tokens past that. The write fails while fetch still works, so nothing looks wrong until every command re-authenticates. Git Credential Manager's Bitbucket provider splits a large token across entries, but its GitLab provider and generic store write one entry, so a token over the limit can still fail there.
 
-Corrected 2026-10-02. Two sentences claimed more than their sources. The Linux sentence said the Secret Service encrypts the value and only your account can decrypt it. It now says: "On Linux libsecret through the Secret Service, whose backend usually encrypts the value at rest. The specification leaves access control to the implementation, so check what your keyring does when the machine is locked and which applications it lets read the value." The credential manager sentence said splitting a large token across entries is how Git Credential Manager handles it for self-hosted forges. At commit 9c3b25d, only the Bitbucket provider splits. It now says: "Git Credential Manager's Bitbucket provider splits a large token across entries. At Git Credential Manager commit 9c3b25d, its GitLab provider and the generic store path write the token as one entry, so the Windows size limit still applies there. If a self-hosted forge keeps opening a browser prompt on push, a token over the limit is one possible cause."
+Corrected 2026-10-02. Two sentences claimed more than their sources. The Linux sentence said the Secret Service encrypts the value and only your account can decrypt it. It now says: "On Linux libsecret through the Secret Service, whose backend usually encrypts the value at rest. The specification leaves access control to the implementation, so check what your keyring does when the machine is locked and which applications it lets read the value." The credential manager sentence said splitting a large token across entries is how Git Credential Manager handles it for self-hosted forges. At commit 9c3b25d, only the Bitbucket provider splits. It now says: "Git Credential Manager's Bitbucket provider splits a large token across entries. At Git Credential Manager commit 9c3b25d, its GitLab provider and the generic store path write the token as one entry, so the Windows size limit still applies there. If a self-hosted forge keeps opening a browser prompt on push, a token over the limit is one possible cause." The summary and the frequently asked answer on storage still stated the Linux guarantee without that limit, and both now carry it.
 
 ## Related
 
@@ -2779,7 +2784,7 @@ An agent-readiness review therefore has to read the edge configuration next to t
 
 ## Citations are replacing clicks, and both are measurable now
 
-Cloudflare's stated reason for the package is a 2025 Pew Research Center finding: when Google shows an AI summary, users click a traditional result 8% of the time and a link inside the summary about 1% of the time. The visit is no longer where the value moves. Cloudflare's response is to make the citation itself payable. Ceramic.ai pays publishers per query their content answers, You.com lets agents buy individual premium pages, and participating sites get reporting on which AI-search queries surfaced their content, down to the page and the snippet.
+Cloudflare's stated reason for the package is a 2025 Pew Research Center finding: when Google shows an AI summary, users click a traditional result 8% of the time and a link inside the summary about 1% of the time. The visit is no longer where the value moves. Cloudflare's response is to make the citation itself payable. Ceramic.ai pays publishers per query their content answers, and You.com lets agents buy individual premium pages. In the Cloudflare/Ceramic program, participating sites also get reporting on which AI-search queries surfaced their content, down to the page and the snippet.
 
 The reading this is meant to price is already routine. Over the past seven days this site answered 604 requests from identified AI and search crawlers, and AI answers and search referred 88 human visits (Cloudflare edge data), most from Google, the rest led by Meta, DuckDuckGo and Bing. Whether that reading starts to pay is what the new programs will test.
 
@@ -2791,11 +2796,11 @@ The Monetization Gateway waitlist points the same direction: charge for any page
 
 - Open your CDN's AI crawler list and compare it against your intent. A block you did not choose is configuration drift, and it overrides everything your pages declare.
 - Re-scan after any edge change. The public agent-readiness scanners read a site from outside, so a network-level block shows up as a dropped score before a buyer sees the gap.
-- If your content earns citations, look at the Pay Per Use programs. The reporting alone, which queries put your pages into AI answers, is visibility data the Pay Per Use programs offer.
+- If your content earns citations, look at the Pay Per Use programs. The reporting alone, which queries put your pages into AI answers, is visibility data Cloudflare describes for participants in its Ceramic program.
 
 For an agent-readiness audit that reads the edge configuration next to the content, contact info@turva.dev.
 
-Corrected 2026-10-02. A sentence said the Pay Per Use reporting is visibility data you cannot get anywhere else. That exclusivity was not checked, so it now says the reporting is visibility data the Pay Per Use programs offer.
+Corrected 2026-10-02. A sentence said the Pay Per Use reporting is visibility data you cannot get anywhere else. That exclusivity was not checked, so it now says the reporting is visibility data the Pay Per Use programs offer. Cloudflare describes that reporting for the Cloudflare/Ceramic program only, so the article and the list item now attribute it to that program.
 
 ## Related
 
@@ -3370,7 +3375,7 @@ Nine findings. Each one shows the evidence, why it matters, the correction, the 
 - Availability from the stock state, not from the lead time text. In the Store API the stock state is two fields. BackOrder when is_on_backorder is true, OutOfStock when is_in_stock is false, InStock when is_in_stock is true and is_on_backorder is false. The schema notes that is_on_backorder also reads false when backorder notifications are turned off, so a product the confirmed record lists on backorder and the API shows only as in stock is a row to resolve, not a pass. PreOrder is not used: no product in this catalog has a release date, and a lead time on an existing product is a BackOrder with a deliveryLeadTime of six weeks, not a pre-order. The lead time is published in that field and in the page text, and it does not decide the availability value on its own.
 - Variants. The 19 variable products publish one offer per variant, 61 in all, with the variant's own price and stock state, matching the variation list the page shows. The Store API leaves variations out of its default listing, and the parent's variations array carries only each variant's id and attributes, so the 61 variant rows are read from /wp-json/wc/store/v1/products?type=variation, where each variant has its own prices, is_in_stock and is_on_backorder.
 
-Exceptions, listed so that the acceptance test does not read them as failures. Six products are priced on request: the page says so, and they carry no price in JSON-LD or in the API, only an availability from their stock state. The API marks them is_purchasable false. Four products are discontinued and still published: they carry availability Discontinued and no price, and the API marks them is_purchasable false as well. The Store API has no discontinued state, so the confirmed product record names the four. Neither group can then be bought by accident. Decision D4 says whether any of the ten stays published, and the acceptance run reads the published ones against these rules and the unpublished ones against the removal list. The exception is from the price rules, not from the run.
+Exceptions, listed so that the acceptance test does not read them as failures. Six products are priced on request: the page says so, and they carry no price in JSON-LD or in the API, only an availability from their stock state. The API marks them is_purchasable false. Four products are discontinued and still published: they carry availability Discontinued and no price, and the API marks them is_purchasable false as well. The Store API has no discontinued state, so the confirmed product record names the four. Neither group is then presented as purchasable on any of the three surfaces. Decision D4 says whether any of the ten stays published, and the acceptance run reads the published ones against these rules and the unpublished ones against the removal list. The exception is from the price rules, not from the run.
 
 **Who does it and estimated effort.** Two corrections, and the report keeps them apart. At the source, the catalog plugin's structured data mapping and the setting that hides prices from the API for anonymous readers: about two and a half hours in the CMS and its plugin. At the edge, the JSON-LD is corrected on the way through, on every product page, from the price, unit, variant and stock elements the page itself renders, so the served node is right from the day the worker goes live: about three hours, plus one hour for the whole-catalog acceptance script the company keeps. Both are on the fix list, and D1 decides who makes them. The edge cannot correct the API, because the API's empty price is the origin withholding data and there is nothing on the way through to correct it from, so the API rows are fixed in the origin's own setting whoever holds it. The acceptance below says which rows are read on which surface.
 
@@ -3399,7 +3404,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 - Content negotiation. A request with Accept: text/markdown returns Content-Type: text/markdown and a body that starts with the page title as a heading. A request with Accept: text/html, or with no Accept header, returns the origin's HTML page carrying the corrections this report agrees to and nothing else, which on a product page means the F1 JSON-LD and the F9 Organization address and every other byte as the origin served it. The markdown conversion changes no part of the HTML response. A request that lists both with a higher q on text/html gets HTML.
 - Separate caches. Every response the worker negotiates or converts carries Vary: Accept, so no cache serves the markdown form to a browser or the HTML form to an agent that asked for markdown. The routes named in the Scope line below are outside this, because the worker adds nothing to them. Checked by requesting the two forms in both orders from a cold cache.
 - Freshness. A price changed at the origin appears in the markdown form within ten minutes. The worker meets that by revalidating against the origin on every request, which is faster than the limit, or by caching the markdown for at most ten minutes. Checked with a controlled change: the price is changed at the origin at a recorded time, and both forms of the page are read once the ten minutes have passed. One comparison at a single moment does not measure a delay, so it does not settle this line.
-- Canonicals. The .md twin carries Link: rel="canonical" pointing at the HTML page, and the HTML page carries rel="alternate" type="text/markdown" pointing at the twin, so search engines see one page and not two.
+- Canonicals. The .md twin carries Link: rel="canonical" pointing at the HTML page, and the HTML page carries rel="alternate" type="text/markdown" pointing at the twin, so the HTML page is the declared preferred URL and the twin its alternate.
 - HTTP statuses. A page the origin serves with 404 is 404 in markdown. A 301 from the origin is passed through as a 301, not converted. An origin 500 is passed through as 500 and is never cached as markdown.
 - Scope. /cart/, /checkout/, /my-account/, /wp-admin/, /wp-login.php, every /wp-json/ route and every response that sets a cookie or carries a session are passed through untouched and never converted or cached. Checked by requesting each with Accept: text/markdown and reading the response unchanged.
 - Content. On every checked product page the markdown form carries the same price, price basis, availability and lead time as the HTML page and the confirmed product record from F1. [markdown-parity-check](/markdown-parity-check), run with a selector for the product content, reports no missing or changed block in that content. A conversion that drops one of these facts fails this line even when the format is right.
@@ -3513,7 +3518,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **Why it matters.** No scanner points. Observed: two wrong answers in twelve. Possible and not observed: a buyer's assistant sends a visitor or a delivery to the wrong address.
 
-**What to change.** Three parts. Add a PostalAddress with the current address to the Organization node on every page, which the edge does from the text the company confirms. Remove the 2022 PDF or replace it with the current price list at the same address, because the file is the company's own and a price list from 2022 is wrong on more than the address. Ask the directory to correct its listing, and record the request with any answer it gets. The first two are corrections on the fix list. The third is a request to an outside party, and the listing itself stays that party's to change.
+**What to change.** Three parts. Add a PostalAddress with the current address to the Organization node on every page, which the edge does from the text the company confirms. Remove the 2022 PDF or replace it with the current price list at the same URL, because the file is the company's own and its cover carries the old address. Ask the directory to correct its listing, and record the request with any answer it gets. The first two are corrections on the fix list. The third is a request to an outside party, and the listing itself stays that party's to change.
 
 **Who does it and estimated effort.** About half an hour at the edge and about an hour at the source, the request to the directory included. Both are on the fix list. The directory's answer is not, and no one here promises it.
 
@@ -3955,7 +3960,7 @@ Verified 100/100, Level 5, Agent-Native.
 
 I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. Measured 2026-09-23.
 
-- Hardenize: all 24 categories passed. [hardenize.com/report/turva.dev](https://www.hardenize.com/report/turva.dev)
+- Hardenize: all 24 categories passed.
 - Internet.nl website test: 98/100. [internet.nl/site/turva.dev](https://internet.nl/site/turva.dev/)
 - Internet.nl email test: 90/100. [internet.nl/mail/turva.dev](https://internet.nl/mail/turva.dev/)
 
@@ -4084,11 +4089,11 @@ The fixed price covers the whole list, whatever the number of corrections. Work 
 
 For a Shopify check, I need collaborator access to the store. For an audit, I need an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. If the required access cannot be arranged, the add-on is not sold. Your team still receives the correction instructions.
 
-The fixes identified by an audit typically take about two days to implement, the kind of fixes the sample report lists. This is an estimate, not a fixed quote or a limit on the €499 add-on.
+I estimate about two days to implement the fixes an audit identifies, based on the kind of fixes the sample report lists. This is not a fixed quote or a limit on the €499 add-on.
 
 ### Separately scoped implementation days
 
-For website and API implementation, the audit comes first, so I understand the work before implementation starts. The identified fixes usually take about two days. New agent-ready infrastructure is scoped in days too.
+For website and API implementation, the audit comes first, so I understand the work before implementation starts. I estimate about two days for the identified fixes. New agent-ready infrastructure is scoped in days too.
 
 I deploy an edge worker in front of your origin. It changes what the site serves without changing your application code. Deployment access must be ready before work starts.
 
@@ -4147,7 +4152,7 @@ Keep track of what changes after the audit. I repeat the measurements, review re
 - Recommendations for the roadmap.
 - Questions and answers by email or a shared document.
 - A monthly written summary that reads the month's measurements next to the previous month's and names the changes observed. The monthly summary is delivered within five business days after the month ends.
-- A quarterly summary of measurable progress.
+- A quarterly summary of measured changes, including unchanged or worse results.
 
 The written baseline agreed before kickoff sets how many reviews, questions or review pages the month covers. Work beyond it is quoted separately at the day rate.
 
@@ -4355,7 +4360,7 @@ I compare information across your pages, structured data and API. The report sho
 
 I ask 20 recorded questions across three assistants named in the written scope. The questions contain only the public product name and the question text, never client material. The synthetic sample report shows a different run with 15 questions across four assistants, because it only illustrates the format. You receive the answers, the date and the conditions of the test. Each question is asked once per assistant, and an assistant can answer differently from one day to the next, so a changed answer after the fixes is reported as an observation.
 
-On a large site, structured data, prices and availability are read on every page reachable from the sitemap and the API, as the sample report does for all 138 of its product pages. Head metadata and response headers are read on a sample of page templates, and the report lists every page it read. If a tool quota limits the checks, I raise the quota rather than reduce coverage.
+On a large site, structured data, prices and availability are read on every page reachable from the sitemap and the API, as the sample report does for all 138 of its product pages. Head metadata and response headers are read on a sample of page templates, and the report lists every page it read. If a tool quota limits the checks, I raise the quota rather than reduce coverage. The written scope records the hostnames and the access I need before work starts.
 
 ### Technical coverage
 
@@ -4461,7 +4466,7 @@ The fifth item is one retest of up to two corrected items, within 14 days of the
 - Storefront and UCP MCP.
 - Shopify Agentic settings and a Catalog search preview.
 - One anonymous browser cart, with one checkout navigation if you authorise it.
-- One separate remote UCP Cart lifecycle, stopping before Checkout MCP.
+- One separate cart tested through Shopify's remote shopping interface, the Universal Commerce Protocol or UCP, stopping before Shopify's Checkout MCP service.
 - One retest of up to two corrected items, within 14 days of the first package, or of the delivered corrections when the correction add-on is bought.
 
 The scope is agreed before delivery starts.
@@ -4541,7 +4546,7 @@ All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B c
 
 I'm an independent consultant in Tampere, Finland. I check websites, APIs and Shopify stores to understand what AI agents can access and where the information needs attention.
 
-You work directly with me, from agreeing the scope to reading the findings and deciding what to do next.
+You work directly with me, from agreeing the scope to reading the findings and deciding what to do next. I do not use subcontractors.
 
 ## My background
 
@@ -4703,7 +4708,7 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 **Delay.** If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered, and it is not charged. A late advisory review is still delivered in full, and the delay is stated with it.
 
-**Confidentiality.** Information shared during the work is confidential. Your own non-disclosure agreement is signed as it stands, at no charge, before material is shared. If the work gives turva.dev access to personal data you control, turva.dev acts as your processor, and your data processing agreement is signed before that data is shared. Sub-processor changes follow the terms of that agreement. The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work.
+**Confidentiality.** Information shared during the work is confidential. Your own non-disclosure agreement is signed as it stands, at no charge, before material is shared. If the work gives turva.dev access to personal data you control, turva.dev acts as your processor, and your data processing agreement is signed before that data is shared. As your processor, turva.dev notifies you without undue delay after becoming aware of a personal data breach affecting that data, as Article 33(2) of the GDPR requires. Sub-processor changes follow the terms of that agreement. The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work.
 
 **Liability.** Liability is limited to the fee for the engagement excluding VAT, including any add-on bought with it, as one aggregate limit for the whole engagement. For monthly advisory, that fee is the fees paid in the twelve months before the claim, excluding VAT. turva.dev is not liable for indirect or consequential damages. Neither limit applies when turva.dev causes damage intentionally or through gross negligence. Where a signed non-disclosure agreement sets its own remedies for a breach of confidentiality, those remedies apply to that breach. For data protection claims, the liability clause of a signed data processing agreement prevails where it differs from this paragraph.
 
@@ -4723,7 +4728,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material.
 
-**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies, each new copy replaces the oldest, and every backup, version history included, is overwritten within one month. A backup is never restored for any other purpose. Deleted client material has left every backup within one month at most. A private version-history copy of client material lasts as long as the backups: it is removed when the backup rotation replaces the corresponding backup, within the same month. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies, each new copy replaces the oldest, and every backup, version history included, is overwritten within one month. A backup is never restored for any other purpose. Deleted client material has left every backup within one month at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files exist only inside the backups and leave with them when the rotation replaces them, within the same month. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
 **Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
@@ -4731,7 +4736,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **AI tools.** The AI tool used in the work is Claude. Client material, including what is read from a client's public site, is processed only through the Anthropic API, unless the engagement agreement names another route for part of the work at the client's request, such as Claude through Amazon Bedrock. The recorded questions of an audit are put to the assistants named in the written scope in anonymous sessions and contain only the public product name and the question text, never client material. The API is used on Anthropic's [commercial terms](https://www.anthropic.com/legal/commercial-terms), with Anthropic Ireland, Limited as the contracting party. Anthropic's [data processing addendum](https://www.anthropic.com/legal/data-processing-addendum) and the standard contractual clauses named under International transfers apply, and data can be transferred to Anthropic, PBC in the United States. Claude works on a local workspace holding the files a task needs. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. The audit reads what the client's site serves publicly. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
-No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic Ireland, Limited is the contracting party for the AI tool, and data can be transferred to Anthropic, PBC in the United States. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. A card payment made through a payment link is processed by Stripe. A new provider is added to this list before it receives client material.
+No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic Ireland, Limited is the contracting party for the AI tool, and data can be transferred to Anthropic, PBC in the United States. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. A card payment made through a payment link is processed by Stripe. The audit's scanner, isitagentready.com, receives only the public address under test. A new provider is added to this list before it receives client material.
 
 ## Data rights
 
@@ -4741,7 +4746,7 @@ The supervisory authority in Finland is the Data Protection Ombudsman (tietosuoj
 
 ## Reporting a vulnerability
 
-Report a security issue to [info@turva.dev](mailto:info@turva.dev). The PGP key and the security.txt file's own expiry date are at [/.well-known/security.txt](/.well-known/security.txt). A report is acknowledged within one business day.
+Report a security issue to [info@turva.dev](mailto:info@turva.dev). Encrypted reports can go to [erik@turva.dev](mailto:erik@turva.dev), using the OpenPGP key published at [/pgp-key.asc](/pgp-key.asc). The PGP key and the security.txt file's own expiry date are at [/.well-known/security.txt](/.well-known/security.txt). A report is acknowledged within one business day.
 
 ## Cookies
 
@@ -4752,7 +4757,7 @@ This site sets no cookies of its own. A check of the home page, this page and th
 This page is updated when the terms change. The current version applies to engagements started on or after the date below.
 
 - **Terms last updated:** 2026-10-02
-- **Privacy last updated:** 2026-09-29
+- **Privacy last updated:** 2026-10-02
 `,
 
   "/guides/open-knowledge-format": `# Open Knowledge Format explained
@@ -4983,7 +4988,7 @@ For an audit, contact info@turva.dev.
 
 A technical scan, manual review and observed AI answers reveal different problems. This guide explains what an audit should record and how a team can use the findings.
 
-Most sites are built for human readers and search crawlers. AI agents read differently. They look for machine-readable entry points such as llms.txt, a sitemap, response headers, structured data, and well-known manifests. When those are missing, an agent that cannot parse the page's rendered layout either guesses at the fact or gives up on the page, while an agent built with a fallback, such as a search result or a cached summary, may still complete the task another way.
+Most sites are built for human readers and search crawlers. Some AI agents read differently. They use machine-readable entry points such as llms.txt, a sitemap, response headers, structured data and well-known manifests. Which of them a client reads varies. When those are missing, an agent that cannot parse the page's rendered layout either guesses at the fact or gives up on the page, while an agent built with a fallback, such as a search result or a cached summary, may still complete the task another way.
 
 ## Technical checks
 
@@ -4991,7 +4996,7 @@ The audit checks the parts an agent reaches first. Discoverability covers robots
 
 The scanner's checks run against its current rule set, and what it does not score, such as llms.txt, is tested directly. That rule set moves, so a scan run today is a new measurement rather than a repeat of an earlier one.
 
-The table below records each surface's current status, drawn from the reference file this site maintains in its repository.
+The table below records each surface's current status, drawn from the reference file this site maintains in its repository. Pilot means an early-stage mechanism with no ratifying body yet. It names the ratification state and does not rate adoption or production maturity.
 
 | Surface | Status |
 | --- | --- |
@@ -5016,11 +5021,11 @@ A technical scan reads what a page serves. It does not read what a person notice
 
 ## AI-answer observations
 
-A separate question from both of the above is what an AI assistant actually says when a buyer asks it something. Observed AI answers means asking ChatGPT, Perplexity, Claude, and similar assistants the questions a buyer would ask, and recording which sources they name and what they get wrong. This does not test the site directly. It tests whether the work already done on discoverability and content accessibility shows up in a real answer, and it can surface an assistant repeating outdated information that a scan of the current site would not catch.
+A separate question from both of the above is what an AI assistant actually says when a buyer asks it something. Observed AI answers means asking ChatGPT, Perplexity, Claude, and similar assistants the questions a buyer would ask, and recording which sources they name and what they get wrong. This does not test the site directly. It records what selected assistants answer on the test date and which sources they cite. It does not establish which site changes caused the answer, and it can surface an assistant repeating outdated information that a scan of the current site would not catch.
 
 ## Findings and verification
 
-The result of an audit is a list. Each check passes or fails, and each failure comes with a concrete fix instruction and, where this site has a guide for that surface, a link to it. The report is written so your own team can do the work, which means implementation is something you buy if you want it rather than something the report forces on you.
+The result of an audit is a list. Each check passes or fails, and each failure comes with a concrete fix instruction or the reason the gap is left open, and with a link to the guide on this site for that surface where there is one. The report is written so your own team can do the work, which means implementation is something you buy if you want it rather than something the report forces on you.
 
 turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. That is one scan on one day against one named scanner, and it does not stand in for manual review or for how an assistant answers a buyer's question, so it counts as one input among the three above rather than a summary of all of them. A rescan after a fix shows whether that specific fix passed. The audit a client receives runs the same three kinds of check against their site.
 
@@ -5032,11 +5037,11 @@ An agent-readiness audit measures how well an AI agent can discover, read, and a
 
 **What does an agent-readiness audit check?**
 
-It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, and each failure comes with a concrete fix, verified by the scanner where the check is scored and by a direct test where it is not.
+It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, and each failure comes with a concrete fix or the reason the gap is left open. Fixes are verified by the scanner where the check is scored and by a direct test where it is not.
 
 **What does an agent-readiness audit produce?**
 
-A pass or fail on each check, and a concrete fix instruction for every failure, with a link to the guide on this site for that surface where there is one. Your own team can do the work from the report. Scored checks are verified by the scanner before and after, manual-review fixes by a direct test, and the score comes from the scanner's published checks rather than opinion.
+A pass or fail on each check, and for every failure a concrete fix instruction or the reason the gap is left open, with a link to the guide on this site for that surface where there is one. Your own team can do the work from the report. Scored checks are verified by the scanner before and after, manual-review fixes by a direct test, and the score comes from the scanner's published checks rather than opinion.
 
 ## Sources
 
@@ -5609,7 +5614,7 @@ Asking a named assistant a buyer's question and recording what it says is a thir
 
 ## Recording the method and the date
 
-Each conclusion should say which of the three it rests on and when it was taken. This is the standard turva.dev applies to its own site. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix, and the categories the report named are the ones a later scan is checked against. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
+Each conclusion should say which of the three it rests on and when it was taken. This is the standard turva.dev applies to its own site. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix or the reason the gap is left open, and the categories the report named are the ones a later scan is checked against. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-09-23. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
 
 For an audit that reports measured results, naming the method behind each one, contact info@turva.dev.
 
@@ -6753,7 +6758,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.199.1",
+    "version": "3.200.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6863,7 +6868,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Zssl5UzjNEpnfbHh-qwoWD_L-FFVGtTbJ24wwh7ExbhCVHodRR0q1FrBnLnbzfEYOprnL4yykozTYmMI7jsvAQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qXnZ5tVwnZcbHCZODRIlyIkoVZ3gzmirn0bHoSWzKhPUrrpJTiTVreeVSq7k_MIF7Pr2OMFg3Ppsw8tRjN1vBw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"AS3IP_j1eiZAsISspyFtv6l_D5-lVqg10e6aazGZyPV-L0NgnbIwDGDYArBrOxBDYWIAwcF2hFsy09XkGdDvBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qXnZ5tVwnZcbHCZODRIlyIkoVZ3gzmirn0bHoSWzKhPUrrpJTiTVreeVSq7k_MIF7Pr2OMFg3Ppsw8tRjN1vBw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6878,7 +6883,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.12",
+  "version": "1.6.13",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6887,7 +6892,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.12",
+    "version": "1.6.13",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -7033,7 +7038,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.199.1",
+  "version": "3.200.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7882,7 +7887,7 @@ var META_BY_PATH = {
     title: "Why I publish every guide for free · turva.dev",
     description: "I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.",
     date: "2026-09-29",
-    modified: "2026-09-29",
+    modified: "2026-10-02",
     kind: "Build notes",
     image: "/og-why-i-publish-every-guide.jpg",
     imageAlt: "turva.dev blog card: why I publish every guide for free, because the rules move monthly and the reading has to be done before a client needs it.",
@@ -7891,7 +7896,7 @@ var META_BY_PATH = {
     title: "My own site is my proof of work · turva.dev",
     description: "Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.",
     date: "2026-09-26",
-    modified: "2026-09-29",
+    modified: "2026-10-02",
     kind: "Build notes",
     image: "/og-my-own-site-is-my-proof-of-work.jpg",
     imageAlt: "turva.dev blog card: my own site is my proof of work, so nothing on it waits. What gets fixed the same day, and what it cost when a change broke my own tools.",
@@ -8510,7 +8515,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
 {"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"},"addOn":{"@type":"Offer","name":"Shopify correction implementation","description":"Exactly the corrections the check's plan lists. Sold only with the Shopify agent storefront check: bought with it, with its report, or after the report and before implementation starts, and only when collaborator access to the store is arranged in advance.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Shopify correction implementation"}}},
 {"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
-{"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across the same assistants, written review of shipped work within one business day up to four reviews a month, roadmap input, a monthly written summary within five business days after the month ends and a quarterly summary of measurable progress within five business days after every third service month. Minimum three months, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, the retainer runs month to month and either party can end it by email before the next month starts. Corrected 2026-09-28. Added the month-to-month continuation, its email cancellation, the first-month cancellation and the monthly and quarterly summary deadlines.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
+{"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across the same assistants, written review of shipped work within one business day up to four reviews a month, roadmap input, a monthly written summary within five business days after the month ends and a quarterly summary of measured changes within five business days after every third service month. Minimum three months, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, the retainer runs month to month and either party can end it by email before the next month starts. Corrected 2026-09-28. Added the month-to-month continuation, its email cancellation, the first-month cancellation and the monthly and quarterly summary deadlines.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. A separately scoped day excludes DNS changes, tool declarations inside your application and agent payment flows. An MCP server is a separate engagement. Corrected 2026-09-28. Added the day-rate exclusions.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}}`;
 
@@ -8657,6 +8662,7 @@ function serve404(pathname, request) {
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
 <link rel="alternate" type="application/rss+xml" title="turva.dev blog" href="https://turva.dev/blog/feed.xml" />
 <title>Page not found · turva.dev</title>
+<script src="/nav.js" defer></script>
 <style>
 html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;color-scheme:dark;}
 main{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 4rem;}
@@ -9559,9 +9565,15 @@ function mdSecBodyHtml(path, heading, listOnly, dropRow) {
   return parts.join("\n    ");
 }
 function mdOpenSec(path, heading, id, extra, listOnly, dropRow) {
-  return `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
+  const html = `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
     ${mdSecBodyHtml(path, heading, listOnly, dropRow)}${extra || ""}
   </section>`;
+  // The example code blocks on the two tool pages scroll sideways on narrow screens, so they
+  // join the tab order (WCAG 2.1.1). Only these two pages: markdownToHtml stays unchanged and
+  // every other code block on the site keeps its markup.
+  return path === "/llms-txt-validator" || path === "/markdown-parity-check"
+    ? html.replace(/<pre><code>/g, '<pre tabindex="0"><code>')
+    : html;
 }
 // Button rows read from the twin (Tek-484). A row's links sit in the twin as one paragraph
 // made only of markdown links, in the order and with the texts the buttons show, so an agent
@@ -9931,7 +9943,7 @@ function buildValidatorAppJsonLd(canonicalUrl) {
 // none of them read right on Erik's displays in three browsers. The whole site reads the full
 // 68rem frame (Tek-360 stands). READ_CSS stays as an empty hook so the templates need no change.
 var READ_CSS = ``;
-var FOOTER_CSS = `${READ_CSS}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover),main .svcnote a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
+var FOOTER_CSS = `${READ_CSS}pre:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover),main .svcnote a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:3rem clamp(24px,5vw,72px);display:flex;flex-direction:column;gap:1.5rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:10px;}.tv-foot .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}.tv-foot .nv-word b{color:#5DF18F;}
 .tv-foot .foot-brand svg{display:block;width:34px;height:34px;}
@@ -10194,6 +10206,7 @@ function serveGuideHtml(pathname, canonicalUrl) {
 ${metaBlock}
 ${jsonLd}
 ${WEBMCP_SCRIPT}
+<script src="/nav.js" defer></script>
 <link rel="canonical" href="${canonicalUrl}" />
 <link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
@@ -10377,6 +10390,7 @@ function serveHomeHtml(canonicalUrl) {
 ${metaBlock}
 ${SCHEMA_HOME}
 ${WEBMCP_SCRIPT}
+<script src="/nav.js" defer></script>
 <link rel="canonical" href="${canonicalUrl}" />
 <link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
@@ -10789,7 +10803,7 @@ ${TOC_SUB_CSS}
 .bfilter{margin:0 0 .9rem;}
 .blabel{display:block;font-size:.95rem;font-weight:600;color:#F2F4F3;margin:0 0 .45rem;}
 #bsearch{display:block;width:100%;max-width:34rem;box-sizing:border-box;min-height:48px;background:#07110D;border:1px solid #5A6B68;border-radius:7px;padding:10px 14px;color:#F2F4F3;font:inherit;font-size:16px;margin:0 0 .8rem;}
-#bsearch::placeholder{color:#6F7A77;}
+#bsearch::placeholder{color:#9AA3A0;opacity:1;}
 .bkinds{display:flex;flex-wrap:wrap;gap:8px;}
 .bkind{min-height:44px;padding:0 16px;border:1px solid rgba(255,255,255,0.24);border-radius:999px;background:transparent;color:#C9D1CE;font:600 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;}
 .bkind:hover{border-color:#5DF18F;color:#F2F4F3;}
@@ -10858,7 +10872,8 @@ function cardPageHead(metaBlock, jsonLd, canonicalUrl, extraHead) {
 <link rel="alternate" type="application/rss+xml" title="turva.dev blog" href="https://turva.dev/blog/feed.xml" />
 ${metaBlock}
 ${jsonLd}
-${WEBMCP_SCRIPT}${extraHead ? "\n" + extraHead : ""}
+${WEBMCP_SCRIPT}
+<script src="/nav.js" defer></script>${extraHead ? "\n" + extraHead : ""}
 <link rel="canonical" href="${canonicalUrl}" />
 <link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
@@ -11091,6 +11106,7 @@ function briefHtmlPage(rec, canonicalUrl) {
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
 <link rel="apple-touch-icon" href="https://turva.dev/logo.png" />
 ${WEBMCP_SCRIPT}
+<script src="/nav.js" defer></script>
 <link rel="alternate" href="${canonicalUrl}.md" type="text/markdown" />
 <link rel="alternate" href="${canonicalUrl}.json" type="application/json" />
 <style>
@@ -11424,7 +11440,14 @@ function maskLocation(href, base) {
   if (u && u.host) {
     u.username = "";
     u.password = "";
-    for (const key of Array.from(u.searchParams.keys())) u.searchParams.set(key, "***");
+    // One pass (Tek-560): a Set keeps the first-seen key order and collapses duplicates, and the
+    // masked query is built once. Setting each key on u.searchParams re-serializes the whole
+    // query every time, which is quadratic in the number of keys. An empty query is left alone,
+    // so "?" stays "?" as before.
+    const maskedQuery = new URLSearchParams();
+    // append, not set: the keys are already unique, and set searches the whole list on every call.
+    for (const key of new Set(u.searchParams.keys())) maskedQuery.append(key, "***");
+    if (maskedQuery.toString() !== "") u.search = maskedQuery.toString();
     u.hash = "";
     return u.href;
   }
@@ -11683,6 +11706,14 @@ function collectLinks(text, defs) {
     return at;
   };
   const isBlank = (c) => c === " " || c === "\t";
+  // A blank line ends a paragraph, and a link label cannot reach across one (Tek-560). True when
+  // the line break at p is followed by a line that holds only spaces and tabs, or by the end.
+  const blankAt = (p) => {
+    if (text[p] !== "\n") return false;
+    let q = p + 1;
+    while (q < text.length && isBlank(text[q])) q++;
+    return q >= text.length || text[q] === "\n";
+  };
   // Spaces, tabs and at most one line ending may stand around the destination and the title, as
   // CommonMark allows; "[a](  b  )" and a ")" on the next line were missed until the review of
   // 2026-09-27. A blank line still ends the link.
@@ -11731,7 +11762,7 @@ function collectLinks(text, defs) {
   // nested bracket, the way one always was.
   const skipImage = (k) => {
     let m = k + 1;
-    while (m < text.length && text[m] !== "]" && text[m] !== "[") m += text[m] === "\\" ? 2 : 1;
+    while (m < text.length && text[m] !== "]" && text[m] !== "[" && !blankAt(m)) m += text[m] === "\\" ? 2 : 1;
     if (m >= text.length || text[m] !== "]" || text[m + 1] !== "(") return null;
     const t = readTarget(m + 2);
     return t ? t.end + 1 : null;
@@ -11741,7 +11772,7 @@ function collectLinks(text, defs) {
     if (i > 0 && text[i - 1] === "!" && !isEscaped(text, i - 1)) continue;
     let j = i + 1;
     for (;;) {
-      while (j < text.length && text[j] !== "]" && text[j] !== "[") j += text[j] === "\\" ? 2 : 1;
+      while (j < text.length && text[j] !== "]" && text[j] !== "[" && !blankAt(j)) j += text[j] === "\\" ? 2 : 1;
       if (j >= text.length || text[j] !== "[") break;
       if (code[j] || text[j - 1] !== "!" || isEscaped(text, j - 1)) break;
       const after = skipImage(j);
@@ -11749,10 +11780,11 @@ function collectLinks(text, defs) {
       j = after;
     }
     if (j >= text.length) break;
+    if (text[j] === "\n") { i = j; continue; }
     if (text[j] === "[") { i = j - 1; continue; }
     if (text[j + 1] === "(") {
       const t = readTarget(j + 2);
-      if (t) { out.push({ name: text.slice(i + 1, j), target: decodeAttributeValue(t.target), at: i }); i = t.end; continue; }
+      if (t) { out.push({ name: text.slice(i + 1, j), target: decodeDestination(t.target), at: i }); i = t.end; continue; }
       i = j + 1;
       continue;
     }
@@ -11764,7 +11796,7 @@ function collectLinks(text, defs) {
         const label = normalizeLinkLabel(rawLabel === "" ? text.slice(i + 1, j) : rawLabel);
         const dest = label && defs.get(label);
         if (dest !== undefined) {
-          out.push({ name: text.slice(i + 1, j), target: decodeAttributeValue(dest), at: i });
+          out.push({ name: text.slice(i + 1, j), target: decodeDestination(dest), at: i });
           i = m;
           continue;
         }
@@ -11778,7 +11810,7 @@ function collectLinks(text, defs) {
       const label = text[j + 1] === ":" ? "" : normalizeLinkLabel(text.slice(i + 1, j));
       const dest = label ? defs.get(label) : undefined;
       if (dest !== undefined) {
-        out.push({ name: text.slice(i + 1, j), target: decodeAttributeValue(dest), at: i });
+        out.push({ name: text.slice(i + 1, j), target: decodeDestination(dest), at: i });
         i = j;
         continue;
       }
@@ -11826,11 +11858,31 @@ function fenceMask(lines) {
 // A markdown list item that carries a link. A bullet or an ordered marker (1. or 1)) followed by
 // a space or a tab opens the item; an ordered list and a tab after the marker were not read as
 // list items until 2026-09-27 (Tek-496). The link is found by collectLinks, so code, escapes
-// and images count here exactly as they do in the links check. A bare CR, U+2028 and U+2029 stay
-// inside a line after split(/\r?\n/), and a link behind one has never counted, so the item is read
-// up to the first of them.
+// and images count here exactly as they do in the links check. CR and CRLF are turned into LF
+// before the split (Tek-560); U+2028 and U+2029 stay inside a line, and a link behind one has never
+// counted, so the item is read up to the first of them.
 function listItemHasLink(l, hasLink) {
   return !!hasLink && /^ {0,3}(?:[-*+]|\d{1,9}[.)])[ \t]/.test(l);
+}
+
+// The destination of a link as the URL test should see it. CommonMark lets a backslash escape any
+// ASCII punctuation character, so "https\://example.com" is the destination "https://example.com".
+// Backslash escapes and character references are read in one pass over the source, so an escaped
+// ampersand stays literal text and is not decoded a second time (Tek-560).
+function decodeDestination(s) {
+  const escapeAt = /(\\[!-\/:-@\[-`{-~])/;
+  return String(s).split(escapeAt).map((part) => (part.length === 2 && part[0] === "\\" && /[!-\/:-@\[-`{-~]/.test(part[1]) ? part[1] : decodeAttributeValue(part))).join("");
+}
+
+// A setext H1: one text line indented at most three spaces whose next line is a run of "=" (also
+// indented at most three spaces, trailing spaces allowed). Returns true for the pair. A line that
+// starts a block of its own (heading, blockquote, list item, fence) is not paragraph text, so it
+// never becomes a setext title. Only a one-line title is read; a title over several lines is not
+// (Tek-560).
+function isSetextH1(line, next) {
+  if (typeof next !== "string" || !/^ {0,3}=+[ \t]*$/.test(next)) return false;
+  if (!/^ {0,3}\S/.test(line)) return false;
+  return !/^ {0,3}(?:#|>|[-*+](?:[ \t]|$)|\d{1,9}[.)](?:[ \t]|$)|`{3,}|~{3,})/.test(line);
 }
 
 // The text of an ATX H1, or null when the line is not one. One to three leading spaces, a
@@ -11891,7 +11943,9 @@ function validateLlmsTxt(f) {
   // TextDecoder in fetchLlmsTxt removes a BOM by default, so the direct API took a different
   // document than the fetched one for the exact same bytes. V3 (Tek-526): the h1-title check saw
   // the mark as part of the first line and failed a document that would pass when fetched.
-  const text = f.text.charCodeAt(0) === 0xFEFF ? f.text.slice(1) : f.text;
+  // CR-only and CRLF line endings become LF here (Tek-560): a file written with bare CR was one
+  // line for the old split and read as a title with the whole document in it.
+  const text = (f.text.charCodeAt(0) === 0xFEFF ? f.text.slice(1) : f.text).replace(/\r\n?/g, "\n");
   const ct = (f.contentType || "").toLowerCase();
   const looksHtml = /^\s*(<!doctype|<html|<head|<body)/i.test(text);
   if (looksHtml) {
@@ -11906,7 +11960,7 @@ function validateLlmsTxt(f) {
   } else {
     add("content-type", "warn", "Response is plain text", "content-type is " + (ct.split(";")[0] || "missing") + ", text/plain or text/markdown is the convention");
   }
-  const lines = text.split(/\r?\n/);
+  const lines = text.split("\n");
   const firstIdx = lines.findIndex((l) => l.trim() !== "");
   const firstRaw = firstIdx === -1 ? "" : lines[firstIdx];
   const first = firstRaw.trim();
@@ -11915,30 +11969,45 @@ function validateLlmsTxt(f) {
   // "    # Site" passed as the H1 until 2026-08-29. CommonMark allows three spaces.
   // h1Title reads the heading the way CommonMark does, its closing run included (Tek-496).
   const title = h1Title(firstRaw);
-  if (title) {
+  // A setext H1 (a text line, then a line of "=") is an H1 as well (Tek-560). The summary and the
+  // later scans start after its underline.
+  const setext = title === null && firstIdx !== -1 && isSetextH1(firstRaw, lines[firstIdx + 1]);
+  const h1End = setext ? firstIdx + 1 : firstIdx;
+  if (title || setext) {
     add("h1-title", "pass", "Starts with an H1 title", JSON.stringify(cut(first, 80)));
   } else if (title === "") {
     add("h1-title", "fail", "Starts with an H1 title", "the H1 has no text; the format requires the project name there");
   } else {
-    add("h1-title", "fail", "Starts with an H1 title", "the first non-empty line should be a markdown H1 (# Site name)");
+    add("h1-title", "fail", "Starts with an H1 title", "the first non-empty line should be a markdown H1 (# Site name, or one line of text underlined with =)");
   }
-  const afterH1 = lines.slice(firstIdx + 1).find((l) => l.trim() !== "") || "";
+  const afterIdx = lines.findIndex((l, i) => i > h1End && l.trim() !== "");
+  const afterH1 = afterIdx === -1 ? "" : lines[afterIdx];
   // A blockquote marker is 0-3 leading spaces plus ">", optionally followed by one space that
   // is then part of the marker and not the content; CommonMark reads ">Summary" and a tab the
   // same way, and four or more leading spaces stay indented code, not a blockquote. N03
   // (Tek-526): a literal space was required, so a tab or no space at all warned as missing.
+  // The blockquote directly under the title is one block of consecutive ">" lines, and it is the
+  // summary when any line of it has text (Tek-560). ">" followed by "> Real summary" passes, and a
+  // block whose every line is empty (">" alone, or ">" on several lines) is an empty blockquote and
+  // warns. A nested ">>" or "> >" line counts as text, as it did in 0.3.15.
+  let summaryLine = "";
   if (/^ {0,3}>/.test(afterH1)) {
-    add("summary", "pass", "Blockquote summary after the title", JSON.stringify(cut(afterH1.trim(), 80)));
+    for (let i = afterIdx; i < lines.length && /^ {0,3}>/.test(lines[i]); i++) {
+      if (/^ {0,3}>[ \t]*\S/.test(lines[i])) { summaryLine = lines[i]; break; }
+    }
+  }
+  if (summaryLine !== "") {
+    add("summary", "pass", "Blockquote summary after the title", JSON.stringify(cut(summaryLine.trim(), 80)));
   } else {
     // A blockquote further down, before the first H2, is a summary in the wrong place and not a
     // missing one, and the detail says which (ChatGPT retest 2026-09-26, Tek-487). The status is
     // warn either way, because the format places the summary directly after the title.
     const fence = fenceMask(lines);
     let late = -1;
-    for (let i = firstIdx + 1; i < lines.length; i++) {
+    for (let i = h1End + 1; i < lines.length; i++) {
       if (fence[i]) continue;
       if (/^ {0,3}## /.test(lines[i])) break;
-      if (/^ {0,3}>/.test(lines[i])) { late = i; break; }
+      if (/^ {0,3}>[ \t]*\S/.test(lines[i])) { late = i; break; }
     }
     add("summary", "warn", "Blockquote summary after the title", late === -1
       ? "recommended by the format (> one-line summary), not required"
@@ -11987,15 +12056,60 @@ function validateLlmsTxt(f) {
   // Both passed until 2026-09-27 (Tek-496). The first one is named in the detail.
   let sectionsWithList = 0, misplaced = -1;
   {
-    let inSection = false, counted = false, seenH2 = false;
+    let inSection = false, counted = false, seenH2 = false, itemOpen = false, itemGap = false, itemEmpty = false, itemCol = 0, afterFence = false;
+    // Width of the leading white space of a line in columns, a tab running to the next multiple of 4.
+    const indentWidth = (s) => { let c = 0; for (const ch of s) { if (ch === " ") c++; else if (ch === "\t") c += 4 - (c % 4); else break; } return c; };
     for (let i = 0; i < lines.length; i++) {
       const l = lines[i];
-      if (fenced[i]) continue;
-      if (/^ {0,3}## /.test(l)) { inSection = true; counted = false; seenH2 = true; continue; }
+      // A code fence indented less than the item's content column closes the open item, so a link
+      // after it is not that item's link. The content column is where the item's text starts, 2 for
+      // "- item" and 4 for "-   item". A fence indented to that column is inside the item and keeps
+      // it open, as in CommonMark, but the line after it then counts only when it is indented to
+      // that column too, because a lazy continuation cannot follow a fence.
+      if (fenced[i]) {
+        if (l.trim() !== "" && indentWidth(l) < itemCol) itemOpen = false;
+        if (itemOpen) afterFence = true;
+        continue;
+      }
+      if (/^ {0,3}## /.test(l)) { inSection = true; counted = false; seenH2 = true; itemOpen = false; continue; }
       const h1 = /^ {0,3}#(?:[ \t]|$)/.test(l);
       if (misplaced === -1 && i > firstIdx && (h1 || (!seenH2 && /^ {0,3}#{3,6}(?:[ \t]|$)/.test(l)))) misplaced = i;
-      if (h1) { inSection = false; continue; }
-      if (inSection && !counted && listItemHasLink(l, linkedLineIdx.has(i))) { sectionsWithList++; counted = true; }
+      if (h1) { inSection = false; itemOpen = false; continue; }
+      // A link on a line that continues an open list item counts as that item's link (Tek-560):
+      // a marker alone on its line, a link on the next line, or a lazy continuation line. A blank
+      // line keeps the item open only for a line indented to the item's content column after it. A
+      // heading, a blockquote or a thematic break ends the item. An empty marker takes no lazy
+      // continuation (CommonMark): the next line counts only when indented to the content column,
+      // and a blank line right after the empty marker closes the item.
+      if (l.trim() === "") { if (itemEmpty) itemOpen = false; itemGap = itemOpen; continue; }
+      const fromFence = afterFence;
+      afterFence = false;
+      if (/^ {0,3}(?:[-*+]|\d{1,9}[.)])(?:[ \t]|$)/.test(l)) {
+        itemOpen = true;
+        itemGap = false;
+        itemEmpty = /^ {0,3}(?:[-*+]|\d{1,9}[.)])[ \t]*$/.test(l);
+        {
+          // Content column: where the text after the marker starts when one to four spaces
+          // separate them, and the column after the marker when the line is empty or five or
+          // more spaces follow, which makes the rest indented code.
+          const mk = /^( {0,3})([-*+]|\d{1,9}[.)])([ \t]*)/.exec(l);
+          const markerEnd = mk[1].length + mk[2].length;
+          let c = markerEnd;
+          for (const ch of mk[3]) c += ch === "\t" ? 4 - (c % 4) : 1;
+          itemCol = (mk[0].length === l.length || c - markerEnd > 4) ? markerEnd + 1 : c;
+        }
+        if (inSection && !counted && listItemHasLink(l, linkedLineIdx.has(i))) { sectionsWithList++; counted = true; }
+        continue;
+      }
+      if (/^ {0,3}(?:#{1,6}(?:[ \t]|$)|>|([-*_])(?: *\1){2,} *$)/.test(l)) { itemOpen = false; continue; }
+      const indented = indentWidth(l) >= itemCol;
+      if (itemOpen && (!itemGap || indented) && (!itemEmpty || indented) && (!fromFence || indented)) {
+        if (inSection && !counted && linkedLineIdx.has(i)) { sectionsWithList++; counted = true; }
+        itemGap = false;
+        itemEmpty = false;
+      } else {
+        itemOpen = false;
+      }
     }
   }
   if (h2Count > 0 && sectionsWithList > 0) {
@@ -12037,7 +12151,15 @@ function validateLlmsTxt(f) {
   } else {
     add("size", "warn", "Small enough to be cheap to read", f.bytes + " bytes; consider moving detail to llms-full.txt");
   }
-  if (/<\/?[a-z][a-z0-9-]*(?=[\s\/>])|<!--/i.test(text)) {
+  // A tag needs its closing ">" (Tek-560): an opening tag with well formed attributes, a closing tag
+  // or a comment start. "a <b + c" is prose and no longer warns. An attribute name is any run of
+  // characters other than white space, quotes, "<", ">", "/" and "=" that holds a Unicode letter,
+  // a Unicode digit or an underscore, so "@click", "*ngIf", ":class" and "ä" count, while a bare
+  // operator such as the "+" in "a <b + c > d" does not. The tag name itself is ASCII. An unquoted
+  // value may not start with a quote, which keeps the quoted and the unquoted form from matching
+  // the same text, so the scan stays linear. A tag still open at the end of the file, as in
+  // '<div class="x"', has no closing ">" and does not warn.
+  if (/<[a-zA-Z][a-zA-Z0-9-]*(?:\s+[^\s"'<>\/=\p{L}\p{N}_]*[\p{L}\p{N}_][^\s"'<>\/=]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|(?!["'])[^\s<>]+))?)*\s*\/?>|<\/[a-zA-Z][a-zA-Z0-9-]*\s*>|<!--/u.test(text)) {
     add("no-html", "warn", "No HTML markup in the file", "HTML tags found; llms.txt should be plain markdown");
   } else {
     add("no-html", "pass", "No HTML markup in the file", "plain markdown");
@@ -12623,36 +12745,55 @@ function scriptEnd(lower, from) {
 }
 
 // The end of a nested template: templates count, so an inner </template> does not close
-// an outer one. Returns the index after the closing tag, or -1 when it never closes.
+// an outer one. Returns the index after the closing tag, or -1 when it never closes. A comment
+// or a raw text element inside the template is skipped whole before its markers are counted.
+// Raw text and RCDATA elements whose content is text for the tokenizer, so a "<template" or a
+// "</template" inside one is not a tag. script is read by scriptEnd, the others by rawTextEnd.
+const TEMPLATE_RAW_TEXT = ["script", "style", "title", "noscript", "noframes", "textarea", "xmp", "iframe", "noembed"];
 function templateEnd(lower, from) {
-  let depth = 1;
-  // Both searches resume from their own previous hit. Restarting either one from a shared
-  // cursor is quadratic: "</templateX" repeated made every round scan to the end of the
-  // input again, and 1 MB of it measured 15 686 ms.
-  let open = lower.indexOf("<template", from);
-  let close = lower.indexOf("</template", from);
+  let depth = 1, i = from;
+  // One forward scan: every "<" is looked at once and the cursor never moves back, so the cost
+  // stays linear (restarting a search each round measured 15 686 ms on 1 MB of "</templateX").
+  // Comments and raw text elements are stepped over whole, because the markers inside them are
+  // text for a parser and counted before as if they were tags (Tek-560).
   for (;;) {
-    if (close === -1) return -1;
-    if (open !== -1 && open < close) {
-      if (isTagBoundary(lower[open + 9])) depth++;
-      open = lower.indexOf("<template", open + 9);
+    const lt = lower.indexOf("<", i);
+    if (lt === -1) return -1;
+    if (lower.startsWith("<!--", lt)) {
+      if (lower.startsWith("<!-->", lt)) { i = lt + 5; continue; }
+      if (lower.startsWith("<!--->", lt)) { i = lt + 6; continue; }
+      const cend = commentEnd(lower, lt + 4);
+      if (cend === -1) return -1;
+      i = cend;
       continue;
     }
-    let j = close + 10;
-    j = skipSpace(lower, j);
-    if (lower[j] === "/") j = skipSpace(lower, j + 1);
-    if (lower[j] !== ">") {
-      // Not an end tag: for the tokenizer the rest of the name runs to the next ">", and a
-      // "<" inside it is part of the name rather than a new tag.
-      const bogus = lower.indexOf(">", close + 10);
-      if (bogus === -1) return -1;
-      close = lower.indexOf("</template", bogus + 1);
-      if (open !== -1 && open < bogus) open = lower.indexOf("<template", bogus + 1);
+    if (lower.startsWith("</template", lt)) {
+      let j = skipSpace(lower, lt + 10);
+      if (lower[j] === "/") j = skipSpace(lower, j + 1);
+      if (lower[j] !== ">") {
+        // Not an end tag: for the tokenizer the rest of the name runs to the next ">", and a
+        // "<" inside it is part of the name rather than a new tag.
+        const bogus = lower.indexOf(">", lt + 10);
+        if (bogus === -1) return -1;
+        i = bogus + 1;
+        continue;
+      }
+      depth--;
+      if (depth === 0) return j + 1;
+      i = j + 1;
       continue;
     }
-    depth--;
-    if (depth === 0) return j + 1;
-    close = lower.indexOf("</template", j + 1);
+    if (lower.startsWith("<template", lt) && isTagBoundary(lower[lt + 9])) { depth++; i = lt + 9; continue; }
+    const rawName = TEMPLATE_RAW_TEXT.find((n) => lower.startsWith(n, lt + 1) && isTagBoundary(lower[lt + 1 + n.length]));
+    if (rawName) {
+      const gt = tagEnd(lower, lt);
+      if (gt === -1) return -1;
+      const rend = rawName === "script" ? scriptEnd(lower, gt + 1) : rawTextEnd(lower, rawName, gt + 1);
+      if (rend === -1) return -1;
+      i = rend;
+      continue;
+    }
+    i = lt + 1;
   }
 }
 
@@ -13741,6 +13882,28 @@ var BLOG_FILTER_JS = `(function () {
 })();
 `;
 
+// Served at /nav.js, allowed by script-src 'self'. Closes the mobile menu (details.nv-mobile) on
+// Escape, returning focus to its summary, and when focus leaves the details element, so an open
+// menu never keeps covering the focused control behind it (WCAG 2.4.11). No library, no CSP
+// change, no inline script. Backticks and a dollar-brace pair stay out of this literal so the
+// served bytes are the source bytes. The page works without it: the menu still opens and closes.
+var NAV_JS = `(function () {
+  var d = document.querySelector("details.nv-mobile");
+  if (!d) return;
+  var s = d.querySelector("summary");
+  d.addEventListener("keydown", function (e) {
+    if ((e.key === "Escape" || e.key === "Esc") && d.open) {
+      d.open = false;
+      if (s) s.focus();
+    }
+  });
+  d.addEventListener("focusout", function (e) {
+    var to = e.relatedTarget;
+    if (d.open && to && !d.contains(to)) d.open = false;
+  });
+})();
+`;
+
 function serveBlogHtml(canonicalUrl) {
   const head = cardPageHead(buildMetaBlock("/blog", canonicalUrl), buildGuideJsonLd("/blog", canonicalUrl), canonicalUrl, '<script src="/blog-filter.js" defer></script>');
   const body = `${head}
@@ -14455,6 +14618,9 @@ async function handleRequest(request, env) {
   }
   if (pathname === "/blog-filter.js") {
     return serveStatic(BLOG_FILTER_JS, "text/javascript; charset=utf-8", "asset");
+  }
+  if (pathname === "/nav.js") {
+    return serveStatic(NAV_JS, "text/javascript; charset=utf-8", "asset");
   }
 
   if (pathname === "/" + INDEXNOW_KEY + ".txt") {

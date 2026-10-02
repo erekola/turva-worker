@@ -641,7 +641,8 @@ console.log('\nService set (facts.json owns which services exist)');
 
 console.log('\nSecurity evidence');
 const H = facts.security.hardenize, I = facts.security.internetnl;
-for (const k of Object.keys(src)) check(src[k].text.includes(H.url), `${src[k].rel} links canonical Hardenize URL`);
+// Tek-560: the Hardenize report page no longer exists (302 to the start page, measured 2026-10-02), so no surface may link it; the dated reading stays as text.
+for (const k of Object.keys(src)) check(!/hardenize\.com\/report\/turva\.dev/.test(src[k].text), `${src[k].rel} does not link the retired Hardenize report URL`);
 for (const k of Object.keys(src)) check(containsAny(src[k].text, slashVariants(I.score)), `${src[k].rel} shows Internet.nl ${I.score}`);
 check(src.worker.text.includes(I.url), `Internet.nl URL in worker.js`);
 const IM = facts.security.internetnlMail;
@@ -3336,8 +3337,8 @@ if (LIVE) {
       const hzM = String(hz.result).match(/^(\d+)\/(\d+) categories passed$/);
       check(Number.isFinite(wantHz) && !!hzM && Number(hzM[1]) === wantHz && Number(hzM[2]) === wantHz,
         `get_security_evidence Hardenize reads ${wantHz}/${wantHz} categories passed (saw ${JSON.stringify(hz.result)})`);
-      check(hz.url === facts.security.hardenize.url,
-        `get_security_evidence Hardenize url == facts.json (saw ${hz.url})`);
+      check(hz.url === undefined,
+        `get_security_evidence Hardenize entry carries no report url (saw ${hz.url})`);
       const inl = (secEv.scans || []).find((s) => s.provider === 'Internet.nl') || {};
       const wantInl = ints(facts.security.internetnl.score);
       check(Number.isFinite(wantInl[0]) && inl.score === wantInl[0],

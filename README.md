@@ -70,7 +70,7 @@ These three do different jobs, but they are the same kind of work: each lets som
 - The `PARITY_LIMITER` binding allows about 10 checks per minute per client IP at each Cloudflare location. Without the binding the route answers 503 and runs nothing.
 - Every response to a check carries `Cache-Control: no-store`, and the route does not write the target address or the report to its logs.
 
-The page states the turva.dev limit in its opening paragraph and again in the address field's own hint, so a reader sees it before typing an address. Fill in an example only writes turva.dev's tools page into the field, and Check is the separate step that runs the comparison. That example returned a fail on 2026-09-11, described in [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree): the Related heading and its four links were in the Markdown and not in the HTML, while the same four targets were links inside the HTML page's tool cards. That was fixed, and the example now returns a pass with the pinned markdown-parity-check 0.2.17 (verified 2026-09-29, 26/26 HTML and Markdown blocks matched, 0 errors, 0 warnings, 0 infos).
+The page states the turva.dev limit in its opening paragraph and again in the address field's own hint, so a reader sees it before typing an address. Fill in an example only writes turva.dev's tools page into the field, and Check is the separate step that runs the comparison. That example returned a fail on 2026-09-11, described in [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree): the Related heading and its four links were in the Markdown and not in the HTML, while the same four targets were links inside the HTML page's tool cards. That was fixed, and on 2026-09-29 the example returned a pass with markdown-parity-check 0.2.17. It matched 26 of 26 HTML and Markdown blocks, with 0 errors, 0 warnings and 0 infos. The current pin is in package.json.
 
 The pinned release can be older than the latest npm release, and the report's `toolVersion` field names the one that ran. A newer package reaches the hosted page only through a site release.
 
@@ -92,6 +92,7 @@ The pinned release can be older than the latest npm release, and the report's `t
 | `/agent-readiness-audit`, `/shopify-agent-storefront-check` | Product pages, with the service comparison at `/services` |
 | `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Sample reports using invented sites |
 | `/blog-filter.js` | Search and kind filter for the blog index. Every post remains listed without it |
+| `/nav.js` | Closes the mobile menu on Escape and when focus leaves it. The menu works without it |
 
 See [docs/endpoints.md](docs/endpoints.md) for the complete inventory, including A2A, checkout, OAuth and mail-related endpoints.
 
@@ -122,7 +123,7 @@ The payment routes return x402 challenges and publish Stripe payment links. x402
 
 ## Web security
 
-Recorded on 2026-09-23: all 24 categories passed on [Hardenize](https://www.hardenize.com/report/turva.dev), 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
+Recorded on 2026-09-23: all 24 categories passed on Hardenize, 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
 
 The website deduction concerned the key-exchange hash function in one HTTPS sub-test. Its IPv6, DNSSEC and RPKI checks passed in full. The email deduction concerned IPv6, because the receiving mail servers, operated by the mail provider, publish no IPv6 address. Its DNSSEC and RPKI checks passed in full. DMARC with DKIM and SPF, and STARTTLS with DANE, also passed.
 
