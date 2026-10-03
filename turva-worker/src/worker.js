@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.203.0 - outside re-checks W36 to W45 applied (Tek-564): the hosted llms.txt validator reads a second H1 written as a setext heading, one line of text over a run of =, like the # form, so a file with one warns between the title and the first H2 and after the last section with the same detail and the line of the text, and the package turva-llms-txt-validator mirrors it as 0.3.19, and the MCP server card names MCP 1.6.15, whose get_services tool now says, as /services does, that read-only tools cannot modify the source through that interface
 // turva.dev worker v3.202.0 - outside reviews W26 to W35 applied (Tek-562): the x402 EIP-712 name of the Base mainnet USDC asset is USD Coin (X402_USDC_NAME, measured on chain), the UCP service key is dev.turva.agent_readiness, the ACP capabilities object loses checkout_note, the hosted llms.txt validator reads ## followed by a tab and a single-line setext H2 as headings, GET /v1/tasks/{id} and POST /v1/tasks/{id}:cancel answer -32001 task not found, the OpenAPI A2A message names messageId and kind, the MCP server card exposes ETag and answers a CORS preflight (its signed bytes are unchanged), the version 6 OpenPGP armor loses its CRC24 line, the sample pages carry their own revision dates and the 188 kB to 340 kB range, the services page says I reply within one business day, the legal page adds the re-scan and retest window to the remedy, and the validator page points to implementation.
 // turva.dev worker v3.201.0 - outside reviews W15 to W25 applied (Tek-561): the Hardenize report link is back with its own measurement date 2026-10-02 beside the Internet.nl date 2026-09-23, the hosted llms.txt validator form returns to its result and names a port in its own fixed sentence while the set of accepted addresses stays the same, the hosted parity check gives two fixed selector sentences (not valid, matched nothing) and runs markdown-parity-check 0.2.22, the sample audit and Shopify reports fix their counts, units, dates and attributions, the Privacy section states the Cloudflare security log retention of 31 days and a 24 month deletion rule for a question that does not lead to an engagement, the audit's follow-up round carries the written scope sentence its sibling services carry, the home business node is an Organization without priceRange, the MCP server card names MCP 1.6.14, and the published OpenPGP key is split so that /pgp-key.asc and WKD serve the Ed25519 version 4 key alone, which GnuPG imports, while the post-quantum version 6 key moves to its own block at /pgp-key-v6.asc.
 // turva.dev worker v3.200.0 - outside reviews W8 to W14 applied (Tek-560): the hosted llms.txt validator fixes nine wrong results (blank-line labels, escaped destinations, CR line endings, setext H1, continuation-line links, bare angle brackets, template comments, linear query masking, empty blockquote summaries), the mobile menu closes on Escape and when focus leaves it through /nav.js, the blog search placeholder meets 4.5:1, the five example code blocks on the two tool pages are focusable, the dead Hardenize report link is removed with the dated reading kept, the legal page names the encrypted report address, the scanner's input, the processor breach notice, the private repository rule and Privacy last updated 2026-10-02, the company page says no subcontractors, and dated corrections on five posts plus wording on the audit, services, Shopify and guide pages.
@@ -6776,7 +6777,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.202.0",
+    "version": "3.203.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6886,7 +6887,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"3DCukUPu1TsO8GeD1liScU4ofTxw1MnG1u5jvEwABRUq2lAt1_Eqnb0yIT2TFyoOurVOOF2FhUn0t0E0eX2AAw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qXnZ5tVwnZcbHCZODRIlyIkoVZ3gzmirn0bHoSWzKhPUrrpJTiTVreeVSq7k_MIF7Pr2OMFg3Ppsw8tRjN1vBw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"P_mvs0BKEszVOneWBZO3Oqa_A5_gpHStUg3RRxnnGRehVJdCZvWaeDV8JLDC0mcO1g8PPGIrwlVxUIYO86K4BA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qXnZ5tVwnZcbHCZODRIlyIkoVZ3gzmirn0bHoSWzKhPUrrpJTiTVreeVSq7k_MIF7Pr2OMFg3Ppsw8tRjN1vBw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -6901,7 +6902,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.14",
+  "version": "1.6.15",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -6910,7 +6911,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.14",
+    "version": "1.6.15",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -7055,7 +7056,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.202.0",
+  "version": "3.203.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -11931,6 +11932,38 @@ function isSetextH1(line, next) {
   return isSetextText(line);
 }
 
+// Lines that open a block of their own in CommonMark, so they are never setext text after the
+// title: a thematic break, the start of an HTML block (an autolink such as <https://...> is not
+// one, it stays paragraph text) and a link reference definition. Only the later-H1 reading skips
+// them; the title reading keeps its Tek-560 predicate. QA 2 of Tek-564 measured "---", "<div>" and
+// "[a]: url" over a run of "=" warning as a second H1 although 0.3.18 passed them.
+function startsOtherBlock(line) {
+  return /^ {0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$/.test(line)
+    || /^ {0,3}<(?:[A-Za-z][A-Za-z0-9-]*(?:[\s\/>]|$)|\/[A-Za-z][A-Za-z0-9-]*(?:[\s>]|$)|!--|\?|![A-Za-z]|!\[CDATA\[)/.test(line)
+    || /^ {0,3}\[[^\]]+\]:/.test(line);
+}
+
+// Setext H1 lines after the title (Tek-564). A second H1 written as one text line over a run of "="
+// is out of place exactly like "# Second title" is, and ends the section before it the same way.
+// The text line is read by isSetextH1, the predicate the first-title reading uses. It must start
+// a paragraph: a line that follows other paragraph text, a list item or a blockquote without a
+// blank line is a continuation line, so a title over several lines is not read as a heading, and
+// text that starts with "#" is not an H1 (isSetextText). The underline is returned separately
+// because it is not a heading and not content.
+function laterSetextH1(lines, fenced) {
+  const text = new Array(lines.length).fill(false);
+  const under = new Array(lines.length).fill(false);
+  let open = false;
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    if (fenced[i] || l.trim() === "") { open = false; continue; }
+    if (!open && !fenced[i + 1] && !startsOtherBlock(l) && isSetextH1(l, lines[i + 1])) { text[i] = true; under[i + 1] = true; i++; continue; }
+    if (open && /^ {0,3}=+[ \t]*$/.test(l)) { open = false; continue; }
+    open = !(/^ {0,3}#{1,6}(?:[ \t]|$)/.test(l) || /^ {0,3}(?:-+|([-*_])(?: *\1){2,})[ \t]*$/.test(l));
+  }
+  return { text, under };
+}
+
 // The one predicate for "is this line an H2" (Tek-562). An ATX H2 is "##" followed by a space or
 // a tab. A setext H2 is one line of paragraph text, with the line before it blank or the start of
 // the file, underlined by a run of hyphens on the next line. The text line follows the setext H1
@@ -12115,6 +12148,7 @@ function validateLlmsTxt(f) {
     }
   }
   const h2Count = lines.filter((l, i) => isH2At(lines, i, fenced)).length;
+  const sx = laterSetextH1(lines, fenced);
   // A section counts when it carries a file list. An H2 followed by a paragraph satisfied
   // this check until 2026-08-29, and the format puts each section's links in a list.
   // A heading between the title and the first H2, or a second H1 anywhere, is out of place,
@@ -12137,8 +12171,9 @@ function validateLlmsTxt(f) {
         if (itemOpen) afterFence = true;
         continue;
       }
+      if (sx.under[i]) continue;
       if (isH2At(lines, i, fenced)) { inSection = true; counted = false; seenH2 = true; itemOpen = false; if (!isAtxH2(l)) i++; continue; }
-      const h1 = /^ {0,3}#(?:[ \t]|$)/.test(l);
+      const h1 = /^ {0,3}#(?:[ \t]|$)/.test(l) || sx.text[i];
       if (misplaced === -1 && i > firstIdx && (h1 || (!seenH2 && /^ {0,3}#{3,6}(?:[ \t]|$)/.test(l)))) misplaced = i;
       if (h1) { inSection = false; itemOpen = false; continue; }
       // A link on a line that continues an open list item counts as that item's link (Tek-560):
