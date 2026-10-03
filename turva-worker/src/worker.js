@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.203.1 - the agent-readiness audit page's closing call to action shows info@turva.dev once: the address stays as a link in the paragraph above the button, the second copy beside the button is gone, and the unused .mail-plain rule is removed.
 // turva.dev worker v3.203.0 - outside re-checks W36 to W45 applied (Tek-564): the hosted llms.txt validator reads a second H1 written as a setext heading, one line of text over a run of =, like the # form, so a file with one warns between the title and the first H2 and after the last section with the same detail and the line of the text, and the package turva-llms-txt-validator mirrors it as 0.3.19, and the MCP server card names MCP 1.6.15, whose get_services tool now says, as /services does, that read-only tools cannot modify the source through that interface
 // turva.dev worker v3.202.0 - outside reviews W26 to W35 applied (Tek-562): the x402 EIP-712 name of the Base mainnet USDC asset is USD Coin (X402_USDC_NAME, measured on chain), the UCP service key is dev.turva.agent_readiness, the ACP capabilities object loses checkout_note, the hosted llms.txt validator reads ## followed by a tab and a single-line setext H2 as headings, GET /v1/tasks/{id} and POST /v1/tasks/{id}:cancel answer -32001 task not found, the OpenAPI A2A message names messageId and kind, the MCP server card exposes ETag and answers a CORS preflight (its signed bytes are unchanged), the version 6 OpenPGP armor loses its CRC24 line, the sample pages carry their own revision dates and the 188 kB to 340 kB range, the services page says I reply within one business day, the legal page adds the re-scan and retest window to the remedy, and the validator page points to implementation.
 // turva.dev worker v3.201.0 - outside reviews W15 to W25 applied (Tek-561): the Hardenize report link is back with its own measurement date 2026-10-02 beside the Internet.nl date 2026-09-23, the hosted llms.txt validator form returns to its result and names a port in its own fixed sentence while the set of accepted addresses stays the same, the hosted parity check gives two fixed selector sentences (not valid, matched nothing) and runs markdown-parity-check 0.2.22, the sample audit and Shopify reports fix their counts, units, dates and attributions, the Privacy section states the Cloudflare security log retention of 31 days and a 24 month deletion rule for a question that does not lead to an engagement, the audit's follow-up round carries the written scope sentence its sibling services carry, the home business node is an Organization without priceRange, the MCP server card names MCP 1.6.14, and the published OpenPGP key is split so that /pgp-key.asc and WKD serve the Ed25519 version 4 key alone, which GnuPG imports, while the post-quantum version 6 key moves to its own block at /pgp-key-v6.asc.
@@ -4426,7 +4427,7 @@ Send the URLs of up to two targets and your question to [info@turva.dev](mailto:
 
 We work in writing, with no calls or meetings.
 
-[Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A) [info@turva.dev](mailto:info@turva.dev)
+[Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
 All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.
 `,
@@ -6777,7 +6778,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.203.0",
+    "version": "3.203.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7056,7 +7057,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.203.0",
+  "version": "3.203.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -10855,7 +10856,6 @@ ${TOC_SUB_CSS}
 .cta-row{margin:1.1rem 0 1.3rem;}
 .cta-btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;background:#5DF18F;color:#06100F;font-weight:700;border-radius:7px;padding:.75rem 1.35rem;font-size:15px;}
 .cta-btn:hover{background:#7df7a6;text-decoration:none;}
-.mail-plain{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;color:#F2F4F3;overflow-wrap:anywhere;}
 .copy-btn{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;margin-left:10px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;background:transparent;color:#F2F4F3;font:600 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;}
 .copy-btn:hover{border-color:#5DF18F;color:#5DF18F;}
 .vform{display:flex;flex-wrap:wrap;gap:10px;margin:.6rem 0 .4rem;}
@@ -11328,7 +11328,7 @@ function serveAuditHtml(canonicalUrl) {
     buildGuideJsonLd("/agent-readiness-audit", canonicalUrl) + "\n" +
       buildAuditServiceJsonLd(canonicalUrl),
     canonicalUrl);
-  const start = mdParasCta("/agent-readiness-audit", "Tell me what you want to understand", 3, "cta-row", ["cta-btn", "mail-plain"]);
+  const start = mdParasCta("/agent-readiness-audit", "Tell me what you want to understand", 3, "cta-row", ["cta-btn"]);
   // The twin's price sentence renders as the price line the other sections use; fail closed
   // if the sentence moves, so the page never shows a plain paragraph where the price belongs.
   // Widened 2026-09-28 (Tek-542, third Codex retest round): the twin's lead paragraph gained
