@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.203.2 - outside re-check W46 applied (Tek-565): the hosted llms.txt validator reads a line of text over a run of = after an indented code line as a second H1, because a line indented four columns or more that does not continue a paragraph is code and the next paragraph starts fresh, while a four-space line right after paragraph text, the indented lines of a list item, a block quote, an HTML block and a link reference definition keep the earlier reading, with an HTML block of types 1 to 5 kept up to its end marker and the others up to the next blank line, and the package turva-llms-txt-validator mirrors it as 0.3.20.
 // turva.dev worker v3.203.1 - the agent-readiness audit page's closing call to action shows info@turva.dev once: the address stays as a link in the paragraph above the button, the second copy beside the button is gone, and the unused .mail-plain rule is removed.
 // turva.dev worker v3.203.0 - outside re-checks W36 to W45 applied (Tek-564): the hosted llms.txt validator reads a second H1 written as a setext heading, one line of text over a run of =, like the # form, so a file with one warns between the title and the first H2 and after the last section with the same detail and the line of the text, and the package turva-llms-txt-validator mirrors it as 0.3.19, and the MCP server card names MCP 1.6.15, whose get_services tool now says, as /services does, that read-only tools cannot modify the source through that interface
 // turva.dev worker v3.202.0 - outside reviews W26 to W35 applied (Tek-562): the x402 EIP-712 name of the Base mainnet USDC asset is USD Coin (X402_USDC_NAME, measured on chain), the UCP service key is dev.turva.agent_readiness, the ACP capabilities object loses checkout_note, the hosted llms.txt validator reads ## followed by a tab and a single-line setext H2 as headings, GET /v1/tasks/{id} and POST /v1/tasks/{id}:cancel answer -32001 task not found, the OpenAPI A2A message names messageId and kind, the MCP server card exposes ETag and answers a CORS preflight (its signed bytes are unchanged), the version 6 OpenPGP armor loses its CRC24 line, the sample pages carry their own revision dates and the 188 kB to 340 kB range, the services page says I reply within one business day, the legal page adds the re-scan and retest window to the remedy, and the validator page points to implementation.
@@ -6778,7 +6779,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.203.1",
+    "version": "3.203.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7057,7 +7058,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.203.1",
+  "version": "3.203.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -11937,10 +11938,22 @@ function isSetextH1(line, next) {
 // one, it stays paragraph text) and a link reference definition. Only the later-H1 reading skips
 // them; the title reading keeps its Tek-560 predicate. QA 2 of Tek-564 measured "---", "<div>" and
 // "[a]: url" over a run of "=" warning as a second H1 although 0.3.18 passed them.
+const HTML_BLOCK_START = /^ {0,3}<(?:[A-Za-z][A-Za-z0-9-]*(?:[\s\/>]|$)|\/[A-Za-z][A-Za-z0-9-]*(?:[\s>]|$)|!--|\?|![A-Za-z]|!\[CDATA\[)/;
+const LINK_REF_DEF = /^ {0,3}\[[^\]]+\]:/;
+// HTML blocks of CommonMark types 1 to 5 end at a marker, not at a blank line: <pre>, <script>,
+// <style> and <textarea> at "</...>", "<!--" at "-->", "<?" at "?>", "<!X" at ">" and "<![CDATA[" at
+// "]]>". Each entry is [start, end]; the end marker is looked for after the start on the same line.
+const RAW_HTML_BLOCKS = [
+  [/^ {0,3}<(?:pre|script|style|textarea)(?:[ \t>]|$)/i, /<\/(?:pre|script|style|textarea)>/i],
+  [/^ {0,3}<!--/, /-->/],
+  [/^ {0,3}<\?/, /\?>/],
+  [/^ {0,3}<!\[CDATA\[/, /\]\]>/],
+  [/^ {0,3}<![A-Za-z]/, />/]
+];
 function startsOtherBlock(line) {
   return /^ {0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$/.test(line)
-    || /^ {0,3}<(?:[A-Za-z][A-Za-z0-9-]*(?:[\s\/>]|$)|\/[A-Za-z][A-Za-z0-9-]*(?:[\s>]|$)|!--|\?|![A-Za-z]|!\[CDATA\[)/.test(line)
-    || /^ {0,3}\[[^\]]+\]:/.test(line);
+    || HTML_BLOCK_START.test(line)
+    || LINK_REF_DEF.test(line);
 }
 
 // Setext H1 lines after the title (Tek-564). A second H1 written as one text line over a run of "="
@@ -11950,13 +11963,49 @@ function startsOtherBlock(line) {
 // blank line is a continuation line, so a title over several lines is not read as a heading, and
 // text that starts with "#" is not an H1 (isSetextText). The underline is returned separately
 // because it is not a heading and not content.
+// An indented code block is not a paragraph (Tek-565, outside review W46): a line indented four
+// columns or more that does not continue a paragraph is code, so the text after it starts a new
+// paragraph and "Title" over "===" there is a second H1. A four-space line right after paragraph
+// text stays a continuation line (the accepted Tek-564 limit). The exception is a list item: its
+// blank lines and indented lines belong to the item as continuation paragraphs, not as code, so
+// while a list item is open (listCtx) an indented line is read as before. The list context ends at
+// a thematic break or an ATX heading, or at a line with no indent after a blank line. When unsure
+// the function stays in the list context, which is the 0.3.19 reading. A block quote, an HTML block
+// and a link reference definition keep the old reading too, until the next blank line, and an HTML
+// block of type 1 to 5 (<pre>, a comment, <?, <!X, CDATA) until its end marker: an indented line
+// there continues the quote paragraph or the HTML block, or follows a "=" line that is itself
+// paragraph text, and is not code.
 function laterSetextH1(lines, fenced) {
   const text = new Array(lines.length).fill(false);
   const under = new Array(lines.length).fill(false);
   let open = false;
+  let listCtx = false;
+  let blankBefore = false;
+  let quoteCtx = false;
+  let htmlCtx = false;
+  let rawEnd = null;
+  let rawDone = false;
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
-    if (fenced[i] || l.trim() === "") { open = false; continue; }
+    if (rawDone) { htmlCtx = false; rawDone = false; }
+    if (fenced[i]) { open = false; continue; }
+    if (l.trim() === "") { open = false; blankBefore = true; quoteCtx = false; if (!rawEnd) htmlCtx = false; continue; }
+    const indented = /^(?: {4}| {0,3}\t)/.test(l);
+    if (/^ ?#{1,6}(?:[ \t]|$)/.test(l) || /^ ?([-*_])(?:[ \t]*\1){2,}[ \t]*$/.test(l)) listCtx = false;
+    else if (/^ {0,3}(?:[-*+]|\d{1,9}[.)])(?:[ \t]|$)/.test(l)) listCtx = true;
+    else if (blankBefore && /^ ?[^ \t]/.test(l)) listCtx = false;
+    blankBefore = false;
+    if (/^ {0,3}>/.test(l)) quoteCtx = true;
+    if (rawEnd) {
+      if (rawEnd.test(l)) { rawEnd = null; rawDone = true; }
+    } else {
+      if (HTML_BLOCK_START.test(l) || LINK_REF_DEF.test(l)) htmlCtx = true;
+      for (const [start, end] of RAW_HTML_BLOCKS) {
+        const m = start.exec(l);
+        if (m) { if (!end.test(l.slice(m[0].length))) rawEnd = end; break; }
+      }
+    }
+    if (!open && !listCtx && !quoteCtx && !htmlCtx && indented) continue;
     if (!open && !fenced[i + 1] && !startsOtherBlock(l) && isSetextH1(l, lines[i + 1])) { text[i] = true; under[i + 1] = true; i++; continue; }
     if (open && /^ {0,3}=+[ \t]*$/.test(l)) { open = false; continue; }
     open = !(/^ {0,3}#{1,6}(?:[ \t]|$)/.test(l) || /^ {0,3}(?:-+|([-*_])(?: *\1){2,})[ \t]*$/.test(l));

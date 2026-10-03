@@ -246,3 +246,51 @@ test("Tek-564: a thematic break, an HTML block or a link reference definition ov
   // An autolink is paragraph text, so an autolink line over a run of "=" is still a second H1.
   assert.equal((await sectionsOf(base + "\n<https://example.com/x>\n============\n")).status, "warn");
 });
+
+// Tek-565 (outside review W46): a four-space line that does not continue a paragraph is indented
+// code, so the next unindented "Title" over "===" is a second H1 even after it. The six fixtures
+// are the W46 cases, with the line of the text each must name. The package turva-llms-txt-validator
+// mirrors this from 0.3.20.
+const w46 = {
+  f1: ["# Site\n\n> Summary\n\nSecond title\n===\n\n## Docs\n- [Doc](https://turva.dev)\n", 5],
+  f2: ["# Site\n\n> Summary\n\n    code\nSecond title\n===\n\n## Docs\n- [Doc](https://turva.dev)\n", 6],
+  f3: ["# Site\n\n> Summary\n\n    code\n# Second title\n\n## Docs\n- [Doc](https://turva.dev)\n", 6],
+  f4: ["# Site\n\n> Summary\n\n## Docs\n- [Doc](https://turva.dev)\n\n---\n\nSecond title\n===\n", 10],
+  f5: ["# Site\n\n> Summary\n\n## Docs\n- [Doc](https://turva.dev)\n\n---\n\n    code\nSecond title\n===\n", 11],
+  f6: ["# Site\n\n> Summary\n\n## Docs\n- [Doc](https://turva.dev)\n\n---\n\n    code\n# Second title\n", 11]
+};
+
+test("Tek-565: a second H1 after an indented code line warns like the ATX form, at the same line", async () => {
+  for (const [name, [text, line]] of Object.entries(w46)) {
+    const body = await check(text);
+    const s = body.checks.find((c) => c.id === "sections");
+    assert.equal(s.status, "warn", name);
+    assert.match(s.detail, new RegExp("heading at line " + line + " is out of place"), name);
+    assert.equal(body.summary, "valid with warnings", name);
+  }
+});
+
+test("Tek-565: a four-space line inside a paragraph or a list item is not indented code", async () => {
+  // Paragraph continuation: the accepted Tek-564 limit stays.
+  const para = "# Site\n\n> Summary\n\nPara text\n    continued\nTitle\n===\n\n## Docs\n- [Doc](https://turva.dev)\n";
+  const s = await sectionsOf(para);
+  assert.equal(s.status, "pass");
+  assert.ok(!/out of place/.test(s.detail));
+  assert.equal((await check(para)).summary, "valid");
+  // A list item keeps its blank and indented lines, so "    code" there is a continuation paragraph.
+  const l = await sectionsOf(base + "\n    code\nTitle\n===\n");
+  assert.equal(l.status, "pass");
+  assert.ok(!/out of place/.test(l.detail));
+  // Inside a block quote (lazy continuation), an HTML block or after a link reference definition an
+  // indented line continues the block, so the old reading stays until the next blank line.
+  for (const extra of ["> quote\nTitle\n===\n    code\nTitle\n===", "> quote\nTitle\n===\n\tcode\nTitle\n===", "> quote\nTitle\n===\n    - sub\nTitle\n===", "<div>\n---\n\tcode\nTitle\n===", "[a]: https://example.com/x\n===\n    code\nTitle\n==="]) {
+    const q = (await sectionsOf(base + "\n" + extra));
+    assert.equal(q.status, "pass", extra);
+    assert.ok(!/out of place/.test(q.detail), extra);
+  }
+  // An HTML block of type 1 to 5 runs past blank lines to its end marker.
+  for (const extra of ["# T\n\n## Docs\n- [Doc](https://turva.dev)\n\n<!-- a\n\n    b\nTitle\n===\n-->\n", "# T\n\n## Docs\n- [Doc](https://turva.dev)\n\n<pre>\n\n    x\nTitle\n===\n</pre>\n"]) {
+    const q = (await sectionsOf(extra));
+    assert.ok(!/out of place/.test(q.detail), extra);
+  }
+});
