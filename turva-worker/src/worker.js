@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.203.3 - the hosted llms.txt validator matches the end markers of CommonMark HTML blocks of types 1 to 5 as plain lowercase substrings instead of regular expressions (CodeQL js/bad-tag-filter), with identical results for every line, and the package turva-llms-txt-validator mirrors it as 0.3.21.
 // turva.dev worker v3.203.2 - outside re-check W46 applied (Tek-565): the hosted llms.txt validator reads a line of text over a run of = after an indented code line as a second H1, because a line indented four columns or more that does not continue a paragraph is code and the next paragraph starts fresh, while a four-space line right after paragraph text, the indented lines of a list item, a block quote, an HTML block and a link reference definition keep the earlier reading, with an HTML block of types 1 to 5 kept up to its end marker and the others up to the next blank line, and the package turva-llms-txt-validator mirrors it as 0.3.20.
 // turva.dev worker v3.203.1 - the agent-readiness audit page's closing call to action shows info@turva.dev once: the address stays as a link in the paragraph above the button, the second copy beside the button is gone, and the unused .mail-plain rule is removed.
 // turva.dev worker v3.203.0 - outside re-checks W36 to W45 applied (Tek-564): the hosted llms.txt validator reads a second H1 written as a setext heading, one line of text over a run of =, like the # form, so a file with one warns between the title and the first H2 and after the last section with the same detail and the line of the text, and the package turva-llms-txt-validator mirrors it as 0.3.19, and the MCP server card names MCP 1.6.15, whose get_services tool now says, as /services does, that read-only tools cannot modify the source through that interface
@@ -6779,7 +6780,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.203.2",
+    "version": "3.203.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7058,7 +7059,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.203.2",
+  "version": "3.203.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7742,7 +7743,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-03";
+var SITEMAP_LASTMOD = "2026-10-05";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -11940,15 +11941,15 @@ function isSetextH1(line, next) {
 // "[a]: url" over a run of "=" warning as a second H1 although 0.3.18 passed them.
 const HTML_BLOCK_START = /^ {0,3}<(?:[A-Za-z][A-Za-z0-9-]*(?:[\s\/>]|$)|\/[A-Za-z][A-Za-z0-9-]*(?:[\s>]|$)|!--|\?|![A-Za-z]|!\[CDATA\[)/;
 const LINK_REF_DEF = /^ {0,3}\[[^\]]+\]:/;
-// HTML blocks of CommonMark types 1 to 5 end at a marker, not at a blank line: <pre>, <script>,
-// <style> and <textarea> at "</...>", "<!--" at "-->", "<?" at "?>", "<!X" at ">" and "<![CDATA[" at
-// "]]>". Each entry is [start, end]; the end marker is looked for after the start on the same line.
+// HTML blocks of CommonMark types 1 to 5 end at a marker, not at a blank line. The end markers are plain substrings matched case-insensitively, as CommonMark defines them, and not a tag regexp (CodeQL js/bad-tag-filter): type 2 ends at "-->" only, never at "--!>".
+// Entry is [start, ends]: </pre>, </script>, </style>, </textarea> after <pre> and kin, "-->" after "<!--", "?>" after "<?", "]]>" after "<![CDATA[", ">" after "<!X"; the marker is looked for after the start on the same line.
+function hasRawEnd(s, ends) { const t = s.toLowerCase(); return ends.some((e) => t.includes(e)); }
 const RAW_HTML_BLOCKS = [
-  [/^ {0,3}<(?:pre|script|style|textarea)(?:[ \t>]|$)/i, /<\/(?:pre|script|style|textarea)>/i],
-  [/^ {0,3}<!--/, /-->/],
-  [/^ {0,3}<\?/, /\?>/],
-  [/^ {0,3}<!\[CDATA\[/, /\]\]>/],
-  [/^ {0,3}<![A-Za-z]/, />/]
+  [/^ {0,3}<(?:pre|script|style|textarea)(?:[ \t>]|$)/i, ['</pre>', '</script>', '</style>', '</textarea>']],
+  [/^ {0,3}<!--/, ['-->']],
+  [/^ {0,3}<\?/, ['?>']],
+  [/^ {0,3}<!\[CDATA\[/, [']]>']],
+  [/^ {0,3}<![A-Za-z]/, ['>']]
 ];
 function startsOtherBlock(line) {
   return /^ {0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$/.test(line)
@@ -11997,12 +11998,12 @@ function laterSetextH1(lines, fenced) {
     blankBefore = false;
     if (/^ {0,3}>/.test(l)) quoteCtx = true;
     if (rawEnd) {
-      if (rawEnd.test(l)) { rawEnd = null; rawDone = true; }
+      if (hasRawEnd(l, rawEnd)) { rawEnd = null; rawDone = true; }
     } else {
       if (HTML_BLOCK_START.test(l) || LINK_REF_DEF.test(l)) htmlCtx = true;
       for (const [start, end] of RAW_HTML_BLOCKS) {
         const m = start.exec(l);
-        if (m) { if (!end.test(l.slice(m[0].length))) rawEnd = end; break; }
+        if (m) { if (!hasRawEnd(l.slice(m[0].length), end)) rawEnd = end; break; }
       }
     }
     if (!open && !listCtx && !quoteCtx && !htmlCtx && indented) continue;
