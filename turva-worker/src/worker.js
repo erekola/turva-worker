@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.204.0 - new Build notes post /blog/clean-windows-install-for-agent-work (2026-10-05): A clean Windows install for agent work, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 37, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.203.3 - the hosted llms.txt validator matches the end markers of CommonMark HTML blocks of types 1 to 5 as plain lowercase substrings instead of regular expressions (CodeQL js/bad-tag-filter), with identical results for every line, and the package turva-llms-txt-validator mirrors it as 0.3.21.
 // turva.dev worker v3.203.2 - outside re-check W46 applied (Tek-565): the hosted llms.txt validator reads a line of text over a run of = after an indented code line as a second H1, because a line indented four columns or more that does not continue a paragraph is code and the next paragraph starts fresh, while a four-space line right after paragraph text, the indented lines of a list item, a block quote, an HTML block and a link reference definition keep the earlier reading, with an HTML block of types 1 to 5 kept up to its end marker and the others up to the next blank line, and the package turva-llms-txt-validator mirrors it as 0.3.20.
 // turva.dev worker v3.203.1 - the agent-readiness audit page's closing call to action shows info@turva.dev once: the address stays as a link in the paragraph above the button, the second copy beside the button is gone, and the unused .mail-plain rule is removed.
@@ -302,6 +303,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [A clean Windows install for agent work](https://turva.dev/blog/clean-windows-install-for-agent-work.md)
 - [Why I publish every guide for free](https://turva.dev/blog/why-i-publish-every-guide.md)
 - [My own site is my proof of work](https://turva.dev/blog/my-own-site-is-my-proof-of-work.md)
 - [What agent memory in local files gets me](https://turva.dev/blog/local-agent-memory.md)
@@ -513,6 +515,97 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/clean-windows-install-for-agent-work": `# A clean Windows install for agent work
+
+2026-10-05
+
+I reinstalled Windows 11 on my machine on 30 September, and a Synology NAS is the next thing to go in. Before it does, I set the machine up for the way I work: several Claude Code sessions at once, each running with my own user rights. Portmaster and Defender were in use before the reinstall, and so were my own agent gates. The agent's deny list and its newest gate are new. Setting everything up together showed me what each layer covers that the others leave open, and I found none I would drop.
+
+## Why set everything up at once?
+
+The gap in one layer is easiest to see next to the others. Before the reinstall each protection had arrived on its own day for its own reason, and I never looked at them side by side. This time I set them up together and measured the machine after each step.
+
+## What was off after the cleanup?
+
+After the reinstall I ran O&O ShutUp10++, which I need before Windows is usable for me at all. I also ran RemoveWindowsAI by zoicware with every option except the one for Defender's AI protection, to remove Recall and Copilot along with the other Windows AI features. A measurement afterwards found three protections off. The tool's registry option disables what it calls experimental agentic features, so it had disabled the agent isolation service and added four agent policies. Defender's protection for AI agents was off as well, but I had left the tool's Defender option unchecked, and the off state was Defender's own default on this machine. Resetting it to the default does not turn it on, so it has to be set to Block explicitly. Cloud protection was off because of a policy I had set myself earlier.
+
+A reviewed script returned the agent isolation service to manual start. It removed the four agent policies and set three Defender values on: protection for AI agents, its network inspection and cloud protection. It recorded how to undo each step. Group Policy then undid part of that, because my own local policy file still set cloud protection off and still held the agent policies the script had removed. On 5 October I took three of those policies out of the file and changed cloud protection there to Advanced MAPS. Group Policy now sets it again at every policy refresh, along with virtualization-based security and memory integrity. The fourth policy turns off only the AI search in the Settings app, and I left it in place. The Windows toggle for the agent workspace stays gone, because the tool removed its packages, and I do not use that feature. Everything else the tool removed stays removed. A tool that removes features can remove protections in the same run, so I measure after every such tool. RemoveWindowsAI also often leaves something in Windows broken. It is easy to put right if you know Windows and read a little on the tool's GitHub page, and I have used the tool for a long time.
+
+Several of Windows' own protections were already on when I measured them: virtualization-based security with memory integrity, LSA protection and the vulnerable driver blocklist. Defender's real-time protection and Tamper Protection were on as well. I have checked Secure Boot and the TPM myself, and both are on.
+
+## What does the firewall decide?
+
+Portmaster decides which app may connect where. Its default action is Block, so a connection that no rule allows is refused. I also have it set to block incoming connections in its global settings. Connections made straight to an IP address without a DNS lookup first are blocked for every app except the browsers. The browsers do not work with that block, and I think it is because they resolve names through a modDNS setup of their own. In Portmaster I turned off its own relay network and set all 64 app profiles to match.
+
+Windows Firewall stays on in all three profiles. It allows outgoing traffic by default, so for outgoing connections Portmaster makes the decision. On 1 October I removed 25 allow rules, nearly all for telemetry or for Store and system packages that Portmaster does not allow, such as the Xbox packages and Clipchamp. A second round since then removed 18 more and switched others off. Windows Firewall has 485 rules today, and 354 of them are switched off. Of the 131 allow rules that are on, 78 are Windows' own built-in rules and 39 belong to app packages, nearly all of them parts of Windows. The other 14 belong to apps I use, the browsers among them. I also disabled 22 services, among them the telemetry service and the SSDP and UPnP discovery services.
+
+## What did the DNS setting show?
+
+Portmaster has a setting called Block Secure DNS Bypassing. It stops programs from sending name lookups past Portmaster's own Secure DNS resolver, for example to DNS over HTTPS or to public resolvers. The setting was on before the reinstall too. After the reinstall, before I had forced it on again, I watched Portmaster show the same kind of warning again and again. Two of the warnings name a program, one Portmaster calls Git Curl and one it calls Python. Each says the program uses its own Secure DNS resolver, which would go past Portmaster.
+
+I first guessed that Node and Python do this by default. Python's standard name lookup asks the resolver the operating system is configured with, so I doubt the Python warning came from Python's default behaviour. Later I noticed that I also had Portmaster's Ignore System/Network Servers setting on, so it does not use the DNS servers that Windows or the network hands out. I think that setting is the likely cause of the warnings. With Block Secure DNS Bypassing forced on, I no longer get a notification. I did not test which of those two settings explains what I saw, and I did not trace which program behind either warning made the lookups.
+
+A third case I know of is my own code, from before the reinstall, so it is not one of the warnings I saw. My local resolver did not answer the mail server queries of my sending script, so in August I made the script ask DNS over HTTPS first, with the system resolver and public resolvers as fallbacks. When Portmaster blocked those paths in September, the script learned to skip a blocked path and use the system resolver, which on this machine is Portmaster's.
+
+## What else sits between the machine and the internet?
+
+My connection goes out through IVPN, which I have set to rotate its WireGuard key every day. Its firewall is set to always on, so it starts at boot before any other process and blocks traffic outside the VPN even when the IVPN app is not running. It lets through traffic to IVPN's own servers and to my local network. Windows treats both the IVPN tunnel and my wired connection as public networks, so its firewall applies its most restrictive profile to both. IVPN is behind three of these pieces: it runs the VPN and modDNS, and in December 2024 it bought Safing, the company behind Portmaster. In the IVPN app I have set modDNS as the custom DNS, and it filters with the HaGeZi Threat Intelligence Feeds and Pro lists, plus a HaGeZi list of domains registered within the last seven days. I have checked that my lookups reach it. For one day I collected the domains modDNS blocked, and I copied every one whose block breaks nothing into the Windows hosts file, as a second block in Windows itself. After that they disappeared from the modDNS log, so those lookups now stop in Windows before they reach it. The browsers have a modDNS setup of their own. HaGeZi publishes stricter lists than Pro, so I still count these list choices as relaxed. I use these lists in all my work. If the machine ever reached my router without the VPN, the router runs the NextDNS CLI with much stricter HaGeZi lists. As far as I know, that has never happened without me choosing it.
+
+## What may an agent session not touch?
+
+On this machine a Claude Code session runs commands as me, and there is no sandbox between a command and my files. So I closed off what a session has no reason to reach:
+
+- My password manager and the apps behind my sign-in keys.
+- My encrypted vaults, read from the vault app's own settings at run time.
+- Portmaster and its control interface.
+- Every drive letter except C:, the system drive. That covers the backup clone of the system disk and any vault I open, because an open vault gets a drive letter of its own.
+- The browser I use myself, because the agent has a browser of its own.
+- Writes to the agent's own user settings and its installed plugin, so that a session cannot switch these rules off.
+
+Two layers do this. Claude Code's own settings carry 161 deny rules, and a gate in my own plugin reads each command and tool call as text before it runs.
+
+The vaults are on the list because of a warning from a session. I had unlocked an encrypted vault, and the session I was working in warned me that its secrets were now open. While a vault is unlocked, its files are readable by every program that runs with my rights, the agent session included. That was the moment I understood the list had to be much wider than the one vault.
+
+## How do I know the gate holds?
+
+I test the gate with mutations. Each mutation breaks one condition in a copy of the gate's code and runs the whole suite of 309 tests. It counts as caught only when the run goes red and the test that fails is that gate's own test. The plugin has 239 mutation cases, and 70 of them belong to this gate. A full run is 73 851 test runs. The run that started just after midnight on 5 October had caught 226 of 226 when Windows Update restarted the machine an hour and 50 minutes in. That morning I reran the group of 19 cases that held the other 13. Eighteen were caught at once. The nineteenth could not find the line it was meant to break, because a fix had moved that code and the case still looked for it at the old place. After I pointed it at the new place, it was caught as well, so all 239 are caught.
+
+The gate reads the text of a command, so it is a filter and not a boundary in the operating system. It catches a session's mistakes. Anything that touches a closed area I run myself, after reading its dry run.
+
+## Why does the hardware matter?
+
+The model runs at Anthropic, and everything around it runs here: several sessions at once, their Node and Python processes, the test suites and the two hour mutation run. The machine has an Intel Core i9-14900KS, 48 GB of DDR5 at 8000 MT/s and an RTX 4080 Super.
+
+On 4 October the pump in the liquid cooler stopped. Without the pump the radiator and its push and pull fans cannot carry heat away from the processor, and all work stopped. A new cooler is in, and the machine is ready for the week ahead.
+
+## What comes next?
+
+Two 8 TB drives go into the NAS, and my disk images will go there. Once the first image is on it, I will test a restore from it.
+
+## What does this not show?
+
+It does not show that this machine cannot be broken into. The gate stops mistakes made by a session I started myself, and its limits are above. Portmaster named two programs in two warnings. I did not trace which script or command behind them made each attempt, or test whether my Ignore System/Network Servers setting caused them. I have no count of how often each layer has mattered. The two hours for a full run is extrapolated from the 226 cases that ran in one go. This is one person's machine.
+
+## Frequently asked
+
+**Does an agent session on Windows run with my user rights?**
+
+On my machine it does. Claude Code runs commands as my user, so whatever my account can read or change, a command it runs can too. That is why the deny rules and the gate exist.
+
+**Why keep the agent away from the backup disk?**
+
+The clone is a full copy of the system disk. A session that can read it can read everything on that disk, and one that can write to it can damage the copy I would restore from.
+
+**What does Block Secure DNS Bypassing do in Portmaster?**
+
+It prevents apps from going past Portmaster's Secure DNS resolver, for example by using DNS over HTTPS or a public resolver. Lookups then go through Portmaster, which can filter them.
+
+## Related
+
+- [What agent memory in local files gets me](/blog/local-agent-memory)
+- [Five rounds before the agent signed anything](/blog/five-rounds-before-the-agent-signed)
+- [Define what an agent may do with your data](/guides/letting-agents-act-on-data)`,
+
   "/blog/why-i-publish-every-guide": `# Why I publish every guide for free
 
 2026-09-29
@@ -2738,8 +2831,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-36 articles.
+37 articles.
 
+- [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work). 2026-10-05. Build notes. How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.
 - [Why I publish every guide for free](/blog/why-i-publish-every-guide). 2026-09-29. Build notes. I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.
 - [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work). 2026-09-26. Build notes. Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.
 - [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25. Build notes. Plain local files let each Claude Code session look up what the earlier sessions recorded. A count of that memory, and why it now reads like a private language.
@@ -6780,7 +6874,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.203.3",
+    "version": "3.204.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6890,7 +6984,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"P_mvs0BKEszVOneWBZO3Oqa_A5_gpHStUg3RRxnnGRehVJdCZvWaeDV8JLDC0mcO1g8PPGIrwlVxUIYO86K4BA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qXnZ5tVwnZcbHCZODRIlyIkoVZ3gzmirn0bHoSWzKhPUrrpJTiTVreeVSq7k_MIF7Pr2OMFg3Ppsw8tRjN1vBw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"P_mvs0BKEszVOneWBZO3Oqa_A5_gpHStUg3RRxnnGRehVJdCZvWaeDV8JLDC0mcO1g8PPGIrwlVxUIYO86K4BA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"RFYf-_Mf-9UZKRvOolyYsiSqYKAFpB-MR2ygn7pVZIJqu27NVARGmfYWtCD2oBqtHBz9rrVtvFgylH_zbzNmAQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7059,7 +7153,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.203.3",
+  "version": "3.204.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7785,6 +7879,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/clean-windows-install-for-agent-work", "monthly", "0.6"],
   ["/blog/why-i-publish-every-guide", "monthly", "0.6"],
   ["/blog/my-own-site-is-my-proof-of-work", "monthly", "0.6"],
   ["/blog/local-agent-memory", "monthly", "0.6"],
@@ -7894,7 +7989,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -7904,6 +7999,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/clean-windows-install-for-agent-work": {
+    title: "A clean Windows install for agent work · turva.dev",
+    description: "How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.",
+    date: "2026-10-05",
+    kind: "Build notes",
+    image: "/og-clean-windows-install-for-agent-work.jpg",
+    imageAlt: "turva.dev card: A clean Windows install for agent work",
+  },
   "/blog/why-i-publish-every-guide": {
     title: "Why I publish every guide for free · turva.dev",
     description: "I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.",
@@ -9801,6 +9904,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/clean-windows-install-for-agent-work": mdFaqBlocks("/blog/clean-windows-install-for-agent-work", "Frequently asked").pairs,
   "/blog/why-i-publish-every-guide": mdFaqBlocks("/blog/why-i-publish-every-guide", "Frequently asked").pairs,
   "/blog/my-own-site-is-my-proof-of-work": mdFaqBlocks("/blog/my-own-site-is-my-proof-of-work", "Frequently asked").pairs,
   "/blog/local-agent-memory": mdFaqBlocks("/blog/local-agent-memory", "Frequently asked").pairs,
