@@ -644,7 +644,10 @@ const H = facts.security.hardenize, I = facts.security.internetnl;
 for (const k of Object.keys(src)) check(src[k].text.includes(H.url), `${src[k].rel} links canonical Hardenize URL`);
 // Tek-561: Hardenize has its own measurement date, separate from facts.security.measuredAt (Internet.nl).
 check(/^\d{4}-\d{2}-\d{2}$/.test(String(H.measuredAt)), `facts.security.hardenize.measuredAt is an ISO date (saw ${JSON.stringify(H.measuredAt)})`);
-check(src.worker.text.includes(`and Hardenize again on ${H.measuredAt}.`) && src.worker.text.includes(`Hardenize, measured ${H.measuredAt}: `), `worker.js Hardenize bullet carries the Hardenize date ${H.measuredAt}`);
+// When Hardenize shares the Internet.nl date the prose names one date for all three;
+// otherwise it names the later Hardenize run separately. Either way the date must match facts.json.
+const hSentence = H.measuredAt === facts.security.measuredAt ? `I measured all three on ${H.measuredAt}.` : `and Hardenize again on ${H.measuredAt}.`;
+check(src.worker.text.includes(hSentence) && src.worker.text.includes(`Hardenize, measured ${H.measuredAt}: `), `worker.js Hardenize bullet carries the Hardenize date ${H.measuredAt}`);
 check(src.readme.text.includes(`Measured on ${H.measuredAt}: all `), `README.md carries the Hardenize date ${H.measuredAt}`);
 for (const k of Object.keys(src)) check(containsAny(src[k].text, slashVariants(I.score)), `${src[k].rel} shows Internet.nl ${I.score}`);
 check(src.worker.text.includes(I.url), `Internet.nl URL in worker.js`);
