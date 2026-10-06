@@ -31,13 +31,18 @@ and its own dependencies are in the build and test toolchain. They are still
 cleared as they appear, because this repository is a reference implementation
 people fork. `npm audit --omit=dev` found no advisories in the runtime
 tree. The full tree, which adds wrangler, reported three vulnerable
-packages (`wrangler`, `miniflare` and `undici`). All three traced to
-`undici` 7.29.0, pulled in through `miniflare`, and `undici` 7.29.0
-carried ten advisories (two high, five moderate and three low).
-Updating wrangler to 4.145.0,
-which pulls in `undici` 7.29.1, cleared them, and `npm audit` now reports no
-advisories in the full tree either. None was in the runtime tree, so
-none reached the deployed Worker. Checked 2026-10-01.
+packages: `wrangler`, `miniflare` and `sharp`. All three traced to
+`sharp` 0.35.4 and GHSA-wq5f-xc86-pv6w, a high advisory in the librsvg that
+`sharp` bundles. `miniflare` 5.20261006.0-alpha, which wrangler 4.148.0 pulls
+in, pins `sharp` at exactly 0.35.4, and no release of either had moved that
+pin. `package.json` therefore carries an `overrides` entry forcing `sharp` to
+`^0.35.5`, the fixed release, and `allowScripts` keeps a key for both 0.35.4,
+the version miniflare declares, and 0.35.5, the version installed. The
+override comes out when miniflare pins a fixed release. `npm audit` now
+reports no advisories in the full tree either. None was in the runtime tree,
+so none reached the deployed Worker. An earlier set, ten advisories in
+`undici` 7.29.0, cleared when wrangler 4.145.0 brought in `undici` 7.29.1.
+Checked 2026-10-06.
 
 `esbuild` is in the toolchain only as a dependency of wrangler. Wrangler
 4.148.0 declares it at exactly `0.28.1`, the release that fixed
