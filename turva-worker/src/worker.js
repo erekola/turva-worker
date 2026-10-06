@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.205.1 - the post /blog/browser-my-agent-and-i-run (2026-10-06) adds 11 inline source links to its body (none in the Frequently asked answers); the post text is otherwise unchanged, and no signed surface changes bytes.
 // turva.dev worker v3.205.0 - new Build notes post /blog/browser-my-agent-and-i-run (2026-10-06): The browser my agent and I both run, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 38, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.204.1 - the dated scanner readings move to 2026-10-05 (measurement day): isitagentready.com, Internet.nl and Hardenize, scores unchanged (Level 5, 21 of 21 checks, 98/100 website, 90/100 email), in the home, audit-method and sample-report pages, the markdown twins and HOME_JSON lastVerified; the Hardenize report is re-run the same day, so its date moves to 2026-10-05 too; turva-mcp 1.6.16 carries the new snapshot dates, so the MCP server card is re-signed.
 // turva.dev worker v3.204.0 - new Build notes post /blog/clean-windows-install-for-agent-work (2026-10-05): A clean Windows install for agent work, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 37, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
@@ -526,13 +527,13 @@ Brave is the only browser I use, and my agent has a separate Brave install of it
 
 ## Why turn off the JavaScript optimizer?
 
-A browser runs JavaScript from every page it opens. Brave runs it in V8, the engine from Chromium, which compiles frequently run code to machine code while the page runs. Microsoft's Edge vulnerability research team wrote, in its post on the Super Duper Secure Mode experiment, that CVE data after 2019 showed roughly 45% of the CVEs issued for V8 were related to the JIT engine. By their estimate, turning the JIT off would remove roughly half of the V8 bugs that must be fixed. The Chromium project reports a related figure for the whole browser: around 70% of the high-severity security bugs it analysed since 2015 are memory safety problems.
+A browser runs JavaScript from every page it opens. Brave runs it in V8, the engine from Chromium, which compiles frequently run code to machine code while the page runs. Microsoft's Edge vulnerability research team wrote, in [its post on the Super Duper Secure Mode experiment](https://microsoftedge.github.io/edgevr/posts/Super-Duper-Secure-Mode), that CVE data after 2019 showed roughly 45% of the CVEs issued for V8 were related to the JIT engine. By their estimate, turning the JIT off would remove roughly half of the V8 bugs that must be fixed. The Chromium project [reports a related figure](https://www.chromium.org/Home/chromium-security/memory-safety/) for the whole browser: around 70% of the high-severity security bugs it analysed since 2015 are memory safety problems.
 
 ## How far do I turn it off?
 
-Brave has a per-site setting for the V8 optimizer, and I keep it off by default. On top of it I have turned on Brave's JITless mode flag, \`brave://flags/#brave-v8-jitless-mode\`. A Privacy Guides forum thread describes the flag as a JITless mode toggle that also enables DrumBrake, the WebAssembly interpreter for Chromium. According to the same thread, with the flag on, the optimizer setting skips the Liftoff-only mode and goes straight to DrumBrake.
+Brave has a per-site setting for the V8 optimizer, and I keep it off by default. On top of it I have turned on Brave's JITless mode flag, \`brave://flags/#brave-v8-jitless-mode\`. A [Privacy Guides forum thread](https://discuss.privacyguides.net/t/mention-brave-supporting-jitless-mode/33611) describes the flag as a JITless mode toggle that also enables DrumBrake, the WebAssembly interpreter for Chromium. According to the same thread, with the flag on, the optimizer setting skips the Liftoff-only mode and goes straight to DrumBrake.
 
-Without the flag, Chromium's setting turns off only V8's high-tier compilers. Early versions of it turned off all JIT in the page, WebAssembly included, until a fix in February 2024.
+Without the flag, Chromium's setting turns off only V8's high-tier compilers. Early versions of it turned off all JIT in the page, WebAssembly included, until [a fix in February 2024](https://issues.chromium.org/issues/325974501).
 
 Turning the JIT off does not turn JavaScript off, but it costs speed. Microsoft measured the cost in the Super Duper Secure Mode experiment for Edge. On the tests that showed a page-load regression, the slowdown averaged around 17%, and startup times only improved.
 
@@ -542,19 +543,19 @@ I allow the optimizer only on sites I know. My password manager is one of them, 
 
 ## What does Forgetful Browsing do?
 
-Brave clears a site's first-party storage a few seconds after the last tab of that site closes, so on the next visit the site has no first-party storage from before. It is set per site behind the Shields icon, under Advanced controls, as Forget me when I close this site. Brave's Shields settings can also make it the default for every site. The cost is that a sign-in does not survive closing the site, so each new visit means signing in again.
+[Brave clears a site's first-party storage](https://brave.com/privacy-updates/25-forgetful-browsing/) a few seconds after the last tab of that site closes, so on the next visit the site has no first-party storage from before. It is set per site behind the Shields icon, under Advanced controls, as Forget me when I close this site. Brave's Shields settings can also make it the default for every site. The cost is that a sign-in does not survive closing the site, so each new visit means signing in again.
 
 ## Why does the ad blocker's language matter?
 
-Brave's ad blocker runs on adblock-rust, an open source engine written in Rust, which parses the URLs of the requests a page makes and checks them against its filter lists. A hostile page controls that input. Safe Rust rules out most of the memory safety bug classes behind Chromium's 70%. I did not check how much unsafe code adblock-rust or its dependencies contain. The reasoning is mine. What Brave's own blog post and README say about the engine is about its speed and memory use.
+Brave's ad blocker runs on [adblock-rust](https://github.com/brave/adblock-rust), an open source engine written in Rust, which parses the URLs of the requests a page makes and checks them against its filter lists. A hostile page controls that input. Safe Rust rules out most of the memory safety bug classes behind Chromium's 70%. I did not check how much unsafe code adblock-rust or its dependencies contain. The reasoning is mine. What Brave's own [blog post](https://brave.com/privacy-updates/36-adblock-memory-reduction/) and README say about the engine is about its speed and memory use.
 
 The blocker can also cut the amount of JavaScript the browser runs, because a third-party script that is never fetched never reaches V8. I have not measured how much.
 
 ## Why passkeys and a YubiKey?
 
-Google's threat intelligence group counted the zero-days exploited in 2025, and browsers accounted for less than 10% of them. That is a marked fall from the browser-heavy years of 2021 and 2022, and Google says this suggests that browser hardening measures are working. A hardened browser still does nothing against a password typed into a fake page.
+Google's threat intelligence group [counted the zero-days exploited in 2025](https://cloud.google.com/blog/topics/threat-intelligence/2025-zero-day-review), and browsers accounted for less than 10% of them. That is a marked fall from the browser-heavy years of 2021 and 2022, and Google says this suggests that browser hardening measures are working. A hardened browser still does nothing against a password typed into a fake page.
 
-That is the gap passkeys and security keys close. A CISA fact sheet from October 2022 says the only widely available phishing-resistant authentication is FIDO/WebAuthn, and calls phishing-resistant MFA the gold standard. The WebAuthn standard scopes each credential to the relying party ID, normally the site's domain, so a lookalike domain cannot use it. In a 2019 study Google found that zero users who used only security keys fell victim to targeted phishing during the investigation. If I could recommend only one change from this post, it would be this one.
+That is the gap passkeys and security keys close. [A CISA fact sheet from October 2022](https://www.cisa.gov/sites/default/files/publications/fact-sheet-implementing-phishing-resistant-mfa-508c.pdf) says the only widely available phishing-resistant authentication is FIDO/WebAuthn, and calls phishing-resistant MFA the gold standard. [The WebAuthn standard](https://www.w3.org/TR/webauthn-3/) scopes each credential to the relying party ID, normally the site's domain, so a lookalike domain cannot use it. In a [2019 study](https://security.googleblog.com/2019/05/new-research-how-effective-is-basic.html) Google found that zero users who used only security keys fell victim to targeted phishing during the investigation. If I could recommend only one change from this post, it would be this one.
 
 The two differ in where the private key lives. A synced passkey sits in a password manager or a platform account and follows me to my other devices, while a credential on a YubiKey is bound to the hardware and signing in needs a touch on the key. That touch matters for agent work too. My agent can browse, but it cannot touch the key, and my deny rules and gate keep it away from the apps behind my sign-in keys. The gate is a filter on the commands a session runs, not a boundary in the operating system.
 
@@ -6941,7 +6942,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.205.0",
+    "version": "3.205.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7220,7 +7221,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.205.0",
+  "version": "3.205.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
