@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.205.0 - new Build notes post /blog/browser-my-agent-and-i-run (2026-10-06): The browser my agent and I both run, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 38, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.204.1 - the dated scanner readings move to 2026-10-05 (measurement day): isitagentready.com, Internet.nl and Hardenize, scores unchanged (Level 5, 21 of 21 checks, 98/100 website, 90/100 email), in the home, audit-method and sample-report pages, the markdown twins and HOME_JSON lastVerified; the Hardenize report is re-run the same day, so its date moves to 2026-10-05 too; turva-mcp 1.6.16 carries the new snapshot dates, so the MCP server card is re-signed.
 // turva.dev worker v3.204.0 - new Build notes post /blog/clean-windows-install-for-agent-work (2026-10-05): A clean Windows install for agent work, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 37, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.203.3 - the hosted llms.txt validator matches the end markers of CommonMark HTML blocks of types 1 to 5 as plain lowercase substrings instead of regular expressions (CodeQL js/bad-tag-filter), with identical results for every line, and the package turva-llms-txt-validator mirrors it as 0.3.21.
@@ -304,6 +305,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [The browser my agent and I both run](https://turva.dev/blog/browser-my-agent-and-i-run.md)
 - [A clean Windows install for agent work](https://turva.dev/blog/clean-windows-install-for-agent-work.md)
 - [Why I publish every guide for free](https://turva.dev/blog/why-i-publish-every-guide.md)
 - [My own site is my proof of work](https://turva.dev/blog/my-own-site-is-my-proof-of-work.md)
@@ -516,6 +518,69 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/browser-my-agent-and-i-run": `# The browser my agent and I both run
+
+2026-10-06
+
+Brave is the only browser I use, and my agent has a separate Brave install of its own, so it does not use the browser I use myself. Both run with the V8 optimizer off by default and Brave's own ad blocker on. I also use Forgetful Browsing, and I sign in with a passkey or a YubiKey wherever a site accepts one. This post says what each setting covers, what the sources behind it measured and where the setup rubs.
+
+## Why turn off the JavaScript optimizer?
+
+A browser runs JavaScript from every page it opens. Brave runs it in V8, the engine from Chromium, which compiles frequently run code to machine code while the page runs. Microsoft's Edge vulnerability research team wrote, in its post on the Super Duper Secure Mode experiment, that CVE data after 2019 showed roughly 45% of the CVEs issued for V8 were related to the JIT engine. By their estimate, turning the JIT off would remove roughly half of the V8 bugs that must be fixed. The Chromium project reports a related figure for the whole browser: around 70% of the high-severity security bugs it analysed since 2015 are memory safety problems.
+
+## How far do I turn it off?
+
+Brave has a per-site setting for the V8 optimizer, and I keep it off by default. On top of it I have turned on Brave's JITless mode flag, \`brave://flags/#brave-v8-jitless-mode\`. A Privacy Guides forum thread describes the flag as a JITless mode toggle that also enables DrumBrake, the WebAssembly interpreter for Chromium. According to the same thread, with the flag on, the optimizer setting skips the Liftoff-only mode and goes straight to DrumBrake.
+
+Without the flag, Chromium's setting turns off only V8's high-tier compilers. Early versions of it turned off all JIT in the page, WebAssembly included, until a fix in February 2024.
+
+Turning the JIT off does not turn JavaScript off, but it costs speed. Microsoft measured the cost in the Super Duper Secure Mode experiment for Edge. On the tests that showed a page-load regression, the slowdown averaged around 17%, and startup times only improved.
+
+## Where does it rub?
+
+I allow the optimizer only on sites I know. My password manager is one of them, for one reason: signing in to it with a passkey needs the exception, and everything else in it works without. Because the setting is per site, the rest of the web still runs without the optimizer.
+
+## What does Forgetful Browsing do?
+
+Brave clears a site's first-party storage a few seconds after the last tab of that site closes, so on the next visit the site has no first-party storage from before. It is set per site behind the Shields icon, under Advanced controls, as Forget me when I close this site. Brave's Shields settings can also make it the default for every site. The cost is that a sign-in does not survive closing the site, so each new visit means signing in again.
+
+## Why does the ad blocker's language matter?
+
+Brave's ad blocker runs on adblock-rust, an open source engine written in Rust, which parses the URLs of the requests a page makes and checks them against its filter lists. A hostile page controls that input. Safe Rust rules out most of the memory safety bug classes behind Chromium's 70%. I did not check how much unsafe code adblock-rust or its dependencies contain. The reasoning is mine. What Brave's own blog post and README say about the engine is about its speed and memory use.
+
+The blocker can also cut the amount of JavaScript the browser runs, because a third-party script that is never fetched never reaches V8. I have not measured how much.
+
+## Why passkeys and a YubiKey?
+
+Google's threat intelligence group counted the zero-days exploited in 2025, and browsers accounted for less than 10% of them. That is a marked fall from the browser-heavy years of 2021 and 2022, and Google says this suggests that browser hardening measures are working. A hardened browser still does nothing against a password typed into a fake page.
+
+That is the gap passkeys and security keys close. A CISA fact sheet from October 2022 says the only widely available phishing-resistant authentication is FIDO/WebAuthn, and calls phishing-resistant MFA the gold standard. The WebAuthn standard scopes each credential to the relying party ID, normally the site's domain, so a lookalike domain cannot use it. In a 2019 study Google found that zero users who used only security keys fell victim to targeted phishing during the investigation. If I could recommend only one change from this post, it would be this one.
+
+The two differ in where the private key lives. A synced passkey sits in a password manager or a platform account and follows me to my other devices, while a credential on a YubiKey is bound to the hardware and signing in needs a touch on the key. That touch matters for agent work too. My agent can browse, but it cannot touch the key, and my deny rules and gate keep it away from the apps behind my sign-in keys. The gate is a filter on the commands a session runs, not a boundary in the operating system.
+
+## What does this not show?
+
+It does not show that this setup stops a determined attacker. The 45% is Microsoft's count of V8 CVEs after 2019, not a share of attacks today, and the 70% is Chromium's figure for its own high-severity bugs. No source I found gives a share of all vulnerabilities that comes from JavaScript, so I do not give one. Google's figure under 10% covers the exploitation it observed, and Google itself says attackers have become harder to observe. What the JITless flag does I take from a community thread, not from Brave's own documentation, and Brave's community forum has threads from September 2026 about problems with the setting and the flag that I have not checked. I have not measured how much slower my own browsing is. The passkey exception is what I see with one password manager, and I have not tested others.
+
+## Frequently asked
+
+**Does turning off the V8 optimizer break websites?**
+
+In my use the exception that mattered was passkey sign-in to my password manager. Pages can load slower: in Microsoft's Super Duper Secure Mode tests for Edge, page loads that regressed were around 17% slower on average.
+
+**Does turning off the optimizer stop WebAssembly?**
+
+Not in Chromium's site setting since a fix in February 2024, which turns off only V8's high-tier compilers. With Brave's JITless mode flag on, a site where the optimizer is off runs its WebAssembly in DrumBrake, an interpreter, according to a Privacy Guides forum thread.
+
+**Is a passkey enough without a YubiKey?**
+
+Both are FIDO credentials scoped to the relying party ID of the site that created them, so both resist phishing. The difference is where the private key lives: a synced passkey sits in a password manager or a platform account, and a credential on a YubiKey is bound to the hardware key.
+
+## Related
+
+- [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work)
+- [Define what an agent may do with your data](/guides/letting-agents-act-on-data)`,
+
   "/blog/clean-windows-install-for-agent-work": `# A clean Windows install for agent work
 
 2026-10-05
@@ -2832,8 +2897,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-37 articles.
+38 articles.
 
+- [The browser my agent and I both run](/blog/browser-my-agent-and-i-run). 2026-10-06. Build notes. Why my agent and I both run Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.
 - [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work). 2026-10-05. Build notes. How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.
 - [Why I publish every guide for free](/blog/why-i-publish-every-guide). 2026-09-29. Build notes. I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.
 - [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work). 2026-09-26. Build notes. Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.
@@ -6875,7 +6941,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.204.1",
+    "version": "3.205.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -6985,7 +7051,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oqQO2oUEEiojtvH4_MZAdybmW760PrZesdgNsrPRgfBxBJtgi5KxWtZ4Rjp6DmG7EmWvoUj6kAktf6UZYi04DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"RFYf-_Mf-9UZKRvOolyYsiSqYKAFpB-MR2ygn7pVZIJqu27NVARGmfYWtCD2oBqtHBz9rrVtvFgylH_zbzNmAQ\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oqQO2oUEEiojtvH4_MZAdybmW760PrZesdgNsrPRgfBxBJtgi5KxWtZ4Rjp6DmG7EmWvoUj6kAktf6UZYi04DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"7cr3gHZmw52Z-uhSWct3WShUaysdpYDOz14TDPuoCr-7R2pNcSqG-uCcD6OxM6tbaUnmWtbx6agq0ObqELAVDA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7154,7 +7220,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.204.1",
+  "version": "3.205.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7838,7 +7904,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-05";
+var SITEMAP_LASTMOD = "2026-10-06";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -7880,6 +7946,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/browser-my-agent-and-i-run", "monthly", "0.6"],
   ["/blog/clean-windows-install-for-agent-work", "monthly", "0.6"],
   ["/blog/why-i-publish-every-guide", "monthly", "0.6"],
   ["/blog/my-own-site-is-my-proof-of-work", "monthly", "0.6"],
@@ -7990,7 +8057,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -8000,6 +8067,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/browser-my-agent-and-i-run": {
+    title: "The browser my agent and I both run · turva.dev",
+    description: "Why my agent and I both run Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.",
+    date: "2026-10-06",
+    kind: "Build notes",
+    image: "/og-browser-my-agent-and-i-run.jpg",
+    imageAlt: "turva.dev card: The browser my agent and I both run",
+  },
   "/blog/clean-windows-install-for-agent-work": {
     title: "A clean Windows install for agent work · turva.dev",
     description: "How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.",
@@ -9905,6 +9980,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/browser-my-agent-and-i-run": mdFaqBlocks("/blog/browser-my-agent-and-i-run", "Frequently asked").pairs,
   "/blog/clean-windows-install-for-agent-work": mdFaqBlocks("/blog/clean-windows-install-for-agent-work", "Frequently asked").pairs,
   "/blog/why-i-publish-every-guide": mdFaqBlocks("/blog/why-i-publish-every-guide", "Frequently asked").pairs,
   "/blog/my-own-site-is-my-proof-of-work": mdFaqBlocks("/blog/my-own-site-is-my-proof-of-work", "Frequently asked").pairs,
