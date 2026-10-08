@@ -83,6 +83,12 @@
     "subhead": "Each protection layer measured, and what it leaves open.",
     "white": "A clean Windows install"
   },
+  "og-cloud-agents-on-my-desktop.jpg": {
+    "green": "and one desktop",
+    "kicker": "Blog",
+    "subhead": "The model ran in the cloud and the tests ran here.",
+    "white": "497 cloud agents"
+  },
   "og-company.jpg": {
     "green": "measured by an independent scanner",
     "kicker": "Company",

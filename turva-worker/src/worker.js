@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.206.0 - new Build notes post /blog/cloud-agents-on-my-desktop (2026-10-08): What 497 cloud agents asked of my desktop, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
 // turva.dev worker v3.205.1 - the post /blog/browser-my-agent-and-i-run (2026-10-06) adds 11 inline source links to its body (none in the Frequently asked answers); the post text is otherwise unchanged, and no signed surface changes bytes.
 // turva.dev worker v3.205.0 - new Build notes post /blog/browser-my-agent-and-i-run (2026-10-06): The browser my agent and I both run, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 38, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.204.1 - the dated scanner readings move to 2026-10-05 (measurement day): isitagentready.com, Internet.nl and Hardenize, scores unchanged (Level 5, 21 of 21 checks, 98/100 website, 90/100 email), in the home, audit-method and sample-report pages, the markdown twins and HOME_JSON lastVerified; the Hardenize report is re-run the same day, so its date moves to 2026-10-05 too; turva-mcp 1.6.16 carries the new snapshot dates, so the MCP server card is re-signed.
@@ -306,6 +307,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [What 497 cloud agents asked of my desktop](https://turva.dev/blog/cloud-agents-on-my-desktop.md)
 - [The browser my agent and I both run](https://turva.dev/blog/browser-my-agent-and-i-run.md)
 - [A clean Windows install for agent work](https://turva.dev/blog/clean-windows-install-for-agent-work.md)
 - [Why I publish every guide for free](https://turva.dev/blog/why-i-publish-every-guide.md)
@@ -519,6 +521,125 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/cloud-agents-on-my-desktop": `# What 497 cloud agents asked of my desktop
+
+2026-10-08
+
+On the morning of 8 October I checked the fixes my sessions had made overnight. The check ran 497 Claude Sonnet subagents in five workflows. Every model call runs at Anthropic, so none of the reasoning happened on my machine. Commands the agents started did run here, and they kept a 24-core desktop processor busy.
+
+This was a check of my own tooling, not client work. I push limits like this only on my own tools, where I can try whatever I like, and I do not want to spend my own hours checking them. That makes it a good place to see what a run of this size costs the machine it starts from.
+
+## What did the agents check?
+
+An outside review on 7 October found faults in my own tools, among them the scripts that send and ship my work. Its findings became a fix plan, and sessions made 70 of those fixes overnight. In the morning each fix got one verifier and two adversaries, whose task was to show the fix was broken. Where anyone claimed a problem, two or three judges ruled on the claim.
+
+Other workflows reran the tools' own tests and looked across the fixes for gaps. Finally, two workflows turned the confirmed findings into a fix list and checked it.
+
+| Workflow | Agents | Tokens | Duration |
+|---|---|---|---|
+| Each fix: verifier, two adversaries, judges | 362 | 46 900 179 | 3 h 3 min |
+| Baseline and cross-checks | 63 | 10 393 948 | 2 h 12 min |
+| Coverage | 56 | 7 691 573 | 52 min |
+| Fix list | 11 | 1 493 435 | 22 min |
+| Finishing | 5 | 687 619 | 16 min |
+| Total | 497 | 67 166 754 | |
+
+The verifiers found 62 fixes complete, 8 partial and none missing or harmful. The judges ruled on 388 claims in all. None was high severity. Merging the confirmed claims gave a fix list of 173 items, which the next sessions work through.
+
+Token counts come from the workflow tool itself, about 135 000 per agent. I do not know whether they include input the model read from its cache, so below I treat them as the least an agent reads.
+
+## What ran on my machine?
+
+The two largest workflows ran side by side, each with at most 16 agents at a time, so up to 32 agents were running commands at once. They ran the tools' test suites and Go builds of my secrets vault, and browser tests in Playwright's Chromium. In the background the full mutation run of my gate tests went on. It caught all 383 mutations in 2 hours 11 minutes.
+
+I took HWiNFO and Task Manager captures during the run:
+
+| Reading | Value |
+|---|---|
+| Processor | Intel Core i9-14900KS, 24 cores and 32 threads |
+| Core usage | 100 % in one capture, 42 % in another |
+| Package power | 143 to 146 W, peak 164,7 W |
+| Package temperature | 55 to 56 °C, peak 65 °C |
+| All-core clock | about 4,6 GHz at about 1,12 V |
+| Memory in use | 26,1 of 47,8 GB |
+| Processes | 601, with 8 549 threads and 194 432 handles |
+| RTX 4080 SUPER | about 46 % at 34 to 36 °C |
+
+No model ran on the graphics card.
+
+## What limited the processor?
+
+HWiNFO names the reason a processor holds its clock back. During the run it named one: IA Electrical Design Point/Other, the current limit often called ICCmax. The cores drew up to 137,5 A. I set that limit conservatively on purpose, and this run was the first time anything reached it. Client work has never come near it.
+
+Power and heat stayed out of it. The power limits PL1 and PL2 stand at 253 W, and the package peaked at 164,7 W. Every thermal reason for the cores stayed at No, and the package peaked at 65 °C.
+
+## What would the same check take on a local model?
+
+This is an estimate and not a measurement. The speeds come from other people's published benchmarks, and the rest are my assumptions:
+
+- One agent at a time. On the two graphics cards one agent's context does not fit even once, as the next section shows, so running several side by side is out.
+- Each agent reads 135 000 tokens once, the workflow average, as if every repeated prefix stayed cached.
+- Each agent writes 10 000 tokens. I have no measured split between reading and writing, so this figure is my guess.
+- The time the tools themselves take is left out.
+
+The 4080 SUPER figures come from tests at 32 000 tokens of context, and LocalScore does not state its prompt length. My agents start near 76 000 tokens, and speed falls as the context grows, so the context effect alone makes every time below optimistic.
+
+| Machine and model | Read | Write | Per agent | 497 agents |
+|---|---|---|---|---|
+| RTX 4080 SUPER 16 GB, Qwen3 14B Q4 | 1 769 t/s | 42,6 t/s | about 5 min | about 43 h |
+| RTX 4060 Laptop 8 GB, Llama 3.1 8B Q4 | 1 365 t/s | 36,0 t/s | about 6 min | about 52 h |
+| Core Ultra 9 285H, no discrete graphics card, Llama 3.1 8B Q4 | 44 t/s | 11,3 t/s | about 66 min | about 23 days |
+
+The 4080 SUPER figures are hardware-corner.net's [RTX 4080 SUPER table](https://www.hardware-corner.net/gpu-llm-benchmarks/rtx-4080-super/) at 32k context. The other two rows are LocalScore results for the [RTX 4060 Laptop GPU](https://www.localscore.ai/accelerator/529) and the [Core Ultra 9 285H](https://www.localscore.ai/accelerator/3156).
+
+In the cloud the five workflows took 6 hours 45 minutes added together, and the two largest ran side by side.
+
+## Would the context even fit?
+
+Not as the agents run today. Qwen3-14B has 40 layers with 8 key and value heads of 128 dimensions each, according to its [model configuration](https://huggingface.co/Qwen/Qwen3-14B/raw/main/config.json). At 16 bits that cache takes 160 KiB per token, so a 76 000 token start needs about 11,6 GiB. Its 4-bit weights take roughly 8 GiB more, about 19,6 GiB in all against a card with 16 GB. Native context for this model is 40 960 tokens, well short of where an agent starts.
+
+Llama 3.1 8B, the model in both laptop rows, takes 128 KiB per token, according to a public copy of its [configuration](https://huggingface.co/unsloth/Meta-Llama-3.1-8B-Instruct/raw/main/config.json). Its context alone would need about 9,3 GiB, more than the 8 GB of the laptop card. The 14B model would need a quantized cache and a context extension, and the 8B model a quantized cache on the laptop card. I have tested neither.
+
+## Why would a laptop not keep up?
+
+The table assumes the machine holds full load for days. My desktop processor drew 143 to 146 W for the tool work alone, with a peak of 164,7 W. Intel rates the [Core Ultra 9 285H](https://www.intel.com/content/www/us/en/products/sku/241747/intel-core-ultra-9-processor-285h-24m-cache-up-to-5-40-ghz/specifications.html) from the table at 45 W base power and 115 W maximum turbo power. Even that maximum is below what my desktop drew, before a local model takes its own share.
+
+Memory is a second limit. The run had 26,1 GB in use on this machine, more than a laptop with 16 GB has in all. A smaller run would need less, but a local model would also take its share. In my experience a laptop holds a load like this for a few minutes before it slows down. I have not measured that, so the laptop rows are lower bounds and not forecasts.
+
+## Would a local model do the same work?
+
+I doubt it, and I have not measured it either. The agents reproduced faults that appear only on Windows and argued against each other's verdicts. Whether an 8B or 14B model can do that is the next thing I would measure. I would run one real verifier prompt on the 4080 and record its speed and duration, then set its verdict next to Sonnet's.
+
+## How has the load grown this year?
+
+My own records give a rough series. On 4 July a deep audit ran 4 agents. Audits on 3 and 23 September ran 7 and 10 readers. On 24 September a workspace audit ran 125 agents, and the next evening an audit ran 178. This check ran 497, and I have not yet found where Claude's ceiling for subagents lies.
+
+Part of that jump is a decision of mine. On 29 September I made subagents the default way of working, so the main session plans and delegates and the subagents do the reading and checking. The models got better over the same months, and I have no measure of how much of the growth that explains.
+
+## What does this not show?
+
+The local model times are estimates built on other people's benchmarks, and none of them is my own measurement. I did not measure how long a laptop holds this load. I do not know exactly what the workflow tool's token count includes. The machine readings are captures from a few moments, not a log of the whole run, and this is one machine and one run.
+
+## Frequently asked
+
+**Does a cloud agent load my own computer?**
+
+The model runs in the cloud, but the commands it starts run on your machine. In this run up to 32 agents ran tests and builds at once, and the processor package drew 143 to 146 W, with a peak of 164,7 W.
+
+**Could a 16 GB graphics card run this check with a local 14B model?**
+
+Not as the agents run today. For Qwen3-14B, one agent's starting context of about 76 000 tokens needs about 11,6 GiB of 16-bit cache on top of roughly 8 GiB of 4-bit weights, and the model's native context is 40 960 tokens.
+
+**How long would the same check take on a local model?**
+
+By my estimate at least 43 hours on an RTX 4080 SUPER, if a quantized cache lets the context fit at all, and about 23 days on a laptop processor without a discrete graphics card, one agent at a time and before the tools' own time. In the cloud the five workflows took 6 hours 45 minutes added together.
+
+## Related
+
+- [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work)
+- [What agent memory in local files gets me](/blog/local-agent-memory)
+- [The browser my agent and I both run](/blog/browser-my-agent-and-i-run)
+`,
   "/blog/browser-my-agent-and-i-run": `# The browser my agent and I both run
 
 2026-10-06
@@ -2898,8 +3019,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-38 articles.
+39 articles.
 
+- [What 497 cloud agents asked of my desktop](/blog/cloud-agents-on-my-desktop). 2026-10-08. Build notes. 497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. A local model would have taken days.
 - [The browser my agent and I both run](/blog/browser-my-agent-and-i-run). 2026-10-06. Build notes. Why my agent and I both run Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.
 - [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work). 2026-10-05. Build notes. How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.
 - [Why I publish every guide for free](/blog/why-i-publish-every-guide). 2026-09-29. Build notes. I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.
@@ -6942,7 +7064,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.205.1",
+    "version": "3.206.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7052,7 +7174,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oqQO2oUEEiojtvH4_MZAdybmW760PrZesdgNsrPRgfBxBJtgi5KxWtZ4Rjp6DmG7EmWvoUj6kAktf6UZYi04DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"7cr3gHZmw52Z-uhSWct3WShUaysdpYDOz14TDPuoCr-7R2pNcSqG-uCcD6OxM6tbaUnmWtbx6agq0ObqELAVDA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oqQO2oUEEiojtvH4_MZAdybmW760PrZesdgNsrPRgfBxBJtgi5KxWtZ4Rjp6DmG7EmWvoUj6kAktf6UZYi04DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"H-0KPWVJg5jmeC5denG_EgRE-Tr9SoNOCf77MSVhNL_RWhWIsjZcCfcy7i7v1qwqOydYaPeev_GIqF8cwOchCQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7221,7 +7343,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.205.1",
+  "version": "3.206.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7905,7 +8027,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-06";
+var SITEMAP_LASTMOD = "2026-10-08";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -7947,6 +8069,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/cloud-agents-on-my-desktop", "monthly", "0.6"],
   ["/blog/browser-my-agent-and-i-run", "monthly", "0.6"],
   ["/blog/clean-windows-install-for-agent-work", "monthly", "0.6"],
   ["/blog/why-i-publish-every-guide", "monthly", "0.6"],
@@ -8058,7 +8181,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -8068,6 +8191,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/cloud-agents-on-my-desktop": {
+    title: "What 497 cloud agents asked of my desktop · turva.dev",
+    description: "497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. A local model would have taken days.",
+    date: "2026-10-08",
+    kind: "Build notes",
+    image: "/og-cloud-agents-on-my-desktop.jpg",
+    imageAlt: "turva.dev card: What 497 cloud agents asked of my desktop",
+  },
   "/blog/browser-my-agent-and-i-run": {
     title: "The browser my agent and I both run · turva.dev",
     description: "Why my agent and I both run Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.",
@@ -9981,6 +10112,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/cloud-agents-on-my-desktop": mdFaqBlocks("/blog/cloud-agents-on-my-desktop", "Frequently asked").pairs,
   "/blog/browser-my-agent-and-i-run": mdFaqBlocks("/blog/browser-my-agent-and-i-run", "Frequently asked").pairs,
   "/blog/clean-windows-install-for-agent-work": mdFaqBlocks("/blog/clean-windows-install-for-agent-work", "Frequently asked").pairs,
   "/blog/why-i-publish-every-guide": mdFaqBlocks("/blog/why-i-publish-every-guide", "Frequently asked").pairs,
