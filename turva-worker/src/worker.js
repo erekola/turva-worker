@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.207.0 - new Build notes post /blog/twelve-days-of-tla-plus (2026-10-09): Twelve days of TLA+ on my own tools, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
 // turva.dev worker v3.206.0 - new Build notes post /blog/cloud-agents-on-my-desktop (2026-10-08): What 497 cloud agents asked of my desktop, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
 // turva.dev worker v3.205.1 - the post /blog/browser-my-agent-and-i-run (2026-10-06) adds 11 inline source links to its body (none in the Frequently asked answers); the post text is otherwise unchanged, and no signed surface changes bytes.
 // turva.dev worker v3.205.0 - new Build notes post /blog/browser-my-agent-and-i-run (2026-10-06): The browser my agent and I both run, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 38, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
@@ -307,6 +308,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Twelve days of TLA+ on my own tools](https://turva.dev/blog/twelve-days-of-tla-plus.md)
 - [What 497 cloud agents asked of my desktop](https://turva.dev/blog/cloud-agents-on-my-desktop.md)
 - [The browser my agent and I both run](https://turva.dev/blog/browser-my-agent-and-i-run.md)
 - [A clean Windows install for agent work](https://turva.dev/blog/clean-windows-install-for-agent-work.md)
@@ -521,6 +523,107 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/twelve-days-of-tla-plus": `# Twelve days of TLA+ on my own tools
+
+2026-10-09
+
+On 22 September Boris Cherny, who created Claude Code, wrote on X that he had used Opus 5.5 to formally verify the Claude Agent SDK with Lean. Further down [his post](https://x.com/bcherny/status/2102543349102338309) he added, "TLA+ also works well. I sometimes combine Lean and TLA+". Five days later I pointed TLA+ at my own tools, and this post counts what has happened since.
+
+## Why TLA+ and not Lean?
+
+My tools are scripts that send outreach email, ship this site, keep shared logs and clean up after file sync. Several Claude Code sessions run them at the same time, and a sync service writes to the same folder. The faults I worry about depend on the order in which those writers happen to run. TLA+ describes a system as states and the steps between them, and its model checker TLC tries every order of steps the model allows. My question was about order, so I left Lean out.
+
+One rule came before the first model. A finding counts only when it reproduces against the unchanged code or has already happened on disk, and an independent Sonnet subagent compares the model with the code. A day after his first post Boris described the same sequence of work in [a follow-up](https://x.com/bcherny/status/2102898067133595992): build a model, find counterexamples in it, reproduce them and fix them.
+
+## What did the first model find?
+
+The pilot on 27 September modelled the script that deletes the conflict copies file sync leaves behind. TLC found a run in which the script deleted the newest version of a file, because sync had restored an old version under the original name and the newer text sat in the copy. The same run reproduced against the unchanged script.
+
+I fixed it, and the model of the fixed script found a hole in the fix. The fix was safe only if sync kept the old file's modification time, and I had never measured whether it does. The script now handles only copies whose content is identical to the original, and since 28 September it moves them to a quarantine folder instead of deleting them.
+
+## How far did it go?
+
+On 28 September six more phases ran in one day. Here is one finding each from five of the tools:
+
+| Tool | What the model found |
+|---|---|
+| Outreach send chain | Four separate ways to send the same email twice, reproduced against a fake mail server on 127.0.0.1 with nothing sent |
+| Prospect pipeline file | Two overlapping additions lost the first record while the three checks that existed for it stayed green |
+| Shared log sizes | Two runs that read the same version of the log-size registry lost each other's entries without a warning |
+| Ship script | On 28 September it pushed another session's undeployed work to the public repos, ahead of the live site, and the model reached the same state |
+| Cross-posting | Replayed against a fake server, the old publish scripts failed 7 of 8 duplicate cases and the fixed ones failed none |
+
+By 1 October I had 23 distinct models in 27 files. The largest state space TLC explored held 20 849 212 distinct states.
+
+## Who checked the work?
+
+Outside models read the work several times. The last two reads came from ChatGPT, and Sonnet subagents checked every claim against the code before anything was fixed. A refined claim held only in a narrower form or at a lower severity than the reviewer gave it.
+
+| Review | Claims | Confirmed | Refined | Refuted | Rated high before and after the check |
+|---|---|---|---|---|---|
+| 7 October, five packages of my tools | 166 | 65 | 98 | 3 | 95 before, 1 after |
+| 8 October, the TLA+ models in four packages | 68 | 39 | 29 | 0 | 33 before, 2 after |
+
+On 8 October I also checked the 70 fixes from the first review with 497 Sonnet subagents. That run has [its own post](/blog/cloud-agents-on-my-desktop).
+
+## How many fix rounds so far?
+
+I count a round as one logged batch of fixes that went into code together. Before 7 October a batch was a wave of decisions after the models, and after that it was a fix group or one session from a fix list.
+
+| Dates | Where the findings came from | Rounds |
+|---|---|---|
+| 28 September to 2 October | Waves of decisions after the models | 6 |
+| 7 to 8 October | The 7 October review | 6 |
+| 8 to 9 October | The 497-agent check, a fix list of 173 items | 9 |
+| Done so far | | 21 |
+
+Two more sessions from that check are open. The 8 October review set seven more rounds, and they wait for 13 decisions that only I can make. Since the pilot my decision log has gained 81 numbered entries, not all of them about TLA+.
+
+## How many gates and hooks?
+
+The gates live in turva-portit, a Claude Code plugin I wrote for this workspace. It hooks into Claude Code at six points: session start, each prompt, before a tool call, after a tool call, before the context is compacted and when a session stops. Seven hook scripts sit behind those points. A gate is one check inside them that blocks or asks before a session does something my rules forbid.
+
+| Measure | 27 September | 9 October, in the source |
+|---|---|---|
+| Plugin version | 0.31.6 | 0.45.0 |
+| Gates in the plugin | 22 | 25 |
+| Plugin tests | 258 | 576 |
+| Cases that run my gate scripts on empty input | 91 | 258 |
+
+The 9 October column is the plugin's source. The installed plugin is still 0.44.1 until I install 0.45.0.
+
+Outside the plugin, 21 scripts in my tools folder carry portti, the Finnish word for gate, in their names, and the docs check runs 35 checks before every ship. The full mutation run breaks the tools' code one change at a time and expects a test to notice. Its last full run, on 9 October, caught 577 of 577 mutations in 2 hours 37 minutes.
+
+## What does this not show?
+
+A model covers only what I put in it. A green TLC run says nothing about a step the model leaves out, so a model has to be read against the code again whenever the code changes. TLC also checks only within the bounds each model sets, such as a fixed number of sessions and files, and a fault that needs more than that stays out of its reach.
+
+I made the counts in this post from my own logs. The rounds before 7 October are my grouping of logged sessions.
+
+## Why keep going?
+
+Seven rounds wait for my decisions, and every round so far has left something for the next one. I will not stop until the last stone is turned. Luckily Claude does not get tired.
+
+## Frequently asked
+
+**What is TLA+ used for?**
+
+TLA+ is a language for describing a system as states and the steps between them. Its model checker TLC tries every order of steps the model allows and reports a run that breaks a stated property. I use it on scripts that several sessions and a sync service run at the same time.
+
+**Did the models find real bugs?**
+
+Yes. The first model found a run in which my conflict copy cleaner deleted the newest version of a file, and the same run reproduced against the unchanged script. Later models found four ways to send the same email twice and a pipeline write that lost a record while the checks that existed for it stayed green.
+
+**How many fix rounds has the work taken?**
+
+It has taken 21 logged fix rounds between 28 September and 9 October. Two more sessions are open, and seven planned rounds wait for my decisions.
+
+## Related
+
+- [What 497 cloud agents asked of my desktop](/blog/cloud-agents-on-my-desktop)
+- [The checks that pass for the wrong reason](/blog/checks-that-pass-for-the-wrong-reason)
+- [My gate could not see a sixth](/blog/my-gate-could-not-see-a-sixth)
+`,
   "/blog/cloud-agents-on-my-desktop": `# What 497 cloud agents asked of my desktop
 
 2026-10-08
@@ -3019,8 +3122,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-39 articles.
+40 articles.
 
+- [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus). 2026-10-09. Build notes. What TLA+ found in my own tools in twelve days, what outside reviews confirmed and the 21 fix rounds so far.
 - [What 497 cloud agents asked of my desktop](/blog/cloud-agents-on-my-desktop). 2026-10-08. Build notes. 497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. A local model would have taken days.
 - [The browser my agent and I both run](/blog/browser-my-agent-and-i-run). 2026-10-06. Build notes. Why my agent and I both run Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.
 - [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work). 2026-10-05. Build notes. How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.
@@ -7064,7 +7168,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.206.0",
+    "version": "3.207.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7174,7 +7278,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oqQO2oUEEiojtvH4_MZAdybmW760PrZesdgNsrPRgfBxBJtgi5KxWtZ4Rjp6DmG7EmWvoUj6kAktf6UZYi04DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"H-0KPWVJg5jmeC5denG_EgRE-Tr9SoNOCf77MSVhNL_RWhWIsjZcCfcy7i7v1qwqOydYaPeev_GIqF8cwOchCQ\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oqQO2oUEEiojtvH4_MZAdybmW760PrZesdgNsrPRgfBxBJtgi5KxWtZ4Rjp6DmG7EmWvoUj6kAktf6UZYi04DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pPMcsVaLcZ5Fu-gFdriBS1MIGPRHzeEIiDFDgJMcZOswuUeQFIy11LhfQQ-3HgkbRbIpGeXBgXkpVgP4pi-_DA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7343,7 +7447,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.206.0",
+  "version": "3.207.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8027,7 +8131,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-08";
+var SITEMAP_LASTMOD = "2026-10-09";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -8069,6 +8173,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/twelve-days-of-tla-plus", "monthly", "0.6"],
   ["/blog/cloud-agents-on-my-desktop", "monthly", "0.6"],
   ["/blog/browser-my-agent-and-i-run", "monthly", "0.6"],
   ["/blog/clean-windows-install-for-agent-work", "monthly", "0.6"],
@@ -8181,7 +8286,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -8191,6 +8296,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/twelve-days-of-tla-plus": {
+    title: "Twelve days of TLA+ on my own tools · turva.dev",
+    description: "What TLA+ found in my own tools in twelve days, what outside reviews confirmed and the 21 fix rounds so far.",
+    date: "2026-10-09",
+    kind: "Build notes",
+    image: "/og-twelve-days-of-tla-plus.jpg",
+    imageAlt: "turva.dev card: Twelve days of TLA+ on my own tools",
+  },
   "/blog/cloud-agents-on-my-desktop": {
     title: "What 497 cloud agents asked of my desktop · turva.dev",
     description: "497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. A local model would have taken days.",
@@ -10112,6 +10225,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/twelve-days-of-tla-plus": mdFaqBlocks("/blog/twelve-days-of-tla-plus", "Frequently asked").pairs,
   "/blog/cloud-agents-on-my-desktop": mdFaqBlocks("/blog/cloud-agents-on-my-desktop", "Frequently asked").pairs,
   "/blog/browser-my-agent-and-i-run": mdFaqBlocks("/blog/browser-my-agent-and-i-run", "Frequently asked").pairs,
   "/blog/clean-windows-install-for-agent-work": mdFaqBlocks("/blog/clean-windows-install-for-agent-work", "Frequently asked").pairs,

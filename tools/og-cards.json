@@ -431,6 +431,12 @@
     "subhead": "Three trust levels, and the one below hardware proves nothing against a privileged operator.",
     "white": "TRACE signs how an agent ran,"
   },
+  "og-twelve-days-of-tla-plus.jpg": {
+    "green": "on my own tools",
+    "kicker": "Blog",
+    "subhead": "What the models found, what outside reviews confirmed and the 21 fix rounds so far.",
+    "white": "Twelve days of TLA+"
+  },
   "og-two-auth-md-dialects.jpg": {
     "green": "and they disagree",
     "kicker": "Blog",
