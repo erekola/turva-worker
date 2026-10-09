@@ -29,25 +29,24 @@ reaches the parsers. It does not make such an advisory irrelevant.
 `wrangler` is the only entry under `devDependencies`. Advisories against it
 and its own dependencies are in the build and test toolchain. They are still
 cleared as they appear, because this repository is a reference implementation
-people fork. `npm audit --omit=dev` found no advisories in the runtime
-tree. The full tree, which adds wrangler, reported three vulnerable
-packages: `wrangler`, `miniflare` and `sharp`. All three traced to
-`sharp` 0.35.4 and GHSA-wq5f-xc86-pv6w, a high advisory in the librsvg that
-`sharp` bundles. `miniflare` 5.20261006.0-alpha, which wrangler 4.148.0 pulls
-in, pins `sharp` at exactly 0.35.4, and no release of either had moved that
-pin. `package.json` therefore carries an `overrides` entry forcing `sharp` to
-`^0.35.5`, the fixed release, and `allowScripts` keeps a key for both 0.35.4,
-the version miniflare declares, and 0.35.5, the version installed. The
-override comes out when miniflare pins a fixed release. `npm audit` now
-reports no advisories in the full tree either. None was in the runtime tree,
-so none reached the deployed Worker. An earlier set, ten advisories in
-`undici` 7.29.0, cleared when wrangler 4.145.0 brought in `undici` 7.29.1.
-Checked 2026-10-06.
+people fork. `npm audit` finds no advisories in the runtime tree and none in
+the full tree, which adds wrangler. On 2026-10-06 the full
+tree reported three vulnerable packages: `wrangler`, `miniflare` and `sharp`.
+All three traced to `sharp` 0.35.4 and GHSA-wq5f-xc86-pv6w, a high advisory
+in the librsvg that `sharp` bundles. `miniflare` 5.20261006.0-alpha, which
+wrangler 4.148.0 pulled in, pinned `sharp` at exactly 0.35.4.
+`package.json` carried an `overrides` entry forcing `sharp` to `^0.35.5`, the
+fixed release, until 2026-10-09, when wrangler 4.149.0 brought in `miniflare`
+5.20261006.1-alpha, which pins `sharp` at exactly 0.35.5. The override and
+the `allowScripts` key for 0.35.4 came out then. None of these advisories was
+in the runtime tree. None reached the deployed Worker. An earlier set, ten
+advisories in `undici` 7.29.0, cleared when wrangler 4.145.0 brought in the
+patched `undici` 7.29.1. Checked 2026-10-09.
 
 `esbuild` is in the toolchain only as a dependency of wrangler. Wrangler
-4.148.0 declares it at exactly `0.28.1`, the release that fixed
-GHSA-g7r4-m6w7-qqqr, an arbitrary file read in the esbuild development server
-on Windows. `turva-worker/package-lock.json` resolves that version, and
+4.149.0 declares it at exactly `0.28.2`. The fix for GHSA-g7r4-m6w7-qqqr, an
+arbitrary file read in the esbuild development server on Windows, landed in
+`0.28.1`. `turva-worker/package-lock.json` resolves `0.28.2`, and
 `turva-worker/package.json` does not override it.
 
 ## Reporting a Vulnerability
