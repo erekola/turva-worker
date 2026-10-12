@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.208.0 - new Build notes post /blog/thirteen-review-rounds-and-one-rollback (2026-10-12): Thirteen review rounds and one rollback, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
 // turva.dev worker v3.207.0 - new Build notes post /blog/twelve-days-of-tla-plus (2026-10-09): Twelve days of TLA+ on my own tools, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
 // turva.dev worker v3.206.0 - new Build notes post /blog/cloud-agents-on-my-desktop (2026-10-08): What 497 cloud agents asked of my desktop, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
 // turva.dev worker v3.205.1 - the post /blog/browser-my-agent-and-i-run (2026-10-06) adds 11 inline source links to its body (none in the Frequently asked answers); the post text is otherwise unchanged, and no signed surface changes bytes.
@@ -308,6 +309,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Thirteen review rounds and one rollback](https://turva.dev/blog/thirteen-review-rounds-and-one-rollback.md)
 - [Twelve days of TLA+ on my own tools](https://turva.dev/blog/twelve-days-of-tla-plus.md)
 - [What 497 cloud agents asked of my desktop](https://turva.dev/blog/cloud-agents-on-my-desktop.md)
 - [The browser my agent and I both run](https://turva.dev/blog/browser-my-agent-and-i-run.md)
@@ -523,6 +525,78 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/thirteen-review-rounds-and-one-rollback": `# Thirteen review rounds and one rollback
+
+2026-10-12
+
+This is the second part of [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus). That post ended with seven fix rounds waiting for 13 decisions that only I could make. On 10 October I took the recommendation on all 13, and two of the seven rounds are now done. Beside them ran a fix session for my gates, and it lasted more than a day and kept my machine busy with mutation runs.
+
+## What did the two TLA+ rounds fix?
+
+The first round fixed the ship script and its release tags. The script now saves its record of what was deployed only when the files on disk still match the ones it read before the deploy, and a refused save stops the ship before any commit. Release tags now point at the commit the release script checked. The second round fixed the shared state files: before every retry of a rename, the helper that writes them checks that it still holds the lock. Five fix rounds still wait.
+
+## What was the gate fix about?
+
+My workspace has a rule that a session never runs git. A gate in turva-portit, the Claude Code plugin from part 1, enforces it by reading every shell command before it runs. A check of the plugin's earlier fixes on 9 October left a fix list, and one session worked through four of its items from the evening of 10 October to the night of 11 October.
+
+One item asked the gate to stop blocking harmless PowerShell text that only mentions git inside quotes. That block is a false alarm and, as far as I have seen, only costs a retry. Narrowing it meant teaching the gate which quoted words PowerShell will still run as a command.
+
+## Why did every round find a new hole?
+
+Each fix went to an independent Sonnet subagent that tried to get git past the gate. Review rounds 1 to 8 each found a new way past the narrowed PowerShell rule. Every parsing rule I added opened the next gap. From round 4 on the reviewers used PowerShell's own parser as the judge and generated their own inputs, soon in the hundreds of thousands. In round 6 the narrowed rule let git through in 176 of 700 000 inputs that the old gate blocked.
+
+Before round 8 I set a stopping rule: if that round found escapes too, the PowerShell part of the narrowing would be undone. It did, so I undid it. Quoted git in PowerShell is blocked again, as it was before the session. Eight rounds of problems came from one change whose only benefit was removing a harmless false block.
+
+The other items stayed. One of them took review rounds 9 to 13, and its rule became a list of allowed command shapes. In all the session ran 13 numbered review rounds, one of them twice. The 23 subagent runs through round 9, implementers and reviewers together and the mutation speed work included, added up to about 21 hours of run time and about 7 800 000 tokens, all on Sonnet. Rounds 10 to 13 came on top.
+
+## How was the result checked?
+
+The full comparison in round 9 checked the fixed gate against the gate from before the session on about 4 000 000 PowerShell inputs, 1 100 000 bash inputs and 12 386 real commands from my session logs. It found no input that the old git gate blocked and the new one lets through.
+
+That comparison does not prove the gate is complete. Earlier in the session the reviewers measured 456 inputs where PowerShell runs git and neither the old nor the new gate blocks it. Those holes are older than this session and are listed for a session of their own.
+
+## What did the mutation runs cost?
+
+A mutation run breaks the plugin's code one change at a time and expects a test to notice. In part 1 a full run took 2 hours 37 minutes. On the evening of 10 October another session had started one, and the fix session began an hour later on the same machine. I stopped the run after about 16 hours without knowing how far it had got, and I never found out why it was so slow.
+
+Until then every mutation ran the whole test suite, which took about 400 seconds during the fix session and about 310 seconds when I later measured it on a quiet machine. The fix session changed that: a mutation now runs only the test meant to catch it, and a mutation that survives gets the whole suite. Three parallel parts then finished all mutations in 11 to 12 minutes, and a sample of 40 mutations gave the same result in both modes.
+
+More parallel parts did not help at first. With 96 parts Windows ran out of resources and showed a system error, and with 6 parts the timing tests in the starting check failed under load and stopped the run before its first mutation. Now the starting check runs once on its own, and the timing tests compare growth between two input sizes instead of a fixed two seconds. Runs with 3, 12 and 24 parts caught 643 of 643 mutations in 707, 535 and 519 seconds.
+
+On the morning of 12 October my weekly health check started two mutation runs on its own. One hit its time limit and I stopped the other. Mutation runs are no longer part of the weekly check, and I start them by hand.
+
+## Why is this a forced break?
+
+While these runs went on, the processor drew about 140 W for about 14 hours in a row and peaked at 62 °C. I have kept the machine free for the mutation runs, because other load can slow a run or fail a timing test, and then I cannot read the result.
+
+So I am on a forced break. Luckily my running costs are small, so the break does not hurt. I do not even want to do other work until I can trust the results again.
+
+## What does this not show?
+
+A mutation caught by a test proves that the test notices that one change. It says nothing about a fault no mutation imitates. The zero regressions in the comparison hold for the inputs the generators and my logs produced, and the 456 shared holes show what a comparison against the old gate cannot see.
+
+I made the counts in this post from my own logs and the subagents' usage readings. The power and temperature figures are my own readings from a hardware monitor.
+
+## Frequently asked
+
+**Why was part of the gate fix undone?**
+
+Eight independent review rounds in a row each found a new way to run git past the narrowed PowerShell rule. The narrowing only removed a harmless false block, so I set a stopping rule before round 8 and undid that part when the round found escapes again.
+
+**What is a mutation run?**
+
+It breaks the code under test one small change at a time and runs the tests after each change. A mutation that no test notices points to a test that does not check what it claims to check.
+
+**Why did a mutation run take 16 hours?**
+
+I did not find the cause. The run started on the evening of 10 October, an hour before the fix session began, and I stopped it after about 16 hours, while a full run in part 1 had taken 2 hours 37 minutes. A mutation now runs only the test meant to catch it, and a full run with 12 parts takes about 9 minutes.
+
+## Related
+
+- [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus)
+- [The checks that pass for the wrong reason](/blog/checks-that-pass-for-the-wrong-reason)
+- [What 497 cloud agents asked of my desktop](/blog/cloud-agents-on-my-desktop)
+`,
   "/blog/twelve-days-of-tla-plus": `# Twelve days of TLA+ on my own tools
 
 2026-10-09
@@ -3122,8 +3196,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-40 articles.
+41 articles.
 
+- [Thirteen review rounds and one rollback](/blog/thirteen-review-rounds-and-one-rollback). 2026-10-12. Build notes. Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.
 - [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus). 2026-10-09. Build notes. What TLA+ found in my own tools in twelve days, what outside reviews confirmed and the 21 fix rounds so far.
 - [What 497 cloud agents asked of my desktop](/blog/cloud-agents-on-my-desktop). 2026-10-08. Build notes. 497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. A local model would have taken days.
 - [The browser my agent and I both run](/blog/browser-my-agent-and-i-run). 2026-10-06. Build notes. Why my agent and I both run Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.
@@ -7168,7 +7243,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.207.0",
+    "version": "3.208.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7278,7 +7353,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oqQO2oUEEiojtvH4_MZAdybmW760PrZesdgNsrPRgfBxBJtgi5KxWtZ4Rjp6DmG7EmWvoUj6kAktf6UZYi04DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"pPMcsVaLcZ5Fu-gFdriBS1MIGPRHzeEIiDFDgJMcZOswuUeQFIy11LhfQQ-3HgkbRbIpGeXBgXkpVgP4pi-_DA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oqQO2oUEEiojtvH4_MZAdybmW760PrZesdgNsrPRgfBxBJtgi5KxWtZ4Rjp6DmG7EmWvoUj6kAktf6UZYi04DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"XwrXLfr_auR9XqtztQ4M5cF3GZn9PvxsP2ynMcSibPBj9D2cQIN321bNwu1vH-xwWeg56700Kd37-lWxKfIkCg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7447,7 +7522,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.207.0",
+  "version": "3.208.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8131,7 +8206,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-09";
+var SITEMAP_LASTMOD = "2026-10-12";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -8173,6 +8248,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/thirteen-review-rounds-and-one-rollback", "monthly", "0.6"],
   ["/blog/twelve-days-of-tla-plus", "monthly", "0.6"],
   ["/blog/cloud-agents-on-my-desktop", "monthly", "0.6"],
   ["/blog/browser-my-agent-and-i-run", "monthly", "0.6"],
@@ -8286,7 +8362,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -8296,6 +8372,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/thirteen-review-rounds-and-one-rollback": {
+    title: "Thirteen review rounds and one rollback · turva.dev",
+    description: "Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.",
+    date: "2026-10-12",
+    kind: "Build notes",
+    image: "/og-thirteen-review-rounds-and-one-rollback.jpg",
+    imageAlt: "Thirteen review rounds and one rollback, a turva.dev build note on a gate fix that was undone and on mutation runs.",
+  },
   "/blog/twelve-days-of-tla-plus": {
     title: "Twelve days of TLA+ on my own tools · turva.dev",
     description: "What TLA+ found in my own tools in twelve days, what outside reviews confirmed and the 21 fix rounds so far.",
@@ -10225,6 +10309,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/thirteen-review-rounds-and-one-rollback": mdFaqBlocks("/blog/thirteen-review-rounds-and-one-rollback", "Frequently asked").pairs,
   "/blog/twelve-days-of-tla-plus": mdFaqBlocks("/blog/twelve-days-of-tla-plus", "Frequently asked").pairs,
   "/blog/cloud-agents-on-my-desktop": mdFaqBlocks("/blog/cloud-agents-on-my-desktop", "Frequently asked").pairs,
   "/blog/browser-my-agent-and-i-run": mdFaqBlocks("/blog/browser-my-agent-and-i-run", "Frequently asked").pairs,
