@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.209.1 - the post /blog/microsofts-own-cve-count (2026-10-14) gets its Frequently asked section with three question and answer pairs, and the path joins GUIDE_PAGE_FAQ, so the page publishes FAQPage structured data; the post text is otherwise unchanged, and no signed surface changes bytes.
 // turva.dev worker v3.209.0 - new Research post /blog/microsofts-own-cve-count (2026-10-14): Microsoft's own CVE count is up nearly eightfold in a year, with its OG card, a new first Blog row and its llms.txt line, plus two dated correction notes in /blog/measuring-the-ai-patch-surge.
 // turva.dev worker v3.208.0 - new Build notes post /blog/thirteen-review-rounds-and-one-rollback (2026-10-12): Thirteen review rounds and one rollback, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
 // turva.dev worker v3.207.0 - new Build notes post /blog/twelve-days-of-tla-plus (2026-10-09): Twelve days of TLA+ on my own tools, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
@@ -605,6 +606,20 @@ That second input is the part I work on: the data an agent acts on and the limit
     https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct
 
 Send an Accept: application/json header. The Vulnerability array is the full list. In each entry, the note with Type 8 names the assigning authority, the earliest RevisionHistory date is when the CVE first appeared in the document, and Threats with Type 3 carries the severity rating. Change the month to pull another. Your counts will differ from mine if Microsoft has revised the document since 14 October, which is the point of the second section.
+
+## Frequently asked
+
+**Why do outlets report different CVE counts for the same Patch Tuesday?**
+
+They count different sets. Some count only the CVEs released on Patch Tuesday itself, some count every CVE Microsoft assigned that month, and the monthly CVRF document also lists CVEs other authorities assigned for Edge and Azure Linux. For October 2026 the news sources give 1407, 1411 or 1417, and the document lists 1760.
+
+**Does Microsoft say AI caused the October record?**
+
+Not in its own October text. The MSRC post published on release day ties its risk cohort idea to AI-assisted research but gives no cause for the record. BleepingComputer credits AI for the record in its own voice.
+
+**How do I count only the CVEs Microsoft assigned itself?**
+
+Pull the month from the MSRC CVRF API with an Accept: application/json header and keep the Vulnerability entries whose note with Type 8 reads Microsoft. Record the pull time with the count, because Microsoft keeps adding entries to the document after release.
 
 ## Related
 
@@ -7336,7 +7351,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.209.0",
+    "version": "3.209.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7615,7 +7630,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.209.0",
+  "version": "3.209.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -10412,6 +10427,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/microsofts-own-cve-count": mdFaqBlocks("/blog/microsofts-own-cve-count", "Frequently asked").pairs,
   "/blog/thirteen-review-rounds-and-one-rollback": mdFaqBlocks("/blog/thirteen-review-rounds-and-one-rollback", "Frequently asked").pairs,
   "/blog/twelve-days-of-tla-plus": mdFaqBlocks("/blog/twelve-days-of-tla-plus", "Frequently asked").pairs,
   "/blog/cloud-agents-on-my-desktop": mdFaqBlocks("/blog/cloud-agents-on-my-desktop", "Frequently asked").pairs,
