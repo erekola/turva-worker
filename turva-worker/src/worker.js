@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.209.0 - new Research post /blog/microsofts-own-cve-count (2026-10-14): Microsoft's own CVE count is up nearly eightfold in a year, with its OG card, a new first Blog row and its llms.txt line, plus two dated correction notes in /blog/measuring-the-ai-patch-surge.
 // turva.dev worker v3.208.0 - new Build notes post /blog/thirteen-review-rounds-and-one-rollback (2026-10-12): Thirteen review rounds and one rollback, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
 // turva.dev worker v3.207.0 - new Build notes post /blog/twelve-days-of-tla-plus (2026-10-09): Twelve days of TLA+ on my own tools, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
 // turva.dev worker v3.206.0 - new Build notes post /blog/cloud-agents-on-my-desktop (2026-10-08): What 497 cloud agents asked of my desktop, with its Frequently asked section, its OG card, a new first Blog row and its llms.txt line.
@@ -309,6 +310,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Microsoft's own CVE count is up nearly eightfold in a year](https://turva.dev/blog/microsofts-own-cve-count.md)
 - [Thirteen review rounds and one rollback](https://turva.dev/blog/thirteen-review-rounds-and-one-rollback.md)
 - [Twelve days of TLA+ on my own tools](https://turva.dev/blog/twelve-days-of-tla-plus.md)
 - [What 497 cloud agents asked of my desktop](https://turva.dev/blog/cloud-agents-on-my-desktop.md)
@@ -525,6 +527,92 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/microsofts-own-cve-count": `# Microsoft's own CVE count is up nearly eightfold in a year
+
+2026-10-14
+
+Microsoft-assigned CVEs rose from 180 to 1417 a month in a year, and the monthly release keeps growing after Patch Tuesday.
+
+Microsoft shipped its October security update on 13 October 2026. Depending on who you read, it fixed 1407, 1411 or 1417 vulnerabilities. They count different things, and the difference matters more than it used to.
+
+I pulled the same machine-readable document Microsoft publishes for every month, the CVRF file behind the Security Update Guide, on 14 October at 11:04 UTC. The October document lists 1760 CVEs. Each entry names the CVE Numbering Authority that assigned it, and Microsoft is the assigning authority on 1417 of them. The rest were assigned by others, mostly Linux kernel and Apache CVEs that Microsoft republishes for Azure Linux packages.
+
+## The series, counted one way
+
+Here is every month I pulled, restricted to CVEs Microsoft assigned itself.
+
+| Baseline month | Microsoft-assigned CVEs |
+| --- | --- |
+| 2024-07 | 144 |
+| 2025-01 | 165 |
+| 2025-04 | 132 |
+| 2025-07 | 137 |
+| 2025-10 | 180 |
+| 2026-01 | 124 |
+| 2026-02 | 61 |
+| 2026-03 | 97 |
+
+| Recent month | Microsoft-assigned CVEs |
+| --- | --- |
+| 2026-04 | 181 |
+| 2026-05 | 162 |
+| 2026-06 | 220 |
+| 2026-07 | 663 |
+| 2026-08 | 456 |
+| 2026-09 | 998 |
+| 2026-10 | 1417 |
+
+The baseline months average 130. October 2026 is 10,9 times that, and 7,9 times October 2025. Leave out February, the low outlier, and the average is 140 and October is 10,1 times it.
+
+Severity did not drop as volume rose. In July 2025 the median CVSS base score of Microsoft-assigned CVEs was 7,8, and in July 2026 it was still 7,8, with 76,6 % and 74,2 % of them at 7,0 or above. Critical-rated CVEs went from 17 to 77. October looked similar: the median went from 7,3 to 7,5, and Critical-rated CVEs from 18 to 76. The bigger releases contain more of the same kind of finding, not a pile of minor ones.
+
+## The release is not a fixed list
+
+The monthly document does not stay the size it was on Patch Tuesday. Today the July 2026 document holds 2005 CVEs. Of those, 874 first appeared after 14 July, most of them Chromium CVEs for Edge and Linux CVEs for Azure Linux. In September, 1595 of 2776 entries arrived after Patch Tuesday. CVEs first published on Patch Tuesday itself are 27 % of today's April document, 29 % of July and 36 % of September.
+
+So "the July release" read on release day and the same document read three months later differ by hundreds of entries. A count or a patch list without a pull date does not say which entries it contained.
+
+## What Microsoft itself says about the load
+
+On the day of the release MSRC published a post about how customers can cope with large releases. It does not give a cause for the record. It proposes what it calls risk cohorts: group the CVEs that raise the same question about your environment, answer that question once and write the answer down, then review each CVE with that context. Its examples are questions like whether an RD Gateway is reachable from outside the corporate network, or which users open untrusted documents and mail.
+
+Microsoft is careful with it. The post calls the cohorts exploratory and says they do not change Microsoft's update guidance or replace the review of each CVE. Its one line about AI ties the approach to AI-assisted discovery: "As AI-assisted research contributes to vulnerability discovery", this kind of grouping may become more useful. It does not say how much of this month's count that explains.
+
+That is as far as Microsoft's own October text goes. BleepingComputer attributes the record to Microsoft's use of AI platforms in its own voice, with no source cited in the text. In July the head of Windows wrote that customers would see higher update volume as AI helps defenders find more issues, which I measured [in an earlier post](/blog/measuring-the-ai-patch-surge). This post measures the count. It does not prove the cause.
+
+## The one that had a deadline
+
+One October CVE was already exploited: CVE-2026-96951, a Mark of the Web bypass in Windows Shell rated CVSS 8,8. CISA added it to its Known Exploited Vulnerabilities catalog on 13 October with a due date of 16 October.
+
+The CVE with a CISA due date three days out arrived in the same release as 1416 other Microsoft-assigned CVEs. Finding it in the list is easy, because it is flagged. Deciding what comes next for the rest is the slow part, and that part depends on facts about your own environment that no feed contains.
+
+## If a script or an agent does the triage
+
+Handing patch triage to automation is the obvious response to a release this size, and two inputs decide whether it works.
+
+The first input is the feed. It changes after you read it, so the pull time and the document revision belong with every decision made from it. An agent that triaged the July document on release day and another that triaged it in October worked from different lists, and both were correct about what they were given.
+
+The second input is the answers. Whether the RDP gateway is exposed, which roles are deployed and who opens outside documents are facts about one organisation. If they are written down and kept current, an agent can apply them to 1417 CVEs consistently. If they are not, the agent fills the gap with a guess, and nothing in its output will show which answers were guessed.
+
+That second input is the part I work on: the data an agent acts on and the limits of what it may decide on its own.
+
+## A correction to my July post
+
+[The July post](/blog/measuring-the-ai-patch-surge) counted every CVE in each monthly document, including the ones other authorities assigned. Counted that way, July 2026 was 3,0 times the baseline. Counted as Microsoft-assigned only, the rise is steeper: July 2026 is 5,1 times the baseline of 130. The severity comparison does not survive the narrower count. The July post reported the median moving from 6,5 to 7,5. For Microsoft-assigned CVEs it stayed at 7,8. The shift in that post came from the mix of CVEs in the documents, not from Microsoft's own findings. A dated note on that post now says so.
+
+## Check it yourself
+
+    https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct
+
+Send an Accept: application/json header. The Vulnerability array is the full list. In each entry, the note with Type 8 names the assigning authority, the earliest RevisionHistory date is when the CVE first appeared in the document, and Threats with Type 3 carries the severity rating. Change the month to pull another. Your counts will differ from mine if Microsoft has revised the document since 14 October, which is the point of the second section.
+
+## Related
+
+- [Microsoft said the patches would get bigger. I measured how much bigger.](/blog/measuring-the-ai-patch-surge)
+- [Define what an agent may do with your data](/guides/letting-agents-act-on-data)
+- [Measure agent-readiness with evidence](/guides/measurement-led-agent-readiness)
+`,
+
   "/blog/thirteen-review-rounds-and-one-rollback": `# Thirteen review rounds and one rollback
 
 2026-10-12
@@ -2495,6 +2583,8 @@ Corrected 2026-09-29. A sentence said that from the outside a guard that has fai
 
 A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.
 
+Corrected 2026-10-14: the severity comparison below does not hold for Microsoft-assigned CVEs alone. The note at the end says why.
+
 On 9 July 2026 the head of Windows published a post about AI-powered vulnerability discovery. One line in it was a warning to customers: "As AI helps defenders discover more issues, customers will see a higher volume of security updates included in each security release."
 
 It does not say how much higher. The post runs well over a thousand words and gives no figure for the increase.
@@ -2603,6 +2693,8 @@ Note added September 27: two sentences went further than the numbers. The severi
 Corrected 2026-09-28. A sentence said the two benchmark figures came from conditions neither party published. Microsoft's own linked source names its side, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, and the sentence now says that, and that Anthropic's own conditions for Mythos are not published.
 
 Corrected 2026-10-02. Several sentences claimed more than their sources. The Mythos sentence said Anthropic's own evaluation conditions are not published, and the 2026-09-28 note above repeats it. Anthropic's system card publishes the task count, pass@1 scoring and sampling settings but does not name the CyberGym difficulty level, so it now says: "Microsoft names its side of the setup, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, but Anthropic's system card gives only part of its setup for Mythos, pass@1 over the same 1507 tasks with no extended thinking, and does not name the CyberGym difficulty level, so the two scores cannot be assumed to share a setup, and a gap of 5,35 percentage points does not show that either approach is better." The same sentence also said five points is well inside what a difference in evaluation setup can produce, which no cited source quantifies, so it now says the gap does not show either approach is better. The Microsoft post is longer than about 1400 words and carries ordinary numerals, so the sentence now says it gives no figure for the increase. HackerOne's 76 % is March 2026 against March 2025, not a year through March, and HackerOne reports the valid share steady at roughly 25 %, so the noise claim is gone. The three-quarters-noise wording, the DDoS attribution and the claim that Google stopped taking AI-generated submissions are replaced by what the linked sources say.
+
+Corrected 2026-10-14. This post counted every CVE in each monthly document, including the CVEs other numbering authorities assigned, mostly Chromium CVEs for Edge and Linux CVEs for Azure Linux. Counted as Microsoft-assigned only, the rise is steeper: the eight baseline months average 130 and July 2026 is 663, or 5,1 times. The severity table does not hold under that count. For Microsoft-assigned CVEs the median CVSS was 7,8 in July 2025 and 7,8 in July 2026, with 76,6 % and 74,2 % scoring 7,0 or above. The shift reported above therefore came from the mix of CVEs in the documents and not from Microsoft's own findings. The July 2026 document has also grown to 2005 entries since this post was written, and most of the added entries are Chromium and Linux CVEs. The tables above are left as the endpoint returned them, and the full series is in [the October follow-up](/blog/microsofts-own-cve-count).
 
 ## Related
 
@@ -3196,8 +3288,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-41 articles.
+42 articles.
 
+- [Microsoft's own CVE count is up nearly eightfold in a year](/blog/microsofts-own-cve-count). 2026-10-14. Research. Microsoft-assigned CVEs rose from 180 to 1417 a month in a year, and the monthly release keeps growing after Patch Tuesday.
 - [Thirteen review rounds and one rollback](/blog/thirteen-review-rounds-and-one-rollback). 2026-10-12. Build notes. Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.
 - [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus). 2026-10-09. Build notes. What TLA+ found in my own tools in twelve days, what outside reviews confirmed and the 21 fix rounds so far.
 - [What 497 cloud agents asked of my desktop](/blog/cloud-agents-on-my-desktop). 2026-10-08. Build notes. 497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. A local model would have taken days.
@@ -7243,7 +7336,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.208.0",
+    "version": "3.209.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7353,7 +7446,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oqQO2oUEEiojtvH4_MZAdybmW760PrZesdgNsrPRgfBxBJtgi5KxWtZ4Rjp6DmG7EmWvoUj6kAktf6UZYi04DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"XwrXLfr_auR9XqtztQ4M5cF3GZn9PvxsP2ynMcSibPBj9D2cQIN321bNwu1vH-xwWeg56700Kd37-lWxKfIkCg\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oqQO2oUEEiojtvH4_MZAdybmW760PrZesdgNsrPRgfBxBJtgi5KxWtZ4Rjp6DmG7EmWvoUj6kAktf6UZYi04DA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KMZsEob3mlFRnVyWjFU5_YJpL8dvpfNkLj-MJL_I2REAjKCnDDw3gWtgsAmVyqBPLV2oGavGyferDQDNdMFQCw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7522,7 +7615,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.208.0",
+  "version": "3.209.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8206,7 +8299,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-12";
+var SITEMAP_LASTMOD = "2026-10-14";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -8248,6 +8341,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/microsofts-own-cve-count", "monthly", "0.6"],
   ["/blog/thirteen-review-rounds-and-one-rollback", "monthly", "0.6"],
   ["/blog/twelve-days-of-tla-plus", "monthly", "0.6"],
   ["/blog/cloud-agents-on-my-desktop", "monthly", "0.6"],
@@ -8362,7 +8456,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -8372,6 +8466,15 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/microsofts-own-cve-count": {
+    title: "Microsoft's own CVE count is up nearly eightfold in a year · turva.dev",
+    titleTag: "Microsoft's own CVE count, up nearly eightfold · turva.dev",
+    description: "Microsoft-assigned CVEs rose from 180 to 1417 a month in a year, and the monthly release keeps growing after Patch Tuesday.",
+    date: "2026-10-14",
+    kind: "Research",
+    image: "/og-microsofts-own-cve-count.jpg",
+    imageAlt: "Microsoft's own CVE count up nearly eightfold in a year, a turva.dev research post on the monthly security release.",
+  },
   "/blog/thirteen-review-rounds-and-one-rollback": {
     title: "Thirteen review rounds and one rollback · turva.dev",
     description: "Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.",
@@ -8607,7 +8710,7 @@ var META_BY_PATH = {
     description: "A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.",
     date: "2026-07-15",
     kind: "Research",
-    modified: "2026-10-02",
+    modified: "2026-10-14",
     image: "/og-measuring-the-ai-patch-surge.jpg",
     imageAlt: "Measuring the AI patch surge from MSRC data"
   },

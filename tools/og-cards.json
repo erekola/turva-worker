@@ -329,6 +329,12 @@
     "subhead": "Twelve months of MSRC data: the July package is 3,0 times the baseline, and the median CVE got more severe.",
     "white": "Microsoft said the patches would get bigger."
   },
+  "og-microsofts-own-cve-count.jpg": {
+    "green": "up nearly eightfold in a year",
+    "kicker": "Blog",
+    "subhead": "The monthly release keeps growing after Patch Tuesday, so every count needs its pull date.",
+    "white": "Microsoft's own CVE count"
+  },
   "og-moving-source-to-codeberg.jpg": {
     "green": "from GitHub to Codeberg",
     "kicker": "Blog",
