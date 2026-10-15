@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.209.4 - content corrections from outside reviews W50 to W53 (Tek-546): /services now names the same four kinds of copy as /legal and /legal names its fourth kind, the post /blog/website-agent-readiness-567-sites marks the CMS floor as the author's reading with a Corrected 2026-10-16 note, and the MCP server card guides and the audit status table state that SEP-2127 reads Status: Final while the extension repository still says Experimental; no signed surface changes bytes.
 // turva.dev worker v3.209.3 - MCP server card version 1.6.18 for output field descriptions of get_agent_readiness, get_security_evidence, get_principles and get_contact; the MCP server card changes bytes, so its signature must be renewed.
 // turva.dev worker v3.209.1 - the post /blog/microsofts-own-cve-count (2026-10-14) gets its Frequently asked section with three question and answer pairs, and the path joins GUIDE_PAGE_FAQ, so the page publishes FAQPage structured data; the post text is otherwise unchanged, and no signed surface changes bytes.
 // turva.dev worker v3.209.0 - new Research post /blog/microsofts-own-cve-count (2026-10-14): Microsoft's own CVE count is up nearly eightfold in a year, with its OG card, a new first Blog row and its llms.txt line, plus two dated correction notes in /blog/measuring-the-ai-patch-surge.
@@ -1864,7 +1865,7 @@ Website agent readiness is a property of a site or an API. It asks whether a mac
 
 ## The numbers
 
-Of the 567 sites, 485 read Level 1 of 5. Level 1 is the floor an ordinary CMS site reaches. Seventy-four sites read Level 0, below that floor. Seven read Level 2, and one read Level 5.
+Of the 567 sites, 485 read Level 1 of 5. I read Level 1 as the floor a default CMS ships. That is my reading and not a measurement, because the study did not record which CMS each site runs. Seventy-four sites read Level 0, below that floor. Seven read Level 2, and one read Level 5.
 
 The Finnish subset is 407 sites, and 352 of them, 86,5 percent, read Level 1. The 160 sites from outside Finland read 83,1 percent at Level 1 and 14,4 percent at Level 0. Those two shares are 3,4 percentage points apart and both subsets land on Level 1, so the floor is not a Finnish trait.
 
@@ -1909,6 +1910,8 @@ Corrected again 2026-09-27. The opening said an assistant's answer describes an 
 Corrected 2026-09-28. A sentence said the audit starts with an email that carries the domain. It now adds that the email also carries the question you want answered, matching how /contact and the MCP get_contact tool describe the same email. No reading changed.
 
 Corrected 2026-09-28. Two more sentences needed the same care. The claim that the same scan always repeats now excepts the handful of readings this site's own later series found unstable and recorded as such, and the how to read your own site paragraph outside the FAQ now asks for the question you want answered as well as the domain, matching the FAQ.
+
+Corrected 2026-10-16. One sentence said Level 1 is the floor an ordinary CMS site reaches. That is my reading, and the study did not record which CMS each site runs, so the sentence now says so. No number changed.
 
 ## Related
 
@@ -2802,7 +2805,7 @@ range, not as a causal claim about readiness.
 
 ## The numbers
 
-On the isitagentready Level scale almost all of the sixteen landed at Level 1 of 5, the floor an ordinary CMS site reaches, a couple sat at Level 0, and only one reached Level 2. None reached Level 3 or above.
+On the isitagentready Level scale almost all of the sixteen landed at Level 1 of 5, which I read as the floor a default CMS ships, a couple sat at Level 0, and only one reached Level 2. None reached Level 3 or above.
 
 That does not mean these are broken websites. They load, and a person can use them without trouble. The scanner measures something else, whether an AI agent can read the site and act on it.
 
@@ -2827,6 +2830,8 @@ To check where a site stands, the free llms.txt validator is at [turva.dev/llms-
 Corrected 2026-09-25. Three passages said more than the scan measured. The token figures were an estimate from a scanner this site no longer uses, and they are now labelled as reported and estimated. Two sentences drew what an agent can answer and whether a business appears in an answer from configuration checks, and a third said most of these sites rank fine in search, which was never measured. They now say what the scan read. The counts did not change.
 
 Corrected 2026-09-27. One more sentence still said these sites rank in search, which was not measured either. It now says only that they load and that a person can use them.
+
+Corrected 2026-10-16. One sentence called Level 1 the floor an ordinary CMS site reaches. That is my reading, and the scan did not record which CMS each site runs, so the sentence now marks it as my reading. No number changed.
 
 ## Related
 
@@ -4879,7 +4884,7 @@ Yes. I sign your own NDA as it stands, at no charge, before material is shared.
 
 **How is our material handled?**
 
-Client material is kept only on systems needed for the work and deleted within thirty days of closure, as the legal page defines closure, unless the law requires retention. Four kinds of copy follow their own rules: bookkeeping material, which is kept for six years, what the AI tool's provider keeps under its own terms, an encrypted backup copy until the rotation replaces it, and a private version-history copy that lasts as long as the backups. Every backup is overwritten within one month at most. Engagement email and its attachments are deleted under the same closing rule. The legal page explains each. The workstation uses full disk encryption. Credentials are stored in an encrypted vault, and backups are encrypted before upload.
+Client material is kept only on systems needed for the work and deleted within thirty days of closure, as the legal page defines closure, unless the law requires retention. Four kinds of copy follow their own rules: bookkeeping material, which is kept for six years, what the AI tool's provider keeps under its own terms, an encrypted backup copy until the rotation replaces it, and earlier versions of files, which exist only inside those backups and leave with them within one month. Every backup is overwritten within one month at most. Engagement email and its attachments are deleted under the same closing rule. The legal page explains each. The workstation uses full disk encryption. Credentials are stored in an encrypted vault, and backups are encrypted before upload.
 
 **Do you use AI tools?**
 
@@ -5312,7 +5317,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. A question sent by email, Signal or LinkedIn that does not lead to an engagement is deleted 24 months after the latest message.
 
-**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies, each new copy replaces the oldest, and every backup, version history included, is overwritten within one month. A backup is never restored for any other purpose. Deleted client material has left every backup within one month at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files exist only inside the backups and leave with them when the rotation replaces them, within the same month. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies, each new copy replaces the oldest, and every backup, version history included, is overwritten within one month. A backup is never restored for any other purpose. Deleted client material has left every backup within one month at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them, within the same month. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
 **Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
@@ -5580,7 +5585,7 @@ The audit checks the parts an agent reaches first. Discoverability covers robots
 
 The scanner's checks run against its current rule set, and what it does not score, such as llms.txt, is tested directly. That rule set moves, so a scan run today is a new measurement rather than a repeat of an earlier one.
 
-The table below records each surface's current status, drawn from the reference file this site maintains in its repository. Pilot means an early-stage mechanism with no ratifying body yet. It names the ratification state and does not rate adoption or production maturity.
+The table below records each surface's current status, drawn from the reference file this site maintains in its repository. Pilot means an early-stage mechanism with no ratifying body yet. It names the ratification state and does not rate adoption or production maturity. Accepted extension means the protocol's own proposal process has marked the extension Final, while the extension's reference repository can still be labelled experimental.
 
 | Surface | Status |
 | --- | --- |
@@ -5593,7 +5598,7 @@ The table below records each surface's current status, drawn from the reference 
 | JSON-LD and structured data | Standard |
 | Response headers | Mixed |
 | agents.json | Pilot |
-| MCP server cards | Draft |
+| MCP server cards | Accepted extension |
 | Agent authentication | Standard for OAuth discovery |
 | x402 and agent payments | Pilot |
 
@@ -5700,17 +5705,17 @@ The file format did not change. v2 added two standard link relations so an agent
 
 A server card describes an MCP endpoint for clients that support the relevant discovery convention. The card, the live endpoint and the client's protocol support must agree.
 
-As of September 2026 the server card lives in two places that have not converged. Deployed cards, turva.dev's among them, commonly sit at /.well-known/mcp/server-card.json. The proposal behind the card, [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), now develops as an [experimental MCP extension](https://github.com/modelcontextprotocol/ext-server-card), and its draft reserves a different default, the MCP endpoint URL followed by /server-card. The draft does not recommend a /.well-known path for the card itself, and site-level discovery instead sits in a catalog: the experimental Server Card document keeps an AI Catalog at /.well-known/ai-catalog.json, while ARD v0.91 names /.well-known/ard.json. The convention is still moving, so a client that checks only one location may miss a card that exists at the other.
+As of September 2026 the server card lives in two places that have not converged. Deployed cards, turva.dev's among them, commonly sit at /.well-known/mcp/server-card.json. The proposal behind the card, [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), now develops as an [experimental MCP extension](https://github.com/modelcontextprotocol/ext-server-card), and its draft reserves a different default, the MCP endpoint URL followed by /server-card. The draft does not recommend a /.well-known path for the card itself, and site-level discovery instead sits in a catalog: the experimental Server Card document keeps an AI Catalog at /.well-known/ai-catalog.json, while ARD v0.91 names /.well-known/ard.json. The convention is still moving, so a client that checks only one location may miss a card that exists at the other. On 2026-10-06 SEP-2127 was merged, and its text now reads Status: Final on the Extensions Track. It recommends the MCP endpoint URL followed by /server-card, lets a card be hosted at any unreserved URI, lets an AI Catalog at /.well-known/ai-catalog.json link to or embed cards and leaves tools, resources and prompts out of the card, while the extension repository's README still labels itself Experimental. The two locations have still not converged in deployment.
 
 An MCP server card is a small JSON file that describes a site's Model Context Protocol server so a client can find it and learn what it offers. The Model Context Protocol itself is a standard way for agents to use external tools and data. A server implements the protocol and may expose tools, resources or prompts, and the card is how that server announces itself before any connection is made.
 
 ## What the card states
 
-A useful card states the server name, the endpoint and the transport, in a shape a client can parse without guessing. Many published cards, including turva.dev's, also list the tools the server offers. The newer draft leaves that list to the live MCP connection instead, since a tools list answer from the running server does not depend on a separate static copy the way a list in a card does. A client may still cache that answer, and the protocol treats the cache lifetime as a freshness hint that does not guarantee the list is current.
+A useful card states the server name, the endpoint and the transport, in a shape a client can parse without guessing. Many published cards, including turva.dev's, also list the tools the server offers. The accepted proposal leaves that list to the live MCP connection instead, since a tools list answer from the running server does not depend on a separate static copy the way a list in a card does. A client may still cache that answer, and the protocol treats the cache lifetime as a freshness hint that does not guarantee the list is current.
 
 ## Where discovery can fail
 
-Finding a card is not the same as confirming the server works. A card can exist at a stale path, point to an endpoint that has moved, or name a transport the client does not support, and a client that stops at the card being found has not checked any of that. The card, the live endpoint and the client's own protocol support all have to agree before a connection succeeds, and only the connection attempt itself confirms that they do. The draft adds that a client MUST NOT treat a card's contents as authoritative for security or access-control decisions, and SHOULD verify the card's claims against the live connection, preferring the runtime values where the two disagree.
+Finding a card is not the same as confirming the server works. A card can exist at a stale path, point to an endpoint that has moved, or name a transport the client does not support, and a client that stops at the card being found has not checked any of that. The card, the live endpoint and the client's own protocol support all have to agree before a connection succeeds, and only the connection attempt itself confirms that they do. The extension specification adds that a client MUST NOT treat a card's contents as authoritative for security or access-control decisions, and SHOULD verify the card's claims against the live connection, preferring the runtime values where the two disagree.
 
 ## How it fits with other discovery files
 
@@ -5718,13 +5723,13 @@ A server card sits in the same family as other well-known manifests a client loo
 
 ## Practical steps
 
-Publish the card at the deployed convention your target clients actually check, and confirm it with a live connection attempt rather than a directory listing. Where a client supports the newer draft location, publish there too rather than choosing one over the other, since the two conventions have not converged. The card is a low cost step for a site that wants to expose a capability to agents, and it only becomes useful once a client can reach and use the endpoint it names. For an audit of whether a site's MCP server card and its live endpoint agree, contact info@turva.dev.
+Publish the card at the deployed convention your target clients actually check, and confirm it with a live connection attempt rather than a directory listing. Where a client supports the location the proposal recommends, publish there too rather than choosing one over the other, since the two conventions have not converged. The card is a low-cost step for a site that wants to expose a capability to agents, and it only becomes useful once a client can reach and use the endpoint it names. For an audit of whether a site's MCP server card and its live endpoint agree, contact info@turva.dev.
 
 ## Frequently asked
 
 **What is an MCP server card?**
 
-An MCP server card is a small JSON file that describes a site's Model Context Protocol server, its endpoint and its transport, so a client can attempt a connection without a human wiring it up first. The current draft leaves the tool list to the live connection rather than to the card.
+An MCP server card is a small JSON file that describes a site's Model Context Protocol server, its endpoint and its transport, so a client can attempt a connection without a human wiring it up first. The accepted proposal leaves the tool list to the live connection rather than to the card.
 
 **Why publish an MCP server card?**
 
@@ -5732,13 +5737,13 @@ Without a card or a registry listing, a client has no reliable way to discover t
 
 **Where does an MCP server card live?**
 
-Deployed cards commonly sit at /.well-known/mcp/server-card.json, and turva.dev serves one there. The current experimental draft reserves a different default, the MCP endpoint URL followed by /server-card, so a client may need to check both locations until the convention settles.
+Deployed cards commonly sit at /.well-known/mcp/server-card.json, and turva.dev serves one there. The accepted proposal recommends a different default, the MCP endpoint URL followed by /server-card, so a client may need to check both locations until the convention settles.
 
 ## Sources
 
 - [MCP Server Card extension repository](https://github.com/modelcontextprotocol/ext-server-card)
 - [Server Card discovery document](https://github.com/modelcontextprotocol/ext-server-card/blob/main/docs/discovery.md)
-- [SEP-2127, the proposal](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127)
+- [SEP-2127, the proposal, merged on 2026-10-06](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127)
 
 ## Related
 
@@ -6030,7 +6035,7 @@ An API catalog at a well-known path, defined by RFC 9727, lets a client enumerat
 
 ## Where MCP discovery still moves
 
-A server card describes an MCP server and how to reach it, but this one is not yet settled the way the three above are. Deployed cards, turva.dev's among them, sit at /.well-known/mcp/server-card.json. The experimental Server Card specification instead reserves the MCP endpoint URL followed by /server-card as its default, and expects a client to follow the URL a site's own catalog gives rather than assume a fixed well-known path. Treat the MCP card path as a deployed convention, not as a ratified standard on the same footing as RFC 9727 or OAuth discovery.
+A server card describes an MCP server and how to reach it, but this one is not yet settled the way the three above are. Deployed cards, turva.dev's among them, sit at /.well-known/mcp/server-card.json. The Server Card extension specification, accepted in October 2026 as SEP-2127 although its repository is still labelled experimental, instead recommends the MCP endpoint URL followed by /server-card, and expects a client to follow the URL a site's own catalog gives rather than assume a fixed well-known path. Treat the MCP card path as a deployed convention, not as a ratified standard on the same footing as RFC 9727 or OAuth discovery.
 
 ## Why lookup beats crawling
 
@@ -6048,7 +6053,7 @@ The /.well-known directory is a standard place at the root of a site where clien
 
 **What files do agents look for under /.well-known?**
 
-An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment and agent-payment manifests, and a security contact. The MCP card is the one whose home is still moving: deployed cards use /.well-known/mcp/server-card.json, while the experimental specification defaults to the MCP endpoint URL plus /server-card and does not recommend a well-known path for the card itself.
+An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment and agent-payment manifests, and a security contact. The MCP card is the one whose home is still moving: deployed cards use /.well-known/mcp/server-card.json, while the Server Card extension specification recommends the MCP endpoint URL plus /server-card and does not recommend a well-known path for the card itself.
 
 **Why do clients use the well-known directory instead of crawling pages?**
 
@@ -6097,7 +6102,7 @@ A technical scan can check whether a manifest resolves at the declared path, par
 
 Adoption is early. In a June 2026 check against public well-known paths, none of the launch partners the [announcement](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/) shows yet served a discoverable ai-catalog.json, so publishing one now is a forward move rather than table stakes. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
 
-turva.dev serves the same entries at both paths, /.well-known/ard.json with the MCP Server Card media type on its MCP entry and rel="ard" in every page head, and /.well-known/ai-catalog.json for clients and scanners that still read the predecessor. Both index its MCP server, its A2A agent, its API and its agent skills, each of which already resolves on its own. The separate experimental MCP Server Card discovery document keeps its own convention, an AI Catalog at /.well-known/ai-catalog.json, so the two profiles are described apart and not merged. For an audit of a site's discovery surface, contact info@turva.dev.
+turva.dev serves the same entries at both paths, /.well-known/ard.json with the MCP Server Card media type on its MCP entry and rel="ard" in every page head, and /.well-known/ai-catalog.json for clients and scanners that still read the predecessor. Both index its MCP server, its A2A agent, its API and its agent skills, each of which already resolves on its own. The separate MCP Server Card discovery document, from the extension repository that is still labelled experimental, keeps its own convention, an AI Catalog at /.well-known/ai-catalog.json, so the two profiles are described apart and not merged. For an audit of a site's discovery surface, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -6389,7 +6394,7 @@ The markup, scripts and layout it does not need. That cost is counted in tokens,
 
 A prospecting sample of 567 company sites revealed recurring technical gaps. This guide explains the patterns while keeping the sample and scanner limitations visible.
 
-Marketing sites are often strong for people and weak for agents, and the gaps are predictable. The evidence here is [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) with one independent scanner between 28 June and 3 September 2026, which grew out of [an earlier write-up of sixteen Finnish sites](/blog/agent-readiness-finnish-b2b). The sample is a prospecting list and not a random draw, so read it as what recurred in the sites reviewed rather than as a count of the whole web. Of the 567 sites, 485 read Level 1 of 5, the floor an ordinary CMS reaches, and 74 read Level 0, below it.
+Marketing sites are often strong for people and weak for agents, and the gaps are predictable. The evidence here is [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) with one independent scanner between 28 June and 3 September 2026, which grew out of [an earlier write-up of sixteen Finnish sites](/blog/agent-readiness-finnish-b2b). The sample is a prospecting list and not a random draw, so read it as what recurred in the sites reviewed rather than as a count of the whole web. Of the 567 sites, 485 read Level 1 of 5 and 74 read Level 0, below it. The write-up reads Level 1 as the floor a default CMS ships, but the study did not record which CMS each site runs.
 
 ## Rendering
 
@@ -7352,7 +7357,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.209.3",
+    "version": "3.209.4",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7631,7 +7636,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.209.3",
+  "version": "3.209.4",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8626,7 +8631,7 @@ var META_BY_PATH = {
     description: "One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-09-28",
+    modified: "2026-10-16",
     image: "/og-website-agent-readiness-567-sites.jpg",
     imageAlt: "turva.dev blog card: 567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, Finnish and foreign sites alike.",
   },
@@ -8744,7 +8749,7 @@ var META_BY_PATH = {
     description: "A scan of sixteen selected Finnish B2B sites records gaps in agent-readiness. This historical sample leads into the later study of 567 sites.",
     date: "2026-07-07",
     kind: "Research",
-    modified: "2026-09-27",
+    modified: "2026-10-16",
     image: "/og-agent-readiness-finnish-b2b.jpg",
     imageAlt: "turva.dev blog card: I ran an independent scanner over sixteen Finnish B2B sites. Almost every one landed at isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere."
   },
@@ -8981,7 +8986,7 @@ var META_BY_PATH = {
   },
   "/guides/mcp-server-card": {
     title: "MCP server cards and discovery · turva.dev",
-    checked: "2026-10-01",
+    checked: "2026-10-16",
     description: "A server card describes an MCP endpoint for clients that support the relevant discovery convention.",
     image: "/og-guide-mcp-server-card.jpg",
     imageAlt: "turva.dev guide card: An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and connect to it."
