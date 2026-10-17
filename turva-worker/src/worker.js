@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.210.0 - new Build notes post /blog/three-outside-reviews-of-my-tla-plus-models (TLA+ series part 3), with its Frequently asked section and its OG card.
 // turva.dev worker v3.209.4 - content corrections from outside reviews W50 to W53 (Tek-546): /services now names the same four kinds of copy as /legal and /legal names its fourth kind, the post /blog/website-agent-readiness-567-sites marks the CMS floor as the author's reading with a Corrected 2026-10-16 note, and the MCP server card guides and the audit status table state that SEP-2127 reads Status: Final while the extension repository still says Experimental; no signed surface changes bytes.
 // turva.dev worker v3.209.3 - MCP server card version 1.6.18 for output field descriptions of get_agent_readiness, get_security_evidence, get_principles and get_contact; the MCP server card changes bytes, so its signature must be renewed.
 // turva.dev worker v3.209.1 - the post /blog/microsofts-own-cve-count (2026-10-14) gets its Frequently asked section with three question and answer pairs, and the path joins GUIDE_PAGE_FAQ, so the page publishes FAQPage structured data; the post text is otherwise unchanged, and no signed surface changes bytes.
@@ -313,6 +314,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Three outside reviews of my TLA+ models](https://turva.dev/blog/three-outside-reviews-of-my-tla-plus-models.md)
 - [Microsoft's own CVE count is up nearly eightfold in a year](https://turva.dev/blog/microsofts-own-cve-count.md)
 - [Thirteen review rounds and one rollback](https://turva.dev/blog/thirteen-review-rounds-and-one-rollback.md)
 - [Twelve days of TLA+ on my own tools](https://turva.dev/blog/twelve-days-of-tla-plus.md)
@@ -530,6 +532,91 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/three-outside-reviews-of-my-tla-plus-models": `# Three outside reviews of my TLA+ models
+
+2026-10-17
+
+This is the third part of the series that began with [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus) and continued in [Thirteen review rounds and one rollback](/blog/thirteen-review-rounds-and-one-rollback). Part 2 ended with five fix rounds of the first outside review still waiting. Since then all of them are done, two more outside reviews have read the models, and each review got its own fix sessions.
+
+## What did the three reviews find?
+
+Each review read packages of my TLA+ models together with the code they describe and the reports of earlier runs. Sonnet subagents then checked every claim against TLC and the real code before anything was fixed. A claim rated high was one where, in the reader's words, a TLC verdict or a fix might not hold for the real code. After the check I kept the high rating only for a silent loss that contradicts a general statement in one of my reports.
+
+| Review | Claims | Confirmed | Refined | Refuted | Rated high before and after the check |
+|---|---|---|---|---|---|
+| 8 October, four packages | 68 | 39 | 29 | 0 | 33 before, 2 after |
+| 15 October, six packages, 35 models | 49 | 35 | 14 | 0 | 20 before, 2 after |
+| 16 October, six packages, 55 models | 37 | 24 | 13 | 0 | 10 before, 0 after |
+
+The third review is the first with no claim left at the high rating. The two high claims of the second review were one mechanism that two readers found in different models. My log size check registered entries from one scan and checked the caller's own entry with a separate read, so two sync restores in that window could leave the entry unregistered while the check still printed PASS. The fix session made the check read the caller's entry from the same scan.
+
+## Can the three rounds be compared?
+
+Not as a quality trend. ChatGPT read the packages in all three rounds at its Ultra effort setting, but the model changed: Sol 6.1 read rounds 1 and 2, and Astra read round 3. The prompt for round 3 also asked the reader not to report a point from an earlier round again unless it could show that the fix fails or that the stated limit understates the problem. Fewer claims in round 3 can come from the different reader or from better code, and the narrower prompt may have cut repeats as well. The numbers do not tell which.
+
+The steadier signal is that no review claim about the models was refuted in any round. Many claims held only in a narrower form or at a lower rating, but none was wrong outright.
+
+## What changed between the reviews?
+
+The last five fix sessions of the first review ran on 12 October. Three of them changed real behaviour. The send script now refuses a rescan package whose target already has send evidence in another rescan batch. When the log rotation tool loses its lock after writing its size approval, it now prints the dropped entries and exits with an error instead of saying that nothing was approved. The restore path of the archive tool checks its lock again before it writes, so it no longer overwrites another writer's change.
+
+From 12 to 15 October I worked through a plan of 12 items before the second review. The first one found that some of my test scripts passed for the wrong reason. In the send test, 12 of 120 checks stayed green when the tool exited at once with an error, and 8 of 120 when it exited at once with a clean exit code. The test scripts now require proof that the tool actually ran. The last full mutation run so far, on the night of 12 to 13 October, caught 786 of 788 mutations in about 3 hours 45 minutes, and both survivors were faults in the mutations themselves: one was equivalent to the original code, and the other matched two places in its target file.
+
+Models moved into a versioned library with a manifest of the code each one covers, and a drift check names every model whose covered code has changed since the model last ran. It started with 32 models and had 41 before the second review. A runner reruns every stored configuration and compares the verdict and the state count with the recorded ones.
+
+## Did the new techniques find anything?
+
+I tried three techniques that go beyond checking a model on its own. A liveness check asks whether something good eventually happens, not only whether something bad never does. It confirmed two known stuck states that only a human step clears: the pipeline lock after a hard crash, and the in-progress marker of a send after a crash or an uncertain send. I left both for a human to resolve.
+
+State graph replay walked the lock model's state graph edge by edge against the real code. Across 5 502 edges it found no contradiction. In 465 edges the model allowed a write that the code refused, because the model is older than the code's later ownership check.
+
+Trace validation went the other way. Real tools ran freely in parallel and wrote an event log, and TLC checked that each log was a behaviour of the model. Of 300 traces, 298 were accepted, one failed because of the test setup and one exposed a model step that was coarser than the code. The data stayed correct, so the fix went into a finer model and not into the code.
+
+Two real bugs came from the same stretch. Parallel subagents share their parent session's id, so my plugin's hooks wrote the same state file at the same time. A replay against the real hook code showed one gate silently skipping its check in 20 of 300 rounds, and after the fix in 0 of 300. Batch import never finished an interrupted run: after three retries it stayed at 4 of 5 records, and now it resumes.
+
+## How did the second and third fix rounds run?
+
+The second review got seven fix sessions from 15 to 16 October, each in a fresh Claude Code session with Opus leading and Sonnet subagents doing the work, and the third got six on 17 October. In the third review the worst finding was in the send script. After the final dot that ends an SMTP message it treated a late 354 reply as a certain refusal, so a server that had already accepted the message and then sent that 354 made a retry send it a second time. A local fake server reproduced the double delivery. It now treats only 4xx and 5xx replies as a certain refusal and leaves anything else for me to resolve.
+
+The chain of fix sessions also ran differently the third time. The app does not let a session start another session on a turn that a session report woke up, so in the second round each later session waited for my click. In the third round the coordinating session started the last four sessions at once on a turn of my own. The first began right away. Each of the other three waited in a background loop until the previous session had marked its row done in the shared plan, and only then read or wrote anything. After one stop of mine that a message from the coordinating session undid, the chain ran through without me, and a choice that only I could make no longer stopped it: the session took its own recommendation and listed it in a morning report for me to change.
+
+Checking the 37 claims of the third review took 16 Sonnet subagents and about 3 100 000 tokens, against about 3 900 000 for the 49 claims of the second, counting subagent tokens only.
+
+## What is still open?
+
+The library now holds 88 models and 770 stored runs, and 56 of those models have drifted from the code they cover. A drifted model's PASS holds only for the version of the code it was run against, so each needs a fresh run before I rely on it.
+
+The fix sessions of the second and third rounds ran only limited mutation runs. A full run has about 880 mutations now and takes roughly 3 to 4 hours, and it has not run since 13 October.
+
+Each fix session also named limits it chose not to close. Before I close any of them I want a list sorted by cost and consequence. Some environments are unmeasured: a mail server that answers wrongly, how often my sync client restores files, a full disk and file symlinks, which this account cannot create. A fourth outside review makes sense only after the full mutation run and the drift runs, and with a reader other than Astra.
+
+## What does this not show?
+
+A confirmed claim shows that the reviewer described the code correctly. It does not show that the reviewers found everything, and three rounds by two models of one product family are a narrow sample. A model that passes holds for its small constants and for the code it was run against.
+
+I made the counts in this post from my decision log, the review reports and the subagents' usage readings.
+
+## Frequently asked
+
+**Why did the number of high-rated claims fall to zero?**
+
+I cannot say it was only better code. The third round had a different reader model and a prompt that asked it not to repeat earlier points without new evidence, so the three rounds are not a clean comparison.
+
+**What is trace validation?**
+
+The real tools run freely and log what they do, and TLC checks that every log is a behaviour the model allows. A rejected log means the model and the code disagree or the test setup is wrong, and in this project the one real rejection pointed to a model step that was coarser than the code.
+
+**What is a drifted model?**
+
+A model whose covered code has changed since its last run. Its stored PASS still describes the old code, so it needs a fresh run before it says anything about the code that runs today.
+
+## Related
+
+- [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus)
+- [Thirteen review rounds and one rollback](/blog/thirteen-review-rounds-and-one-rollback)
+- [The checks that pass for the wrong reason](/blog/checks-that-pass-for-the-wrong-reason)
+`,
+
   "/blog/microsofts-own-cve-count": `# Microsoft's own CVE count is up nearly eightfold in a year
 
 2026-10-14
@@ -3309,8 +3396,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-42 articles.
+43 articles.
 
+- [Three outside reviews of my TLA+ models](/blog/three-outside-reviews-of-my-tla-plus-models). 2026-10-17. Build notes. Three outside reviews read my TLA+ models, none of their claims was refuted, and the third left no high rated finding.
 - [Microsoft's own CVE count is up nearly eightfold in a year](/blog/microsofts-own-cve-count). 2026-10-14. Research. Microsoft-assigned CVEs rose from 180 to 1417 a month in a year, and the monthly release keeps growing after Patch Tuesday.
 - [Thirteen review rounds and one rollback](/blog/thirteen-review-rounds-and-one-rollback). 2026-10-12. Build notes. Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.
 - [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus). 2026-10-09. Build notes. What TLA+ found in my own tools in twelve days, what outside reviews confirmed and the 21 fix rounds so far.
@@ -7357,7 +7445,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.209.4",
+    "version": "3.210.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7467,7 +7555,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Rysho3uo4SXKSAyoMNISj2woeD6QI2lAolkLcBfmYPWzhSq1vpJQhDIhJJXZpMl6jp-N_V85jy19DRK3L56gAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KMZsEob3mlFRnVyWjFU5_YJpL8dvpfNkLj-MJL_I2REAjKCnDDw3gWtgsAmVyqBPLV2oGavGyferDQDNdMFQCw\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Rysho3uo4SXKSAyoMNISj2woeD6QI2lAolkLcBfmYPWzhSq1vpJQhDIhJJXZpMl6jp-N_V85jy19DRK3L56gAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"DxX1kXptt4A6gMl00pRIeFt73EP-A2MqzLIdjjQnCdWx9ANdJhJznEVNDA7NLLE_VRCFPVRZEaZMDMJKvrKGCA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7636,7 +7724,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.209.4",
+  "version": "3.210.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8320,7 +8408,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-14";
+var SITEMAP_LASTMOD = "2026-10-17";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -8362,6 +8450,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/three-outside-reviews-of-my-tla-plus-models", "monthly", "0.6"],
   ["/blog/microsofts-own-cve-count", "monthly", "0.6"],
   ["/blog/thirteen-review-rounds-and-one-rollback", "monthly", "0.6"],
   ["/blog/twelve-days-of-tla-plus", "monthly", "0.6"],
@@ -8477,7 +8566,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -8487,6 +8576,14 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/three-outside-reviews-of-my-tla-plus-models": {
+    title: "Three outside reviews of my TLA+ models · turva.dev",
+    description: "Three outside reviews read my TLA+ models, none of their claims was refuted, and the third left no high rated finding.",
+    date: "2026-10-17",
+    kind: "Build notes",
+    image: "/og-three-outside-reviews-of-my-tla-plus-models.jpg",
+    imageAlt: "Three outside reviews of my TLA+ models, a turva.dev build note on review rounds, fix sessions and what is still open.",
+  },
   "/blog/microsofts-own-cve-count": {
     title: "Microsoft's own CVE count is up nearly eightfold in a year · turva.dev",
     titleTag: "Microsoft's own CVE count, up nearly eightfold · turva.dev",
@@ -10433,6 +10530,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/three-outside-reviews-of-my-tla-plus-models": mdFaqBlocks("/blog/three-outside-reviews-of-my-tla-plus-models", "Frequently asked").pairs,
   "/blog/microsofts-own-cve-count": mdFaqBlocks("/blog/microsofts-own-cve-count", "Frequently asked").pairs,
   "/blog/thirteen-review-rounds-and-one-rollback": mdFaqBlocks("/blog/thirteen-review-rounds-and-one-rollback", "Frequently asked").pairs,
   "/blog/twelve-days-of-tla-plus": mdFaqBlocks("/blog/twelve-days-of-tla-plus", "Frequently asked").pairs,
