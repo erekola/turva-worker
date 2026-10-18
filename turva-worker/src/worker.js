@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.210.1 - Shopify agent storefront check: the stale name Storefront and UCP MCP is replaced with Shopify's current names, Storefront Catalog MCP and Cart MCP on /api/ucp/mcp and the Policy and FAQs tool on /api/mcp, on the product page, the sample report (catalog and policy responses now read separately), /services, the agentic commerce guide and the structured data; MCP server card version 1.6.19 for the same correction in get_services.
 // turva.dev worker v3.210.0 - new Build notes post /blog/three-outside-reviews-of-my-tla-plus-models (TLA+ series part 3), with its Frequently asked section and its OG card.
 // turva.dev worker v3.209.4 - content corrections from outside reviews W50 to W53 (Tek-546): /services now names the same four kinds of copy as /legal and /legal names its fourth kind, the post /blog/website-agent-readiness-567-sites marks the CMS floor as the author's reading with a Corrected 2026-10-16 note, and the MCP server card guides and the audit status table state that SEP-2127 reads Status: Final while the extension repository still says Experimental; no signed surface changes bytes.
 // turva.dev worker v3.209.3 - MCP server card version 1.6.18 for output field descriptions of get_agent_readiness, get_security_evidence, get_principles and get_contact; the MCP server card changes bytes, so its signature must be renewed.
@@ -4313,7 +4314,7 @@ Illustrative report date: 6 September 2026, the delivery date in the engagement 
 - **Evidence:** The remote catalog quotes the blue Trail Bottle at 31,90 EUR against 29,90 EUR on the storefront, and the M size of the Merino Base Layer is sellable on every surface except the Agentic Catalog preview.
 - **Why it matters:** An agent may quote the wrong price or leave the sellable size out.
 - **Owner:** Shopify Markets, product data and Agentic storefront settings, on the merchant's side.
-- **Acceptance:** The same variant returns the same price, currency and availability on the storefront, in the WebMCP read, in the Storefront MCP catalog read and in a remote UCP cart, and the M variant reads as sellable in the Agentic Catalog preview in the agreed market.
+- **Acceptance:** The same variant returns the same price, currency and availability on the storefront, in the WebMCP read, in the Storefront Catalog MCP read and in a remote UCP cart, and the M variant reads as sellable in the Agentic Catalog preview in the agreed market.
 - **Test limits:** Three products, one market, one anonymous session on 2026-09-05. Nothing was paid, ordered or signed in, and no customer detail was entered.
 
 Two of the three tested products need attention. The remote catalog shows one price 2 EUR higher than the storefront. The Agentic preview marks one variant unavailable even though the storefront sells it.
@@ -4364,7 +4365,7 @@ The table shows what could be checked on each interface, using the same products
 | Surface | Status | What was verified | What was not |
 | --- | --- | --- | --- |
 | Browser WebMCP, in the shopper's live storefront tab | Present | Ten tools registered on navigator.modelContext: browse_store, search_catalog, get_product, show_variant, update_cart, get_cart, cancel_cart, proceed_to_checkout, search_shop_policies_and_faqs and manage_orders. Eight were called within scope. One anonymous cart built and emptied. | manage_orders and browse_store were not called, and proceed_to_checkout was called once for the permitted navigation only. No customer account was opened. |
-| Shopify-hosted Storefront MCP and UCP MCP | Present | Catalog search and product read answered at protocol level. One remote cart was created with the blue Trail Bottle through the UCP Cart MCP tool create_cart and cancelled with cancel_cart, without a buyer identity. | Checkout MCP was not reached, by scope. |
+| Shopify-hosted Storefront Catalog MCP and Cart MCP on /api/ucp/mcp, and the Policy and FAQs tool on /api/mcp | Present | Catalog search and product read answered at protocol level on /api/ucp/mcp. On /api/mcp, the Policy and FAQs tool answered. The check created one remote cart with the blue Trail Bottle through the Cart MCP tool create_cart and cancelled it with cancel_cart, without a buyer identity. | Checkout MCP was not reached, by scope. |
 | Shopify Catalog and Agentic storefront channels | Present | Catalog access on, auto-enrolment of new products on, one channel active, read from the merchant's redacted settings evidence. Catalog search preview run for the three products. | Channel ranking or sales were not measured. Settings were not changed. |
 
 These labels describe the test session, not a certification, an endorsement or a security claim.
@@ -4373,7 +4374,7 @@ These labels describe the test session, not a certification, an endorsement or a
 
 The table compares the product, variant, price, currency, availability and policy facts in the same market, language, currency and test window. A difference was reproduced before being marked Mismatch.
 
-| Product and variant | Storefront page | Browser WebMCP | Storefront and UCP MCP | Agentic Catalog preview | Result |
+| Product and variant | Storefront page | Browser WebMCP | Storefront Catalog MCP | Agentic Catalog preview | Result |
 | --- | --- | --- | --- | --- | --- |
 | Trail Bottle 750 ml, blue | 29,90 EUR, in stock | 29,90 EUR, in stock | 31,90 EUR, in stock | 29,90 EUR, in stock | Mismatch, remote price |
 | Merino Base Layer, M | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, unavailable | Mismatch, variant eligibility |
@@ -4387,7 +4388,7 @@ Each row compares one variant. The three tool interfaces returned the same produ
 | Merino Base Layer, M | gid://shopify/ProductVariant/100000000002 | Merino Base Layer |
 | Camp Mug, green | gid://shopify/ProductVariant/100000000003 | Camp Mug |
 
-The 30-day return window, free shipping above 80 EUR and the delivery estimate of two to four working days matched across the storefront, the WebMCP policy tool and the Storefront MCP policy response. The Agentic Catalog preview has no policy fields, so their absence is not a mismatch.
+The 30-day return window, free shipping above 80 EUR and the delivery estimate of two to four working days matched across the storefront, the WebMCP policy tool and the remote Policy and FAQs tool on /api/mcp. The Agentic Catalog preview has no policy fields, so their absence is not a mismatch.
 
 The price difference was reproduced at 11:20 and 14:05 EEST. The merchant's redacted settings screenshot shows the M variant's Agentic eligibility switched off. According to the merchant's written note at the kickoff, every product in scope was meant to be sellable in that channel. No settings were changed during the test.
 
@@ -4402,19 +4403,19 @@ Each row records the tool, the input, the result and the cart state for the five
 | Search 3, "camp mug green" | WebMCP search_catalog | Camp Mug returned, green variant listed | Empty | Aligned |
 | Search 4, "waterproof jacket" | WebMCP search_catalog | Two jackets returned, both outside the scope, no claim recorded | Empty | Observed |
 | Search 5, "return and shipping policy" | WebMCP search_shop_policies_and_faqs | 30-day return window, free shipping above 80 EUR and a delivery estimate of two to four working days returned, matching the storefront policy page | Empty | Aligned |
-| Remote catalog search | Storefront MCP search_catalog on the UCP catalog endpoint, "trail bottle", Finland EUR | Trail Bottle 750 ml returned first, blue variant at 31,90 EUR, in stock | Empty | Mismatch, remote price |
-| Remote product read | Storefront MCP get_product, Trail Bottle, blue variant | Same title and variant ID as the storefront, 31,90 EUR | Empty | Mismatch, remote price |
-| Remote policy read | Storefront MCP search_shop_policies_and_faqs, "return and shipping policy" | 30-day return window, free shipping above 80 EUR and a delivery estimate of two to four working days, matching the storefront policy page | Empty | Aligned |
-| Remote product read, Merino Base Layer M | Storefront MCP get_product, M variant | Same title and variant ID as the storefront, 79,00 EUR, in stock | Empty | Aligned |
-| Remote product read, Camp Mug green | Storefront MCP get_product, green variant | Same title and variant ID as the storefront, 18,50 EUR, in stock | Empty | Aligned |
+| Remote catalog search | Storefront Catalog MCP search_catalog on /api/ucp/mcp, "trail bottle", Finland EUR | Trail Bottle 750 ml returned first, blue variant at 31,90 EUR, in stock | Empty | Mismatch, remote price |
+| Remote product read | Storefront Catalog MCP get_product, Trail Bottle, blue variant | Same title and variant ID as the storefront, 31,90 EUR | Empty | Mismatch, remote price |
+| Remote policy read | Policy and FAQs tool search_shop_policies_and_faqs on /api/mcp, "return and shipping policy" | 30-day return window, free shipping above 80 EUR and a delivery estimate of two to four working days, matching the storefront policy page | Empty | Aligned |
+| Remote product read, Merino Base Layer M | Storefront Catalog MCP get_product, M variant | Same title and variant ID as the storefront, 79,00 EUR, in stock | Empty | Aligned |
+| Remote product read, Camp Mug green | Storefront Catalog MCP get_product, green variant | Same title and variant ID as the storefront, 18,50 EUR, in stock | Empty | Aligned |
 | Agentic Catalog preview | Catalog search preview for the three products, from the merchant's redacted screenshots | Trail Bottle and Camp Mug sellable, Merino Base Layer M unavailable | Empty | Mismatch, variant eligibility |
 | Product detail | WebMCP get_product and show_variant, Trail Bottle blue | Material, volume, price 29,90 EUR and stock matched the storefront page | Empty | Aligned |
 | Add to cart | WebMCP update_cart, one blue Trail Bottle | Cart line created, quantity 1, line price 29,90 EUR | One line, 29,90 EUR | Aligned |
 | Cart read | WebMCP get_cart | One line, 29,90 EUR, matches the visible storefront cart drawer | One line, 29,90 EUR | Aligned |
 | Checkout handoff | WebMCP proceed_to_checkout, the one permitted navigation | Landed on the store's own checkout page, correct store, correct line | One line, 29,90 EUR | Observed |
 | Payment and order | None | No form filled, no payment method entered, no order created. This is the stop | One line, 29,90 EUR | Not tested |
-| Remote UCP cart | UCP Cart MCP create_cart, one blue Trail Bottle, quantity 1, fi-FI Finland EUR | Remote cart created with a 31,90 EUR line price and a 31,90 EUR subtotal, the same 31,90 EUR the remote catalog returned in the comparison above | Separate remote cart, one line | Mismatch, same price difference as the remote catalog, cause not confirmed |
-| Cleanup | WebMCP cancel_cart. UCP Cart MCP cancel_cart | Browser cart empty, storefront drawer empty, remote cart cancelled | Empty | Aligned |
+| Remote UCP cart | Cart MCP create_cart, one blue Trail Bottle, quantity 1, fi-FI Finland EUR | Remote cart created with a 31,90 EUR line price and a 31,90 EUR subtotal, the same 31,90 EUR the remote catalog returned in the comparison above | Separate remote cart, one line | Mismatch, same price difference as the remote catalog, cause not confirmed |
+| Cleanup | WebMCP cancel_cart. Cart MCP cancel_cart | Browser cart empty, storefront drawer empty, remote cart cancelled | Empty | Aligned |
 
 The checkout handoff was one navigation to the checkout page. It was not a payment or an order. The remote cart was a separate test. It returned the same 31,90 EUR as the remote catalog, and the session did not establish that the two share a cause. C1 checks the Finland market price list assignment first, as the explanation to confirm or rule out.
 
@@ -4430,7 +4431,7 @@ This plan contains three changes, ordered by their effect on the buyer. Each has
 
 **What to change.** Check that the Finland market price list is published to the remote catalog, then republish it. If the remote interface uses the default list, correct the market assignment rather than changing the product price. If the Finland list is already published and assigned, the difference has another cause, and C1 stays open until it is found.
 
-**How to check.** Within one hour, the same variant must return 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront MCP catalog response, using the fi-FI Finland EUR context. A remote cart is then created with UCP Cart MCP create_cart for the same variant, quantity 1, in the same market and currency. Its unit price and its line subtotal must both read 29,90 EUR, which the cart returns as 2990 in minor units. The cart is cancelled with cancel_cart and kept apart from the browser cart, and the check stops before Checkout MCP. C1 stays open while the cart price differs. If the cart cannot be created, its reading is Unknown and C1 does not close on the other three readings.
+**How to check.** Within one hour, the same variant must return 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront Catalog MCP response, using the fi-FI Finland EUR context. A remote cart is then created with Cart MCP create_cart for the same variant, quantity 1, in the same market and currency. Its unit price and its line subtotal must both read 29,90 EUR, which the cart returns as 2990 in minor units. The cart is cancelled with cancel_cart and kept apart from the browser cart, and the check stops before Checkout MCP. C1 stays open while the cart price differs. If the cart cannot be created, its reading is Unknown and C1 does not close on the other three readings.
 
 ### C2. Make the M variant available in the Agentic Catalog
 
@@ -4471,7 +4472,7 @@ The retest is pending. C1 and C2 are the two items selected for it, and it is du
 
 | Retest item | What is checked | Test date | Result |
 | --- | --- | --- | --- |
-| C1 | The blue Trail Bottle returns 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront MCP catalog response, and a remote UCP cart for the same variant, quantity 1, Finland market and EUR reads a 29,90 EUR unit price and subtotal before it is cancelled | Pending | Pending |
+| C1 | The blue Trail Bottle returns 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront Catalog MCP response, and a remote UCP cart for the same variant, quantity 1, Finland market and EUR reads a 29,90 EUR unit price and subtotal before it is cancelled | Pending | Pending |
 | C2 | The Merino Base Layer in size M reads as sellable in the Agentic Catalog preview | Pending | Pending |
 
 Each item is then marked Aligned, Mismatch or Unknown. If an interface cannot be read, the result is Unknown. The product comparison above shows the original session on its own until the retest has been run, and the retest result is printed beside it once there is one.
@@ -5140,7 +5141,7 @@ The fifth item is one retest of up to two corrected items, within 14 days of the
 - Up to five real buyer searches.
 - One clean, supported Chromium browser session.
 - Browser WebMCP.
-- Storefront and UCP MCP.
+- Storefront Catalog MCP and Cart MCP on /api/ucp/mcp, and the Policy and FAQs tool on /api/mcp.
 - Shopify Agentic settings and a Catalog search preview.
 - One anonymous browser cart, with one checkout navigation if you authorise it.
 - One separate cart tested through Shopify's remote shopping interface, the Universal Commerce Protocol or UCP, stopping before Shopify's Checkout MCP service.
@@ -5151,7 +5152,7 @@ The scope is agreed before delivery starts.
 ## The three interfaces
 
 - Browser WebMCP. Shopping tools available inside the live storefront tab.
-- Storefront and UCP MCP. Shopify-hosted interfaces for remote clients.
+- Shopify-hosted MCP for remote clients. Storefront Catalog MCP and Cart MCP on /api/ucp/mcp, and the Policy and FAQs tool on /api/mcp.
 - Catalog and Agentic channels. The catalog preview and settings evidence relevant to the selected products.
 
 I compare these within the same test session and product scope. If one cannot be checked, the report says so.
@@ -6681,7 +6682,7 @@ Most catalogs lose the agent before checkout. A price that lives only in rendere
 
 Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built its own agent commerce surface this way, across A2A, AP2, ACP and x402, and an independent scanner checks its discovery files. The path stops on purpose before payment: the ACP checkout answers not_ready_for_payment and the x402 endpoint answers 402 whether or not a payment is sent, because turva.dev sells on a written quote. Tested 2026-09-28 by sending a POST to /api/acp/checkout_sessions and a GET to /x402: both answered exactly as described. The test shows where the path stops. It does not show a payment accepted or settled automatically.
 
-For a Shopify store, the [Shopify agent storefront check](/shopify-agent-storefront-check) reads selected products across the browser WebMCP tools, the Storefront and UCP MCP and the Agentic Catalog, records the buyer journey up to the stop before payment, and delivers a correction plan. For a website or API, the [audit](/agent-readiness-audit) covers the commerce surfaces among the rest.
+For a Shopify store, the [Shopify agent storefront check](/shopify-agent-storefront-check) reads selected products across the browser WebMCP tools, the Shopify-hosted Storefront Catalog MCP, Cart MCP and the Policy and FAQs tool, and the Agentic Catalog, records the buyer journey up to the stop before payment, and delivers a correction plan. For a website or API, the [audit](/agent-readiness-audit) covers the commerce surfaces among the rest.
 
 ## Frequently asked
 
@@ -7445,7 +7446,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.210.0",
+    "version": "3.210.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7555,7 +7556,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Rysho3uo4SXKSAyoMNISj2woeD6QI2lAolkLcBfmYPWzhSq1vpJQhDIhJJXZpMl6jp-N_V85jy19DRK3L56gAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"DxX1kXptt4A6gMl00pRIeFt73EP-A2MqzLIdjjQnCdWx9ANdJhJznEVNDA7NLLE_VRCFPVRZEaZMDMJKvrKGCA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"s14m9qxSqCRut2coUn5UfYsk7MSGcrtUp3uxc0F3bZfnQn2Rn5ATFytZcSp21MPqRExCRDlmI-IvGYpekJEJAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"DxX1kXptt4A6gMl00pRIeFt73EP-A2MqzLIdjjQnCdWx9ANdJhJznEVNDA7NLLE_VRCFPVRZEaZMDMJKvrKGCA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7570,7 +7571,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.18",
+  "version": "1.6.19",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -7579,7 +7580,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.18",
+    "version": "1.6.19",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -7724,7 +7725,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.210.0",
+  "version": "3.210.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8174,7 +8175,7 @@ description: List the service offerings of turva.dev, with fixed prices in EUR f
 Use this skill to learn which services turva.dev offers, and which of them carry a fixed price.
 
 ## Services (fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation, VAT not included; agent operations and MCP server design are quoted on request)
-- **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought.
+- **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront Catalog MCP, Cart MCP and the Policy and FAQs tool, and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought.
 - **Audit.** €4,300. Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, month to month; either party can end it by email before the next month starts. Async-only. Ongoing review and score tracking: a monthly re-scan with the same scanner and profile, and a monthly repeat of the AI question set across the same assistants.
 - **Implementation.** €1,500 / day. Scoped per task. Edge workers, well-known manifests, JSON-LD. A separately scoped day does not include DNS changes, tool declarations inside your application, agent payment flows or building the MCP server itself; these need their own scope.
@@ -8408,7 +8409,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-17";
+var SITEMAP_LASTMOD = "2026-10-18";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9263,7 +9264,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 // pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
 // second copy would be a second price list, and verify.mjs reads this one against facts.json.
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
-{"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"},"addOn":{"@type":"Offer","name":"Shopify correction implementation","description":"Exactly the corrections the check's plan lists. Sold only with the Shopify agent storefront check: bought with it, with its report, or after the report and before implementation starts, and only when collaborator access to the store is arranged in advance.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Shopify correction implementation"}}},
+{"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront Catalog MCP, Cart MCP and the Policy and FAQs tool, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"},"addOn":{"@type":"Offer","name":"Shopify correction implementation","description":"Exactly the corrections the check's plan lists. Sold only with the Shopify agent storefront check: bought with it, with its report, or after the report and before implementation starts, and only when collaborator access to the store is arranged in advance.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Shopify correction implementation"}}},
 {"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across the same assistants, written review of shipped work within one business day up to four reviews a month, roadmap input, a monthly written summary within five business days after the month ends and a quarterly summary of measured changes within five business days after every third service month. Minimum three months, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, the retainer runs month to month and either party can end it by email before the next month starts. Corrected 2026-09-28. Added the month-to-month continuation, its email cancellation, the first-month cancellation and the monthly and quarterly summary deadlines.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. A separately scoped day excludes DNS changes, tool declarations inside your application and agent payment flows. An MCP server is a separate engagement. Corrected 2026-09-28. Added the day-rate exclusions.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
@@ -10612,7 +10613,7 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
     "serviceType": "Agent commerce readiness check",
     "provider": { "@id": "https://turva.dev/#business" },
     "areaServed": { "@type": "Place", "name": "Worldwide" },
-    "description": "A fixed-scope check of what an AI shopper receives from one live Shopify store, across browser WebMCP, Shopify-hosted Storefront and UCP MCP, and Shopify Catalog and Agentic channels. Four written deliverables as one package within 48 hours of the agreed written kickoff, and a fifth, the retest of up to two corrected items, within 14 days of that package, or of the delivered corrections when the correction add-on is bought. A further retest is bought as a new check.",
+    "description": "A fixed-scope check of what an AI shopper receives from one live Shopify store, across browser WebMCP, Shopify-hosted Storefront Catalog MCP, Cart MCP and the Policy and FAQs tool, and Shopify Catalog and Agentic channels. Four written deliverables as one package within 48 hours of the agreed written kickoff, and a fifth, the retest of up to two corrected items, within 14 days of that package, or of the delivered corrections when the correction add-on is bought. A further retest is bought as a new check.",
     "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
     "offers": {
       "@type": "Offer",
