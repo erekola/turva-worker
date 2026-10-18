@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.211.0 - new Protocol notes post /blog/what-shopify-changed-for-agent-shopping (2026-10-18): What Shopify changed for agent shopping since August, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 44, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.210.1 - Shopify agent storefront check: the stale name Storefront and UCP MCP is replaced with Shopify's current names, Storefront Catalog MCP and Cart MCP on /api/ucp/mcp and the Policy and FAQs tool on /api/mcp, on the product page, the sample report (catalog and policy responses now read separately), /services, the agentic commerce guide and the structured data; MCP server card version 1.6.19 for the same correction in get_services.
 // turva.dev worker v3.210.0 - new Build notes post /blog/three-outside-reviews-of-my-tla-plus-models (TLA+ series part 3), with its Frequently asked section and its OG card.
 // turva.dev worker v3.209.4 - content corrections from outside reviews W50 to W53 (Tek-546): /services now names the same four kinds of copy as /legal and /legal names its fourth kind, the post /blog/website-agent-readiness-567-sites marks the CMS floor as the author's reading with a Corrected 2026-10-16 note, and the MCP server card guides and the audit status table state that SEP-2127 reads Status: Final while the extension repository still says Experimental; no signed surface changes bytes.
@@ -315,6 +316,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [What Shopify changed for agent shopping since August](https://turva.dev/blog/what-shopify-changed-for-agent-shopping.md)
 - [Three outside reviews of my TLA+ models](https://turva.dev/blog/three-outside-reviews-of-my-tla-plus-models.md)
 - [Microsoft's own CVE count is up nearly eightfold in a year](https://turva.dev/blog/microsofts-own-cve-count.md)
 - [Thirteen review rounds and one rollback](https://turva.dev/blog/thirteen-review-rounds-and-one-rollback.md)
@@ -533,6 +535,104 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 var PAGE_MARKDOWN = {
+  "/blog/what-shopify-changed-for-agent-shopping": `# What Shopify changed for agent shopping since August
+
+2026-10-18
+
+By 18 October 2026, Shopify's migration page said that the catalog and cart tools on each store's /api/mcp address were removed, and since August Shopify has opened new routes for agents to reach checkout. Most of these changes were announced in Shopify's developer changelog.
+
+## Which old interface did Shopify retire?
+
+Each store used to serve catalog and cart tools for agents at /api/mcp. A deprecation notice on 24 June 2026 said the old cart tools would be maintained until 31 August 2026. Shopify's [migration page](https://shopify.dev/docs/apps/build/storefront-mcp) now says the catalog and cart tools on /api/mcp were removed.
+
+The same capabilities now sit at /api/ucp/mcp on the store's own domain, built on the Universal Commerce Protocol, or UCP. Shopify documents them as two services. [Storefront Catalog MCP](https://shopify.dev/docs/agents/catalog/storefront-catalog) searches and looks up products, and [Cart MCP](https://shopify.dev/docs/agents/carts-and-checkout/cart-mcp) builds carts. One tool stayed where it was: the [Policy and FAQs tool](https://shopify.dev/docs/agents/catalog/policy-and-faqs-tool), which answers questions about store policies, is still on /api/mcp.
+
+For a merchant this matters in two places. An app, chat widget or agent integration that still calls the old catalog or cart tools on /api/mcp no longer gets them. A checklist or audit that names the old interface is out of date too. Mine was one of them.
+
+## What do the new UCP versions change for a store?
+
+On 4 September 2026 Shopify storefronts began advertising [UCP version 2026-08-25](https://shopify.dev/changelog/posts/08-25-is-now-supported) in their discovery profile at /.well-known/ucp. The changelog says the set of capabilities Shopify supports did not change and that merchants need to change nothing.
+
+On 16 October 2026 [Checkout MCP and Cart MCP added the UCP buyer consent extension](https://shopify.dev/changelog/posts/checkout-mcp-and-cart-mcp-now-support-ucp-buyer-consent). An agent that declares it can show the buyer the same privacy and marketing choices as your own checkout, such as an email or SMS opt-in, and your store receives those choices with the cart, checkout and order. If the agent sends no choice, Shopify applies your store's default settings for the buyer's country, and when the country is unknown, consent defaults to opt-out. Agents that do not declare the extension are not affected.
+
+## What changed at checkout?
+
+On 5 August 2026 Shopify added [WebMCP tools to Liquid storefronts](https://shopify.dev/changelog/posts/webmcp-liquid-hydrogen). WebMCP is a proposed web standard that lets a page register tools with the browser, so an agent working in the shopper's own tab can search, update the cart and go to checkout without simulating clicks. Agent support is limited to Chromium-based browsers through an origin trial.
+
+On 28 September 2026 the same approach reached checkout. [Checkout WebMCP](https://shopify.dev/docs/agents/carts-and-checkout/checkout-webmcp) lets the agent read and update the checkout in the shopper's tab, and complete it only after the buyer's permission. It needs no merchant configuration, but it does not cover every checkout. According to Shopify's [carts and checkout overview](https://shopify.dev/docs/agents/carts-and-checkout), checkout registers no tools for:
+
+- the standard three-page checkout, unless the buyer checks out with Shop Pay
+- B2B checkout
+- embedded checkout, and checkouts in mobile checkout SDKs
+- checkouts with merchandise from another shop
+- draft orders, order edits and payment collection
+
+In those cases the buyer finishes on the checkout page. If your store uses the three-page checkout, an agent in the browser reaches checkout and then hands it back to the buyer unless they pay with Shop Pay.
+
+## What is Shop MCP?
+
+On 13 October 2026 Shopify opened [Shop MCP](https://shopify.dev/changelog/posts/add-shopping-and-shop-pay-checkout-to-any-agent-with-shop-mcp) at mcp.shop.com. It lets any agent search Shopify Catalog, which the changelog puts at over 1 billion products, with no API key for search. The agent builds a cart and creates a checkout at the store that sells the product. With a signed-in shopper it can pay with Shop Pay after the shopper confirms the total and payment method. Orders placed this way appear in your Shopify admin like any other order.
+
+The Shop MCP announcement names no setting for merchants. Shop MCP reads Shopify Catalog, and as the section on Agentic settings below explains, turning off agent access in the admin does not remove a product from Catalog.
+
+## What changed in catalog data?
+
+On 9 October 2026 the Catalog API began returning [the compare-at price as list_price](https://shopify.dev/changelog/posts/catalog-api-now-returns-compare-at-prices-as-list_price) on each product variant, so an agent can tell that a product is marked down and by how much. A variant includes it only when all three conditions hold:
+
+- You share compare-at prices through Catalog Mapping, which Shopify turns on by default for most stores and off for stores that use compare-at for a manufacturer's price or another reference price.
+- The compare-at price is higher than the price for the buyer's context.
+- Your store shows compare-at prices in the buyer's region, so a store that hides them from EEA buyers does not return list_price to those buyers.
+
+On the same day, Shopify announced that the [Global Catalog REST API stops serving traffic on 2 November 2026](https://shopify.dev/changelog/posts/global-catalog-rest-api-stops-serving-traffic-on-november-2-2026). It was deprecated in April 2026 and replaced by Global Catalog MCP. This concerns apps that read the cross-merchant catalog, not your store itself. If you pay for an app or service that does, ask its vendor whether it has moved.
+
+## Which Agentic settings and regional limits apply to your store?
+
+In the admin, agent channels are managed under Sales channels > Agentic. The default setting, Allow Shopify to manage for me, keeps every channel active and enrolls the store in new channels automatically. When you turn it off, you get a Shopify Catalog access setting for third-party agentic storefronts, a setting for automatic enrollment, controls for each channel and one group setting for smaller platforms. According to Shopify, after you turn off Catalog access it can take up to 7 days before your product data is no longer shared.
+
+Three channels set regional conditions for their direct checkout. Google AI Mode and Gemini need a store based in the United States that sells to customers there, and direct checkout is shown only to customers in the United States. Microsoft Copilot needs a store that sells to customers in the United States, and its direct checkout is shown only to them. Meta needs a store that sells to customers in the United States, Canada or Mexico. ChatGPT has a Catalog access setting and no direct checkout setting. For a store that sells only in Finland or elsewhere in the EU, the direct checkout of those three channels does not apply, and its absence is not a fault to fix. Google's page says that buyers outside the United States are sent to your online store to complete the purchase.
+
+Two limits hold whatever you choose. You cannot opt out of Shopify Catalog itself, and turning off Catalog access does not remove your products from it, because Shopify keeps using Catalog for other purposes, Shop among them. To hide a product from AI channels completely, Shopify's instruction is to set its status to Unlisted, which also removes it from sitemaps, from Google and from your online store search.
+
+## What can you check on your own store?
+
+Three public files show what your store announces to agents, and you can open each one in a browser:
+
+- /.well-known/ucp is the UCP discovery profile. It lists the protocol versions and capabilities your store advertises and the address of its MCP endpoint. After 4 September it should list version 2026-08-25, and after 16 October the buyer consent extension.
+- /agents.md is a Markdown summary for agents that points to the UCP profile and the MCP endpoint. Every Shopify store serves it by default, and a theme can replace it with an agents.md.liquid template.
+- /llms.txt and /llms-full.txt are served by default with the same content as agents.md, and a theme can replace them the same way.
+
+Your checkout type is one of the conditions in the list above that decide whether Checkout WebMCP registers its tools for your buyers.
+
+## What can you not see from outside?
+
+Your Agentic settings are kept in your admin, and none of the public files above records which channels you have turned off. Catalog inclusion is not part of those files either. A search through Shop MCP needs no API key and can show whether a product comes up for a query, but it does not show why a product is missing. One reason can be Shopify's own classification, because Shopify does not include products it classifies as Uncategorized.
+
+A remote agent's cart is not a read-only check either, because building a cart writes state in your store. And what an agent finally shows a buyer depends on Shopify and the channel operator. Nothing on your storefront records how they present your products, so none of the files above tells you where your products appear in an AI channel.
+
+## What did I change on my own Shopify check?
+
+Until 18 October my [Shopify agent storefront check](/shopify-agent-storefront-check) described Shopify's remote interface as "Storefront and UCP MCP". That name no longer matches Shopify's documentation. On 18 October, in site version 3.210.1, I replaced it with the current names, Storefront Catalog MCP and Cart MCP on /api/ucp/mcp and the Policy and FAQs tool on /api/mcp, on the product page, the sample report, the services page, the agentic commerce guide and the structured data.
+
+## Frequently asked
+
+**Does a Shopify store still serve agent tools at /api/mcp?**
+
+Only the Policy and FAQs tool. Shopify removed the catalog and cart tools there, and the same capabilities are now at /api/ucp/mcp on the store's domain.
+
+**Do I need to change anything for the 2 November date?**
+
+The 2 November date concerns apps that call the Global Catalog REST API. If you run or pay for one, check that it has moved to Global Catalog MCP, which Shopify names as the replacement.
+
+**Can I see from outside whether my products are in Shopify Catalog?**
+
+Not from the storefront files. The UCP profile, agents.md and llms.txt show what your store announces. A search through Shop MCP needs no API key and can show whether a product comes up for a query, but it does not show why a product is missing.
+
+## Related
+
+- [Agentic commerce readiness](/guides/agentic-commerce-readiness)
+- [Agent commerce discovery](/guides/agent-commerce-discovery)
+- [Finishing the optional commerce checks](/blog/finishing-the-optional-commerce-checks)
+`,
   "/blog/three-outside-reviews-of-my-tla-plus-models": `# Three outside reviews of my TLA+ models
 
 2026-10-17
@@ -3397,8 +3497,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-43 articles.
+44 articles.
 
+- [What Shopify changed for agent shopping since August](/blog/what-shopify-changed-for-agent-shopping). 2026-10-18. Protocol notes. Shopify moved store agent tools to /api/ucp/mcp and opened checkout to agents. What a merchant can check publicly and what stays hidden.
 - [Three outside reviews of my TLA+ models](/blog/three-outside-reviews-of-my-tla-plus-models). 2026-10-17. Build notes. Three outside reviews read my TLA+ models, none of their claims was refuted, and the third left no high rated finding.
 - [Microsoft's own CVE count is up nearly eightfold in a year](/blog/microsofts-own-cve-count). 2026-10-14. Research. Microsoft-assigned CVEs rose from 180 to 1417 a month in a year, and the monthly release keeps growing after Patch Tuesday.
 - [Thirteen review rounds and one rollback](/blog/thirteen-review-rounds-and-one-rollback). 2026-10-12. Build notes. Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.
@@ -7446,7 +7547,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.210.1",
+    "version": "3.211.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7556,7 +7657,7 @@ var AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"s14m9qxSqCRut2coUn5UfYsk7MSGcrtUp3uxc0F3bZfnQn2Rn5ATFytZcSp21MPqRExCRDlmI-IvGYpekJEJAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"DxX1kXptt4A6gMl00pRIeFt73EP-A2MqzLIdjjQnCdWx9ANdJhJznEVNDA7NLLE_VRCFPVRZEaZMDMJKvrKGCA\"\n    }\n  }\n}";
+var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"s14m9qxSqCRut2coUn5UfYsk7MSGcrtUp3uxc0F3bZfnQn2Rn5ATFytZcSp21MPqRExCRDlmI-IvGYpekJEJAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"9bV75kSxEdm6taDeNSizEc6BJprYPQ0WbwE3zGDqPj36eLRKZyBwDJRQHI5ucnbKTWANwi_a5wQ1GLpBYmozAw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7725,7 +7826,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.210.1",
+  "version": "3.211.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8451,6 +8552,7 @@ var SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/what-shopify-changed-for-agent-shopping", "monthly", "0.6"],
   ["/blog/three-outside-reviews-of-my-tla-plus-models", "monthly", "0.6"],
   ["/blog/microsofts-own-cve-count", "monthly", "0.6"],
   ["/blog/thirteen-review-rounds-and-one-rollback", "monthly", "0.6"],
@@ -8567,7 +8669,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -8577,6 +8679,15 @@ function getCanonicalForPath(pathname) {
 }
 
 var META_BY_PATH = {
+  "/blog/what-shopify-changed-for-agent-shopping": {
+    title: "What Shopify changed for agent shopping since August · turva.dev",
+    titleTag: "What Shopify changed for agent shopping · turva.dev",
+    description: "Shopify moved store agent tools to /api/ucp/mcp and opened checkout to agents. What a merchant can check publicly and what stays hidden.",
+    date: "2026-10-18",
+    kind: "Protocol notes",
+    image: "/og-what-shopify-changed-for-agent-shopping.jpg",
+    imageAlt: "What Shopify changed for agent shopping since August, a turva.dev protocol note for merchants on the new agent tools, checkout and catalog data.",
+  },
   "/blog/three-outside-reviews-of-my-tla-plus-models": {
     title: "Three outside reviews of my TLA+ models · turva.dev",
     description: "Three outside reviews read my TLA+ models, none of their claims was refuted, and the third left no high rated finding.",
@@ -10531,6 +10642,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
+  "/blog/what-shopify-changed-for-agent-shopping": mdFaqBlocks("/blog/what-shopify-changed-for-agent-shopping", "Frequently asked").pairs,
   "/blog/three-outside-reviews-of-my-tla-plus-models": mdFaqBlocks("/blog/three-outside-reviews-of-my-tla-plus-models", "Frequently asked").pairs,
   "/blog/microsofts-own-cve-count": mdFaqBlocks("/blog/microsofts-own-cve-count", "Frequently asked").pairs,
   "/blog/thirteen-review-rounds-and-one-rollback": mdFaqBlocks("/blog/thirteen-review-rounds-and-one-rollback", "Frequently asked").pairs,
