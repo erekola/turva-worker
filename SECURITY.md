@@ -41,7 +41,7 @@ fixed release, until 2026-10-09, when wrangler 4.149.0 brought in `miniflare`
 the `allowScripts` key for 0.35.4 came out then. None of these advisories was
 in the runtime tree. None reached the deployed Worker. An earlier set, ten
 advisories in `undici` 7.29.0, cleared when wrangler 4.145.0 brought in the
-patched `undici` 7.29.1. Checked 2026-10-09.
+patched `undici` 7.29.1. Checked 2026-10-19.
 
 `esbuild` is in the toolchain only as a dependency of wrangler. Wrangler
 4.149.0 declares it at exactly `0.28.2`. The fix for GHSA-g7r4-m6w7-qqqr, an
