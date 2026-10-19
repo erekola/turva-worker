@@ -1,4 +1,5 @@
 // src/worker.js
+// turva.dev worker v3.211.1 - /blog/five-rounds-before-the-agent-signed: the closing section no longer invites votes on the Brickken hub; it now says the campaign has ended and the repository is archived on GitHub.
 // turva.dev worker v3.211.0 - new Protocol notes post /blog/what-shopify-changed-for-agent-shopping (2026-10-18): What Shopify changed for agent shopping since August, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 44, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.210.1 - Shopify agent storefront check: the stale name Storefront and UCP MCP is replaced with Shopify's current names, Storefront Catalog MCP and Cart MCP on /api/ucp/mcp and the Policy and FAQs tool on /api/mcp, on the product page, the sample report (catalog and policy responses now read separately), /services, the agentic commerce guide and the structured data; MCP server card version 1.6.19 for the same correction in get_services.
 // turva.dev worker v3.210.0 - new Build notes post /blog/three-outside-reviews-of-my-tla-plus-models (TLA+ series part 3), with its Frequently asked section and its OG card.
@@ -1570,7 +1571,7 @@ It says nothing about an adversarial counterparty, a reorg deeper than the tests
 
 ## Where the project is
 
-The submission is on Brickken's developer hub under agentic tools: [Mandate Desk on the Build with Brickken hub](https://devs.brickken.com/submissions/cmu1g5mmp000819p7n3k42qmo). The page has a vote button, one vote per person, and it does not ask anyone to create an account.
+The submission is on Brickken's developer hub under agentic tools: [Mandate Desk on the Build with Brickken hub](https://devs.brickken.com/submissions/cmu1g5mmp000819p7n3k42qmo). The campaign it was entered in has ended, and the repository is archived on GitHub as a read-only record of the run.
 
 ## Frequently asked
 
@@ -7547,7 +7548,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.211.0",
+    "version": "3.211.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7826,7 +7827,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.211.0",
+  "version": "3.211.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
