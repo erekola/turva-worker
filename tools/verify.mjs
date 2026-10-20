@@ -1540,7 +1540,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // of llms.txt and five guide lists in five different orders. The order now has one home,
   // PRIMARY_PATHS + AUX_PATHS + the /guides twin + META_BY_PATH dates in worker.ts
   // (siteRank), and this block reads every hand-written list against it. What the code
-  // computes (sitemap.xml, llms-full.txt) is checked at runtime in test/routes.test.mjs.
+  // computes (sitemap.xml, llms-full.txt) is checked at runtime in test/routes.test.ts.
   {
     const primary = [...(region('var PRIMARY_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
     const aux = [...(region('var AUX_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
@@ -1593,7 +1593,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
         `/blog twin count line under Browse all articles says ${cnt} and the list carries ${blogWant.length} posts`);
     }
     const smRows = [...region('var SITEMAP_ENTRIES = [', '\n];').matchAll(/\["([^"]+)"/g)].map((m) => m[1]);
-    seqSame('SITEMAP_ENTRIES blog rows (the literal; sitemap.xml sorts by siteRank at runtime and is checked in routes.test.mjs)', smRows.filter((p) => p.startsWith('/blog/')), blogWant);
+    seqSame('SITEMAP_ENTRIES blog rows (the literal; sitemap.xml sorts by siteRank at runtime and is checked in routes.test.ts)', smRows.filter((p) => p.startsWith('/blog/')), blogWant);
     seqSame('SITEMAP_ENTRIES guide rows (the literal)', smRows.filter((p) => p.startsWith('/guides/')), guideWant);
     seqSame('SITEMAP_ENTRIES primary and auxiliary rows (the literal)', smRows.filter((p) => primary.includes(p) || aux.includes(p)), primary.concat(aux));
     // 4. the service lists: facts.json services is the order, shopify first, and the two ACP homes and the two skills homes agree

@@ -16,6 +16,18 @@ updates:
     open-pull-requests-limit: 3
     commit-message:
       prefix: deps
+    ignore:
+      # @cloudflare/workers-types is held on the same ^4 line as in turva-mcp (mds/decisions.md
+      # Tek-73, Tek-387), so both Workers are type-checked against the same platform types. The
+      # `overrides` entry in package.json answers wrangler's optional ^5 peer; without it npm
+      # install fails with ERESOLVE. The two repositories move to ^5 together, by hand.
+      - dependency-name: "@cloudflare/workers-types"
+        update-types: ["version-update:semver-major"]
+      # @types/node is held on major 22 because the types' major tracks the Node major and
+      # engines declares a lower bound of ^22.18.0 (CI runs Node 22 and 24), so a major jump
+      # would type the tests against APIs the oldest supported Node lacks (Tek-663).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       all-dependencies:
         patterns:

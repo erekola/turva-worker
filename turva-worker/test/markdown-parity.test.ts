@@ -2,30 +2,18 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import worker from "../src/worker.ts";
-import { run, renderJson, TOOL_VERSION } from "markdown-parity-check";
-import { stripTypeScriptTypes } from "node:module";
-
-// Tek-664 (TypeScript migration W1): this slice is evaluated, so types are stripped first. Offsets and
-// lines are kept, and plain JavaScript comes back unchanged. Only the API's one-time experimental
-// warning is filtered.
-function stripTypes(text) {
-  const emit = process.emitWarning;
-  process.emitWarning = function (w, ...rest) {
-    if (/stripTypeScriptTypes/.test(String((w && w.message) || w))) return;
-    return emit.call(process, w, ...rest);
-  };
-  try { return stripTypeScriptTypes(text, { mode: "strip" }); } finally { process.emitWarning = emit; }
-}
+import { run, renderJson, TOOL_VERSION, type SourceInput } from "markdown-parity-check";
+import { stripTypes } from "../test-support/strip-types.ts";
 
 // The hosted Markdown parity check (v3.154.0), offline against the module. What these pin: the
 // report is the package's own run() over the bytes the site serves, a check cannot leave turva.dev's
 // published pages in phase 1, the limiter fails closed, no address secret comes back, content is
 // always escaped, and every published page can be checked within the hosted limits.
 
-const limiter = (ok = true) => ({ calls: 0, async limit() { this.calls++; return { success: ok }; } });
+const limiter = (ok = true): { calls: number; seen?: string; limit(o?: any): Promise<{ success: boolean }> } => ({ calls: 0, async limit() { this.calls++; return { success: ok }; } });
 const envOk = () => ({ PARITY_LIMITER: limiter(true) });
 
-function post(body, { env = envOk(), type = "application/json", accept = "application/json", ip = "203.0.113.9", headers = {} } = {}) {
+function post(body, { env = envOk(), type = "application/json", accept = "application/json", ip = "203.0.113.9", headers = {} }: { env?: any; type?: string; accept?: string; ip?: string; headers?: Record<string, string> } = {}) {
   const init = { method: "POST", headers: { accept, "cf-connecting-ip": ip, ...headers }, body: typeof body === "string" ? body : JSON.stringify(body) };
   if (type) init.headers["content-type"] = type;
   return worker.fetch(new Request("https://turva.dev/markdown-parity-check", init), env);
@@ -79,7 +67,7 @@ test("parity page: listed on /tools, in the sitemap, in llms.txt and its script 
 });
 
 test("parity check: the JSON answer is run() from the package over the bytes the site serves", async () => {
-  for (const [path, strict] of [["/tools", false], ["/agent-readiness-audit", true], ["/", false]]) {
+  for (const [path, strict] of [["/tools", false], ["/agent-readiness-audit", true], ["/", false]] as [string, boolean][]) {
     const url = "https://turva.dev" + path;
     const res = await post({ url, strict });
     assert.equal(res.status, 200, path);
@@ -90,7 +78,7 @@ test("parity check: the JSON answer is run() from the package over the bytes the
     const hosted = strip(await res.text());
     const h = await served(path, "text/html");
     const m = await served(path, "text/markdown");
-    const input = (s, accept) => ({ meta: { kind: "url", url: url, requestedUrl: url, status: s.status, contentType: s.contentType, accept, redirects: 0, bytes: s.bytes, baseUrl: url }, body: s.body, base: url });
+    const input = (s, accept): SourceInput => ({ meta: { kind: "url", url: url, requestedUrl: url, status: s.status, contentType: s.contentType, accept, redirects: 0, bytes: s.bytes, baseUrl: url }, body: s.body, base: url });
     const direct = strip(run(input(h, "text/html"), input(m, "text/markdown"), { strict, mode: "url", frontMatter: "keep" }));
     assert.deepEqual(hosted, direct, path);
     assert.equal(hosted.schemaVersion, 1);
@@ -151,7 +139,7 @@ test("Tek-490: the page gate fails a page whose HTML carries one paragraph its t
   const url = "https://turva.dev" + p;
   const h = await served(p, "text/html");
   const m = await served(p, "text/markdown");
-  const input = (s, body, accept) => ({ meta: { kind: "url", url, requestedUrl: url, status: s.status, contentType: s.contentType, accept, redirects: 0, bytes: new TextEncoder().encode(body).length, baseUrl: url }, body, base: url });
+  const input = (s, body, accept): SourceInput => ({ meta: { kind: "url", url, requestedUrl: url, status: s.status, contentType: s.contentType, accept, redirects: 0, bytes: new TextEncoder().encode(body).length, baseUrl: url }, body, base: url });
   const check = (html) => strip(run(input(h, html, "text/html"), input(m, m.body, "text/markdown"), { strict: false, mode: "url", frontMatter: "keep" }));
   assert.equal(parityProblem(check(h.body)), null, "the page as served passes the gate");
   const open = h.body.indexOf('<main id="main"');
@@ -220,7 +208,7 @@ test("parity check: front matter option and strict mode reach the report", async
 });
 
 test("parity check: phase 1 refuses every address outside turva.dev's published pages", async () => {
-  const cases = [
+  const cases: [object, number, RegExp][] = [
     [{ url: "https://turva.dev/auth.md" }, 400, /must be the HTML page/],
     [{ url: "https://turva.dev/tools", markdownUrl: "https://turva.dev/auth.md" }, 403, /not one of turva\.dev's published pages/],
     [{ url: "https://example.com/page" }, 403, /checks turva\.dev pages only/],

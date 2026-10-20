@@ -33,3 +33,19 @@ jobs:
       - run: node --test
         working-directory: turva-worker
       - run: node tools/verify.mjs
+  typecheck:
+    # Since phase W4 of the TypeScript migration (Tek-663) tsc checks src/worker.ts with tsconfig.json
+    # and the tests with tsconfig.test.json. It needs the development dependencies (typescript and the
+    # two type packages), which the test job leaves out with --omit=dev, so it is a job of its own with
+    # the full dependency tree. --ignore-scripts still runs no package install script: the compiler
+    # comes as a platform package and needs none.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts
+        working-directory: turva-worker
+      - run: npm run typecheck
+        working-directory: turva-worker

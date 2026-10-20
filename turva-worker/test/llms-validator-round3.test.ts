@@ -6,7 +6,7 @@ import worker from "../src/worker.ts";
 // validator route instead of the package's own exports: worker.ts exports only
 // { default, escapeHtml, renderInline, markdownToHtml, findLinkRelations }, so maskLocation,
 // validateLlmsTxt, collectLinks and collectLinkDefinitions are reached the way
-// test/tek-526-wk.test.mjs already reaches worker.ts's validator internals, through
+// test/tek-526-wk.test.ts already reaches worker.ts's validator internals, through
 // GET /llms-txt-validator?url=... with Accept: application/json and a mocked global fetch
 // standing in for the target host's /llms.txt and home page.
 
@@ -146,19 +146,7 @@ test("VN2: a collapsed reference, \"[label][]\", still resolves (regression guar
 // maskLocation and no hosted route reaches this shape (a Location value is resolved against the
 // request URL first), so the function is read out of the source text and run as it stands.
 import { readFileSync } from "node:fs";
-import { stripTypeScriptTypes } from "node:module";
-
-// Tek-664 (TypeScript migration W1): this slice is evaluated, so types are stripped first. Offsets and
-// lines are kept, and plain JavaScript comes back unchanged. Only the API's one-time experimental
-// warning is filtered.
-function stripTypes(text) {
-  const emit = process.emitWarning;
-  process.emitWarning = function (w, ...rest) {
-    if (/stripTypeScriptTypes/.test(String((w && w.message) || w))) return;
-    return emit.call(process, w, ...rest);
-  };
-  try { return stripTypeScriptTypes(text, { mode: "strip" }); } finally { process.emitWarning = emit; }
-}
+import { stripTypes } from "../test-support/strip-types.ts";
 
 function loadMaskLocation() {
   const src = stripTypes(readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8"));

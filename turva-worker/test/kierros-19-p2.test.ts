@@ -2,20 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { stripTypeScriptTypes } from "node:module";
+import { stripTypes } from "../test-support/strip-types.ts";
 import worker from "../src/worker.ts";
-
-// Tek-664 (TypeScript migration W1): this slice is evaluated, so types are stripped first. Offsets and
-// lines are kept, and plain JavaScript comes back unchanged. Only the API's one-time experimental
-// warning is filtered.
-function stripTypes(text) {
-  const emit = process.emitWarning;
-  process.emitWarning = function (w, ...rest) {
-    if (/stripTypeScriptTypes/.test(String((w && w.message) || w))) return;
-    return emit.call(process, w, ...rest);
-  };
-  try { return stripTypeScriptTypes(text, { mode: "strip" }); } finally { process.emitWarning = emit; }
-}
 
 // Regression tests for audit round 19, patch 2 (docs/auditit/kierros-19/jatko-briiffi.md).
 // Each test names the item id from that brief so a failure maps back to one row of it.
@@ -25,7 +13,7 @@ function stripTypes(text) {
 
 const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
 
-const get = (path, opts = {}) =>
+const get = (path, opts: { method?: string; headers?: Record<string, string> } = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 
 const workerSrc = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
@@ -525,7 +513,7 @@ test("K6-P4: replaceExactlyOnce replaces a single occurrence and throws on zero 
 test("K6-P5: the two prefilled mailto links carry a plain & in the twin rows the buttons are read from (Tek-484)", () => {
   // The constants moved into the twins in v3.174.0: every button row is a links-only paragraph
   // of its page's Markdown, and escapeHtml turns the & into &amp; when the row is rendered.
-  for (const [path, subject, rows] of [["/shopify-agent-storefront-check", "Shopify", 2], ["/agent-readiness-audit", "Agent-readiness", 3]]) {
+  for (const [path, subject, rows] of [["/shopify-agent-storefront-check", "Shopify", 2], ["/agent-readiness-audit", "Agent-readiness", 3]] as [string, string, number][]) {
     const at = workerSrc.indexOf('"' + path + '": `');
     assert.notEqual(at, -1, path);
     const twin = workerSrc.slice(at, workerSrc.indexOf("\n`,", at));
@@ -643,7 +631,7 @@ test("V6-P1: a bidi override character in a remote report's finding message, exc
 
 // ---- The review of patch 2 (adversarial reviewers, confirmed by a second reader and measured) ----
 
-const parityPost = (body, envExtra = {}, headers = { "content-type": "application/json" }) =>
+const parityPost = (body, envExtra = {}, headers: Record<string, string> = { "content-type": "application/json" }) =>
   worker.fetch(new Request("https://turva.dev/markdown-parity-check", {
     method: "POST",
     headers,

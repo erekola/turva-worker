@@ -8107,7 +8107,7 @@ var X402_INDEX_402 = JSON.stringify({
 }, null, 2);
 
 function build402Body(resource, label, amountUsdcMicro, amountEurCents, description) {
-  const extra = { "name": X402_USDC_NAME, "version": "2", "label": label };
+  const extra = { "name": X402_USDC_NAME, "version": "2", "label": label } as { name: string; version: string; label: any; eurCents?: number; settlement?: any };
   // /api is a discovery probe with no EUR equivalent. Writing "eurCents": 0 into the
   // body states a price of 0,00 EUR for a resource that is not free, so the field is
   // omitted instead.
@@ -9444,7 +9444,7 @@ var FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" f
 // response. The kind follows the path, as it does for 405 and 429.
 // A caller that knows the target's kind better than the path regex passes it: a markdown twin's
 // case redirect is an agent resource like the twin it points to (round 19 review of P1).
-function redirectTo(location, status, pathLower, kind) {
+function redirectTo(location, status, pathLower, kind?) {
   const headers = new Headers({ location: location });
   applySecurityHeaders(headers, kind || (AGENT_API_PATH_RE.test(pathLower || "") ? "agent-api" : "default"));
   return new Response(null, { status: status, headers: headers });
@@ -9645,7 +9645,7 @@ function a2aSkillData(home, skillId) {
   return null;
 }
 
-function a2aJson(body, status, allow) {
+function a2aJson(body, status?, allow?) {
   const headers = new Headers({
     "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store",
@@ -9674,8 +9674,8 @@ function parseA2aTaskPath(pathname) {
   return { id: id.slice(0, 128), cancel };
 }
 
-function a2aError(code, message, data, status, allow) {
-  const err = { code, message };
+function a2aError(code, message, data, status, allow?) {
+  const err: { code: any; message: any; data?: any } = { code, message };
   if (data) err.data = data;
   return a2aJson({ error: err }, status, allow);
 }
@@ -9752,7 +9752,7 @@ async function serveA2AMessageSend(request) {
 }
 // lang names the language of a text body. Markdown is always English prose here, and the
 // two llms files pass "en" themselves; tokens, keys and JSON carry no language header.
-function serveStatic(body, contentType, kind, lang) {
+function serveStatic(body, contentType, kind, lang?) {
   const headers = new Headers({
     "content-type": contentType,
     "cache-control": "public, max-age=3600",
@@ -10184,10 +10184,10 @@ function mdSection(path, heading) {
 function mdBodyHtml(path, heading) {
   return markdownToHtml(mdSection(path, heading)).replace(/href="https:\/\/turva\.dev\//g, 'href="/');
 }
-function mdPageStart(path, ctaCls, ctaLinks) {
+function mdPageStart(path, ctaCls?, ctaLinks?) {
   // ctaCls and ctaLinks: the lead closes with the page's button row, read from the twin
   // (mdLeadCta) and rendered after the intro paragraphs.
-  const lead = ctaCls ? mdLeadCta(path, ctaCls, ctaLinks) : mdLead(path);
+  const lead: { eyebrow: any; title: any; paras: any; cta?: any } = ctaCls ? mdLeadCta(path, ctaCls, ctaLinks) : mdLead(path);
   // A lead paragraph that is only the feed link keeps the feed style (/blog, Tek-486).
   const intro = lead.paras.map((p, i) => `<p${i === 0 ? ' class="intro"' : /^\[RSS feed\]\(\/[^)]+\)$/.test(p) ? ' class="feed"' : ""}>${renderInline(p)}</p>`).join("\n  ");
   return `${lead.eyebrow ? `<p class="eyebrow">${renderInline(lead.eyebrow)}</p>\n  ` : ""}<h1>${renderInline(lead.title)}</h1>
@@ -10198,7 +10198,7 @@ function mdCard(path, heading) {
     ${mdBodyHtml(path, heading)}
   </div>`;
 }
-function mdKvsCard(path, heading, extra) {
+function mdKvsCard(path, heading, extra?) {
   const rows = mdSection(path, heading).split("\n").filter((l) => l.startsWith("- ")).map((l) => {
     const m = l.slice(2).match(/^(?:\*\*(.+?):\*\*|([^:]+):)\s*(.+)$/);
     return m ? { k: (m[1] || m[2]).trim(), v: m[3].trim() } : null;
@@ -10399,7 +10399,7 @@ function mdSlug(text) {
 }
 // The drawn size of every image a twin section renders through mdSecBodyHtml (Tek-486).
 var MD_IMG_SIZE = { "/badge.svg": [216, 36] };
-function mdSecBodyHtml(path, heading, listOnly, dropRow) {
+function mdSecBodyHtml(path, heading, listOnly?, dropRow?) {
   // Like mdPcard's body: an opening **price. meta.** block becomes the price line, a
   // "Label:" block followed by "- items" becomes a labelled checklist, and everything
   // else is markdown. Continuation lines of a list item (indented) join the item.
@@ -10447,7 +10447,7 @@ function mdSecBodyHtml(path, heading, listOnly, dropRow) {
   });
   return parts.join("\n    ");
 }
-function mdOpenSec(path, heading, id, extra, listOnly, dropRow) {
+function mdOpenSec(path, heading, id?, extra?, listOnly?, dropRow?) {
   const html = `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
     ${mdSecBodyHtml(path, heading, listOnly, dropRow)}${extra || ""}
   </section>`;
@@ -10504,13 +10504,13 @@ ${mdFaqRows(path, heading)}
   ${mdFaqTailHtml(path, heading)}
   </section>`;
 }
-function mdKvsSec(path, heading, extra) {
+function mdKvsSec(path, heading, extra?) {
   const grid = mdKvsCard(path, heading).replace(/^<div class="scard"><h2>.*?<\/h2>/, "").replace(/<\/div>$/, "");
   return `<section class="sec" id="${mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
     ${grid}${extra || ""}
   </section>`;
 }
-function mdOfferCards(path, heading, idFor) {
+function mdOfferCards(path, heading, idFor?) {
   // The same row shape as the home page offers: "- [name](href). €price. covers Delivered ... [One retest ...]".
   // idFor carries an old section anchor onto the card that replaced that section, so a link
   // written before the section became a card still lands on the same offer (/services#shopify).
@@ -10570,7 +10570,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
   const isGuide = pathname === "/guides" || pathname.startsWith("/guides/");
   const isBlogPost = pathname.startsWith("/blog/");
   const isBlogHub = pathname === "/blog";
-  const article = {
+  const article: { [k: string]: any } = {
     "@context": "https://schema.org",
     "@type": pathname === "/guides" ? "CollectionPage" : (isGuide ? "TechArticle" : (isBlogPost ? "BlogPosting" : (isBlogHub ? "Blog" : "WebPage"))),
     "headline": headline,
@@ -10597,7 +10597,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
     const posts = Object.keys(PAGE_MARKDOWN).filter((k) => k.startsWith("/blog/")).map((k) => {
       const pm = META_BY_PATH[k] || {};
       const pmH1 = (PAGE_MARKDOWN[k] || "").match(/^# (.+)$/m);
-      const item = { "@type": "BlogPosting", "headline": pmH1 ? pmH1[1].trim() : (pm.title || "").replace(/ [|\u00B7] turva\.dev$/, ""), "url": "https://turva.dev" + k };
+      const item: { [k: string]: any } = { "@type": "BlogPosting", "headline": pmH1 ? pmH1[1].trim() : (pm.title || "").replace(/ [|\u00B7] turva\.dev$/, ""), "url": "https://turva.dev" + k };
       if (pm.date) { item.datePublished = pm.date; item.dateModified = pm.modified || pm.date; }
       return item;
     });
@@ -10882,7 +10882,7 @@ var FAQ_CSS = `.faq .q{color:#F2F4F3;font-weight:700;font-size:1rem;margin:1.15r
 // E03 (Tek-496 audit round): the Mastodon icon path in the footer HTML below matches Boxicons
 // 2.0.8's bxl-mastodon.svg (three numeric differences). That version's own README states its
 // SVG license as CC BY 4.0 and also states that attribution is not required.
-function footerHtml(kieli) { const fi = kieli === "fi"; return `<footer class="tv-foot">
+function footerHtml(kieli?) { const fi = kieli === "fi"; return `<footer class="tv-foot">
   <div class="foot-brand">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle><path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
     <span class="nv-word">turva<b>·</b>dev</span>
@@ -10970,7 +10970,7 @@ var GUIDE_ANCHOR_ALIASES = {
   }
 };
 function withAnchorAliases(pathname, html) {
-  const aliases = GUIDE_ANCHOR_ALIASES[pathname];
+  const aliases: Record<string, string[]> = GUIDE_ANCHOR_ALIASES[pathname];
   if (!aliases) return html;
   let out = html;
   for (const [id, olds] of Object.entries(aliases)) {
@@ -11749,7 +11749,7 @@ ${TOC_SUB_CSS}
 ${TBL_CSS}
 @media (max-width:360px){main{padding-left:20px;padding-right:20px;}}`;
 
-function cardPageHead(metaBlock, jsonLd, canonicalUrl, extraHead) {
+function cardPageHead(metaBlock, jsonLd, canonicalUrl, extraHead?) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -12317,7 +12317,7 @@ function isValidPublicHost(host) {
   if (["localhost", "localdomain", "local", "internal", "home", "lan", "corp", "test", "invalid", "arpa", "onion"].includes(tld)) return false;
   return true;
 }
-
+function maskLocation(href: string, base?: string): string;
 // A redirect target the way a report may show it. The scheme, the host and the path stay readable,
 // and the parts that can carry a secret do not: the user name and the password are removed, every
 // query value becomes ***, and the fragment is dropped. The caller cuts the result to length
@@ -12346,7 +12346,7 @@ function maskLocation(href, base) {
     // so "?" stays "?" as before.
     const maskedQuery = new URLSearchParams();
     // append, not set: the keys are already unique, and set searches the whole list on every call.
-    for (const key of new Set(u.searchParams.keys())) maskedQuery.append(key, "***");
+    for (const key of new Set<string>(u.searchParams.keys())) maskedQuery.append(key, "***");
     if (maskedQuery.toString() !== "") u.search = maskedQuery.toString();
     u.hash = "";
     return u.href;
@@ -12396,7 +12396,7 @@ function validatorEcho(typed, shown) {
   if (!/[@?#]/.test(typed)) return shown;
   return normalizeHostInput(typed) || "";
 }
-
+function fetchLlmsTxt(host: string, path?: string, accept?: string): Promise<any>;
 // The second argument was added for the v2 discovery checks, which need the site's
 // home page as well as its llms.txt. It is one parameter and nothing else moved:
 // the redirect budget, the same-host rule, the credential and port rejections and
@@ -12798,7 +12798,7 @@ const LINK_REF_DEF = /^ {0,3}\[[^\]]+\]:/;
 // HTML blocks of CommonMark types 1 to 5 end at a marker, not at a blank line. The end markers are plain substrings matched case-insensitively, as CommonMark defines them, and not a tag regexp (CodeQL js/bad-tag-filter): type 2 ends at "-->" only, never at "--!>".
 // Entry is [start, ends]: </pre>, </script>, </style>, </textarea> after <pre> and kin, "-->" after "<!--", "?>" after "<?", "]]>" after "<![CDATA[", ">" after "<!X"; the marker is looked for after the start on the same line.
 function hasRawEnd(s, ends) { const t = s.toLowerCase(); return ends.some((e) => t.includes(e)); }
-const RAW_HTML_BLOCKS = [
+const RAW_HTML_BLOCKS: [RegExp, string[]][] = [
   [/^ {0,3}<(?:pre|script|style|textarea)(?:[ \t>]|$)/i, ['</pre>', '</script>', '</style>', '</textarea>']],
   [/^ {0,3}<!--/, ['-->']],
   [/^ {0,3}<\?/, ['?>']],
@@ -13915,7 +13915,7 @@ function* htmlTags(text) {
 }
 
 function tagAttributes(tag) {
-  const out = {};
+  const out: Record<string, string> = {};
   readTag(tag, 0, out);
   return out;
 }
@@ -14007,7 +14007,7 @@ function nextLinkValue(s, from) {
 // How common the relations are in the wild has not been measured, so nothing here
 // claims it.
 function findLinkRelations(html, linkHeader) {
-  const found = { describedby: null, markdown: null };
+  const found: { describedby: any; markdown: any; headCut?: boolean } = { describedby: null, markdown: null };
   // Only the head, and only what a parser would put there: a commented-out link element
   // is not published, a link element inside a script or a template is not published, and
   // a link element the parser moves into the body is not what these two checks are about.
@@ -14054,7 +14054,7 @@ function findLinkRelations(html, linkHeader) {
   return found;
 }
 
-function validateV2Discovery(found, unreadReason) {
+function validateV2Discovery(found, unreadReason?) {
   const checks = [];
   const add = (id, status, label, detail) => checks.push({ id, status, label, detail });
   if (!found) {
@@ -14252,8 +14252,8 @@ var PARITY_EXAMPLE_URL = "https://turva.dev/tools";
 // 503 with Retry-After instead of waiting.
 var parityActive = 0;
 
-class ParityError extends Error {
-  constructor(kind, status, message, field) {
+class ParityError extends Error { declare kind: string; declare status: number; declare field: string | null; declare values: Record<string, unknown>;
+  constructor(kind, status, message, field?) {
     super(message);
     this.name = "ParityError";
     this.kind = kind;
@@ -14289,7 +14289,7 @@ function parityDecode(buf, contentType) {
   const m = /charset=([^;]+)/i.exec(contentType || "");
   const charset = (m ? m[1] : "utf-8").trim().replace(/^"|"$/g, "").toLowerCase();
   try {
-    return new TextDecoder(charset, { fatal: false }).decode(buf);
+    return new TextDecoder(charset, { fatal: false } as TextDecoderConstructorOptions).decode(buf);
   } catch {
     return new TextDecoder("utf-8").decode(buf);
   }
@@ -14300,8 +14300,8 @@ function parityDecode(buf, contentType) {
 async function parityParseInput(request) {
   const type = (request.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
   const form = type === "application/x-www-form-urlencoded";
-  const values = {};
-  const fail = (kind, status, message, field) => {
+  const values: { url?: string; markdownUrl?: string; selector?: string; strict?: boolean; frontMatter?: string } = {};
+  const fail = (kind, status, message, field?) => {
     const e = new ParityError(kind, status, message, field);
     e.values = values;
     return e;
@@ -14448,7 +14448,7 @@ async function parityRemote(input, env) {
 }
 
 function parityOptions(input) {
-  return { selector: input ? input.selector : undefined, frontMatter: input ? input.frontMatter : "keep", strict: input ? input.strict : false, mode: "url", limits: PARITY_LIMITS };
+  return { selector: input ? input.selector : undefined, frontMatter: input ? input.frontMatter : "keep", strict: input ? input.strict : false, mode: "url" as const, limits: PARITY_LIMITS };
 }
 
 async function parityRunCheck(input, env) {
@@ -14506,7 +14506,7 @@ async function parityRunCheck(input, env) {
   }
 }
 
-function parityResponse(asJson, status, report, state, retryAfter) {
+function parityResponse(asJson, status, report, state, retryAfter?) {
   if (asJson) {
     // A browser-based agent may call the JSON form from another origin (round 19, P2, Erik
     // 2026-09-23); the answer carries no cookie and no credential, so any origin may read it,
@@ -15009,7 +15009,7 @@ function buildAcpCheckoutSession(serviceId, sessionId) {
   };
 }
 
-function acpHeaders(allow) {
+function acpHeaders(allow?) {
   const h = new Headers({
     "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store",
@@ -15068,7 +15068,7 @@ async function serveAcpCheckout(request, pathLower) {
     // answered 201 with the default audit session and 4 300 euros: a client's input error
     // was told it had created an order. Those four answer 400 since 2026-09-10 (Tek-383).
     // The line that must NOT move with them is the one below: a VALID empty object keeps
-    // the default, which is what test/routes.test.mjs R16 S1-1 sends and what the comment
+    // the default, which is what test/routes.test.ts R16 S1-1 sends and what the comment
     // under it explains.
     if (!reqBody || typeof reqBody !== "object" || Array.isArray(reqBody)) {
       return new Response(JSON.stringify({ "type": "invalid_request", "code": "invalid_body", "message": "The request body must be a JSON object, for example {\"items\":[{\"id\":\"audit\"}]}." }, null, 2), { status: 400, headers: acpHeaders() });
@@ -15221,7 +15221,7 @@ function serveX402Root() {
   return new Response(X402_INDEX_402, { status: 402, headers });
 }
 
-var worker_default = {
+var worker_default: { fetch(request: Request, env: any, ctx?: unknown): Promise<Response>; scheduled(event: Pick<ScheduledController, "scheduledTime">, env: any, ctx: Pick<ExecutionContext, "waitUntil">): Promise<void> } = {
   async fetch(request, env) {
     const originalMethod = request.method;
     const isHead = originalMethod === "HEAD";

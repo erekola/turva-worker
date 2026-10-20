@@ -11,7 +11,7 @@ import worker, { markdownToHtml, renderInline } from "../src/worker.ts";
 
 const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
 
-const get = (path, opts = {}) =>
+const get = (path, opts: { method?: string; headers?: Record<string, string> } = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 
 const workerSrc = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
@@ -205,7 +205,7 @@ test("K8-1: a request whose body never finishes reading must not hold a parity c
       headers: { "content-type": "application/json" },
       body: stream,
       duplex: "half"
-    });
+    } as RequestInit);
   };
   // Four requests whose bodies never finish reading. Started but never awaited: they
   // are meant to hang for the rest of the process, which is the point of the test.

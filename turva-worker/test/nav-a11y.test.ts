@@ -4,7 +4,7 @@ import worker from "../src/worker.ts";
 
 // Tek-560 (W12 F3 and F2). The mobile menu closes on Escape and on focus leaving it through
 // a served script, because the CSP allows one hashed inline script and nothing else inline.
-// Offline, against the module itself, like routes.test.mjs.
+// Offline, against the module itself, like routes.test.ts.
 const env = {};
 const get = (path, headers = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { headers }), env);

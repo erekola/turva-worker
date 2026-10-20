@@ -19,7 +19,7 @@ const facts = JSON.parse(readFileSync(new URL("../../tools/facts.json", import.m
 // a second, need no network, and fail before wrangler is ever invoked.
 const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
 
-const get = (path, opts = {}) =>
+const get = (path, opts: { method?: string; headers?: Record<string, string> } = {}): Promise<Omit<Response, "json"> & { json(): Promise<any> }> =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 
 const json = async (res) => JSON.parse(await res.text());
@@ -139,7 +139,7 @@ test("agent-API routes are not swallowed by the slash normaliser", async () => {
 
 test("every path listed in the API index resolves", async () => {
   const idx = await json(await get("/api/v1"));
-  for (const url of Object.values(idx.endpoints)) {
+  for (const url of Object.values(idx.endpoints) as string[]) {
     const u = new URL(url);
     if (u.hostname !== "turva.dev") continue; // mcp.turva.dev is a separate Worker
     // A POST-only endpoint answers 405 to a GET, which is a resolving path rather than a
@@ -174,7 +174,7 @@ test("unmatched paths return the Worker's own 404, with no origin behind it", as
 // card's url, the card's skill descriptions, and the data the endpoint actually returns.
 // A first version asserted only that some object came back, and a mutation test that swapped
 // the contact and company payloads passed it, so every skill now asserts content unique to it.
-const a2aSend = (body) => worker.fetch(new Request("https://turva.dev/v1/message:send", {
+const a2aSend = (body): Promise<Omit<Response, "json"> & { json(): Promise<any> }> => worker.fetch(new Request("https://turva.dev/v1/message:send", {
   method: "POST",
   headers: { "content-type": "application/json" },
   body: JSON.stringify(body)
@@ -657,7 +657,7 @@ test("brief: hakemistoa ei ole eika kelvoton tunnus paase lapi", async () => {
 
 test("brief: Accept-neuvottelu vastaa samasta osoitteesta, kuten muuallakin sivustolla", async () => {
   const U = "/brief/" + BRIEF_REC.id;
-  const tapaus = [
+  const tapaus: [Record<string, string>, RegExp][] = [
     [{}, /text\/html/],
     [{ Accept: "text/html" }, /text\/html/],
     [{ Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" }, /text\/html/],
@@ -840,7 +840,7 @@ test("every page in the sitemap renders as HTML and as markdown", async () => {
 // through serveOauthClosed(), which answers 400 with a spec-valid OAuth
 // error body rather than a 404, because the discovery documents advertise
 // these paths and must never point at something that does not respond.
-const DOCUMENTED_ROUTES = [
+const DOCUMENTED_ROUTES: [string, number, RegExp][] = [
   ["/llms.txt", 200, /text\/plain/],
   ["/llms-full.txt", 200, /text\/plain/],
   ["/robots.txt", 200, /text\/plain/],
@@ -950,7 +950,7 @@ test("R15 P4-2: OPTIONS answers 204 with preflight headers on every agent-api su
     // Round 16 (S1-4): the preflight advertises the methods the route honours, so a GET-only
     // surface says GET, OPTIONS and only the x402 roots and payable routes add POST.
     const postRoute = path === "/api" || path === "/x402" || path.startsWith("/oauth/");
-    // Tek-562: the server card preflight says GET and allows If-None-Match, see test/tek562.test.mjs.
+    // Tek-562: the server card preflight says GET and allows If-None-Match, see test/tek562.test.ts.
     const wantMethods = path === "/.well-known/mcp/server-card.json" ? "GET" : postRoute ? "GET, POST, OPTIONS" : "GET, OPTIONS";
     assert.equal(r.headers.get("access-control-allow-methods"), wantMethods, path);
     assert.equal(r.headers.get("access-control-allow-origin"), "*", path);
@@ -997,7 +997,7 @@ test("R16 S1-1: a method the route does not serve answers 405 with Allow, on pag
 });
 
 test("R16 S1-1: POST keeps working exactly where a handler or the OpenAPI document knows it", async () => {
-  const pairs = [
+  const pairs: [string, number[]][] = [
     ["/v1/message:send", [200, 400]],
     ["/api/agent/audit", [402]],
     ["/api", [402]],
@@ -1037,7 +1037,7 @@ test("R16 S3-1: the validator cuts its details on a code point boundary, so a tr
   const r = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(raw), { headers: { accept: "text/html" } }), env, {});
   assert.equal(r.status, 200);
   const bytes = new Uint8Array(await r.arrayBuffer());
-  const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  const text = new TextDecoder("utf-8", { fatal: true } as TextDecoderConstructorOptions).decode(bytes);
   assert.ok(text.includes('value="' + "a".repeat(299) + '"'), "the echoed value ends at the last whole character");
 });
 
@@ -1317,15 +1317,15 @@ const streamOf = (text, chunk = 4096) => {
     }
   });
 };
-const postBody = (path, body, extraEnv) => worker.fetch(new Request("https://turva.dev" + path, typeof body === "string"
+const postBody = (path, body, extraEnv?) => worker.fetch(new Request("https://turva.dev" + path, typeof body === "string"
   ? { method: "POST", headers: { "content-type": "application/json" }, body }
-  : { method: "POST", headers: { "content-type": "application/json" }, body, duplex: "half" }), extraEnv || env, {});
+  : { method: "POST", headers: { "content-type": "application/json" }, body, duplex: "half" } as RequestInit), extraEnv || env, {});
 // F13 (Tek-496 audit round): postBody above never sets Content-Length itself, so a test that
 // claims to cover "with and without Content-Length" was really covering "without" twice. This
 // variant sets the header explicitly, either to the real byte length or to a deliberately too
 // small one, so the byte-cap enforcement is proven against a header instead of only against a
 // bodyless Request object.
-const postBodyWithLength = (path, body, contentLength, extraEnv) => worker.fetch(new Request("https://turva.dev" + path, {
+const postBodyWithLength = (path, body, contentLength, extraEnv?) => worker.fetch(new Request("https://turva.dev" + path, {
   method: "POST", headers: { "content-type": "application/json", "content-length": String(contentLength) }, body
 }), extraEnv || env, {});
 

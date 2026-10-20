@@ -8,7 +8,7 @@ import worker from "../src/worker.ts";
 // 0.3.18 carries the same H2 cases in test/tek562.test.mjs.
 
 const env = {};
-const get = (path, opts = {}) =>
+const get = (path, opts: { method?: string; headers?: Record<string, string> } = {}): Promise<Omit<Response, "json"> & { json(): Promise<any> }> =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 // The digests below pin public bytes, so they go through WebCrypto rather than a hash CodeQL reads as a password hash.
 const sha256Hex = async (bytes) => Buffer.from(await crypto.subtle.digest("SHA-256", bytes)).toString("hex");
