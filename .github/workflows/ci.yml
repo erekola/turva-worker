@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       # Since v3.154.0 src/worker.ts imports one npm package, markdown-parity-check, for the
-      # hosted parity check, and tools/verify.mjs resolves it too. Only the runtime dependencies
+      # hosted parity check, and tools/verify.mts resolves it too. Only the runtime dependencies
       # are installed, from the lock: --omit=dev leaves out wrangler, which the tests do not need,
       # and --ignore-scripts runs no package install script. Without this step both jobs fail on
       # ERR_MODULE_NOT_FOUND (run 13, commit 143d2e3).
@@ -32,13 +32,14 @@ jobs:
         working-directory: turva-worker
       - run: node --test
         working-directory: turva-worker
-      - run: node tools/verify.mjs
+      - run: node tools/verify.mts
   typecheck:
-    # Since phase W4 of the TypeScript migration (Tek-663) tsc checks src/worker.ts with tsconfig.json
-    # and the tests with tsconfig.test.json. It needs the development dependencies (typescript and the
-    # two type packages), which the test job leaves out with --omit=dev, so it is a job of its own with
-    # the full dependency tree. --ignore-scripts still runs no package install script: the compiler
-    # comes as a platform package and needs none.
+    # Since phase W4 of the Tek-663 TypeScript migration, tsc checks src/worker.ts with tsconfig.json
+    # and the tests with tsconfig.test.json. Since phase W5 it also checks tools/verify.mts with
+    # tsconfig.tools.json. The job needs the development dependencies: typescript and the two type
+    # packages. The test job leaves them out with --omit=dev, so this is a job of its own with the
+    # full dependency tree. --ignore-scripts still runs no package install script, because the
+    # compiler comes as a platform package and needs none.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

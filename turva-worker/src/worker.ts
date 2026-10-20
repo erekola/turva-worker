@@ -6991,7 +6991,7 @@ Facts stated as data rather than prose, and the same fact visible in more than o
 // company, contact and legal), the auxiliary pages, /guides and the guides in the order the
 // /guides twin lists them, then /blog and the posts newest first (META_BY_PATH.date, and the
 // twin key order within one date). sitemap.xml and llms-full.txt compute it here; llms.txt is
-// a signed hand-written literal and follows the same order by hand, and tools/verify.mjs
+// a signed hand-written literal and follows the same order by hand, and tools/verify.mts
 // reads all three against this order. Round 17 (2026-09-03) found the blog ahead of the home
 // page in llms-full.txt and the pricing on line 78 of llms.txt; the order lived in five hand
 // lists that had drifted apart. It lives here now.
@@ -9378,7 +9378,7 @@ var PRICE_VALID_UNTIL = "2026-12-31";
 
 // The Service node with its AggregateOffer and OfferCatalog is one constant because two
 // pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
-// second copy would be a second price list, and verify.mjs reads this one against facts.json.
+// second copy would be a second price list, and verify.mts reads this one against facts.json.
 var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
 {"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront Catalog MCP, Cart MCP and the Policy and FAQs tool, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"},"addOn":{"@type":"Offer","name":"Shopify correction implementation","description":"Exactly the corrections the check's plan lists. Sold only with the Shopify agent storefront check: bought with it, with its report, or after the report and before implementation starts, and only when collaborator access to the store is arranged in advance.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Shopify correction implementation"}}},
 {"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
@@ -9989,7 +9989,7 @@ function renderInline(text) {
     // string, and a reverse-DNS identifier has exactly that shape, so two MCP metadata
     // keys in a blog post rendered as links to a host that does not resolve. The last
     // label now has to be a top-level domain this file declares; anything else is left
-    // as the text it was. The set is enumerated rather than guessed, and verify.mjs
+    // as the text it was. The set is enumerated rather than guessed, and verify.mts
     // asserts that every autolink-shaped string in the served markdown either ends in
     // one of these or is named in AUTOLINK_NOT_HOSTS, so a new top-level domain fails
     // the gate loudly instead of silently not linking.
@@ -10007,7 +10007,7 @@ function renderInline(text) {
 
 // Top-level domains the protocol-less autolinker in renderInline() accepts, and the
 // strings that look like a bare host but are not one. Both are read by
-// turva-worker/tools/verify.mjs, so these are the only copies. Added kierros 18
+// turva-worker/tools/verify.mts, so these are the only copies. Added kierros 18
 // (2026-09-06) after two reverse-DNS metadata keys rendered as dead links.
 var AUTOLINK_TLDS = new Set(["com", "dev", "org", "net", "io", "fi", "nl", "eu", "se", "no", "dk", "de", "uk", "ai", "app", "me", "info"]);
 var AUTOLINK_NOT_HOSTS = new Set(["io.modelcontextprotocol/protocolVersion", "io.modelcontextprotocol/clientCapabilities"]);
@@ -10017,7 +10017,7 @@ var AUTOLINK_NOT_HOSTS = new Set(["io.modelcontextprotocol/protocolVersion", "io
 // same length, and its lines are code even across blank lines. A brief carries the scanner's raw
 // output this way, and until then its "## Discoverability" line and every FAIL line under it
 // rendered as one h2 with the fence as literal text. A fence that never closes stays ordinary
-// text, as it was. A site twin never uses a fence, because verify.mjs fails one that does, so no
+// text, as it was. A site twin never uses a fence, because verify.mts fails one that does, so no
 // page's output changes.
 function mdFenceOpen(line) {
   const m = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
@@ -10154,7 +10154,7 @@ function markdownToHtml(md) {
 // Card pages render hand-built structure (nav, cards, key-value grids,
 // forms) around prose read from PAGE_MARKDOWN at request time, so every
 // sentence lives once and a page cannot drift from its markdown twin.
-// tools/verify.mjs guards converted pages: no literal prose paragraphs in
+// tools/verify.mts guards converted pages: no literal prose paragraphs in
 // the function body, and every referenced section heading must exist in
 // the twin. A missing heading throws here, which the render harness and
 // the static gate catch before any deploy.
@@ -10587,7 +10587,7 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
     article.datePublished = m.date;
     // A post whose own body says "Corrected 2026-08-02" has been modified, and this field
     // told every reader it had not. The modification date owns one place, META_BY_PATH,
-    // beside the publication date; verify.mjs derives it from the twin and fails on drift.
+    // beside the publication date; verify.mts derives it from the twin and fails on drift.
     article.dateModified = m.modified || m.date;
   }
   if (isGuide || isBlogPost) {
@@ -10643,7 +10643,7 @@ ${json}
 // Every page that serves a FAQPage reads it from that page's own markdown twin, so a
 // crawler and a reader are handed the same words. Eighteen guides and the buyer guide
 // held their pairs here as literals until v3.92.0 and rendered none of them (B1-03).
-// tools/verify.mjs compares this map, plus the card pages that build their FAQ by name
+// tools/verify.mts compares this map, plus the card pages that build their FAQ by name
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 var GUIDE_PAGE_FAQ = {
@@ -11200,7 +11200,7 @@ function serveHomeHtml(canonicalUrl) {
   const lead = mdLeadCta("/", "cta", ["btn", "btn-ghost"]);
   if (!lead.eyebrow) throw new Error("the home twin carries no eyebrow line above its H1");
   // The measured date comes from the twin's own agent-readiness sentence, so the hero row and
-  // the markdown agree by construction and the Measured-date gate in verify.mjs reads one copy.
+  // the markdown agree by construction and the Measured-date gate in verify.mts reads one copy.
   // Tek-488 round 3: the lead carries five paragraphs, the two ledes, the service note, the
   // agent-readiness sentence and the label of the finding card, and the page shows all five.
   if (lead.paras.length !== 5) throw new Error("home lead carries " + lead.paras.length + " paragraphs, want 5");
@@ -11252,7 +11252,7 @@ function serveHomeHtml(canonicalUrl) {
   // Tek-488 round 3: the section carries the three work cards, the scan board's three lines and
   // the security paragraph, and the board's five category rows are its first list. The board
   // itself stays hand-written HTML: its head, scanner and summary lines are bound to the twin
-  // here and its rows are counted, and the static and live board gates in verify.mjs bind every
+  // here and its rows are counted, and the static and live board gates in verify.mts bind every
   // cell to facts.json, which the evidence twin gate binds the twin's rows to.
   const work = mdParas("/", "See what the work looks like", 7);
   const boardHead = "Independent agent-readiness scan of turva.dev. Measured " + evMeasured + ".";

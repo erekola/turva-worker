@@ -131,22 +131,22 @@ Use the linked reports for current results. Recorded values and dates are mainta
 
 ## Verify
 
-[tools/verify.mjs](tools/verify.mjs) compares source and documentation with [tools/facts.json](tools/facts.json). It checks published claims and file integrity, including the use of Markdown content sources.
+[tools/verify.mts](tools/verify.mts) compares source and documentation with [tools/facts.json](tools/facts.json). It checks published claims and file integrity, including the use of Markdown content sources.
 
-`tools/verify.mjs`, the Worker's tests and the Worker itself import markdown-parity-check. Install the nested project's runtime dependencies first, from the repository root:
+`tools/verify.mts`, the Worker's tests and the Worker itself import markdown-parity-check. Install the nested project's runtime dependencies first, from the repository root:
 
 ```sh
 npm --prefix turva-worker ci --omit=dev --ignore-scripts
-node tools/verify.mjs
+node tools/verify.mts
 npm --prefix turva-worker test
 ```
 
-GitHub Actions runs the same install, the local tests and the documentation checks on Node.js 22 and 24. A second job installs the development dependencies as well and runs `npm --prefix turva-worker run typecheck`, which checks the Worker source and the tests with the TypeScript compiler. The repository's workflow does not deploy the site.
+GitHub Actions runs the same install, the local tests and the documentation checks on Node.js 22 and 24. A second job installs the development dependencies as well and runs `npm --prefix turva-worker run typecheck`, which checks the Worker source, the tests and `tools/verify.mts` with the TypeScript compiler. The repository's workflow does not deploy the site.
 
 The live variant contacts a fixed list of declared public endpoints and the separate MCP server. Adding `--twins` also fetches every canonical page and its Markdown twin. It also verifies the four signed manifests against the published JWKS:
 
 ```sh
-node tools/verify.mjs --live
+node tools/verify.mts --live
 ```
 
 These checks are tailored to turva.dev. Update the facts and checks for your own site. The live checks do not deploy changes.

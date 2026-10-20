@@ -283,7 +283,7 @@ test("A2A: wrong method, bad body, unknown skill and unknown method all answer a
 // negotiation, so the risk of adding the address is not that it 404s, it is that the two
 // forms drift apart and the site starts answering two different documents at one page.
 // Every canonical path in the sitemap is checked byte for byte here, offline, which is
-// the cheap half of the live --twins run in tools/verify.mjs.
+// the cheap half of the live --twins run in tools/verify.mts.
 
 const sitemapPaths = async () => {
   const xml = await (await get("/sitemap.xml")).text();

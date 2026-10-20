@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// tools/verify.mjs - turva.dev consistency + integrity checker for this repo.
+// tools/verify.mts - turva.dev consistency + integrity checker for this repo.
 // This is the deploy gate the site runs on itself before every ship.
 // Source of truth: tools/facts.json. MIT, same license as the repo.
-//   node tools/verify.mjs          static, offline-safe; since Tek-475 this also verifies
+//   node tools/verify.mts          static, offline-safe; since Tek-475 this also verifies
 //                                  the four signed surfaces offline, against worker.ts's OWN
 //                                  bytes and its own embedded JWKS/signatures, before any
 //                                  deploy (kitka-lokit-003)
-//   node tools/verify.mjs --live   also GET every declared URL, verify the Ed25519
+//   node tools/verify.mts --live   also GET every declared URL, verify the Ed25519
 //                                  signatures of the four signed manifests against the
 //                                  PUBLISHED JWKS of the already-deployed site, and speak MCP
 //                                  to mcp.turva.dev to prove the signed server card matches
@@ -14,7 +14,7 @@
 // existsSync added 2026-08-16: the og-cards.json check used it without an import, and it
 // had never run, because the manifest was empty. The first card in the manifest brought the
 // whole verify run down with a ReferenceError. A check that has never run is not green, it is unrun.
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { execSync, execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createPublicKey, verify as edVerify } from 'node:crypto';
@@ -97,7 +97,7 @@ function stripTypes(text) {
 // expected condition rather than the fault being measured.
 const FETCH_TIMEOUT_MS = Number(process.env.VERIFY_FETCH_TIMEOUT_MS || 20000);
 const nativeFetch = globalThis.fetch;
-const timedFetch = (input, init = {}) => (
+const timedFetch = (input, init: any = {}) => (
   init && init.signal
     ? nativeFetch(input, init)
     : nativeFetch(input, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
@@ -123,7 +123,7 @@ const OWN_HOSTS = new Set(['turva.dev', 'mcp.turva.dev', 'mta-sts.turva.dev']);
 // signed path must all fail here, not just a changed count (mds/gotchas.md, portti-mittaa-vain-mita-mittaa).
 const REQUIRED_SIGNED_PATHS = new Set(['/llms.txt', '/.well-known/agent.json', '/.well-known/ai-plugin.json', '/.well-known/mcp/server-card.json']);
 let rateWaits = 0;
-const fetch = async (input, init = {}) => {
+const fetch = async (input, init: any = {}) => {
   const r = await timedFetch(input, init);
   if (r.status !== 429 || (init && init.signal)) return r;
   let url;
@@ -144,7 +144,7 @@ const FILES = {
   worker:   workerMain(),
   readme:   'README.md',
 };
-const src = {};
+const src: Record<string, any> = {};
 for (const [k, rel] of Object.entries(FILES)) {
   const p = join(ROOT, rel);
   src[k] = { rel, buf: readFileSync(p), text: readFileSync(p, 'utf8') };
@@ -164,7 +164,7 @@ const DOCS = {
   security:  'SECURITY.md',
   readiness: 'docs/agent-readiness.md',
 };
-const doc = {};
+const doc: Record<string, any> = {};
 for (const [k, rel] of Object.entries(DOCS)) {
   const p = join(ROOT, rel);
   doc[k] = { rel, buf: readFileSync(p), text: readFileSync(p, 'utf8') };
@@ -233,19 +233,19 @@ let dohUsed = false;
 const dohQuery = async (name, type) => {
   const r = await fetch(`${DOH}?name=${encodeURIComponent(name)}&type=${type}`,
     { headers: { accept: 'application/dns-json' }, signal: AbortSignal.timeout(6000) });
-  if (!r.ok) { const e = new Error(`DoH ${type} ${name} -> ${r.status}`); e.code = 'EDOHSTATUS'; throw e; }
-  const j = await r.json();
+  if (!r.ok) { const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> ${r.status}`); e.code = 'EDOHSTATUS'; throw e; }
+  const j: any = await r.json();
   // NXDOMAIN and NODATA are ANSWERS. They keep their own error codes so the caller treats them
   // as findings, exactly as the system resolver's ENOTFOUND and ENODATA are treated.
-  if (j.Status === 3) { const e = new Error(`DoH ${type} ${name} -> NXDOMAIN`); e.code = 'ENOTFOUND'; throw e; }
+  if (j.Status === 3) { const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> NXDOMAIN`); e.code = 'ENOTFOUND'; throw e; }
   // Every other non-zero rcode is the RESOLVER talking, not the zone: 2 SERVFAIL is the same
   // condition the system path reports as ESERVFAIL, and 5 REFUSED, 1 FORMERR or 4 NOTIMP say the
   // question was not answered at all. Before 2026-09-05 these fell through the empty Answer
   // below and were booked as ENODATA, a finding, with no fallback to the second resolver.
-  if (j.Status === 2) { const e = new Error(`DoH ${type} ${name} -> SERVFAIL`); e.code = 'ESERVFAIL'; throw e; }
-  if (j.Status !== 0) { const e = new Error(`DoH ${type} ${name} -> rcode ${j.Status}`); e.code = 'EDOHRCODE'; throw e; }
+  if (j.Status === 2) { const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> SERVFAIL`); e.code = 'ESERVFAIL'; throw e; }
+  if (j.Status !== 0) { const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> rcode ${j.Status}`); e.code = 'EDOHRCODE'; throw e; }
   const ans = (j.Answer || []).filter((a) => a.type === (type === 'MX' ? 15 : 16));
-  if (!ans.length) { const e = new Error(`DoH ${type} ${name} -> no ${type} record`); e.code = 'ENODATA'; throw e; }
+  if (!ans.length) { const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> no ${type} record`); e.code = 'ENODATA'; throw e; }
   dohUsed = true;
   return type === 'MX'
     ? ans.map((a) => { const [pref, ex] = String(a.data).trim().split(/\s+/); return { priority: Number(pref), exchange: ex }; })
@@ -322,7 +322,7 @@ console.log('\nSecret files stay out of the public repo');
   // itself. A loop over a list reads the same and hides which entry went missing.
   check(giLines.includes('THREAT_MODEL.md'), '.gitignore still excludes THREAT_MODEL.md');
   check(giLines.includes('VULN-FINDINGS.*'), '.gitignore still excludes VULN-FINDINGS.*');
-  check(giLines.includes('tools/verify.proxy.mjs'), '.gitignore still excludes tools/verify.proxy.mjs');
+  check(giLines.includes('tools/verify.proxy.mts'), '.gitignore still excludes tools/verify.proxy.mts');
 }
 
 console.log('\nShare card manifest (tools/og-cards.json)');
@@ -424,7 +424,7 @@ check(doc.readiness.text.includes(ar), `${doc.readiness.rel} carries ${ar}`);
   check(doc.security.text.includes(`Checked ${checkedAt}`), `${doc.security.rel} carries Checked ${checkedAt}`);
 }
 
-let CAT_LOOKUP = () => undefined;
+let CAT_LOOKUP: (item?: any) => any = () => undefined;
 console.log('\nCategory set (facts.json owns which categories exist)');
 // Five checks and one board proved the score. Nothing proved the SET. The five
 // categories are stated on six surfaces, in six different spellings, and until
@@ -453,7 +453,7 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   const swMissing = [];
   for (const [k, keys] of [['evidenceTwin', ['spanFrom', 'spanTo', 'spellingIndex', 'template']],
                            ['auditGuide', ['introVerb', 'locatingSentence']],
-                           ['readme', ['countSentence', 'allSentence']]]) {
+                           ['readme', ['countSentence', 'allSentence']]] as [string, string[]][]) {
     if (!SW[k]) { swMissing.push(k); continue; }
     for (const kk of keys) if (!SW[k][kk]) swMissing.push(`${k}.${kk}`);
   }
@@ -962,7 +962,7 @@ const twMdTwin = (path) => {
 // the run fails:
 //   home agent box intro (the md twin carries its own Markdown views note)
 //   home contact intro (CTA block, per-medium wording).
-const twConverted = {
+const twConverted: Record<string, any> = {
   // 'Independent agent-readiness scan of turva.dev' is hand-rendered as the scan board, not as prose.
   // It was previously 'covered' by a mdParas() call in serveHomeHtml whose result nothing interpolated,
   // so this gate read a no-op as proof the section was rendered (2026-08-01).
@@ -2119,7 +2119,7 @@ console.log('\nCurrency symbol matches facts.prices.currency (round 14, R2a-3)')
       .map(([k]) => k);
     check(strayFound.length === 0,
       `worker.ts prices no service in a currency symbol other than ${symbol}${strayFound.length ? ' :: found ' + strayFound.join(', ') : ''}`);
-    const priceVals = Object.entries(facts.prices).filter(([k]) => k !== 'currency').map(([, v]) => v);
+    const priceVals = Object.entries<any>(facts.prices).filter(([k]) => k !== 'currency').map(([, v]) => v);
     const missingSymbol = priceVals.filter((v) => !src.worker.text.includes(`${symbol}${v.toLocaleString('en-US')}`));
     check(priceVals.length > 0 && missingSymbol.length === 0,
       `every facts.prices amount appears in worker.ts written with ${symbol}${missingSymbol.length ? ' :: missing ' + missingSymbol.join(', ') : ''}`);
@@ -2308,7 +2308,7 @@ try {
   const mpcEntry = pathToFileURL(createRequire(join(ROOT, 'turva-worker', 'package.json')).resolve('markdown-parity-check')).href;
   const workerTextForImport = workerJs.replace('from "markdown-parity-check";', 'from "' + mpcEntry + '";');
   const { default: workerModule } = await import('data:text/javascript;base64,' + Buffer.from(workerTextForImport).toString('base64'));
-  for (const [p, s] of Object.entries(sigsLocal.signatures)) {
+  for (const [p, s] of Object.entries<any>(sigsLocal.signatures)) {
     const res = await workerModule.fetch(new Request('https://turva.dev' + p), {});
     const body = Buffer.from(await res.arrayBuffer());
     const pub = keyByKid[s.kid];
@@ -2316,6 +2316,29 @@ try {
     check(valid, `pre-deploy: this worker.ts's own served bytes for ${p} still match its own stored signature`);
   }
 } catch (e) { bad('pre-deploy signature check: ' + (errWhy(e))); }
+
+console.log('\nNo JavaScript files in the repository (Tek-663, phase W6)');
+// Since 2026-10-20 the Worker source, its tests and this checker are TypeScript: src/worker.ts,
+// test/*.test.ts and tools/verify.mts. Tek-663 decided that the repository holds no .js, .mjs or
+// .cjs file at all. Nothing else would notice one coming back. This walk fails the run and names
+// every such file. It skips node_modules, .wrangler and .git at any depth, because they are
+// installed or generated, not source. The four scripts the Worker serves to browsers are strings
+// inside worker.ts, not files. They are outside this check by design.
+{
+  const skipDirs = new Set(['node_modules', '.wrangler', '.git']);
+  const jsFiles = [];
+  const walk = (dir, rel) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (skipDirs.has(e.name)) continue;
+      const r = rel ? rel + '/' + e.name : e.name;
+      if (e.isDirectory()) walk(join(dir, e.name), r);
+      else if (/\.[cm]?js$/i.test(e.name)) jsFiles.push(r);
+    }
+  };
+  walk(ROOT, '');
+  check(jsFiles.length === 0, 'the repository holds no .js, .mjs or .cjs file outside node_modules, .wrangler and .git'
+    + (jsFiles.length ? ' (found: ' + jsFiles.join(', ') + ')' : ''));
+}
 
 if (LIVE) {
   console.log('\nLive (URLs + signatures)');
@@ -2437,7 +2460,7 @@ if (LIVE) {
       // that lost the field and a board that lost the number would compare undefined against
       // undefined and print `pass ... saw undefined`, which is Ansa 2 in the same entry and
       // was measured in this very file.
-      const catByLabel = new Map(CATS.map((c) => [String(c.label), c]));
+      const catByLabel = new Map<string, any>(CATS.map((c) => [String(c.label), c]));
       const wrongVal = cells.filter((c) => {
         const want = (catByLabel.get(c.cat) || {}).score;
         return typeof want !== 'string' || want.trim().length === 0 || c.val !== want;
@@ -2576,7 +2599,7 @@ if (LIVE) {
       const r = await fetch(base + '/v1/message:send', {
         method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
       });
-      const j = await r.json().catch(() => ({}));
+      const j: any = await r.json().catch(() => ({}));
       const msg = j.message || {};
       const parts = Array.isArray(msg.parts) ? msg.parts : [];
       return { status: r.status, skills: (msg.metadata || {}).skills, parts, data: (parts[0] || {}).data };
@@ -2590,7 +2613,7 @@ if (LIVE) {
     check(cardSkills.join(',') === Object.keys(OWN).sort().join(','),
       `A2A card declares the skills this gate knows how to read (saw [${cardSkills}])`);
 
-    const answers = {};
+    const answers: Record<string, any> = {};
     for (const id of Object.keys(OWN)) {
       const r = await a2a(id);
       answers[id] = r;
@@ -2768,7 +2791,7 @@ if (LIVE) {
       const tools = (provided && Array.isArray(provided.tools)) ? provided.tools : [];
       check(tools.length > 0, `WebMCP script registers tools when executed (saw ${tools.length})`);
       const byName = Object.fromEntries(tools.map((t) => [t.name, t]));
-      const answers = {};
+      const answers: Record<string, any> = {};
       // runInContext's timeout does not cover a promise settled after it returns, so
       // the await gets its own deadline.
       const deadline = (p, ms, what) => Promise.race([p,
@@ -2970,7 +2993,7 @@ if (LIVE) {
   // Each surface names the block it owns, so the amount check reads the same object the name
   // check read. An earlier draft re-derived the block with a conditional on the picker function,
   // which is the kind of cleverness this file exists to catch.
-  const priceListSurfaces = [
+  const priceListSurfaces: [string, (d: any) => any, (p: any) => any, (p: any, key: any) => any][] = [
     ['/.well-known/mcp/server-card.json', (d) => (d._meta || d.meta || {}).pricing || {},
       (p) => Object.keys(p).filter((k) => k !== 'currency' && k !== 'vatIncluded').map((k) => byKey[k] || k),
       (p, key) => (p[key] || {}).price],
@@ -2997,7 +3020,7 @@ if (LIVE) {
     try {
       const d = JSON.parse(await (await fetch(base + path)).text());
       const desc = String(d.description_for_model || '');
-      const amounts = desc.match(/\u20ac[\d,]+/g) || [];
+      const amounts: string[] = desc.match(/\u20ac[\d,]+/g) || [];
       check(nonEmpty && amounts.length === PRICED.length,
         `${path} description_for_model states ${PRICED.length} prices (saw ${amounts.length}: [${amounts.join(', ')}])`);
       for (const s of PRICED) check(amounts.includes(euroOf(s.priceKey)),
@@ -3014,7 +3037,7 @@ if (LIVE) {
     const idx = JSON.parse(await (await fetch(base + '/.well-known/agent-skills/index.json')).text());
     const skills = Array.isArray(idx.skills) ? idx.skills : [];
     check(skills.length > 0, `agent-skills index lists skills (${skills.map((s) => s.name).join(', ') || 'none'})`);
-    const bodies = {};
+    const bodies: Record<string, any> = {};
     for (const s of skills) {
       const r = await fetch(base + s.url);
       const text = await r.text();
@@ -3095,7 +3118,7 @@ if (LIVE) {
           `live: /.well-known/signatures.json carries exactly the required signed-path set (missing: ${missing.join(', ') || 'none'}; extra: ${extra.join(', ') || 'none'})`);
       }
     }
-    for (const [p, s] of Object.entries(sigs.signatures)) {
+    for (const [p, s] of Object.entries<any>(sigs.signatures)) {
       const body = await fetchBytes(p);
       const pub = keyByKid[s.kid];
       const valid = !!pub && edVerify(null, body, pub, Buffer.from(s.signature, 'base64url'));
@@ -3119,7 +3142,7 @@ if (LIVE) {
     // them from here also proves that rejection path is wired.
     const REV = '2026-07-28';
     const SERVER_INFO_KEY = 'io.modelcontextprotocol/serverInfo';
-    const rpc = async (method, params, extraHeaders) => {
+    const rpc = async (method, params?, extraHeaders?) => {
       const h = {
         'content-type': 'application/json',
         accept: 'application/json, text/event-stream',
@@ -3229,7 +3252,7 @@ if (LIVE) {
       headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream' },
       body: JSON.stringify([{ jsonrpc: '2.0', id: 1, method: 'tools/list' }, { jsonrpc: '2.0', id: 2, method: 'tools/list' }]),
     });
-    const batchBody = await batchRes.json().catch(() => ({}));
+    const batchBody: any = await batchRes.json().catch(() => ({}));
     check(batchRes.status === 400 && batchBody.error && batchBody.error.code === -32600,
       `a JSON-RPC batch is refused with 400 and -32600 (saw ${batchRes.status} / ${batchBody.error && batchBody.error.code})`);
 
@@ -3244,7 +3267,7 @@ if (LIVE) {
         'io.modelcontextprotocol/clientCapabilities': {},
       } } }),
     });
-    const noVerBody = await noVerRes.json().catch(() => ({}));
+    const noVerBody: any = await noVerRes.json().catch(() => ({}));
     check(noVerRes.status === 400 && noVerBody.error && noVerBody.error.code === -32020,
       `a ${REV} request without MCP-Protocol-Version is refused with 400 and -32020 (saw ${noVerRes.status} / ${noVerBody.error && noVerBody.error.code})`);
 
@@ -3364,7 +3387,7 @@ if (LIVE) {
       // it counts from. A promise carrying a DATE is the kind an agent acts on, so those are
       // the ones read back. This is the only place this repo can see that server at all.
       {
-        const PROMISES = [
+        const PROMISES: [string, RegExp, string][] = [
           ['audit', /re-scan within 30 days of the report/i, 'the re-scan within 30 days of the report'],
           ['audit', /round of written follow-up questions/i, 'the round of written follow-up questions'],
           ['advisory', /monthly re-scan/i, 'the monthly re-scan'],
