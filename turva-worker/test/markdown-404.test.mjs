@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker from "../src/worker.js";
+import worker from "../src/worker.ts";
 
 // Cloudflare's AI Crawl Control reported a third of markdown requests as unfulfilled
 // (2026-09-29). Every page already answered text/markdown; the rest were 404s answered

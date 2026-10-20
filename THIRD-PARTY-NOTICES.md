@@ -8,7 +8,7 @@ gives that data's own license, in full, as its own terms require.
 
 - Package: [character-entities](https://github.com/wooorm/character-entities)
 - Version used: 2.0.2
-- Where: `turva-worker/src/worker.js`, the `NAMED_REFERENCE_DATA` table (the WHATWG named
+- Where: `turva-worker/src/worker.ts`, the `NAMED_REFERENCE_DATA` table (the WHATWG named
   character reference list used to decode HTML entities in the llms.txt validator)
 - License: MIT
 - Copyright: (c) 2015 Titus Wormer <tituswormer@gmail.com>

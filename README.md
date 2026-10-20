@@ -50,7 +50,7 @@ Open the local URL Wrangler prints. The `dev` script is defined in [turva-worker
 
 ## How it works
 
-Page prose lives in `PAGE_MARKDOWN` in [the Worker source](turva-worker/src/worker.js) and is rendered into HTML at the edge. Layout and interactive elements are implemented in code. Shared metadata supplies canonical URLs, Open Graph tags and JSON-LD.
+Page prose lives in `PAGE_MARKDOWN` in [the Worker source](turva-worker/src/worker.ts) and is rendered into HTML at the edge. Layout and interactive elements are implemented in code. Shared metadata supplies canonical URLs, Open Graph tags and JSON-LD.
 
 The public site runs without a separate CMS or origin server. Static assets are served through Cloudflare Workers Assets. Sharing content sources reduces drift between HTML and Markdown, while the repository's checks test for inconsistencies.
 
@@ -155,7 +155,7 @@ These checks are tailored to turva.dev. Update the facts and checks for your own
 
 Requires Node.js, npm and a Cloudflare account. Wrangler is a development dependency in the nested project. The repository contains turva.dev's production configuration. Before deploying a fork:
 
-1. Replace the page content, business identity, canonical URLs, service data, payment links and discovery metadata in [the Worker source](turva-worker/src/worker.js) with your own.
+1. Replace the page content, business identity, canonical URLs, service data, payment links and discovery metadata in [the Worker source](turva-worker/src/worker.ts) with your own.
 2. Set your Worker name, domain routes and `zone_name` in [wrangler.jsonc](turva-worker/wrangler.jsonc). Both `workers_dev` and preview URLs are disabled, so configure routes and proxied DNS for the hostnames you intend to serve.
 3. Use your own `RATE_LIMITER`, `PARITY_LIMITER` and `BRIEFIT` bindings. `BRIEFIT` is a KV namespace that stores separately managed client briefs, and those records are not included in this repository. Remove the corresponding functionality if your site does not need it.
 4. Replace the IndexNow key and scheduled submission configuration, or remove the scheduled task if you do not use it.

@@ -3,7 +3,7 @@
 // This is the deploy gate the site runs on itself before every ship.
 // Source of truth: tools/facts.json. MIT, same license as the repo.
 //   node tools/verify.mjs          static, offline-safe; since Tek-475 this also verifies
-//                                  the four signed surfaces offline, against worker.js's OWN
+//                                  the four signed surfaces offline, against worker.ts's OWN
 //                                  bytes and its own embedded JWKS/signatures, before any
 //                                  deploy (kitka-lokit-003)
 //   node tools/verify.mjs --live   also GET every declared URL, verify the Ed25519
@@ -306,8 +306,8 @@ for (const f of [...Object.values(src), ...Object.values(doc)]) {
   check(!f.text.includes('\r\r'), `${f.rel}: no doubled CR`);
   check(nlOk, `${f.rel}: clean ${crlf===0?'LF':'CRLF'} newlines`);
 }
-try { execFileSync(process.execPath, ['--input-type=module', '--check'], { input: workerJs, stdio: ['pipe', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 }); ok('worker.js parses (types stripped, node --check)'); }
-catch (e) { bad('worker.js node --check: ' + String(e.stderr||e.message).slice(0,200)); }
+try { execFileSync(process.execPath, ['--input-type=module', '--check'], { input: workerJs, stdio: ['pipe', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 }); ok('worker.ts parses (types stripped, node --check)'); }
+catch (e) { bad('worker.ts node --check: ' + String(e.stderr||e.message).slice(0,200)); }
 
 console.log('\nSecret files stay out of the public repo');
 // B2-12 (round 12, batch E16). Three lines in the repo root .gitignore are the only thing
@@ -359,7 +359,7 @@ console.log('\nShare card manifest (tools/og-cards.json)');
     `every og-cards.json entry names a file in turva-worker/public${missingFile.length ? ' (missing: ' + missingFile.join(', ') + ')' : ''}`);
   const unreferenced = names.filter((n) => !src.worker.text.includes(`"/${n}"`));
   check(unreferenced.length === 0,
-    `every og-cards.json entry is referenced by worker.js${unreferenced.length ? ' (not referenced: ' + unreferenced.join(', ') + ')' : ''}`);
+    `every og-cards.json entry is referenced by worker.ts${unreferenced.length ? ' (not referenced: ' + unreferenced.join(', ') + ')' : ''}`);
   const fields = ['kicker', 'white', 'green', 'subhead'];
   const incomplete = names.filter((n) => !fields.every((f) => typeof cards[n][f] === 'string' && cards[n][f].trim().length > 0));
   check(incomplete.length === 0,
@@ -371,7 +371,7 @@ console.log('\nMeasured dates');
 const ar = facts.agentReadiness.measuredAt, sec = facts.security.measuredAt;
 const allowed = new Set([ar, sec]);
 const wm = [...src.worker.text.matchAll(/Measured (\d{4}-\d{2}-\d{2})/g)].map(m=>m[1]);
-check(wm.length>0 && wm.every(d=>allowed.has(d)), `worker.js "Measured <date>" all current (saw ${[...new Set(wm)].join(', ')||'none'})`);
+check(wm.length>0 && wm.every(d=>allowed.has(d)), `worker.ts "Measured <date>" all current (saw ${[...new Set(wm)].join(', ')||'none'})`);
 // Attribute each Measured date to its claim by exact adjacency: every
 // agent-readiness claim ends "on isitagentready.com. Measured <date>" and the
 // security claim ends "asserted. Measured <date>". Added after two guide lines
@@ -382,16 +382,16 @@ check(wm.length>0 && wm.every(d=>allowed.has(d)), `worker.js "Measured <date>" a
 // Floors reflect prose living once in PAGE_MARKDOWN: the security phrase
 // appears n=1 and agent-readiness n=3 (twin plus two guides).
 const arNear = [...src.worker.text.matchAll(/isitagentready\.com\. Measured (\d{4}-\d{2}-\d{2})/g)].map(m=>m[1]);
-check(arNear.length>=3 && arNear.every(d=>d===ar), `worker.js agent-readiness "Measured" all == ${ar} (saw ${[...new Set(arNear)].join(', ')||'none'}, n=${arNear.length})`);
+check(arNear.length>=3 && arNear.every(d=>d===ar), `worker.ts agent-readiness "Measured" all == ${ar} (saw ${[...new Set(arNear)].join(', ')||'none'}, n=${arNear.length})`);
 const secNear = [...src.worker.text.matchAll(/asserted\. I measured all three on (\d{4}-\d{2}-\d{2})/g)].map(m=>m[1]);
-check(secNear.length>=1 && secNear.every(d=>d===sec), `worker.js security "Measured" all == ${sec} (saw ${[...new Set(secNear)].join(', ')||'none'}, n=${secNear.length})`);
+check(secNear.length>=1 && secNear.every(d=>d===sec), `worker.ts security "Measured" all == ${sec} (saw ${[...new Set(secNear)].join(', ')||'none'}, n=${secNear.length})`);
 const lvm = src.worker.text.match(/"lastVerified":\s*"(\d{4}-\d{2}-\d{2})"/);
-check(!!lvm && lvm[1]===ar, `worker.js HOME_JSON lastVerified == ${ar}`);
+check(!!lvm && lvm[1]===ar, `worker.ts HOME_JSON lastVerified == ${ar}`);
 check(src.readme.text.includes(ar), `README.md carries ${ar}`);
 // B2-06 (round 12, batch E16). Only the agent-readiness date was anchored in README.md,
 // although the same file carries the security measurement date in its own sentence
 // ("Measured on `turva.dev` on <date>") and `sec` was already read above. That sentence does
-// not match the "Measured <date>" pattern used for worker.js either, because a word sits in
+// not match the "Measured <date>" pattern used for worker.ts either, because a word sits in
 // between, so nothing was watching it. Both dates are anchored now.
 check(src.readme.text.includes(sec), `README.md carries ${sec}`);
 
@@ -714,13 +714,13 @@ check(/^\d{4}-\d{2}-\d{2}$/.test(String(H.measuredAt)), `facts.security.hardeniz
 // When Hardenize shares the Internet.nl date the prose names one date for all three;
 // otherwise it names the later Hardenize run separately. Either way the date must match facts.json.
 const hSentence = H.measuredAt === facts.security.measuredAt ? `I measured all three on ${H.measuredAt}.` : `and Hardenize again on ${H.measuredAt}.`;
-check(src.worker.text.includes(hSentence) && src.worker.text.includes(`Hardenize, measured ${H.measuredAt}: `), `worker.js Hardenize bullet carries the Hardenize date ${H.measuredAt}`);
+check(src.worker.text.includes(hSentence) && src.worker.text.includes(`Hardenize, measured ${H.measuredAt}: `), `worker.ts Hardenize bullet carries the Hardenize date ${H.measuredAt}`);
 check(src.readme.text.includes(`Measured on ${H.measuredAt}: all `), `README.md carries the Hardenize date ${H.measuredAt}`);
 for (const k of Object.keys(src)) check(containsAny(src[k].text, slashVariants(I.score)), `${src[k].rel} shows Internet.nl ${I.score}`);
-check(src.worker.text.includes(I.url), `Internet.nl URL in worker.js`);
+check(src.worker.text.includes(I.url), `Internet.nl URL in worker.ts`);
 const IM = facts.security.internetnlMail;
 for (const k of Object.keys(src)) check(containsAny(src[k].text, slashVariants(IM.score)), `${src[k].rel} shows the Internet.nl mail test ${IM.score}`);
-check(src.worker.text.includes(IM.url), `Internet.nl mail URL in worker.js`);
+check(src.worker.text.includes(IM.url), `Internet.nl mail URL in worker.ts`);
 // Fixed 2026-08-16 (round 12, finding B4-19, surface B2-07). The number 13 was hardcoded into
 // this regex while its canonical home is facts.security.hardenize.result ("all 13 categories
 // passed"), and the Rot gates block lower in this same file already derives it correctly. A
@@ -750,8 +750,8 @@ for (const svc of PRICED_STATIC) {
   check(Number.isFinite(val), `facts.prices resolves ${svc.priceKey} to a number (${svc.name})`);
   if (!Number.isFinite(val)) continue;
   const euro = '€' + val.toLocaleString('en-US');
-  check(src.worker.text.includes(`"price": ${val}`), `worker.js "price": ${val} (${svc.name})`);
-  check(src.worker.text.includes(euro), `worker.js ${euro} (${svc.name})`);
+  check(src.worker.text.includes(`"price": ${val}`), `worker.ts "price": ${val} (${svc.name})`);
+  check(src.worker.text.includes(euro), `worker.ts ${euro} (${svc.name})`);
 }
 
 console.log('\nBundled implementation add-ons (Tek-317)');
@@ -777,8 +777,8 @@ console.log('\nBundled implementation add-ons (Tek-317)');
   check(B.every((x) => !priceKeys.includes(x.id)), 'no bundled add-on id doubles as a facts.prices key');
   for (const x of B) {
     const euro = '\u20ac' + x.price.toLocaleString('en-US');
-    check(w.includes(euro), `worker.js states ${euro} (${x.name})`);
-    check(w.includes(`"price": ${x.price}`) || w.includes(`price: ${x.price}`), `worker.js carries a structured price ${x.price} (${x.name})`);
+    check(w.includes(euro), `worker.ts states ${euro} (${x.name})`);
+    check(w.includes(`"price": ${x.price}`) || w.includes(`price: ${x.price}`), `worker.ts carries a structured price ${x.price} (${x.name})`);
     // Absent from the checkout surfaces, in cents. An amount that appears here would mean an
     // agent can buy the add-on without the diagnosis, which is the thing being promised away.
     const cents = String(x.price * 100);
@@ -841,10 +841,10 @@ console.log('\nVersions');
 // user input, but a partial escape is the same defect wherever it is copied,
 // and CodeQL flags it as one (turva-worker alert #2, 2026-07-26).
 const sv = facts.versions.site.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-check((src.worker.text.match(new RegExp(`"version":\\s*"${sv}"`,'g'))||[]).length>=2, `worker.js site version ${facts.versions.site} (>=2 manifests)`);
-check(src.worker.text.includes(`worker v${facts.versions.site}`), `worker.js header v${facts.versions.site}`);
+check((src.worker.text.match(new RegExp(`"version":\\s*"${sv}"`,'g'))||[]).length>=2, `worker.ts site version ${facts.versions.site} (>=2 manifests)`);
+check(src.worker.text.includes(`worker v${facts.versions.site}`), `worker.ts header v${facts.versions.site}`);
 // package.json "version" is inert (private, wrangler ignores it) but the repo
-// is public, so a reader sees it next to the worker.js header. Enforced so it
+// is public, so a reader sees it next to the worker.ts header. Enforced so it
 // cannot drift silently.
 const pkgSite = JSON.parse(readFileSync(join(ROOT, 'turva-worker/package.json'), 'utf8'));
 check(pkgSite.version === facts.versions.site, `turva-worker package.json version == ${facts.versions.site} (saw ${pkgSite.version})`);
@@ -867,7 +867,7 @@ console.log('\nCSP script hash');
     const body = w.slice(from, to).replace(/\r\n/g, '\n');
     const want = createHash('sha256').update(body, 'utf8').digest('base64');
     // Matched against the script-src directive itself, not the file. The hash
-    // sitting anywhere in worker.js proves nothing: it could be in a comment,
+    // sitting anywhere in worker.ts proves nothing: it could be in a comment,
     // or in style-src, and script-src would still carry no permission.
     const dir = (w.match(/"script-src ([^"]*)"/) || [])[1] || '';
     check(dir.includes(`'sha256-${want}'`), `CSP script-src carries the current WEBMCP_SCRIPT hash (sha256-${want}, script-src is "${dir}")`);
@@ -1033,12 +1033,12 @@ for (const [path, cfg] of Object.entries(twConverted)) {
 // literal, so both operands came from one object and a page missing from twConverted was
 // invisible to the gate. The message read as a coverage proof and proved nothing: the only
 // way it could go red was a `continue` above that had already printed its own FAIL. The set
-// is derived from worker.js now, in both directions.
+// is derived from worker.ts now, in both directions.
 //
 // serveGuideHtml is a named exception with a reason: it renders any guide path rather than
 // one fixed path, and its twin is gated separately below (the FAQ and guide sections read
 // twMdTwin for the guide pages by name). The exception list is itself checked against
-// worker.js, so a renamed renderer cannot hide inside it.
+// worker.ts, so a renamed renderer cannot hide inside it.
 const twServeFns = [...new Set([...src.worker.text.matchAll(/function (serve\w*Html)\s*\(/g)].map((m) => m[1]))];
 const twSkipFns = ['serveGuideHtml'];
 const twGated = new Set(Object.values(twConverted).map((c) => c.fn));
@@ -1047,7 +1047,7 @@ const twNoRenderer = [...twGated].filter((f) => !twServeFns.includes(f));
 const twSkipStale = twSkipFns.filter((f) => !twServeFns.includes(f));
 check(twServeFns.length > 0 && twcPages === Object.keys(twConverted).length
   && twUngated.length === 0 && twNoRenderer.length === 0 && twSkipStale.length === 0,
-  `converted gate covered ${twcPages} of ${twServeFns.length} worker.js page renderers`
+  `converted gate covered ${twcPages} of ${twServeFns.length} worker.ts page renderers`
   + `${twUngated.length ? ', ungated: ' + twUngated.join(', ') : ''}`
   + `${twNoRenderer.length ? ', names no renderer: ' + twNoRenderer.join(', ') : ''}`
   + `${twSkipStale.length ? ', exception names no renderer: ' + twSkipStale.join(', ') : ''}`);
@@ -1074,14 +1074,14 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   ];
   const WINDOW = 400;
   const naked = [];
-  for (const [name, text] of [['worker.js', w], ['README.md', src.readme.text]]) {
+  for (const [name, text] of [['worker.ts', w], ['README.md', src.readme.text]]) {
     for (const m of text.matchAll(/https:\/\/buy\.stripe\.com\/[A-Za-z0-9]+/g)) {
       const near = text.slice(Math.max(0, m.index - WINDOW), m.index + WINDOW);
       if (!CONDITIONS.some((c) => near.includes(c))) naked.push(name + ' ' + m[0]);
     }
   }
   const hits = [...w.matchAll(/https:\/\/buy\.stripe\.com\/[A-Za-z0-9]+/g)];
-  check(hits.length > 0, 'worker.js names at least one card checkout link');
+  check(hits.length > 0, 'worker.ts names at least one card checkout link');
   check(CONDITIONS.every((c) => w.includes(c)), 'both condition sentences are present to match against');
   check(naked.length === 0,
     `every checkout link sits within ${WINDOW} characters of a condition sentence${naked.length ? ' :: naked: ' + [...new Set(naked)].join(', ') : ''}`);
@@ -1101,7 +1101,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 // priced services drifting from four to three, only with no gate anywhere.
 //
 // WHAT IS CHECKED, stated narrowly. Every channel declared in facts.json.channels appears in
-// worker.js, and every sameAs entry in the JSON-LD resolves to a declared channel. It is a
+// worker.ts, and every sameAs entry in the JSON-LD resolves to a declared channel. It is a
 // membership and cardinality check, not a per-surface map: proving that each surface names the
 // right SUBSET would need each surface to declare which subset it owns, and inventing that
 // declaration now would be building a schema to satisfy a gate rather than to describe the site.
@@ -1113,7 +1113,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   check(chKeys.length > 0, `facts.json declares the contact channels (${chKeys.length})`);
   const puuttuu = chKeys.filter((k) => !src.worker.text.includes(CH[k]));
   check(chKeys.length > 0 && puuttuu.length === 0,
-    `every declared channel appears in worker.js${puuttuu.length ? ' :: missing ' + puuttuu.join(', ') : ''}`);
+    `every declared channel appears in worker.ts${puuttuu.length ? ' :: missing ' + puuttuu.join(', ') : ''}`);
   // sameAs is the union of two declared lists, not one. The first version of this check assumed
   // every sameAs entry is a contact channel and failed on its first run against the business
   // registry and Wikidata entries, which are identity references rather than ways to reach a
@@ -1124,9 +1124,9 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   check(Object.keys(ID).length > 0, `facts.json declares the identity references (${Object.keys(ID).length})`);
   const idPuuttuu = Object.keys(ID).filter((k) => !src.worker.text.includes(ID[k]));
   check(Object.keys(ID).length > 0 && idPuuttuu.length === 0,
-    `every declared identity reference appears in worker.js${idPuuttuu.length ? ' :: missing ' + idPuuttuu.join(', ') : ''}`);
+    `every declared identity reference appears in worker.ts${idPuuttuu.length ? ' :: missing ' + idPuuttuu.join(', ') : ''}`);
   // matchAll, not match. The first version used .match() and read only the FIRST of the five
-  // sameAs blocks in worker.js, so four fifths of the surface it claims to cover were invisible
+  // sameAs blocks in worker.ts, so four fifths of the surface it claims to cover were invisible
   // to it, including the Person block on every article. An independent review found that on the
   // same day it was written, and it is the reason the count below is printed: a gate that says
   // "4 entries" when the file holds five blocks is telling you where it stopped looking.
@@ -1151,7 +1151,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   check(w.includes(`"vatID":"${want}"`), `JSON-LD vatID == facts.json ${want}`);
   const seen = [...new Set([...w.matchAll(/\bFI\d{8}\b/g)].map((m) => m[0]))];
   check(seen.length === 1 && seen[0] === want,
-    `worker.js spells one VAT ID and it is ${want} (saw ${JSON.stringify(seen)})`);
+    `worker.ts spells one VAT ID and it is ${want} (saw ${JSON.stringify(seen)})`);
   // Derivable from the business ID, so a drift between the two is the likelier error
   // than a typo in either alone.
   check(want === 'FI' + facts.businessId.replace('-', ''),
@@ -1220,7 +1220,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   const euroKeys = (text) => (text.match(/€\d{1,3}(?:,\d{3})*/g) || [])
     .map((a) => (PRICED.find((s) => euroOf(s.priceKey) === a) || {}).priceKey || a);
 
-  console.log('\nPublished price lists in worker.js (B1-02)');
+  console.log('\nPublished price lists in worker.ts (B1-02)');
   // The v3.90.0 gate reads six manifests and the /services markdown. It reads no page
   // prose, no JSON-LD and no META_BY_PATH, and on 2026-08-09 the buyer guide shipped a
   // three-service price list while its own FAQ JSON-LD on the same URL listed four.
@@ -1310,7 +1310,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const generated = JSON.parse(itemsSrc).map((p) => p[0]);
     const inline = uls.filter((u) => u.length > 0);
     // Four since v3.133.0 (Tek-358): /services moved onto cardPageNav with the other card pages.
-    check(uls.length === 4, `four navMenuHtml call sites in worker.js (saw ${uls.length})`);
+    check(uls.length === 4, `four navMenuHtml call sites in worker.ts (saw ${uls.length})`);
     check(uls.length - inline.length === 1, `exactly one nav is generated from an items array (saw ${uls.length - inline.length})`);
     const helper = region('function navMenuHtml', '\nfunction ');
     check((helper.match(/\$\{lis\}/g) || []).length === 2 && helper.includes('<details class="nv-mobile">') && helper.includes('<summary>Menu</summary>'),
@@ -1538,14 +1538,14 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   console.log('\nOne site order (2026-09-04, Tek-336)');
   // Round 17 found the blog ahead of the home page in llms-full.txt, the pricing on line 78
   // of llms.txt and five guide lists in five different orders. The order now has one home,
-  // PRIMARY_PATHS + AUX_PATHS + the /guides twin + META_BY_PATH dates in worker.js
+  // PRIMARY_PATHS + AUX_PATHS + the /guides twin + META_BY_PATH dates in worker.ts
   // (siteRank), and this block reads every hand-written list against it. What the code
   // computes (sitemap.xml, llms-full.txt) is checked at runtime in test/routes.test.mjs.
   {
     const primary = [...(region('var PRIMARY_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
     const aux = [...(region('var AUX_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
     check(primary.length >= 8 && primary[0] === '/' && primary.indexOf('/tools') < primary.indexOf('/company') && aux.length >= 2,
-      `PRIMARY_PATHS parsed from worker.js (${primary.length}: ${primary.join(' ')}) and AUX_PATHS (${aux.join(' ')})`);
+      `PRIMARY_PATHS parsed from worker.ts (${primary.length}: ${primary.join(' ')}) and AUX_PATHS (${aux.join(' ')})`);
     const seqSame = (label, found, want) => {
       let firstDiff = -1;
       for (let i = 0; i < Math.max(found.length, want.length); i++) { if (found[i] !== want[i]) { firstDiff = i; break; } }
@@ -1631,7 +1631,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // not mdOnly/hand must be rendered, and the rendered ones must keep the twin's order.
     // Extra rendered headings (index lists, hand sections) are ignored, not failed.
     try {
-      // worker.js imports markdown-parity-check (v3.154.0) and a data: URL resolves no package, so the
+      // worker.ts imports markdown-parity-check (v3.154.0) and a data: URL resolves no package, so the
       // bare specifier is pointed at the file the worker's own node_modules resolves it to.
       const mpcEntry = pathToFileURL(createRequire(join(ROOT, 'turva-worker', 'package.json')).resolve('markdown-parity-check')).href;
       const workerText = workerJs.replace('from "markdown-parity-check";', 'from "' + mpcEntry + '";');
@@ -1885,8 +1885,8 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     `every source anchor these gates read resolves${anchorFails.length ? ' :: ' + anchorFails.join(' | ') : ''}`);
 }
 
-// --- The homepage scan board, read STATICALLY from worker.js source ------------------
-// WHY THIS EXISTS. The board is hand-written HTML in worker.js. Tek-303 bound each cell's
+// --- The homepage scan board, read STATICALLY from worker.ts source ------------------
+// WHY THIS EXISTS. The board is hand-written HTML in worker.ts. Tek-303 bound each cell's
 // VALUE to its own category's score in facts.json, but the only gate that read the board
 // was the live one further down, which fetches the served page. That means a plain
 // `node tools/verify.mjs` could not see the deployed page and facts.json drifting apart,
@@ -1895,7 +1895,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 //
 // WHAT THIS CLAIM IS WORTH, said out loud because a green gate proves only what it
 // measures. Reading the source is a WEAKER claim than reading the served bytes: it proves
-// the string is in worker.js, not that a buyer's browser receives it. That distinction is
+// the string is in worker.ts, not that a buyer's browser receives it. That distinction is
 // the whole point of gotchas 2026-07-26 (jatko 2), and it is why this block does not
 // replace the live one. What it adds is the half the live gate cannot give: it runs
 // without the network, on every static run, before any deploy, so a source edit that
@@ -1915,7 +1915,7 @@ const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
   // Since Tek-488 round 3 the board is a list whose cells read as the twin's rows, "Label: 100/100.",
   // so the colon and the period are part of the shape and the label and the value are read between them.
   const gridM = lahde.match(/<ul class="board-grid">([\s\S]*?)<\/ul>\s*<p class="board-sum">([\s\S]*?)<\/p>/);
-  if (!gridM) return ['board-grid / board-sum not found in worker.js source'];
+  if (!gridM) return ['board-grid / board-sum not found in worker.ts source'];
   const cells = [...gridM[1].matchAll(/<li class="cell"><span class="cat">([^<]*):<\/span>\s*<span class="val">([^<]*)\.<\/span><\/li>/g)]
     .map((m) => ({ cat: twDecode(m[1]).trim(), val: twDecode(m[2]).trim() }));
   const want = (Array.isArray(kategoriat) ? kategoriat : []);
@@ -1969,7 +1969,7 @@ const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
   } else {
     const loydot = boardLoydot(src.worker.text, CATS, iar.score, lvl);
     check(loydot.length === 0,
-      `static board gate: worker.js source board == facts.json (${loydot.length ? loydot.join(' | ') : `${CATS.length} cells, labels, order, values and summary; 8 controls green; the SERVED page is proved by --live, not here`})`);
+      `static board gate: worker.ts source board == facts.json (${loydot.length ? loydot.join(' | ') : `${CATS.length} cells, labels, order, values and summary; 8 controls green; the SERVED page is proved by --live, not here`})`);
   }
 }
 
@@ -2006,7 +2006,7 @@ console.log('\nRobots.txt agent lists, generated and checked (round 14, R1a-14-2
   const ri = workerJs.indexOf(robotsStart);
   const rj = ri < 0 ? -1 : workerJs.indexOf(robotsEnd, ri);
   if (ri < 0 || rj < 0) {
-    bad('robots.txt agent lists: ROBOTS_ALLOW_AGENTS..ROBOTS_TXT block not found in worker.js');
+    bad('robots.txt agent lists: ROBOTS_ALLOW_AGENTS..ROBOTS_TXT block not found in worker.ts');
   } else {
     const robotsBlock = workerJs.slice(ri, rj + robotsEnd.length);
     let ROBOTS_ALLOW_AGENTS, ROBOTS_DISALLOW_AGENTS, ROBOTS_TXT;
@@ -2019,9 +2019,9 @@ console.log('\nRobots.txt agent lists, generated and checked (round 14, R1a-14-2
     if (ROBOTS_TXT !== undefined) {
       const robotsEsc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       check(Array.isArray(ROBOTS_ALLOW_AGENTS) && ROBOTS_ALLOW_AGENTS.length > 0,
-        `ROBOTS_ALLOW_AGENTS parsed from worker.js (${(ROBOTS_ALLOW_AGENTS || []).length} agents)`);
+        `ROBOTS_ALLOW_AGENTS parsed from worker.ts (${(ROBOTS_ALLOW_AGENTS || []).length} agents)`);
       check(Array.isArray(ROBOTS_DISALLOW_AGENTS) && ROBOTS_DISALLOW_AGENTS.length > 0,
-        `ROBOTS_DISALLOW_AGENTS parsed from worker.js (${(ROBOTS_DISALLOW_AGENTS || []).length} agents)`);
+        `ROBOTS_DISALLOW_AGENTS parsed from worker.ts (${(ROBOTS_DISALLOW_AGENTS || []).length} agents)`);
       const allowMissing = (ROBOTS_ALLOW_AGENTS || []).filter((ua) =>
         !new RegExp(`User-agent: ${robotsEsc(ua)}\nAllow: /\nContent-Signal: search=yes, ai-input=yes, ai-train=yes\n`).test(ROBOTS_TXT));
       check(allowMissing.length === 0,
@@ -2050,7 +2050,7 @@ console.log('\nSitemap and canonical path sets agree (round 14, R14d-5)');
   const sitemapPaths = smM ? [...smM[1].matchAll(/\["([^"]+)"/g)].map((m) => m[1]) : [];
   const canonicalPaths = cpM3 ? [...cpM3[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
   check(sitemapPaths.length > 2 && canonicalPaths.length > 2,
-    `SITEMAP_ENTRIES (${sitemapPaths.length}) and CANONICAL_PATHS (${canonicalPaths.length}) both parsed from worker.js`);
+    `SITEMAP_ENTRIES (${sitemapPaths.length}) and CANONICAL_PATHS (${canonicalPaths.length}) both parsed from worker.ts`);
   const ALLOWED_SITEMAP_ONLY = ['/auth.md'];
   const sitemapExtra = sitemapPaths.filter((p) => !canonicalPaths.includes(p) && !ALLOWED_SITEMAP_ONLY.includes(p));
   const canonicalExtra = canonicalPaths.filter((p) => !sitemapPaths.includes(p));
@@ -2060,8 +2060,8 @@ console.log('\nSitemap and canonical path sets agree (round 14, R14d-5)');
     `every CANONICAL_PATHS path is in SITEMAP_ENTRIES${canonicalExtra.length ? ' :: ' + canonicalExtra.join(', ') : ''}`);
 }
 
-console.log('\nRate limiter: wrangler.jsonc vs worker.js literals (round 14, R1g-1)');
-// The 100/60 s figure is written out as a literal in three places in worker.js (the
+console.log('\nRate limiter: wrangler.jsonc vs worker.ts literals (round 14, R1g-1)');
+// The 100/60 s figure is written out as a literal in three places in worker.ts (the
 // enforcement comment, the RateLimit-Policy header, and the 429 body) and none of them
 // read the wrangler.jsonc binding that actually sets the limit. A change to the binding
 // would leave every one of those three sentences advertising a number nobody enforces.
@@ -2075,7 +2075,7 @@ console.log('\nRate limiter: wrangler.jsonc vs worker.js literals (round 14, R1g
     `wrangler.jsonc RATE_LIMITER simple.limit/period parsed (limit=${rlLimit}, period=${rlPeriod})`);
   if (rlLimit !== null && rlPeriod !== null) {
     check(src.worker.text.includes(`'"default";q=${rlLimit};w=${rlPeriod}'`),
-      `worker.js RateLimit-Policy header literal matches wrangler.jsonc (q=${rlLimit};w=${rlPeriod})`);
+      `worker.ts RateLimit-Policy header literal matches wrangler.jsonc (q=${rlLimit};w=${rlPeriod})`);
     const rlWording = `${rlLimit} requests per ${rlPeriod} seconds`;
     // avoimet-muisti-011 / Tek-475: this used to count the whole file, so it stayed green
     // on two incidental hits (the release-header comment, an old blog post) even if the
@@ -2088,19 +2088,19 @@ console.log('\nRate limiter: wrangler.jsonc vs worker.js literals (round 14, R1g
     const rlBlockToRaw = rlBlockFrom >= 0 ? src.worker.text.indexOf(rlBlockEnd, rlBlockFrom) : -1;
     const rlBlockTo = rlBlockToRaw >= 0 ? rlBlockToRaw + rlBlockEnd.length : -1;
     check(rlBlockFrom >= 0 && rlBlockTo > rlBlockFrom,
-      `worker.js: the rate limiter's own enforcement comment and its 429 Response() are both found`);
+      `worker.ts: the rate limiter's own enforcement comment and its 429 Response() are both found`);
     const rlBlock = rlBlockTo > rlBlockFrom ? src.worker.text.slice(rlBlockFrom, rlBlockTo) : '';
     const rlWordingCount = (rlBlock.match(new RegExp(rlWording.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
     check(rlWordingCount >= 2,
-      `worker.js's rate limiter code states "${rlWording}" at least twice, in its own enforcement comment and its own 429 body (saw ${rlWordingCount})`);
+      `worker.ts's rate limiter code states "${rlWording}" at least twice, in its own enforcement comment and its own 429 body (saw ${rlWordingCount})`);
   }
 }
 
 console.log('\nCurrency symbol matches facts.prices.currency (round 14, R2a-3)');
 // facts.prices.currency is read by NAME in several places (see priceKeys above) but its
-// VALUE was compared to nothing on a static run: every euro figure in worker.js uses a
+// VALUE was compared to nothing on a static run: every euro figure in worker.ts uses a
 // literal "€", never facts.prices.currency. If the currency were ever changed in
-// facts.json, nothing here would notice the symbols in worker.js still say euro.
+// facts.json, nothing here would notice the symbols in worker.ts still say euro.
 {
   const CURRENCY_SYMBOL = { EUR: '€', USD: '$', GBP: '£' };
   const cur = facts.prices.currency;
@@ -2118,18 +2118,18 @@ console.log('\nCurrency symbol matches facts.prices.currency (round 14, R2a-3)')
       .filter(([, s]) => new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\d{2,}').test(src.worker.text))
       .map(([k]) => k);
     check(strayFound.length === 0,
-      `worker.js prices no service in a currency symbol other than ${symbol}${strayFound.length ? ' :: found ' + strayFound.join(', ') : ''}`);
+      `worker.ts prices no service in a currency symbol other than ${symbol}${strayFound.length ? ' :: found ' + strayFound.join(', ') : ''}`);
     const priceVals = Object.entries(facts.prices).filter(([k]) => k !== 'currency').map(([, v]) => v);
     const missingSymbol = priceVals.filter((v) => !src.worker.text.includes(`${symbol}${v.toLocaleString('en-US')}`));
     check(priceVals.length > 0 && missingSymbol.length === 0,
-      `every facts.prices amount appears in worker.js written with ${symbol}${missingSymbol.length ? ' :: missing ' + missingSymbol.join(', ') : ''}`);
+      `every facts.prices amount appears in worker.ts written with ${symbol}${missingSymbol.length ? ' :: missing ' + missingSymbol.join(', ') : ''}`);
   }
 }
 
 console.log('\nAutolink: bare hosts in the served markdown (kierros 18, S5-1)');
 // renderInline() links protocol-less "label.label/path" strings. A reverse-DNS
 // identifier has that exact shape, and two MCP metadata keys in a blog post rendered
-// as links to a host that does not resolve. worker.js now requires the last label to
+// as links to a host that does not resolve. worker.ts now requires the last label to
 // be in AUTOLINK_TLDS. That alone would fail SILENTLY on a new top-level domain: the
 // link would just stop being a link, and nothing would say so. This gate is the loud
 // half. Every autolink-shaped string in the served markdown must either end in a
@@ -2142,8 +2142,8 @@ console.log('\nAutolink: bare hosts in the served markdown (kierros 18, S5-1)');
   };
   const tlds = setOf('AUTOLINK_TLDS');
   const notHosts = setOf('AUTOLINK_NOT_HOSTS');
-  check(Array.isArray(tlds) && tlds.length > 0, `AUTOLINK_TLDS parsed from worker.js (${tlds ? tlds.length : 0} top-level domains)`);
-  check(Array.isArray(notHosts), `AUTOLINK_NOT_HOSTS parsed from worker.js (${notHosts ? notHosts.length : 0} declared non-hosts)`);
+  check(Array.isArray(tlds) && tlds.length > 0, `AUTOLINK_TLDS parsed from worker.ts (${tlds ? tlds.length : 0} top-level domains)`);
+  check(Array.isArray(notHosts), `AUTOLINK_NOT_HOSTS parsed from worker.ts (${notHosts ? notHosts.length : 0} declared non-hosts)`);
   if (tlds && notHosts) {
     const pmStart = src.worker.text.indexOf('var PAGE_MARKDOWN');
     const pmEnd = src.worker.text.indexOf('var META_BY_PATH');
@@ -2176,7 +2176,7 @@ console.log('\nRetest window: the correction add-on exception (Tek-481, Tek-482)
 // sentences carry it, written by hand across the home and /services cards, the product
 // pages, a guide, the services skill, the JSON-LD offers and the ACP session. Nothing read
 // it back, and the same promise had drifted between two repos once already (the PROMISES
-// comment below, 2026-09-10). This gate reads every sentence of worker.js that names a
+// comment below, 2026-09-10). This gate reads every sentence of worker.ts that names a
 // window start and fails when one of them lacks the exception, and it fails when fewer
 // sentences than the measured floor name a start at all, so a rewording that slips past
 // the pattern is loud rather than silently unread. The Shopify sample's dated window
@@ -2198,7 +2198,7 @@ console.log('\nRetest window: the correction add-on exception (Tek-481, Tek-482)
     }
   });
   check(found.length >= FLOOR,
-    `at least ${FLOOR} sentences in worker.js name the start day of an included retest window (saw ${found.length})`);
+    `at least ${FLOOR} sentences in worker.ts name the start day of an included retest window (saw ${found.length})`);
   check(missing.length === 0,
     'every sentence naming a retest window start also names the delivered corrections of the correction add-on'
     + (missing.length ? ' :: ' + missing.slice(0, 3).join(' | ') : ''));
@@ -2267,16 +2267,16 @@ console.log('\nSigned surfaces match their stored signature, offline before depl
 // if (LIVE) below, including the live signature check further down, only runs AFTER a
 // deploy, and on failure it only prints a warning, never Die()s. So the static gate never
 // checked a single signature: a signed surface's served bytes could drift away from its own
-// stored signature and still pass here. This block closes that gap. It imports worker.js's
+// stored signature and still pass here. This block closes that gap. It imports worker.ts's
 // own default export from its own source text, no copy, no deploy, no network, no private key,
 // and calls its own fetch() handler locally for the four signed paths to get the exact bytes
 // this ship would serve, then verifies each against the Ed25519 signature and JWKS that
-// worker.js itself already declares. A worker.js edit not yet followed by a fresh resign now
+// worker.ts itself already declares. A worker.ts edit not yet followed by a fresh resign now
 // fails HERE, before any ship, not only after one (Tek-475, kitka-lokit-003).
 try {
   const jwksM = src.worker.text.match(/var JWKS_JSON = "((?:[^"\\]|\\.)*)";/);
   const sigsM = src.worker.text.match(/var SIGNATURES_JSON = "((?:[^"\\]|\\.)*)";/);
-  if (!jwksM || !sigsM) throw new Error('JWKS_JSON or SIGNATURES_JSON not found in worker.js');
+  if (!jwksM || !sigsM) throw new Error('JWKS_JSON or SIGNATURES_JSON not found in worker.ts');
   const jwksLocal = JSON.parse(new Function('return "' + jwksM[1] + '"')());
   const sigsLocal = JSON.parse(new Function('return "' + sigsM[1] + '"')());
   const jwkToKey = (jwk) => {
@@ -2286,7 +2286,7 @@ try {
   };
   const keyByKid = Object.fromEntries(jwksLocal.keys.map((k) => [k.kid, jwkToKey(k)]));
   const preDeployCount = Object.keys(sigsLocal.signatures).length;
-  check(preDeployCount > 0, `worker.js SIGNATURES_JSON declares at least one surface to check pre-deploy (saw ${preDeployCount})`);
+  check(preDeployCount > 0, `worker.ts SIGNATURES_JSON declares at least one surface to check pre-deploy (saw ${preDeployCount})`);
   // F06: count equality alone passes a dropped path paired with an added query-variant
   // alias of another signed path. Check the exact required set instead.
   {
@@ -2296,7 +2296,7 @@ try {
     check(missing.length === 0 && extra.length === 0,
       `pre-deploy: SIGNATURES_JSON carries exactly the required signed-path set (missing: ${missing.join(', ') || 'none'}; extra: ${extra.join(', ') || 'none'})`);
   }
-  // Same technique as 5b above, not a plain file:// import of worker.js. e16portti.mjs runs
+  // Same technique as 5b above, not a plain file:// import of worker.ts. e16portti.mjs runs
   // this file inside a sandbox copy that deliberately excludes node_modules, with NODE_PATH
   // pointed at the real one instead (ebportti.mjs copies turva-worker the same way, but its
   // own cases never invoke this file). NODE_PATH is not consulted for ESM import resolution,
@@ -2313,7 +2313,7 @@ try {
     const body = Buffer.from(await res.arrayBuffer());
     const pub = keyByKid[s.kid];
     const valid = res.ok && !!pub && edVerify(null, body, pub, Buffer.from(s.signature, 'base64url'));
-    check(valid, `pre-deploy: this worker.js's own served bytes for ${p} still match its own stored signature`);
+    check(valid, `pre-deploy: this worker.ts's own served bytes for ${p} still match its own stored signature`);
   }
 } catch (e) { bad('pre-deploy signature check: ' + (errWhy(e))); }
 
@@ -2368,7 +2368,7 @@ if (LIVE) {
   } catch (e) { bad('server card CORS and x402 name: ' + errWhy(e)); }
 
   console.log('\nFAQ published where a reader can see it (B1-03)');
-  // Read from the served page, not from worker.js: a gate that greps the source proves the
+  // Read from the served page, not from worker.ts: a gate that greps the source proves the
   // string is in the source, which was true all along while the reader saw nothing. The
   // list of pages comes from the twins, so a page that stops publishing its FAQ is a
   // missing card here rather than a page nobody checks.
@@ -2406,7 +2406,7 @@ if (LIVE) {
   }
   // The homepage scan board is a surface that states the category set, and nothing
   // compared it to anything until 2026-08-01. It is read from the SERVED page rather
-  // than from worker.js on purpose: a gate that greps the source proves the string is
+  // than from worker.ts on purpose: a gate that greps the source proves the string is
   // in the source, which is a different claim from what a buyer's browser receives.
   // The cells are read as a shaped list in order, so a dropped cell, an extra cell, a
   // reordered cell and a changed score each fail on their own line. facts.json owns
@@ -2470,7 +2470,7 @@ if (LIVE) {
   // block did not do it.
   const nonEmpty = SERVICES.length > 0;
 
-  // The evidence twin, read as SERVED. The static section checks it in worker.js, and
+  // The evidence twin, read as SERVED. The static section checks it in worker.ts, and
   // the board block's own argument applies here too: a source read proves the string
   // is in the source. Agents read the markdown twin, so it is fetched the way they
   // fetch it.
@@ -2502,7 +2502,7 @@ if (LIVE) {
   // <h1>, which is what makes this a comparison rather than a liveness probe.
   //
   // WHAT IT DOES NOT ASK. It does not compare the served markdown byte for byte against the
-  // PAGE_MARKDOWN twin in worker.js. That would need a parser for a JS object of template
+  // PAGE_MARKDOWN twin in worker.ts. That would need a parser for a JS object of template
   // literals, and a parser that is subtly wrong reports subtly wrong results forever. Two
   // paths ARE compared against their source content above, and those two stay the deep check.
   // This is the wide one. Saying which is which is the point: a wide check presented as a deep
@@ -2521,7 +2521,7 @@ if (LIVE) {
   if (LIVE && process.argv.includes('--twins')) try {
     const cpM = src.worker.text.match(/var CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
     const paths = cpM ? [...cpM[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
-    check(paths.length > 2, `CANONICAL_PATHS parsed from worker.js (${paths.length} paths)`);
+    check(paths.length > 2, `CANONICAL_PATHS parsed from worker.ts (${paths.length} paths)`);
     const rikki = [];
     const rajoitettu = [];
     // 1100 ms between requests: 114 requests spread over about 125 s, roughly 55 in any 60 s window.
@@ -2643,7 +2643,7 @@ if (LIVE) {
   } catch (e) { bad('A2A message:send: ' + (errWhy(e))); }
 
   // WebMCP in-page tools. Structurally these run in a browser, so a gate is tempted to
-  // read WEBMCP_SCRIPT out of worker.js and call that proof. It is not: the CSP hash
+  // read WEBMCP_SCRIPT out of worker.ts and call that proof. It is not: the CSP hash
   // gate proves the script is intact in the SOURCE, and what was never proved is what
   // the tools RETURN. So the script is taken from the SERVED page and executed.
   //
@@ -2737,7 +2737,7 @@ if (LIVE) {
     const from = at < 0 ? -1 : w.indexOf('<script>', at) + '<script>'.length;
     const to = from < 0 ? -1 : w.indexOf('<\\/script>', from);
     const sourceBody = (at < 0 || to < 0) ? null : w.slice(from, to).replace(/\r\n/g, '\n');
-    check(!!sourceBody, 'WEBMCP_SCRIPT body found in worker.js');
+    check(!!sourceBody, 'WEBMCP_SCRIPT body found in worker.ts');
 
     const servedBody = inline.length === 1 ? inline[0] : null;
     const identical = !!sourceBody && servedBody === sourceBody;
@@ -3071,7 +3071,7 @@ if (LIVE) {
     // R2b14-2 (round 14). The loop below iterates Object.entries(sigs.signatures) and
     // never checked how many entries that was: a signatures.json that lost every entry
     // would run the loop zero times, issue zero bad() calls, and pass. The expected count
-    // is read from worker.js's own SIGNATURES_JSON rather than hardcoded here, so this
+    // is read from worker.ts's own SIGNATURES_JSON rather than hardcoded here, so this
     // cannot itself go stale when a manifest is added to or removed from the signing set.
     {
       const sjM = src.worker.text.match(/var SIGNATURES_JSON = "((?:[^"\\]|\\.)*)";/);
@@ -3084,7 +3084,7 @@ if (LIVE) {
       }
       const gotSigCount = Object.keys(sigs.signatures).length;
       check(wantSigCount !== null && wantSigCount > 0 && gotSigCount === wantSigCount,
-        `/.well-known/signatures.json carries the same number of entries as worker.js SIGNATURES_JSON (want ${wantSigCount}, saw ${gotSigCount})`);
+        `/.well-known/signatures.json carries the same number of entries as worker.ts SIGNATURES_JSON (want ${wantSigCount}, saw ${gotSigCount})`);
       // F06: also require the exact documented set of four paths, live, so a dropped
       // path paired with an added query-variant alias cannot hide behind equal counts.
       {
@@ -3643,7 +3643,7 @@ if (LIVE) {
     const ms = facts.mtaSts || {};
     const polSha = createHash('sha256').update(Buffer.from(pol, 'utf8')).digest('hex');
     check(ms.policySha256 === polSha,
-      `facts.json mtaSts.policySha256 == the policy in worker.js (facts ${String(ms.policySha256).slice(0, 16)}..., worker.js ${polSha.slice(0, 16)}...)`);
+      `facts.json mtaSts.policySha256 == the policy in worker.ts (facts ${String(ms.policySha256).slice(0, 16)}..., worker.ts ${polSha.slice(0, 16)}...)`);
     const liveId = ((sts[0] || '').match(/id=([A-Za-z0-9]+)/) || [])[1];
     console.log(`  note  the MX and TXT reads above came from ${dohUsed ? DOH + ' over DNS-over-HTTPS' : "this machine's own resolver"}`);
     check(!!ms.txtId && ms.txtId === liveId,

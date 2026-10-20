@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker from "../src/worker.js";
+import worker from "../src/worker.ts";
 
 // ChatGPT last read 2026-10-02 (W5 V-1, W6 F01, F08, F09, F10): the hosted validator's HTML check,
 // the ai-catalog MCP media type, the root security.txt Canonical lines, representativeQueries on

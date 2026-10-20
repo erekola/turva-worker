@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker from "../src/worker.js";
+import worker from "../src/worker.ts";
 
 // Regression tests for Tek-562 (outside reviews W26 to W35): the x402 EIP-712 name, the UCP key,
 // the closed ACP capabilities object, the A2A task routes, the server card CORS headers, the v6 key

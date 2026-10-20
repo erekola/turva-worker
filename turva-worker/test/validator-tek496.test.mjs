@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker from "../src/worker.js";
+import worker from "../src/worker.ts";
 
 // Regression tests for Tek-496 (outside audit 2026-09-26): the hosted llms.txt validator reads the
 // H1, the links, the order of headings, the link targets and the media type the way the format and

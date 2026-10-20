@@ -1,12 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker from "../src/worker.js";
+import worker from "../src/worker.ts";
 
 // Mirrors llms-txt-validator/test/round3.test.mjs (Tek-542, batch Fv) against the hosted
-// validator route instead of the package's own exports: worker.js exports only
+// validator route instead of the package's own exports: worker.ts exports only
 // { default, escapeHtml, renderInline, markdownToHtml, findLinkRelations }, so maskLocation,
 // validateLlmsTxt, collectLinks and collectLinkDefinitions are reached the way
-// test/tek-526-wk.test.mjs already reaches worker.js's validator internals, through
+// test/tek-526-wk.test.mjs already reaches worker.ts's validator internals, through
 // GET /llms-txt-validator?url=... with Accept: application/json and a mocked global fetch
 // standing in for the target host's /llms.txt and home page.
 
@@ -142,7 +142,7 @@ test("VN2: a collapsed reference, \"[label][]\", still resolves (regression guar
 });
 
 // --- V13 D5-1: with no slash at all, a ":" ahead of the last @ is user:password and is masked;
-// an @ with no ":" ahead of it (an asset name) stays as given. worker.js does not export
+// an @ with no ":" ahead of it (an asset name) stays as given. worker.ts does not export
 // maskLocation and no hosted route reaches this shape (a Location value is resolved against the
 // request URL first), so the function is read out of the source text and run as it stands.
 import { readFileSync } from "node:fs";
@@ -161,9 +161,9 @@ function stripTypes(text) {
 }
 
 function loadMaskLocation() {
-  const src = stripTypes(readFileSync(new URL("../src/worker.js", import.meta.url), "utf8"));
+  const src = stripTypes(readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8"));
   const start = src.indexOf("function maskLocation(href, base) {");
-  assert.ok(start >= 0, "maskLocation is in worker.js");
+  assert.ok(start >= 0, "maskLocation is in worker.ts");
   const close = /\n\}\r?\n/.exec(src.slice(start));
   assert.ok(close, "maskLocation has a closing brace at column 0");
   const body = src.slice(start, start + close.index + 2);

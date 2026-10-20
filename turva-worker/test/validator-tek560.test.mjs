@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker, { findLinkRelations } from "../src/worker.js";
+import worker, { findLinkRelations } from "../src/worker.ts";
 
 // Regression tests for Tek-560 (outside review 2026-10-02, items V01 to V04, V06, V07, V08 and
 // V10): the hosted llms.txt validator, the canonical copy. The package turva-llms-txt-validator

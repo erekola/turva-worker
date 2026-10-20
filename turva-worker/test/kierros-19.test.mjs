@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import worker, { markdownToHtml, renderInline } from "../src/worker.js";
+import worker, { markdownToHtml, renderInline } from "../src/worker.ts";
 
 // Regression tests for audit round 19 (docs/auditit/kierros-19/korjaussuunnitelma.md).
 // Each test names the finding id it guards (F1, K6-1, ... G1-5) so a failure maps back
@@ -14,7 +14,7 @@ const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open p
 const get = (path, opts = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 
-const workerSrc = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+const workerSrc = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
 
 // ---- F1: fenced code blocks and one-line ATX headings ----
 
@@ -341,7 +341,7 @@ test("G1-2: OPTIONS /api/v1 answers access-control-max-age 86400 exactly", async
 function parseLegacyRedirects(src) {
   const startMarker = "var LEGACY_REDIRECTS = {";
   const start = src.indexOf(startMarker);
-  if (start === -1) throw new Error("LEGACY_REDIRECTS not found in worker.js");
+  if (start === -1) throw new Error("LEGACY_REDIRECTS not found in worker.ts");
   const bodyStart = start + startMarker.length;
   const end = src.indexOf("};", bodyStart);
   if (end === -1) throw new Error("LEGACY_REDIRECTS closing brace not found");

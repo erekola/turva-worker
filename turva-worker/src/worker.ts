@@ -1,4 +1,5 @@
-// src/worker.js
+// src/worker.ts
+// turva.dev worker v3.211.2 - the Worker source is renamed from src/worker.js to src/worker.ts, a rename that by itself changes no byte, and wrangler bundles the .ts file with no build step (TypeScript migration, step 2); /blog/the-twin-is-the-page keeps its sentences and gets an Update, October 20 note naming src/worker.ts and the CI workflow that has run since September 10, with its modified date.
 // turva.dev worker v3.211.1 - /blog/five-rounds-before-the-agent-signed: the closing section no longer invites votes on the Brickken hub; it now says the campaign has ended and the repository is archived on GitHub.
 // turva.dev worker v3.211.0 - new Protocol notes post /blog/what-shopify-changed-for-agent-shopping (2026-10-18): What Shopify changed for agent shopping since August, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 44, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.210.1 - Shopify agent storefront check: the stale name Storefront and UCP MCP is replaced with Shopify's current names, Storefront Catalog MCP and Cart MCP on /api/ucp/mcp and the Policy and FAQs tool on /api/mcp, on the product page, the sample report (catalog and policy responses now read separately), /services, the agentic commerce guide and the structured data; MCP server card version 1.6.19 for the same correction in get_services.
@@ -2701,6 +2702,8 @@ From the outside almost nothing moved. The scanner read the site before and afte
 Two limits are worth stating plainly. The checks run on my machine before a deploy, and there is no CI behind them. And the blast radius of a bad edit is unchanged, because all content lives in template literals in module scope, so one stray interpolation marker would still take down every page rather than one. A build step would solve that differently, and at some size it wins. At this size, one file that renders itself is cheaper to keep honest.
 
 If you want to check any of this, request any guide or blog post with Accept: text/markdown and diff the response against its string in worker.js. They match byte for byte.
+
+Update, October 20: the file name and the missing CI mentioned above no longer describe the setup. The Worker's source file is now src/worker.ts, so the string to diff against is in worker.ts. And since September 10 a GitHub Actions workflow runs on every push and pull request. It runs the repository's tests and its own verify script, a subset of the checks that run on my machine before a deploy.
 
 ## Related
 
@@ -7548,7 +7551,7 @@ var OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.211.1",
+    "version": "3.211.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7827,7 +7830,7 @@ var A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.211.1",
+  "version": "3.211.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8511,7 +8514,7 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-18";
+var SITEMAP_LASTMOD = "2026-10-20";
 var SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -8922,6 +8925,7 @@ var META_BY_PATH = {
     description: "Two separately maintained versions of the same content drifted apart. This build note explains the move to shared content and the limits of the checks on it.",
     date: "2026-07-19",
     kind: "Build notes",
+    modified: "2026-10-20",
     image: "/og-the-twin-is-the-page.jpg",
     imageAlt: "turva.dev blog card: Ten card pages now render their prose from the markdown twin. What the parity gate caught before it retired and the check that replaced it."
   },
@@ -11820,7 +11824,7 @@ function cardPageHeaders(canonicalUrl) {
 // from the same address: HTML for a browser, .md and .json for a machine.
 //
 // WHY KV AND NOT PAGE_MARKDOWN. This repo is PUBLIC. A client's brief names the
-// company and its gaps, so writing it into worker.js would publish those permanently
+// company and its gaps, so writing it into worker.ts would publish those permanently
 // in a public repo and there would be no taking it back afterwards. On top of that,
 // every brief that goes out would be a code change, a deploy and a push. The content
 // therefore comes from KV and this file carries only the route.

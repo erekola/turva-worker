@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker, { findLinkRelations, markdownToHtml } from "../src/worker.js";
+import worker, { findLinkRelations, markdownToHtml } from "../src/worker.ts";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 
@@ -331,7 +331,7 @@ test("both address forms v2 names answer for a page, not only for the home page"
 // someone else's site may not have. Both cases below were found by an independent
 // review on the day this shipped.
 // The same contract, written out in both implementations: the npm package and the hosted
-// validator in turva-worker/src/worker.js. The cases are stated against the EXPECTED
+// validator in turva-worker/src/worker.ts. The cases are stated against the EXPECTED
 // public behaviour, not against each other, because two copies agreeing proves only that
 // they are copies. Added 2026-09-09 after a quoted attribute value and a quoted Link
 // parameter both reported a relation the page does not publish.
@@ -831,11 +831,11 @@ test("every page in the sitemap renders as HTML and as markdown", async () => {
 // R3b-1 (round 14, kierros 14 batch T). docs/endpoints.md declares 39 routes
 // plus an Aliases row, and every one of them is supposed to resolve because
 // the file's own first line says "if a path is listed here it resolves in
-// src/worker.js". A large group of them had never been exercised by
+// src/worker.ts". A large group of them had never been exercised by
 // worker.fetch in this file: this table closes that gap route by route, so a
 // path that stops resolving fails here before a deploy rather than only
 // during the next audit's live curl pass. Every expected status and
-// content-type below was read out of src/worker.js, not guessed: the 200s
+// content-type below was read out of src/worker.ts, not guessed: the 200s
 // are serveStatic() calls, and /oauth/authorize and /oauth/token both go
 // through serveOauthClosed(), which answers 400 with a spec-valid OAuth
 // error body rather than a 404, because the discovery documents advertise
@@ -941,7 +941,7 @@ test("footer: the copyright year is this year, read per request and not at modul
 test("R15 P4-2: OPTIONS answers 204 with preflight headers on every agent-api surface, not only /x402, /api/* and /agent/auth/*", async () => {
   // Round 15 measured live that OPTIONS on /api, /openapi.json, /llms.txt and the
   // /.well-known/ manifests fell through to the GET handler and returned the body with
-  // no access-control-allow-methods header. The preflight branch in src/worker.js now
+  // no access-control-allow-methods header. The preflight branch in src/worker.ts now
   // covers them; /v1/message:send keeps its own POST-only preflight and the fediverse
   // aliases keep redirecting.
   for (const path of ["/api", "/openapi.json", "/llms.txt", "/llms-full.txt", "/auth.md", "/robots.txt", "/.well-known/ai-plugin.json", "/.well-known/mcp/server-card.json", "/.well-known/agent-card.json", "/.well-known/x402", "/.well-known/api-catalog", "/x402", "/api/v1", "/oauth/token", "/oauth/authorize", "/security.txt", "/ai.txt", "/api-catalog", "/blog/feed.xml"]) {
@@ -1068,7 +1068,7 @@ test("R16 S2-2 and C5-11: the OpenAPI document and the API catalog name /api/v1 
 });
 
 test("R16 S4-1: no live brief address and no prospect name sits in the source", async () => {
-  const src = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  const src = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
   assert.ok(!/\/brief\/[a-z0-9]+-[a-z0-9]{13}\b/.test(src), "a real brief address (name-13 random chars) must not appear in the source");
   // The guarded names are held as SHA-256 digests of the lowercased name, so this public
   // test does not itself carry the names it keeps out of the source. Every substring of
@@ -1102,7 +1102,7 @@ test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guid
   assert.ok(guides.length >= 20, "the /guides twin lists the guides");
   assert.equal(guides[0], "/guides/agent-readiness-audit");
   assert.equal(guides[1], "/guides/choosing-an-agent-readiness-audit");
-  const src = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  const src = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
   const meta = src.slice(src.indexOf("var META_BY_PATH"));
   const posts = [...meta.matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{[\s\S]*?date: "(\d{4}-\d{2}-\d{2})"/g)].map((m, i) => ({ p: m[1], d: m[2], i }));
   const blog = posts.sort((a, b) => b.d.localeCompare(a.d) || a.i - b.i).map((x) => x.p);

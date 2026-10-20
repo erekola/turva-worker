@@ -1,6 +1,6 @@
 {
   "name": "turva-worker",
-  "main": "src/worker.js",
+  "main": "src/worker.ts",
   "assets": {
     "directory": "./public"
   },

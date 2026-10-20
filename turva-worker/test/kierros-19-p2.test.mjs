@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { stripTypeScriptTypes } from "node:module";
-import worker from "../src/worker.js";
+import worker from "../src/worker.ts";
 
 // Tek-664 (TypeScript migration W1): this slice is evaluated, so types are stripped first. Offsets and
 // lines are kept, and plain JavaScript comes back unchanged. Only the API's one-time experimental
@@ -28,13 +28,13 @@ const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open p
 const get = (path, opts = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 
-const workerSrc = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+const workerSrc = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
 
 // Ground truth for "every page": parsed from the source the same way the site itself builds
 // its sitemap and its IndexNow list, so this list can never drift from what CANONICAL_PATHS says.
 function parseCanonicalPaths(src) {
   const m = src.match(/var CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\);/);
-  if (!m) throw new Error("CANONICAL_PATHS not found in worker.js");
+  if (!m) throw new Error("CANONICAL_PATHS not found in worker.ts");
   return [...m[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((x) => x[1]);
 }
 
@@ -434,7 +434,7 @@ test("K4-P6: an Accept q value above 1 clamps to 1, turning a text/html vs appli
 // ---- K5-2: the ten dead CSS rules and their class usages are gone ----
 
 test("K5-2: the ten removed classes carry no CSS rule and no class attribute anywhere in the served source", () => {
-  // worker.js is the one and only source of every page's markup and CSS: nothing here is
+  // worker.ts is the one and only source of every page's markup and CSS: nothing here is
   // computed from external state, so a source-text sweep is exactly equivalent to sweeping
   // every rendered page, and is far cheaper. The CSS-rule check requires "{" or a pseudo-class
   // ":" right after the class name, on purpose: a looser class such as [{,: ] also matches JS
@@ -508,7 +508,7 @@ test("K6-P3: a brief's markdown and JSON forms carry cross-origin-resource-polic
 
 test("K6-P4: replaceExactlyOnce replaces a single occurrence and throws on zero or on more than one", () => {
   const fnSrc = extractFunction(stripTypes(workerSrc), "replaceExactlyOnce");
-  assert.ok(fnSrc, "replaceExactlyOnce must exist in worker.js");
+  assert.ok(fnSrc, "replaceExactlyOnce must exist in worker.ts");
   const fn = new Function("return (" + fnSrc + ");")();
   assert.equal(fn("a-b", "-", "+"), "a+b");
   assert.throws(() => fn("ab", "-", "+"), /occurs 0 times/);

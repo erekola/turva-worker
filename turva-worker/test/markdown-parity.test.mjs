@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import worker from "../src/worker.js";
+import worker from "../src/worker.ts";
 import { run, renderJson, TOOL_VERSION } from "markdown-parity-check";
 import { stripTypeScriptTypes } from "node:module";
 
@@ -405,7 +405,7 @@ test("Tek-484: every button row on the seven pages is a links-only paragraph of 
 });
 
 test("Tek-484: a block without a links-only paragraph fails the page build instead of dropping the row", () => {
-  const src = stripTypes(readFileSync(new URL("../src/worker.js", import.meta.url), "utf8"));
+  const src = stripTypes(readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8"));
   const at = src.indexOf("function mdCtaSplit(");
   const fn = new Function("return (" + src.slice(at, src.indexOf("\nfunction mdCtaHtml(", at)) + ");")();
   assert.throws(() => fn(["Some prose.", "More prose with a [link](/x) inside."], "t"), /no links-only paragraph/);

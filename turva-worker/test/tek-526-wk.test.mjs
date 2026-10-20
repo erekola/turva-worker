@@ -1,11 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker from "../src/worker.js";
+import worker from "../src/worker.ts";
 
 // Regression tests for the Wk batch of Tek-526 (korjausohje, vaihe 2, 2026-09-28):
-// A1 (V01 N01), A3 (V01 N02) and the worker.js side of decision 19 (T2-01, T2-02).
+// A1 (V01 N01), A3 (V01 N02) and the worker.ts side of decision 19 (T2-01, T2-02).
 // These fail until työt/astra-uusinta-2026-09-28/paikat/Wk.py has been applied to
-// src/worker.js; run with `node --test test/tek-526-wk.test.mjs` from
+// src/worker.ts; run with `node --test test/tek-526-wk.test.mjs` from
 // turva-worker/turva-worker after the patch lands, or bare `node --test` to run
 // the whole suite.
 

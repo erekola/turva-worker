@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import worker, { escapeHtml, renderInline, markdownToHtml } from "../src/worker.js";
+import worker, { escapeHtml, renderInline, markdownToHtml } from "../src/worker.ts";
 
 test("escapeHtml escapes all five HTML-significant characters", () => {
   assert.equal(escapeHtml("&<>\"'"), "&amp;&lt;&gt;&quot;&#39;");
