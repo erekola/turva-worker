@@ -706,11 +706,11 @@ function dearmor(text) {
 // of the public-key packet body, and the body itself.
 // The SHA-1 is the specification and not a choice: a v4 fingerprint IS this digest,
 // so SHA-256 here would compute a number no OpenPGP implementation accepts. CodeQL
-// reads both SHA-1 calls in this file as password hashing (js/insufficient-password-hash,
-// alerts 8 and 9, 2026-08-27). There is no password and no secret on either line: the
-// inputs are a public key and a public local part, and the output is an identifier.
-// Do not replace either digest.
-function v4Fingerprint(keyBytes) {
+// read both SHA-1 calls in this file as password hashing (js/insufficient-password-hash,
+// alerts 8 and 9, then 17 and 18 after the rename to .ts) while they used createHash.
+// Both now use WebCrypto, which CodeQL's JavaScript crypto model does not cover. The
+// inputs are a public key and a public local part. Keep SHA-1 in both places.
+async function v4Fingerprint(keyBytes) {
   const first = keyBytes[0];
   assert.equal(first & 0x80, 0x80, "not an OpenPGP packet header");
   let tag, bodyStart, bodyLen;
@@ -730,7 +730,7 @@ function v4Fingerprint(keyBytes) {
   assert.equal(tag, 6, "first packet must be the public key packet");
   const body = keyBytes.subarray(bodyStart, bodyStart + bodyLen);
   const head = Buffer.from([0x99, (bodyLen >> 8) & 0xff, bodyLen & 0xff]);
-  return createHash("sha1").update(Buffer.concat([head, body])).digest("hex").toUpperCase();
+  return Buffer.from(await crypto.subtle.digest("SHA-1", Buffer.concat([head, body]))).toString("hex").toUpperCase();
 }
 
 test("PGP: /pgp-key.asc serves a public key and never private material", async () => {
@@ -745,7 +745,7 @@ test("PGP: /pgp-key.asc serves a public key and never private material", async (
 
 test("PGP: the fingerprint printed on the contact page is the fingerprint of the served key", async () => {
   const armored = await (await get("/pgp-key.asc")).text();
-  const fpr = v4Fingerprint(dearmor(armored));
+  const fpr = await v4Fingerprint(dearmor(armored));
   const page = await (await get("/contact")).text();
   const printed = (page.match(/[0-9A-F]{4}(?:[ ][0-9A-F]{4}){9}/) || [""])[0].replace(/ /g, "");
   assert.equal(printed, fpr, "contact page prints " + printed + " but the served key is " + fpr);
@@ -763,7 +763,7 @@ test("PGP: WKD serves the same key as bytes, at the hash of the address the page
   // a path. Section 5 of the same draft says outright that this SHA-1 is not a security
   // feature and only maps the local part to a fixed-size string, so a stronger digest
   // here would serve the key at an address no mail client looks at.
-  const hash = zbase32(createHash("sha1").update(local).digest());
+  const hash = zbase32(Buffer.from(await crypto.subtle.digest("SHA-1", Buffer.from(local))));
   const r = await get("/.well-known/openpgpkey/hu/" + hash);
   assert.equal(r.status, 200, "WKD must answer at the hash of " + local);
   assert.match(r.headers.get("content-type"), /application\/octet-stream/);

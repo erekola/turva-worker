@@ -12018,7 +12018,7 @@ ${footerHtml(kieli)}
 </html>`;
 }
 
-async function serveBrief(route, pathname, env, request) {
+async function serveBrief(route, pathname, env: Env, request) {
   var kv = env && env.BRIEFIT;
   // Without the binding the route does not exist. This way the tests and the pre-deploy
   // state answer as they would for an unknown path, and a missing binding is not a 500.
@@ -14407,7 +14407,7 @@ async function paritySource(requested, final, res, accept, redirects) {
 
 // One of turva.dev's own pages, rendered in process with the Accept header the CLI sends. Redirects
 // are followed within turva.dev only, and every hop is checked against the published-page list again.
-async function parityFetchSelf(start, accept, env) {
+async function parityFetchSelf(start, accept, env: Env) {
   let url = new URL(start.href);
   let redirects = 0;
   const visited = new Set();
@@ -14434,10 +14434,10 @@ async function parityFetchSelf(start, accept, env) {
 
 // Phase 2: the remote transport lives in its own Worker behind a service binding, so its CPU limit
 // and its failures stay out of this isolate. Its answer is { status, report }.
-async function parityRemote(input, env) {
+async function parityRemote(input, env: Env) {
   let res;
   try {
-    res = await env.PARITY.fetch("https://parity.internal/check", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(input) });
+    res = await env.PARITY!.fetch("https://parity.internal/check", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(input) });
   } catch {
     throw new ParityError("remote_failed", 503, "The comparison service did not answer. Try again later.");
   }
@@ -14451,7 +14451,7 @@ function parityOptions(input) {
   return { selector: input ? input.selector : undefined, frontMatter: input ? input.frontMatter : "keep", strict: input ? input.strict : false, mode: "url" as const, limits: PARITY_LIMITS };
 }
 
-async function parityRunCheck(input, env) {
+async function parityRunCheck(input, env: Env) {
   const options = parityOptions(input);
   let html = null;
   let markdown = null;
@@ -14521,7 +14521,7 @@ function parityResponse(asJson, status, report, state, retryAfter?) {
   return res;
 }
 
-async function handleParityPost(request, env) {
+async function handleParityPost(request, env: Env) {
   const asJson = wantsJson(request) || (request.headers.get("content-type") || "").toLowerCase().startsWith("application/json");
   const refuse = (status, message, retryAfter) => parityResponse(asJson, status, mpcErrorReport(parityOptions(null), null, null, message), null, retryAfter);
   // Fail closed: without its limiter this endpoint does not run, unlike the site-wide limiter,
@@ -15220,8 +15220,8 @@ function serveX402Root() {
   applySecurityHeaders(headers, "agent-api");
   return new Response(X402_INDEX_402, { status: 402, headers });
 }
-
-var worker_default: { fetch(request: Request, env: any, ctx?: unknown): Promise<Response>; scheduled(event: Pick<ScheduledController, "scheduledTime">, env: any, ctx: Pick<ExecutionContext, "waitUntil">): Promise<void> } = {
+interface Env { BRIEFIT?: { get(key: string, options: { type: "json" }): Promise<unknown> }; RATE_LIMITER?: RateLimit; PARITY_LIMITER?: RateLimit; PARITY?: Pick<Fetcher, "fetch">; PARITY_REMOTE_FETCH?: string } type SatisfiesExportedHandler<T extends ExportedHandler<Env>> = T;
+var worker_default: SatisfiesExportedHandler<{ fetch(request: Request, env: Env, ctx?: unknown): Promise<Response>; scheduled(event: Pick<ScheduledController, "scheduledTime">, env: Env, ctx: Pick<ExecutionContext, "waitUntil">): Promise<void> }> = {
   async fetch(request, env) {
     const originalMethod = request.method;
     const isHead = originalMethod === "HEAD";
@@ -15274,13 +15274,13 @@ var worker_default: { fetch(request: Request, env: any, ctx?: unknown): Promise<
             const rlResponse = new Response("429 Too Many Requests. This site allows about 100 requests per 60 seconds per client IP. Each Cloudflare location keeps its own approximate count, so a burst can pass more requests before this answer. Retry after 60 seconds.\n", { status: 429, headers: rlHeaders });
             return isHead ? stripBody(rlResponse) : rlResponse;
           }
-        } catch (rlErr) {
+        } catch (rlErr: any) {
           console.error("Rate limiter error (failing open):", rlErr && rlErr.stack ? rlErr.stack : String(rlErr));
         }
       }
       const response = await withValidator(workingRequest, await handleRequest(workingRequest, env));
       return isHead ? stripBody(response) : response;
-    } catch (err) {
+    } catch (err: any) {
       console.error("Worker error:", err && err.stack ? err.stack : String(err));
       const errHeaders = new Headers({ "content-type": "text/plain; charset=utf-8" });
       applySecurityHeaders(errHeaders, "default");
@@ -15324,13 +15324,13 @@ var worker_default: { fetch(request: Request, env: any, ctx?: unknown): Promise<
           console.error("IndexNow submit failed:", err && err.stack ? err.stack : String(err));
         })
       );
-    } catch (err) {
+    } catch (err: any) {
       console.error("IndexNow scheduled error:", err && err.stack ? err.stack : String(err));
     }
   }
 };
 
-async function handleRequest(request, env) {
+async function handleRequest(request, env: Env) {
   const url = new URL(request.url);
   const pathname = url.pathname;
   const hostname = url.hostname;
