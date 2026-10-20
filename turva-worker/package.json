@@ -15,7 +15,7 @@
     "node": "^22.18.0 || >=24.11.0"
   },
   "dependencies": {
-    "markdown-parity-check": "0.2.26"
+    "markdown-parity-check": "0.2.27"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260523.1",
