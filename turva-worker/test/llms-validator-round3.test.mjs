@@ -146,9 +146,22 @@ test("VN2: a collapsed reference, \"[label][]\", still resolves (regression guar
 // maskLocation and no hosted route reaches this shape (a Location value is resolved against the
 // request URL first), so the function is read out of the source text and run as it stands.
 import { readFileSync } from "node:fs";
+import { stripTypeScriptTypes } from "node:module";
+
+// Tek-664 (TypeScript migration W1): this slice is evaluated, so types are stripped first. Offsets and
+// lines are kept, and plain JavaScript comes back unchanged. Only the API's one-time experimental
+// warning is filtered.
+function stripTypes(text) {
+  const emit = process.emitWarning;
+  process.emitWarning = function (w, ...rest) {
+    if (/stripTypeScriptTypes/.test(String((w && w.message) || w))) return;
+    return emit.call(process, w, ...rest);
+  };
+  try { return stripTypeScriptTypes(text, { mode: "strip" }); } finally { process.emitWarning = emit; }
+}
 
 function loadMaskLocation() {
-  const src = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  const src = stripTypes(readFileSync(new URL("../src/worker.js", import.meta.url), "utf8"));
   const start = src.indexOf("function maskLocation(href, base) {");
   assert.ok(start >= 0, "maskLocation is in worker.js");
   const close = /\n\}\r?\n/.exec(src.slice(start));

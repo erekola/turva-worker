@@ -3,6 +3,19 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import worker from "../src/worker.js";
 import { run, renderJson, TOOL_VERSION } from "markdown-parity-check";
+import { stripTypeScriptTypes } from "node:module";
+
+// Tek-664 (TypeScript migration W1): this slice is evaluated, so types are stripped first. Offsets and
+// lines are kept, and plain JavaScript comes back unchanged. Only the API's one-time experimental
+// warning is filtered.
+function stripTypes(text) {
+  const emit = process.emitWarning;
+  process.emitWarning = function (w, ...rest) {
+    if (/stripTypeScriptTypes/.test(String((w && w.message) || w))) return;
+    return emit.call(process, w, ...rest);
+  };
+  try { return stripTypeScriptTypes(text, { mode: "strip" }); } finally { process.emitWarning = emit; }
+}
 
 // The hosted Markdown parity check (v3.154.0), offline against the module. What these pin: the
 // report is the package's own run() over the bytes the site serves, a check cannot leave turva.dev's
@@ -392,7 +405,7 @@ test("Tek-484: every button row on the seven pages is a links-only paragraph of 
 });
 
 test("Tek-484: a block without a links-only paragraph fails the page build instead of dropping the row", () => {
-  const src = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  const src = stripTypes(readFileSync(new URL("../src/worker.js", import.meta.url), "utf8"));
   const at = src.indexOf("function mdCtaSplit(");
   const fn = new Function("return (" + src.slice(at, src.indexOf("\nfunction mdCtaHtml(", at)) + ");")();
   assert.throws(() => fn(["Some prose.", "More prose with a [link](/x) inside."], "t"), /no links-only paragraph/);

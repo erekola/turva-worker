@@ -2,7 +2,20 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { stripTypeScriptTypes } from "node:module";
 import worker from "../src/worker.js";
+
+// Tek-664 (TypeScript migration W1): this slice is evaluated, so types are stripped first. Offsets and
+// lines are kept, and plain JavaScript comes back unchanged. Only the API's one-time experimental
+// warning is filtered.
+function stripTypes(text) {
+  const emit = process.emitWarning;
+  process.emitWarning = function (w, ...rest) {
+    if (/stripTypeScriptTypes/.test(String((w && w.message) || w))) return;
+    return emit.call(process, w, ...rest);
+  };
+  try { return stripTypeScriptTypes(text, { mode: "strip" }); } finally { process.emitWarning = emit; }
+}
 
 // Regression tests for audit round 19, patch 2 (docs/auditit/kierros-19/jatko-briiffi.md).
 // Each test names the item id from that brief so a failure maps back to one row of it.
@@ -494,7 +507,7 @@ test("K6-P3: a brief's markdown and JSON forms carry cross-origin-resource-polic
 // ---- K6-P4: replaceExactlyOnce throws on a missing or repeated anchor ----
 
 test("K6-P4: replaceExactlyOnce replaces a single occurrence and throws on zero or on more than one", () => {
-  const fnSrc = extractFunction(workerSrc, "replaceExactlyOnce");
+  const fnSrc = extractFunction(stripTypes(workerSrc), "replaceExactlyOnce");
   assert.ok(fnSrc, "replaceExactlyOnce must exist in worker.js");
   const fn = new Function("return (" + fnSrc + ");")();
   assert.equal(fn("a-b", "-", "+"), "a+b");

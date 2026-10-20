@@ -15,14 +15,77 @@
 // had never run, because the manifest was empty. The first card in the manifest brought the
 // whole verify run down with a ReferenceError. A check that has never run is not green, it is unrun.
 import { readFileSync, existsSync } from 'node:fs';
-import { execSync } from 'node:child_process';
+import { execSync, execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createPublicKey, verify as edVerify } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
+import * as nodeModule from 'node:module';
 import { dirname, join } from 'node:path';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
+
+// THE WORKER SOURCE PATH AND TYPE STRIPPING (Tek-663, Tek-664; TypeScript migration phase W1).
+// The path is the top-level `main` of turva-worker/wrangler.jsonc, the file wrangler bundles,
+// so this gate reads exactly what a deploy ships and the move from src/worker.js to
+// src/worker.ts is one line there. Text checks read the raw source; everything that EVALUATES
+// it (the data: URL imports, the robots.txt new Function slice, the syntax check) reads the
+// type-stripped copy. node:module stripTypeScriptTypes replaces types with spaces, so offsets,
+// lines and CRLF stay put, and plain JavaScript comes back byte-identical (measured on
+// worker.js 2026-10-20). `node --check x.ts` is no gate: on Node 24.20 it passed a broken .ts
+// that has an import or export and failed a valid one that has neither (measured 2026-10-20).
+// The workspace has the same two steps in tools/workerlahde.mjs; this public repo stands alone.
+function jsoncToJson(t) {
+  let out = '';
+  for (let i = 0; i < t.length;) {
+    const c = t[i];
+    if (c === '"') {
+      let j = i + 1;
+      while (j < t.length && t[j] !== '"') j += t[j] === '\\' ? 2 : 1;
+      if (j >= t.length) throw new Error('unterminated string');
+      out += t.slice(i, j + 1); i = j + 1;
+    } else if (c === '/' && t[i + 1] === '/') {
+      while (i < t.length && t[i] !== '\n') i++;
+    } else if (c === '/' && t[i + 1] === '*') {
+      const e = t.indexOf('*/', i + 2);
+      if (e < 0) throw new Error('unterminated comment');
+      out += ' '; i = e + 2;
+    } else { out += c; i++; }
+  }
+  // Trailing commas: comments are gone and strings are intact, so a comma followed only by
+  // whitespace and a closing bracket is dropped outside strings by a second string-aware pass.
+  let res = '';
+  for (let i = 0; i < out.length;) {
+    const c = out[i];
+    if (c === '"') {
+      let j = i + 1;
+      while (j < out.length && out[j] !== '"') j += out[j] === '\\' ? 2 : 1;
+      res += out.slice(i, j + 1); i = j + 1;
+    } else if (c === ',' && /^\s*[}\]]/.test(out.slice(i + 1))) { i++; }
+    else { res += c; i++; }
+  }
+  return res;
+}
+function workerMain() {
+  const cfg = JSON.parse(jsoncToJson(readFileSync(join(ROOT, 'turva-worker/wrangler.jsonc'), 'utf8')));
+  const main = cfg && cfg.main;
+  if (typeof main !== 'string' || !/^[A-Za-z0-9_./-]+\.(js|mjs|ts|mts)$/.test(main) || main.split('/').includes('..') || main.startsWith('/')) {
+    throw new Error('turva-worker/wrangler.jsonc: top-level main is missing or not a relative .js/.mjs/.ts/.mts path: ' + JSON.stringify(main));
+  }
+  return 'turva-worker/' + main.replace(/^\.\//, '');
+}
+function stripTypes(text) {
+  const strip = nodeModule.stripTypeScriptTypes;
+  if (typeof strip !== 'function') throw new Error('node:module stripTypeScriptTypes is missing (Node ' + process.versions.node + '); Node 22.13 or later is needed');
+  // The API is experimental and warns once per process; the warning is filtered here only.
+  const emit = process.emitWarning;
+  process.emitWarning = function (w, ...rest) {
+    const type = typeof rest[0] === 'string' ? rest[0] : rest[0] && rest[0].type;
+    if ((type === 'ExperimentalWarning' || (w && w.name === 'ExperimentalWarning')) && /stripTypeScriptTypes/.test(String(w && w.message || w))) return;
+    return emit.call(process, w, ...rest);
+  };
+  try { return strip(text, { mode: 'strip' }); } finally { process.emitWarning = emit; }
+}
 
 // FETCH TIMEOUT, added 2026-08-16 (round 12, follow-up work item 1 from the round-12 wrap-up).
 // Every one of the 19 network calls in this file ran without a timeout. Node's fetch has no
@@ -78,7 +141,7 @@ const LIVE = process.argv.includes('--live');
 const facts = JSON.parse(readFileSync(join(ROOT, 'tools/facts.json'), 'utf8'));
 
 const FILES = {
-  worker:   'turva-worker/src/worker.js',
+  worker:   workerMain(),
   readme:   'README.md',
 };
 const src = {};
@@ -86,6 +149,10 @@ for (const [k, rel] of Object.entries(FILES)) {
   const p = join(ROOT, rel);
   src[k] = { rel, buf: readFileSync(p), text: readFileSync(p, 'utf8') };
 }
+// What evaluates the Worker reads this copy; text checks keep reading src.worker.text. If the
+// strip throws (non-erasable syntax such as an enum, or a syntax error) the whole gate stops here
+// with the reason, because no evaluating check below could run on it.
+const workerJs = stripTypes(src.worker.text);
 
 // B2-20 (round 12, batch E16). Two published files in this repo were read by no gate at
 // all, so their numbers, dates and spellings could drift silently, and one of them had
@@ -239,7 +306,7 @@ for (const f of [...Object.values(src), ...Object.values(doc)]) {
   check(!f.text.includes('\r\r'), `${f.rel}: no doubled CR`);
   check(nlOk, `${f.rel}: clean ${crlf===0?'LF':'CRLF'} newlines`);
 }
-try { execSync(`node --check "${join(ROOT, FILES.worker)}"`); ok('worker.js parses (node --check)'); }
+try { execFileSync(process.execPath, ['--input-type=module', '--check'], { input: workerJs, stdio: ['pipe', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 }); ok('worker.js parses (types stripped, node --check)'); }
 catch (e) { bad('worker.js node --check: ' + String(e.stderr||e.message).slice(0,200)); }
 
 console.log('\nSecret files stay out of the public repo');
@@ -1567,7 +1634,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       // worker.js imports markdown-parity-check (v3.154.0) and a data: URL resolves no package, so the
       // bare specifier is pointed at the file the worker's own node_modules resolves it to.
       const mpcEntry = pathToFileURL(createRequire(join(ROOT, 'turva-worker', 'package.json')).resolve('markdown-parity-check')).href;
-      const workerText = src.worker.text.replace('from "markdown-parity-check";', 'from "' + mpcEntry + '";');
+      const workerText = workerJs.replace('from "markdown-parity-check";', 'from "' + mpcEntry + '";');
       const rendered = (await import('data:text/javascript;base64,' + Buffer.from(workerText).toString('base64'))).default;
       let homePriceHtml = null, servicesPriceHtml = null;
       for (const [path, cfg] of Object.entries(twConverted)) {
@@ -1936,12 +2003,12 @@ console.log('\nRobots.txt agent lists, generated and checked (round 14, R1a-14-2
 {
   const robotsStart = 'var ROBOTS_ALLOW_AGENTS = [';
   const robotsEnd = '+ "Sitemap: https://turva.dev/sitemap.xml\\n";';
-  const ri = src.worker.text.indexOf(robotsStart);
-  const rj = ri < 0 ? -1 : src.worker.text.indexOf(robotsEnd, ri);
+  const ri = workerJs.indexOf(robotsStart);
+  const rj = ri < 0 ? -1 : workerJs.indexOf(robotsEnd, ri);
   if (ri < 0 || rj < 0) {
     bad('robots.txt agent lists: ROBOTS_ALLOW_AGENTS..ROBOTS_TXT block not found in worker.js');
   } else {
-    const robotsBlock = src.worker.text.slice(ri, rj + robotsEnd.length);
+    const robotsBlock = workerJs.slice(ri, rj + robotsEnd.length);
     let ROBOTS_ALLOW_AGENTS, ROBOTS_DISALLOW_AGENTS, ROBOTS_TXT;
     try {
       ({ ROBOTS_ALLOW_AGENTS, ROBOTS_DISALLOW_AGENTS, ROBOTS_TXT } = new Function(robotsBlock
@@ -2239,7 +2306,7 @@ try {
   // .resolve() DOES follow NODE_PATH, so the bare specifier is pointed at a real file first,
   // the same fix already applied to 5b above.
   const mpcEntry = pathToFileURL(createRequire(join(ROOT, 'turva-worker', 'package.json')).resolve('markdown-parity-check')).href;
-  const workerTextForImport = src.worker.text.replace('from "markdown-parity-check";', 'from "' + mpcEntry + '";');
+  const workerTextForImport = workerJs.replace('from "markdown-parity-check";', 'from "' + mpcEntry + '";');
   const { default: workerModule } = await import('data:text/javascript;base64,' + Buffer.from(workerTextForImport).toString('base64'));
   for (const [p, s] of Object.entries(sigsLocal.signatures)) {
     const res = await workerModule.fetch(new Request('https://turva.dev' + p), {});
