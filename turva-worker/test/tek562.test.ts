@@ -121,12 +121,12 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
   assert.equal(o.headers.get("access-control-expose-headers"), "ETag");
 });
 
-// Tek-564 moved the card to MCP 1.6.15 and the 2026-10-05 measurement day to MCP 1.6.16 (both version fields, same length) and site 3.209.2 to MCP 1.6.17 and site 3.209.3 to MCP 1.6.18 and site 3.210.1 to MCP 1.6.19 (same length again), so the pinned
+// Tek-564 moved the card to MCP 1.6.15 and the 2026-10-05 measurement day to MCP 1.6.16 (both version fields, same length) and site 3.209.2 to MCP 1.6.17 and site 3.209.3 to MCP 1.6.18 and site 3.210.1 to MCP 1.6.19 and the 2026-10-21 measurement day to MCP 1.6.20 (same length again), so the pinned
 // digest is that card's; the signature lives in SIGNATURES_JSON, outside these bytes.
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
   assert.equal(b.length, 4244);
-  assert.equal(await sha256Hex(b), "608605d6932352820c323e075ae6efe6ea46a4836e01f72d74e2e40802fcdc5b");
+  assert.equal(await sha256Hex(b), "5f3f490d31e33330d11134c3518744af1f5b7453ace1628f4c9788e9c0692948");
 });
 
 // ---------------------------------------------------------------- PGP v6 key

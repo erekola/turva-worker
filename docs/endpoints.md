@@ -48,7 +48,7 @@ Every route this Worker serves, copied from the repository README so the README 
 | `/robots.txt` | Crawler directives |
 | `/sitemap.xml` | URL index |
 | `/blog/feed.xml` | Blog RSS feed |
-| `/<indexnow-key>.txt` | IndexNow key file. A weekly cron resubmits the canonical URLs |
+| `/<indexnow-key>.txt` | IndexNow key file. A weekly cron resubmits the canonical pages whose sitemap date falls in the last eight days |
 | Aliases | `/ai.txt`, `/security.txt`, `/.well-known/mcp.json`, `/.well-known/openid-configuration`, `/.well-known/openapi.json`, favicons, and fediverse redirects (`host-meta`, `webfinger`, `nodeinfo`) |
 | `/llms-txt-validator` | llms.txt structure checker (HTML form, JSON for agents) |
 | `/markdown-parity-check` | Main-content comparison of this site's pages with the markdown-parity-check package (HTML form, JSON POST for agents); `/markdown-parity-check.js` adds the busy state and the JSON copy and save, and the form works without it |

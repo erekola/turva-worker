@@ -1,6 +1,6 @@
 # turva-worker
 
-The Cloudflare Worker behind [turva.dev](https://turva.dev). It serves HTML for people and Markdown for automated clients from shared content sources, with discovery metadata for agents and APIs.
+The Cloudflare Worker behind [turva.dev](https://turva.dev), written in TypeScript. It serves HTML for people and Markdown for automated clients from shared content sources, with discovery metadata for agents and APIs.
 
 I use this site as a working reference. You can inspect the code or adapt it for your own domain.
 
@@ -16,6 +16,48 @@ curl -H "Accept: text/markdown" https://turva.dev/
 ```
 
 In Windows PowerShell, use `curl.exe` if `curl` resolves to `Invoke-WebRequest`. You can also open [index.md](https://turva.dev/index.md) directly.
+
+## Requirements and layout
+
+The Worker needs Node.js `^22.18.0 || >=24.11.0`, the range in the `engines` field of [turva-worker/package.json](turva-worker/package.json). Node runs the TypeScript tests and `tools/verify.mts` by stripping types.
+
+There is no build step. Wrangler bundles `src/worker.ts` when you run or deploy it, and the compiler is used only to check types.
+
+The repository root holds the docs, `tools/` and `SECURITY.md`. The Worker project is the nested folder `turva-worker/`, with `src/worker.ts`, `test/`, `wrangler.jsonc` and `public/`.
+
+The routes `/nav.js` and `/blog-filter.js` serve JavaScript on purpose. Those browser scripts are kept as strings inside `src/worker.ts` and served from the Worker under `script-src 'self'`, so they need no inline script and no change to the content security policy.
+
+## Develop
+
+Run these from the repository root. Type checking needs the full install, so use `npm ci` without `--omit=dev`:
+
+```sh
+npm --prefix turva-worker ci
+npm --prefix turva-worker run dev -- --local
+npm --prefix turva-worker run typecheck
+npm --prefix turva-worker test
+node tools/verify.mts
+```
+
+- `dev` starts Wrangler locally. Open the local URL it prints. Local storage starts without the separately managed client briefs, and links in the content still point to turva.dev until you adapt them. Review the [configuration](turva-worker/wrangler.jsonc) before testing features that use bindings.
+- `typecheck` runs `tsc` three times: once for `src` under [tsconfig.json](turva-worker/tsconfig.json) with `strict` on, once for the tests under `tsconfig.test.json` and once for `tools/verify.mts` under `tsconfig.tools.json`.
+- `test` runs `node --experimental-strip-types --test` over the files in `turva-worker/test/`.
+- [tools/verify.mts](tools/verify.mts) compares source and documentation with [tools/facts.json](tools/facts.json). It checks published claims and file integrity, including the use of Markdown content sources. These checks are tailored to turva.dev, so update the facts and checks for your own site.
+
+`tools/verify.mts`, the Worker's tests and the Worker itself import markdown-parity-check. If you only run the tests and `verify.mts`, `npm --prefix turva-worker ci --omit=dev --ignore-scripts` installs enough.
+
+The live variant contacts a fixed list of declared public endpoints and the separate MCP server. It also verifies the four signed manifests against the published JWKS. Adding `--twins` fetches every canonical page and its Markdown twin. The live checks do not deploy changes:
+
+```sh
+node tools/verify.mts --live
+```
+
+### Continuous integration
+
+[The workflow](.github/workflows/ci.yml) runs on every push and pull request with read-only permissions. It has two jobs and does not deploy the site.
+
+- `test` runs on Node.js 22 and 24. It installs with `npm ci --omit=dev --ignore-scripts` in `turva-worker`, runs `node --test` there and then runs `node tools/verify.mts` from the repository root.
+- `typecheck` runs on Node.js 24. It installs with `npm ci --ignore-scripts` and runs `npm run typecheck`. It is a separate job because it needs the development dependencies, which the `test` job leaves out.
 
 ## Command-line tools
 
@@ -37,20 +79,9 @@ The comparison requests both formats from the same URL. Add `--markdown-url http
 
 This Worker also hosts both checks in the browser. The [llms.txt validator](https://turva.dev/llms-txt-validator) accepts any public domain. The [Markdown parity check](https://turva.dev/markdown-parity-check) checks turva.dev's own published pages only, so use the command above for another site.
 
-## Run locally
-
-Use Node.js 22 or 24, the versions covered by this repository's CI. From the root of your own clone, install the nested project's dependencies and start Wrangler locally:
-
-```sh
-npm --prefix turva-worker ci
-npm --prefix turva-worker run dev -- --local
-```
-
-Open the local URL Wrangler prints. The `dev` script is defined in [turva-worker/package.json](turva-worker/package.json). Local storage starts without the separately managed client briefs, and links in the content still point to turva.dev until you adapt them. Review the [configuration](turva-worker/wrangler.jsonc) before testing features that use bindings.
-
 ## How it works
 
-Page prose lives in `PAGE_MARKDOWN` in [the Worker source](turva-worker/src/worker.ts) and is rendered into HTML at the edge. Layout and interactive elements are implemented in code. Shared metadata supplies canonical URLs, Open Graph tags and JSON-LD.
+Page prose lives in `PAGE_MARKDOWN` in [the Worker source](turva-worker/src/worker.ts) and is rendered into HTML at the edge. The Worker code implements layout and interactive elements. Shared metadata supplies canonical URLs, Open Graph tags and JSON-LD.
 
 The public site runs without a separate CMS or origin server. Static assets are served through Cloudflare Workers Assets. Sharing content sources reduces drift between HTML and Markdown, while the repository's checks test for inconsistencies.
 
@@ -58,11 +89,15 @@ The Worker also serves the hosted llms.txt validator, the hosted Markdown parity
 
 The [MCP server](https://github.com/erekola/turva-mcp#connect) runs separately. This repository publishes its discovery card and links to it. The [standalone validator](https://github.com/erekola/llms-txt-validator) provides a CLI and Node package.
 
-These three do different jobs, but they are the same kind of work: each lets someone outside turva.dev check a specific claim against evidence instead of taking it on request. A signature lets a reader confirm a fetched manifest still matches the bytes that were signed. A public-site brief's retention rule lets the company it named find the actual page that was sent, not a redrafted account of it, for as long as the brief stays published. An npm package's provenance attestation lets an installer trace a published version back to the repository and workflow run that built it. Signature coverage, the brief lifecycle and npm package provenance are documented where each already lives, not repeated here: the four signed manifests and their signatures are listed in [docs/endpoints.md](docs/endpoints.md), an unlisted client brief's retention is described on [the legal page](https://turva.dev/legal), and each npm package's own SECURITY.md states its publishing provenance ([turva-llms-txt-validator](https://github.com/erekola/llms-txt-validator/blob/main/SECURITY.md), [markdown-parity-check](https://github.com/erekola/markdown-parity-check/blob/main/SECURITY.md)).
+Three mechanisms let someone outside turva.dev check a claim against evidence instead of taking it on trust:
+
+- A signature lets a reader confirm that a fetched manifest still matches the bytes that were signed. The four signed paths are `/llms.txt`, `/.well-known/agent.json`, `/.well-known/ai-plugin.json` and `/.well-known/mcp/server-card.json`, and `/.well-known/signatures.json` carries their signatures.
+- A public-site brief stays at its unlisted address until it is removed on request or expires, no later than 400 days after its latest publication, so the company it named can reread what was sent. [The legal page](https://turva.dev/legal) states the rule.
+- An npm package's provenance attestation lets an installer trace a published version back to the repository and workflow run that built it. Each package's SECURITY.md states its publishing provenance: [turva-llms-txt-validator](https://github.com/erekola/llms-txt-validator/blob/main/SECURITY.md) and [markdown-parity-check](https://github.com/erekola/markdown-parity-check/blob/main/SECURITY.md).
 
 ## Hosted Markdown parity check
 
-`/markdown-parity-check` runs the comparison from the npm package [markdown-parity-check](https://github.com/erekola/markdown-parity-check). The Worker imports the package's library entry, which Wrangler bundles at deploy time. The version is pinned in [turva-worker/package.json](turva-worker/package.json) and its lockfile. The comparison code is the same one the command-line tool runs. Fetching and limits belong to this route:
+`/markdown-parity-check` runs the comparison from the npm package [markdown-parity-check](https://github.com/erekola/markdown-parity-check). The Worker imports the package's library entry, which Wrangler bundles at deploy time. [turva-worker/package.json](turva-worker/package.json) and its lockfile pin the version, and the command-line tool runs the same comparison code. Fetching and limits belong to this route:
 
 - It checks turva.dev's own published pages only. The Worker renders the page and its Markdown version through its own request handler, so a check sends no request over the network. The two tool pages are not accepted as targets.
 - An address on another host is refused with HTTP 403 and a pointer to `npx --yes markdown-parity-check`. Forwarding other hosts to a separate Worker is switched off in [wrangler.jsonc](turva-worker/wrangler.jsonc).
@@ -70,7 +105,7 @@ These three do different jobs, but they are the same kind of work: each lets som
 - The `PARITY_LIMITER` binding allows about 10 checks per minute per client IP at each Cloudflare location. Without the binding the route answers 503 and runs nothing.
 - Every response to a check carries `Cache-Control: no-store`, and the route does not write the target address or the report to its logs.
 
-The page states the turva.dev limit in its opening paragraph and again in the address field's own hint, so a reader sees it before typing an address. Fill in an example only writes turva.dev's tools page into the field, and Check is the separate step that runs the comparison. That example returned a fail on 2026-09-11, described in [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree): the Related heading and its four links were in the Markdown and not in the HTML, while the same four targets were links inside the HTML page's tool cards. That was fixed, and on 2026-09-29 the example returned a pass with markdown-parity-check 0.2.17. It matched 26 of 26 HTML and Markdown blocks, with 0 errors, 0 warnings and 0 infos. The current pin is in package.json.
+The page states the turva.dev limit in its introduction and again in the address field's own hint, so a reader sees it before typing an address. The Fill in an example button writes turva.dev's tools page into the Page URL field and resets the other options, and the Check button is the separate step that runs the comparison. That example returned a fail on 2026-09-11, described in [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree): the Related heading and its four links were in the Markdown and not in the HTML, while the same four targets were links inside the HTML page's tool cards. That was fixed, and on 2026-09-29 the example returned a pass with markdown-parity-check 0.2.17. It matched 26 of 26 HTML and Markdown blocks, with 0 errors, 0 warnings and 0 infos. The current pin is in package.json.
 
 The pinned release can be older than the latest npm release, and the report's `toolVersion` field names the one that ran. A newer package reaches the hosted page only through a site release.
 
@@ -94,11 +129,11 @@ The pinned release can be older than the latest npm release, and the report's `t
 | `/blog-filter.js` | Search and kind filter for the blog index. Every post remains listed without it |
 | `/nav.js` | Closes the mobile menu on Escape and when focus leaves it. The menu works without it |
 
-See [docs/endpoints.md](docs/endpoints.md) for the complete inventory, including A2A, checkout, OAuth and mail-related endpoints.
+See [docs/endpoints.md](docs/endpoints.md) for the other endpoints, including A2A, checkout, OAuth and the OpenPGP key.
 
 ## Scanner results
 
-The published turva.dev reference build recorded 100/100, Level 5 Agent-Native on [isitagentready.com](https://isitagentready.com/) on 2026-10-05. This is a dated measurement of this domain. A fork needs its own checks.
+The published turva.dev reference build recorded 100/100, Level 5 Agent-Native on [isitagentready.com](https://isitagentready.com/) on 2026-10-21. This is a dated measurement of this domain. A fork needs its own checks.
 
 <details>
 <summary>Category results and measurement limits</summary>
@@ -115,41 +150,19 @@ isitagentready.com groups its checks into five categories. turva.dev passes ever
 | API, Auth, MCP & A2A Discovery | 100/100 |
 | Commerce | 100/100 |
 
-Commerce is optional in the scanner's model and is included here. Individual check counts are omitted because the scanner's public page and MCP interface report different check sets.
+Commerce is included in the table and passes. Individual check counts are omitted because the scanner's public page and MCP interface report different check sets.
 
 </details>
 
-The payment routes return x402 challenges and publish Stripe payment links. x402 settlement is quote-on-request and confirmed out of band. This Worker does not verify an incoming x402 payment and automatically release a paid service. Scope is agreed in writing before payment.
+A Commerce pass means the scanner detected the payment discovery surfaces. The payment routes return x402 challenges and publish Stripe payment links. x402 settlement is quote-on-request and confirmed out of band. This Worker does not verify an incoming x402 payment and automatically release a paid service. Scope is agreed in writing before payment.
 
 ## Web security
 
-Measured on 2026-10-05: all 24 categories passed on [Hardenize](https://www.hardenize.com/report/turva.dev), 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
+Measured on 2026-10-21: all 24 categories passed on [Hardenize](https://www.hardenize.com/report/turva.dev), 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
 
 The website deduction concerned the key-exchange hash function in one HTTPS sub-test. Its IPv6, DNSSEC and RPKI checks passed in full. The email deduction concerned IPv6, because the receiving mail servers, operated by the mail provider, publish no IPv6 address. Its DNSSEC and RPKI checks passed in full. DMARC with DKIM and SPF, and STARTTLS with DANE, also passed.
 
-Use the linked reports for current results. Recorded values and dates are maintained in [tools/facts.json](tools/facts.json).
-
-## Verify
-
-[tools/verify.mts](tools/verify.mts) compares source and documentation with [tools/facts.json](tools/facts.json). It checks published claims and file integrity, including the use of Markdown content sources.
-
-`tools/verify.mts`, the Worker's tests and the Worker itself import markdown-parity-check. Install the nested project's runtime dependencies first, from the repository root:
-
-```sh
-npm --prefix turva-worker ci --omit=dev --ignore-scripts
-node tools/verify.mts
-npm --prefix turva-worker test
-```
-
-GitHub Actions runs the same install, the local tests and the documentation checks on Node.js 22 and 24. A second job installs the development dependencies as well and runs `npm --prefix turva-worker run typecheck`, which checks the Worker source, the tests and `tools/verify.mts` with the TypeScript compiler. The repository's workflow does not deploy the site.
-
-The live variant contacts a fixed list of declared public endpoints and the separate MCP server. Adding `--twins` also fetches every canonical page and its Markdown twin. It also verifies the four signed manifests against the published JWKS:
-
-```sh
-node tools/verify.mts --live
-```
-
-These checks are tailored to turva.dev. Update the facts and checks for your own site. The live checks do not deploy changes.
+Use the linked reports for current results. [tools/facts.json](tools/facts.json) holds the recorded values and dates.
 
 ## Adapt and deploy your own site
 
@@ -163,7 +176,7 @@ Requires Node.js, npm and a Cloudflare account. Wrangler is a development depend
 
 The Worker does not require a runtime signing secret. Its signatures are prepared ahead of deployment and stored with the public content. You still need your own Cloudflare bindings and deployment credentials.
 
-After adapting the configuration and passing the relevant checks, run from the repository root:
+After adapting the configuration and passing the checks under Develop, run from the repository root:
 
 ```sh
 npm --prefix turva-worker ci
