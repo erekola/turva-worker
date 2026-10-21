@@ -12266,7 +12266,7 @@ ${footerHtml()}
 // unsafe redirect is never fetched and fails the first check. The fetch times
 // out after 8 seconds and the body read is capped at 256 KB. Results are
 // never stored and result pages are served with no-store.
-function normalizeHostInput(raw) {
+function normalizeHostInput(raw: unknown): string | null {
   let s = String(raw || "").trim().toLowerCase();
   if (!s) return null;
   if (!/^[a-z][a-z0-9+.-]*:\/\//.test(s)) s = "https://" + s;
@@ -12280,23 +12280,23 @@ function normalizeHostInput(raw) {
   const typedHost = u.hostname;
   return typedHost.length > 1 && typedHost.endsWith(".") ? typedHost.slice(0, -1) : typedHost;
 }
-
+interface FetchedLlmsTxt { redirect?: undefined; reason?: undefined; location?: undefined; status: number; contentType: string; linkHeader: string; text: string; bytes: number; truncated: boolean; redirectedFrom: string | null; finalUrl: string }
 // True when the typed address carries a port or a non-numeric port after the host, as in
 // https://turva.dev:invalid/ or turva.dev:8443. It only picks which fixed sentence the error shows,
 // so the set of accepted addresses is the one normalizeHostInput defines and nothing typed is echoed.
-function inputNamesPort(raw) {
+function inputNamesPort(raw: unknown): boolean {
   const s = String(raw || "").trim().toLowerCase().replace(/^[a-z][a-z0-9+.-]*:\/\//, "");
   const authority = s.split(/[\/?#]/)[0];
   const host = authority.slice(authority.lastIndexOf("@") + 1);
   return host.startsWith("[") ? /\]:/.test(host) : /^[^:\[\]]+:[a-z0-9_-]*$/.test(host);
 }
-
+interface FetchRedirect { redirect: true; reason: "no-location" | "too-many" | "bad-location" | "unsafe-target" | "off-host"; status: number; location: string; contentType?: undefined; linkHeader?: undefined; text?: undefined; bytes?: undefined; truncated?: undefined; redirectedFrom?: undefined; finalUrl?: undefined }
 // The path of the address as typed, when it is neither the root nor /llms.txt. The fetch stays pinned
 // to https://<host>/llms.txt, because a fixed path is part of its guard against use as a fetch proxy
 // (THREAT_MODEL T10), so a typed /docs/llms.txt used to be dropped without a word while the report
 // described the root file (ChatGPT retest 2026-09-26, Tek-487). The report now names the unused path in
 // an information line. The case of the path is kept, and the query and fragment are never shown.
-function enteredPath(raw) {
+function enteredPath(raw: unknown): string {
   let s = String(raw || "").trim();
   if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) s = "https://" + s;
   let u;
@@ -12304,12 +12304,12 @@ function enteredPath(raw) {
   const path = u.pathname;
   return path === "/" || path === "" || path === "/llms.txt" ? "" : path;
 }
-
-function isValidPublicHost(host) {
+type LlmsFetchResult = FetchedLlmsTxt | FetchRedirect;
+function isValidPublicHost(host: string): boolean {
   if (!host || host.length > 253) return false;
   if (host.startsWith("[") || /^\d+\.\d+\.\d+\.\d+$/.test(host)) return false;
   if (!/^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{1,62}$/.test(host)) return false;
-  const tld = host.split(".").pop();
+  const tld = host.split(".").pop()!;
   // arpa and onion since round 19 (P3, Erik 2026-09-23): home.arpa is the home-network name of
   // RFC 8375, in-addr.arpa names an address, and an onion name never resolves on the public web.
   // localdomain since 2026-09-27 (Tek-496): localhost.localdomain is the loopback alias that many
@@ -12317,7 +12317,7 @@ function isValidPublicHost(host) {
   if (["localhost", "localdomain", "local", "internal", "home", "lan", "corp", "test", "invalid", "arpa", "onion"].includes(tld)) return false;
   return true;
 }
-function maskLocation(href: string, base?: string): string;
+function maskLocation(href: string | undefined, base?: string): string;
 // A redirect target the way a report may show it. The scheme, the host and the path stay readable,
 // and the parts that can carry a secret do not: the user name and the password are removed, every
 // query value becomes ***, and the fragment is dropped. The caller cuts the result to length
@@ -12384,7 +12384,7 @@ function maskLocation(href, base) {
   const at = s.lastIndexOf("@");
   return at < from ? s : s.slice(0, from) + "***@" + s.slice(at + 1);
 }
-
+function validatorEcho(typed: string, shown: string): string;
 // The validator form repeats what was typed. An entry with an @, a ? or a # can carry a user name,
 // a password or a query value, so for such an entry the field shows only the host that
 // normalizeHostInput reads from it, or nothing when it reads none (2026-09-22). The test runs on the
@@ -12396,7 +12396,7 @@ function validatorEcho(typed, shown) {
   if (!/[@?#]/.test(typed)) return shown;
   return normalizeHostInput(typed) || "";
 }
-function fetchLlmsTxt(host: string, path?: string, accept?: string): Promise<any>;
+function fetchLlmsTxt(host: string, path?: string, accept?: string): Promise<LlmsFetchResult>;
 // The second argument was added for the v2 discovery checks, which need the site's
 // home page as well as its llms.txt. It is one parameter and nothing else moved:
 // the redirect budget, the same-host rule, the credential and port rejections and
@@ -12472,14 +12472,14 @@ async function fetchLlmsTxt(host, path, accept) {
     };
   }
 }
-
+interface ValidationError { error: string; docs?: string }
 // A backslash escapes the character after it when an odd number of backslashes precede it.
-function isEscaped(s, i) {
+function isEscaped(s: string, i: number): boolean {
   let n = 0;
   for (let b = i - 1; b >= 0 && s[b] === "\\"; b--) n++;
   return n % 2 === 1;
 }
-
+type LlmsTxtInput = FetchRedirect | (Partial<FetchedLlmsTxt> & Pick<FetchedLlmsTxt, "status" | "contentType" | "text" | "bytes" | "truncated">);
 // Inline code spans, marked per character across the whole document, so a link written inside
 // backticks is read as the code it is (outside audit 2026-09-26, Tek-496), including when the
 // span itself crosses a real line ending. V2 (Tek-526): a fenceless "`[a](b)\ncontinued`" was
@@ -12493,7 +12493,7 @@ function isEscaped(s, i) {
 // is never escaped, because a backslash inside a code span is literal. Runs are grouped by
 // length and every group is read with one forward pointer, so the scan stays linear on a
 // document of unmatched runs. The package turva-llms-txt-validator mirrors this from 0.3.11.
-function crossesBlockBoundary(text, start, end) {
+function crossesBlockBoundary(text: string, start: number, end: number): boolean {
   const inner = text.slice(start, end);
   if (/\n[ \t]*\n/.test(inner)) return true;
   const lines = inner.split("\n");
@@ -12502,7 +12502,7 @@ function crossesBlockBoundary(text, start, end) {
   }
   return false;
 }
-function codeSpanMask(text) {
+function codeSpanMask(text: string): Uint8Array {
   const mask = new Uint8Array(text.length);
   const runs = [];
   for (let i = 0; i < text.length; ) {
@@ -12512,9 +12512,9 @@ function codeSpanMask(text) {
     runs.push({ at: i, len: j - i, escaped: isEscaped(text, i) });
     i = j;
   }
-  const byLen = new Map();
-  runs.forEach((r, k) => { if (!byLen.has(r.len)) byLen.set(r.len, []); byLen.get(r.len).push(k); });
-  const ptr = new Map();
+  const byLen = new Map<number, number[]>();
+  runs.forEach((r, k) => { if (!byLen.has(r.len)) byLen.set(r.len, []); byLen.get(r.len)!.push(k); });
+  const ptr = new Map<number, number>();
   for (let k = 0; k < runs.length; k++) {
     const r = runs[k];
     const len = r.escaped ? r.len - 1 : r.len;
@@ -12535,7 +12535,7 @@ function codeSpanMask(text) {
 
 // A CommonMark link reference label is matched without regard to case or the exact run of
 // whitespace inside it, so "[Guide]" and "[ guide ]" name the same definition.
-function normalizeLinkLabel(s) {
+function normalizeLinkLabel(s: string): string {
   return s.trim().replace(/\s+/g, " ").toLowerCase();
 }
 
@@ -12552,8 +12552,8 @@ function normalizeLinkLabel(s) {
 // title's own value. Only the first definition of a given label counts, per spec. A destination
 // wrapped in angle brackets has them stripped. The package turva-llms-txt-validator mirrors this
 // from 0.3.11.
-function collectLinkDefinitions(text) {
-  const defs = new Map();
+function collectLinkDefinitions(text: string): Map<string, string> {
+  const defs = new Map<string, string>();
   const lines = text.split("\n");
   const code = codeSpanMask(text);
   const starts = [];
@@ -12575,7 +12575,7 @@ function collectLinkDefinitions(text) {
   }
   return defs;
 }
-
+interface MdLink { name: string; target: string; at: number }
 // Every markdown link in the prose, scanned once from left to right. A "[" inside a code span,
 // an escaped "\[" and the "![" of an image open no link, because none of them is a hyperlink
 // (all three counted until the outside audit of 2026-09-26, Tek-496). A target may be written in angle
@@ -12593,22 +12593,22 @@ function collectLinkDefinitions(text) {
 // failed plain target is remembered as before, and the closing ">", quote and line end are
 // looked up through a cache that only moves forward, so a file that repeats "[a](" or
 // "[a](x \"" stays linear.
-function collectLinks(text, defs) {
-  const out = [];
+function collectLinks(text: string, defs?: Map<string, string>): MdLink[] {
+  const out: MdLink[] = [];
   const code = codeSpanMask(text);
   if (!defs) defs = collectLinkDefinitions(text);
-  const cache = Object.create(null);
-  const nextIdx = (c, from) => {
+  const cache: Record<string, { from: number; at: number }> = Object.create(null);
+  const nextIdx = (c: string, from: number): number => {
     const h = cache[c];
     if (h && h.from <= from && (h.at === -1 || h.at >= from)) return h.at;
     const at = text.indexOf(c, from);
     cache[c] = { from, at };
     return at;
   };
-  const isBlank = (c) => c === " " || c === "\t";
+  const isBlank = (c: string) => c === " " || c === "\t";
   // A blank line ends a paragraph, and a link label cannot reach across one (Tek-560). True when
   // the line break at p is followed by a line that holds only spaces and tabs, or by the end.
-  const blankAt = (p) => {
+  const blankAt = (p: number): boolean => {
     if (text[p] !== "\n") return false;
     let q = p + 1;
     while (q < text.length && isBlank(text[q])) q++;
@@ -12617,12 +12617,12 @@ function collectLinks(text, defs) {
   // Spaces, tabs and at most one line ending may stand around the destination and the title, as
   // CommonMark allows; "[a](  b  )" and a ")" on the next line were missed until the review of
   // 2026-09-27. A blank line still ends the link.
-  const skipSpace = (p) => {
+  const skipSpace = (p: number): number => {
     while (p < text.length && isBlank(text[p])) p++;
     if (text[p] === "\n") { p++; while (p < text.length && isBlank(text[p])) p++; }
     return p;
   };
-  const afterTarget = (target, p) => {
+  const afterTarget = (target: string, p: number): { target: string; end: number } | null => {
     const q = skipSpace(p);
     if (text[q] === ")") return { target, end: q };
     const quote = text[q];
@@ -12636,7 +12636,7 @@ function collectLinks(text, defs) {
     return null;
   };
   let failEnd = -1;
-  const readTarget = (k) => {
+  const readTarget = (k: number): { target: string; end: number } | null => {
     k = skipSpace(k);
     if (text[k] === "<") {
       const gt = nextIdx(">", k + 1);
@@ -12660,7 +12660,7 @@ function collectLinks(text, defs) {
   // first unescaped "]" closes it, and it is only skipped when a target follows; a malformed
   // image (no closing "]", no "(target)") is left for the caller to treat as an ordinary
   // nested bracket, the way one always was.
-  const skipImage = (k) => {
+  const skipImage = (k: number): number | null => {
     let m = k + 1;
     while (m < text.length && text[m] !== "]" && text[m] !== "[" && !blankAt(m)) m += text[m] === "\\" ? 2 : 1;
     if (m >= text.length || text[m] !== "]" || text[m + 1] !== "(") return null;
@@ -12727,8 +12727,8 @@ function collectLinks(text, defs) {
 // of 2026-08-24 bought a worse accuracy defect with a bounded quantifier and the rule out
 // of it was to scan by index instead (mds/gotchas.md 2026-08-24 (jatko 12)).
 // Returns one boolean per line: true for a fence line and for everything inside it.
-function fenceMask(lines) {
-  const mask = new Array(lines.length).fill(false);
+function fenceMask(lines: string[]): boolean[] {
+  const mask = new Array<boolean>(lines.length).fill(false);
   let fenceChar = "", fenceLen = 0;
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
@@ -12761,7 +12761,7 @@ function fenceMask(lines) {
 // and images count here exactly as they do in the links check. CR and CRLF are turned into LF
 // before the split (Tek-560); U+2028 and U+2029 stay inside a line, and a link behind one has never
 // counted, so the item is read up to the first of them.
-function listItemHasLink(l, hasLink) {
+function listItemHasLink(l: string, hasLink: boolean): boolean {
   return !!hasLink && /^ {0,3}(?:[-*+]|\d{1,9}[.)])[ \t]/.test(l);
 }
 
@@ -12769,7 +12769,7 @@ function listItemHasLink(l, hasLink) {
 // ASCII punctuation character, so "https\://example.com" is the destination "https://example.com".
 // Backslash escapes and character references are read in one pass over the source, so an escaped
 // ampersand stays literal text and is not decoded a second time (Tek-560).
-function decodeDestination(s) {
+function decodeDestination(s: unknown): string {
   const escapeAt = /(\\[!-\/:-@\[-`{-~])/;
   return String(s).split(escapeAt).map((part) => (part.length === 2 && part[0] === "\\" && /[!-\/:-@\[-`{-~]/.test(part[1]) ? part[1] : decodeAttributeValue(part))).join("");
 }
@@ -12779,11 +12779,11 @@ function decodeDestination(s) {
 // starts a block of its own (heading, blockquote, list item, fence) is not paragraph text, so it
 // never becomes a setext title. Only a one-line title is read; a title over several lines is not
 // (Tek-560).
-function isSetextText(line) {
+function isSetextText(line: string): boolean {
   if (!/^ {0,3}\S/.test(line)) return false;
   return !/^ {0,3}(?:#|>|[-*+](?:[ \t]|$)|\d{1,9}[.)](?:[ \t]|$)|`{3,}|~{3,})/.test(line);
 }
-function isSetextH1(line, next) {
+function isSetextH1(line: string, next: string | undefined): boolean {
   if (typeof next !== "string" || !/^ {0,3}=+[ \t]*$/.test(next)) return false;
   return isSetextText(line);
 }
@@ -12797,7 +12797,7 @@ const HTML_BLOCK_START = /^ {0,3}<(?:[A-Za-z][A-Za-z0-9-]*(?:[\s\/>]|$)|\/[A-Za-
 const LINK_REF_DEF = /^ {0,3}\[[^\]]+\]:/;
 // HTML blocks of CommonMark types 1 to 5 end at a marker, not at a blank line. The end markers are plain substrings matched case-insensitively, as CommonMark defines them, and not a tag regexp (CodeQL js/bad-tag-filter): type 2 ends at "-->" only, never at "--!>".
 // Entry is [start, ends]: </pre>, </script>, </style>, </textarea> after <pre> and kin, "-->" after "<!--", "?>" after "<?", "]]>" after "<![CDATA[", ">" after "<!X"; the marker is looked for after the start on the same line.
-function hasRawEnd(s, ends) { const t = s.toLowerCase(); return ends.some((e) => t.includes(e)); }
+function hasRawEnd(s: string, ends: string[]): boolean { const t = s.toLowerCase(); return ends.some((e) => t.includes(e)); }
 const RAW_HTML_BLOCKS: [RegExp, string[]][] = [
   [/^ {0,3}<(?:pre|script|style|textarea)(?:[ \t>]|$)/i, ['</pre>', '</script>', '</style>', '</textarea>']],
   [/^ {0,3}<!--/, ['-->']],
@@ -12805,7 +12805,7 @@ const RAW_HTML_BLOCKS: [RegExp, string[]][] = [
   [/^ {0,3}<!\[CDATA\[/, [']]>']],
   [/^ {0,3}<![A-Za-z]/, ['>']]
 ];
-function startsOtherBlock(line) {
+function startsOtherBlock(line: string): boolean {
   return /^ {0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$/.test(line)
     || HTML_BLOCK_START.test(line)
     || LINK_REF_DEF.test(line);
@@ -12830,15 +12830,15 @@ function startsOtherBlock(line) {
 // block of type 1 to 5 (<pre>, a comment, <?, <!X, CDATA) until its end marker: an indented line
 // there continues the quote paragraph or the HTML block, or follows a "=" line that is itself
 // paragraph text, and is not code.
-function laterSetextH1(lines, fenced) {
-  const text = new Array(lines.length).fill(false);
-  const under = new Array(lines.length).fill(false);
+function laterSetextH1(lines: string[], fenced: boolean[]): { text: boolean[]; under: boolean[] } {
+  const text = new Array<boolean>(lines.length).fill(false);
+  const under = new Array<boolean>(lines.length).fill(false);
   let open = false;
   let listCtx = false;
   let blankBefore = false;
   let quoteCtx = false;
   let htmlCtx = false;
-  let rawEnd = null;
+  let rawEnd: string[] | null = null;
   let rawDone = false;
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
@@ -12874,17 +12874,17 @@ function laterSetextH1(lines, fenced) {
 // rule (isSetextText) and is also not a thematic break. The underline belongs to the heading, so
 // a list item followed by "---" or "---" after a blank line is not an H2. A line inside a fence,
 // or an underline inside one, is never a heading, which the mask says.
-function isAtxH2(line) {
+function isAtxH2(line: string): boolean {
   return /^ {0,3}##[ \t]/.test(line);
 }
-function isSetextH2(lines, i, mask) {
+function isSetextH2(lines: string[], i: number, mask?: boolean[]): boolean {
   if (i + 1 >= lines.length || (mask && (mask[i] || mask[i + 1]))) return false;
   if (!/^ {0,3}-+[ \t]*$/.test(lines[i + 1])) return false;
   if (i > 0 && lines[i - 1].trim() !== "") return false;
   if (/^ {0,3}([-*_])(?: *\1){2,} *$/.test(lines[i])) return false;
   return isSetextText(lines[i]);
 }
-function isH2At(lines, i, mask) {
+function isH2At(lines: string[], i: number, mask?: boolean[]): boolean {
   return !(mask && mask[i]) && (isAtxH2(lines[i]) || isSetextH2(lines, i, mask));
 }
 
@@ -12895,7 +12895,7 @@ function isH2At(lines, i, mask) {
 // it, so "#  Example" and "#\tExample" failed and "# ###", a heading with no text, passed
 // (Tek-496). The closing run is read by index, not by a pattern, so a long line of
 // spaces and "#" stays linear.
-function h1Title(line) {
+function h1Title(line: string): string | null {
   const m = /^ {0,3}#(?=[ \t]|$)/.exec(line);
   if (!m) return null;
   const s = line.slice(m[0].length);
@@ -12914,23 +12914,23 @@ function h1Title(line) {
 // parser reads it with a host. Until 2026-09-27 a pattern accepted anything after the scheme,
 // so https://% and https://example.com:99999/ passed as absolute URLs although no client can
 // open them (Tek-496).
-function isAbsoluteHttpUrl(t) {
+function isAbsoluteHttpUrl(t: string): boolean {
   if (!/^https?:\/\//i.test(t)) return false;
   let u;
   try { u = new URL(t); } catch { return false; }
   return (u.protocol === "http:" || u.protocol === "https:") && u.hostname !== "";
 }
-
-function redirectFailDetail(f) {
+type CheckStatus = "pass" | "warn" | "fail" | "info";
+function redirectFailDetail(f: LlmsTxtInput): string {
   if (f.reason === "off-host") return "redirects to " + f.location + ", a different host; llms.txt is host-scoped, so validate that host directly";
   if (f.reason === "unsafe-target") return "redirects to an unsupported target (" + f.location + "); only https redirects to the same site are followed";
   if (f.reason === "too-many") return "too many redirects; the llms.txt is not served at a stable URL";
   return "got a " + f.status + " redirect without a usable Location header";
 }
-
-function validateLlmsTxt(f) {
-  const checks = [];
-  const add = (id, status, label, detail) => checks.push({ id, status, label, detail });
+interface LlmsCheck { id: string; status: CheckStatus; label: string; detail: string; value?: string }
+function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
+  const checks: LlmsCheck[] = [];
+  const add = (id: string, status: CheckStatus, label: string, detail: string) => checks.push({ id, status, label, detail });
   if (f.redirect) {
     add("http-status", "fail", "File exists at /llms.txt", redirectFailDetail(f));
     return checks;
@@ -13062,7 +13062,7 @@ function validateLlmsTxt(f) {
   {
     let inSection = false, counted = false, seenH2 = false, itemOpen = false, itemGap = false, itemEmpty = false, itemCol = 0, afterFence = false;
     // Width of the leading white space of a line in columns, a tab running to the next multiple of 4.
-    const indentWidth = (s) => { let c = 0; for (const ch of s) { if (ch === " ") c++; else if (ch === "\t") c += 4 - (c % 4); else break; } return c; };
+    const indentWidth = (s: string) => { let c = 0; for (const ch of s) { if (ch === " ") c++; else if (ch === "\t") c += 4 - (c % 4); else break; } return c; };
     for (let i = 0; i < lines.length; i++) {
       const l = lines[i];
       // A code fence indented less than the item's content column closes the open item, so a link
@@ -13097,7 +13097,7 @@ function validateLlmsTxt(f) {
           // Content column: where the text after the marker starts when one to four spaces
           // separate them, and the column after the marker when the line is empty or five or
           // more spaces follow, which makes the rest indented code.
-          const mk = /^( {0,3})([-*+]|\d{1,9}[.)])([ \t]*)/.exec(l);
+          const mk = /^( {0,3})([-*+]|\d{1,9}[.)])([ \t]*)/.exec(l)!;
           const markerEnd = mk[1].length + mk[2].length;
           let c = markerEnd;
           for (const ch of mk[3]) c += ch === "\t" ? 4 - (c % 4) : 1;
@@ -13176,7 +13176,7 @@ function validateLlmsTxt(f) {
 // text, and the NEXT "<" can still start a tag. Measured, not assumed: without this rule
 // "<<style><link rel=describedby ...>" read the link as published while a real parser
 // treats the first "<" as text, opens style, and publishes nothing.
-function startsTag(c) {
+function startsTag(c: string | undefined): boolean {
   return c !== undefined && (c === "!" || c === "/" || c === "?" || (c >= "a" && c <= "z"));
 }
 
@@ -13191,13 +13191,13 @@ function startsTag(c) {
 // any "=", which the tokenizer does not do either: in a="x"=">" the second "=" starts an attribute
 // NAME, and so does an "=" where a name is expected, so the quote after it is part of that name
 // and the ">" inside it ends the tag. Measured against parse5, 2026-09-12.
-function readTag(text, lt, attrs) {
+function readTag(text: string, lt: number, attrs: Record<string, string> | null): number {
   const n = text.length;
   let j = lt + 1;
   if (text[j] === "/") j++;
   while (j < n && !isTagBoundary(text[j])) j++;
   let state = "before", name = "", start = 0, quote = "";
-  const add = (value) => {
+  const add = (value: string) => {
     if (attrs && !(name in attrs)) attrs[name] = decodeAttributeValue(value);
   };
   for (; j < n; j++) {
@@ -13255,7 +13255,7 @@ function readTag(text, lt, attrs) {
   return -1;
 }
 
-function tagEnd(text, lt) {
+function tagEnd(text: string, lt: number): number {
   return readTag(text, lt, null);
 }
 
@@ -13266,7 +13266,7 @@ function tagEnd(text, lt) {
 // after it was lost; U+212A lowercases to "k"; and NBSP counted as whitespace between head
 // elements, where a parser starts the body, and between rel tokens. Measured against parse5,
 // 2026-09-12.
-function asciiLower(s) {
+function asciiLower(s: string): string {
   return s.replace(/[A-Z]+/g, (m) => m.toLowerCase());
 }
 
@@ -13274,19 +13274,19 @@ var HTML_WHITESPACE = " \t\n\r\f";
 // A MIME type is trimmed of HTTP whitespace, which does not include FF.
 var HTTP_WHITESPACE = " \t\n\r";
 
-function trimChars(s, chars) {
+function trimChars(s: string, chars: string): string {
   let a = 0, b = s.length;
   while (a < b && chars.includes(s[a])) a++;
   while (b > a && chars.includes(s[b - 1])) b--;
   return s.slice(a, b);
 }
 
-function isHtmlWhitespace(s) {
+function isHtmlWhitespace(s: string): boolean {
   for (let k = 0; k < s.length; k++) if (!HTML_WHITESPACE.includes(s[k])) return false;
   return true;
 }
 
-function isAsciiAlphanumeric(c) {
+function isAsciiAlphanumeric(c: string | undefined): boolean {
   return c !== undefined && ((c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c >= "0" && c <= "9"));
 }
 
@@ -13300,7 +13300,7 @@ function isAsciiAlphanumeric(c) {
 // the replacement table below. A NUL in the value becomes U+FFFD as well. Before this,
 // rel="described&#98;y" read as no relation and href="/llms.txt?a=1&amp;b=2" was reported
 // with "&amp;" still in it.
-var C1_REPLACEMENTS = {
+var C1_REPLACEMENTS: Record<number, number> = {
   0x80: 0x20ac, 0x82: 0x201a, 0x83: 0x0192, 0x84: 0x201e, 0x85: 0x2026, 0x86: 0x2020, 0x87: 0x2021,
   0x88: 0x02c6, 0x89: 0x2030, 0x8a: 0x0160, 0x8b: 0x2039, 0x8c: 0x0152, 0x8e: 0x017d, 0x91: 0x2018,
   0x92: 0x2019, 0x93: 0x201c, 0x94: 0x201d, 0x95: 0x2022, 0x96: 0x2013, 0x97: 0x2014, 0x98: 0x02dc,
@@ -13612,10 +13612,10 @@ var NAMED_REFERENCE_DATA =
   "yopf=1d56a yscr=1d4ce yucy=44e yuml!ff zacute=17a zcaron=17e zcy=437 zdot=17c zeetrf=2128 " +
   "zeta=3b6 zfr=1d537 zhcy=436 zigrarr=21dd zopf=1d56b zscr=1d4cf zwj=200d zwnj=200c";
 
-let namedReferences = null;
-function namedReference(key) {
+let namedReferences: Map<string, string> | null = null;
+function namedReference(key: string): string | undefined {
   if (namedReferences === null) {
-    namedReferences = new Map();
+    namedReferences = new Map<string, string>();
     for (const entry of NAMED_REFERENCE_DATA.split(" ")) {
       const sep = entry.search(/[!=]/);
       const name = entry.slice(0, sep);
@@ -13627,7 +13627,7 @@ function namedReference(key) {
   return namedReferences.get(key);
 }
 
-function decodeAttributeValue(value) {
+function decodeAttributeValue(value: string): string {
   if (!value.includes("&") && !value.includes("\u0000")) return value;
   const s = value.replace(/\u0000/g, "\uFFFD");
   const n = s.length;
@@ -13664,7 +13664,7 @@ function decodeAttributeValue(value) {
     // A name is at most 31 letters and digits, so the run is read no further than 32.
     let end = i;
     while (end < n && end - i < 32 && isAsciiAlphanumeric(s[end])) end++;
-    let match, matchEnd = -1;
+    let match: string | undefined, matchEnd = -1;
     if (end > i && s[end] === ";") {
       match = namedReference(s.slice(i, end) + ";");
       if (match !== undefined) matchEnd = end + 1;
@@ -13699,25 +13699,25 @@ var HEAD_SKIPPED_CONTENT = ["script", "style", "title", "noscript", "noframes", 
 // whitespace, an optional "/" (a parser closes on </script/> too) and a ">". Returns the
 // index after it, or -1 when the element never closes, which means the rest of the
 // document is inside it.
-function skipSpace(lower, j) {
+function skipSpace(lower: string, j: number): number {
   while (j < lower.length && (lower[j] === " " || lower[j] === "\t" || lower[j] === "\n" || lower[j] === "\r" || lower[j] === "\f")) j++;
   return j;
 }
 
 // True when the character ends a tag name: whitespace, "/", ">" or the end of the input.
-function isTagBoundary(c) {
+function isTagBoundary(c: string | undefined): boolean {
   return c === undefined || c === ">" || c === "/" || c === " " || c === "\t" || c === "\n" || c === "\r" || c === "\f";
 }
 
 // The index just after "</name ... >", or -1 when that is not an end tag there.
-function endTagAt(lower, name, at) {
+function endTagAt(lower: string, name: string, at: number): number {
   if (!lower.startsWith("</" + name, at)) return -1;
   let j = skipSpace(lower, at + name.length + 2);
   if (lower[j] === "/") j = skipSpace(lower, j + 1);
   return lower[j] === ">" ? j + 1 : -1;
 }
 
-function rawTextEnd(lower, name, from) {
+function rawTextEnd(lower: string, name: string, from: number): number {
   for (let at = lower.indexOf("</" + name, from); at !== -1; at = lower.indexOf("</" + name, at + name.length + 2)) {
     const end = endTagAt(lower, name, at);
     if (end !== -1) return end;
@@ -13730,7 +13730,7 @@ function rawTextEnd(lower, name, from) {
 // the escape, not the element. Without this the legacy shape
 // <script><!-- ... <script>...</script> ... --></script> ended early and the rest of the
 // script was read as markup, which is the wrong direction. 4 of 240 000 fuzz inputs.
-function scriptEnd(lower, from) {
+function scriptEnd(lower: string, from: number): number {
   let i = from, escaped = false, doubleEscaped = false;
   while (i < lower.length) {
     if (lower.startsWith("<!--", i)) { escaped = true; i += 4; continue; }
@@ -13755,7 +13755,7 @@ function scriptEnd(lower, from) {
 // Raw text and RCDATA elements whose content is text for the tokenizer, so a "<template" or a
 // "</template" inside one is not a tag. script is read by scriptEnd, the others by rawTextEnd.
 const TEMPLATE_RAW_TEXT = ["script", "style", "title", "noscript", "noframes", "textarea", "xmp", "iframe", "noembed"];
-function templateEnd(lower, from) {
+function templateEnd(lower: string, from: number): number {
   let depth = 1, i = from;
   // One forward scan: every "<" is looked at once and the cursor never moves back, so the cost
   // stays linear (restarting a search each round measured 15 686 ms on 1 MB of "</templateX").
@@ -13807,7 +13807,7 @@ function templateEnd(lower, from) {
 // "--!>" separately from every comment, and on a page that never uses that ending, which is
 // almost every page, each search ran to the end of the document: 100 KB of short comments
 // measured 770 ms and each doubling took four times as long (found by a verifier, 2026-09-12).
-function commentEnd(lower, from) {
+function commentEnd(lower: string, from: number): number {
   for (let p = lower.indexOf("--", from); p !== -1; p = lower.indexOf("--", p + 1)) {
     if (lower[p + 2] === ">") return p + 3;
     if (lower[p + 2] === "!" && lower[p + 3] === ">") return p + 4;
@@ -13828,7 +13828,7 @@ function commentEnd(lower, from) {
 // comments, not unterminated ones, and --!> ends a comment as well. A "<" that no letter,
 // "!", "/" or "?" follows is text. A ">" inside a quoted attribute value does not end a
 // tag. </script/> closes a raw text element as well as </script> does.
-function headOfDocument(html) {
+function headOfDocument(html: unknown): string {
   // A parser tokenizes an input stream whose CRLF and CR have already become LF, so a value read
   // from the head carries LF where the page wrote CR (measured against parse5, 2026-09-12).
   const text = String(html || "").replace(/\r\n?/g, "\n");
@@ -13900,7 +13900,7 @@ function headOfDocument(html) {
 // js/polynomial-redos (alerts #4 and #5 on the package repo, 2026-08-24). This scan
 // visits every character once: from each "<" it reads to the next ">" and then continues
 // after it, which is what the regex meant to say.
-function* htmlTags(text) {
+function* htmlTags(text: string): Generator<string, void, unknown> {
   const lower = asciiLower(text);
   let i = 0;
   for (;;) {
@@ -13914,22 +13914,22 @@ function* htmlTags(text) {
   }
 }
 
-function tagAttributes(tag) {
+function tagAttributes(tag: string): Record<string, string> {
   const out: Record<string, string> = {};
   readTag(tag, 0, out);
   return out;
 }
-
+interface LinkHeaderValue { href: string; params: Record<string, string> }
 // RFC 8288 section 3: a Link header is a comma separated list, each value an angle
 // bracketed URI reference followed by semicolon separated parameters, and a parameter
 // value may be a quoted string that contains commas, semicolons and backslash escapes.
 // Reading rel and type with one regex over the whole value read the CONTENT of
 // title="note; rel=alternate; type=text/markdown" as parameters of the link.
-function parseLinkHeader(header) {
+function parseLinkHeader(header: unknown): LinkHeaderValue[] {
   const s = String(header || "");
   const space = " \t";
   const n = s.length;
-  const out = [];
+  const out: LinkHeaderValue[] = [];
   let i = 0;
   while (i < n) {
     while (i < n && (s[i] === "," || space.includes(s[i]))) i++;
@@ -13939,7 +13939,7 @@ function parseLinkHeader(header) {
     if (gt === -1) break;
     const href = s.slice(i + 1, gt).trim();
     i = gt + 1;
-    const params = {};
+    const params: Record<string, string> = {};
     while (i < n) {
       while (i < n && space.includes(s[i])) i++;
       if (i >= n) break;
@@ -13980,7 +13980,7 @@ function parseLinkHeader(header) {
 
 // Move to the start of the next comma separated value without stopping inside a quoted
 // string, so a comma in title="a, b" does not split one value into two.
-function nextLinkValue(s, from) {
+function nextLinkValue(s: string, from: number): number {
   let quote = "";
   for (let j = from; j < s.length; j++) {
     const c = s[j];
@@ -13994,7 +13994,7 @@ function nextLinkValue(s, from) {
   }
   return s.length;
 }
-
+interface LinkRelations { describedby: string | null; markdown: string | null; headCut?: boolean }
 // v2 of the llms.txt proposal (August 2026) left the file format alone and added one
 // thing: a page should say where its markdown version and its llms.txt are, using
 // rel="alternate" type="text/markdown" and rel="describedby", as HTML link elements
@@ -14006,8 +14006,8 @@ function nextLinkValue(s, from) {
 // against, which is a change to who passes rather than a new measurement (Tek-160).
 // How common the relations are in the wild has not been measured, so nothing here
 // claims it.
-function findLinkRelations(html, linkHeader) {
-  const found: { describedby: any; markdown: any; headCut?: boolean } = { describedby: null, markdown: null };
+function findLinkRelations(html: unknown, linkHeader: unknown): LinkRelations {
+  const found: LinkRelations = { describedby: null, markdown: null };
   // Only the head, and only what a parser would put there: a commented-out link element
   // is not published, a link element inside a script or a template is not published, and
   // a link element the parser moves into the body is not what these two checks are about.
@@ -14053,13 +14053,13 @@ function findLinkRelations(html, linkHeader) {
   if (whole.length > 65536) found.headCut = true;
   return found;
 }
-
-function validateV2Discovery(found, unreadReason?) {
-  const checks = [];
-  const add = (id, status, label, detail) => checks.push({ id, status, label, detail });
+type ChecksSummary = "not valid" | "valid with warnings" | "valid";
+function validateV2Discovery(found: LinkRelations | null, unreadReason?: string): LlmsCheck[] {
+  const checks: LlmsCheck[] = [];
+  const add = (id: string, status: CheckStatus, label: string, detail: string) => checks.push({ id, status, label, detail });
   if (!found) {
-    add("v2-describedby", "info", "Home page points to its llms.txt (v2)", unreadReason);
-    add("v2-markdown-alternate", "info", "Home page points to a markdown version (v2)", unreadReason);
+    add("v2-describedby", "info", "Home page points to its llms.txt (v2)", unreadReason!);
+    add("v2-markdown-alternate", "info", "Home page points to a markdown version (v2)", unreadReason!);
     return checks;
   }
   // A target is shown through maskLocation, as a redirect target is, so a user name, a password,
@@ -14072,8 +14072,8 @@ function validateV2Discovery(found, unreadReason?) {
     found.markdown ? 'rel="alternate" type="text/markdown" to ' + cut(maskLocation(found.markdown), 120) : 'no rel="alternate" type="text/markdown" ' + where + '; v2 recommends it so an agent finds the markdown form without guessing');
   return checks;
 }
-
-function summarizeChecks(checks) {
+interface ValidationResult { target: string; summary: ChecksSummary; checks: LlmsCheck[]; error?: undefined }
+function summarizeChecks(checks: LlmsCheck[]): ChecksSummary {
   if (checks.some((c) => c.status === "fail")) return "not valid";
   if (checks.some((c) => c.status === "warn")) return "valid with warnings";
   return "valid";
@@ -14093,8 +14093,8 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
   // and then validate turva.dev, because the tabs left in the 300-unit window vanished on
   // their own once normalizeHostInput built a URL from it.
   const raw = cut(typed.replace(/[\t\r\n]/g, "").trim(), 300);
-  let result = null;
-  let error = null;
+  let result: Omit<ValidationResult, "summary" | "error"> | null = null;
+  let error: string | null = null;
   if (raw) {
     const host = normalizeHostInput(raw);
     if (!host || !isValidPublicHost(host)) {
@@ -14132,7 +14132,7 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
         }
         result = { target: "https://" + host + "/llms.txt", checks: validateLlmsTxt(fetched).concat(discovery) };
       } catch (err) {
-        error = "Could not fetch https://" + host + "/llms.txt: " + (err && err.name === "TimeoutError" ? "timed out after 8 seconds" : "network error") + ".";
+        error = "Could not fetch https://" + host + "/llms.txt: " + (err && (err as { name?: unknown }).name === "TimeoutError" ? "timed out after 8 seconds" : "network error") + ".";
       }
     }
   }
@@ -14143,12 +14143,12 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
   // its own field with the same 120 character cut it always had, and the sentence stays the
   // same words for every address, so a JSON caller reads the raw value from one field instead
   // of parsing it back out of a message meant for people.
-  if (unusedPath) result.checks.unshift({ id: "input-path", status: "info", label: "Path in the address you entered", value: cut(unusedPath, 120), detail: "This path is not used, because the validator always reads /llms.txt at the root of the host." });
+  if (unusedPath) result!.checks.unshift({ id: "input-path", status: "info", label: "Path in the address you entered", value: cut(unusedPath, 120), detail: "This path is not used, because the validator always reads /llms.txt at the root of the host." });
   // Text quoted from the fetched file leaves without bidirectional controls (round 19, V6-U1): a
   // site's own H1 or summary could otherwise read in another order here and in the JSON answer.
   if (result) result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripControls(stripBidi(c.detail)) }) : c));
   if (wantsJson(request)) {
-    const payload = error
+    const payload: ValidationResult | ValidationError = error
       ? { error }
       : result
         ? { target: result.target, summary: summarizeChecks(result.checks), checks: result.checks }
@@ -14163,7 +14163,7 @@ async function serveLlmsValidatorHtml(request, canonicalUrl) {
   // opens with the target and the counts. No total and no percentage on purpose: the twin
   // says why. Error wording is the shared form from the 2026-09-06 page instruction, with
   // the measured reason appended so nothing is hidden.
-  const word = { pass: "Pass", warn: "Warning", fail: "Fail", info: "Information" };
+  const word: Record<string, string> = { pass: "Pass", warn: "Warning", fail: "Fail", info: "Information" };
   let resultHtml = "";
   if (error) {
     const invalid = error.startsWith("That does not look like");

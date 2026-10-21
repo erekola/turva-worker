@@ -5,7 +5,7 @@ import worker from "../src/worker.ts";
 // Regression tests for Tek-562 (outside reviews W26 to W35): the x402 EIP-712 name, the UCP key,
 // the closed ACP capabilities object, the A2A task routes, the server card CORS headers, the v6 key
 // footer and the H2 rule of the hosted llms.txt validator. The package turva-llms-txt-validator
-// 0.3.18 carries the same H2 cases in test/tek562.test.mjs.
+// 0.3.18 carries the same H2 cases in test/tek562.test.ts.
 
 const env = {};
 const get = (path, opts: { method?: string; headers?: Record<string, string> } = {}): Promise<Omit<Response, "json"> & { json(): Promise<any> }> =>

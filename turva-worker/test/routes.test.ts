@@ -1207,7 +1207,7 @@ test("F10: ACP checkout complete answers 422, matching the OpenAPI document", as
 
 // The hosted validator and the npm package are one implementation in two files and they
 // answer identically by rule. These are the same cases the package's own suite runs
-// (llms-txt-validator/test/validate.test.mjs, Astra 2026-09-10 F1).
+// (llms-txt-validator/test/validate.test.ts, Astra 2026-09-10 F1).
 test("A10-3: the hosted validator reads fences and indented headings like the package", async () => {
   const ask = async (text) => {
     const real = globalThis.fetch;

@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
 
-// Mirrors llms-txt-validator/test/round3.test.mjs (Tek-542, batch Fv) against the hosted
+// Mirrors llms-txt-validator/test/round3.test.ts (Tek-542, batch Fv) against the hosted
 // validator route instead of the package's own exports: worker.ts exports only
 // { default, escapeHtml, renderInline, markdownToHtml, findLinkRelations }, so maskLocation,
 // validateLlmsTxt, collectLinks and collectLinkDefinitions are reached the way
