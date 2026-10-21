@@ -339,7 +339,7 @@ test("G1-2: OPTIONS /api/v1 answers access-control-max-age 86400 exactly", async
 // ---- G1-3: every LEGACY_REDIRECTS entry redirects to its mapped target ----
 
 function parseLegacyRedirects(src) {
-  const startMarker = "var LEGACY_REDIRECTS = {";
+  const startMarker = "const LEGACY_REDIRECTS = {";
   const start = src.indexOf(startMarker);
   if (start === -1) throw new Error("LEGACY_REDIRECTS not found in worker.ts");
   const bodyStart = start + startMarker.length;

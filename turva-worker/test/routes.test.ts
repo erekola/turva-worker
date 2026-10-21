@@ -1103,7 +1103,7 @@ test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guid
   assert.equal(guides[0], "/guides/agent-readiness-audit");
   assert.equal(guides[1], "/guides/choosing-an-agent-readiness-audit");
   const src = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
-  const meta = src.slice(src.indexOf("var META_BY_PATH"));
+  const meta = src.slice(src.indexOf("const META_BY_PATH"));
   const posts = [...meta.matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{[\s\S]*?date: "(\d{4}-\d{2}-\d{2})"/g)].map((m, i) => ({ p: m[1], d: m[2], i }));
   const blog = posts.sort((a, b) => b.d.localeCompare(a.d) || a.i - b.i).map((x) => x.p);
   assert.ok(blog.length > 20, "META_BY_PATH lists the posts");

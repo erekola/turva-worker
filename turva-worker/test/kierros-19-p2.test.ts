@@ -21,7 +21,7 @@ const workerSrc = readFileSync(new URL("../src/worker.ts", import.meta.url), "ut
 // Ground truth for "every page": parsed from the source the same way the site itself builds
 // its sitemap and its IndexNow list, so this list can never drift from what CANONICAL_PATHS says.
 function parseCanonicalPaths(src) {
-  const m = src.match(/var CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\);/);
+  const m = src.match(/const CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\);/);
   if (!m) throw new Error("CANONICAL_PATHS not found in worker.ts");
   return [...m[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((x) => x[1]);
 }

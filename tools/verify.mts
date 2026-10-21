@@ -782,7 +782,7 @@ console.log('\nBundled implementation add-ons (Tek-317)');
     // Absent from the checkout surfaces, in cents. An amount that appears here would mean an
     // agent can buy the add-on without the diagnosis, which is the thing being promised away.
     const cents = String(x.price * 100);
-    const acpI = w.indexOf('var ACP_SERVICES');
+    const acpI = w.indexOf('const ACP_SERVICES');
     const acp = acpI < 0 ? '' : w.slice(acpI, w.indexOf('\nfunction buildAcpCheckoutSession', acpI));
     check(acpI >= 0 && !acp.includes(cents), `ACP_SERVICES does not sell ${x.name} on its own (${cents} cents absent)`);
   }
@@ -801,7 +801,7 @@ console.log('\nBundled implementation add-ons (Tek-317)');
     };
     const SURFACES = [
       ['llms.txt price list',      '## Pricing (EUR, VAT not included)', 'Final price is confirmed'],
-      ['services skill markdown',  'var SKILL_SERVICES = ',              'var SKILL_COMPANY = '],
+      ['services skill markdown',  'const SKILL_SERVICES = ',              'const SKILL_COMPANY = '],
       ['WebMCP get_services',      "name: 'get_services'",               "name: 'get_company'"],
     ];
     for (const [label, a, z] of SURFACES) {
@@ -820,7 +820,7 @@ console.log('\nBundled implementation add-ons (Tek-317)');
 
   // HOME_JSON is what A2A services and the JSON twin hand an agent, so the add-ons are read
   // back from it rather than from the source line that writes them.
-  const homeSrc = (w.match(/var HOME_JSON = JSON\.stringify\(([\s\S]*?), null, 2\);/) || [])[1] || '{}';
+  const homeSrc = (w.match(/const HOME_JSON = JSON\.stringify\(([\s\S]*?), null, 2\);/) || [])[1] || '{}';
   let hb = [];
   try { hb = JSON.parse(homeSrc).bundledImplementation || []; } catch { hb = []; }
   check(hb.length === B.length, `HOME_JSON lists all ${B.length} bundled add-ons (saw ${hb.length})`);
@@ -859,7 +859,7 @@ console.log('\nCSP script hash');
 // on disk is CRLF.
 {
   const w = src.worker.text;
-  const at = w.indexOf('var WEBMCP_SCRIPT = `<script>');
+  const at = w.indexOf('const WEBMCP_SCRIPT = `<script>');
   const from = at < 0 ? -1 : w.indexOf('<script>', at) + '<script>'.length;
   const to = from < 0 ? -1 : w.indexOf('<\\/script>', from);
   if (at < 0 || to < 0) bad('CSP: WEBMCP_SCRIPT body not found');
@@ -947,7 +947,7 @@ const twFnBody = (name) => {
   }
   return src.worker.text.slice(i, j);
 };
-const twPmStart = src.worker.text.indexOf('var PAGE_MARKDOWN');
+const twPmStart = src.worker.text.indexOf('const PAGE_MARKDOWN');
 const twMdTwin = (path) => {
   const key = `"${path}": \``;
   const s0 = src.worker.text.indexOf(key, twPmStart);
@@ -1190,7 +1190,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     timeZone: 'Europe/Helsinki', year: 'numeric', month: '2-digit', day: '2-digit',
   }).format(now);
   const days = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
-  const constOf = (name) => (w.match(new RegExp('var ' + name + ' = "([^"]*)"')) || [])[1];
+  const constOf = (name) => (w.match(new RegExp('const ' + name + ' = "([^"]*)"')) || [])[1];
   // A missing end anchor used to slice to the end of the file, silently handing a
   // 186 kB region to a check whose name promised one constant. Anchors are data too:
   // a gate reading the wrong block is the failure mode this file exists to catch.
@@ -1227,8 +1227,8 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   {
     // Since v3.113.0 the Service node lives in SCHEMA_SERVICE, one constant that both the
     // home page and /services render, so the price gate reads that constant and not SCHEMA_HOME.
-    const home = region('var SCHEMA_SERVICE', '\nvar SCHEMA_HOME');
-    const cat = region('"hasOfferCatalog"', '\nvar SCHEMA_HOME');
+    const home = region('const SCHEMA_SERVICE', '\nconst SCHEMA_HOME');
+    const cat = region('"hasOfferCatalog"', '\nconst SCHEMA_HOME');
     // An addOn offer (Tek-528, Y3) is nested inside its base offer and is not a catalog entry,
     // so the catalog count reads top-level offers only and the add-ons get their own check.
     const offers = [...cat.matchAll(/(?<!"addOn":)\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)];
@@ -1270,7 +1270,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     setSame('buyer guide cost answer', euroKeys(qi > 0 ? blocks[qi + 1] || '' : ''), PRICED.map((s) => s.priceKey));
   }
   {
-    const acp = region('var ACP_SERVICES', '\nfunction buildAcpCheckoutSession');
+    const acp = region('const ACP_SERVICES', '\nfunction buildAcpCheckoutSession');
     const rows = [...acp.matchAll(/^  (\w+): \{ item: "(\w+)", name: "([^"]+)", amount: (\d+)/gm)];
     setSame('ACP_SERVICES', rows.map((m) => m[1]), PRICED.map((s) => s.priceKey));
     for (const m of rows) {
@@ -1281,7 +1281,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // HOME_JSON is the surface project-do-not-fix.md points at when it says the catalogue
     // is deliberately narrower than the service set. That sentence is only true while this
     // list holds every service, and it named the wrong count for a day (B1-21).
-    const home = (w.match(/var HOME_JSON = JSON\.stringify\(([\s\S]*?), null, 2\);/) || [])[1] || '{}';
+    const home = (w.match(/const HOME_JSON = JSON\.stringify\(([\s\S]*?), null, 2\);/) || [])[1] || '{}';
     const hs = JSON.parse(home).services || [];
     setSame('HOME_JSON services', hs.map((s) => s.name), (facts.services || []).map((s) => s.name));
     for (const s of facts.services || []) {
@@ -1422,7 +1422,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // the tree before v3.92.0 this section fails, which is the reason it is written this way.
   {
     // A lone trailing CR survives a \r\n replace here, because region() ends on the \n.
-    const gpf = region('var GUIDE_PAGE_FAQ = {', '\n};').replace(/\r/g, '');
+    const gpf = region('const GUIDE_PAGE_FAQ = {', '\n};').replace(/\r/g, '');
     const rows = [...gpf.matchAll(/\n  "([^"]+)": mdFaqBlocks\("([^"]+)", "Frequently asked"\)\.pairs,/g)];
     const crossed = rows.filter((m) => m[1] !== m[2]).map((m) => `${m[1]} reads ${m[2]}`);
     check(rows.length > 0 && crossed.length === 0,
@@ -1433,7 +1433,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       .filter((l) => l.trim() && !/^  "[^"]+": mdFaqBlocks\("[^"]+", "Frequently asked"\)\.pairs,$/.test(l));
     check(strays.length === 0,
       `GUIDE_PAGE_FAQ holds no FAQ typed beside the twin${strays.length ? ' :: ' + strays[0].trim().slice(0, 60) : ''}`);
-    check(!/\bvar BUYER_FAQ\b/.test(w), 'no page keeps a second FAQ home beside its twin (BUYER_FAQ is gone)');
+    check(!/\b(?:var|let|const) BUYER_FAQ\b/.test(w), 'no page keeps a second FAQ home beside its twin (BUYER_FAQ is gone)');
 
     const twinKeys = [...w.slice(twPmStart).matchAll(/\n  "(\/[^"]*)": `/g)].map((m) => m[1]);
     const hasFaq = (p) => /\n## Frequently asked\n/.test((twMdTwin(p) || '').replace(/\r\n/g, '\n'));
@@ -1481,7 +1481,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // still needed because it checks the DATED list, which the heading comparison above
   // does not read.
   {
-    const llms = region('var LLMS_TXT', '\nvar ');
+    const llms = region('const LLMS_TXT', '\nconst AUTH_MD');
     // The .md suffix arrived with llms.txt v2 (2026-08-24): the file's links point at the
     // markdown twin of each page now. The gate compares PATHS, so the suffix is optional in
     // the pattern and never part of the captured path. Without this the regex matched zero
@@ -1489,7 +1489,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const a = [...llms.matchAll(/\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/blog\/[a-z0-9-]+)(?:\.md)?\)/g)].map((m) => m[1]);
     const twin = (twMdTwin('/blog') || '').replace(/\r\n/g, '\n');
     const b = [...twin.matchAll(/\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\.? (\d{4}-\d{2}-\d{2})\./g)];
-    const meta = [...w.slice(w.indexOf('var META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)].map((m) => m[1]);
+    const meta = [...w.slice(w.indexOf('const META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)].map((m) => m[1]);
     setSame('LLMS_TXT blog list vs META_BY_PATH', a, meta);
     setSame('/blog twin list vs META_BY_PATH', b.map((m) => m[1]), meta);
     const wrong = b.filter((m) => !w.includes(`"${m[1]}": {`) || !region(`  "${m[1]}": {`, '\n  },').includes(`date: "${m[2]}"`));
@@ -1531,7 +1531,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // Every hidden attribute on the card pages hides for real. A class that sets its own display
     // beats the browser's rule for [hidden] (.post until v3.148.0, .copy-btn until v3.176.0), so the
     // card-page CSS carries one global rule with !important instead of an override per class (Tek-487).
-    check(/(^|\n)\[hidden\]\{display:none !important;\}\r?\n/.test(region('var CARDPAGE_CSS = `', '`;')),
+    check(/(^|\n)\[hidden\]\{display:none !important;\}\r?\n/.test(region('const CARDPAGE_CSS = `', '`;')),
       'CARDPAGE_CSS carries the global [hidden]{display:none !important} rule (Tek-487)');
   }
 
@@ -1542,8 +1542,8 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // (siteRank), and this block reads every hand-written list against it. What the code
   // computes (sitemap.xml, llms-full.txt) is checked at runtime in test/routes.test.ts.
   {
-    const primary = [...(region('var PRIMARY_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
-    const aux = [...(region('var AUX_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
+    const primary = [...(region('const PRIMARY_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
+    const aux = [...(region('const AUX_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
     check(primary.length >= 8 && primary[0] === '/' && primary.indexOf('/tools') < primary.indexOf('/company') && aux.length >= 2,
       `PRIMARY_PATHS parsed from worker.ts (${primary.length}: ${primary.join(' ')}) and AUX_PATHS (${aux.join(' ')})`);
     const seqSame = (label, found, want) => {
@@ -1554,7 +1554,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     };
     const links = (text, re) => [...text.matchAll(re)].map((m) => m[1]);
     const section = (text, head) => { const i = text.indexOf('\n## ' + head + '\n'); if (i < 0) return ''; const j = text.indexOf('\n## ', i + 4); return text.slice(i, j < 0 ? undefined : j); };
-    const llms = region('var LLMS_TXT', '\nvar ').replace(/\r\n/g, '\n');
+    const llms = region('const LLMS_TXT', '\nconst AUTH_MD').replace(/\r\n/g, '\n');
     // 1. the guides: the /guides twin is the source, read in link order
     const guidesTwin = (twMdTwin('/guides') || '').replace(/\r\n/g, '\n');
     const guideWant = links(guidesTwin, /\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g);
@@ -1575,9 +1575,9 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     seqSame('LLMS_TXT Services section', links(section(llms, 'Services'), /\n- \[[^\]]*\]\(https:\/\/turva\.dev(\/[a-z0-9-]+)\.md\)/g), primary.slice(1).concat(['/badge']));
     check(!llms.includes('\n## Tools\n'), 'LLMS_TXT has no Tools section behind the blog (the tool pages sit in the Services block)');
     // 3. the blog, newest first everywhere: META_BY_PATH keys, PAGE_MARKDOWN keys, LLMS_TXT, the /blog twin, SITEMAP_ENTRIES
-    const metaKeys = [...w.slice(w.indexOf('var META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)].map((m) => m[1]);
+    const metaKeys = [...w.slice(w.indexOf('const META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)].map((m) => m[1]);
     const dateOf = (p) => (region(`  "${p}": {`, '\n  },').match(/date: "(\d{4}-\d{2}-\d{2})"/) || [])[1] || '';
-    const pmKeys = [...w.slice(w.indexOf('var PAGE_MARKDOWN'), w.indexOf('var META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": `/g)].map((m) => m[1]);
+    const pmKeys = [...w.slice(w.indexOf('const PAGE_MARKDOWN'), w.indexOf('const META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": `/g)].map((m) => m[1]);
     const blogWant = pmKeys.map((p, i) => ({ p, i, d: dateOf(p) })).sort((a, b) => b.d.localeCompare(a.d) || a.i - b.i).map((x) => x.p);
     check(blogWant.length > 20 && blogWant.every((p) => dateOf(p)), `blog order derived from PAGE_MARKDOWN keys and META_BY_PATH dates (${blogWant.length}, newest ${blogWant[0]})`);
     seqSame('PAGE_MARKDOWN blog keys', pmKeys, blogWant);
@@ -1592,16 +1592,16 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       check(cnt !== undefined && Number(cnt) === blogWant.length,
         `/blog twin count line under Browse all articles says ${cnt} and the list carries ${blogWant.length} posts`);
     }
-    const smRows = [...region('var SITEMAP_ENTRIES = [', '\n];').matchAll(/\["([^"]+)"/g)].map((m) => m[1]);
+    const smRows = [...region('const SITEMAP_ENTRIES = [', '\n];').matchAll(/\["([^"]+)"/g)].map((m) => m[1]);
     seqSame('SITEMAP_ENTRIES blog rows (the literal; sitemap.xml sorts by siteRank at runtime and is checked in routes.test.ts)', smRows.filter((p) => p.startsWith('/blog/')), blogWant);
     seqSame('SITEMAP_ENTRIES guide rows (the literal)', smRows.filter((p) => p.startsWith('/guides/')), guideWant);
     seqSame('SITEMAP_ENTRIES primary and auxiliary rows (the literal)', smRows.filter((p) => primary.includes(p) || aux.includes(p)), primary.concat(aux));
     // 4. the service lists: facts.json services is the order, shopify first, and the two ACP homes and the two skills homes agree
     const priced = (facts.services || []).filter((s) => s.priceKey).map((s) => s.id);
-    seqSame('ACP_SERVICES keys', [...region('var ACP_SERVICES = {', '\n};').matchAll(/\n  ([a-z-]+): \{ item:/g)].map((m) => m[1]), priced);
-    seqSame('ACP_INDEX_JSON items', [...((region('var ACP_INDEX_JSON', '\n}, null, 2);').match(/"items": \[([^\]]*)\]/) || ['', ''])[1].matchAll(/"([a-z-]+)"/g))].map((m) => m[1]), priced);
-    const a2aSkills = [...region('var A2A_AGENT_CARD', '\n}, null, 2);').matchAll(/\n      "id": "([a-z-]+)"/g)].map((m) => m[1]);
-    seqSame('SKILLS (agent-skills index) vs the A2A card skills', [...region('var SKILLS = [', '\n];').matchAll(/name: "([a-z-]+)"/g)].map((m) => m[1]), a2aSkills);
+    seqSame('ACP_SERVICES keys', [...region('const ACP_SERVICES = {', '\n};').matchAll(/\n  ([a-z-]+): \{ item:/g)].map((m) => m[1]), priced);
+    seqSame('ACP_INDEX_JSON items', [...((region('const ACP_INDEX_JSON', '\n}, null, 2);').match(/"items": \[([^\]]*)\]/) || ['', ''])[1].matchAll(/"([a-z-]+)"/g))].map((m) => m[1]), priced);
+    const a2aSkills = [...region('const A2A_AGENT_CARD', '\n}, null, 2);').matchAll(/\n      "id": "([a-z-]+)"/g)].map((m) => m[1]);
+    seqSame('SKILLS (agent-skills index) vs the A2A card skills', [...region('const SKILLS = [', '\n];').matchAll(/name: "([a-z-]+)"/g)].map((m) => m[1]), a2aSkills);
     check(a2aSkills[0] === 'services', `the first skill on the A2A card is services (saw ${a2aSkills[0]})`);
     // 5. every converted page renders its sections in the twin's order. Read from the card
     // calls (md*Card render their own h2) and the literal <h2> tags; mdLists and mdParas
@@ -1691,7 +1691,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // META_BY_PATH entry carries `checked`, an ISO date of the last read against primary sources,
   // and serveGuideHtml renders it under the H1. A guide without one would make the promise false.
   {
-    const metaRegion = region('var META_BY_PATH = {', '\n};');
+    const metaRegion = region('const META_BY_PATH = {', '\n};');
     const guidePaths = [...src.worker.text.matchAll(/^  "(\/guides\/[a-z0-9-]+)": `/gm)].map((m) => m[1]);
     let withDate = 0;
     for (const gp of guidePaths) {
@@ -1709,7 +1709,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   {
     const MONTHS = { January: '01', February: '02', March: '03', April: '04', May: '05', June: '06', July: '07', August: '08', September: '09', October: '10', November: '11', December: '12' };
     const bad2 = [];
-    for (const m of w.slice(w.indexOf('var META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)) {
+    for (const m of w.slice(w.indexOf('const META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)) {
       const path = m[1];
       const entry = region(`  "${path}": {`, '\n  },');
       const declared = (entry.match(/modified: "(\d{4}-\d{2}-\d{2})"/) || [])[1] || null;
@@ -1737,9 +1737,9 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // until now nothing compared them, so a new or removed page could land in one and be
   // forgotten in the other two without a red check anywhere.
   {
-    const sitemapPaths = [...region('var SITEMAP_ENTRIES = [', '\n];').matchAll(/[[]"([^"]+)"/g)].map((m) => m[1]);
-    const canonicalPaths = [...region('var CANONICAL_PATHS = new Set([', ']);').matchAll(/"([^"]+)"/g)].map((m) => m[1]);
-    const metaPaths = [...region('var META_BY_PATH = {', '\nvar PRICE_VALID_UNTIL').matchAll(/\n  "([^"]+)": [{]/g)].map((m) => m[1]);
+    const sitemapPaths = [...region('const SITEMAP_ENTRIES = [', '\n];').matchAll(/[[]"([^"]+)"/g)].map((m) => m[1]);
+    const canonicalPaths = [...region('const CANONICAL_PATHS = new Set([', ']);').matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+    const metaPaths = [...region('const META_BY_PATH = {', '\nconst PRICE_VALID_UNTIL').matchAll(/\n  "([^"]+)": [{]/g)].map((m) => m[1]);
     // /auth.md is served as text/markdown, not an HTML page (K3, round 19): it carries no
     // canonical link and no OG meta by design, so it is named here instead of silently
     // excluded.
@@ -1759,7 +1759,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // caught by it, which is exactly what happened to one post until v3.164.0. This block
   // watches for that failure mode directly, across every twin, not only the blog's.
   {
-    const pmRegion = region('var PAGE_MARKDOWN = {', '\nvar PRIMARY_PATHS');
+    const pmRegion = region('const PAGE_MARKDOWN = {', '\nconst PRIMARY_PATHS');
     const pmAllKeys = [...pmRegion.matchAll(/\n  "(\/[a-z0-9/-]*)": `/g)].map((m) => m[1]);
     const badCorrected = [];
     for (const p of pmAllKeys) {
@@ -1778,10 +1778,10 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // comparing them, and they encode a EUR/USDC rate that has no source and no
   // measurement date anywhere. Consistency is checkable; the rate itself is not.
   {
-    const man = region('var X402_MANIFEST', '\nvar ');
+    const man = region('const X402_MANIFEST', '\nconst X402_INDEX_402');
     const acc = [...man.matchAll(/"amount": "(\d+)",\s*\n\s*"resource": "https:\/\/turva\.dev(\/api\/agent\/\w+)"/g)]
       .map((m) => ({ path: m[2], amount: m[1] }));
-    const routesSrc = region('var X402_ROUTES', 'var ACP_SERVICES');
+    const routesSrc = region('const X402_ROUTES', 'const ACP_SERVICES');
     const routes = [...routesSrc.matchAll(/"(\/api\/agent\/(\w+))": \{[\s\S]*?amountUsdcMicro: "(\d+)",\s*\n\s*amountEurCents: (\d+)/g)]
       .map((m) => ({ path: m[1], key: m[2], usdc: m[3], cents: Number(m[4]) }));
     setSame('X402_MANIFEST priced resources vs X402_ROUTES', acc.map((x) => x.path), routes.map((r) => r.path));
@@ -1818,7 +1818,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       'x402: every entry with asset X402_USDC_BASE carries its own extra.name (' + assets + ' assets, ' + extras.length + ' names)');
     check(w.includes('"dev.turva.agent_readiness": [') && !w.includes('"dev.turva.agent-readiness"'),
       'UCP service key is dev.turva.agent_readiness and the hyphen form is gone');
-    const acpM = region('var ACP_MANIFEST', '\n// ====');
+    const acpM = region('const ACP_MANIFEST', '\n// ====');
     check(acpM.includes('"capabilities"') && !acpM.includes('checkout_note'), 'ACP_MANIFEST capabilities carries no checkout_note');
   }
 
@@ -1841,7 +1841,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // quietly loosening or dropping one of them.
   {
     const constInt = (name) => {
-      const m = w.match(new RegExp('var ' + name + ' = ([0-9]+);'));
+      const m = w.match(new RegExp('const ' + name + ' = ([0-9]+);'));
       return m ? Number(m[1]) : null;
     };
     const agentJsonMax = constInt('AGENT_JSON_MAX_BYTES');
@@ -1865,7 +1865,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       `every redirect detail in fetchLlmsTxt is masked or empty (${maskedFields} masked, ${emptyFields} empty, ${locFields} total)`);
 
     const validateLlmsTxtSrc = region('function validateLlmsTxt', '\nfunction startsTag');
-    check(validateLlmsTxtSrc.includes('f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + " to " + maskLocation(f.finalUrl)'),
+    check(validateLlmsTxtSrc.includes('f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + (f.finalUrl ? " to " + maskLocation(f.finalUrl) : "")'),
       'validateLlmsTxt masks both sides of an accepted redirect (redirectedFrom and finalUrl) with maskLocation');
 
     // V6-U1 (round 19): a validator check's detail can quote a third-party llms.txt
@@ -2001,7 +2001,7 @@ console.log('\nRobots.txt agent lists, generated and checked (round 14, R1a-14-2
 // re-implemented in a second copy, so a change to the join/map logic itself is
 // exercised the same way it runs at request time, not just the two array literals.
 {
-  const robotsStart = 'var ROBOTS_ALLOW_AGENTS = [';
+  const robotsStart = 'const ROBOTS_ALLOW_AGENTS = [';
   const robotsEnd = '+ "Sitemap: https://turva.dev/sitemap.xml\\n";';
   const ri = workerJs.indexOf(robotsStart);
   const rj = ri < 0 ? -1 : workerJs.indexOf(robotsEnd, ri);
@@ -2045,8 +2045,8 @@ console.log('\nSitemap and canonical path sets agree (round 14, R14d-5)');
 // markdown document with its own route, not an HTML page, so it stays in the sitemap for
 // agents without a canonical link or an IndexNow entry.
 {
-  const smM = src.worker.text.match(/var SITEMAP_ENTRIES = \[([\s\S]*?)\n\];/);
-  const cpM3 = src.worker.text.match(/var CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
+  const smM = src.worker.text.match(/const SITEMAP_ENTRIES = \[([\s\S]*?)\n\];/);
+  const cpM3 = src.worker.text.match(/const CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
   const sitemapPaths = smM ? [...smM[1].matchAll(/\["([^"]+)"/g)].map((m) => m[1]) : [];
   const canonicalPaths = cpM3 ? [...cpM3[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
   check(sitemapPaths.length > 2 && canonicalPaths.length > 2,
@@ -2137,7 +2137,7 @@ console.log('\nAutolink: bare hosts in the served markdown (kierros 18, S5-1)');
 // new top-level domain fails here instead of shipping as plain text.
 {
   const setOf = (name) => {
-    const m = src.worker.text.match(new RegExp('var ' + name + ' = new Set\\(\\[([^\\]]*)\\]\\)'));
+    const m = src.worker.text.match(new RegExp('const ' + name + ' = new Set\\(\\[([^\\]]*)\\]\\)'));
     return m ? [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]) : null;
   };
   const tlds = setOf('AUTOLINK_TLDS');
@@ -2145,8 +2145,8 @@ console.log('\nAutolink: bare hosts in the served markdown (kierros 18, S5-1)');
   check(Array.isArray(tlds) && tlds.length > 0, `AUTOLINK_TLDS parsed from worker.ts (${tlds ? tlds.length : 0} top-level domains)`);
   check(Array.isArray(notHosts), `AUTOLINK_NOT_HOSTS parsed from worker.ts (${notHosts ? notHosts.length : 0} declared non-hosts)`);
   if (tlds && notHosts) {
-    const pmStart = src.worker.text.indexOf('var PAGE_MARKDOWN');
-    const pmEnd = src.worker.text.indexOf('var META_BY_PATH');
+    const pmStart = src.worker.text.indexOf('const PAGE_MARKDOWN');
+    const pmEnd = src.worker.text.indexOf('const META_BY_PATH');
     const markdown = src.worker.text.slice(pmStart, pmEnd);
     check(pmStart > 0 && pmEnd > pmStart, 'PAGE_MARKDOWN block located for the autolink scan');
     // The same shape renderInline matches, minus the leading-boundary group.
@@ -2219,7 +2219,7 @@ console.log('\nx402 amounts derive from facts.json eurUsdc (kierros 18, S6-1)');
   // X402_ROUTES route table, which is what the Worker actually serves, and the manifest
   // is read against it: a new route with no manifest offer fails the run by itself.
   const routeBlock = (() => {
-    const i = src.worker.text.indexOf('var X402_ROUTES');
+    const i = src.worker.text.indexOf('const X402_ROUTES');
     if (i < 0) return '';
     const j = src.worker.text.indexOf('\n};', i);
     return j < 0 ? '' : src.worker.text.slice(i, j);
@@ -2255,7 +2255,7 @@ console.log('\nSigning material is declared where an agent looks (kierros 18, S6
 // catalog listed neither. A surface that nothing enumerates is a surface that can be
 // removed without anything noticing.
 {
-  const cat = src.worker.text.slice(src.worker.text.indexOf('var API_CATALOG'), src.worker.text.indexOf('var API_CATALOG') + 6000);
+  const cat = src.worker.text.slice(src.worker.text.indexOf('const API_CATALOG'), src.worker.text.indexOf('const API_CATALOG') + 6000);
   for (const href of ['https://turva.dev/.well-known/jwks.json', 'https://turva.dev/.well-known/signatures.json']) {
     check(cat.includes(href), `API_CATALOG service-meta names ${href.replace('https://turva.dev', '')}`);
   }
@@ -2274,8 +2274,8 @@ console.log('\nSigned surfaces match their stored signature, offline before depl
 // worker.ts itself already declares. A worker.ts edit not yet followed by a fresh resign now
 // fails HERE, before any ship, not only after one (Tek-475, kitka-lokit-003).
 try {
-  const jwksM = src.worker.text.match(/var JWKS_JSON = "((?:[^"\\]|\\.)*)";/);
-  const sigsM = src.worker.text.match(/var SIGNATURES_JSON = "((?:[^"\\]|\\.)*)";/);
+  const jwksM = src.worker.text.match(/const JWKS_JSON = "((?:[^"\\]|\\.)*)";/);
+  const sigsM = src.worker.text.match(/const SIGNATURES_JSON = "((?:[^"\\]|\\.)*)";/);
   if (!jwksM || !sigsM) throw new Error('JWKS_JSON or SIGNATURES_JSON not found in worker.ts');
   const jwksLocal = JSON.parse(new Function('return "' + jwksM[1] + '"')());
   const sigsLocal = JSON.parse(new Function('return "' + sigsM[1] + '"')());
@@ -2542,7 +2542,7 @@ if (LIVE) {
   // 2026-08-16 was to take the three new gates into trial use and drop any that cause trouble;
   // an opt-in flag is what makes dropping it a decision rather than an incident.
   if (LIVE && process.argv.includes('--twins')) try {
-    const cpM = src.worker.text.match(/var CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
+    const cpM = src.worker.text.match(/const CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
     const paths = cpM ? [...cpM[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
     check(paths.length > 2, `CANONICAL_PATHS parsed from worker.ts (${paths.length} paths)`);
     const rikki = [];
@@ -2745,9 +2745,9 @@ if (LIVE) {
     check(otherExternal.length === 0 && navTags.length <= 1, `served homepage loads no external script other than one /nav.js (saw ${otherExternal.length} other, ${navTags.length} /nav.js)`);
     if (navTags.length === 1) {
       const wNav = src.worker.text;
-      const navAt = wNav.indexOf('var NAV_JS = `');
+      const navAt = wNav.indexOf('const NAV_JS = `');
       const navEnd = navAt < 0 ? -1 : wNav.indexOf('`;', navAt);
-      const navSource = (navAt < 0 || navEnd < 0) ? null : wNav.slice(navAt + 'var NAV_JS = `'.length, navEnd).replace(/\r\n/g, '\n');
+      const navSource = (navAt < 0 || navEnd < 0) ? null : wNav.slice(navAt + 'const NAV_JS = `'.length, navEnd).replace(/\r\n/g, '\n');
       const navServed = await (await fetch(base + '/nav.js')).text();
       check(!!navSource && navServed === navSource && !navServed.includes('modelContext'), `served /nav.js is byte-identical to NAV_JS in this repo and never mentions modelContext (source ${navSource ? navSource.length : 'n/a'} bytes, served ${navServed.length} bytes)`);
     }
@@ -2756,7 +2756,7 @@ if (LIVE) {
 
     // Source side, sliced the same way the CSP hash check slices it.
     const w = src.worker.text;
-    const at = w.indexOf('var WEBMCP_SCRIPT = `<script>');
+    const at = w.indexOf('const WEBMCP_SCRIPT = `<script>');
     const from = at < 0 ? -1 : w.indexOf('<script>', at) + '<script>'.length;
     const to = from < 0 ? -1 : w.indexOf('<\\/script>', from);
     const sourceBody = (at < 0 || to < 0) ? null : w.slice(from, to).replace(/\r\n/g, '\n');
@@ -2906,7 +2906,7 @@ if (LIVE) {
         check(names.length > 0, `WebMCP open_page declares its pages as an enum (${names.length})`);
         // Every destination it offers has to be a real page of this site, or the tool sends
         // a person to a 404 that no other gate would catch.
-        const cpMw = src.worker.text.match(/var CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
+        const cpMw = src.worker.text.match(/const CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
         const cpForOpen = cpMw ? [...cpMw[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
         check(cpForOpen.length > 2, `CANONICAL_PATHS parsed for the open_page check (${cpForOpen.length})`);
         const missing = [];
@@ -3097,7 +3097,7 @@ if (LIVE) {
     // is read from worker.ts's own SIGNATURES_JSON rather than hardcoded here, so this
     // cannot itself go stale when a manifest is added to or removed from the signing set.
     {
-      const sjM = src.worker.text.match(/var SIGNATURES_JSON = "((?:[^"\\]|\\.)*)";/);
+      const sjM = src.worker.text.match(/const SIGNATURES_JSON = "((?:[^"\\]|\\.)*)";/);
       let wantSigCount = null;
       if (sjM) {
         try {
@@ -3590,7 +3590,7 @@ if (LIVE) {
     const dnsMod = await import('node:dns');
     const dns = new dnsMod.promises.Resolver({ timeout: 2000, tries: 1 });
     const mailDomain = 'turva.dev';
-    const polSrc = (src.worker.text.match(/var MTA_STS_POLICY = `([\s\S]*?)`;/) || [])[1] || '';
+    const polSrc = (src.worker.text.match(/const MTA_STS_POLICY = `([\s\S]*?)`;/) || [])[1] || '';
     // The source is CRLF and a JS template literal is LF at runtime, so the served bytes are
     // LF. RFC 8461 allows either (sts-policy-term = LF / CRLF), so this normalises and
     // everything else has to match exactly.

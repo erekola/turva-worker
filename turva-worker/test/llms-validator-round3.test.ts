@@ -150,7 +150,7 @@ import { stripTypes } from "../test-support/strip-types.ts";
 
 function loadMaskLocation() {
   const src = stripTypes(readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8"));
-  const start = src.indexOf("function maskLocation(href, base) {");
+  const start = src.search(/function maskLocation\(href\s*,\s*base\s*\)\s*\{/);
   assert.ok(start >= 0, "maskLocation is in worker.ts");
   const close = /\n\}\r?\n/.exec(src.slice(start));
   assert.ok(close, "maskLocation has a closing brace at column 0");
@@ -169,4 +169,41 @@ test("V13 D5-1: a slashless user:password@host is masked, path@2x.png is not", (
   }
   assert.equal(maskLocation("path@2x.png"), "path@2x.png");
   assert.equal(maskLocation("path/x@y"), "path/x@y");
+});
+
+// --- Tek-668 NULL-1 and NULL-2 (2026-10-21): two inputs that no hosted route produces, because the route
+// always passes validateV2Discovery a reason and fetchLlmsTxt always sets finalUrl together with
+// redirectedFrom. They are fixed here first because the hosted validator is canonical and the npm package
+// mirrors it, and there both are reachable through the public API. Neither function is exported, so the
+// whole module body is run from the type-stripped source with its one import and its export list removed.
+function loadValidatorInternals() {
+  let src = stripTypes(readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8"));
+  const imp = /^import \{[^}]*\} from "markdown-parity-check";(\r?)$/m;
+  const exp = /\nexport \{[^}]*\};?\s*$/;
+  assert.ok(imp.test(src) && exp.test(src), "worker.ts has its one import and its export list");
+  src = src.replace(imp, "$1").replace(exp, "\n");
+  return new Function('"use strict";\n' + src + "\nreturn { validateLlmsTxt, validateV2Discovery };")();
+}
+
+test("Tek-668 NULL-1: validateV2Discovery(null) without a reason says the home page was not read", () => {
+  const { validateV2Discovery } = loadValidatorInternals();
+  const checks = validateV2Discovery(null);
+  assert.equal(checks.length, 2);
+  for (const c of checks) {
+    assert.equal(c.status, "info");
+    assert.equal(c.detail, "the home page was not read, so this was not measured");
+  }
+  for (const c of validateV2Discovery(null, "given reason")) assert.equal(c.detail, "given reason");
+});
+
+test('Tek-668 NULL-2: a redirect with no finalUrl names the address it was redirected from alone, not "to undefined"', () => {
+  const { validateLlmsTxt } = loadValidatorInternals();
+  const text = "# Example\n\n> Summary\n\n## Docs\n\n- [A](https://example.com/a): one\n";
+  const base = { status: 200, contentType: "text/plain; charset=utf-8", linkHeader: "", text, bytes: text.length };
+  const detail = (extra: Record<string, unknown>) =>
+    validateLlmsTxt(Object.assign({}, base, extra)).find((c: { id: string }) => c.id === "http-status").detail;
+  assert.equal(detail({ redirectedFrom: "https://example.com/llms.txt" }), "HTTP 200, followed a redirect from https://example.com/llms.txt");
+  assert.equal(detail({ redirectedFrom: "https://example.com/llms.txt", finalUrl: "https://www.example.com/llms.txt?session=abc" }),
+    "HTTP 200, followed a redirect from https://example.com/llms.txt to https://www.example.com/llms.txt?session=***");
+  assert.equal(detail({}), "HTTP 200");
 });

@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.211.3 - TypeScript migration, step 3 finished: src/worker.ts type-checks under strict, the last eight untyped functions carry parameter types, three overload signatures are moved onto their implementations, and every var declaration is now const or let. The hosted llms.txt validator no longer leaves an undefined value in a check's detail for two inputs no hosted route reaches. Responses change only in the version number and the sitemap date.
 // turva.dev worker v3.211.2 - the Worker source is renamed from src/worker.js to src/worker.ts, a rename that by itself changes no byte, and wrangler bundles the .ts file with no build step (TypeScript migration, step 2); /blog/the-twin-is-the-page keeps its sentences and gets an Update, October 20 note naming src/worker.ts and the CI workflow that has run since September 10, with its modified date.
 // turva.dev worker v3.211.1 - /blog/five-rounds-before-the-agent-signed: the closing section no longer invites votes on the Brickken hub; it now says the campaign has ended and the repository is archived on GitHub.
 // turva.dev worker v3.211.0 - new Protocol notes post /blog/what-shopify-changed-for-agent-shopping (2026-10-18): What Shopify changed for agent shopping since August, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 44, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
@@ -124,14 +125,14 @@ import { run as mpcRun, errorReport as mpcErrorReport, renderJson as mpcRenderJs
 
 const INDEXNOW_KEY = "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63";
 
-var X402_PAY_TO = "0x35a46b0b699864f8b7fff52c581fc83adb80fae1";
-var X402_USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+const X402_PAY_TO = "0x35a46b0b699864f8b7fff52c581fc83adb80fae1";
+const X402_USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 // The EIP-712 domain name of the Base mainnet USDC contract above. name() on that contract returns
 // "USD Coin" (measured on chain 2026-10-03), and a client that signs with another name derives a
 // different domain separator, so the signature fails. Base Sepolia USDC uses "USDC", not this asset.
-var X402_USDC_NAME = "USD Coin";
+const X402_USDC_NAME = "USD Coin";
 
-var LEGACY_REDIRECTS = {
+const LEGACY_REDIRECTS = {
   "/en": "/", "/en/": "/",
   "/en/packages": "/services", "/en/packages/": "/services",
   "/en/company": "/company", "/en/company/": "/company",
@@ -163,14 +164,14 @@ var LEGACY_REDIRECTS = {
   "/legal/": "/legal"
 };
 
-var MTA_STS_POLICY = `version: STSv1
+const MTA_STS_POLICY = `version: STSv1
 mode: enforce
 mx: mail.protonmail.ch
 mx: mailsec.protonmail.ch
 max_age: 604800
 `;
 
-var CSP_HTML = [
+const CSP_HTML = [
   "default-src 'self'",
   "script-src 'self' 'sha256-aYDvr8aW6OGCZCnuXXpdb79gguLAY+ZwnmUjQuB+7Qk='",
   "style-src 'self' 'unsafe-inline' data:",
@@ -185,7 +186,7 @@ var CSP_HTML = [
   "upgrade-insecure-requests"
 ].join("; ");
 
-var PERMISSIONS_POLICY = [
+const PERMISSIONS_POLICY = [
   "accelerometer=()", "ambient-light-sensor=()", "autoplay=()", "battery=()",
   "camera=()", "display-capture=()", "document-domain=()", "encrypted-media=()",
   "fullscreen=(self)", "geolocation=()", "gyroscope=()", "magnetometer=()",
@@ -198,7 +199,7 @@ var PERMISSIONS_POLICY = [
 // The agent-API paths, as one regex, so the 429 answer in worker_default and the 405 answer
 // in serve405 describe the same surface the same way. /llms-txt-validator is the one path with
 // two policies and is decided by the accepted request (see the 429 branch).
-var AGENT_API_PATH_RE = /^\/(api|v1|x402|openapi\.json|llms(-full)?\.txt|\.well-known|agent\/auth|auth\.md|robots\.txt|sitemap\.xml|security\.txt|ai\.txt|api-catalog|blog\/feed\.xml|oauth\/(authorize|token)|favicon\.(ico|svg)|[0-9a-f]{32}\.txt)(\/|$)/;
+const AGENT_API_PATH_RE = /^\/(api|v1|x402|openapi\.json|llms(-full)?\.txt|\.well-known|agent\/auth|auth\.md|robots\.txt|sitemap\.xml|security\.txt|ai\.txt|api-catalog|blog\/feed\.xml|oauth\/(authorize|token)|favicon\.(ico|svg)|[0-9a-f]{32}\.txt)(\/|$)/;
 
 function applySecurityHeaders(headers: Headers, kind: string) {
   headers.delete("nel");
@@ -225,15 +226,15 @@ function applySecurityHeaders(headers: Headers, kind: string) {
 
 // One list, one signal line. The ten Allow blocks used to be ten hand-typed copies of
 // the same Content-Signal line (round 13 R1a-2); now a copy cannot drift from its siblings.
-var ROBOTS_ALLOW_AGENTS = ["*", "GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User", "Claude-SearchBot", "PerplexityBot", "Perplexity-User", "Google-Extended"];
-var ROBOTS_DISALLOW_AGENTS = ["FacebookBot", "Meta-ExternalAgent"];
-var ROBOTS_CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=yes";
-var ROBOTS_TXT = "# robots.txt\n# Content Signals per contentsignals.org\n\n"
+const ROBOTS_ALLOW_AGENTS = ["*", "GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User", "Claude-SearchBot", "PerplexityBot", "Perplexity-User", "Google-Extended"];
+const ROBOTS_DISALLOW_AGENTS = ["FacebookBot", "Meta-ExternalAgent"];
+const ROBOTS_CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=yes";
+const ROBOTS_TXT = "# robots.txt\n# Content Signals per contentsignals.org\n\n"
   + ROBOTS_ALLOW_AGENTS.map(function(ua) { return "User-agent: " + ua + "\nAllow: /\n" + ROBOTS_CONTENT_SIGNAL + "\n\n"; }).join("")
   + ROBOTS_DISALLOW_AGENTS.map(function(ua) { return "User-agent: " + ua + "\nDisallow: /\n\n"; }).join("")
   + "Sitemap: https://turva.dev/sitemap.xml\n";
 
-var LLMS_TXT = `# turva.dev
+const LLMS_TXT = `# turva.dev
 
 > Agent-readiness audits and advisory for product teams.
 > Independent measurement of how readable a site or API is by AI agents,
@@ -386,7 +387,7 @@ Final price is confirmed in writing after scope is agreed.
 - AI policy: https://turva.dev/.well-known/ai.txt
 `;
 
-var AUTH_MD = `# Auth.md
+const AUTH_MD = `# Auth.md
 
 > Agent registration metadata for turva.dev.
 > Public read-only. No accounts. Credentials are optional and
@@ -536,7 +537,7 @@ The two OAuth documents are named in Discovery above.
 Corrected 2026-09-28. The engagement principles said no tracking, no analytics, no third-party scripts. The site avoids analytics cookies, tracking pixels and third-party scripts of its own, but Cloudflare, the host, still keeps standard traffic logs, as the legal page describes, so the line now says that instead.
 `;
 
-var PAGE_MARKDOWN = {
+const PAGE_MARKDOWN = {
   "/blog/what-shopify-changed-for-agent-shopping": `# What Shopify changed for agent shopping since August
 
 2026-10-18
@@ -6995,9 +6996,9 @@ Facts stated as data rather than prose, and the same fact visible in more than o
 // reads all three against this order. Round 17 (2026-09-03) found the blog ahead of the home
 // page in llms-full.txt and the pricing on line 78 of llms.txt; the order lived in five hand
 // lists that had drifted apart. It lives here now.
-var PRIMARY_PATHS = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
-var AUX_PATHS = ["/badge", "/auth.md", "/samples/audit-report", "/samples/shopify-agent-storefront-check"];
-var _guideOrderCache: string[] | null = null;
+const PRIMARY_PATHS = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
+const AUX_PATHS = ["/badge", "/auth.md", "/samples/audit-report", "/samples/shopify-agent-storefront-check"];
+let _guideOrderCache: string[] | null = null;
 function guideOrder() {
   if (_guideOrderCache === null) {
     _guideOrderCache = [];
@@ -7067,13 +7068,13 @@ ${AUTH_MD}`;
   return header + sections + authSection;
 }
 
-var _llmsFullCache: string | null = null;
+let _llmsFullCache: string | null = null;
 function getLlmsFullTxt() {
   if (_llmsFullCache === null) _llmsFullCache = buildLlmsFullTxt();
   return _llmsFullCache;
 }
 
-var AI_TXT = `# ai.txt
+const AI_TXT = `# ai.txt
 User-agent: *
 Allow: /
 
@@ -7118,7 +7119,7 @@ Training: disallowed
 Grounding: disallowed
 `;
 
-var SECURITY_TXT = `Contact: mailto:info@turva.dev
+const SECURITY_TXT = `Contact: mailto:info@turva.dev
 Expires: 2027-05-28T00:00:00.000Z
 Encryption: https://turva.dev/pgp-key.asc
 Preferred-Languages: en
@@ -7132,7 +7133,7 @@ Policy: https://turva.dev/legal#reporting-a-vulnerability
 // is served alone at /pgp-key.asc and through WKD, and the post-quantum version 6 key has its
 // own block at /pgp-key-v6.asc. The two blocks are the packets of the earlier single block,
 // split at the second public-key packet, so the key material is unchanged.
-var PGP_PUBLIC_KEY = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+const PGP_PUBLIC_KEY = `-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 xjMEap73mBYJKwYBBAHaRw8BAQdAPcu7smgWgUwI5Kr4zi6vBx43kfeLkUlpPS9n
 Qi0Oir3NH2VyaWtAdHVydmEuZGV2IDxlcmlrQHR1cnZhLmRldj7CwBEEExYKAIMF
@@ -7150,7 +7151,7 @@ kJfHiSB/mxO2E6wWnrnS9UhVBws=
 -----END PGP PUBLIC KEY BLOCK-----
 `;
 
-var PGP_PUBLIC_KEY_V6 = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+const PGP_PUBLIC_KEY_V6 = `-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 xscKBmqe95geAAAHwL7ZHDevn0yIWK1cNE1rZNLM615yk2IdMyTe1VWNNNaUI1QP
 RBwiHsmA4p/3kWOURw01YaN0BTUEq2IENtg4d5tI5KQvk7NNogWynsqEhOhFJntC
@@ -7445,12 +7446,12 @@ f8nN+BcnPVNmfoW/2w09THiGxg+1zQAAAAAAAAAAAAAAAAAAAAAAAAULExwiJQ==
 // "erik", not "info". Recomputing it from a different local part serves a key
 // no client will accept, because the client checks the user ID against the
 // address it looked up.
-var PGP_WKD_HASH = "agk5kn8g6dnzi4z7szws1t9ns6xgw14y";
+const PGP_WKD_HASH = "agk5kn8g6dnzi4z7szws1t9ns6xgw14y";
 
 // WKD serves the raw version 4 key, not the armored block. Deriving the bytes from
 // PGP_PUBLIC_KEY keeps one source of truth: a replaced key cannot leave the
 // two surfaces disagreeing, because there is only one place to replace it.
-var pgpKeyBytes: Uint8Array | null = null;
+let pgpKeyBytes: Uint8Array | null = null;
 function getPgpKeyBytes() {
   if (pgpKeyBytes) return pgpKeyBytes;
   const lines = PGP_PUBLIC_KEY.split("\n");
@@ -7484,9 +7485,9 @@ function getPgpKeyBytes() {
   return out;
 }
 
-var MCP_REGISTRY_AUTH = "v=MCPv1; k=ed25519; p=ObG30Um8l6QhTDd7Xztiekz8e575d6H2TViwi6Atu8k=\n";
+const MCP_REGISTRY_AUTH = "v=MCPv1; k=ed25519; p=ObG30Um8l6QhTDd7Xztiekz8e575d6H2TViwi6Atu8k=\n";
 
-var AGENT_AUTH_BLOCK = {
+const AGENT_AUTH_BLOCK = {
   skill: "https://turva.dev/auth.md",
   documentation_uri: "https://turva.dev/auth.md",
   register_uri: "https://turva.dev/agent/auth/register",
@@ -7512,7 +7513,7 @@ var AGENT_AUTH_BLOCK = {
   credentials_note: "Credentials only attribute correspondence. Every resource is public and none requires a credential."
 };
 
-var API_CATALOG = JSON.stringify({
+const API_CATALOG = JSON.stringify({
   "linkset": [{
     "anchor": "https://turva.dev/",
     "service-desc": [
@@ -7547,11 +7548,11 @@ var API_CATALOG = JSON.stringify({
   }]
 }, null, 2);
 
-var OPENAPI_SPEC = JSON.stringify({
+const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.211.2",
+    "version": "3.211.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7645,7 +7646,7 @@ var OPENAPI_SPEC = JSON.stringify({
   }
 }, null, 2);
 
-var AGENT_JSON = JSON.stringify({
+const AGENT_JSON = JSON.stringify({
   "schema_version": "v1",
   "name": "turva.dev",
   "name_for_human": "turva.dev",
@@ -7660,8 +7661,8 @@ var AGENT_JSON = JSON.stringify({
 }, null, 2);
 
 // --- signed manifests (provenance) ---
-var JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"s14m9qxSqCRut2coUn5UfYsk7MSGcrtUp3uxc0F3bZfnQn2Rn5ATFytZcSp21MPqRExCRDlmI-IvGYpekJEJAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"9bV75kSxEdm6taDeNSizEc6BJprYPQ0WbwE3zGDqPj36eLRKZyBwDJRQHI5ucnbKTWANwi_a5wQ1GLpBYmozAw\"\n    }\n  }\n}";
+const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"s14m9qxSqCRut2coUn5UfYsk7MSGcrtUp3uxc0F3bZfnQn2Rn5ATFytZcSp21MPqRExCRDlmI-IvGYpekJEJAg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"9bV75kSxEdm6taDeNSizEc6BJprYPQ0WbwE3zGDqPj36eLRKZyBwDJRQHI5ucnbKTWANwi_a5wQ1GLpBYmozAw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7671,7 +7672,7 @@ var SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\
 // capped at 100 characters. Measured against the schema and against the scanner 2026-08-29,
 // see mds/decisions.md Tek-298. Changing this file means re-signing it,
 // julkaisu/resign-server-card-local.mjs.
-var MCP_SERVER_CARD = JSON.stringify({
+const MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
@@ -7738,7 +7739,7 @@ var MCP_SERVER_CARD = JSON.stringify({
   }
 }, null, 2);
 
-var OAUTH_DISCOVERY = JSON.stringify({
+const OAUTH_DISCOVERY = JSON.stringify({
   "issuer": "https://turva.dev",
   "authorization_endpoint": "https://turva.dev/oauth/authorize",
   "token_endpoint": "https://turva.dev/oauth/token",
@@ -7755,7 +7756,7 @@ var OAUTH_DISCOVERY = JSON.stringify({
   "agent_auth": AGENT_AUTH_BLOCK
 }, null, 2);
 
-var OAUTH_PROTECTED_RESOURCE = JSON.stringify({
+const OAUTH_PROTECTED_RESOURCE = JSON.stringify({
   "resource": "https://turva.dev",
   "resource_name": "turva.dev",
   "authorization_servers": ["https://turva.dev"],
@@ -7767,7 +7768,7 @@ var OAUTH_PROTECTED_RESOURCE = JSON.stringify({
   "agent_auth": AGENT_AUTH_BLOCK
 }, null, 2);
 
-var AP2_MANIFEST = JSON.stringify({
+const AP2_MANIFEST = JSON.stringify({
   "$schema": "https://ap2.dev/schemas/manifest/v1.json",
   "version": "1.0",
   "merchant": {
@@ -7806,7 +7807,7 @@ var AP2_MANIFEST = JSON.stringify({
 // ============================================================
 // ACP - spec-compliant discovery (services = closed string enum). Real checkout: /api/acp/checkout_sessions
 // ============================================================
-var ACP_MANIFEST = JSON.stringify({
+const ACP_MANIFEST = JSON.stringify({
   "protocol": {
     "name": "acp",
     "version": "2026-01-16",
@@ -7824,13 +7825,13 @@ var ACP_MANIFEST = JSON.stringify({
 // ============================================================
 // X402 - manifest with full accepts[] array
 // ============================================================
-var A2A_AGENT_CARD = JSON.stringify({
+const A2A_AGENT_CARD = JSON.stringify({
   "protocolVersion": "0.3.0",
   "name": "turva.dev",
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.211.2",
+  "version": "3.211.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -7921,7 +7922,7 @@ var A2A_AGENT_CARD = JSON.stringify({
 // Every entry identifier takes the spec's domain-anchored form urn:air:<publisher>:<namespace>:<name>
 // (ARD v0.91 section 4.2 and Appendix C, and the ard-spec URN naming guide). Until 3.166.0 the
 // prefix was urn:ai:, which the scanner counted as not conformant (urnConformantCount 0).
-var AI_CATALOG = JSON.stringify({
+const AI_CATALOG = JSON.stringify({
   "specVersion": "1.0",
   "host": { "displayName": "turva.dev", "identifier": "turva.dev" },
   "entries": [
@@ -7963,7 +7964,7 @@ var AI_CATALOG = JSON.stringify({
 // the 2026-10-02 decision), plus representativeQueries on ard.json only (ARD v0.91 section 4.2, SHOULD, 2 to 5
 // examples). ai-catalog.json stays free of them because the isitagentready ard check reads it (Tek-349, 2026-09-05).
 // Each query is something the linked artifact really answers.
-var ARD_REPRESENTATIVE_QUERIES = {
+const ARD_REPRESENTATIVE_QUERIES = {
   "urn:air:turva.dev:mcp-server:turva-mcp": [
     "What does turva.dev charge for an agent-readiness audit?",
     "Which services does turva.dev offer?",
@@ -7982,7 +7983,7 @@ var ARD_REPRESENTATIVE_QUERIES = {
     "Where is the skill that describes how to contact turva.dev?"
   ]
 };
-var ARD_MANIFEST = JSON.stringify(Object.assign({}, JSON.parse(AI_CATALOG), {
+const ARD_MANIFEST = JSON.stringify(Object.assign({}, JSON.parse(AI_CATALOG), {
   "entries": JSON.parse(AI_CATALOG).entries.map((e: { identifier: string }) => Object.assign({}, e,
     ARD_REPRESENTATIVE_QUERIES[e.identifier as keyof typeof ARD_REPRESENTATIVE_QUERIES] ? { "representativeQueries": ARD_REPRESENTATIVE_QUERIES[e.identifier as keyof typeof ARD_REPRESENTATIVE_QUERIES] } : {}))
 }), null, 2);
@@ -7994,14 +7995,14 @@ var ARD_MANIFEST = JSON.stringify(Object.assign({}, JSON.parse(AI_CATALOG), {
 // an instruction to send real USDC to a real wallet on Base for a resource that will
 // answer 402 again afterwards, with no refund path. The manifest carries it too: an
 // agent can read /.well-known/x402 and act on the terms without ever fetching a 402.
-var X402_SETTLEMENT_NOTE = {
+const X402_SETTLEMENT_NOTE = {
   "mode": "out-of-band",
   "verified": false,
   "note": "No facilitator is configured. X-PAYMENT is not verified and this resource answers 402 regardless of payment, so sending funds achieves nothing. Ask for a quote and settle against the written scope.",
   "quote": "mailto:info@turva.dev?subject=Quote%20request"
 };
 
-var X402_MANIFEST = JSON.stringify({
+const X402_MANIFEST = JSON.stringify({
   "x402Version": 2,
   "endpoint": "https://turva.dev/x402",
   "network": "eip155:8453",
@@ -8086,7 +8087,7 @@ var X402_MANIFEST = JSON.stringify({
   }
 }, null, 2);
 
-var X402_INDEX_402 = JSON.stringify({
+const X402_INDEX_402 = JSON.stringify({
   "x402Version": 2,
   "resource": { "url": "https://turva.dev/x402", "description": "turva.dev x402 discovery probe.", "mimeType": "application/json" },
   "accepts": [
@@ -8134,7 +8135,7 @@ function build402Body(resource: string, label: string, amountUsdcMicro: string, 
   }, null, 2);
 }
 
-var MPP_MANIFEST = JSON.stringify({
+const MPP_MANIFEST = JSON.stringify({
   "$schema": "https://mpp.dev/schemas/discovery/v1.json",
   "version": "1.0",
   "protocol": {
@@ -8175,7 +8176,7 @@ var MPP_MANIFEST = JSON.stringify({
   }
 }, null, 2);
 
-var UCP_PROFILE = JSON.stringify({
+const UCP_PROFILE = JSON.stringify({
   "ucp": {
     "version": "2026-04-08",
     "spec": "https://ucp.dev/2026-04-08/specification/overview",
@@ -8247,7 +8248,7 @@ function buildAgentAuthInstruction(action: string) {
   }, null, 2);
 }
 
-var SKILL_CONTACT_INFO = `---
+const SKILL_CONTACT_INFO = `---
 name: contact-info
 description: Get the primary contact channels for turva.dev (email, Signal, LinkedIn, business ID). Async-only engagement.
 ---
@@ -8270,7 +8271,7 @@ Use this skill to retrieve official contact methods for turva.dev.
 - https://turva.dev/contact
 `;
 
-var SKILL_SERVICES = `---
+const SKILL_SERVICES = `---
 name: services
 description: List the service offerings of turva.dev, with fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation.
 ---
@@ -8298,7 +8299,7 @@ Async-only engagement. No calls, no calendar links. Existing production password
 - https://turva.dev/services
 `;
 
-var SKILL_COMPANY = `---
+const SKILL_COMPANY = `---
 name: company-info
 description: Get business details and background about turva.dev and its operator Erik Rekola.
 ---
@@ -8320,7 +8321,7 @@ Use this skill for formal company data about turva.dev.
 - https://turva.dev/company
 `;
 
-var SKILLS = [
+const SKILLS = [
   { name: "services", content: SKILL_SERVICES },
   { name: "contact-info", content: SKILL_CONTACT_INFO },
   { name: "company-info", content: SKILL_COMPANY }
@@ -8352,13 +8353,13 @@ async function buildSkillsIndex() {
 
 // Built once per isolate, like the sitemap and llms-full.txt: the three digests only change on a
 // deploy (round 19, K2-P3).
-var _skillsIndexCache: string | null = null;
+let _skillsIndexCache: string | null = null;
 async function getSkillsIndex() {
   if (_skillsIndexCache === null) _skillsIndexCache = await buildSkillsIndex();
   return _skillsIndexCache;
 }
 
-var WEBMCP_SCRIPT = `<script>
+const WEBMCP_SCRIPT = `<script>
 (function(){
  try {
  var NL = String.fromCharCode(10);
@@ -8514,8 +8515,8 @@ var WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-var SITEMAP_LASTMOD = "2026-10-20";
-var SITEMAP_ENTRIES = [
+const SITEMAP_LASTMOD = "2026-10-21";
+const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
   ["/agent-readiness-audit", "monthly", "0.9"],
@@ -8626,13 +8627,13 @@ function buildSitemapXml() {
   }).join("\n");
   return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows + "\n</urlset>";
 }
-var _sitemapCache: string | null = null;
+let _sitemapCache: string | null = null;
 function getSitemapXml() {
   if (_sitemapCache === null) _sitemapCache = buildSitemapXml();
   return _sitemapCache;
 }
 
-var _blogFeedCache: string | null = null;
+let _blogFeedCache: string | null = null;
 
 function buildBlogFeedXml() {
   const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -8673,7 +8674,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -8682,7 +8683,7 @@ function getCanonicalForPath(pathname: string) {
   return null;
 }
 
-var META_BY_PATH = {
+const META_BY_PATH = {
   "/blog/what-shopify-changed-for-agent-shopping": {
     title: "What Shopify changed for agent shopping since August · turva.dev",
     titleTag: "What Shopify changed for agent shopping · turva.dev",
@@ -9374,19 +9375,19 @@ function buildMetaBlock(pathname: string, canonicalUrl: string) {
 <meta name="twitter:image:alt" content="${sa}" />${articleMeta}`;
 }
 
-var PRICE_VALID_UNTIL = "2026-12-31";
+const PRICE_VALID_UNTIL = "2026-12-31";
 
 // The Service node with its AggregateOffer and OfferCatalog is one constant because two
 // pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
 // second copy would be a second price list, and verify.mts reads this one against facts.json.
-var SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
+const SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
 {"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront Catalog MCP, Cart MCP and the Policy and FAQs tool, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"},"addOn":{"@type":"Offer","name":"Shopify correction implementation","description":"Exactly the corrections the check's plan lists. Sold only with the Shopify agent storefront check: bought with it, with its report, or after the report and before implementation starts, and only when collaborator access to the store is arranged in advance.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Shopify correction implementation"}}},
 {"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across the same assistants, written review of shipped work within one business day up to four reviews a month, roadmap input, a monthly written summary within five business days after the month ends and a quarterly summary of measured changes within five business days after every third service month. Minimum three months, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, the retainer runs month to month and either party can end it by email before the next month starts. Corrected 2026-09-28. Added the month-to-month continuation, its email cancellation, the first-month cancellation and the monthly and quarterly summary deadlines.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. A separately scoped day excludes DNS changes, tool declarations inside your application and agent payment flows. An MCP server is a separate engagement. Corrected 2026-09-28. Added the day-rate exclusions.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}}`;
 
-var SCHEMA_HOME = `<script type="application/ld+json">
+const SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"Organization","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
 {"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
@@ -9430,7 +9431,7 @@ function appendAgentLinks(headers: Headers) {
   headers.append("Link", '<https://social.turva.dev/@erik>; rel="me"');
 }
 
-var FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"/><path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"/><path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // 405 for a method the route does not serve. Round 16 (S1-1, C1-2, C5-20, C7-2, measured
 // 2026-09-03): until v3.115.0 every GET route answered POST, PUT, DELETE and PATCH with the
@@ -9600,7 +9601,7 @@ function stripBody(response: Response) {
 // missing. Data comes from HOME_JSON so no fourth copy of the service catalog is created.
 // The response envelope is { message } and not a bare Message, per the spec's REST binding:
 // a conformant client reads response.message and a bare Message hands it undefined.
-var A2A_SKILL_IDS = ["services", "contact-info", "company-info"];
+const A2A_SKILL_IDS = ["services", "contact-info", "company-info"];
 
 function a2aSkillData(home: { services: unknown; bundledImplementation: unknown; engagement: unknown; email: unknown; signal: unknown; sameAs?: string[]; businessId: unknown; name: unknown; description: unknown; founder: unknown; location: unknown }, skillId: string) {
   if (skillId === "services") {
@@ -9687,11 +9688,11 @@ function a2aError(code: number, message: string, data: unknown, status: number, 
 // point, and the answer is 413. 16 KB is many times what either route reads: a skill id and a few
 // short texts, or one item id. Nothing after the parse walks the value recursively, so the cap also
 // bounds the work that a deeply nested body can cause.
-var AGENT_JSON_MAX_BYTES = 16384;
+const AGENT_JSON_MAX_BYTES = 16384;
 // More parts than this is not a question for three fixed skills, and each part is read and joined.
-var A2A_MAX_PARTS = 32;
+const A2A_MAX_PARTS = 32;
 
-async function readAgentJson(request) {
+async function readAgentJson(request: Request) {
   const read = await parityReadCapped(request.body, AGENT_JSON_MAX_BYTES);
   if (read.over) return { tooLarge: true, value: undefined };
   try {
@@ -9773,8 +9774,8 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-var HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 999, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-10-05" }, null, 2);
-var API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
+const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 999, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-10-05" }, null, 2);
+const API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"
 // and keeping only the media type discarded both. "Accept: text/html, text/markdown;q=0.1"
@@ -9896,12 +9897,12 @@ function cut(s: string | number, n: number) {
 // the right-to-left override is the classic way to make a link read as a different address
 // than the one it opens (round 16, verifier C, 2026-09-03). Stripped from every href this
 // renderer writes; the visible text keeps them because escapeHtml already neutralises markup.
-var BIDI_CONTROLS = /[\u202A-\u202E\u2066-\u2069]/g;
+const BIDI_CONTROLS = /[\u202A-\u202E\u2066-\u2069]/g;
 
 // The set of BIDI_CONTROLS as a function. A function declaration exists from the module's first
 // line, while that var is still undefined when a module-level constant renders markdown
 // (mds/gotchas.md 2026-09-06 (jatko 10)), so the new call sites use this one.
-function stripBidi(s) {
+function stripBidi(s: string | undefined) {
   return String(s).replace(/[\u202A-\u202E\u2066-\u2069]/g, "");
 }
 
@@ -9941,7 +9942,7 @@ function jsonLdSafe(s: string) {
   return String(s).split("</").join("<" + String.fromCharCode(92) + "/");
 }
 
-function renderInline(text) {
+function renderInline(text: string) {
   // Inline code since Tek-488: a span between single backticks renders as <code>, its text
   // escaped and nothing inside it linked or bolded, the way GFM reads it. A JSON excerpt and an
   // identifier that must not become a link (the AP2 URI, R15 P1a-1) are written this way, so
@@ -9979,8 +9980,8 @@ function renderInline(text) {
   const outside = (text: string, fn: (s: string) => string) => text.split(/(<a [^>]*>[\s\S]*?<\/a>)/).map((seg: string, i: number) => (i % 2 ? seg : fn(seg))).join("");
   out = outside(out, (t: string) => t.replace(/(^|[\s(])(info@turva\.dev)/g, '$1<a href="mailto:info@turva.dev">$2</a>'));
   out = outside(out, (t: string) => t.replace(/(^|[\s(])(https?:\/\/[^\s<)"]+)/g, function(m: string, pre: string, url: string) {
-    var tm = url.match(/[.,;:!?]+$/);
-    var tail = "";
+    const tm = url.match(/[.,;:!?]+$/);
+    let tail = "";
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
     return pre + '<a href="' + stripBidi(url) + '">' + stripBidi(url) + '</a>' + tail;
   }));
@@ -9993,11 +9994,11 @@ function renderInline(text) {
     // asserts that every autolink-shaped string in the served markdown either ends in
     // one of these or is named in AUTOLINK_NOT_HOSTS, so a new top-level domain fails
     // the gate loudly instead of silently not linking.
-    var host = url.split("/")[0];
-    var tld = host.slice(host.lastIndexOf(".") + 1).toLowerCase();
+    const host = url.split("/")[0];
+    const tld = host.slice(host.lastIndexOf(".") + 1).toLowerCase();
     if (!AUTOLINK_TLDS.has(tld)) return m;
-    var tm = url.match(/[.,;:!?]+$/);
-    var tail = "";
+    const tm = url.match(/[.,;:!?]+$/);
+    let tail = "";
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
     return pre + '<a href="https://' + stripBidi(url) + '">' + stripBidi(url) + '</a>' + tail;
   }));
@@ -10009,8 +10010,8 @@ function renderInline(text) {
 // strings that look like a bare host but are not one. Both are read by
 // turva-worker/tools/verify.mts, so these are the only copies. Added kierros 18
 // (2026-09-06) after two reverse-DNS metadata keys rendered as dead links.
-var AUTOLINK_TLDS = new Set(["com", "dev", "org", "net", "io", "fi", "nl", "eu", "se", "no", "dk", "de", "uk", "ai", "app", "me", "info"]);
-var AUTOLINK_NOT_HOSTS = new Set(["io.modelcontextprotocol/protocolVersion", "io.modelcontextprotocol/clientCapabilities"]);
+const AUTOLINK_TLDS = new Set(["com", "dev", "org", "net", "io", "fi", "nl", "eu", "se", "no", "dk", "de", "uk", "ai", "app", "me", "info"]);
+const AUTOLINK_NOT_HOSTS = new Set(["io.modelcontextprotocol/protocolVersion", "io.modelcontextprotocol/clientCapabilities"]);
 
 // Fenced code, since v3.164.0 (round 19, F1). A block that opens with three or more backticks or
 // tildes, up to three spaces in, runs to a closing fence of the same character and at least the
@@ -10398,7 +10399,7 @@ function mdSlug(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 // The drawn size of every image a twin section renders through mdSecBodyHtml (Tek-486).
-var MD_IMG_SIZE: Record<string, number[]> = { "/badge.svg": [216, 36] };
+const MD_IMG_SIZE: Record<string, number[]> = { "/badge.svg": [216, 36] };
 function mdSecBodyHtml(path: string, heading: string, listOnly?: boolean, dropRow?: boolean) {
   // Like mdPcard's body: an opening **price. meta.** block becomes the price line, a
   // "Label:" block followed by "- items" becomes a labelled checklist, and everything
@@ -10646,7 +10647,7 @@ ${json}
 // tools/verify.mts compares this map, plus the card pages that build their FAQ by name
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
-var GUIDE_PAGE_FAQ = {
+const GUIDE_PAGE_FAQ = {
   "/blog/what-shopify-changed-for-agent-shopping": mdFaqBlocks("/blog/what-shopify-changed-for-agent-shopping", "Frequently asked").pairs,
   "/blog/three-outside-reviews-of-my-tla-plus-models": mdFaqBlocks("/blog/three-outside-reviews-of-my-tla-plus-models", "Frequently asked").pairs,
   "/blog/microsofts-own-cve-count": mdFaqBlocks("/blog/microsofts-own-cve-count", "Frequently asked").pairs,
@@ -10833,8 +10834,8 @@ function buildValidatorAppJsonLd(canonicalUrl: string) {
 // bounded prose to 65ch, v3.140.1 and v3.140.2 tried to limit that to narrower viewports, and
 // none of them read right on Erik's displays in three browsers. The whole site reads the full
 // 68rem frame (Tek-360 stands). READ_CSS stays as an empty hook so the templates need no change.
-var READ_CSS = ``;
-var FOOTER_CSS = `${READ_CSS}pre:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover),main .svcnote a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
+const READ_CSS = ``;
+const FOOTER_CSS = `${READ_CSS}pre:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover),main .svcnote a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:3rem clamp(24px,5vw,72px);display:flex;flex-direction:column;gap:1.5rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:10px;}.tv-foot .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}.tv-foot .nv-word b{color:#5DF18F;}
 .tv-foot .foot-brand svg{display:block;width:34px;height:34px;}
@@ -10859,7 +10860,7 @@ p,li{text-wrap:pretty;}
 // replaces were byte-identical and nothing compared them, and guide pages would
 // have made a fourth: the same shape B1-15 found in the nav menu. /services keeps
 // its own four .scard rules on purpose, they are a smaller set and not a copy.
-var SCARD_CSS = `.scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.4rem 1.5rem 1.2rem;margin:0 0 1rem;transition:border-color .15s ease;}
+const SCARD_CSS = `.scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.4rem 1.5rem 1.2rem;margin:0 0 1rem;transition:border-color .15s ease;}
 .scard:hover{border-color:rgba(93,241,143,0.35);}
 .scard h2{color:#5DF18F;font-size:1.2rem;font-weight:700;letter-spacing:-0.01em;margin:0 0 .85rem;border-top:none;padding-top:0;}
 .scard p{color:#C9D1CE;margin:0 0 .85rem;font-size:.97rem;}
@@ -10872,7 +10873,7 @@ var SCARD_CSS = `.scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:
 .scard li:last-child{margin-bottom:0;}
 .scard .note{margin-top:.85rem;}
 .scard pre+p,.scard ul+p,.scard .dl+p{margin-top:.85rem;}`;
-var FAQ_CSS = `.faq .q{color:#F2F4F3;font-weight:700;font-size:1rem;margin:1.15rem 0 .4rem;}
+const FAQ_CSS = `.faq .q{color:#F2F4F3;font-weight:700;font-size:1rem;margin:1.15rem 0 .4rem;}
 .faq .q:first-child{margin-top:0;}
 .faq p{color:#C9D1CE;margin:0 0 .2rem;font-size:.95rem;}`;
 
@@ -10901,7 +10902,7 @@ function footerHtml(kieli?: string) { const fi = kieli === "fi"; return `<footer
 // One restrained next step at the end of a guide (Tek-358). The default points at the
 // services page; a guide about a free tool or about Shopify points at that instead. Short
 // lines by design: the twin gate reads any paragraph over 80 characters as prose.
-var SAMPLE_HEAD = {
+const SAMPLE_HEAD = {
   "/samples/audit-report": { cta: "What to fix first" },
   "/samples/shopify-agent-storefront-check": { cta: "What to fix first" }
 };
@@ -10909,7 +10910,7 @@ var SAMPLE_HEAD = {
 // derived from the heading, so ten fragment addresses that had been served stopped resolving.
 // The implementation guide keeps existing anchors, so each old id is rendered as an empty
 // span before the heading that now carries the content. The twin does not change.
-var GUIDE_ANCHOR_ALIASES = {
+const GUIDE_ANCHOR_ALIASES = {
   // Sample reports (2026-09-08): a short permanent anchor for the first finding, and the old
   // Decision id of the Shopify sample after its heading became The first decision.
   "/samples/audit-report": {
@@ -10981,7 +10982,7 @@ function withAnchorAliases(pathname: string, html: string) {
   }
   return out;
 }
-var GUIDE_NEXT = {
+const GUIDE_NEXT = {
   default: 'Need a broader review? <a class="btn-ghost" href="/services">See the services</a>',
   "/guides/agent-readiness-audit": 'Need the audit itself? <a class="btn-ghost" href="/agent-readiness-audit">See the website and API audit</a>',
   "/guides/choosing-an-agent-readiness-audit": 'Need the audit itself? <a class="btn-ghost" href="/agent-readiness-audit">See the website and API audit</a>',
@@ -11190,7 +11191,7 @@ ${next ? `<div class="pagefoot">${next}</div>\n` : ""}${footerHtml()}
   return new Response(body, { status: 200, headers });
 }
 
-var HOME_MARKDOWN = (function () {
+const HOME_MARKDOWN = (function () {
   const cut = PAGE_MARKDOWN["/"].indexOf("\n## More");
   return cut === -1 ? PAGE_MARKDOWN["/"] : PAGE_MARKDOWN["/"].slice(0, cut);
 })();
@@ -11547,7 +11548,7 @@ ${footerHtml()}
 }
 
 // Defined before CARDPAGE_CSS on purpose: that constant is built at module load and reads this one.
-var NAV_MOBILE_CSS = `.turva-nav .nv-mobile{display:none;}
+const NAV_MOBILE_CSS = `.turva-nav .nv-mobile{display:none;}
 @media (max-width:760px){.turva-nav{flex-wrap:nowrap;justify-content:space-between;position:relative;padding:10px clamp(16px,4vw,24px);}.turva-nav > ul.nv-menu{display:none;}.turva-nav .nv-mobile{display:block;flex:0 0 auto;}.turva-nav .nv-mobile summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;color:#F2F4F3;font-weight:600;font-size:14px;user-select:none;}.turva-nav .nv-mobile summary::-webkit-details-marker{display:none;}.turva-nav .nv-mobile summary::after{content:"+";font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;line-height:1;}.turva-nav .nv-mobile[open] summary::after{content:"\\2212";}.turva-nav .nv-mobile summary:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}.turva-nav .nv-mobile .nv-list{position:absolute;left:0;right:0;top:100%;z-index:10;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;background:#0A1316;border-bottom:0.5px solid rgba(255,255,255,0.14);padding:6px 0 10px;box-shadow:0 14px 30px rgba(0,0,0,0.35);}.turva-nav .nv-mobile .nv-list li{margin:0;}.turva-nav .nv-mobile .nv-list a{display:block;box-sizing:border-box;min-height:44px;padding:12px clamp(16px,4vw,24px);font-size:16px;color:#F2F4F3;}.turva-nav .nv-mobile .nv-list a[aria-current]{color:#5DF18F;}}`;
 // Hoisted 2026-09-25 (Tek-475, K5-P1, approved kierros 19): the .turva-nav skeleton
 // below was written three times, byte-identical, in serveGuideHtml, serveHomeHtml and
@@ -11557,7 +11558,7 @@ var NAV_MOBILE_CSS = `.turva-nav .nv-mobile{display:none;}
 // while the two guide/home functions read it lazily at request time, once the whole
 // module has finished loading. The 404 page's own .turva-nav block is NOT identical to
 // this one (different gap and padding, no border-bottom) and stays separate on purpose.
-var NAV_CORE_CSS = `.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:24px clamp(24px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
+const NAV_CORE_CSS = `.turva-nav{box-sizing:border-box;width:100%;background:#0A1316;display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:24px clamp(24px,5vw,72px);border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .turva-nav *,.turva-nav *::before,.turva-nav *::after{box-sizing:border-box;}
 .turva-nav .nv-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .turva-nav .nv-brand svg{display:block;width:36px;height:36px;}
@@ -11574,18 +11575,18 @@ ${NAV_MOBILE_CSS}
 // is a two-way merge, not three). The base .toc{...} rule itself is NOT identical (the
 // guide uses margin 1.6rem, CARDPAGE_CSS 1.4rem) and stays written out separately in
 // each template on purpose.
-var TOC_SUB_CSS = `.toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
+const TOC_SUB_CSS = `.toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#9AA3A0;}
 .toc ul{list-style:none;margin:0;padding:0;columns:2;column-gap:1.4rem;}
 .toc li{margin:0 0 .3rem;padding:0;font-size:.95rem;break-inside:avoid;}
 .toc li::before{content:none;}
 .toc a{color:#C9D1CE;}
 .toc a:hover{color:#5DF18F;}
 @media (max-width:560px){.toc ul{columns:1;}}`;
-var TBL_CSS = `.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
+const TBL_CSS = `.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
 .tbl table{margin:0;min-width:100%;}
 .tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 @media (max-width:640px){table.stack{display:block;border:0;min-width:0;}table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stack tbody,table.stack tr{display:block;}table.stack tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stack td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stack td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stack td:first-child{color:#F2F4F3;font-weight:600;}}`;
-var CARDPAGE_CSS = `html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;color-scheme:dark;}
+const CARDPAGE_CSS = `html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(24px,5vw,72px) 3.5rem;}
 main *,main *::before,main *::after{box-sizing:border-box;}
 h1{color:#F2F4F3;overflow-wrap:break-word;font-size:clamp(30px,3.4vw,46px);line-height:1.1;letter-spacing:-0.02em;margin:0 0 .9rem;font-weight:700;max-width:24ch;}
@@ -11844,12 +11845,12 @@ function cardPageHeaders(canonicalUrl: string) {
 //
 // AN UNKNOWN ID ANSWERS EXACTLY LIKE ANY OTHER UNKNOWN PATH, that is, with a 404.
 // A separate "no such brief" page would tell an outsider that the path exists.
-var BRIEF_ID = /^[a-z0-9][a-z0-9-]{7,79}$/;
+const BRIEF_ID = /^[a-z0-9][a-z0-9-]{7,79}$/;
 
 function briefRoute(pathname: string) {
   if (!pathname.startsWith("/brief/")) return null;
-  var rest = pathname.slice("/brief/".length);
-  var muoto = "html";
+  let rest = pathname.slice("/brief/".length);
+  let muoto = "html";
   if (rest.endsWith(".md")) { muoto = "md"; rest = rest.slice(0, -3); }
   else if (rest.endsWith(".json")) { muoto = "json"; rest = rest.slice(0, -5); }
   if (!BRIEF_ID.test(rest)) return null;
@@ -11876,12 +11877,12 @@ function briefRoute(pathname: string) {
 // The redirect carries noindex like every other response on this path, because the redirect's
 // TARGET is a private page and it must not be the line that reveals the path to a search engine.
 // A trailing slash joined the set in round 19 (K6-P1): /brief/<id>/ answered 404.
-var BRIEF_LOPPUVALIMERKIT = /[.,;:!?)\]\/]+$/;
+const BRIEF_LOPPUVALIMERKIT = /[.,;:!?)\]\/]+$/;
 
 function briefSiivousKohde(pathname: string) {
   if (!pathname.startsWith("/brief/")) return null;
   if (!BRIEF_LOPPUVALIMERKIT.test(pathname)) return null;
-  var siivottu = pathname.replace(BRIEF_LOPPUVALIMERKIT, "");
+  const siivottu = pathname.replace(BRIEF_LOPPUVALIMERKIT, "");
   if (!briefRoute(siivottu)) return null;
   return siivottu;
 }
@@ -11898,7 +11899,7 @@ function briefSiivousKohde(pathname: string) {
 // site, say) is held as U+E007 followed by itself, so it comes out unchanged and is never
 // read as a placeholder. The .md response still
 // goes out byte for byte as it is in KV, because it is written for a markdown parser.
-var BRIEF_ESCAPABLE = "#>+*-.)";
+const BRIEF_ESCAPABLE = "#>+*-.)";
 
 function briefHoldEscapes(md: string) {
   return md.replace(/[\uE000-\uE007]/g, "\uE007$&").replace(/\\([#>+*\-.)])/g, function (m: string, c: string) {
@@ -11914,7 +11915,7 @@ function briefReleaseEscapes(html: string) {
 }
 
 function briefHeaders(kind: string, kieli: string | undefined) {
-  var headers = new Headers();
+  const headers = new Headers();
   // A private page, not for the cache. A brief can gain a dated rescan block, and an old
   // copy at the edge would then say something different from KV.
   headers.set("cache-control", "private, no-store");
@@ -11934,7 +11935,7 @@ function briefHeaders(kind: string, kieli: string | undefined) {
 // page template's open-section rules are restated here for bare headings, lists and code.
 // Every brief, old or new, is rendered from KV through this shell at request time, so a
 // change here reaches every published brief at once (Erik 2026-09-06).
-var BRIEF_CSS = `main h1{margin-bottom:1.2rem;max-width:none;}
+const BRIEF_CSS = `main h1{margin-bottom:1.2rem;max-width:none;}
 main h1+p{font-size:clamp(17px,1.3vw,19px);color:#F2F4F3;}
 main h2{color:#F2F4F3;font-size:clamp(24px,2.2vw,28px);line-height:1.2;font-weight:700;letter-spacing:-0.015em;margin:clamp(36px,5vw,52px) 0 .9rem;padding-top:clamp(20px,3vw,28px);border-top:0.5px solid rgba(255,255,255,0.08);scroll-margin-top:1rem;}
 main h3{color:#F2F4F3;font-size:clamp(18px,1.6vw,20px);font-weight:700;margin:1.6rem 0 .55rem;}
@@ -11948,9 +11949,9 @@ main pre{max-width:100%;}
 main a{overflow-wrap:anywhere;}`;
 
 function briefHtmlPage(rec: BriefRec, canonicalUrl: string) {
-  var kieli = rec.kieli === "fi" ? "fi" : "en";
-  var otsikko = (rec.otsikko || rec.yritys || "agent readiness brief") + " · turva.dev";
-  var kuvaus = kieli === "fi"
+  const kieli = rec.kieli === "fi" ? "fi" : "en";
+  const otsikko = (rec.otsikko || rec.yritys || "agent readiness brief") + " · turva.dev";
+  const kuvaus = kieli === "fi"
     ? "Agent-readiness-briiffi, " + (rec.yritys || "") + ". Sama sisältö markdownina ja JSONina samasta osoitteesta."
     : "Agent readiness brief, " + (rec.yritys || "") + ". The same content as markdown and JSON at the same address.";
   // OG AND TWITTER, added 2026-09-01. Without og:description LinkedIn's scraper does not
@@ -11959,14 +11960,14 @@ function briefHtmlPage(rec: BriefRec, canonicalUrl: string) {
   // Measured on one brief 2026-09-01: the preview read "Skip to content turva . dev".
   // The description comes from the same kuvaus variable as the meta description, so that two
   // strings meaning the same thing cannot drift apart.
-  var someOtsikko = rec.otsikko || rec.yritys || "agent readiness brief";
-  var vaihtoehdot = kieli === "fi"
+  const someOtsikko = rec.otsikko || rec.yritys || "agent readiness brief";
+  const vaihtoehdot = kieli === "fi"
     ? "Sama sisältö koneluettavana: <a href=\"" + canonicalUrl + ".md\">markdown</a> ja <a href=\"" + canonicalUrl + ".json\">JSON</a>."
     : "The same content, machine readable: <a href=\"" + canonicalUrl + ".md\">markdown</a> and <a href=\"" + canonicalUrl + ".json\">JSON</a>.";
   // THE FRAME IN FINNISH, added 2026-09-03 (kierros 17, item A). The body of a Finnish brief
   // was Finnish but the skip link, the footer and this line were English, and "sisalto" was
   // written without umlauts. The nav stays English, because it leads to English pages.
-  var yhteys = kieli === "fi"
+  const yhteys = kieli === "fi"
     ? "Kysymykset suomeksi tai englanniksi: <a href=\"mailto:info@turva.dev\">info@turva.dev</a>. Vastaan kirjallisesti yhden arkipäivän kuluessa."
     : "Questions in English or Finnish: <a href=\"mailto:info@turva.dev\">info@turva.dev</a>. I reply in writing within one business day.";
   return `<!doctype html>
@@ -12019,11 +12020,11 @@ ${footerHtml(kieli)}
 }
 type BriefRec = { md: string; json?: unknown; kieli?: string; otsikko?: string; yritys?: string };
 async function serveBrief(route: { id: string; muoto: string }, pathname: string, env: Env, request: Request) {
-  var kv = env && env.BRIEFIT;
+  const kv = env && env.BRIEFIT;
   // Without the binding the route does not exist. This way the tests and the pre-deploy
   // state answer as they would for an unknown path, and a missing binding is not a 500.
   if (!kv || typeof kv.get !== "function") return serve404(pathname, request);
-  var rec = null;
+  let rec = null;
   try {
     rec = await kv.get(route.id, { type: "json" });
   } catch (err) {
@@ -12031,7 +12032,7 @@ async function serveBrief(route: { id: string; muoto: string }, pathname: string
     return serve404(pathname, request);
   }
   if (!rec || typeof rec.md !== "string" || !rec.json) return serve404(pathname, request);
-  var canonicalUrl = "https://turva.dev/brief/" + route.id;
+  const canonicalUrl = "https://turva.dev/brief/" + route.id;
   // ACCEPT NEGOTIATION BELONGS HERE TOO. Measured live 2026-08-24: the suffix addresses
   // worked, but `Accept: text/markdown` to the brief's own address returned HTML.
   // The whole site otherwise answers Accept, and markdown negotiation is one of the checks
@@ -12044,7 +12045,7 @@ async function serveBrief(route: { id: string; muoto: string }, pathname: string
   if (route.muoto === "md") {
     // Same-origin since round 19 (K6-P3): a brief is private, so no other site may load it as a
     // resource; an agent fetching it server-side is not affected.
-    var mh = briefHeaders("default", rec.kieli);
+    const mh = briefHeaders("default", rec.kieli);
     mh.set("content-type", "text/markdown; charset=utf-8");
     mh.set("content-location", canonicalUrl);
     mh.append("Link", `<${canonicalUrl}>; rel="canonical"`);
@@ -12052,13 +12053,13 @@ async function serveBrief(route: { id: string; muoto: string }, pathname: string
     return new Response(rec.md, { status: 200, headers: mh });
   }
   if (route.muoto === "json") {
-    var jh = briefHeaders("default", rec.kieli);
+    const jh = briefHeaders("default", rec.kieli);
     jh.set("content-type", "application/json; charset=utf-8");
     jh.set("content-location", canonicalUrl);
     jh.append("Link", `<${canonicalUrl}>; rel="canonical"`);
     return new Response(JSON.stringify(rec.json, null, 2) + "\n", { status: 200, headers: jh });
   }
-  var hh = briefHeaders("html", rec.kieli);
+  const hh = briefHeaders("html", rec.kieli);
   hh.set("content-type", "text/html; charset=utf-8");
   hh.append("Link", `<${canonicalUrl}.md>; rel="alternate"; type="text/markdown"`);
   return new Response(briefHtmlPage(rec, canonicalUrl), { status: 200, headers: hh });
@@ -12317,7 +12318,6 @@ function isValidPublicHost(host: string): boolean {
   if (["localhost", "localdomain", "local", "internal", "home", "lan", "corp", "test", "invalid", "arpa", "onion"].includes(tld)) return false;
   return true;
 }
-function maskLocation(href: string | undefined, base?: string): string;
 // A redirect target the way a report may show it. The scheme, the host and the path stay readable,
 // and the parts that can carry a secret do not: the user name and the password are removed, every
 // query value becomes ***, and the fragment is dropped. The caller cuts the result to length
@@ -12327,7 +12327,7 @@ function maskLocation(href: string | undefined, base?: string): string;
 // first ? or # survives, and when the target has a scheme or starts with two slashes, everything up
 // to the last @ before them is shown as ***.
 // The package turva-llms-txt-validator mirrors this as maskLocation() from 0.3.5.
-function maskLocation(href, base) {
+function maskLocation(href: string, base?: string): string {
   let u = null;
   try { u = new URL(href, base); } catch { u = null; }
   // An opaque URL (no authority, e.g. "u:name@host/") parses without throwing but has no host,
@@ -12384,7 +12384,6 @@ function maskLocation(href, base) {
   const at = s.lastIndexOf("@");
   return at < from ? s : s.slice(0, from) + "***@" + s.slice(at + 1);
 }
-function validatorEcho(typed: string, shown: string): string;
 // The validator form repeats what was typed. An entry with an @, a ? or a # can carry a user name,
 // a password or a query value, so for such an entry the field shows only the host that
 // normalizeHostInput reads from it, or nothing when it reads none (2026-09-22). The test runs on the
@@ -12392,17 +12391,16 @@ function validatorEcho(typed: string, shown: string): string;
 // first version masked the text itself: an @ past character 300 was cut away before the test, and
 // "https:/user:secret@host" read as a host named https with the secret in its path (independent
 // review of the repair, same day).
-function validatorEcho(typed, shown) {
+function validatorEcho(typed: string, shown: string): string {
   if (!/[@?#]/.test(typed)) return shown;
   return normalizeHostInput(typed) || "";
 }
-function fetchLlmsTxt(host: string, path?: string, accept?: string): Promise<LlmsFetchResult>;
 // The second argument was added for the v2 discovery checks, which need the site's
 // home page as well as its llms.txt. It is one parameter and nothing else moved:
 // the redirect budget, the same-host rule, the credential and port rejections and
 // the 256 KB cap are the guards this function was measured against, and a rewrite
 // would have put them back in play for a feature that does not need them.
-async function fetchLlmsTxt(host, path, accept) {
+async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promise<LlmsFetchResult> {
   const reqApex = host.startsWith("www.") ? host.slice(4) : host;
   const cap = 262144;
   let url = "https://" + host + (path || "/llms.txt");
@@ -12940,8 +12938,8 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
     return checks;
   }
   // An accepted redirect is shown masked as well (round 19, K7-2). Until v3.164.0 only a refused
-  // one was, so a query value or a fragment in a same-host Location reached this detail as sent.
-  add("http-status", "pass", "File exists at /llms.txt", f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + " to " + maskLocation(f.finalUrl) : "HTTP 200");
+  // one was, so a query value or a fragment in a same-host Location reached this detail as sent. An input with redirectedFrom and no finalUrl (fetchLlmsTxt always sets both) names the address it was redirected from alone instead of ending in "to undefined" (Tek-668, NULL-2).
+  add("http-status", "pass", "File exists at /llms.txt", f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + (f.finalUrl ? " to " + maskLocation(f.finalUrl) : "") : "HTTP 200");
   // A leading byte-order mark is stripped the same way the fetch path already strips it: the
   // TextDecoder in fetchLlmsTxt removes a BOM by default, so the direct API took a different
   // document than the fetched one for the exact same bytes. V3 (Tek-526): the h1-title check saw
@@ -13270,9 +13268,9 @@ function asciiLower(s: string): string {
   return s.replace(/[A-Z]+/g, (m) => m.toLowerCase());
 }
 
-var HTML_WHITESPACE = " \t\n\r\f";
+const HTML_WHITESPACE = " \t\n\r\f";
 // A MIME type is trimmed of HTTP whitespace, which does not include FF.
-var HTTP_WHITESPACE = " \t\n\r";
+const HTTP_WHITESPACE = " \t\n\r";
 
 function trimChars(s: string, chars: string): string {
   let a = 0, b = s.length;
@@ -13300,7 +13298,7 @@ function isAsciiAlphanumeric(c: string | undefined): boolean {
 // the replacement table below. A NUL in the value becomes U+FFFD as well. Before this,
 // rel="described&#98;y" read as no relation and href="/llms.txt?a=1&amp;b=2" was reported
 // with "&amp;" still in it.
-var C1_REPLACEMENTS: Record<number, number> = {
+const C1_REPLACEMENTS: Record<number, number> = {
   0x80: 0x20ac, 0x82: 0x201a, 0x83: 0x0192, 0x84: 0x201e, 0x85: 0x2026, 0x86: 0x2020, 0x87: 0x2021,
   0x88: 0x02c6, 0x89: 0x2030, 0x8a: 0x0160, 0x8b: 0x2039, 0x8c: 0x0152, 0x8e: 0x017d, 0x91: 0x2018,
   0x92: 0x2019, 0x93: 0x201c, 0x94: 0x201d, 0x95: 0x2022, 0x96: 0x2013, 0x97: 0x2014, 0x98: 0x02dc,
@@ -13314,7 +13312,7 @@ var C1_REPLACEMENTS: Record<number, number> = {
 // E01 (Tek-496 audit round): character-entities 2.0.2, https://github.com/wooorm/character-entities,
 // MIT, Copyright (c) 2015 Titus Wormer <tituswormer@gmail.com>. Full MIT text in
 // THIRD-PARTY-NOTICES.md at the repo root.
-var NAMED_REFERENCE_DATA =
+const NAMED_REFERENCE_DATA =
   "AElig!c6 AMP!26 Aacute!c1 Abreve=102 Acirc!c2 Acy=410 Afr=1d504 Agrave!c0 Alpha=391 Amacr=100 " +
   "And=2a53 Aogon=104 Aopf=1d538 ApplyFunction=2061 Aring!c5 Ascr=1d49c Assign=2254 Atilde!c3 " +
   "Auml!c4 Backslash=2216 Barv=2ae7 Barwed=2306 Bcy=411 Because=2235 Bernoullis=212c Beta=392 " +
@@ -13687,13 +13685,13 @@ function decodeAttributeValue(value: string): string {
 // does: whitespace, comments, doctype and the head-only elements keep the head open;
 // the first text node, the first body-level element and </head>, </body>, </html> or
 // </br> close it; any other end tag in the head is a parse error and is ignored.
-var HEAD_ELEMENTS = ["base", "basefont", "bgsound", "link", "meta", "noframes", "script", "style", "template", "title", "noscript"];
+const HEAD_ELEMENTS = ["base", "basefont", "bgsound", "link", "meta", "noframes", "script", "style", "template", "title", "noscript"];
 // Once </head> has been seen the parser is in "after head", and that list is the one above
 // WITHOUT noscript: a noscript there opens the body instead of staying in the head.
-var AFTER_HEAD_ELEMENTS = ["base", "basefont", "bgsound", "link", "meta", "noframes", "script", "style", "template", "title"];
+const AFTER_HEAD_ELEMENTS = ["base", "basefont", "bgsound", "link", "meta", "noframes", "script", "style", "template", "title"];
 // Their content is not markup: script, style, title, noscript (a parser with scripting on
 // reads it as raw text) and noframes are raw text or RCDATA, and template content is inert.
-var HEAD_SKIPPED_CONTENT = ["script", "style", "title", "noscript", "noframes", "template"];
+const HEAD_SKIPPED_CONTENT = ["script", "style", "title", "noscript", "noframes", "template"];
 
 // The end of a raw text or RCDATA element: the first </name that is followed by optional
 // whitespace, an optional "/" (a parser closes on </script/> too) and a ">". Returns the
@@ -14054,12 +14052,12 @@ function findLinkRelations(html: unknown, linkHeader: unknown): LinkRelations {
   return found;
 }
 type ChecksSummary = "not valid" | "valid with warnings" | "valid";
-function validateV2Discovery(found: LinkRelations | null, unreadReason?: string): LlmsCheck[] {
+function validateV2Discovery(found: LinkRelations | null, unreadReason: string = "the home page was not read, so this was not measured"): LlmsCheck[] {
   const checks: LlmsCheck[] = [];
   const add = (id: string, status: CheckStatus, label: string, detail: string) => checks.push({ id, status, label, detail });
   if (!found) {
-    add("v2-describedby", "info", "Home page points to its llms.txt (v2)", unreadReason!);
-    add("v2-markdown-alternate", "info", "Home page points to a markdown version (v2)", unreadReason!);
+    add("v2-describedby", "info", "Home page points to its llms.txt (v2)", unreadReason);
+    add("v2-markdown-alternate", "info", "Home page points to a markdown version (v2)", unreadReason);
     return checks;
   }
   // A target is shown through maskLocation, as a redirect target is, so a user name, a password,
@@ -14079,7 +14077,7 @@ function summarizeChecks(checks: LlmsCheck[]): ChecksSummary {
   return "valid";
 }
 
-async function serveLlmsValidatorHtml(request, canonicalUrl) {
+async function serveLlmsValidatorHtml(request: Request, canonicalUrl: string) {
   const reqUrl = new URL(request.url);
   const typed = reqUrl.searchParams.get("url") || "";
   // 18-F02 (Tek-496 audit round): trim before cutting to 300, not after. A long run of
@@ -14231,26 +14229,26 @@ ${footerHtml()}
 // emphasis markers took 12.6 s of CPU in Node.js, 2026-09-11), and a synchronous parse cannot be
 // interrupted by a timer. Nothing here writes the target address or the report to a log, and every
 // response to a check is no-store.
-var PARITY_PATH = "/markdown-parity-check";
-var PARITY_SCRIPT_PATH = "/markdown-parity-check.js";
+const PARITY_PATH = "/markdown-parity-check";
+const PARITY_SCRIPT_PATH = "/markdown-parity-check.js";
 // Lower than the CLI defaults (4 000 000 pairs, 1 000 000 candidates, unbounded work, depth 1 024):
 // measured 2026-09-11 in Node.js 24, a 490 by 490 paragraph pair at these limits took 63 ms and the
 // similarity search stopped at its candidate limit after 69 ms. Exceeding one is an error result.
-var PARITY_LIMITS = { maxAlignmentPairs: 250000, maxSimilarityCandidates: 50000, maxSimilarityWork: 2000000, maxNestingDepth: 512 };
-var PARITY_MAX_HTML_BYTES = 524288;
-var PARITY_MAX_MARKDOWN_BYTES = 131072;
-var PARITY_MAX_REQUEST_BYTES = 8192;
-var PARITY_MAX_URL_CHARS = 2048;
-var PARITY_MAX_SELECTOR_CHARS = 300;
-var PARITY_MAX_REDIRECTS = 5;
-var PARITY_MAX_CONCURRENT = 4;
-var PARITY_FINDINGS_SHOWN = 200;
-var PARITY_JSON_EMBED_MAX = 409600;
-var PARITY_EXAMPLE_URL = "https://turva.dev/tools";
+const PARITY_LIMITS = { maxAlignmentPairs: 250000, maxSimilarityCandidates: 50000, maxSimilarityWork: 2000000, maxNestingDepth: 512 };
+const PARITY_MAX_HTML_BYTES = 524288;
+const PARITY_MAX_MARKDOWN_BYTES = 131072;
+const PARITY_MAX_REQUEST_BYTES = 8192;
+const PARITY_MAX_URL_CHARS = 2048;
+const PARITY_MAX_SELECTOR_CHARS = 300;
+const PARITY_MAX_REDIRECTS = 5;
+const PARITY_MAX_CONCURRENT = 4;
+const PARITY_FINDINGS_SHOWN = 200;
+const PARITY_JSON_EMBED_MAX = 409600;
+const PARITY_EXAMPLE_URL = "https://turva.dev/tools";
 // Comparisons running in this isolate. The rate limiter is per client and per Cloudflare location;
 // this bounds how many synchronous comparisons one isolate holds at once, and a request over it gets
 // 503 with Retry-After instead of waiting.
-var parityActive = 0;
+let parityActive = 0;
 type ParityReport = ReturnType<typeof mpcRun>; type ParityRunOptions = Parameters<typeof mpcRun>[2]; type ParityPage = Parameters<typeof mpcRun>[0] & { meta: { status: number } }; type ParityValues = { url?: string; markdownUrl?: string; selector?: string; strict?: boolean; frontMatter?: string }; type ParityInput = { url?: string; markdownUrl?: string; selector?: string; strict: boolean; frontMatter: "keep" | "strip" }; type ParityState = { values?: ParityValues; field?: string | null; report?: ParityReport; status?: number };
 class ParityError extends Error { declare kind: string; declare status: number; declare field: string | null; declare values?: ParityValues;
   constructor(kind: string, status: number, message: string, field?: string) {
@@ -14681,7 +14679,7 @@ ${footerHtml()}
 // script and no CSP change. It only adds the busy state, the example button and copy and save for the
 // JSON report; the form works without it. No backticks and no template placeholders in this literal,
 // so the served bytes are the source bytes. Every text it writes goes through textContent.
-var PARITY_JS = `(function () {
+const PARITY_JS = `(function () {
   var form = document.getElementById("mpc-form");
   if (!form) return;
   var status = document.getElementById("mpc-status");
@@ -14826,7 +14824,7 @@ function blogPostLinks() {
 }
 // The four filters of the blog index, in display order. Every post's kind has to be one of
 // the three named kinds, or the filter would silently hide a post from every filtered view.
-var BLOG_KINDS = ["Research", "Protocol notes", "Build notes"];
+const BLOG_KINDS = ["Research", "Protocol notes", "Build notes"];
 function blogFilterHtml() {
   const posts = Object.keys(PAGE_MARKDOWN).filter((k) => k.startsWith("/blog/")).map((k): Partial<PageMeta> => META_BY_PATH[k as keyof typeof META_BY_PATH] || {}).filter((m) => m.date);
   for (const m of posts) {
@@ -14851,7 +14849,7 @@ function blogFilterHtml() {
 // Served at /blog-filter.js, allowed by script-src 'self'. No library, no CSP change, no
 // inline script (the CSP hash covers WEBMCP_SCRIPT alone). Backticks and ${ stay out of this
 // literal so the served bytes are the source bytes.
-var BLOG_FILTER_JS = `(function () {
+const BLOG_FILTER_JS = `(function () {
   var box = document.getElementById("bfilter");
   var input = document.getElementById("bsearch");
   var count = document.getElementById("bcount");
@@ -14896,7 +14894,7 @@ var BLOG_FILTER_JS = `(function () {
 // menu never keeps covering the focused control behind it (WCAG 2.4.11). No library, no CSP
 // change, no inline script. Backticks and a dollar-brace pair stay out of this literal so the
 // served bytes are the source bytes. The page works without it: the menu still opens and closes.
-var NAV_JS = `(function () {
+const NAV_JS = `(function () {
   var d = document.querySelector("details.nv-mobile");
   if (!d) return;
   var s = d.querySelector("summary");
@@ -14933,7 +14931,7 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
 }
 
-var X402_ROUTES = {
+const X402_ROUTES = {
   "/api/agent/audit": {
     label: "Audit",
     description: "turva.dev: Agent-readiness audit (fixed scope, within two weeks of the agreed written kickoff)",
@@ -14954,7 +14952,7 @@ var X402_ROUTES = {
   }
 };
 
-var ACP_SERVICES = {
+const ACP_SERVICES = {
   shopify: { item: "shopify", name: "Shopify agent storefront check", amount: 99900, description: "Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store across browser WebMCP, remote MCP and Catalog and Agentic channels." },
   audit: { item: "audit", name: "Agent-readiness audit", amount: 430000, description: "Fixed scope, delivered within two weeks of the agreed written kickoff. Independent scanner sweep, manual review, written report with prioritized fixes. Includes one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought." },
   advisory: { item: "advisory", name: "Continuous advisory", amount: 300000, description: "Monthly re-scan, score delta report, written review, roadmap input. Minimum three months, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged." },
@@ -15032,7 +15030,7 @@ function acpHeaders(allow?: string) {
 // not resolve, so the base returns a small JSON index naming the one resource that
 // lives under it. Same treatment /api and /api/v1 already have. It is discovery only:
 // settlement stays quote-on-request and nothing here asserts a payment.
-var ACP_INDEX_JSON = JSON.stringify({
+const ACP_INDEX_JSON = JSON.stringify({
   "service": "turva.dev",
   "protocol": "acp",
   "api_version": "2026-01-16",
@@ -15052,7 +15050,7 @@ function serveAcpIndex() {
   return new Response(ACP_INDEX_JSON, { status: 200, headers: acpHeaders() });
 }
 
-async function serveAcpCheckout(request, pathLower) {
+async function serveAcpCheckout(request: Request, pathLower: string) {
   const method = request.method;
   const base = "/api/acp/checkout_sessions";
   if (pathLower === base) {
@@ -15173,14 +15171,14 @@ function serveOauthClosed(kind: string) {
   // behind a token. These endpoints therefore answer with a spec-valid error
   // that points to the out-of-band agent-auth flow, instead of a 404, so the
   // discovery document never advertises a path that does not respond.
-  var error = kind === "authorize" ? "access_denied" : "invalid_request";
-  var body = JSON.stringify({
+  const error = kind === "authorize" ? "access_denied" : "invalid_request";
+  const body = JSON.stringify({
     error: error,
     error_description: "turva.dev does not run an interactive OAuth login or issue tokens automatically. Agent access is arranged out of band. Register at https://turva.dev/agent/auth/register, read https://turva.dev/auth.md, or contact info@turva.dev.",
     registration_endpoint: "https://turva.dev/agent/auth/register",
     service_documentation: "https://turva.dev/auth.md"
   }, null, 2);
-  var headers = new Headers({
+  const headers = new Headers({
     "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store"
   });
@@ -15221,7 +15219,7 @@ function serveX402Root() {
   return new Response(X402_INDEX_402, { status: 402, headers });
 }
 interface Env { BRIEFIT?: { get(key: string, options: { type: "json" }): Promise<BriefRec | null> }; RATE_LIMITER?: RateLimit; PARITY_LIMITER?: RateLimit; PARITY?: Pick<Fetcher, "fetch">; PARITY_REMOTE_FETCH?: string } type SatisfiesExportedHandler<T extends ExportedHandler<Env>> = T;
-var worker_default: SatisfiesExportedHandler<{ fetch(request: Request, env: Env, ctx?: unknown): Promise<Response>; scheduled(event: Pick<ScheduledController, "scheduledTime">, env: Env, ctx: Pick<ExecutionContext, "waitUntil">): Promise<void> }> = {
+const worker_default: SatisfiesExportedHandler<{ fetch(request: Request, env: Env, ctx?: unknown): Promise<Response>; scheduled(event: Pick<ScheduledController, "scheduledTime">, env: Env, ctx: Pick<ExecutionContext, "waitUntil">): Promise<void> }> = {
   async fetch(request, env) {
     const originalMethod = request.method;
     const isHead = originalMethod === "HEAD";
@@ -15527,9 +15525,9 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   // the PAGE_MARKDOWN logic. briefRoute returns null for every other path.
   // The trailing-punctuation cleanup runs BEFORE briefRoute, because briefRoute returns
   // null for a path with a period and the path would otherwise fall to a 404. See Tek-323.
-  var briefSiivous = briefSiivousKohde(pathname);
+  const briefSiivous = briefSiivousKohde(pathname);
   if (briefSiivous) {
-    var briefSiivousHeaders = new Headers({ Location: "https://turva.dev" + briefSiivous + url.search, "X-Robots-Tag": "noindex, nofollow" });
+    const briefSiivousHeaders = new Headers({ Location: "https://turva.dev" + briefSiivous + url.search, "X-Robots-Tag": "noindex, nofollow" });
     applySecurityHeaders(briefSiivousHeaders, "default");
     // 18-F03 (Tek-496 audit round): a brief's access token can travel in this path, so this
     // redirect must never be cached, matching the actual brief's own Cache-Control below.
@@ -15537,7 +15535,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
     return new Response(null, { status: 301, headers: briefSiivousHeaders });
   }
 
-  var briefR = briefRoute(pathname);
+  const briefR = briefRoute(pathname);
   if (briefR) return serveBrief(briefR, pathname, env, request);
 
   // A check is a POST and runs before content negotiation, so an Accept header that names
