@@ -8,20 +8,20 @@ import worker from "../src/worker.ts";
 // 0.3.18 carries the same H2 cases in test/tek562.test.ts.
 
 const env = {};
-const get = (path, opts: { method?: string; headers?: Record<string, string> } = {}): Promise<Omit<Response, "json"> & { json(): Promise<any> }> =>
+const get = (path: string, opts: { method?: string; headers?: Record<string, string> } = {}): Promise<Omit<Response, "json"> & { json(): Promise<any> }> =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 // The digests below pin public bytes, so they go through WebCrypto rather than a hash CodeQL reads as a password hash.
-const sha256Hex = async (bytes) => Buffer.from(await crypto.subtle.digest("SHA-256", bytes)).toString("hex");
+const sha256Hex = async (bytes: BufferSource) => Buffer.from(await crypto.subtle.digest("SHA-256", bytes)).toString("hex");
 
 // ---------------------------------------------------------------- x402, UCP, ACP
 
 test("x402: every mainnet USDC entry in the manifest and the 402 challenge names the EIP-712 domain USD Coin", async () => {
   const res = await get("/.well-known/x402");
   const m = JSON.parse(await res.text());
-  const mainnet = m.accepts.filter((a) => a.network === "eip155:8453" && a.asset.toLowerCase() === "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913");
+  const mainnet = m.accepts.filter((a: { network: string; asset: string; extra?: { name: string }; resource: string }) => a.network === "eip155:8453" && a.asset.toLowerCase() === "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913");
   assert.ok(mainnet.length >= 5);
   for (const a of mainnet) assert.equal(a.extra.name, "USD Coin", a.resource);
-  assert.equal(m.accepts.filter((a) => a.extra && a.extra.name === "USDC").length, 0, "no entry keeps the old name");
+  assert.equal(m.accepts.filter((a: { extra?: { name: string } }) => a.extra && a.extra.name === "USDC").length, 0, "no entry keeps the old name");
   const ch = await get("/api/agent/audit");
   assert.equal(ch.status, 402);
   const body = JSON.parse(await ch.text());
@@ -55,7 +55,7 @@ test("API index: the description does not claim every surface", async () => {
 test("A2A: GET /v1/tasks/{id} and POST /v1/tasks/{id}:cancel answer -32001 task not found with status 404", async () => {
   const g = await get("/v1/tasks/abc-123");
   assert.equal(g.status, 404);
-  assert.match(g.headers.get("content-type"), /application\/json/);
+  assert.match(g.headers.get("content-type")!, /application\/json/);
   const gj = await g.json();
   assert.equal(gj.error.code, -32001);
   assert.equal(gj.error.message, "task not found");
@@ -110,7 +110,7 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
   const g = await get("/.well-known/mcp/server-card.json", { headers: { origin: "https://example.com" } });
   assert.equal(g.status, 200);
   assert.equal(g.headers.get("access-control-allow-origin"), "*");
-  assert.match(g.headers.get("access-control-expose-headers"), /ETag/);
+  assert.match(g.headers.get("access-control-expose-headers")!, /ETag/);
   assert.equal(g.headers.get("access-control-allow-methods"), "GET");
   assert.equal(g.headers.get("access-control-allow-headers"), "Content-Type, If-None-Match");
   const o = await get("/.well-known/mcp/server-card.json", { method: "OPTIONS", headers: { origin: "https://example.com", "access-control-request-method": "GET" } });
@@ -145,7 +145,7 @@ test("PGP: the version 6 armor has no CRC24 footer and its binary key is the sam
 
 // ---------------------------------------------------------------- hosted validator H2 rule
 
-async function check(llms) {
+async function check(llms: string) {
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (url) => {
     const u = String(url);
@@ -161,7 +161,7 @@ async function check(llms) {
     globalThis.fetch = realFetch;
   }
 }
-const sections = async (text) => (await check(text)).checks.find((c) => c.id === "sections");
+const sections = async (text: string) => (await check(text)).checks.find((c: { id: string }) => c.id === "sections");
 const link = "- [Guide](https://example.org/a)\n";
 const head = "# Test\n\n> Summary\n\n";
 
@@ -223,13 +223,13 @@ test("hosted validator: what stays out of H2", async () => {
 
 test("hosted validator: #Project with === is still not an H1, and a setext H2 ends the summary scan", async () => {
   const r = await check("#Project\n===\n\n> Summary\n\n## Docs\n\n" + link);
-  assert.equal(r.checks.find((c) => c.id === "h1-title").status, "fail");
+  assert.equal(r.checks.find((c: { id: string }) => c.id === "h1-title").status, "fail");
   // A blockquote after a setext H2 is not read as a late summary of the title.
   const late = await check("# Test\n\nDocs\n----\n\n> not a summary\n\n" + link);
-  const sum = late.checks.find((c) => c.id === "summary");
+  const sum = late.checks.find((c: { id: string }) => c.id === "summary");
   assert.equal(sum.status, "warn");
   assert.match(sum.detail, /recommended by the format/);
-  assert.equal(late.checks.find((c) => c.id === "sections").status, "pass");
+  assert.equal(late.checks.find((c: { id: string }) => c.id === "sections").status, "pass");
 });
 
 // ---------------------------------------------------------------- text

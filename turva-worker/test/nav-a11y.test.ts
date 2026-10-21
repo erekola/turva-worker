@@ -6,11 +6,11 @@ import worker from "../src/worker.ts";
 // a served script, because the CSP allows one hashed inline script and nothing else inline.
 // Offline, against the module itself, like routes.test.ts.
 const env = {};
-const get = (path, headers = {}) =>
+const get = (path: string, headers: Record<string, string> = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { headers }), env);
 
 const NAV_TAG = '<script src="/nav.js" defer></script>';
-const count = (s, needle) => s.split(needle).length - 1;
+const count = (s: string, needle: string) => s.split(needle).length - 1;
 
 test("/nav.js serves 200 as text/javascript with no template residue", async () => {
   const r = await get("/nav.js");

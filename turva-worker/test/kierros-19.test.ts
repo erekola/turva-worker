@@ -11,7 +11,7 @@ import worker, { markdownToHtml, renderInline } from "../src/worker.ts";
 
 const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
 
-const get = (path, opts: { method?: string; headers?: Record<string, string> } = {}) =>
+const get = (path: string, opts: { method?: string; headers?: Record<string, string> } = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 
 const workerSrc = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
@@ -51,7 +51,7 @@ test("K6-1: a brief's code keeps a backslash-escaped character, prose loses it",
     "```"
   ].join("\n");
   const rec = { md: briefMd, json: {}, kieli: "en", otsikko: "t" };
-  const briefEnv = { BRIEFIT: { get: async (k) => (k === id ? rec : null) } };
+  const briefEnv = { BRIEFIT: { get: async (k: string) => (k === id ? rec : null) } };
   const res = await worker.fetch(new Request("https://turva.dev/brief/" + id, { headers: { accept: "text/html" } }), briefEnv);
   assert.equal(res.status, 200);
   const html = await res.text();
@@ -338,7 +338,7 @@ test("G1-2: OPTIONS /api/v1 answers access-control-max-age 86400 exactly", async
 
 // ---- G1-3: every LEGACY_REDIRECTS entry redirects to its mapped target ----
 
-function parseLegacyRedirects(src) {
+function parseLegacyRedirects(src: string) {
   const startMarker = "const LEGACY_REDIRECTS = {";
   const start = src.indexOf(startMarker);
   if (start === -1) throw new Error("LEGACY_REDIRECTS not found in worker.ts");
@@ -346,7 +346,7 @@ function parseLegacyRedirects(src) {
   const end = src.indexOf("};", bodyStart);
   if (end === -1) throw new Error("LEGACY_REDIRECTS closing brace not found");
   const body = src.slice(bodyStart, end);
-  const entries = {};
+  const entries: Record<string, string> = {};
   const re = /"([^"]+)"\s*:\s*"([^"]+)"/g;
   let m;
   while ((m = re.exec(body))) entries[m[1]] = m[2];

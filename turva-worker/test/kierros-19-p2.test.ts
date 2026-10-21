@@ -13,21 +13,21 @@ import worker from "../src/worker.ts";
 
 const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
 
-const get = (path, opts: { method?: string; headers?: Record<string, string> } = {}) =>
+const get = (path: string, opts: { method?: string; headers?: Record<string, string> } = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 
 const workerSrc = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
 
 // Ground truth for "every page": parsed from the source the same way the site itself builds
 // its sitemap and its IndexNow list, so this list can never drift from what CANONICAL_PATHS says.
-function parseCanonicalPaths(src) {
+function parseCanonicalPaths(src: string) {
   const m = src.match(/const CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\);/);
   if (!m) throw new Error("CANONICAL_PATHS not found in worker.ts");
   return [...m[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((x) => x[1]);
 }
 
-function parseSitemapLastmods(xml) {
-  const map = {};
+function parseSitemapLastmods(xml: string) {
+  const map: Record<string, string> = {};
   for (const m of xml.matchAll(/<url><loc>(https:\/\/turva\.dev[^<]*)<\/loc><lastmod>([^<]+)<\/lastmod>/g)) {
     const path = m[1].replace("https://turva.dev", "") || "/";
     map[path] = m[2];
@@ -39,7 +39,7 @@ function parseSitemapLastmods(xml) {
 // function's real, current implementation can be tested directly even though it is not
 // exported. Returns null when the function does not exist in this build (the pre-fix build,
 // for a function patch 2 adds), which the caller turns into a failing assertion.
-function extractFunction(src, name) {
+function extractFunction(src: string, name: string) {
   const marker = "function " + name + "(";
   const start = src.indexOf(marker);
   if (start === -1) return null;
@@ -54,7 +54,7 @@ function extractFunction(src, name) {
 
 // One fetch per canonical page, cached for reuse across the sweeps below (K1-P6, K4-P4), so a
 // ~73 page site is rendered once per test run and not once per test.
-let _pagesCache = null;
+let _pagesCache: { path: string; status: number; html: string }[] | null = null;
 async function allPagesHtml() {
   if (_pagesCache) return _pagesCache;
   const paths = parseCanonicalPaths(workerSrc);
@@ -111,7 +111,7 @@ test("P1: an unknown path in another case stays a plain 404, a brief keeps its e
 
   const id = "testbrief-p1";
   const rec = { md: "Hello.", json: { a: 1 }, kieli: "en", otsikko: "t" };
-  const briefEnv = { BRIEFIT: { get: async (k) => (k === id ? rec : null) } };
+  const briefEnv = { BRIEFIT: { get: async (k: string) => (k === id ? rec : null) } };
   const wrongCase = await worker.fetch(new Request("https://turva.dev/Brief/" + id), briefEnv);
   assert.equal(wrongCase.status, 404, "a brief is not case-redirected, even when the lower-case id would resolve");
 });
@@ -132,8 +132,8 @@ test("P2: a JSON parity POST is an agent-api resource (ACAO *, CORP cross-origin
   const opt = await worker.fetch(new Request("https://turva.dev/markdown-parity-check", { method: "OPTIONS" }), env);
   assert.equal(opt.status, 204);
   assert.equal(opt.headers.get("access-control-allow-origin"), "*");
-  assert.match(opt.headers.get("access-control-allow-methods"), /POST/);
-  assert.match(opt.headers.get("access-control-allow-headers"), /Content-Type/i);
+  assert.match(opt.headers.get("access-control-allow-methods")!, /POST/);
+  assert.match(opt.headers.get("access-control-allow-headers")!, /Content-Type/i);
 
   // The site-wide limiter (RATE_LIMITER), not the parity-specific one: a JSON POST under site
   // load gets the agent form of the 429, a form-encoded POST gets the page form.
@@ -182,7 +182,7 @@ test("18-F02: leading whitespace before a long address does not shift the checke
 
 test("P3, K7-P5: the validator refuses arpa and onion hosts without fetching, and reads a trailing dot as the same host", async () => {
   const realFetch = globalThis.fetch;
-  const seen = [];
+  const seen: string[] = [];
   globalThis.fetch = async (url) => { seen.push(String(url)); throw new Error("must not be called for a refused host"); };
   try {
     for (const bad of ["router.home.arpa", "1.0.0.127.in-addr.arpa", "somesite.onion"]) {
@@ -228,7 +228,7 @@ test("P3, K7-P5: the validator refuses arpa and onion hosts without fetching, an
 
 // ---- P1-P1: a weak ETag on every cacheable text 200, 304 on a matching If-None-Match ----
 
-function sha256First16Hex(bytes) {
+function sha256First16Hex(bytes: Uint8Array) {
   return createHash("sha256").update(Buffer.from(bytes)).digest("hex").slice(0, 32);
 }
 
@@ -236,7 +236,7 @@ test("P1-P1: GET /services carries a weak ETag of the body's own SHA-256, and an
   const res = await get("/services");
   assert.equal(res.status, 200);
   const bytes = new Uint8Array(await res.arrayBuffer());
-  const etag = res.headers.get("etag");
+  const etag = res.headers.get("etag")!;
   assert.match(etag, /^W\/"[0-9a-f]{32}"$/, "etag must be the weak form W/\"<32 hex>\"");
   const hex = etag.slice(3, -1);
   assert.equal(hex, sha256First16Hex(bytes), "the etag must be the first 16 bytes of SHA-256 of the exact body");
@@ -296,14 +296,14 @@ test("K1-P5: scheduled() submits only the canonical URLs whose sitemap lastmod i
   );
   assert.ok(expected.size > 0 && expected.size < canonicalPaths.length, "the cutoff must be selective for this run to mean anything: " + expected.size + " of " + canonicalPaths.length);
 
-  let captured = null;
+  let captured = null as { url: string; body: { urlList: string[] } } | null;
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (url, init) => {
-    captured = { url: String(url), body: JSON.parse(init.body) };
+    captured = { url: String(url), body: JSON.parse(init!.body as string) };
     return new Response("", { status: 200 });
   };
-  const waits = [];
-  const ctx = { waitUntil: (p) => waits.push(p) };
+  const waits: Promise<unknown>[] = [];
+  const ctx = { waitUntil: (p: Promise<unknown>) => waits.push(p) };
   try {
     await worker.scheduled({ scheduledTime }, {}, ctx);
     await Promise.all(waits);
@@ -323,8 +323,8 @@ test("K1-P5: scheduled() submits nothing, and never calls fetch at all, when no 
   let called = false;
   const realFetch = globalThis.fetch;
   globalThis.fetch = async () => { called = true; return new Response("", { status: 200 }); };
-  const waits = [];
-  const ctx = { waitUntil: (p) => waits.push(p) };
+  const waits: Promise<unknown>[] = [];
+  const ctx = { waitUntil: (p: Promise<unknown>) => waits.push(p) };
   try {
     await worker.scheduled({ scheduledTime: Date.parse("2031-01-01T00:00:00.000Z") }, {}, ctx);
     await Promise.all(waits);
@@ -339,14 +339,14 @@ test("K1-P5: scheduled() submits nothing, and never calls fetch at all, when no 
 
 test("K1-P6: the CSP's style-src and font-src carry no https:, and Permissions-Policy adds bluetooth, hid, serial, idle-detection and browsing-topics", async () => {
   const res = await get("/");
-  const csp = res.headers.get("content-security-policy");
+  const csp = res.headers.get("content-security-policy")!;
   const directives = Object.fromEntries(csp.split("; ").map((d) => {
     const sp = d.indexOf(" ");
     return sp === -1 ? [d, ""] : [d.slice(0, sp), d.slice(sp + 1)];
   }));
   assert.equal(directives["style-src"], "'self' 'unsafe-inline' data:", csp);
   assert.equal(directives["font-src"], "'self' data:", csp);
-  const pp = res.headers.get("permissions-policy");
+  const pp = res.headers.get("permissions-policy")!;
   assert.ok(pp.endsWith("bluetooth=(), hid=(), serial=(), idle-detection=(), browsing-topics=()"), pp);
 });
 
@@ -411,12 +411,12 @@ test("K4-P6: an Accept q value above 1 clamps to 1, turning a text/html vs appli
   // so the brief route stays on "html" instead of switching to "json".
   const id = "testbrief-q";
   const rec = { md: "Hello.", json: { a: 1 }, kieli: "en", otsikko: "t" };
-  const briefEnv = { BRIEFIT: { get: async (k) => (k === id ? rec : null) } };
+  const briefEnv = { BRIEFIT: { get: async (k: string) => (k === id ? rec : null) } };
   const res = await worker.fetch(new Request("https://turva.dev/brief/" + id, {
     headers: { accept: "text/html, application/json;q=2" }
   }), briefEnv);
   assert.equal(res.status, 200);
-  assert.match(res.headers.get("content-type"), /text\/html/, "clamped to 1, text/html must win the tie against application/json");
+  assert.match(res.headers.get("content-type")!, /text\/html/, "clamped to 1, text/html must win the tie against application/json");
 });
 
 // ---- K5-2: the ten dead CSS rules and their class usages are gone ----
@@ -467,7 +467,7 @@ test("K5-P5: mdOfferCards and mdToolCards wrap their href in escapeHtml() before
 test("K6-P1: /brief/<id>/ (a trailing slash) redirects exactly like /brief/<id>. (a trailing period)", async () => {
   const id = "testbrief-slash";
   const rec = { md: "Hello.", json: { a: 1 }, kieli: "en", otsikko: "t" };
-  const briefEnv = { BRIEFIT: { get: async (k) => (k === id ? rec : null) } };
+  const briefEnv = { BRIEFIT: { get: async (k: string) => (k === id ? rec : null) } };
   const dot = await worker.fetch(new Request("https://turva.dev/brief/" + id + "."), briefEnv);
   const slash = await worker.fetch(new Request("https://turva.dev/brief/" + id + "/"), briefEnv);
   assert.equal(dot.status, 301);
@@ -481,7 +481,7 @@ test("K6-P1: /brief/<id>/ (a trailing slash) redirects exactly like /brief/<id>.
 test("K6-P3: a brief's markdown and JSON forms carry cross-origin-resource-policy same-origin and no access-control-allow-origin", async () => {
   const id = "testbrief-corp";
   const rec = { md: "Hello **world**.", json: { a: 1 }, kieli: "en", otsikko: "t" };
-  const briefEnv = { BRIEFIT: { get: async (k) => (k === id ? rec : null) } };
+  const briefEnv = { BRIEFIT: { get: async (k: string) => (k === id ? rec : null) } };
   const md = await worker.fetch(new Request("https://turva.dev/brief/" + id + ".md"), briefEnv);
   assert.equal(md.status, 200);
   assert.equal(md.headers.get("cross-origin-resource-policy"), "same-origin");
@@ -631,7 +631,7 @@ test("V6-P1: a bidi override character in a remote report's finding message, exc
 
 // ---- The review of patch 2 (adversarial reviewers, confirmed by a second reader and measured) ----
 
-const parityPost = (body, envExtra = {}, headers: Record<string, string> = { "content-type": "application/json" }) =>
+const parityPost = (body: unknown, envExtra = {}, headers: Record<string, string> = { "content-type": "application/json" }) =>
   worker.fetch(new Request("https://turva.dev/markdown-parity-check", {
     method: "POST",
     headers,

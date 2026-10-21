@@ -11,7 +11,7 @@ import worker from "../src/worker.ts";
 
 const env = {};
 
-async function validatorJson(rawQuery) {
+async function validatorJson(rawQuery: string) {
   const res = await worker.fetch(
     new Request("https://turva.dev/llms-txt-validator?" + rawQuery, { headers: { accept: "application/json" } }),
     env,
@@ -64,7 +64,7 @@ test("A3 V01 N02: OPTIONS preflights on /llms-txt-validator, /index.md and /serv
 
 test("Decision 19, T2-01: the entered-path check puts the typed path in its own value field, and the sentence stays generic", async () => {
   const { body } = await validatorJson("url=" + encodeURIComponent("turva.dev/some/odd/path"));
-  const chk = body.checks.find((c) => c.id === "input-path");
+  const chk = body.checks.find((c: { id: string }) => c.id === "input-path");
   assert.ok(chk, "the input-path information check must be present");
   assert.equal(chk.value, "/some/odd/path", "the raw path belongs in its own field");
   assert.ok(!chk.detail.includes("/some/odd/path"), "the sentence must not carry the raw path");

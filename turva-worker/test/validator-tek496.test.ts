@@ -11,7 +11,7 @@ const BS = String.fromCharCode(92);
 const ESC = String.fromCharCode(27);
 const base = "# Example\n\n> Summary.\n\n## Docs\n\n- [Guide](https://example.com/guide)\n";
 
-async function check(llms, { contentType = "text/plain; charset=utf-8", home = "" } = {}) {
+async function check(llms: string, { contentType = "text/plain; charset=utf-8", home = "" } = {}) {
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (url) => {
     const u = String(url);
@@ -27,7 +27,7 @@ async function check(llms, { contentType = "text/plain; charset=utf-8", home = "
     globalThis.fetch = realFetch;
   }
 }
-const status = (body, id) => body.checks.find((c) => c.id === id).status;
+const status = (body: { checks: { id: string; status: string }[] }, id: string) => body.checks.find((c) => c.id === id)!.status;
 
 test("Tek-496: the base file stays valid", async () => {
   assert.equal((await check(base)).summary, "valid");
@@ -40,7 +40,7 @@ test("Tek-496, H1: whitespace after the marker is allowed, a heading with no tex
   for (const t of ["# ###", "#", "#   #  "]) {
     const body = await check(base.replace("# Example", t));
     assert.equal(status(body, "h1-title"), "fail", t);
-    assert.match(body.checks.find((c) => c.id === "h1-title").detail, /has no text/, t);
+    assert.match(body.checks.find((c: { id: string }) => c.id === "h1-title").detail, /has no text/, t);
   }
   assert.equal(status(await check(base.replace("# Example", "#Example")), "h1-title"), "fail");
 });
@@ -75,15 +75,15 @@ test("Tek-496, links: an ordered list, a tab, a title and an angle target are li
 
 test("Tek-496, links: one line ending may stand around the destination, a blank line may not", async () => {
   const wrapped = await check(base + "\nSee [the guide](https://example.com/guide\n) and [more](\nhttps://example.com/more).\n");
-  assert.match(wrapped.checks.find((c) => c.id === "links").detail, /^3 links, all absolute URLs/);
+  assert.match(wrapped.checks.find((c: { id: string }) => c.id === "links").detail, /^3 links, all absolute URLs/);
   const broken = await check(base + "\nSee [the guide](\n\nhttps://example.com/guide).\n");
-  assert.match(broken.checks.find((c) => c.id === "links").detail, /^1 link, all absolute URLs/);
+  assert.match(broken.checks.find((c: { id: string }) => c.id === "links").detail, /^1 link, all absolute URLs/);
 });
 
 test("Tek-496, structure: a heading before the first H2 or a second H1 warns and names its line", async () => {
   const extra = await check(base.replace("## Docs", "### Extra heading\n\n## Docs"));
   assert.equal(status(extra, "sections"), "warn");
-  assert.match(extra.checks.find((c) => c.id === "sections").detail, /heading at line 5 is out of place/);
+  assert.match(extra.checks.find((c: { id: string }) => c.id === "sections").detail, /heading at line 5 is out of place/);
   assert.equal(status(await check(base.replace("## Docs", "# Another\n\n## Docs")), "sections"), "warn");
   assert.equal(status(await check(base + "\n# Another\n"), "sections"), "warn");
   assert.equal(status(await check(base + "\n### Sub\n\n- [B](https://example.com/b)\n"), "sections"), "pass");
@@ -94,7 +94,7 @@ test("Tek-496, links: a target the URL parser refuses is not an absolute URL", a
   for (const u of ["https://%", "https://example.com:99999/", "https://[", "https://user@", "https://example.com:bogus/"]) {
     const body = await check(base.replace("https://example.com/guide", u));
     assert.equal(status(body, "links"), "warn", u);
-    assert.match(body.checks.find((c) => c.id === "links").detail, /not valid http or https URLs/, u);
+    assert.match(body.checks.find((c: { id: string }) => c.id === "links").detail, /not valid http or https URLs/, u);
   }
   assert.equal(status(await check(base.replace("https://example.com/guide", "HTTPS://EXAMPLE.COM/guide")), "links"), "pass");
 });
@@ -110,7 +110,7 @@ test("Tek-496, content type: the media type is compared whole", async () => {
 
 test("Tek-496, host: localhost.localdomain is refused without a fetch", async () => {
   const realFetch = globalThis.fetch;
-  const seen = [];
+  const seen: string[] = [];
   globalThis.fetch = async (url) => { seen.push(String(url)); throw new Error("must not be called"); };
   try {
     const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=localhost.localdomain", { headers: { accept: "application/json" } }), {});
@@ -128,9 +128,9 @@ test("Tek-496, discovery: a shown target is masked and carries no control charac
   const body = await check(base, { home });
   const text = JSON.stringify(body.checks);
   assert.ok(!text.includes(marker), "no user name, password, query value or fragment in the report");
-  assert.ok(!body.checks.some((c) => c.detail.includes(ESC)), "no ESC in any detail");
+  assert.ok(!body.checks.some((c: { detail: string }) => c.detail.includes(ESC)), "no ESC in any detail");
   assert.equal(status(body, "v2-describedby"), "pass");
-  assert.match(body.checks.find((c) => c.id === "v2-markdown-alternate").detail, /to \/index\.md\?\*\*\*/);
+  assert.match(body.checks.find((c: { id: string }) => c.id === "v2-markdown-alternate").detail, /to \/index\.md\?\*\*\*/);
 });
 
 test("Tek-496, discovery: a relation past the 65,536 character cap is reported as not found in the part read", async () => {
@@ -138,7 +138,7 @@ test("Tek-496, discovery: a relation past the 65,536 character cap is reported a
   const long = "<html><head><meta name=\"pad\" content=\"" + "x".repeat(65536) + "\">" + links + "</head><body></body></html>";
   const body = await check(base, { home: long });
   assert.equal(status(body, "v2-describedby"), "info");
-  assert.match(body.checks.find((c) => c.id === "v2-describedby").detail, /first 65,536 characters of the head/);
+  assert.match(body.checks.find((c: { id: string }) => c.id === "v2-describedby").detail, /first 65,536 characters of the head/);
   const short = await check(base, { home: "<head>" + links + "</head>" });
   assert.equal(status(short, "v2-describedby"), "pass");
 });
@@ -153,8 +153,8 @@ test("Tek-496: turva.dev's own llms.txt stays valid", async () => {
 // times as long when the scan is linear and sixteen times when it is quadratic. A fixed time limit
 // passed on this machine and failed on a slower CI runner once (mds/gotchas.md 2026-09-27 (jatko 3)).
 test("Tek-496: the link scan stays linear on hostile input", async () => {
-  const hostile = (k) => "# T\n\n## S\n\n- " + "[a](x \"".repeat(Math.round(4000 * k)) + "\n" + " ``".repeat(Math.round(3000 * k)) + "`\n" + BS.repeat(Math.round(10000 * k)) + "[a](b)\n" + "[a](<".repeat(Math.round(4000 * k)) + "\n" + "[a](".repeat(Math.round(8000 * k)) + "\n# " + " #".repeat(Math.round(5000 * k)) + "x";
-  const best = async (k) => {
+  const hostile = (k: number) => "# T\n\n## S\n\n- " + "[a](x \"".repeat(Math.round(4000 * k)) + "\n" + " ``".repeat(Math.round(3000 * k)) + "`\n" + BS.repeat(Math.round(10000 * k)) + "[a](b)\n" + "[a](<".repeat(Math.round(4000 * k)) + "\n" + "[a](".repeat(Math.round(8000 * k)) + "\n# " + " #".repeat(Math.round(5000 * k)) + "x";
+  const best = async (k: number) => {
     const text = hostile(k);
     let min = Infinity;
     for (let r = 0; r < 5; r++) {
@@ -176,7 +176,7 @@ test("Tek-496: the link scan stays linear on hostile input", async () => {
 // line over a run of "=", warns like "# Second title" does, with the same detail and the line of
 // the text. Before v3.203.0 only the "#" form was read after the title. The package
 // turva-llms-txt-validator mirrors this from 0.3.19.
-const sectionsOf = async (text) => (await check(text)).checks.find((c) => c.id === "sections");
+const sectionsOf = async (text: string) => (await check(text)).checks.find((c: { id: string }) => c.id === "sections");
 const setextBetween = base.replace("## Docs", "Second title\n============\n\n## Docs");
 const atxBetween = base.replace("## Docs", "# Second title\n\n## Docs");
 const setextAfter = base + "\nSecond title\n============\n";
@@ -184,7 +184,7 @@ const atxAfter = base + "\n# Second title\n";
 
 test("Tek-564: a setext second H1 between the title and the first H2 warns and names its text line", async () => {
   const body = await check(setextBetween);
-  const s = body.checks.find((c) => c.id === "sections");
+  const s = body.checks.find((c: { id: string }) => c.id === "sections");
   assert.equal(s.status, "warn");
   assert.match(s.detail, /heading at line 5 is out of place/);
   assert.equal(body.summary, "valid with warnings");
@@ -192,7 +192,7 @@ test("Tek-564: a setext second H1 between the title and the first H2 warns and n
 
 test("Tek-564: a setext second H1 after the last section warns and names its text line", async () => {
   const body = await check(setextAfter);
-  const s = body.checks.find((c) => c.id === "sections");
+  const s = body.checks.find((c: { id: string }) => c.id === "sections");
   assert.equal(s.status, "warn");
   assert.match(s.detail, /heading at line 9 is out of place/);
   assert.equal(body.summary, "valid with warnings");
@@ -251,7 +251,7 @@ test("Tek-564: a thematic break, an HTML block or a link reference definition ov
 // code, so the next unindented "Title" over "===" is a second H1 even after it. The six fixtures
 // are the W46 cases, with the line of the text each must name. The package turva-llms-txt-validator
 // mirrors this from 0.3.20.
-const w46 = {
+const w46: Record<string, [string, number]> = {
   f1: ["# Site\n\n> Summary\n\nSecond title\n===\n\n## Docs\n- [Doc](https://turva.dev)\n", 5],
   f2: ["# Site\n\n> Summary\n\n    code\nSecond title\n===\n\n## Docs\n- [Doc](https://turva.dev)\n", 6],
   f3: ["# Site\n\n> Summary\n\n    code\n# Second title\n\n## Docs\n- [Doc](https://turva.dev)\n", 6],
@@ -263,7 +263,7 @@ const w46 = {
 test("Tek-565: a second H1 after an indented code line warns like the ATX form, at the same line", async () => {
   for (const [name, [text, line]] of Object.entries(w46)) {
     const body = await check(text);
-    const s = body.checks.find((c) => c.id === "sections");
+    const s = body.checks.find((c: { id: string }) => c.id === "sections");
     assert.equal(s.status, "warn", name);
     assert.match(s.detail, new RegExp("heading at line " + line + " is out of place"), name);
     assert.equal(body.summary, "valid with warnings", name);

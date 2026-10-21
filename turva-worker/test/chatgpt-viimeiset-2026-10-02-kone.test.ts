@@ -8,7 +8,7 @@ import worker from "../src/worker.ts";
 
 const base = "# Example\n\n> Summary.\n\n## Docs\n\n- [Guide](https://example.com/guide)\n";
 
-async function noHtmlStatus(llms) {
+async function noHtmlStatus(llms: string) {
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (url) => {
     const u = String(url);
@@ -20,7 +20,7 @@ async function noHtmlStatus(llms) {
     const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), {});
     assert.equal(res.status, 200);
     const body = JSON.parse(await res.text());
-    return body.checks.find((c) => c.id === "no-html").status;
+    return body.checks.find((c: { id: string; status: string }) => c.id === "no-html").status;
   } finally {
     globalThis.fetch = realFetch;
   }
@@ -39,7 +39,7 @@ test("validator HTML check: autolinks and plain prose still pass", async () => {
   assert.equal(await noHtmlStatus(base), "pass");
 });
 
-async function getJson(path) {
+async function getJson(path: string) {
   const res = await worker.fetch(new Request("https://turva.dev" + path), {});
   assert.equal(res.status, 200, path);
   return { res, body: JSON.parse(await res.text()) };
@@ -48,7 +48,7 @@ async function getJson(path) {
 test("ai-catalog and ard.json type the MCP entry application/mcp-server-card+json", async () => {
   for (const path of ["/.well-known/ai-catalog.json", "/.well-known/ard.json"]) {
     const { body } = await getJson(path);
-    const mcp = body.entries.find((e) => e.identifier === "urn:air:turva.dev:mcp-server:turva-mcp");
+    const mcp = body.entries.find((e: { identifier: string }) => e.identifier === "urn:air:turva.dev:mcp-server:turva-mcp");
     assert.equal(mcp.type, "application/mcp-server-card+json", path);
   }
 });
@@ -75,7 +75,7 @@ test("security.txt names both retrieval URLs as Canonical", async () => {
 
 test("api-catalog Content-Type carries the RFC 9727 profile", async () => {
   const { res } = await getJson("/.well-known/api-catalog");
-  const ct = res.headers.get("content-type");
+  const ct = res.headers.get("content-type")!;
   assert.match(ct, /^application\/linkset\+json/);
   assert.match(ct, /profile="https:\/\/www\.rfc-editor\.org\/info\/rfc9727"/);
 });

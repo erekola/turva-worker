@@ -13,21 +13,21 @@ import { stripTypes } from "../test-support/strip-types.ts";
 const limiter = (ok = true): { calls: number; seen?: string; limit(o?: any): Promise<{ success: boolean }> } => ({ calls: 0, async limit() { this.calls++; return { success: ok }; } });
 const envOk = () => ({ PARITY_LIMITER: limiter(true) });
 
-function post(body, { env = envOk(), type = "application/json", accept = "application/json", ip = "203.0.113.9", headers = {} }: { env?: any; type?: string; accept?: string; ip?: string; headers?: Record<string, string> } = {}) {
-  const init = { method: "POST", headers: { accept, "cf-connecting-ip": ip, ...headers }, body: typeof body === "string" ? body : JSON.stringify(body) };
+function post(body: unknown, { env = envOk(), type = "application/json", accept = "application/json", ip = "203.0.113.9", headers = {} }: { env?: any; type?: string; accept?: string; ip?: string; headers?: Record<string, string> } = {}) {
+  const init = { method: "POST", headers: { accept, "cf-connecting-ip": ip, ...headers } as Record<string, string>, body: typeof body === "string" ? body : JSON.stringify(body) };
   if (type) init.headers["content-type"] = type;
   return worker.fetch(new Request("https://turva.dev/markdown-parity-check", init), env);
 }
-const form = (fields, opts = {}) => post(new URLSearchParams(fields).toString(), { type: "application/x-www-form-urlencoded", accept: "text/html", ...opts });
-const get = (path, headers = {}) => worker.fetch(new Request("https://turva.dev" + path, { headers }), {});
+const form = (fields: Record<string, string>, opts: Parameters<typeof post>[1] = {}) => post(new URLSearchParams(fields).toString(), { type: "application/x-www-form-urlencoded", accept: "text/html", ...opts });
+const get = (path: string, headers: Record<string, string> = {}) => worker.fetch(new Request("https://turva.dev" + path, { headers }), {});
 
-async function served(path, accept) {
+async function served(path: string, accept: string) {
   const res = await get(path, { accept });
   const bytes = new Uint8Array(await res.arrayBuffer());
   return { status: res.status, contentType: res.headers.get("content-type"), body: new TextDecoder().decode(bytes), bytes: bytes.length };
 }
 
-function strip(report) {
+function strip(report: Parameters<typeof renderJson>[0] | string) {
   const { generatedAt, ...rest } = JSON.parse(typeof report === "string" ? report : renderJson(report));
   assert.match(generatedAt, /^\d{4}-\d{2}-\d{2}T/);
   return rest;
@@ -36,8 +36,8 @@ function strip(report) {
 test("parity page: served as a card page with its form, twin and script, cacheable when no check ran", async () => {
   const res = await get("/markdown-parity-check");
   assert.equal(res.status, 200);
-  assert.match(res.headers.get("content-type"), /text\/html/);
-  assert.match(res.headers.get("cache-control"), /public/);
+  assert.match(res.headers.get("content-type")!, /text\/html/);
+  assert.match(res.headers.get("cache-control")!, /public/);
   const html = await res.text();
   assert.ok(html.includes('<link rel="canonical" href="https://turva.dev/markdown-parity-check" />'));
   assert.ok(html.includes('<form class="vform pform" id="mpc-form" method="post" action="/markdown-parity-check#result" novalidate>'));
@@ -61,7 +61,7 @@ test("parity page: listed on /tools, in the sitemap, in llms.txt and its script 
   assert.ok((await (await get("/llms.txt")).text()).includes("- [Markdown parity check](https://turva.dev/markdown-parity-check.md)"));
   const js = await get("/markdown-parity-check.js");
   assert.equal(js.status, 200);
-  assert.match(js.headers.get("content-type"), /text\/javascript/);
+  assert.match(js.headers.get("content-type")!, /text\/javascript/);
   const src = await js.text();
   assert.ok(!/innerHTML|outerHTML|insertAdjacentHTML|document\.write|eval\(/.test(src), "the script writes text only");
 });
@@ -71,14 +71,14 @@ test("parity check: the JSON answer is run() from the package over the bytes the
     const url = "https://turva.dev" + path;
     const res = await post({ url, strict });
     assert.equal(res.status, 200, path);
-    assert.match(res.headers.get("content-type"), /application\/json/);
+    assert.match(res.headers.get("content-type")!, /application\/json/);
     assert.equal(res.headers.get("cache-control"), "no-store");
     assert.equal(res.headers.get("access-control-allow-origin"), "*", "a browser agent on another origin may read the JSON answer (round 19, P2)");
     assert.equal(res.headers.get("cross-origin-resource-policy"), "cross-origin", "an agent-api resource, like the validator's JSON answer");
     const hosted = strip(await res.text());
     const h = await served(path, "text/html");
     const m = await served(path, "text/markdown");
-    const input = (s, accept): SourceInput => ({ meta: { kind: "url", url: url, requestedUrl: url, status: s.status, contentType: s.contentType, accept, redirects: 0, bytes: s.bytes, baseUrl: url }, body: s.body, base: url });
+    const input = (s: { status: number; contentType: string | null; bytes: number; body: string }, accept: string): SourceInput => ({ meta: { kind: "url", url: url, requestedUrl: url, status: s.status, contentType: s.contentType, accept, redirects: 0, bytes: s.bytes, baseUrl: url }, body: s.body, base: url });
     const direct = strip(run(input(h, "text/html"), input(m, "text/markdown"), { strict, mode: "url", frontMatter: "keep" }));
     assert.deepEqual(hosted, direct, path);
     assert.equal(hosted.schemaVersion, 1);
@@ -102,10 +102,10 @@ const PARITY_REFUSED = {
 // A page passes when the report says pass with no error and no warning. A warning does not fail the
 // hosted check, but every checkable page reached zero warnings in Tek-488, so a new one is a
 // regression here. Informational notes are not counted.
-function parityProblem(r) {
+function parityProblem(r: { summary?: { result?: string; errors?: number; warnings?: number }; findings?: { code: string; before?: string; html?: { excerpt?: string } }[] }) {
   const s = r.summary || {};
   if (s.result === "pass" && s.errors === 0 && s.warnings === 0) return null;
-  const top = (r.findings || []).slice(0, 3).map((f) => f.code + " " + String(f.before || (f.html && f.html.excerpt) || "").slice(0, 60));
+  const top = (r.findings || []).slice(0, 3).map((f: { code: string; before?: string; html?: { excerpt?: string } }) => f.code + " " + String(f.before || (f.html && f.html.excerpt) || "").slice(0, 60));
   return s.result + ", " + s.errors + " errors, " + s.warnings + " warnings " + JSON.stringify(top);
 }
 
@@ -119,7 +119,7 @@ test("Tek-490: every page in the sitemap passes its own parity check with no err
     const res = await post({ url: "https://turva.dev" + p });
     const r = JSON.parse(await res.text());
     if (Object.hasOwn(PARITY_REFUSED, p)) {
-      const [status, re] = PARITY_REFUSED[p];
+      const [status, re] = PARITY_REFUSED[p as keyof typeof PARITY_REFUSED] as [number, RegExp];
       refused.push(p);
       if (res.status !== status || r.summary.result !== "error" || !re.test(r.summary.error || "")) bad.push(p + ": expected the refusal " + status + ", got " + res.status + " " + (r.summary.error || r.summary.result));
       continue;
@@ -139,8 +139,8 @@ test("Tek-490: the page gate fails a page whose HTML carries one paragraph its t
   const url = "https://turva.dev" + p;
   const h = await served(p, "text/html");
   const m = await served(p, "text/markdown");
-  const input = (s, body, accept): SourceInput => ({ meta: { kind: "url", url, requestedUrl: url, status: s.status, contentType: s.contentType, accept, redirects: 0, bytes: new TextEncoder().encode(body).length, baseUrl: url }, body, base: url });
-  const check = (html) => strip(run(input(h, html, "text/html"), input(m, m.body, "text/markdown"), { strict: false, mode: "url", frontMatter: "keep" }));
+  const input = (s: { status: number; contentType: string | null }, body: string, accept: string): SourceInput => ({ meta: { kind: "url", url, requestedUrl: url, status: s.status, contentType: s.contentType, accept, redirects: 0, bytes: new TextEncoder().encode(body).length, baseUrl: url }, body, base: url });
+  const check: (html: string) => ReturnType<typeof strip> = (html) => strip(run(input(h, html, "text/html"), input(m, m.body, "text/markdown"), { strict: false, mode: "url", frontMatter: "keep" }));
   assert.equal(parityProblem(check(h.body)), null, "the page as served passes the gate");
   const open = h.body.indexOf('<main id="main"');
   assert.ok(open > 0, "the page has its main element");
@@ -148,7 +148,7 @@ test("Tek-490: the page gate fails a page whose HTML carries one paragraph its t
   const mutated = h.body.slice(0, at) + "<p>This paragraph is in the HTML only, and the twin does not carry it.</p>" + h.body.slice(at);
   const problem = parityProblem(check(mutated));
   assert.notEqual(problem, null, "one HTML-only paragraph fails the gate");
-  assert.match(problem, /HTML only/, "the finding quotes the added paragraph: " + problem);
+  assert.match(problem!, /HTML only/, "the finding quotes the added paragraph: " + problem);
   // A warning alone leaves the hosted result at pass, so the gate's own warning clause is tested with
   // a heading one level lower in the HTML than in the twin.
   const h2 = h.body.indexOf("<h2>", at);
@@ -183,7 +183,7 @@ test("parity check: no guide or post carries its page frame as content (Tek-479 
 test("parity check: a guide and a post pass in full against their own twins (Tek-479 P14)", async () => {
   for (const p of ["/guides/llms-txt", "/blog/html-and-markdown-can-disagree"]) {
     const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
-    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code + " " + (f.before || ""))));
+    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f: { code: string; before?: string }) => f.code + " " + (f.before || ""))));
   }
 });
 
@@ -204,7 +204,7 @@ test("parity check: front matter option and strict mode reach the report", async
   assert.equal(keep.summary.strict, false);
   const strip = JSON.parse(await (await post({ url: "https://turva.dev/tools", frontMatter: "strip", strict: true })).text());
   assert.equal(strip.summary.strict, true);
-  assert.ok(strip.extraction.markdown.notes.some((n) => /nothing was stripped/.test(n)), "strip on a page without front matter says so");
+  assert.ok(strip.extraction.markdown.notes.some((n: string) => /nothing was stripped/.test(n)), "strip on a page without front matter says so");
 });
 
 test("parity check: phase 1 refuses every address outside turva.dev's published pages", async () => {
@@ -248,7 +248,7 @@ test("parity check: phase 1 refuses every address outside turva.dev's published 
 });
 
 test("parity check: malformed requests get 400, 413 and 415 with an error report", async () => {
-  const r400 = async (body, re) => { const res = await post(body); assert.equal(res.status, 400); assert.match(JSON.parse(await res.text()).summary.error, re); };
+  const r400 = async (body: unknown, re: RegExp) => { const res = await post(body); assert.equal(res.status, 400); assert.match(JSON.parse(await res.text()).summary.error, re); };
   await r400("{not json", /not valid JSON/);
   await r400("[1,2]", /JSON object/);
   await r400({}, /Enter the page URL/);
@@ -278,7 +278,7 @@ test("parity check: the limiter fails closed, answers 429 and bounds concurrent 
   assert.ok(statuses.every((s) => s === 200 || s === 503), String(statuses));
   assert.equal((await post({ url: "https://turva.dev/tools" })).status, 200, "the counter is released after the burst");
   const key = limiter(true);
-  await post({ url: "https://turva.dev/tools" }, { env: { PARITY_LIMITER: { limit: async (o) => { key.seen = o.key; return { success: true }; } } } });
+  await post({ url: "https://turva.dev/tools" }, { env: { PARITY_LIMITER: { limit: async (o: { key: string }) => { key.seen = o.key; return { success: true }; } } } });
   assert.equal(key.seen, "parity:203.0.113.9");
 });
 
@@ -317,15 +317,15 @@ test("parity check: the form posts back a result page with the JSON report, no-s
   assert.match(html, /<h2 id="result-h">Result: (Pass|Fail)<\/h2>/);
   assert.ok(html.includes('<pre id="mpc-json" tabindex="0">'));
   assert.ok(html.includes('id="mpc-strict" name="strict" value="on" checked'));
-  const pre = html.match(/<pre id="mpc-json" tabindex="0">([\s\S]*?)<\/pre>/)[1].replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+  const pre = html.match(/<pre id="mpc-json" tabindex="0">([\s\S]*?)<\/pre>/)![1].replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
   const api = strip(await (await post({ url: "https://turva.dev/tools", strict: true })).text());
   assert.deepEqual(strip(pre), api, "the page shows the same report as the API");
 });
 
 test("parity check: phase 2 forwards other hosts only when switched on and bound", async () => {
   const report = JSON.parse(await (await post({ url: "https://turva.dev/tools" })).text());
-  const calls = [];
-  const env = { PARITY_LIMITER: limiter(true), PARITY_REMOTE_FETCH: "on", PARITY: { fetch: async (u, init) => { calls.push([u, JSON.parse(init.body)]); return new Response(JSON.stringify({ status: 200, report })); } } };
+  const calls: [string, unknown][] = [];
+  const env = { PARITY_LIMITER: limiter(true), PARITY_REMOTE_FETCH: "on", PARITY: { fetch: async (u: string, init: { body: string }) => { calls.push([u, JSON.parse(init.body)]); return new Response(JSON.stringify({ status: 200, report })); } } };
   const res = await post({ url: "https://example.com/page", strict: true }, { env });
   assert.equal(res.status, 200);
   assert.equal(calls.length, 1);
@@ -346,13 +346,13 @@ test("parity route: methods and preflight name POST, and a POST that asks for Ma
   assert.equal(opt.status, 204);
   assert.equal(opt.headers.get("access-control-allow-methods"), "GET, POST, OPTIONS");
   assert.equal(opt.headers.get("access-control-allow-origin"), "*");
-  assert.match(opt.headers.get("access-control-allow-headers"), /Content-Type/);
+  assert.match(opt.headers.get("access-control-allow-headers")!, /Content-Type/);
   const put = await worker.fetch(new Request("https://turva.dev/markdown-parity-check", { method: "PUT", body: "x" }), {});
   assert.equal(put.status, 405);
   assert.equal(put.headers.get("allow"), "GET, HEAD, POST, OPTIONS");
   const md = await post({ url: "https://turva.dev/tools" }, { accept: "text/markdown" });
   assert.equal(md.status, 200);
-  assert.match(md.headers.get("content-type"), /application\/json/, "a JSON body gets the JSON report");
+  assert.match(md.headers.get("content-type")!, /application\/json/, "a JSON body gets the JSON report");
   const other = await worker.fetch(new Request("https://turva.dev/tools", { method: "POST", body: "x" }), {});
   assert.equal(other.status, 405, "no other page accepts POST");
   const upper = await worker.fetch(new Request("https://turva.dev/Markdown-Parity-Check", { method: "POST", headers: { "content-type": "application/json" }, body: "{}" }), {});
@@ -366,7 +366,7 @@ test("parity route: methods and preflight name POST, and a POST that asks for Ma
 // silently stops rendering fails here too.
 test("Tek-484: every button row on the seven pages is a links-only paragraph of the twin, in order", async () => {
   const want = { "/": 2, "/services": 2, "/company": 1, "/agent-readiness-audit": 3, "/shopify-agent-storefront-check": 2, "/samples/audit-report": 1, "/samples/shopify-agent-storefront-check": 1 };
-  const slug = (h) => h.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const slug = (h: string) => h.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   for (const [path, count] of Object.entries(want)) {
     const html = (await served(path, "text/html")).body;
     const main = html.slice(html.indexOf('<main id="main"'), html.indexOf("</main>"));
@@ -406,7 +406,7 @@ test("Tek-484: a block without a links-only paragraph fails the page build inste
 test("Tek-488: the two sample reports, the Shopify page and the commerce guide pass in full", async () => {
   for (const p of ["/samples/audit-report", "/samples/shopify-agent-storefront-check", "/shopify-agent-storefront-check", "/guides/agent-commerce-discovery"]) {
     const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
-    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code + " " + (f.before || ""))));
+    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f: { code: string; before?: string }) => f.code + " " + (f.before || ""))));
   }
 });
 
@@ -466,7 +466,7 @@ test("Tek-488: a brief with a code span and an escaped hash in one paragraph ren
   const bs = String.fromCharCode(92);
   const rec = { id: "tek488-brief", yritys: "Test Oy", kieli: "en", otsikko: "t", json: { a: 1 },
     md: ["# A brief", "", "It has `a code span` and " + bs + "#7" + bs + "# in one paragraph.", ""].join("\n") };
-  const env = { BRIEFIT: { get: async (k) => (k === rec.id ? rec : null) } };
+  const env = { BRIEFIT: { get: async (k: string) => (k === rec.id ? rec : null) } };
   const res = await worker.fetch(new Request("https://turva.dev/brief/" + rec.id, { headers: { accept: "text/html" } }), env);
   assert.equal(res.status, 200);
   const html = await res.text();
@@ -475,13 +475,13 @@ test("Tek-488: a brief with a code span and an escaped hash in one paragraph ren
 
 // ---- Tek-488: round 2, the card lists read as the same blocks ----
 
-const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
 test("Tek-488: /blog, /guides and /services pass in full, with no warning", async () => {
   for (const p of ["/blog", "/guides", "/services"]) {
     const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
-    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code + " " + (f.before || ""))));
-    assert.equal(r.summary.warnings, 0, p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code)));
+    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f: { code: string; before?: string }) => f.code + " " + (f.before || ""))));
+    assert.equal(r.summary.warnings, 0, p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f: { code: string }) => f.code)));
   }
 });
 
@@ -532,8 +532,8 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
 test("Tek-488: the home, company and contact pages pass in full, with no warning", async () => {
   for (const p of ["/", "/company", "/contact"]) {
     const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
-    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code + " " + (f.before || ""))));
-    assert.equal(r.summary.warnings, 0, p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f) => f.code)));
+    assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f: { code: string; before?: string }) => f.code + " " + (f.before || ""))));
+    assert.equal(r.summary.warnings, 0, p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f: { code: string }) => f.code)));
   }
   const html = (await served("/company", "text/html")).body;
   assert.ok(html.includes('<ul class="kvs">') && html.includes('<li class="kv"><span class="k">Business ID:</span> '), "a key-value row is the twin's list item, colon included");
@@ -544,8 +544,8 @@ test("Tek-488: the scan board shows the twin's own rows, and its labels are the 
   const cats = facts.agentReadiness.isitagentready.categories;
   const md = (await served("/", "text/markdown")).body.replace(/\r\n/g, "\n");
   const html = (await served("/", "text/html")).body;
-  const rows = [...md.matchAll(/\n- ([^:\n]+): (\d+\/100)\.(?=\n)/g)].filter((m) => cats.some((c) => c.label === m[1]));
-  assert.deepEqual(rows.map((m) => m[1]), cats.map((c) => c.label), "the twin lists every category by its label, in order");
+  const rows = [...md.matchAll(/\n- ([^:\n]+): (\d+\/100)\.(?=\n)/g)].filter((m) => cats.some((c: { label: string }) => c.label === m[1]));
+  assert.deepEqual(rows.map((m) => m[1]), cats.map((c: { label: string }) => c.label), "the twin lists every category by its label, in order");
   for (const [, label, score] of rows) {
     assert.ok(html.includes('<li class="cell"><span class="cat">' + esc(label) + ':</span> <span class="val">' + score + ".</span></li>"), label);
   }

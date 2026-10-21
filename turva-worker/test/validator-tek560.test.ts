@@ -10,7 +10,7 @@ import worker, { findLinkRelations } from "../src/worker.ts";
 const BS = String.fromCharCode(92);
 const base = "# Example\n\n> Summary.\n\n## Docs\n\n- [Guide](https://example.com/guide)\n";
 
-async function check(llms, { home = "" } = {}) {
+async function check(llms: string, { home = "" } = {}) {
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (url) => {
     const u = String(url);
@@ -26,8 +26,8 @@ async function check(llms, { home = "" } = {}) {
     globalThis.fetch = realFetch;
   }
 }
-const status = async (text, id) => (await check(text)).checks.find((c) => c.id === id).status;
-const detail = async (text, id) => (await check(text)).checks.find((c) => c.id === id).detail;
+const status = async (text: string, id: string) => (await check(text)).checks.find((c: { id: string }) => c.id === id).status;
+const detail = async (text: string, id: string) => (await check(text)).checks.find((c: { id: string }) => c.id === id).detail;
 
 test("Tek-560 V01: a link label cannot cross a blank line", async () => {
   const split = base.replace("[Guide](", "[Gu\n\nide](");
@@ -77,7 +77,7 @@ test("Tek-560 V04B: a link on a continuation line counts as the list item's link
 });
 
 test("Tek-560 V06: the HTML check needs a real tag", async () => {
-  const add = (t) => base + "\n" + t + "\n";
+  const add = (t: string) => base + "\n" + t + "\n";
   for (const t of ["For the calculation, a <b + c.", "if n <b1 + 2", "a <b + c > d", "x <3 and 2> y", "<https://example.com>", "<mailto:a@example.com>", "a < b and c > d"]) {
     assert.equal(await status(add(t), "no-html"), "pass", t);
   }
@@ -95,7 +95,7 @@ test("Tek-560 V07: a template marker inside a comment or a raw text element does
 
 test("Tek-560 V07: the template scan stays linear on hostile input", () => {
   // Both sizes stay under the 65,536 character head read, so the larger one is not cut before the scan.
-  const time = (s) => { const t = performance.now(); findLinkRelations("<head><template>" + s, ""); return performance.now() - t; };
+  const time = (s: string) => { const t = performance.now(); findLinkRelations("<head><template>" + s, ""); return performance.now() - t; };
   for (const unit of ["</templateX", "<template>", "<style>", "<!--", "<template><style>"]) {
     const n = Math.floor(14000 / unit.length);
     time(unit.repeat(n));
@@ -112,12 +112,12 @@ test("Tek-560 V08: a discovery target with many query keys is masked in order an
   const t = performance.now();
   const body = await check(base, { home });
   const ms = performance.now() - t;
-  const d = body.checks.find((c) => c.id === "v2-describedby");
+  const d = body.checks.find((c: { id: string }) => c.id === "v2-describedby");
   assert.equal(d.status, "pass");
   assert.match(d.detail, /https:\/\/example\.com\/d\?k0=\*\*\*&k1=\*\*\*&k2=\*\*\*/);
   assert.ok(ms < 1500, keys + " keys took " + ms.toFixed(0) + " ms");
   const small = await check(base, { home: '<head><link rel="describedby" href="https://example.com/d?b=1&a=2&b=3&c#f"></head>' });
-  assert.match(small.checks.find((c) => c.id === "v2-describedby").detail, /https:\/\/example\.com\/d\?b=\*\*\*&a=\*\*\*&c=\*\*\*$/);
+  assert.match(small.checks.find((c: { id: string }) => c.id === "v2-describedby").detail, /https:\/\/example\.com\/d\?b=\*\*\*&a=\*\*\*&c=\*\*\*$/);
 });
 
 test("Tek-560 V10: an empty blockquote is not a summary", async () => {
@@ -131,7 +131,7 @@ test("Tek-560 V10: an empty blockquote is not a summary", async () => {
 });
 
 test("Tek-560 F1: a blockquote block is the summary when any of its lines has text", async () => {
-  const withQuote = (q) => base.replace("> Summary.", q);
+  const withQuote = (q: string) => base.replace("> Summary.", q);
   for (const q of [">\n> Real summary", "> \n> Real summary", ">\n>\n> Real summary", "  >\n  > Real summary", "> Real summary\n>"]) {
     assert.equal(await status(withQuote(q), "summary"), "pass", JSON.stringify(q));
     assert.match(await detail(withQuote(q), "summary"), /Real summary/, JSON.stringify(q));
@@ -148,7 +148,7 @@ test("Tek-560 F1: a blockquote block is the summary when any of its lines has te
 });
 
 test("Tek-560 F2: an empty list marker takes only an indented continuation, and a fence closes the item", async () => {
-  const item = (t) => base.replace("- [Guide](https://example.com/guide)", t);
+  const item = (t: string) => base.replace("- [Guide](https://example.com/guide)", t);
   for (const t of ["-\n  [Guide](https://example.com/guide)", "-\n\t[Guide](https://example.com/guide)", "- Read\n[Guide](https://example.com/guide)", "- Read\nthe [Guide](https://example.com/guide)", "-\n  Read the\n[Guide](https://example.com/guide)"]) {
     assert.equal(await status(item(t), "sections"), "pass", JSON.stringify(t));
   }
@@ -162,7 +162,7 @@ test("Tek-560 F2: an empty list marker takes only an indented continuation, and 
 });
 
 test("Tek-560 F3: the HTML check reads any non-space attribute name", async () => {
-  const add = (t) => base + "\n" + t + "\n";
+  const add = (t: string) => base + "\n" + t + "\n";
   for (const t of ["<div @click=\"x\">", "<div *ngIf=\"x\">", "<div class=a\"b\">", "<div class=a'b'>", "<div :class=\"x\" #slot>", "<div v-on:click.prevent=\"x\">", "<a title=\"1 > 2\">", "<input disabled>"]) {
     assert.equal(await status(add(t), "no-html"), "warn", t);
   }
@@ -172,7 +172,7 @@ test("Tek-560 F3: the HTML check reads any non-space attribute name", async () =
   // A tag still open at the end of the file has no closing bracket and does not warn.
   assert.equal(await status(base + "\n<div class=\"x\"", "no-html"), "pass");
   // The scan stays linear on a long run of attributes with no closing bracket.
-  const time = async (s) => { const t = performance.now(); await status(base + "\n" + s, "no-html"); return performance.now() - t; };
+  const time = async (s: string) => { const t = performance.now(); await status(base + "\n" + s, "no-html"); return performance.now() - t; };
   for (const unit of ["<a b ", "<a b=\"x\" c='y ", "<a @b=x\"y\" ", "<a +++ ", "<a b=\"<a b='"]) {
     await time(unit.repeat(2000));
     const small = await time(unit.repeat(10000));
@@ -182,14 +182,14 @@ test("Tek-560 F3: the HTML check reads any non-space attribute name", async () =
 });
 
 test("Tek-560 V-1: the HTML check reads a Unicode letter or digit in an attribute name", async () => {
-  const add = (t) => base + "\n" + t + "\n";
+  const add = (t: string) => base + "\n" + t + "\n";
   for (const t of ["<p ä=\"x\">", "<p data-ñ=1>", "<p é>", "<p ٣=\"x\">", "<p 名前=\"x\">"]) {
     assert.equal(await status(add(t), "no-html"), "warn", t);
   }
   for (const t of ["a <b + c > d", "a <b ! ? > d", "a <é> b"]) {
     assert.equal(await status(add(t), "no-html"), "pass", t);
   }
-  const time = async (s) => { const t = performance.now(); await status(base + "\n" + s, "no-html"); return performance.now() - t; };
+  const time = async (s: string) => { const t = performance.now(); await status(base + "\n" + s, "no-html"); return performance.now() - t; };
   for (const unit of ["<a ä ", "<a ä=\"x\" c='y ", "<a @ä=x\"y\" ", "<a ", "<a b=\"<a b='"]) {
     await time(unit.repeat(2000));
     const small = await time(unit.repeat(10000));
@@ -199,7 +199,7 @@ test("Tek-560 V-1: the HTML check reads a Unicode letter or digit in an attribut
 });
 
 test("Tek-560 V-2: the line after a fence needs the item's content column, and the column is the real content start", async () => {
-  const item = (t) => base.replace("- [Guide](https://example.com/guide)", t);
+  const item = (t: string) => base.replace("- [Guide](https://example.com/guide)", t);
   const link = "[Guide](https://example.com/guide)";
   // (a) A lazy continuation cannot follow a fence, even one that sits inside the item.
   assert.equal(await status(item("- item\n  ```\n  x\n  ```\n" + link), "sections"), "warn");

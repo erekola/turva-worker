@@ -13,9 +13,9 @@ import worker from "../src/worker.ts";
 const env = {};
 const prefix = "# Example\n\n> Summary\n\n## Docs\n\n";
 
-function mockFetch(routes) {
-  return async (input) => {
-    const u = new URL(typeof input === "string" ? input : input.url);
+function mockFetch(routes: Record<string, { text: string; status?: number; contentType?: string }>) {
+  return async (input: string | URL | Request) => {
+    const u = new URL(typeof input === "string" ? input : (input as Request).url);
     const entry = routes[u.pathname];
     if (!entry) return new Response("not found", { status: 404 });
     return new Response(entry.text, {
@@ -25,7 +25,7 @@ function mockFetch(routes) {
   };
 }
 
-async function validate(text) {
+async function validate(text: string) {
   const orig = globalThis.fetch;
   globalThis.fetch = mockFetch({
     "/llms.txt": { text },
@@ -45,8 +45,8 @@ async function validate(text) {
   }
 }
 
-function byId(checks, id) {
-  return checks.find((c) => c.id === id);
+function byId(checks: { id: string; status: string; detail: string }[], id: string) {
+  return checks.find((c) => c.id === id)!;
 }
 
 // --- V03-VREG1: a link reference definition is CommonMark-valid only in its own block, not

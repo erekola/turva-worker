@@ -19,16 +19,16 @@ const facts = JSON.parse(readFileSync(new URL("../../tools/facts.json", import.m
 // a second, need no network, and fail before wrangler is ever invoked.
 const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
 
-const get = (path, opts: { method?: string; headers?: Record<string, string> } = {}): Promise<Omit<Response, "json"> & { json(): Promise<any> }> =>
+const get = (path: string, opts: { method?: string; headers?: Record<string, string> } = {}): Promise<Omit<Response, "json"> & { json(): Promise<any> }> =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 
-const json = async (res) => JSON.parse(await res.text());
+const json = async (res: { text(): Promise<string> }) => JSON.parse(await res.text());
 
 test("ACP: the declared api_base_url resolves as JSON, not as the HTML 404", async () => {
   for (const p of ["/api/acp", "/api/acp/", "/API/ACP"]) {
     const r = await get(p);
     assert.equal(r.status, 200, p + " must resolve");
-    assert.match(r.headers.get("content-type"), /application\/json/, p + " must be JSON");
+    assert.match(r.headers.get("content-type")!, /application\/json/, p + " must be JSON");
     const j = await json(r);
     assert.equal(j.protocol, "acp");
     assert.ok(j.endpoints.create_checkout_session.url.endsWith("/api/acp/checkout_sessions"));
@@ -70,7 +70,7 @@ test("/services carries the same priced Service node as the home page, and both 
   // v3.113.0: an agent landing on the price page from search used to get prices in prose and
   // FAQ answers only, while the home page carried the AggregateOffer and OfferCatalog. The node
   // is one constant now; this test reads both rendered pages so a future split cannot drift.
-  const offersOf = (html) => {
+  const offersOf: (html: string) => (string | number)[][] = (html) => {
     const i = html.indexOf('"hasOfferCatalog"');
     assert.ok(i > 0, "hasOfferCatalog present");
     const block = html.slice(i, html.indexOf("</script>", i));
@@ -80,7 +80,7 @@ test("/services carries the same priced Service node as the home page, and both 
   const home = offersOf(await (await get("/")).text());
   const services = offersOf(await (await get("/services")).text());
   assert.deepEqual(services, home, "the two pages carry the same offers");
-  const priced = facts.services.filter((x) => x.priceKey).map((x) => [x.name, facts.prices[x.priceKey]]);
+  const priced = facts.services.filter((x: { priceKey: string | null; name: string }) => x.priceKey).map((x: { priceKey: string; name: string }) => [x.name, facts.prices[x.priceKey]]);
   assert.deepEqual(services, priced, "the offers are exactly the priced services facts.json names");
   assert.ok((await (await get("/services")).text()).includes('"@id":"https://turva.dev/#service"'), "same @id as the home page");
 });
@@ -106,7 +106,7 @@ test("the primary navigation is a named landmark on every page, and a contents l
 });
 
 test("the article frame sits outside <main>: back link, frame dates and next step (Tek-479 P14)", async () => {
-  const mainOf = (html) => html.slice(html.indexOf('<main id="main"'), html.indexOf("</main>") + 7);
+  const mainOf: (html: string) => string = (html) => html.slice(html.indexOf('<main id="main"'), html.indexOf("</main>") + 7);
   const guide = await (await get("/guides/llms-txt")).text();
   const gm = mainOf(guide);
   assert.ok(gm.includes("<h1>llms.txt explained</h1>"), "the guide's main holds the article");
@@ -165,7 +165,7 @@ test("the site version is the same in every manifest that carries one", async ()
 test("unmatched paths return the Worker's own 404, with no origin behind it", async () => {
   const r = await get("/definitely-not-a-page");
   assert.equal(r.status, 404);
-  assert.match(r.headers.get("content-type"), /text\/html/);
+  assert.match(r.headers.get("content-type")!, /text\/html/);
 });
 
 // A2A: the agent card declared url + HTTP+JSON transport and three skills while nothing
@@ -174,7 +174,7 @@ test("unmatched paths return the Worker's own 404, with no origin behind it", as
 // card's url, the card's skill descriptions, and the data the endpoint actually returns.
 // A first version asserted only that some object came back, and a mutation test that swapped
 // the contact and company payloads passed it, so every skill now asserts content unique to it.
-const a2aSend = (body): Promise<Omit<Response, "json"> & { json(): Promise<any> }> => worker.fetch(new Request("https://turva.dev/v1/message:send", {
+const a2aSend = (body: unknown): Promise<Omit<Response, "json"> & { json(): Promise<any> }> => worker.fetch(new Request("https://turva.dev/v1/message:send", {
   method: "POST",
   headers: { "content-type": "application/json" },
   body: JSON.stringify(body)
@@ -186,7 +186,7 @@ test("A2A: the transport the card declares answers, in the envelope the spec def
   assert.equal(new URL(card.url).pathname.replace(/\/$/, ""), "", "card url is the transport base");
   const res = await a2aSend({ message: { role: "user", parts: [{ kind: "text", text: "services" }], messageId: "t1" } });
   assert.equal(res.status, 200);
-  assert.match(res.headers.get("content-type"), /application\/json/);
+  assert.match(res.headers.get("content-type")!, /application\/json/);
   const body = await res.json();
   // Spec 0.3.0 REST binding: the response is { message?, task? }, not a bare Message.
   assert.equal(body.kind, undefined, "a bare Message hands a conformant client undefined");
@@ -198,9 +198,9 @@ test("A2A: the transport the card declares answers, in the envelope the spec def
 
 test("A2A: every skill the card declares returns the data its own description promises", async () => {
   const card = await (await get("/.well-known/agent-card.json")).json();
-  const byId = Object.fromEntries(card.skills.map((s) => [s.id, s]));
+  const byId = Object.fromEntries(card.skills.map((s: { id: string }) => [s.id, s]));
   assert.deepEqual(Object.keys(byId).sort(), ["company-info", "contact-info", "services"]);
-  const dataFor = async (id) => {
+  const dataFor = async (id: string) => {
     const r = await a2aSend({ message: { role: "user", parts: [], messageId: "t", metadata: { skillId: id } } });
     assert.equal(r.status, 200, id + " must resolve");
     const b = await r.json();
@@ -240,7 +240,7 @@ test("A2A: wrong method, bad body, unknown skill and unknown method all answer a
   const g = await get("/v1/message:send");
   assert.equal(g.status, 405);
   assert.equal(g.headers.get("allow"), "POST, OPTIONS");
-  assert.match(g.headers.get("content-type"), /application\/json/);
+  assert.match(g.headers.get("content-type")!, /application\/json/);
 
   const bad = await a2aSend({});
   assert.equal(bad.status, 400);
@@ -255,7 +255,7 @@ test("A2A: wrong method, bad body, unknown skill and unknown method all answer a
 
   // A deeply nested array used to reach String() and throw RangeError out of the handler,
   // answering 500 to an 8 kB body. Only a string is accepted now.
-  let deep = [];
+  let deep: unknown[] = [];
   for (let i = 0; i < 4000; i++) deep = [deep];
   const nested = await a2aSend({ message: { role: "user", parts: [], messageId: "t", metadata: { skillId: deep } } });
   assert.equal(nested.status, 200, "a non-string skillId must not crash the handler");
@@ -474,16 +474,16 @@ test("a page points at its markdown address with the two v2 relations", async ()
 test("the validator reports the two v2 relations and its summary does not move", async () => {
   const r = await get("/llms-txt-validator?url=turva.dev", { headers: { accept: "application/json" } });
   const j = await json(r);
-  const ids = j.checks.map((c) => c.id);
+  const ids = j.checks.map((c: { id: string }) => c.id);
   assert.ok(ids.includes("v2-describedby") && ids.includes("v2-markdown-alternate"), "both v2 checks must be reported");
   for (const id of ["v2-describedby", "v2-markdown-alternate"]) {
-    const c = j.checks.find((x) => x.id === id);
+    const c = j.checks.find((x: { id: string }) => x.id === id);
     assert.equal(c.status, "pass", id + " must pass for this site, measured from the page it serves");
   }
   assert.equal(j.summary, "valid");
-  const fileOnly = j.checks.filter((c) => !c.id.startsWith("v2-"));
+  const fileOnly = j.checks.filter((c: { id: string }) => !c.id.startsWith("v2-"));
   assert.equal(fileOnly.length, 8, "the eight file checks are unchanged");
-  assert.ok(!j.checks.some((c) => c.status === "info"), "nothing here should be unmeasured");
+  assert.ok(!j.checks.some((c: { status: string }) => c.status === "info"), "nothing here should be unmeasured");
 });
 
 // ---------------------------------------------------------------------------
@@ -535,20 +535,20 @@ const BRIEF_REC = {
 
 const briefEnv = {
   BRIEFIT: {
-    get: async (avain, opts) => {
+    get: async (avain: string, opts?: { type?: string }) => {
       assert.equal(opts && opts.type, "json", "brief luetaan JSONina");
       return avain === BRIEF_REC.id ? BRIEF_REC : null;
     }
   }
 };
 
-const getBrief = (path) =>
+const getBrief = (path: string) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: "GET" }), briefEnv);
 
 test("brief: HTML vastaa, kantaa noindexin eika mene valimuistiin", async () => {
   const r = await getBrief("/brief/" + BRIEF_REC.id);
   assert.equal(r.status, 200);
-  assert.match(r.headers.get("content-type"), /text\/html/);
+  assert.match(r.headers.get("content-type")!, /text\/html/);
   assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow");
   assert.equal(r.headers.get("cache-control"), "private, no-store");
   assert.equal(r.headers.get("content-language"), "fi");
@@ -574,7 +574,7 @@ test("brief: HTML vastaa, kantaa noindexin eika mene valimuistiin", async () => 
 test("brief: .md vastaa tavulleen sen mita KV:ssa on", async () => {
   const r = await getBrief("/brief/" + BRIEF_REC.id + ".md");
   assert.equal(r.status, 200);
-  assert.match(r.headers.get("content-type"), /text\/markdown/);
+  assert.match(r.headers.get("content-type")!, /text\/markdown/);
   assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow");
   assert.equal(await r.text(), BRIEF_MD, "markdown menee ulos muuttumattomana");
   assert.equal(r.headers.get("content-location"), "https://turva.dev/brief/" + BRIEF_REC.id);
@@ -583,7 +583,7 @@ test("brief: .md vastaa tavulleen sen mita KV:ssa on", async () => {
 test("brief: .json vastaa tallennetun rakenteen", async () => {
   const r = await getBrief("/brief/" + BRIEF_REC.id + ".json");
   assert.equal(r.status, 200);
-  assert.match(r.headers.get("content-type"), /application\/json/);
+  assert.match(r.headers.get("content-type")!, /application\/json/);
   assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow");
   const j = JSON.parse(await r.text());
   assert.equal(j.tyyppi, "agent-readiness-brief");
@@ -667,7 +667,7 @@ test("brief: Accept-neuvottelu vastaa samasta osoitteesta, kuten muuallakin sivu
   for (const [headers, odotus] of tapaus) {
     const r = await worker.fetch(new Request("https://turva.dev" + U, { headers }), briefEnv);
     assert.equal(r.status, 200, JSON.stringify(headers));
-    assert.match(r.headers.get("content-type"), odotus, JSON.stringify(headers));
+    assert.match(r.headers.get("content-type")!, odotus, JSON.stringify(headers));
     assert.equal(r.headers.get("vary"), "Accept", "neuvoteltu vastaus kantaa vary: Accept");
     assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow", "myos neuvoteltu vastaus on noindex");
   }
@@ -680,14 +680,14 @@ test("brief: Accept-neuvottelu vastaa samasta osoitteesta, kuten muuallakin sivu
 // and both claims are checked against the key that is actually served. A key swap
 // that leaves the printed fingerprint behind fails here, before a deploy.
 const ZB32 = "ybndrfg8ejkmcpqxot1uwisza345h769";
-function zbase32(bytes) {
+function zbase32(bytes: Uint8Array) {
   let bits = "";
   for (const b of bytes) bits += b.toString(2).padStart(8, "0");
   let out = "";
   for (let i = 0; i < bits.length; i += 5) out += ZB32[parseInt(bits.slice(i, i + 5).padEnd(5, "0"), 2)];
   return out;
 }
-function dearmor(text) {
+function dearmor(text: string) {
   const lines = text.split("\n");
   const b64 = [];
   let inArmor = false, pastHeaders = false;
@@ -710,7 +710,7 @@ function dearmor(text) {
 // alerts 8 and 9, then 17 and 18 after the rename to .ts) while they used createHash.
 // Both now use WebCrypto, which CodeQL's JavaScript crypto model does not cover. The
 // inputs are a public key and a public local part. Keep SHA-1 in both places.
-async function v4Fingerprint(keyBytes) {
+async function v4Fingerprint(keyBytes: Buffer) {
   const first = keyBytes[0];
   assert.equal(first & 0x80, 0x80, "not an OpenPGP packet header");
   let tag, bodyStart, bodyLen;
@@ -736,7 +736,7 @@ async function v4Fingerprint(keyBytes) {
 test("PGP: /pgp-key.asc serves a public key and never private material", async () => {
   const r = await get("/pgp-key.asc");
   assert.equal(r.status, 200);
-  assert.match(r.headers.get("content-type"), /application\/pgp-keys/);
+  assert.match(r.headers.get("content-type")!, /application\/pgp-keys/);
   const body = await r.text();
   assert.match(body, /^-----BEGIN PGP PUBLIC KEY BLOCK-----/);
   assert.match(body, /-----END PGP PUBLIC KEY BLOCK-----\s*$/);
@@ -766,7 +766,7 @@ test("PGP: WKD serves the same key as bytes, at the hash of the address the page
   const hash = zbase32(Buffer.from(await crypto.subtle.digest("SHA-1", Buffer.from(local))));
   const r = await get("/.well-known/openpgpkey/hu/" + hash);
   assert.equal(r.status, 200, "WKD must answer at the hash of " + local);
-  assert.match(r.headers.get("content-type"), /application\/octet-stream/);
+  assert.match(r.headers.get("content-type")!, /application\/octet-stream/);
   const served = Buffer.from(await r.arrayBuffer());
   const armored = await (await get("/pgp-key.asc")).text();
   assert.deepEqual(served, dearmor(armored), "WKD bytes must be the armored key, dearmored");
@@ -783,7 +783,7 @@ test("PGP: the Encryption field in security.txt resolves", async () => {
   assert.ok(m, "security.txt must declare Encryption");
   const r = await get(new URL(m[1]).pathname);
   assert.equal(r.status, 200, m[1] + " must resolve");
-  assert.match(r.headers.get("content-type"), /application\/pgp-keys/);
+  assert.match(r.headers.get("content-type")!, /application\/pgp-keys/);
 });
 
 test("PGP: the WKD advanced method serves the same bytes as the direct method", async () => {
@@ -791,7 +791,7 @@ test("PGP: the WKD advanced method serves the same bytes as the direct method", 
   const adv = await worker.fetch(new Request(
     "https://openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/hu/" + hash + "?l=erik"), env);
   assert.equal(adv.status, 200, "the advanced host must answer");
-  assert.match(adv.headers.get("content-type"), /application\/octet-stream/);
+  assert.match(adv.headers.get("content-type")!, /application\/octet-stream/);
   const direct = await get("/.well-known/openpgpkey/hu/" + hash);
   assert.deepEqual(Buffer.from(await adv.arrayBuffer()), Buffer.from(await direct.arrayBuffer()),
     "both WKD methods must serve the identical key");
@@ -1059,10 +1059,10 @@ test("R16 S2-2 and C5-11: the OpenAPI document and the API catalog name /api/v1 
   assert.ok(spec.paths["/api/acp/checkout_sessions/{session_id}/cancel"].post);
   assert.ok(!spec.info.description.includes("ACP enabled on /api/agent/*"), "the description no longer places ACP on the x402 routes");
   // The MPP reading of x-payment-info must stay at three operations (do-not-fix, Tek-160).
-  const paid = Object.values(spec.paths).flatMap((ops) => Object.values(ops)).filter((op) => op && op["x-payment-info"]);
+  const paid = Object.values<Record<string, Record<string, unknown> | null>>(spec.paths).flatMap((ops) => Object.values(ops)).filter((op) => op && op["x-payment-info"]);
   assert.equal(paid.length, 3, "exactly three operations carry x-payment-info");
   const cat = JSON.parse(await (await get("/.well-known/api-catalog")).text());
-  assert.ok(cat.linkset[0]["service-desc"].some((l) => l.href === "https://turva.dev/api/v1"), "the API catalog names /api/v1");
+  assert.ok(cat.linkset[0]["service-desc"].some((l: { href: string }) => l.href === "https://turva.dev/api/v1"), "the API catalog names /api/v1");
   const live = await get("/api/v1");
   assert.equal(live.status, 200);
 });
@@ -1119,12 +1119,12 @@ test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guid
   assert.ok(full.indexOf("Source: https://turva.dev/\n") < full.indexOf("Source: https://turva.dev/blog"), "the home page comes before the blog");
 
   // The services, shopify first, the same in every home that lists them.
-  const priced = facts.services.filter((s) => s.priceKey).map((s) => s.id);
+  const priced = facts.services.filter((s: { priceKey: string | null; id: string }) => s.priceKey).map((s: { priceKey: string; id: string }) => s.id);
   assert.equal(priced[0], "shopify");
   const acp = JSON.parse(await (await get("/api/acp")).text());
   assert.deepEqual(acp.items, priced, "ACP index items");
-  const skills = JSON.parse(await (await get("/.well-known/agent-skills/index.json")).text()).skills.map((s) => s.name);
-  const card = JSON.parse(await (await get("/.well-known/agent-card.json")).text()).skills.map((s) => s.id);
+  const skills = JSON.parse(await (await get("/.well-known/agent-skills/index.json")).text()).skills.map((s: { name: string }) => s.name);
+  const card = JSON.parse(await (await get("/.well-known/agent-card.json")).text()).skills.map((s: { id: string }) => s.id);
   assert.deepEqual(skills, card, "agent-skills index and the A2A card list the skills in one order");
   assert.equal(skills[0], "services");
 });
@@ -1135,7 +1135,7 @@ test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guid
 // exists to hold is the pair at the end: a VALID empty object still gets the default, and
 // R16 S1-1 above sends exactly that.
 test("A10-1: the ACP checkout refuses a body it cannot read, and keeps the default for one it can", async () => {
-  const post = (body) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
+  const post = (body: string) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
   for (const [body, code] of [["{", "invalid_body"], ["null", "invalid_body"], ["[]", "invalid_body"], ['""', "invalid_body"], ["3", "invalid_body"]]) {
     const r = await post(body);
     assert.equal(r.status, 400, "body " + body + " is not a JSON object");
@@ -1154,7 +1154,7 @@ test("A10-1: the ACP checkout refuses a body it cannot read, and keeps the defau
 // word even when its id was not a service. One session buys one service, because the
 // session id encodes which one (Tek-383).
 test("A10-2: the ACP checkout reads every item, not only the first", async () => {
-  const post = (body) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
+  const post = (body: string) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
   const two = await post('{"items":[{"id":"shopify"},{"id":"audit"}]}');
   assert.equal(two.status, 400, "two items are refused rather than truncated to the first");
   assert.equal((await json(two)).code, "too_many_items");
@@ -1173,7 +1173,7 @@ test("A10-2: the ACP checkout reads every item, not only the first", async () =>
 // to be treated the same as an absent id (the default "audit" service), instead of being
 // rejected as the distinct invalid input it is.
 test("F09: ACP checkout rejects a quantity other than 1 and an explicit null id", async () => {
-  const post = (body) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
+  const post = (body: string) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
   for (const body of ['{"items":[{"id":"implementation","quantity":10}]}', '{"items":[{"id":"shopify","quantity":-1}]}', '{"items":[{"id":"audit","quantity":0}]}', '{"items":[{"id":"audit","quantity":1.5}]}']) {
     const r = await post(body);
     assert.equal(r.status, 400, body + " must be refused, not rewritten to quantity 1");
@@ -1209,7 +1209,7 @@ test("F10: ACP checkout complete answers 422, matching the OpenAPI document", as
 // answer identically by rule. These are the same cases the package's own suite runs
 // (llms-txt-validator/test/validate.test.ts, Astra 2026-09-10 F1).
 test("A10-3: the hosted validator reads fences and indented headings like the package", async () => {
-  const ask = async (text) => {
+  const ask = async (text: string) => {
     const real = globalThis.fetch;
     globalThis.fetch = async (url) => new Response(String(url).endsWith("/llms.txt") ? text : "<html><head></head></html>", { headers: { "Content-Type": String(url).endsWith("/llms.txt") ? "text/plain" : "text/html" } });
     try {
@@ -1217,7 +1217,7 @@ test("A10-3: the hosted validator reads fences and indented headings like the pa
       return await json(r);
     } finally { globalThis.fetch = real; }
   };
-  const at = (body, id) => body.checks.find((c) => c.id === id);
+  const at = (body: { checks: { id: string; status: string }[] }, id: string) => body.checks.find((c) => c.id === id)!;
   for (const fence of ["```", "~~~"]) {
     const body = await ask("# Site\n> Summary\n\n" + fence + "\n## Docs\n- [Doc](https://example.com/doc)\n" + fence + "\n");
     assert.equal(at(body, "sections").status, "warn", fence + ": a fenced H2 is not a section");
@@ -1306,7 +1306,7 @@ test("many comments in the head are scanned in linear time", () => {
 // Outside review of the public repos, 2026-09-22 (F05). Both anonymous JSON routes read the whole
 // body before this, so a request of about 1 MB was parsed and answered 200 or 201. The cap is
 // counted from the stream, and the stream case below sends no Content-Length at all.
-const streamOf = (text, chunk = 4096) => {
+const streamOf = (text: string, chunk = 4096) => {
   const bytes = new TextEncoder().encode(text);
   let o = 0;
   return new ReadableStream({
@@ -1317,7 +1317,7 @@ const streamOf = (text, chunk = 4096) => {
     }
   });
 };
-const postBody = (path, body, extraEnv?) => worker.fetch(new Request("https://turva.dev" + path, typeof body === "string"
+const postBody = (path: string, body: string | ReadableStream, extraEnv?: object) => worker.fetch(new Request("https://turva.dev" + path, typeof body === "string"
   ? { method: "POST", headers: { "content-type": "application/json" }, body }
   : { method: "POST", headers: { "content-type": "application/json" }, body, duplex: "half" } as RequestInit), extraEnv || env, {});
 // F13 (Tek-496 audit round): postBody above never sets Content-Length itself, so a test that
@@ -1325,26 +1325,26 @@ const postBody = (path, body, extraEnv?) => worker.fetch(new Request("https://tu
 // variant sets the header explicitly, either to the real byte length or to a deliberately too
 // small one, so the byte-cap enforcement is proven against a header instead of only against a
 // bodyless Request object.
-const postBodyWithLength = (path, body, contentLength, extraEnv?) => worker.fetch(new Request("https://turva.dev" + path, {
+const postBodyWithLength = (path: string, body: string, contentLength: number, extraEnv?: object) => worker.fetch(new Request("https://turva.dev" + path, {
   method: "POST", headers: { "content-type": "application/json", "content-length": String(contentLength) }, body
 }), extraEnv || env, {});
 
 test("F05: A2A and ACP answer 413 to a body over 16 KB, with and without Content-Length", async () => {
   const bodies = {
-    "/v1/message:send": (n) => JSON.stringify({ message: { parts: [{ kind: "text", text: "x".repeat(n) }] } }),
-    "/api/acp/checkout_sessions": (n) => JSON.stringify({ items: [{ id: "audit" }], padding: "x".repeat(n) })
+    "/v1/message:send": (n: number) => JSON.stringify({ message: { parts: [{ kind: "text", text: "x".repeat(n) }] } }),
+    "/api/acp/checkout_sessions": (n: number) => JSON.stringify({ items: [{ id: "audit" }], padding: "x".repeat(n) })
   };
   for (const [path, make] of Object.entries(bodies)) {
     const huge = make(1024 * 1024);
     for (const body of [huge, streamOf(huge)]) {
       const r = await postBody(path, body);
       assert.equal(r.status, 413, path + (typeof body === "string" ? " with a length" : " as a stream"));
-      assert.match(r.headers.get("content-type"), /application\/json/);
+      assert.match(r.headers.get("content-type")!, /application\/json/);
       const j = await json(r);
       assert.ok(JSON.stringify(j).includes("16384"), path + " names the limit");
     }
     // The boundary: a body of exactly 16384 bytes is read, one byte more is not.
-    const pad = (target) => { const base = make(0).length; return make(target - base); };
+    const pad = (target: number) => { const base = make(0).length; return make(target - base); };
     assert.equal(pad(16384).length, 16384);
     const at = await postBody(path, streamOf(pad(16384), 1000));
     assert.equal(at.status, path === "/v1/message:send" ? 200 : 201, path + " at the limit");
@@ -1355,8 +1355,8 @@ test("F05: A2A and ACP answer 413 to a body over 16 KB, with and without Content
 
 test("F13: the byte cap is enforced against the actual stream, not the declared Content-Length", async () => {
   const bodies = {
-    "/v1/message:send": (n) => JSON.stringify({ message: { parts: [{ kind: "text", text: "x".repeat(n) }] } }),
-    "/api/acp/checkout_sessions": (n) => JSON.stringify({ items: [{ id: "audit" }], padding: "x".repeat(n) })
+    "/v1/message:send": (n: number) => JSON.stringify({ message: { parts: [{ kind: "text", text: "x".repeat(n) }] } }),
+    "/api/acp/checkout_sessions": (n: number) => JSON.stringify({ items: [{ id: "audit" }], padding: "x".repeat(n) })
   };
   for (const [path, make] of Object.entries(bodies)) {
     const huge = make(1024 * 1024);
@@ -1381,7 +1381,7 @@ test("F05: the rate limiter still answers first, and a malformed body is still a
 });
 
 test("F05: A2A takes at most 32 parts", async () => {
-  const parts = (n) => JSON.stringify({ message: { parts: Array.from({ length: n }, () => ({ kind: "text", text: "services" })) } });
+  const parts = (n: number) => JSON.stringify({ message: { parts: Array.from({ length: n }, () => ({ kind: "text", text: "services" })) } });
   assert.equal((await postBody("/v1/message:send", parts(32))).status, 200);
   const r = await postBody("/v1/message:send", parts(33));
   assert.equal(r.status, 400);
@@ -1395,7 +1395,7 @@ test("F04: the hosted validator masks a refused redirect target and a typed secr
   const SECRET = "SYNTHETICPASSWORDNOTREAL";
   const QSECRET = "SYNTHETICQUERYNOTREAL";
   const orig = globalThis.fetch;
-  const asked = [];
+  const asked: string[] = [];
   globalThis.fetch = async (u) => {
     asked.push(String(u));
     return new Response(null, { status: 302, headers: { location: "https://user:" + SECRET + "@example.com/llms.txt?token=" + QSECRET + "#frag" } });
@@ -1411,7 +1411,7 @@ test("F04: the hosted validator masks a refused redirect target and a typed secr
     assert.ok(html.includes("unsupported target"), "the HTML answer shows the refusal");
     assert.ok(!html.includes(SECRET) && !html.includes(QSECRET), "HTML answer");
     assert.ok(asked.every((u) => !u.includes(SECRET)), "the credential target was never requested");
-    const echo = (page) => (/id="vurl" name="url"[^>]*value="([^"]*)"/.exec(page) || [])[1];
+    const echo = (page: string) => (/id="vurl" name="url"[^>]*value="([^"]*)"/.exec(page) || [])[1];
     const typedCases = [
       ["https://user:" + SECRET + "@example.com/", ""],
       ["user:" + SECRET + "@example.com", ""],
@@ -1436,7 +1436,7 @@ test("PGP: /pgp-key.asc holds the version 4 key alone and /pgp-key-v6.asc holds 
   const v4 = dearmor(await (await get("/pgp-key.asc")).text());
   const r6 = await get("/pgp-key-v6.asc");
   assert.equal(r6.status, 200);
-  assert.match(r6.headers.get("content-type"), /application\/pgp-keys/);
+  assert.match(r6.headers.get("content-type")!, /application\/pgp-keys/);
   const r4 = await get("/pgp-key.asc");
   assert.equal(r6.headers.get("cache-control"), r4.headers.get("cache-control"), "both key addresses carry the same cache header");
   const text6 = await r6.text();
@@ -1451,7 +1451,7 @@ test("PGP: /pgp-key.asc holds the version 4 key alone and /pgp-key-v6.asc holds 
 });
 
 // Packet walk for the two published blocks: returns the version byte of every public-key packet.
-function publicKeyPackets(bytes) {
+function publicKeyPackets(bytes: Buffer) {
   const out = [];
   let i = 0;
   while (i < bytes.length) {

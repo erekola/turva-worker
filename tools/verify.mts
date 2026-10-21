@@ -35,7 +35,7 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 // worker.js 2026-10-20). `node --check x.ts` is no gate: on Node 24.20 it passed a broken .ts
 // that has an import or export and failed a valid one that has neither (measured 2026-10-20).
 // The workspace has the same two steps in tools/workerlahde.mjs; this public repo stands alone.
-function jsoncToJson(t) {
+function jsoncToJson(t: string) {
   let out = '';
   for (let i = 0; i < t.length;) {
     const c = t[i];
@@ -74,19 +74,19 @@ function workerMain() {
   }
   return 'turva-worker/' + main.replace(/^\.\//, '');
 }
-function stripTypes(text) {
+function stripTypes(text: string) {
   const strip = nodeModule.stripTypeScriptTypes;
   if (typeof strip !== 'function') throw new Error('node:module stripTypeScriptTypes is missing (Node ' + process.versions.node + '); Node 22.13 or later is needed');
   // The API is experimental and warns once per process; the warning is filtered here only.
   const emit = process.emitWarning;
-  process.emitWarning = function (w, ...rest) {
-    const type = typeof rest[0] === 'string' ? rest[0] : rest[0] && rest[0].type;
-    if ((type === 'ExperimentalWarning' || (w && w.name === 'ExperimentalWarning')) && /stripTypeScriptTypes/.test(String(w && w.message || w))) return;
-    return emit.call(process, w, ...rest);
+  process.emitWarning = function (w: string | Error, ...rest: unknown[]) {
+    const type = typeof rest[0] === 'string' ? rest[0] : rest[0] && (rest[0] as NodeJS.EmitWarningOptions).type;
+    if ((type === 'ExperimentalWarning' || (w && (w as Error).name === 'ExperimentalWarning')) && /stripTypeScriptTypes/.test(String(w && (w as Error).message || w))) return;
+    return emit.call(process, w, ...(rest as [NodeJS.EmitWarningOptions?]));
   };
   try { return strip(text, { mode: 'strip' }); } finally { process.emitWarning = emit; }
 }
-
+type VerifyErrShape = { name?: string; code?: string | number; message?: string; cause?: { name?: string; code?: string | number; message?: string } | null };
 // FETCH TIMEOUT, added 2026-08-16 (round 12, follow-up work item 1 from the round-12 wrap-up).
 // Every one of the 19 network calls in this file ran without a timeout. Node's fetch has no
 // default one, so a single unanswered request hung the whole gate with no error and no exit
@@ -97,12 +97,12 @@ function stripTypes(text) {
 // expected condition rather than the fault being measured.
 const FETCH_TIMEOUT_MS = Number(process.env.VERIFY_FETCH_TIMEOUT_MS || 20000);
 const nativeFetch = globalThis.fetch;
-const timedFetch = (input, init: any = {}) => (
+const timedFetch = (input: string | URL | Request, init: any = {}) => (
   init && init.signal
     ? nativeFetch(input, init)
     : nativeFetch(input, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
 );
-
+type VerifyFactsCat = { id: string; label: string; score: string; prose?: string[]; checks?: unknown };
 // THE SITE'S OWN RATE LIMIT, added 2026-09-23 (Tek-455). Both Workers allow about 100 requests
 // per 60 s per client IP, counted approximately in each Cloudflare location, and answer above
 // that with 429 and Retry-After: 60. A --live run makes
@@ -123,11 +123,11 @@ const OWN_HOSTS = new Set(['turva.dev', 'mcp.turva.dev', 'mta-sts.turva.dev']);
 // signed path must all fail here, not just a changed count (mds/gotchas.md, portti-mittaa-vain-mita-mittaa).
 const REQUIRED_SIGNED_PATHS = new Set(['/llms.txt', '/.well-known/agent.json', '/.well-known/ai-plugin.json', '/.well-known/mcp/server-card.json']);
 let rateWaits = 0;
-const fetch = async (input, init: any = {}) => {
+const fetch = async (input: string | URL | Request, init: any = {}) => {
   const r = await timedFetch(input, init);
   if (r.status !== 429 || (init && init.signal)) return r;
   let url;
-  try { url = new URL(typeof input === 'object' && input && input.url ? input.url : String(input)); } catch { return r; }
+  try { url = new URL(typeof input === 'object' && input && (input as Request).url ? (input as Request).url : String(input)); } catch { return r; }
   const wait = Number(r.headers.get('retry-after'));
   const body = init && init.body;
   if (!OWN_HOSTS.has(url.host) || !(wait > 0 && wait <= RATE_WAIT_MAX_S)
@@ -169,10 +169,10 @@ for (const [k, rel] of Object.entries(DOCS)) {
   const p = join(ROOT, rel);
   doc[k] = { rel, buf: readFileSync(p), text: readFileSync(p, 'utf8') };
 }
-
+type VerifyFactsService = { id: string; name: string; priceKey: string | null }; type VerifyBundled = { id: string; name: string; price: number; requires: string; scope: string };
 let fails = 0, passes = 0, unmeasured = 0;
-const ok  = (m) => { passes++; console.log('  pass  ' + m); };
-const bad = (m) => { fails++;  console.log('  FAIL  ' + m); };
+const ok  = (m: string) => { passes++; console.log('  pass  ' + m); };
+const bad = (m: string) => { fails++;  console.log('  FAIL  ' + m); };
 // A check that could not be TAKEN is not a check that FAILED, and reporting it as a failure is
 // what teaches a reader to skip the report (Tek-118, Tek-261). Added 2026-08-29 after the live
 // step was red in three shipped runs and in a dry run with no deploy: the cause was a DNS
@@ -180,10 +180,10 @@ const bad = (m) => { fails++;  console.log('  FAIL  ' + m); };
 // narrow, see TRANSIENT below: a missing record, a wrong policy or a non-200 stays a FAIL,
 // because a gate that can call its own blindness a pass is worse than no gate (gotchas
 // 2026-08-10 (jatko 4)).
-const unmet = (m) => { unmeasured++; console.log('  SKIP  ' + m); };
+const unmet = (m: string) => { unmeasured++; console.log('  SKIP  ' + m); };
 // Codes that mean "this machine could not ask", never "the answer was wrong". ENOTFOUND and
 // ENODATA are absent on purpose: they are answers, and a missing MTA-STS record is a finding.
-const TRANSIENT = new Set(['ETIMEOUT', 'ETIMEDOUT', 'ESERVFAIL', 'EAI_AGAIN', 'ECONNRESET',
+const TRANSIENT = new Set<unknown>(['ETIMEOUT', 'ETIMEDOUT', 'ESERVFAIL', 'EAI_AGAIN', 'ECONNRESET',
   'ENETUNREACH', 'EHOSTUNREACH', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'EDOHRCODE',
   // EACCES and EPERM: the operator's own machine refused to open the socket. Added 2026-09-19
   // after a local firewall began refusing DNS-over-HTTPS and the MTA-STS check read that as
@@ -195,24 +195,24 @@ const TRANSIENT = new Set(['ETIMEOUT', 'ETIMEDOUT', 'ESERVFAIL', 'EAI_AGAIN', 'E
 // the set above never matched them and a timed-out read was booked as a FAIL against the domain.
 // Found by an outside read-only review 2026-09-05 (Astra, työt/astra-repokierros-2026-09-05);
 // the name is the stable part of that exception, so it is what is matched.
-const timeoutName = (e) => (e && (e.name === 'TimeoutError' || (e.cause || {}).name === 'TimeoutError'))
+const timeoutName = (e: unknown) => (e && ((e as VerifyErrShape).name === 'TimeoutError' || ((e as VerifyErrShape).cause || {}).name === 'TimeoutError'))
   ? 'ETIMEDOUT' : null;
 // The reason to print for a failed call. fetch() hides its socket or TLS reason in e.cause, so
 // the old code-or-message form printed a bare "fetch failed" (186 such lines in ship-live.log, 2026-10-01).
-const errWhy = (e) => {
+const errWhy = (e: unknown) => {
   if (!e) return 'unknown error';
-  if (e.code) return String(e.code);
-  const c = e.cause;
+  if ((e as VerifyErrShape).code) return String((e as VerifyErrShape).code);
+  const c = (e as VerifyErrShape).cause;
   const inner = c && [c.code, c.message].filter(Boolean).join(': ');
-  return inner ? e.message + ' (cause: ' + inner + ')' : String(e.message);
+  return inner ? (e as VerifyErrShape).message + ' (cause: ' + inner + ')' : String((e as VerifyErrShape).message);
 };
 // An error's own string code wins over its cause: ENODATA wrapped around a timed-out inner call
 // is still an answer. Only an error without a code of its own is read through its cause.
-const transientCode = (e) => {
+const transientCode = (e: unknown) => {
   if (!e) return null;
-  if (typeof e.code === 'string') return TRANSIENT.has(e.code) ? e.code : null;
-  const inner = (e.cause || {}).code;
-  if (TRANSIENT.has(inner)) return inner;
+  if (typeof (e as VerifyErrShape).code === 'string') return TRANSIENT.has((e as VerifyErrShape).code) ? (e as VerifyErrShape).code as string : null;
+  const inner = ((e as VerifyErrShape).cause || {}).code;
+  if (TRANSIENT.has(inner)) return inner as string;
   return timeoutName(e);
 };
 // The system resolver is not the only path to a public record, and on one machine here it is not
@@ -230,7 +230,7 @@ const transientCode = (e) => {
 // six seconds of timeouts before it gives up, and it answers nothing that this does not.
 const DOH = 'https://1.1.1.2/dns-query';
 let dohUsed = false;
-const dohQuery = async (name, type) => {
+const dohQuery = async (name: string, type: string) => {
   const r = await fetch(`${DOH}?name=${encodeURIComponent(name)}&type=${type}`,
     { headers: { accept: 'application/dns-json' }, signal: AbortSignal.timeout(6000) });
   if (!r.ok) { const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> ${r.status}`); e.code = 'EDOHSTATUS'; throw e; }
@@ -244,19 +244,19 @@ const dohQuery = async (name, type) => {
   // below and were booked as ENODATA, a finding, with no fallback to the second resolver.
   if (j.Status === 2) { const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> SERVFAIL`); e.code = 'ESERVFAIL'; throw e; }
   if (j.Status !== 0) { const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> rcode ${j.Status}`); e.code = 'EDOHRCODE'; throw e; }
-  const ans = (j.Answer || []).filter((a) => a.type === (type === 'MX' ? 15 : 16));
+  const ans = (j.Answer || []).filter((a: { type: number }) => a.type === (type === 'MX' ? 15 : 16));
   if (!ans.length) { const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> no ${type} record`); e.code = 'ENODATA'; throw e; }
   dohUsed = true;
   return type === 'MX'
-    ? ans.map((a) => { const [pref, ex] = String(a.data).trim().split(/\s+/); return { priority: Number(pref), exchange: ex }; })
-    : ans.map((a) => [String(a.data).replace(/^"|"$/g, '').replace(/" "/g, '')]);
+    ? ans.map((a: { data: unknown }) => { const [pref, ex] = String(a.data).trim().split(/\s+/); return { priority: Number(pref), exchange: ex }; })
+    : ans.map((a: { data: unknown }) => [String(a.data).replace(/^"|"$/g, '').replace(/" "/g, '')]);
 };
 
 // One retry pair before a transient error is believed: a single timed-out UDP packet is not a
 // measurement either. Three attempts total, 400 ms and 800 ms apart.
 // Three attempts for a plain HTTPS read that timed out. No second instrument here: the policy has
 // exactly one address, and reading it from somewhere else would not be reading it.
-const retryTransient = async (fn) => {
+const retryTransient = async <T,>(fn: () => Promise<T>) => {
   let last;
   for (let i = 0; i < 3; i++) {
     try { return await fn(); } catch (e) {
@@ -273,8 +273,8 @@ const retryTransient = async (fn) => {
 // bought six seconds of nothing on every run. An ANSWER from either path is final, including
 // NXDOMAIN and NODATA, which are findings and not reasons to ask someone else. Only a transient
 // error moves the read to the second path, and the move is always printed.
-const readRecord = async (label, doh, system) => {
-  try { return await doh(); } catch (e) {
+const readRecord = async <T,>(label: string, doh: () => Promise<unknown>, system: () => Promise<T>) => {
+  try { return await doh() as T; } catch (e) {
     if (!transientCode(e)) throw e;
     console.log(`  note  ${label}: DNS-over-HTTPS did not answer (${errWhy(e)}), falling back to this machine's own resolver`);
   }
@@ -288,10 +288,10 @@ const readRecord = async (label, doh, system) => {
   }
   throw last;
 };
-const check = (cond, m) => (cond ? ok(m) : bad(m));
-const slashVariants = (s) => s.includes('/') ? [s, s.replace('/', ' / ')] : [s];
-const containsAny = (t, arr) => arr.some((s) => t.includes(s));
-
+const check = (cond: unknown, m: string) => (cond ? ok(m) : bad(m));
+const slashVariants = (s: string) => s.includes('/') ? [s, s.replace('/', ' / ')] : [s];
+const containsAny = (t: string, arr: string[]) => arr.some((s) => t.includes(s));
+type VerifyHomeEntry = { name?: string; price?: unknown; pricing?: unknown; soldSeparately?: unknown; requires?: unknown; scope?: unknown };
 console.log('turva.dev verify  (source of truth: tools/facts.json)\n');
 
 console.log('Integrity');
@@ -307,7 +307,7 @@ for (const f of [...Object.values(src), ...Object.values(doc)]) {
   check(nlOk, `${f.rel}: clean ${crlf===0?'LF':'CRLF'} newlines`);
 }
 try { execFileSync(process.execPath, ['--input-type=module', '--check'], { input: workerJs, stdio: ['pipe', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 }); ok('worker.ts parses (types stripped, node --check)'); }
-catch (e) { bad('worker.ts node --check: ' + String(e.stderr||e.message).slice(0,200)); }
+catch (e) { bad('worker.ts node --check: ' + String((e as Error & { stderr?: unknown }).stderr||(e as Error).message).slice(0,200)); }
 
 console.log('\nSecret files stay out of the public repo');
 // B2-12 (round 12, batch E16). Three lines in the repo root .gitignore are the only thing
@@ -347,7 +347,7 @@ console.log('\nShare card manifest (tools/og-cards.json)');
 {
   const cardsRaw = readFileSync(join(ROOT, 'tools/og-cards.json'), 'utf8');
   let cards = null;
-  try { cards = JSON.parse(cardsRaw); } catch (e) { bad('tools/og-cards.json does not parse: ' + e.message); }
+  try { cards = JSON.parse(cardsRaw); } catch (e) { bad('tools/og-cards.json does not parse: ' + (e as Error).message); }
   const isObj = !!cards && typeof cards === 'object' && !Array.isArray(cards);
   check(isObj, 'og-cards.json is a JSON object keyed by file name');
   const names = isObj ? Object.keys(cards) : [];
@@ -401,7 +401,7 @@ const iar = facts.agentReadiness.isitagentready, lvl = iar.level;
 // that is a source of truth. Read defensively: if the array ever goes missing the
 // checks below must name that and fail, not compare undefined against undefined and
 // report a pass, which is how a repaired gate went green in round 7.
-const CATS = Array.isArray(iar.categories) ? iar.categories : [];
+const CATS: VerifyFactsCat[] = Array.isArray(iar.categories) ? iar.categories : [];
 for (const k of Object.keys(src)) {
   check(containsAny(src[k].text, slashVariants(iar.score)), `${src[k].rel} shows ${iar.score}`);
   check(src[k].text.includes(lvl), `${src[k].rel} shows "${lvl}"`);
@@ -462,8 +462,8 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   check(Array.isArray(SW.evidenceTwin && SW.evidenceTwin.spellingIndex) && SW.evidenceTwin.spellingIndex.length === CATS.length,
     `evidence twin spellingIndex has one entry per category (${(SW.evidenceTwin && SW.evidenceTwin.spellingIndex || []).length} of ${CATS.length})`);
 
-  const spellings = (c) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase());
-  const resolve = (item) => CATS.find((c) => spellings(c).includes(String(item).trim().toLowerCase()));
+  const spellings = (c: VerifyFactsCat) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase());
+  const resolve = (item: unknown) => CATS.find((c) => spellings(c).includes(String(item).trim().toLowerCase()));
   // The same lookup is needed on three other surfaces (the README table, the home table and the
   // MCP live response), and until 2026-08-30 all three compared their row with the TOTAL SCORE.
   // That is gotchas 2026-08-01 (jatko 18) Ansa 4. Lifted to module level so that every
@@ -509,21 +509,21 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   const used = new Set();
   // Compare an enumerated list against the category set: same length, every item
   // resolves, every category hit exactly once, and in the declared order.
-  const enumerated = (items, label, ordered) => {
+  const enumerated = (items: string[], label: string, ordered?: boolean) => {
     const got = items.map((x) => String(x).trim());
     const res = got.map(resolve);
     check(got.length === CATS.length, `${label} enumerates exactly ${CATS.length} categories (saw ${got.length}: ${got.join(' / ') || 'none'})`);
     const bad0 = got.filter((x, i) => !res[i]);
     check(bad0.length === 0, `${label}: every item resolves to a category${bad0.length ? ' :: unknown ' + bad0.map((x) => `"${x}"`).join(', ') : ''}`);
-    check(got.length === CATS.length && res.every(Boolean) && new Set(res.map((c) => c.id)).size === CATS.length,
+    check(got.length === CATS.length && res.every(Boolean) && new Set(res.map((c) => c!.id)).size === CATS.length,
       `${label}: no category is named twice`);
     if (ordered) {
-      check(got.length === CATS.length && res.every(Boolean) && res.map((c) => c.id).join(',') === CATS.map((c) => c.id).join(','),
+      check(got.length === CATS.length && res.every(Boolean) && res.map((c) => c!.id).join(',') === CATS.map((c) => c.id).join(','),
         `${label}: in the facts.json order (saw [${got.join(', ')}])`);
     }
     got.forEach((x, i) => { if (res[i]) used.add(x.toLowerCase()); });
   };
-  const span = (text, from, to, label) => {
+  const span = (text: string, from: string, to: string, label: string) => {
     const i = text.indexOf(from);
     const j = i < 0 ? -1 : text.indexOf(to, i + from.length);
     if (i < 0 || j < 0) { bad(`${label}: anchor not found (${i < 0 ? 'start' : 'end'})`); return null; }
@@ -534,7 +534,7 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   // appears in many guides, indexOf finds the first one, and the span then covers a
   // different page entirely and captures nothing. The section is therefore located
   // from a sentence that occurs once and expanded outward.
-  const sectionAround = (text, unique, label) => {
+  const sectionAround = (text: string, unique: string, label: string) => {
     const i = text.indexOf(unique);
     if (i < 0) { bad(`${label}: locating sentence not found`); return null; }
     if (text.indexOf(unique, i + 1) >= 0) { bad(`${label}: locating sentence is not unique`); return null; }
@@ -568,14 +568,14 @@ console.log('\nCategory set (facts.json owns which categories exist)');
       // The sentence shape comes from facts.json (surfaceWording.evidenceTwin), not from
       // this file. spellingIndex says WHICH declared spelling each position uses, so a
       // surface that changes its wording changes it in the data the gate reads.
-      const picked = SW.evidenceTwin.spellingIndex.map((ix, i) => sp[i][ix]);
+      const picked = SW.evidenceTwin.spellingIndex.map((ix: number, i: number) => sp[i][ix]);
       const want = SW.evidenceTwin.template
-        .replace(/\{(\d)\}/g, (_, i) => picked[Number(i)])
+        .replace(/\{(\d)\}/g, (_: string, i: string) => picked[Number(i)])
         .replace(/\{score\}/g, sc)
         .replace(/\{level\}/g, lv);
       const gotA = A.toLowerCase().replace(/\s+/g, ' ');
       check(gotA === want, `evidence twin is exactly the set and both scores${gotA === want ? '' : `\n        want: "${want}"\n        got:  "${gotA}"`}`);
-      picked.forEach((x) => used.add(x));
+      picked.forEach((x: string) => used.add(x));
     }
   }
 
@@ -686,7 +686,7 @@ console.log('\nService set (facts.json owns which services exist)');
 // static run has to be able to see a corrupted facts.json. The served surfaces that
 // state the service set are checked in the live block.
 {
-  const S = Array.isArray(facts.services) ? facts.services : [];
+  const S: VerifyFactsService[] = Array.isArray(facts.services) ? facts.services : [];
   check(S.length > 0, `facts.json records the service set (${S.length})`);
   check(S.length > 0 && S.every((x) => typeof x.name === 'string' && x.name.trim()), 'every service carries a non-empty name');
   check(new Set(S.map((x) => x.name)).size === S.length, 'service names are unique');
@@ -743,7 +743,7 @@ console.log('\nPricing');
 // Rot gates block lower in this same file already derives its set from
 // facts.services.filter(s => s.priceKey), so this block was the one copy that could drift.
 // Enumerate, do not search: a search for each expected name passes a list missing one.
-const PRICED_STATIC = (facts.services || []).filter((s) => s.priceKey);
+const PRICED_STATIC = (facts.services || []).filter((s: VerifyFactsService) => s.priceKey);
 check(PRICED_STATIC.length > 0, `facts.json names at least one priced service (${PRICED_STATIC.length})`);
 for (const svc of PRICED_STATIC) {
   const val = facts.prices[svc.priceKey];
@@ -761,9 +761,9 @@ console.log('\nBundled implementation add-ons (Tek-317)');
 // claim this block defends is exactly that split: the amounts are declared on the catalog
 // surfaces an agent reads, and they are absent from the surfaces an agent buys from.
 {
-  const B = Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : [];
+  const B: VerifyBundled[] = Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : [];
   const w = src.worker.text;
-  const ids = (facts.services || []).map((s) => s.id);
+  const ids = (facts.services || []).map((s: VerifyFactsService) => s.id);
   check(B.length > 0, `facts.json declares the bundled add-ons (${B.length})`);
   check(B.length > 0 && B.every((x) => typeof x.id === 'string' && /^[a-z0-9-]+$/.test(x.id)), 'every bundled add-on carries a lowercase id');
   check(new Set(B.map((x) => x.id)).size === B.length, 'bundled add-on ids are unique');
@@ -792,7 +792,7 @@ console.log('\nBundled implementation add-ons (Tek-317)');
   // surfaces in the same file. A gate that cannot see one surface go dark is not watching
   // that surface. Anchors are data: a missing end anchor slices to the end of the file.
   {
-    const regionOf = (label, start, end) => {
+    const regionOf = (label: string, start: string, end: string) => {
       const i = w.indexOf(start);
       if (i < 0) { bad(`bundled add-ons: ${label} start anchor missing (${start.slice(0, 40)})`); return null; }
       const j = w.indexOf(end, i + start.length);
@@ -821,11 +821,11 @@ console.log('\nBundled implementation add-ons (Tek-317)');
   // HOME_JSON is what A2A services and the JSON twin hand an agent, so the add-ons are read
   // back from it rather than from the source line that writes them.
   const homeSrc = (w.match(/const HOME_JSON = JSON\.stringify\(([\s\S]*?), null, 2\);/) || [])[1] || '{}';
-  let hb = [];
+  let hb: VerifyHomeEntry[] = [];
   try { hb = JSON.parse(homeSrc).bundledImplementation || []; } catch { hb = []; }
   check(hb.length === B.length, `HOME_JSON lists all ${B.length} bundled add-ons (saw ${hb.length})`);
   for (const x of B) {
-    const got = hb.find((h) => h.name === x.name) || {};
+    const got: VerifyHomeEntry = hb.find((h) => h.name === x.name) || {};
     check(got.price === x.price, `HOME_JSON ${x.name} priced ${x.price} (saw ${JSON.stringify(got.price)})`);
     check(got.soldSeparately === false, `HOME_JSON ${x.name} says it is not sold separately (saw ${JSON.stringify(got.soldSeparately)})`);
     check(typeof got.requires === 'string' && got.requires.trim(), `HOME_JSON ${x.name} names what it requires (saw ${JSON.stringify(got.requires)})`);
@@ -888,7 +888,7 @@ console.log('\nCSP script hash');
 // The pages that publish a FAQPage, enumerated from the twins by the static gate and
 // re-read from the served HTML by the live one.
 const faqPaths = [];
-const setSameLive = (label, found, want) => {
+const setSameLive = <T,>(label: string, found: T[], want: T[]) => {
   const seen = new Set(), dupes = [];
   for (const n of found) { if (seen.has(n)) dupes.push(n); else seen.add(n); }
   const unknown = found.filter((n) => !want.includes(n));
@@ -912,8 +912,8 @@ console.log('\nTwin gate (prose from PAGE_MARKDOWN)');
 // One pass over the whole entity set, not a chain of replaces. A chain that
 // takes &amp; first turns &amp;lt; into < , which is a double unescape; one
 // pass leaves it as &lt; (turva-worker alert #1, 2026-07-26).
-const TW_ENTITIES = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&#x27;': "'" };
-const twDecode = (s) => s.replace(/&(?:amp|lt|gt|quot|#39|#x27);/g, (m) => TW_ENTITIES[m]);
+const TW_ENTITIES: Record<string, string> = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&#x27;': "'" };
+const twDecode = (s: string) => s.replace(/&(?:amp|lt|gt|quot|#39|#x27);/g, (m) => TW_ENTITIES[m]);
 // Same family, used by the h1 twin comparison below. Two rules. Strip tags to a
 // FIXED POINT rather than in one pass: deleting the match is what CodeQL flags
 // as incomplete multi-character sanitization (js/incomplete-multi-character-
@@ -925,12 +925,12 @@ const twDecode = (s) => s.replace(/&(?:amp|lt|gt|quot|#39|#x27);/g, (m) => TW_EN
 // only these two, exactly what the h1 comparison decoded before, because adding
 // &lt; and friends would decide that new h1 pairs match, which moves the set that
 // passes the gate and is a decision, not a fix (Tek-160).
-const H1_ENTITIES = { '&middot;': '\u00b7', '&amp;': '&' };
-const h1Strip = (s) => { let prev; do { prev = s; s = s.replace(/<[^>]+>/g, ''); } while (s !== prev); return s; };
-const h1Decode = (s) => s.replace(/&(?:middot|amp);/g, (m) => H1_ENTITIES[m]);
-const twSquash = (s) => s.replace(/https?:\/\//g,'').replace(/\s+/g,' ').replace(/ ([,.;:])/g,'$1').trim();
-const twHtml = (s) => twSquash(twDecode(s.replace(/<[^>]+>/g,' ')));
-const twFnBody = (name) => {
+const H1_ENTITIES: Record<string, string> = { '&middot;': '\u00b7', '&amp;': '&' };
+const h1Strip = (s: string) => { let prev; do { prev = s; s = s.replace(/<[^>]+>/g, ''); } while (s !== prev); return s; };
+const h1Decode = (s: string) => s.replace(/&(?:middot|amp);/g, (m) => H1_ENTITIES[m]);
+const twSquash = (s: string) => s.replace(/https?:\/\//g,'').replace(/\s+/g,' ').replace(/ ([,.;:])/g,'$1').trim();
+const twHtml = (s: string) => twSquash(twDecode(s.replace(/<[^>]+>/g,' ')));
+const twFnBody = (name: string) => {
   const i = src.worker.text.indexOf('function ' + name + '(');
   if (i < 0) return null;
   let j = src.worker.text.length;
@@ -948,7 +948,7 @@ const twFnBody = (name) => {
   return src.worker.text.slice(i, j);
 };
 const twPmStart = src.worker.text.indexOf('const PAGE_MARKDOWN');
-const twMdTwin = (path) => {
+const twMdTwin = (path: string) => {
   const key = `"${path}": \``;
   const s0 = src.worker.text.indexOf(key, twPmStart);
   if (s0 < 0) return null;
@@ -998,7 +998,7 @@ for (const [path, cfg] of Object.entries(twConverted)) {
     if (m[1].includes('${')) continue;
     const x = twHtml(m[1]);
     if (x.length < 80) continue;
-    if ((cfg.prose || []).some((pre) => x.startsWith(pre))) { twcProseUsed++; continue; }
+    if ((cfg.prose || []).some((pre: string) => x.startsWith(pre))) { twcProseUsed++; continue; }
     probs.push('literal prose: ' + x.slice(0, 60));
   }
   if (twcProseUsed !== (cfg.prose || []).length) probs.push(`prose exceptions used ${twcProseUsed} of ${(cfg.prose || []).length}`);
@@ -1173,8 +1173,8 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 // ============================================================================
 {
   const w = src.worker.text;
-  const PRICED = (facts.services || []).filter((s) => s.priceKey);
-  const euroOf = (k) => '€' + facts.prices[k].toLocaleString('en-US');
+  const PRICED: (VerifyFactsService & { priceKey: string })[] = (facts.services || []).filter((s: VerifyFactsService) => s.priceKey);
+  const euroOf = (k: string) => '€' + facts.prices[k].toLocaleString('en-US');
   // The calendar day in Helsinki, where every date in this repo is written. The UTC day made a
   // release dated today read as "in the future" between midnight and 03.00 Helsinki time, and
   // the checked dates below had the same window. Intl with a named zone gives the same answer
@@ -1189,13 +1189,13 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   const today = new Intl.DateTimeFormat('sv-SE', {
     timeZone: 'Europe/Helsinki', year: 'numeric', month: '2-digit', day: '2-digit',
   }).format(now);
-  const days = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
-  const constOf = (name) => (w.match(new RegExp('const ' + name + ' = "([^"]*)"')) || [])[1];
+  const days = (a: string, b: string) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
+  const constOf = (name: string) => (w.match(new RegExp('const ' + name + ' = "([^"]*)"')) || [])[1];
   // A missing end anchor used to slice to the end of the file, silently handing a
   // 186 kB region to a check whose name promised one constant. Anchors are data too:
   // a gate reading the wrong block is the failure mode this file exists to catch.
-  const anchorFails = [];
-  const region = (start, end) => {
+  const anchorFails: string[] = [];
+  const region = (start: string, end?: string) => {
     const i = w.indexOf(start);
     if (i < 0) { anchorFails.push('start missing: ' + start.slice(0, 44)); return ''; }
     if (!end) return w.slice(i);
@@ -1203,7 +1203,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     if (j < 0) { anchorFails.push('end missing after ' + start.slice(0, 30) + ': ' + end.slice(0, 30)); return ''; }
     return w.slice(i, j);
   };
-  const setSame = (label, found, want) => {
+  const setSame = <T,>(label: string, found: T[], want: T[]) => {
     const seen = new Set(), dupes = [];
     for (const n of found) { if (seen.has(n)) dupes.push(n); else seen.add(n); }
     const unknown = found.filter((n) => !want.includes(n));
@@ -1217,7 +1217,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // Every euro amount in a passage, resolved back to the service it prices. Prose
   // cannot be parsed into a list, but the amounts in it can be, and a fourth service
   // missing from a sentence changes the set.
-  const euroKeys = (text) => (text.match(/€\d{1,3}(?:,\d{3})*/g) || [])
+  const euroKeys = (text: string) => (text.match(/€\d{1,3}(?:,\d{3})*/g) || [])
     .map((a) => (PRICED.find((s) => euroOf(s.priceKey) === a) || {}).priceKey || a);
 
   console.log('\nPublished price lists in worker.ts (B1-02)');
@@ -1233,7 +1233,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // so the catalog count reads top-level offers only and the add-ons get their own check.
     const offers = [...cat.matchAll(/(?<!"addOn":)\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)];
     setSame('SCHEMA_HOME OfferCatalog', offers.map((m) => m[1]), PRICED.map((s) => s.name));
-    const bundled = Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : [];
+    const bundled: VerifyBundled[] = Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : [];
     const addOns = [...cat.matchAll(/"addOn":\{"@type":"Offer","name":"([^"]+)"[\s\S]*?"price":"(\d+)"/g)];
     setSame('SCHEMA_SERVICE addOn offers (Tek-528)', addOns.map((m) => m[1]), bundled.map((x) => x.name));
     for (const x of bundled) {
@@ -1241,7 +1241,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       check(!!m && m[2] === String(x.price), `SCHEMA_SERVICE addOn ${x.name} priced ${x.price} (saw ${JSON.stringify(m && m[2])})`);
       // The add-on must sit under the offer of the service it requires: the last top-level
       // offer that starts before it.
-      const parentName = ((facts.services || []).find((s) => s.id === x.requires) || {}).name;
+      const parentName = ((facts.services || []).find((s: VerifyFactsService) => s.id === x.requires) || {}).name;
       const under = m ? offers.filter((o) => o.index < m.index).pop() : null;
       check(!!under && under[1] === parentName, `SCHEMA_SERVICE addOn ${x.name} sits under ${parentName} (saw ${under ? under[1] : 'none'})`);
     }
@@ -1263,8 +1263,8 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // and the FAQPage is derived from it, so there is one passage and it is the one a
     // reader sees. Two checks became one because one of the two homes ceased to exist.
     const md = (twMdTwin('/guides/choosing-an-agent-readiness-audit') || '').replace(/\r\n/g, '\n');
-    const sec = md.split('\n## ').find((s) => s.startsWith('Frequently asked')) || '';
-    const blocks = sec.split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+    const sec = md.split('\n## ').find((s: string) => s.startsWith('Frequently asked')) || '';
+    const blocks = sec.split(/\n{2,}/).map((b: string) => b.trim()).filter(Boolean);
     const qi = blocks.indexOf('**What does an agent-readiness audit cost?**');
     check(qi > 0, 'the buyer guide carries its cost question in the twin');
     setSame('buyer guide cost answer', euroKeys(qi > 0 ? blocks[qi + 1] || '' : ''), PRICED.map((s) => s.priceKey));
@@ -1282,10 +1282,10 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // is deliberately narrower than the service set. That sentence is only true while this
     // list holds every service, and it named the wrong count for a day (B1-21).
     const home = (w.match(/const HOME_JSON = JSON\.stringify\(([\s\S]*?), null, 2\);/) || [])[1] || '{}';
-    const hs = JSON.parse(home).services || [];
-    setSame('HOME_JSON services', hs.map((s) => s.name), (facts.services || []).map((s) => s.name));
+    const hs: VerifyHomeEntry[] = JSON.parse(home).services || [];
+    setSame('HOME_JSON services', hs.map((s) => s.name), (facts.services || []).map((s: VerifyFactsService) => s.name));
     for (const s of facts.services || []) {
-      const got = hs.find((x) => x.name === s.name) || {};
+      const got: VerifyHomeEntry = hs.find((x) => x.name === s.name) || {};
       check(s.priceKey ? got.price === facts.prices[s.priceKey] : got.pricing === 'on request',
         `HOME_JSON ${s.name} ${s.priceKey ? 'priced ' + facts.prices[s.priceKey] : 'stays on request'} (saw ${JSON.stringify(s.priceKey ? got.price : got.pricing)})`);
     }
@@ -1307,7 +1307,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const uls = [...w.matchAll(/\$\{navMenuHtml\((`[\s\S]*?`|lis)\)\}/g)]
       .map((m) => [...m[1].matchAll(/<li><a href="([^"]+)"/g)].map((x) => x[1]));
     const itemsSrc = (w.match(/const items = (\[\[[\s\S]*?\]\]);/) || [])[1] || '[]';
-    const generated = JSON.parse(itemsSrc).map((p) => p[0]);
+    const generated = JSON.parse(itemsSrc).map((p: string[]) => p[0]);
     const inline = uls.filter((u) => u.length > 0);
     // Four since v3.133.0 (Tek-358): /services moved onto cardPageNav with the other card pages.
     check(uls.length === 4, `four navMenuHtml call sites in worker.ts (saw ${uls.length})`);
@@ -1390,9 +1390,9 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       if (/^\d+\. /m.test(md)) probs.push(k + ': numbered list');
       if (/^```/m.test(md)) probs.push(k + ': fenced code block');
       for (const block of md.split(/\n{2,}/)) {
-        const lines = block.split('\n').filter((l) => l.trim() !== '');
-        if (lines.length > 1 && /^- /.test(lines[0]) && lines.some((l) => !/^- /.test(l))) {
-          probs.push(k + ': wrapped list item (' + lines.find((l) => !/^- /.test(l)).trim().slice(0, 40) + ')');
+        const lines = block.split('\n').filter((l: string) => l.trim() !== '');
+        if (lines.length > 1 && /^- /.test(lines[0]) && lines.some((l: string) => !/^- /.test(l))) {
+          probs.push(k + ': wrapped list item (' + lines.find((l: string) => !/^- /.test(l)).trim().slice(0, 40) + ')');
         }
       }
     }
@@ -1402,9 +1402,9 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const empties = [];
     for (const k of keys) {
       const md = (twMdTwin(k) || '').replace(/\r\n/g, '\n');
-      const sec = md.split('\n## ').find((s) => s.startsWith('Frequently asked'));
+      const sec = md.split('\n## ').find((s: string) => s.startsWith('Frequently asked'));
       if (!sec) continue;
-      const blocks = sec.split('\n\n').slice(1).map((b) => b.trim()).filter(Boolean);
+      const blocks = sec.split('\n\n').slice(1).map((b: string) => b.trim()).filter(Boolean);
       for (let i = 0; i < blocks.length; i++) {
         const q = blocks[i].match(/^\*\*(.+?)\*\*$/s);
         if (q && (i + 1 >= blocks.length || /^\*\*(.+?)\*\*$/s.test(blocks[i + 1]))) empties.push(k + ': ' + q[1].slice(0, 40));
@@ -1430,13 +1430,13 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // A pair typed here rather than in the twin is the whole defect, so the shape is banned
     // rather than counted: the block may hold nothing but the derivation lines.
     const strays = gpf.split('\n').slice(1)
-      .filter((l) => l.trim() && !/^  "[^"]+": mdFaqBlocks\("[^"]+", "Frequently asked"\)\.pairs,$/.test(l));
+      .filter((l: string) => l.trim() && !/^  "[^"]+": mdFaqBlocks\("[^"]+", "Frequently asked"\)\.pairs,$/.test(l));
     check(strays.length === 0,
       `GUIDE_PAGE_FAQ holds no FAQ typed beside the twin${strays.length ? ' :: ' + strays[0].trim().slice(0, 60) : ''}`);
     check(!/\b(?:var|let|const) BUYER_FAQ\b/.test(w), 'no page keeps a second FAQ home beside its twin (BUYER_FAQ is gone)');
 
     const twinKeys = [...w.slice(twPmStart).matchAll(/\n  "(\/[^"]*)": `/g)].map((m) => m[1]);
-    const hasFaq = (p) => /\n## Frequently asked\n/.test((twMdTwin(p) || '').replace(/\r\n/g, '\n'));
+    const hasFaq = (p: string) => /\n## Frequently asked\n/.test((twMdTwin(p) || '').replace(/\r\n/g, '\n'));
     const faqTwins = twinKeys.filter(hasFaq);
     // mdSection reads the first section of a given name, so a twin with two of them
     // publishes one and renders the other as loose prose, and every count above still
@@ -1507,7 +1507,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // list item in the parity check. A new post whose row stops at the date fails here: the
     // pattern takes every dated row, the tail after the date included when it is empty, and the
     // count must equal the dated rows read above. A JS string value may carry an escaped quote.
-    const metaStr = (r, key) => { const v = (r.match(new RegExp('\\n    ' + key + ': "((?:\\\\.|[^"\\\\])*)"')) || [])[1]; return v === undefined ? undefined : v.replace(/\\(.)/g, '$1'); };
+    const metaStr = (r: string, key: string) => { const v = (r.match(new RegExp('\\n    ' + key + ': "((?:\\\\.|[^"\\\\])*)"')) || [])[1]; return v === undefined ? undefined : v.replace(/\\(.)/g, '$1'); };
     const rows = [...twin.matchAll(/\n- \[[^\]]*\]\((\/blog\/[a-z0-9-]+)\)\.? \d{4}-\d{2}-\d{2}\.([^\n]*)/g)];
     const rowOff = rows.filter((m) => {
       const r = region(`  "${m[1]}": {`, '\n  },');
@@ -1546,14 +1546,14 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const aux = [...(region('const AUX_PATHS = [', '];').matchAll(/"([^"]+)"/g))].map((m) => m[1]);
     check(primary.length >= 8 && primary[0] === '/' && primary.indexOf('/tools') < primary.indexOf('/company') && aux.length >= 2,
       `PRIMARY_PATHS parsed from worker.ts (${primary.length}: ${primary.join(' ')}) and AUX_PATHS (${aux.join(' ')})`);
-    const seqSame = (label, found, want) => {
+    const seqSame = (label: string, found: string[], want: string[]) => {
       let firstDiff = -1;
       for (let i = 0; i < Math.max(found.length, want.length); i++) { if (found[i] !== want[i]) { firstDiff = i; break; } }
       check(want.length > 0 && firstDiff === -1,
         `${label} follows the one site order (${want.length})${firstDiff === -1 ? '' : ' :: first difference at ' + (firstDiff + 1) + ': saw ' + (found[firstDiff] || '(end)') + ', want ' + (want[firstDiff] || '(end)')}`);
     };
-    const links = (text, re) => [...text.matchAll(re)].map((m) => m[1]);
-    const section = (text, head) => { const i = text.indexOf('\n## ' + head + '\n'); if (i < 0) return ''; const j = text.indexOf('\n## ', i + 4); return text.slice(i, j < 0 ? undefined : j); };
+    const links = (text: string, re: RegExp) => [...text.matchAll(re)].map((m) => m[1]);
+    const section = (text: string, head: string) => { const i = text.indexOf('\n## ' + head + '\n'); if (i < 0) return ''; const j = text.indexOf('\n## ', i + 4); return text.slice(i, j < 0 ? undefined : j); };
     const llms = region('const LLMS_TXT', '\nconst AUTH_MD').replace(/\r\n/g, '\n');
     // 1. the guides: the /guides twin is the source, read in link order
     const guidesTwin = (twMdTwin('/guides') || '').replace(/\r\n/g, '\n');
@@ -1565,7 +1565,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // card shows. A guide link anywhere else in the twin fails, so a plain list row cannot return.
     const gHeads = [...guidesTwin.matchAll(/\n### \[[^\]]+\]\((?:https:\/\/turva\.dev)?(\/guides\/[a-z0-9-]+)\)\n\n([^\n]*)/g)];
     const gLinks = (guidesTwin.match(/\]\((?:https:\/\/turva\.dev)?\/guides\/[a-z0-9-]+\)/g) || []).length;
-    const metaStr = (r, key) => { const v = (r.match(new RegExp('\\n    ' + key + ': "((?:\\\\.|[^"\\\\])*)"')) || [])[1]; return v === undefined ? undefined : v.replace(/\\(.)/g, '$1'); };
+    const metaStr = (r: string, key: string) => { const v = (r.match(new RegExp('\\n    ' + key + ': "((?:\\\\.|[^"\\\\])*)"')) || [])[1]; return v === undefined ? undefined : v.replace(/\\(.)/g, '$1'); };
     const gOff = gHeads.filter((m) => (metaStr(region(`  "${m[1]}": {`, '\n  },'), 'description') || '') !== m[2]).map((m) => m[1]);
     check(gHeads.length >= 20 && gHeads.length === gLinks && gOff.length === 0,
       `every /guides twin guide is a ### heading with its META_BY_PATH description under it, ${gHeads.length} of ${gLinks} guide links (Tek-488)${gOff.length ? ' :: ' + gOff.join(', ') : ''}`);
@@ -1576,7 +1576,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     check(!llms.includes('\n## Tools\n'), 'LLMS_TXT has no Tools section behind the blog (the tool pages sit in the Services block)');
     // 3. the blog, newest first everywhere: META_BY_PATH keys, PAGE_MARKDOWN keys, LLMS_TXT, the /blog twin, SITEMAP_ENTRIES
     const metaKeys = [...w.slice(w.indexOf('const META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)].map((m) => m[1]);
-    const dateOf = (p) => (region(`  "${p}": {`, '\n  },').match(/date: "(\d{4}-\d{2}-\d{2})"/) || [])[1] || '';
+    const dateOf = (p: string) => (region(`  "${p}": {`, '\n  },').match(/date: "(\d{4}-\d{2}-\d{2})"/) || [])[1] || '';
     const pmKeys = [...w.slice(w.indexOf('const PAGE_MARKDOWN'), w.indexOf('const META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": `/g)].map((m) => m[1]);
     const blogWant = pmKeys.map((p, i) => ({ p, i, d: dateOf(p) })).sort((a, b) => b.d.localeCompare(a.d) || a.i - b.i).map((x) => x.p);
     check(blogWant.length > 20 && blogWant.every((p) => dateOf(p)), `blog order derived from PAGE_MARKDOWN keys and META_BY_PATH dates (${blogWant.length}, newest ${blogWant[0]})`);
@@ -1597,7 +1597,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     seqSame('SITEMAP_ENTRIES guide rows (the literal)', smRows.filter((p) => p.startsWith('/guides/')), guideWant);
     seqSame('SITEMAP_ENTRIES primary and auxiliary rows (the literal)', smRows.filter((p) => primary.includes(p) || aux.includes(p)), primary.concat(aux));
     // 4. the service lists: facts.json services is the order, shopify first, and the two ACP homes and the two skills homes agree
-    const priced = (facts.services || []).filter((s) => s.priceKey).map((s) => s.id);
+    const priced = (facts.services || []).filter((s: { priceKey: string | null }) => s.priceKey).map((s: { id: string }) => s.id);
     seqSame('ACP_SERVICES keys', [...region('const ACP_SERVICES = {', '\n};').matchAll(/\n  ([a-z-]+): \{ item:/g)].map((m) => m[1]), priced);
     seqSame('ACP_INDEX_JSON items', [...((region('const ACP_INDEX_JSON', '\n}, null, 2);').match(/"items": \[([^\]]*)\]/) || ['', ''])[1].matchAll(/"([a-z-]+)"/g))].map((m) => m[1]), priced);
     const a2aSkills = [...region('const A2A_AGENT_CARD', '\n}, null, 2);').matchAll(/\n      "id": "([a-z-]+)"/g)].map((m) => m[1]);
@@ -1607,12 +1607,12 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // calls (md*Card render their own h2) and the literal <h2> tags; mdLists and mdParas
     // are data helpers called before the markup and say nothing about order (the class of defect
     // round 17 found on the home page: FAQ before Contact in HTML, Contact before FAQ in the twin)
-    const H2_ALIAS = { 'Contact me': 'Contact' };
+    const H2_ALIAS: Record<string, string> = { 'Contact me': 'Contact' };
     for (const [path, cfg] of Object.entries(twConverted)) {
       const body = twFnBody(cfg.fn), md = twMdTwin(path);
       if (!body || !md) continue;
       const heads = [...md.matchAll(/^## (.+)$/gm)].map((h) => h[1].trim());
-      const seen = [];
+      const seen: string[] = [];
       // md*Sec are the open sections of the 2026-09-06 template (Tek-358): each renders its own h2.
       for (const m of body.matchAll(/\bmd\w*(?:[Cc]ard|Sec)\("([^"]+)", "([^"]+)"(?:, [^)]*)?\)|<h2(?:\s[^>]*)?>([^<{]+)<\/h2>/g)) {
         const h = m[2] && m[1] === path ? m[2] : m[3] ? H2_ALIAS[m[3].trim()] || m[3].trim() : null;
@@ -1649,7 +1649,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
         // it can see directly.
         const skip = cfg.mdOnly;
         const h2s = [...html.matchAll(/<h2(?:\s[^>]*)?>([\s\S]*?)<\/h2>/g)].map((m) => twHtml(m[1]));
-        const seenR = [];
+        const seenR: string[] = [];
         for (const t of h2s) { const h = (cfg.h2 || {})[t] || H2_ALIAS[t] || t; if (heads.includes(h) && !seenR.includes(h)) seenR.push(h); }
         const missing = heads.filter((h) => !skip.includes(h) && !seenR.includes(h));
         const idxR = seenR.map((h) => heads.indexOf(h));
@@ -1669,20 +1669,20 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       // stated in EUR somewhere on the page. Neither side is cross-checked against
       // facts.json anywhere else, so a price edited in one place and forgotten in the
       // other would still render, and pass, with the wrong number.
-      const priceNum = (s) => Number(s.replace(/&#8364;|\u20ac/g, '').replace(/,/g, ''));
+      const priceNum = (s: string) => Number(s.replace(/&#8364;|\u20ac/g, '').replace(/,/g, ''));
       if (homePriceHtml) {
         const homePrices = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => priceNum(m[1]));
         setSame('home page offer-price spans vs facts.json (shopify, audit)', homePrices, ['shopify', 'audit'].map((k) => facts.prices[k]));
       } else bad('K5-P3: the home page was not rendered, cannot check its prices');
       if (servicesPriceHtml) {
-        const wantEuro = (n) => '\u20ac' + n.toLocaleString('en-US');
+        const wantEuro = (n: number) => '\u20ac' + n.toLocaleString('en-US');
         const svcPriced = Object.entries(facts.prices).filter(([k]) => k !== 'currency');
-        const svcMissing = svcPriced.filter(([, v]) => !servicesPriceHtml.includes(wantEuro(v)));
+        const svcMissing = svcPriced.filter(([, v]) => !servicesPriceHtml.includes(wantEuro(v as number)));
         check(svcPriced.length > 0 && svcMissing.length === 0,
-          `/services states every facts.json price in EUR${svcMissing.length ? ' :: missing ' + svcMissing.map(([k, v]) => k + '=' + wantEuro(v)).join(', ') : ' (' + svcPriced.map(([k]) => k).join(', ') + ')'}`);
+          `/services states every facts.json price in EUR${svcMissing.length ? ' :: missing ' + svcMissing.map(([k, v]) => k + '=' + wantEuro(v as number)).join(', ') : ' (' + svcPriced.map(([k]) => k).join(', ') + ')'}`);
       } else bad('K5-P3: /services was not rendered, cannot check its prices');
     } catch (e) {
-      bad('rendered h2 order: the worker could not be imported or rendered :: ' + (e && e.message));
+      bad('rendered h2 order: the worker could not be imported or rendered :: ' + (e && (e as Error).message));
     }
   }
 
@@ -1707,7 +1707,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // "Corrected 2026-08-02": structured data telling a reader the page had not been
   // touched while the page said it had. The marker in the prose owns the date.
   {
-    const MONTHS = { January: '01', February: '02', March: '03', April: '04', May: '05', June: '06', July: '07', August: '08', September: '09', October: '10', November: '11', December: '12' };
+    const MONTHS: Record<string, string> = { January: '01', February: '02', March: '03', April: '04', May: '05', June: '06', July: '07', August: '08', September: '09', October: '10', November: '11', December: '12' };
     const bad2 = [];
     for (const m of w.slice(w.indexOf('const META_BY_PATH')).matchAll(/\n  "(\/blog\/[a-z0-9-]+)": \{/g)) {
       const path = m[1];
@@ -1840,7 +1840,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // whole file for their names found zero matches: nothing would notice a future edit
   // quietly loosening or dropping one of them.
   {
-    const constInt = (name) => {
+    const constInt = (name: string) => {
       const m = w.match(new RegExp('const ' + name + ' = ([0-9]+);'));
       return m ? Number(m[1]) : null;
     };
@@ -1850,7 +1850,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const parityMaxConcurrent = constInt('PARITY_MAX_CONCURRENT');
     check(agentJsonMax === 16384, `AGENT_JSON_MAX_BYTES == 16384 (saw ${agentJsonMax})`);
     check(a2aMaxParts === 32, `A2A_MAX_PARTS == 32 (saw ${a2aMaxParts})`);
-    check(Number.isInteger(parityMaxRequestBytes) && parityMaxRequestBytes > 0 && parityMaxRequestBytes <= 1048576,
+    check(Number.isInteger(parityMaxRequestBytes) && parityMaxRequestBytes! > 0 && parityMaxRequestBytes! <= 1048576,
       `PARITY_MAX_REQUEST_BYTES is a positive integer at most 1 MB (saw ${parityMaxRequestBytes})`);
     check(parityMaxConcurrent === 4, `PARITY_MAX_CONCURRENT == 4 (saw ${parityMaxConcurrent})`);
 
@@ -1907,7 +1907,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 // drift in the data, and comparing an empty want against an empty got reads as agreement
 // (Ansa 2 in the same 2026-08-01 entry, measured in this very file). So a missing or
 // empty expected value is a FAIL here too, never a skip.
-const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
+const boardLoydot = (lahde: string, kategoriat: unknown, kokonaispiste: unknown, taso: unknown) => {
   // Since v3.171.0 (Tek-479 P14) a cell carries a space between its label and its value, so a text
   // reader gets "content 100/100" and not "content100/100". The separator is whitespace either way;
   // the label, the value, their order and the count are compared exactly as before.
@@ -1944,9 +1944,9 @@ const boardLoydot = (lahde, kategoriat, kokonaispiste, taso) => {
   // reason (2026-08-16 (jatko 9)). So both directions are exercised on synthetic input
   // whose result does not depend on what is on disk, and the control set is asymmetric
   // on purpose: the surface drifting from the data, and the data losing its value.
-  const kSarja = (rivit, summa) =>
+  const kSarja = (rivit: string, summa: string) =>
     `<ul class="board-grid">${rivit}</ul>\n<p class="board-sum">Verified <b>${summa}</b>, <span class="pill">Level 5</span>, <span class="pill">Agent-Native</span>.</p>`;
-  const kCell = (cat, val) => `<li class="cell"><span class="cat">${cat}:</span> <span class="val">${val}.</span></li>`;
+  const kCell = (cat: string, val: string) => `<li class="cell"><span class="cat">${cat}:</span> <span class="val">${val}.</span></li>`;
   const kCats = [{ id: 'a', label: 'alpha', score: '100/100' }, { id: 'b', label: 'beta', score: '90/100' }];
   const kHyva = kSarja(kCell('alpha', '100/100') + kCell('beta', '90/100'), '100/100');
   const kAjautunut = kSarja(kCell('alpha', '100/100') + kCell('beta', '80/100'), '100/100');   // pinta ajautui datasta
@@ -2009,26 +2009,26 @@ console.log('\nRobots.txt agent lists, generated and checked (round 14, R1a-14-2
     bad('robots.txt agent lists: ROBOTS_ALLOW_AGENTS..ROBOTS_TXT block not found in worker.ts');
   } else {
     const robotsBlock = workerJs.slice(ri, rj + robotsEnd.length);
-    let ROBOTS_ALLOW_AGENTS, ROBOTS_DISALLOW_AGENTS, ROBOTS_TXT;
+    let ROBOTS_ALLOW_AGENTS: string[] | undefined, ROBOTS_DISALLOW_AGENTS: string[] | undefined, ROBOTS_TXT: string | undefined;
     try {
       ({ ROBOTS_ALLOW_AGENTS, ROBOTS_DISALLOW_AGENTS, ROBOTS_TXT } = new Function(robotsBlock
         + '\nreturn { ROBOTS_ALLOW_AGENTS: ROBOTS_ALLOW_AGENTS, ROBOTS_DISALLOW_AGENTS: ROBOTS_DISALLOW_AGENTS, ROBOTS_TXT: ROBOTS_TXT };')());
     } catch (e) {
-      bad('robots.txt agent lists: could not evaluate the ROBOTS_TXT construction: ' + e.message);
+      bad('robots.txt agent lists: could not evaluate the ROBOTS_TXT construction: ' + (e as Error).message);
     }
     if (ROBOTS_TXT !== undefined) {
-      const robotsEsc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const robotsEsc = (s: unknown) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       check(Array.isArray(ROBOTS_ALLOW_AGENTS) && ROBOTS_ALLOW_AGENTS.length > 0,
         `ROBOTS_ALLOW_AGENTS parsed from worker.ts (${(ROBOTS_ALLOW_AGENTS || []).length} agents)`);
       check(Array.isArray(ROBOTS_DISALLOW_AGENTS) && ROBOTS_DISALLOW_AGENTS.length > 0,
         `ROBOTS_DISALLOW_AGENTS parsed from worker.ts (${(ROBOTS_DISALLOW_AGENTS || []).length} agents)`);
-      const allowMissing = (ROBOTS_ALLOW_AGENTS || []).filter((ua) =>
-        !new RegExp(`User-agent: ${robotsEsc(ua)}\nAllow: /\nContent-Signal: search=yes, ai-input=yes, ai-train=yes\n`).test(ROBOTS_TXT));
+      const allowMissing = (ROBOTS_ALLOW_AGENTS || []).filter((ua: string) =>
+        !new RegExp(`User-agent: ${robotsEsc(ua)}\nAllow: /\nContent-Signal: search=yes, ai-input=yes, ai-train=yes\n`).test(ROBOTS_TXT!));
       check(allowMissing.length === 0,
         `every ROBOTS_ALLOW_AGENTS member has an Allow block carrying the Content-Signal line in generated robots.txt${allowMissing.length ? ' :: ' + allowMissing.join(', ') : ''}`);
-      const disallowWrong = (ROBOTS_DISALLOW_AGENTS || []).filter((ua) => {
-        const hasDisallow = new RegExp(`User-agent: ${robotsEsc(ua)}\nDisallow: /\n`).test(ROBOTS_TXT);
-        const hasSignal = new RegExp(`User-agent: ${robotsEsc(ua)}\nDisallow: /\nContent-Signal`).test(ROBOTS_TXT);
+      const disallowWrong = (ROBOTS_DISALLOW_AGENTS || []).filter((ua: string) => {
+        const hasDisallow = new RegExp(`User-agent: ${robotsEsc(ua)}\nDisallow: /\n`).test(ROBOTS_TXT!);
+        const hasSignal = new RegExp(`User-agent: ${robotsEsc(ua)}\nDisallow: /\nContent-Signal`).test(ROBOTS_TXT!);
         return !hasDisallow || hasSignal;
       });
       check(disallowWrong.length === 0,
@@ -2105,7 +2105,7 @@ console.log('\nCurrency symbol matches facts.prices.currency (round 14, R2a-3)')
   const CURRENCY_SYMBOL = { EUR: '€', USD: '$', GBP: '£' };
   const cur = facts.prices.currency;
   check(cur === 'EUR', `facts.prices.currency is EUR (saw ${JSON.stringify(cur)})`);
-  const symbol = CURRENCY_SYMBOL[cur];
+  const symbol = (CURRENCY_SYMBOL as Record<string, string | undefined>)[cur];
   check(!!symbol, `a symbol is known for facts.prices.currency ${JSON.stringify(cur)}`);
   if (symbol) {
     // A bare "$" would match every template-literal interpolation ("${...}") in this
@@ -2136,7 +2136,7 @@ console.log('\nAutolink: bare hosts in the served markdown (kierros 18, S5-1)');
 // declared top-level domain or be named in AUTOLINK_NOT_HOSTS, so adding a link with a
 // new top-level domain fails here instead of shipping as plain text.
 {
-  const setOf = (name) => {
+  const setOf = (name: string) => {
     const m = src.worker.text.match(new RegExp('const ' + name + ' = new Set\\(\\[([^\\]]*)\\]\\)'));
     return m ? [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]) : null;
   };
@@ -2188,8 +2188,8 @@ console.log('\nRetest window: the correction add-on exception (Tek-481, Tek-482)
   const EXC = /delivered corrections|corrections are delivered/i;
   const FLOOR = 21; // measured 2026-09-26 on v3.174.0: 21 sentences, all carrying the exception (the audit ACP session joined, Tek-484)
   const found = [];
-  const missing = [];
-  src.worker.text.replace(/\r\n/g, '\n').split('\n').forEach((line, i) => {
+  const missing: string[] = [];
+  src.worker.text.replace(/\r\n/g, '\n').split('\n').forEach((line: string, i: number) => {
     if (!START.test(line)) return;
     for (const s of line.split(/(?<=[.!?])\s+(?=[A-Z"\[])/)) {
       if (!START.test(s)) continue;
@@ -2279,12 +2279,12 @@ try {
   if (!jwksM || !sigsM) throw new Error('JWKS_JSON or SIGNATURES_JSON not found in worker.ts');
   const jwksLocal = JSON.parse(new Function('return "' + jwksM[1] + '"')());
   const sigsLocal = JSON.parse(new Function('return "' + sigsM[1] + '"')());
-  const jwkToKey = (jwk) => {
+  const jwkToKey = (jwk: { x: string }) => {
     const raw = Buffer.from(jwk.x, 'base64url');
     const der = Buffer.concat([Buffer.from('302a300506032b6570032100', 'hex'), raw]); // Ed25519 SPKI prefix
     return createPublicKey({ key: der, format: 'der', type: 'spki' });
   };
-  const keyByKid = Object.fromEntries(jwksLocal.keys.map((k) => [k.kid, jwkToKey(k)]));
+  const keyByKid = Object.fromEntries(jwksLocal.keys.map((k: { kid: string; x: string }) => [k.kid, jwkToKey(k)]));
   const preDeployCount = Object.keys(sigsLocal.signatures).length;
   check(preDeployCount > 0, `worker.ts SIGNATURES_JSON declares at least one surface to check pre-deploy (saw ${preDeployCount})`);
   // F06: count equality alone passes a dropped path paired with an added query-variant
@@ -2326,8 +2326,8 @@ console.log('\nNo JavaScript files in the repository (Tek-663, phase W6)');
 // inside worker.ts, not files. They are outside this check by design.
 {
   const skipDirs = new Set(['node_modules', '.wrangler', '.git']);
-  const jsFiles = [];
-  const walk = (dir, rel) => {
+  const jsFiles: string[] = [];
+  const walk = (dir: string, rel: string) => {
     for (const e of readdirSync(dir, { withFileTypes: true })) {
       if (skipDirs.has(e.name)) continue;
       const r = rel ? rel + '/' + e.name : e.name;
@@ -2385,22 +2385,22 @@ if (LIVE) {
     check(o.status === 204 && /if-none-match/i.test(o.headers.get('access-control-allow-headers') || '') && /etag/i.test(o.headers.get('access-control-expose-headers') || ''),
       `OPTIONS server card allows If-None-Match and exposes ETag (saw ${o.status} / ${o.headers.get('access-control-allow-headers')} / ${o.headers.get('access-control-expose-headers')})`);
     const x = JSON.parse(await (await fetch(base + '/.well-known/x402')).text());
-    const main = (x.accepts || []).filter((a) => a.network === 'eip155:8453' && /^0x833589fcd6edb6e08f4c7c32d4f71b54bda02913$/i.test(a.asset));
-    check(main.length > 0 && main.every((a) => (a.extra || {}).name === 'USD Coin'),
+    const main = (x.accepts || []).filter((a: { network?: string; asset: string }) => a.network === 'eip155:8453' && /^0x833589fcd6edb6e08f4c7c32d4f71b54bda02913$/i.test(a.asset));
+    check(main.length > 0 && main.every((a: { extra?: { name?: string } }) => (a.extra || {}).name === 'USD Coin'),
       `live x402 manifest: ${main.length} mainnet USDC entries all carry extra.name "USD Coin"`);
   } catch (e) { bad('server card CORS and x402 name: ' + errWhy(e)); }
-
+type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer?: { text?: string } }[]; '@graph'?: FaqLdNode } | FaqLdNode[] | null | undefined;
   console.log('\nFAQ published where a reader can see it (B1-03)');
   // Read from the served page, not from worker.ts: a gate that greps the source proves the
   // string is in the source, which was true all along while the reader saw nothing. The
   // list of pages comes from the twins, so a page that stops publishing its FAQ is a
   // missing card here rather than a page nobody checks.
   {
-    const faqNodes = (html) => {
-      const out = [];
+    const faqNodes: (html: string) => { q: string; a: string }[] = (html) => {
+      const out = [] as { q: string; a: string }[];
       for (const m of html.matchAll(/<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/g)) {
         let j; try { j = JSON.parse(m[1].replace(/<\\\/script/g, '</script')); } catch { continue; }
-        const walk = (n) => {
+        const walk = (n: FaqLdNode) => {
           if (Array.isArray(n)) { n.forEach(walk); return; }
           if (!n || typeof n !== 'object') return;
           if (n['@type'] === 'FAQPage') for (const q of n.mainEntity || []) out.push({ q: twSquash(q.name), a: twSquash((q.acceptedAnswer || {}).text || '') });
@@ -2443,11 +2443,11 @@ if (LIVE) {
     else {
       const cells = [...gridM[1].matchAll(/<li class="cell"><span class="cat">([^<]*):<\/span>\s*<span class="val">([^<]*)\.<\/span><\/li>/g)]
         .map((m) => ({ cat: twDecode(m[1]).trim(), val: twDecode(m[2]).trim() }));
-      const wantLabels = CATS.map((c) => c.label);
+      const wantLabels = CATS.map((c: { label: string }) => c.label);
       // Both sides can go empty at once, and then two empty joins compare equal. The
       // label check and the count check are separate lines so an empty facts.json
       // cannot make the order check below vacuously true.
-      check(CATS.length > 0 && wantLabels.every((l) => typeof l === 'string' && l.length > 0),
+      check(CATS.length > 0 && wantLabels.every((l: unknown) => typeof l === 'string' && l.length > 0),
         `facts.json gives all ${CATS.length} categories a board label`);
       check(cells.length === CATS.length, `board shows ${CATS.length} cells (saw ${cells.length})`);
       check(cells.length > 0 && cells.length === CATS.length && cells.map((c) => c.cat).join(' | ') === wantLabels.join(' | '),
@@ -2460,7 +2460,7 @@ if (LIVE) {
       // that lost the field and a board that lost the number would compare undefined against
       // undefined and print `pass ... saw undefined`, which is Ansa 2 in the same entry and
       // was measured in this very file.
-      const catByLabel = new Map<string, any>(CATS.map((c) => [String(c.label), c]));
+      const catByLabel = new Map<string, any>(CATS.map((c: { label: string }) => [String(c.label), c]));
       const wrongVal = cells.filter((c) => {
         const want = (catByLabel.get(c.cat) || {}).score;
         return typeof want !== 'string' || want.trim().length === 0 || c.val !== want;
@@ -2482,10 +2482,10 @@ if (LIVE) {
   // names are not data; these are the same question asked of the other transports.
   // facts.json owns the prices, the business ID and the service set. Every check calls
   // the surface and reads the answer, rather than reading the source that produces it.
-  const SERVICES = Array.isArray(facts.services) ? facts.services : [];
-  const priceOf = (svc) => (svc.priceKey ? facts.prices[svc.priceKey] : 'on request');
-  const PRICED = SERVICES.filter((x) => x.priceKey);
-  const euroOf = (key) => '€' + facts.prices[key].toLocaleString('en-US');
+  const SERVICES: { id: string; name: string; priceKey: string | null }[] = Array.isArray(facts.services) ? facts.services : [];
+  const priceOf = (svc: { priceKey: string | null }) => (svc.priceKey ? facts.prices[svc.priceKey] : 'on request');
+  const PRICED = SERVICES.filter((x) => x.priceKey) as { id: string; name: string; priceKey: string }[];
+  const euroOf = (key: string) => '€' + facts.prices[key].toLocaleString('en-US');
   // Every length comparison below is guarded by a positive floor as well. Two empty
   // lists compare equal, two empty joins compare equal, and every() over an empty
   // array is true, so an empty facts.json plus an empty answer reads as agreement.
@@ -2499,12 +2499,12 @@ if (LIVE) {
   // fetch it.
   try {
     const md = await (await fetch(base + '/', { headers: { accept: 'text/markdown' } })).text();
-    const sp = CATS.map((c) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase()));
+    const sp = CATS.map((c: { label: string; prose?: string[] }) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase()));
     const sc = iar.score.toLowerCase(), lv = lvl.toLowerCase();
     // Since Tek-488 round 3 the served twin is built from the same facts.json template as the static
     // one, so the two gates cannot drift into two sentence shapes.
     const ET = (iar.surfaceWording || {}).evidenceTwin || {};
-    const want = String(ET.template || '').replace(/\{(\d)\}/g, (_, k) => (ET.spellingIndex || []).map((ix, n) => sp[n][ix])[Number(k)])
+    const want = String(ET.template || '').replace(/\{(\d)\}/g, (_, k) => (ET.spellingIndex || []).map((ix: number, n: number) => sp[n][ix])[Number(k)])
       .replace(/\{score\}/g, sc).replace(/\{level\}/g, lv) + 'agent-native.';
     const i = md.toLowerCase().replace(/\s+/g, ' ').indexOf(String(ET.spanFrom || '\u0000').toLowerCase());
     const gotMd = i < 0 ? '' : md.toLowerCase().replace(/\s+/g, ' ').slice(i, i + want.length);
@@ -2551,7 +2551,7 @@ if (LIVE) {
     // The first version used 700 ms and justified it with this block's own 114 requests alone. An
     // independent review pointed out the obvious omission: the same --live run makes 40 to 65 other
     // requests with no pacing at all, and they share the quota. 55 leaves room for those.
-    const odota = (ms) => new Promise((r) => setTimeout(r, ms));
+    const odota = (ms: number) => new Promise((r) => setTimeout(r, ms));
     for (const pth of paths) {
       try {
         await odota(1100);
@@ -2574,7 +2574,7 @@ if (LIVE) {
         const html = await htmlRes.text();
         const htmlH1raw = (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1];
         if (!mdH1 || !htmlH1raw) { rikki.push(`${pth}: no h1 in ${!mdH1 ? 'markdown' : 'html'}`); continue; }
-        const norm = (s) => h1Decode(h1Strip(s))
+        const norm = (s: string) => h1Decode(h1Strip(s))
           .replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
         if (norm(mdH1) !== norm(htmlH1raw)) rikki.push(`${pth}: h1 differs, md "${norm(mdH1)}" vs html "${norm(htmlH1raw)}"`);
       } catch (e) { rikki.push(`${pth}: ${errWhy(e)}`); }
@@ -2593,7 +2593,7 @@ if (LIVE) {
   // beside the union of all three payloads would otherwise satisfy every value check
   // below while answering a different question from the one asked.
   try {
-    const a2a = async (skillId) => {
+    const a2a = async (skillId?: string | null) => {
       const body = { message: { kind: 'message', role: 'user', messageId: 'verify-' + (skillId || 'none'),
         parts: [{ kind: 'text', text: 'verify' }], ...(skillId ? { metadata: { skillId } } : {}) } };
       const r = await fetch(base + '/v1/message:send', {
@@ -2606,9 +2606,9 @@ if (LIVE) {
     };
     // One field that belongs to exactly one skill. Present in its own answer, absent
     // from the other two, which is what a union payload cannot satisfy.
-    const OWN = { services: 'services', 'contact-info': 'email', 'company-info': 'sameAs' };
+    const OWN: Record<string, string> = { services: 'services', 'contact-info': 'email', 'company-info': 'sameAs' };
     const card = JSON.parse(await (await fetch(base + '/.well-known/agent-card.json')).text());
-    const cardSkills = (card.skills || []).map((x) => x.id).sort();
+    const cardSkills = (card.skills || []).map((x: { id: string }) => x.id).sort();
     check(cardSkills.length > 0, `A2A card declares skills (${cardSkills.join(', ') || 'none'})`);
     check(cardSkills.join(',') === Object.keys(OWN).sort().join(','),
       `A2A card declares the skills this gate knows how to read (saw [${cardSkills}])`);
@@ -2629,16 +2629,16 @@ if (LIVE) {
     const aList = (answers.services.data && Array.isArray(answers.services.data.services)) ? answers.services.data.services : [];
     check(nonEmpty && aList.length === SERVICES.length,
       `A2A services lists all ${SERVICES.length} services (saw ${aList.length})`);
-    check(nonEmpty && aList.length === SERVICES.length && aList.map((x) => x.name).join(' | ') === SERVICES.map((x) => x.name).join(' | '),
-      `A2A service names == facts.json, in order (saw [${aList.map((x) => x.name).join(', ')}])`);
+    check(nonEmpty && aList.length === SERVICES.length && aList.map((x: { name: string }) => x.name).join(' | ') === SERVICES.map((x) => x.name).join(' | '),
+      `A2A service names == facts.json, in order (saw [${aList.map((x: { name: string }) => x.name).join(', ')}])`);
     for (const want of SERVICES) {
-      const got = aList.find((x) => x.name === want.name);
+      const got = aList.find((x: { name: string }) => x.name === want.name);
       const p = want.priceKey ? (got && got.price) : (got && got.pricing);
       check(!!got && p === priceOf(want), `A2A services ${want.name} == ${priceOf(want)} (saw ${JSON.stringify(p)})`);
     }
-    const pricedA = aList.filter((x) => typeof x.price === 'number').length;
+    const pricedA = aList.filter((x: { price?: unknown }) => typeof x.price === 'number').length;
     check(PRICED.length > 0 && pricedA === PRICED.length, `A2A prices exactly ${PRICED.length} of ${aList.length} services (saw ${pricedA})`);
-    check(aList.length > 0 && aList.every((x) => typeof x.price !== 'number' || x.currency === facts.prices.currency),
+    check(aList.length > 0 && aList.every((x: { price?: unknown; currency?: string }) => typeof x.price !== 'number' || x.currency === facts.prices.currency),
       `A2A priced services all carry currency ${facts.prices.currency}`);
 
     for (const id of ['contact-info', 'company-info']) {
@@ -2700,7 +2700,7 @@ if (LIVE) {
     // element is not counted at all. The one case that can still hand this gate a wrong
     // body is an unclosed <script inside a comment, and the byte-identity check below
     // is what catches that.
-    const scriptElements = (html) => {
+    const scriptElements: (html: string) => { attrs: string; body: string }[] = (html) => {
       const low = html.toLowerCase();
       const out = [];
       let i = 0;
@@ -2786,22 +2786,22 @@ if (LIVE) {
         globalThis.navigator = { modelContext: { provideContext: function (a) { globalThis.__provided = a; } } };
         globalThis.fetch = function (u) { var s = String(u); var llms = s.indexOf('llms.txt') !== -1; var body = llms ? globalThis.__llms : globalThis.__md; var ct = llms ? 'text/plain; charset=utf-8' : 'text/markdown; charset=utf-8'; return Promise.resolve({ ok: true, status: 200, headers: { get: function (k) { return String(k).toLowerCase() === 'content-type' ? ct : null; } }, text: function () { return Promise.resolve(body); } }); };
       `, ctx, { timeout: 5000 });
-      runInContext(servedBody, ctx, { timeout: 5000 });
+      runInContext(servedBody!, ctx, { timeout: 5000 });
       const provided = ctx.__provided;
       const tools = (provided && Array.isArray(provided.tools)) ? provided.tools : [];
       check(tools.length > 0, `WebMCP script registers tools when executed (saw ${tools.length})`);
-      const byName = Object.fromEntries(tools.map((t) => [t.name, t]));
+      const byName = Object.fromEntries(tools.map((t: { name: string }) => [t.name, t]));
       const answers: Record<string, any> = {};
       // runInContext's timeout does not cover a promise settled after it returns, so
       // the await gets its own deadline.
-      const deadline = (p, ms, what) => Promise.race([p,
-        new Promise((_, rej) => setTimeout(() => rej(new Error('timed out after ' + ms + ' ms')), ms).unref?.())]);
+      const deadline = <T extends unknown>(p: Promise<T>, ms: number, what: string) => Promise.race([p,
+        new Promise<never>((_, rej) => setTimeout(() => rej(new Error('timed out after ' + ms + ' ms')), ms).unref?.())]);
       for (const t of tools) {
         try { answers[t.name] = await deadline(t.execute({}), 10000, t.name); }
-        catch (e) { bad(`WebMCP ${t.name} failed when called: ${e.message}`); }
+        catch (e) { bad(`WebMCP ${t.name} failed when called: ${(e as Error).message}`); }
       }
-      check(tools.length > 0 && tools.every((t) => answers[t.name] && typeof answers[t.name] === 'object'),
-        `every WebMCP tool returns an object (${tools.map((t) => t.name).join(', ') || 'none'})`);
+      check(tools.length > 0 && tools.every((t: { name: string }) => answers[t.name] && typeof answers[t.name] === 'object'),
+        `every WebMCP tool returns an object (${tools.map((t: { name: string }) => t.name).join(', ') || 'none'})`);
 
       const wc = answers.get_contact || {};
       check(!!byName.get_contact && wc.businessId === facts.businessId,
@@ -2832,7 +2832,7 @@ if (LIVE) {
         const wpSeen = new Set(), wpDupes = [];
         for (const k of wpKeys) { if (wpSeen.has(k)) wpDupes.push(k); else wpSeen.add(k); }
         const wpUnknown = wpKeys.filter((k) => !wantKeys.includes(k));
-        const wpMissing = wantKeys.filter((k) => !wpKeys.includes(k));
+        const wpMissing = wantKeys.filter((k: string) => !wpKeys.includes(k));
         check(!!byName.get_services && wantKeys.length > 0 && wpKeys.length === wantKeys.length
           && !wpUnknown.length && !wpDupes.length && !wpMissing.length,
           `WebMCP get_services pricing carries exactly the ${wantKeys.length} priced keys, no unpriced service and no stray key (saw [${wpKeys.join(', ')}]`
@@ -2869,18 +2869,18 @@ if (LIVE) {
       check(wsc && Array.isArray(wsc.results) && typeof wsc.error === 'string',
         `WebMCP search_content with no query returns an error and no results (saw ${JSON.stringify(wsc.error)})`);
       if (byName.search_content) {
-        const hit = await deadline(byName.search_content.execute({ query: 'llms' }), 10000, 'search_content');
+        const hit = await deadline<{ count: number; results: { url?: unknown }[] }>(byName.search_content.execute({ query: 'llms' }), 10000, 'search_content');
         check(hit && hit.count > 0 && Array.isArray(hit.results) && hit.results.length === hit.count,
           `WebMCP search_content finds llms.txt rows in the published index (count ${hit && hit.count})`);
-        const badUrl = (hit && hit.results || []).find((r) => !/^https:\/\/turva\.dev\//.test(String(r.url || '')));
+        const badUrl = (hit && hit.results || []).find((r: { url?: unknown }) => !/^https:\/\/turva\.dev\//.test(String(r.url || '')));
         check(!badUrl, `WebMCP search_content returns only turva.dev URLs${badUrl ? ' :: ' + JSON.stringify(badUrl.url) : ''}`);
-        const capped = await deadline(byName.search_content.execute({ query: 'a', limit: 3 }), 10000, 'search_content limit');
+        const capped = await deadline<{ results: unknown[] }>(byName.search_content.execute({ query: 'a', limit: 3 }), 10000, 'search_content limit');
         check(capped && capped.results.length <= 3, `WebMCP search_content honours limit (asked 3, got ${capped && capped.results.length})`);
       }
 
       check(!!byName.get_page, 'WebMCP registers get_page');
       if (byName.get_page) {
-        const good = await deadline(byName.get_page.execute({ path: '/services' }), 10000, 'get_page');
+        const good = await deadline<{ markdown?: string; bytes?: number }>(byName.get_page.execute({ path: '/services' }), 10000, 'get_page');
         // bytes is a byte count, so it is compared to the UTF-8 length and not to the
         // string length. Those two agree only while the page is pure ASCII, and the check
         // read the same wrong number as the tool until 2026-09-09.
@@ -2890,7 +2890,7 @@ if (LIVE) {
         // An agent's argument can come from the page it is reading, so the three shapes that
         // would leave this origin are refused rather than fetched.
         for (const evil of ['//example.com/', 'https://example.com/', 'services', '/\\\\example.com/', '/\\\\/example.com/']) {
-          const r = await deadline(byName.get_page.execute({ path: evil }), 10000, 'get_page ' + evil);
+          const r = await deadline<{ error?: unknown; markdown?: unknown }>(byName.get_page.execute({ path: evil }), 10000, 'get_page ' + evil);
           check(r && typeof r.error === 'string' && r.markdown === undefined,
             `WebMCP get_page refuses ${JSON.stringify(evil)} and fetches nothing`);
         }
@@ -2898,7 +2898,7 @@ if (LIVE) {
 
       check(!!byName.open_page, 'WebMCP registers open_page');
       if (byName.open_page) {
-        const miss = await deadline(byName.open_page.execute({ page: 'https://example.com/' }), 10000, 'open_page evil');
+        const miss = await deadline<{ error?: unknown; path?: unknown }>(byName.open_page.execute({ page: 'https://example.com/' }), 10000, 'open_page evil');
         check(miss && typeof miss.error === 'string' && miss.path === undefined,
           'WebMCP open_page refuses a URL and exposes only named pages');
         const enumVals = ((byName.open_page.inputSchema || {}).properties || {}).page || {};
@@ -2911,7 +2911,7 @@ if (LIVE) {
         check(cpForOpen.length > 2, `CANONICAL_PATHS parsed for the open_page check (${cpForOpen.length})`);
         const missing = [];
         for (const n of names) {
-          const r = await deadline(byName.open_page.execute({ page: n }), 10000, 'open_page ' + n);
+          const r = await deadline<{ path?: string }>(byName.open_page.execute({ page: n }), 10000, 'open_page ' + n);
           if (!r || !r.path || !cpForOpen.includes(r.path)) missing.push(n + ' -> ' + JSON.stringify(r && r.path));
         }
         check(!missing.length, `every WebMCP open_page destination is in CANONICAL_PATHS${missing.length ? ' :: ' + missing.join(', ') : ''}`);
@@ -2935,10 +2935,10 @@ if (LIVE) {
         globalThis.document = { modelContext: { registerTool: function (t) { globalThis.__registered.push(t); } } };
         globalThis.fetch = function () { return Promise.resolve({ ok: true, status: 200, headers: { get: function () { return 'text/markdown; charset=utf-8'; } }, text: function () { return Promise.resolve(globalThis.__md); } }); };
       `, ctx2, { timeout: 5000 });
-      runInContext(servedBody, ctx2, { timeout: 5000 });
-      const viaRegister = (ctx2.__registered || []).map((t) => t && t.name);
-      const viaProvide = tools.map((t) => t.name);
-      check(viaRegister.length === viaProvide.length && viaProvide.every((n) => viaRegister.includes(n)),
+      runInContext(servedBody!, ctx2, { timeout: 5000 });
+      const viaRegister = (ctx2.__registered || []).map((t: { name: string } | null | undefined) => t && t.name);
+      const viaProvide = tools.map((t: { name: string }) => t.name);
+      check(viaRegister.length === viaProvide.length && viaProvide.every((n: string) => viaRegister.includes(n)),
         `WebMCP registerTool branch registers the same ${viaProvide.length} tools (saw ${viaRegister.length}: ${viaRegister.join(', ') || 'none'})`);
 
       const ctx3 = createContext(Object.create(null));
@@ -2953,7 +2953,7 @@ if (LIVE) {
         globalThis.document = { modelContext: { registerTool: function (t) { globalThis.__registered.push(t); } } };
         globalThis.fetch = function () { return Promise.resolve({ ok: true, status: 200, headers: { get: function () { return 'text/markdown; charset=utf-8'; } }, text: function () { return Promise.resolve(''); } }); };
       `, ctx3, { timeout: 5000 });
-      runInContext(servedBody, ctx3, { timeout: 5000 });
+      runInContext(servedBody!, ctx3, { timeout: 5000 });
       const bothProvided = ctx3.__provided && Array.isArray(ctx3.__provided.tools) ? ctx3.__provided.tools.length : 0;
       const bothRegistered = (ctx3.__registered || []).length;
       check(bothProvided === viaProvide.length && bothRegistered === 0,
@@ -2977,12 +2977,12 @@ if (LIVE) {
   // surfaces deliberately left at three are /openapi.json, /.well-known/x402 and the x402 challenge:
   // those enumerate what an agent can actually pay for, and the Shopify check has no card link and
   // no on-chain resource by decision (mds/decisions.md Tek-176).
-  const priceList = (label, found) => {
+  const priceList = (label: string, found: string[]) => {
     const want = PRICED.map((s) => s.name);
     const seen = new Set(), dupes = [];
     for (const n of found) { if (seen.has(n)) dupes.push(n); else seen.add(n); }
-    const unknown = found.filter((n) => !want.includes(n));
-    const missing = want.filter((n) => !found.includes(n));
+    const unknown = found.filter((n: string) => !want.includes(n));
+    const missing = want.filter((n: string) => !found.includes(n));
     const ok = nonEmpty && found.length === want.length && !unknown.length && !dupes.length && !missing.length;
     check(ok, `${label} enumerates exactly the ${want.length} priced services (saw ${found.length}: [${found.join(', ')}]`
       + `${missing.length ? ', missing: ' + missing.join(', ') : ''}`
@@ -2997,12 +2997,12 @@ if (LIVE) {
     ['/.well-known/mcp/server-card.json', (d) => (d._meta || d.meta || {}).pricing || {},
       (p) => Object.keys(p).filter((k) => k !== 'currency' && k !== 'vatIncluded').map((k) => byKey[k] || k),
       (p, key) => (p[key] || {}).price],
-    ['/.well-known/ap2', (d) => d.pricing || {}, (p) => (p.items || []).map((i) => i.name),
-      (p, key) => ((p.items || []).find((i) => i.name === byKey[key]) || {}).price],
-    ['/.well-known/mpp', (d) => d.pricing || {}, (p) => (p.items || []).map((i) => i.name),
-      (p, key) => ((p.items || []).find((i) => i.name === byKey[key]) || {}).price],
-    ['/.well-known/ucp', (d) => ((d.ucp || {}).pricing || {}), (p) => (p.items || []).map((i) => i.name),
-      (p, key) => ((p.items || []).find((i) => i.name === byKey[key]) || {}).price],
+    ['/.well-known/ap2', (d) => d.pricing || {}, (p) => (p.items || []).map((i: { name: string }) => i.name),
+      (p, key) => ((p.items || []).find((i: { name: string }) => i.name === byKey[key]) || {}).price],
+    ['/.well-known/mpp', (d) => d.pricing || {}, (p) => (p.items || []).map((i: { name: string }) => i.name),
+      (p, key) => ((p.items || []).find((i: { name: string }) => i.name === byKey[key]) || {}).price],
+    ['/.well-known/ucp', (d) => ((d.ucp || {}).pricing || {}), (p) => (p.items || []).map((i: { name: string }) => i.name),
+      (p, key) => ((p.items || []).find((i: { name: string }) => i.name === byKey[key]) || {}).price],
   ];
   for (const [path, block, names, amountOf] of priceListSurfaces) {
     try {
@@ -3036,7 +3036,7 @@ if (LIVE) {
   try {
     const idx = JSON.parse(await (await fetch(base + '/.well-known/agent-skills/index.json')).text());
     const skills = Array.isArray(idx.skills) ? idx.skills : [];
-    check(skills.length > 0, `agent-skills index lists skills (${skills.map((s) => s.name).join(', ') || 'none'})`);
+    check(skills.length > 0, `agent-skills index lists skills (${skills.map((s: { name: string }) => s.name).join(', ') || 'none'})`);
     const bodies: Record<string, any> = {};
     for (const s of skills) {
       const r = await fetch(base + s.url);
@@ -3068,7 +3068,7 @@ if (LIVE) {
     // did not, and a substring search cannot tell a claim from a link. Caught by
     // mutation on 2026-08-01, and it is the same defect as pulling loose integers out
     // of a scanner string.
-    const esc = (x) => String(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const esc = (x: unknown) => String(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const bidRe = new RegExp('\\*\\*Business ID[^*]*\\*\\*\\s*' + esc(facts.businessId));
     for (const name of ['contact-info', 'company-info']) {
       const body = bodies[name] || '';
@@ -3078,19 +3078,19 @@ if (LIVE) {
     }
   } catch (e) { bad('agent skills: ' + (errWhy(e))); }
 
-  const fetchBytesMcp = async (p) => Buffer.from(await (await fetch(base + p)).arrayBuffer());
+  const fetchBytesMcp = async (p: string) => Buffer.from(await (await fetch(base + p)).arrayBuffer());
   // Verify the four signed manifests against the published JWKS. Public-key
   // verification only; the same check anyone can run from these two URLs.
   try {
-    const fetchBytes = async (p) => Buffer.from(await (await fetch(base + p)).arrayBuffer());
+    const fetchBytes = async (p: string) => Buffer.from(await (await fetch(base + p)).arrayBuffer());
     const jwks = JSON.parse((await fetchBytes('/.well-known/jwks.json')).toString());
     const sigs = JSON.parse((await fetchBytes('/.well-known/signatures.json')).toString());
-    const jwkToKey = (jwk) => {
+    const jwkToKey = (jwk: { x: string }) => {
       const raw = Buffer.from(jwk.x, 'base64url');
       const der = Buffer.concat([Buffer.from('302a300506032b6570032100', 'hex'), raw]); // Ed25519 SPKI prefix
       return createPublicKey({ key: der, format: 'der', type: 'spki' });
     };
-    const keyByKid = Object.fromEntries(jwks.keys.map((k) => [k.kid, jwkToKey(k)]));
+    const keyByKid = Object.fromEntries(jwks.keys.map((k: { kid: string; x: string }) => [k.kid, jwkToKey(k)]));
     // R2b14-2 (round 14). The loop below iterates Object.entries(sigs.signatures) and
     // never checked how many entries that was: a signatures.json that lost every entry
     // would run the loop zero times, issue zero bad() calls, and pass. The expected count
@@ -3142,7 +3142,7 @@ if (LIVE) {
     // them from here also proves that rejection path is wired.
     const REV = '2026-07-28';
     const SERVER_INFO_KEY = 'io.modelcontextprotocol/serverInfo';
-    const rpc = async (method, params?, extraHeaders?) => {
+    const rpc = async (method: string, params?: object, extraHeaders?: Record<string, string>) => {
       const h = {
         'content-type': 'application/json',
         accept: 'application/json, text/event-stream',
@@ -3207,7 +3207,7 @@ if (LIVE) {
     // copied it, so card and server agreed on a promise neither kept. Round 20 found this as
     // A1-1 on 2026-09-23. This check compares the whole object and refuses a listChanged
     // true, because this server sends no notifications/tools/list_changed.
-    const canon = (v) => JSON.stringify(v, (k, x) => (x && typeof x === 'object' && !Array.isArray(x)
+    const canon = (v: unknown) => JSON.stringify(v, (k, x) => (x && typeof x === 'object' && !Array.isArray(x)
       ? Object.fromEntries(Object.entries(x).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) : x));
     check(canon(card.capabilities || {}) === canon(result.capabilities || {}),
       `capabilities equal field by field: card ${canon(card.capabilities || {})} == live ${canon(result.capabilities || {})}`);
@@ -3216,7 +3216,7 @@ if (LIVE) {
 
     // Every capability the card declares must answer its list method. A declared
     // capability that returns -32601 is a declared surface that does not resolve.
-    const listMethod = { tools: 'tools/list', resources: 'resources/list', prompts: 'prompts/list' };
+    const listMethod: Record<string, string> = { tools: 'tools/list', resources: 'resources/list', prompts: 'prompts/list' };
     for (const cap of cardCaps) {
       const m = listMethod[cap];
       if (!m) { bad(`server-card declares unknown capability "${cap}"`); continue; }
@@ -3232,9 +3232,9 @@ if (LIVE) {
       check(!!r.body.error || r.res.status >= 400, `undeclared "${cap}" correctly does not answer ${m}`);
     }
 
-    const cardTools = (card.tools || []).map((t) => t.name).sort();
+    const cardTools = (card.tools || []).map((t: { name: string }) => t.name).sort();
     const liveList = await rpc('tools/list', {});
-    const liveTools = ((liveList.body.result && liveList.body.result.tools) || []).map((t) => t.name).sort();
+    const liveTools = ((liveList.body.result && liveList.body.result.tools) || []).map((t: { name: string }) => t.name).sort();
     check(cardTools.length > 0 && cardTools.join(',') === liveTools.join(','),
       `tool-name parity: card [${cardTools}] == live [${liveTools}]`);
     // Since turva-mcp 1.5.0 every tool describes its output, and none takes an argument.
@@ -3298,7 +3298,7 @@ if (LIVE) {
     // envelope lands on the SDK compatibility lane and returns the same 2486 bytes with a
     // 200 and no resultType. A gate that only read the payload would pass while measuring
     // a lane this server no longer claims to serve.
-    const callTool = async (name) => {
+    const callTool = async (name: string) => {
       const r = await rpc('tools/call', { name, arguments: {} }, { 'mcp-name': name });
       const result = r.body.result || {};
       const first = (result.content || [])[0] || {};
@@ -3310,7 +3310,7 @@ if (LIVE) {
         `tools/call ${name} answers on revision ${REV} (resultType ${JSON.stringify(result.resultType)})`);
       try { return JSON.parse(first.text); } catch { bad(`tools/call ${name} answer is not JSON`); return null; }
     };
-    const ints = (v) => (String(v).match(/\d+/g) || []).map(Number);
+    const ints = (v: unknown) => (String(v).match(/\d+/g) || []).map(Number);
 
     const svc = await callTool('get_services');
     if (svc) {
@@ -3320,16 +3320,16 @@ if (LIVE) {
       // name a published sample. A url that does not answer 200 is a declared surface that
       // does not resolve. A fragment names an anchor on the page, so the page itself is read.
       const svcList = svc.services || [];
-      check(svcList.length > 0 && svcList.every((s) => typeof s.url === 'string' && s.url.startsWith('https://turva.dev/')),
+      check(svcList.length > 0 && svcList.every((s: { url?: unknown }) => typeof s.url === 'string' && s.url.startsWith('https://turva.dev/')),
         `get_services names a turva.dev page for every service`);
-      const svcPages = [...new Set(svcList.flatMap((s) => [s.url, s.sample_url])
-        .filter((u) => typeof u === 'string').map((u) => u.split('#')[0]))];
+      const svcPages = [...new Set<string>(svcList.flatMap((s: { url?: unknown; sample_url?: unknown }) => [s.url, s.sample_url])
+        .filter((u: unknown): u is string => typeof u === 'string').map((u: string) => u.split('#')[0]))];
       for (const u of svcPages) {
         const r = await fetch(u, { redirect: 'manual' });
         check(r.status === 200, `get_services page ${u} answers 200 (saw ${r.status})`);
         await r.arrayBuffer().catch(() => null);
       }
-      const byId = Object.fromEntries((svc.services || []).map((s) => [s.id, s]));
+      const byId = Object.fromEntries((svc.services || []).map((s: { id: string }) => [s.id, s]));
       // The id list is derived from facts.json rather than written out here. It was a
       // literal ['audit', 'advisory', 'implementation'] until 2026-08-09, so a fourth
       // priced service was invisible to this gate: the loop asked only about the three
@@ -3354,14 +3354,14 @@ if (LIVE) {
         const got = byId[s.id] && byId[s.id].price;
         check(got === 'on request', `get_services ${s.id} stays on request (saw ${JSON.stringify(got)})`);
       }
-      const priced = (svc.services || []).filter((s) => typeof s.price === 'number').length;
+      const priced = (svc.services || []).filter((s: { price?: unknown }) => typeof s.price === 'number').length;
       check(priced === PRICED.length,
         `get_services prices exactly ${PRICED.length} of ${(svc.services || []).length} services (saw ${priced})`);
       // And the total, which this block printed without comparing it to anything: a seventh
       // service in the answer changed the message and no check.
       check(nonEmpty && (svc.services || []).length === SERVICES.length,
         `get_services answers with exactly the facts.json service set (${SERVICES.length} services, saw ${(svc.services || []).length})`);
-      const gotIds = (svc.services || []).map((s) => s.id).sort().join(',');
+      const gotIds = (svc.services || []).map((s: { id: string }) => s.id).sort().join(',');
       const wantIds = SERVICES.map((s) => s.id).sort().join(',');
       check(nonEmpty && gotIds === wantIds,
         `get_services names the facts.json service ids (want [${wantIds}], saw [${gotIds}])`);
@@ -3400,7 +3400,7 @@ if (LIVE) {
           ['shopify', /or of the delivered corrections when the correction add-on is bought/i, 'the retest window of the correction add-on'],
         ];
         for (const [id, re, what] of PROMISES) {
-          const one = (svc.services || []).find((x) => x.id === id);
+          const one = (svc.services || []).find((x: { id: string; deliverable?: unknown }) => x.id === id);
           check(!!one && re.test(String(one.deliverable || '')),
             `get_services deliverable for ${id} still carries ${what}`);
         }
@@ -3410,7 +3410,7 @@ if (LIVE) {
       check(BUN.length > 0 && mb.length === BUN.length,
         `get_services lists all ${BUN.length} bundled add-ons (saw ${mb.length})`);
       for (const x of BUN) {
-        const got = mb.find((m) => m.id === x.id);
+        const got = mb.find((m: { id: string; price?: unknown }) => m.id === x.id);
         check(!!got && got.price === x.price,
           `get_services bundled ${x.id} priced ${x.price} (saw ${JSON.stringify(got && got.price)})`);
         check(!!got && got.requires === x.requires,
@@ -3426,7 +3426,7 @@ if (LIVE) {
     // after the one .find() returns and nothing here would see it. Checked once per array
     // (this function covers all four .find() call sites that follow, since each reads the
     // same rdy.scans or secEv.scans snapshot), before any of them run.
-    const scansSane = (arr, label) => {
+    const scansSane = (arr: unknown, label: string) => {
       const list = Array.isArray(arr) ? arr : [];
       const providers = list.map((s) => s && s.provider);
       const seen = new Set(), dupes = [];
@@ -3442,7 +3442,7 @@ if (LIVE) {
       check(rdy.measured_at === facts.agentReadiness.measuredAt,
         `get_agent_readiness measured_at == facts.json ${facts.agentReadiness.measuredAt} (saw ${rdy.measured_at})`);
       scansSane(rdy.scans, 'get_agent_readiness');
-      const scan = (rdy.scans || []).find((s) => s.provider === 'isitagentready.com') || {};
+      const scan = (rdy.scans || []).find((s: { provider?: string }) => s.provider === 'isitagentready.com') || {};
       check(String(scan.result || '').includes(scanner.score) && String(scanner.level) && String(scan.result || '').includes(scanner.level),
         `get_agent_readiness states ${scanner.score} and ${scanner.level} (saw ${JSON.stringify(scan.result)})`);
       // Read the category set defensively: if facts.json ever loses it, the failure
@@ -3451,8 +3451,8 @@ if (LIVE) {
       const cats = Array.isArray(scanner.categories) ? scanner.categories : [];
       check(cats.length > 0, 'facts.json records the isitagentready category set');
       const gotCats = scan.categories || {};
-      check(cats.length > 0 && Object.keys(gotCats).sort().join(',') === cats.map((c) => c.id).sort().join(','),
-        `get_agent_readiness category keys == facts.json [${cats.map((c) => c.id)}] (saw [${Object.keys(gotCats)}])`);
+      check(cats.length > 0 && Object.keys(gotCats).sort().join(',') === cats.map((c: { id: string }) => c.id).sort().join(','),
+        `get_agent_readiness category keys == facts.json [${cats.map((c: { id: string }) => c.id)}] (saw [${Object.keys(gotCats)}])`);
       for (const c of cats) {
         // Shaped, not scraped. Pulling loose integers accepted "100 (4/4 checks failed)"
         // as a pass, and it broke on any added word. The expected value is this category's
@@ -3479,7 +3479,7 @@ if (LIVE) {
       // ("all 13 categories passed" against "13/13 categories passed", "98/100" against
       // a score beside a scale), so the numbers are compared and the prose is not.
       scansSane(secEv.scans, 'get_security_evidence');
-      const hz = (secEv.scans || []).find((s) => s.provider === 'Hardenize') || {};
+      const hz = (secEv.scans || []).find((s: { provider?: string }) => s.provider === 'Hardenize') || {};
       const wantHz = ints(facts.security.hardenize.result)[0];
       // The word carries as much of the claim as the number does: reading loose integers
       // passed "13/13 categories failed" without complaint.
@@ -3490,7 +3490,7 @@ if (LIVE) {
         `get_security_evidence Hardenize url == facts.json (saw ${hz.url})`);
       check(hz.measured_at === facts.security.hardenize.measuredAt,
         `get_security_evidence Hardenize measured_at == facts.json ${facts.security.hardenize.measuredAt} (saw ${hz.measured_at})`);
-      const inl = (secEv.scans || []).find((s) => s.provider === 'Internet.nl') || {};
+      const inl = (secEv.scans || []).find((s: { provider?: string }) => s.provider === 'Internet.nl') || {};
       const wantInl = ints(facts.security.internetnl.score);
       check(Number.isFinite(wantInl[0]) && inl.score === wantInl[0],
         `get_security_evidence Internet.nl score == facts.json ${wantInl[0]} (saw ${JSON.stringify(inl.score)})`);
@@ -3500,7 +3500,7 @@ if (LIVE) {
         `get_security_evidence Internet.nl scale tops out at ${wantInl[1]} (saw ${JSON.stringify(inl.scale)})`);
       check(inl.url === facts.security.internetnl.url,
         `get_security_evidence Internet.nl url == facts.json (saw ${inl.url})`);
-      const inlM = (secEv.scans || []).find((s) => s.provider === 'Internet.nl (email)') || {};
+      const inlM = (secEv.scans || []).find((s: { provider?: string }) => s.provider === 'Internet.nl (email)') || {};
       const wantInlM = ints(facts.security.internetnlMail.score);
       check(Number.isFinite(wantInlM[0]) && inlM.score === wantInlM[0],
         `get_security_evidence Internet.nl mail score == facts.json ${wantInlM[0]} (saw ${JSON.stringify(inlM.score)})`);
@@ -3532,8 +3532,8 @@ if (LIVE) {
       // every string the tool returns, and each sentence that promises a higher reading must
       // carry the tradeoff clause itself, so a second promise in the same field cannot borrow
       // the first one's clause, which QA 3 of the round measured in Q3-2.
-      const priStrings = [];
-      const walkPri = (v) => {
+      const priStrings: string[] = [];
+      const walkPri = (v: unknown) => {
         if (typeof v === 'string') priStrings.push(v);
         else if (v && typeof v === 'object') Object.values(v).forEach(walkPri);
       };
@@ -3599,7 +3599,7 @@ if (LIVE) {
     // the receiving end rejects (sts-policy-field-delim is ":" *WSP, and WSP is SP/HTAB only).
     // The trailing [ \t]* is the other half: RFC 8461 allows *WSP after a field, so a stray space
     // must not fail. Both measured 2026-08-10.
-    const field = (k) => (pol.match(new RegExp('^' + k + ':[ \\t]*(.+?)[ \\t]*$', 'm')) || [])[1];
+    const field = (k: string) => (pol.match(new RegExp('^' + k + ':[ \\t]*(.+?)[ \\t]*$', 'm')) || [])[1];
     const polMx = [...pol.matchAll(/^mx:[ \t]*(\S+)[ \t]*$/gm)].map((m) => m[1].toLowerCase().replace(/\.$/, ''));
     check(field('version') === 'STSv1', `MTA_STS_POLICY version: STSv1 (saw ${JSON.stringify(field('version'))})`);
     check(field('mode') === 'enforce', `MTA_STS_POLICY mode: enforce (saw ${JSON.stringify(field('mode'))})`);
@@ -3612,16 +3612,16 @@ if (LIVE) {
       `MTA_STS_POLICY max_age is a positive integer no greater than the RFC 8461 maximum of 31557600 (saw ${JSON.stringify(field('max_age'))})`);
     check(polMx.length > 0, `MTA_STS_POLICY names at least one mx (saw ${polMx.length})`);
 
-    const zoneMx = (await readRecord('MX', () => dohQuery(mailDomain, 'MX'), () => dns.resolveMx(mailDomain))).map((r) => r.exchange.toLowerCase().replace(/\.$/, ''));
+    const zoneMx = (await readRecord('MX', () => dohQuery(mailDomain, 'MX'), () => dns.resolveMx(mailDomain))).map((r: { exchange: string }) => r.exchange.toLowerCase().replace(/\.$/, ''));
     // An mx: entry may be a wildcard covering exactly one label (RFC 8461 section 4.1), so
     // membership is covered-by rather than string equality, and it is read in both directions:
     // every host the zone hands a sender must be allowed by the policy, and every line in the
     // policy must still match something. A one-way check passes a policy with a dead name in it.
-    const covers = (pat, host) => pat.startsWith('*.')
+    const covers = (pat: string, host: string) => pat.startsWith('*.')
       ? host.endsWith(pat.slice(1)) && host.split('.').length === pat.split('.').length
       : pat === host;
-    const uncovered = zoneMx.filter((h) => !polMx.some((p) => covers(p, h)));
-    const unused = polMx.filter((p) => !zoneMx.some((h) => covers(p, h)));
+    const uncovered = zoneMx.filter((h: string) => !polMx.some((p) => covers(p, h)));
+    const unused = polMx.filter((p) => !zoneMx.some((h: string) => covers(p, h)));
     check(zoneMx.length > 0 && uncovered.length === 0 && unused.length === 0,
       `MTA-STS policy allows exactly the ${mailDomain} MX set, and no line of it is dead (zone: [${zoneMx.join(', ')}], policy: [${polMx.join(', ')}]`
       + `${uncovered.length ? ', MX the policy does not allow: ' + uncovered.join(', ') : ''}`
@@ -3644,8 +3644,8 @@ if (LIVE) {
     // The TXT id is the cache key. In enforce mode a sender keeps its cached policy until the
     // id changes, so a policy edited without a new id reaches nobody for up to max_age. This
     // proves the record is there and well formed; it cannot prove the id was bumped.
-    const txt = (await readRecord('TXT', () => dohQuery(`_mta-sts.${mailDomain}`, 'TXT'), () => dns.resolveTxt(`_mta-sts.${mailDomain}`))).map((r) => r.join(''));
-    const sts = txt.filter((r) => r.startsWith('v=STSv1'));
+    const txt = (await readRecord('TXT', () => dohQuery(`_mta-sts.${mailDomain}`, 'TXT'), () => dns.resolveTxt(`_mta-sts.${mailDomain}`))).map((r: string[]) => r.join(''));
+    const sts = txt.filter((r: string) => r.startsWith('v=STSv1'));
     // RFC 8461 section 3.1: sts-field-delim = *WSP ";" *WSP, extension fields are allowed and
     // field order is not significant. The first regex here was turva's own exact spelling while
     // the message claimed RFC well-formedness, which is a narrower thing wearing a wider name.
@@ -3682,9 +3682,9 @@ if (LIVE) {
     // fetch() keeps its reason in e.cause (a socket or TLS code), so a failed read printed only
     // "fetch failed" and a red run could not tell this machine's network from the domain.
     else {
-      const c = e && e.cause;
+      const c = (e as { cause?: { code?: string; message?: string } } | null | undefined) && (e as { cause?: { code?: string; message?: string } }).cause;
       const why = c && (c.code || c.message) ? ' (cause: ' + [c.code, c.message].filter(Boolean).join(': ') + ')' : '';
-      bad('MTA-STS: ' + (e.code || e.message) + why);
+      bad('MTA-STS: ' + ((e as NodeJS.ErrnoException).code || (e as Error).message) + why);
     }
   }
 } else {
