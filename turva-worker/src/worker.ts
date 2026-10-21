@@ -200,7 +200,7 @@ var PERMISSIONS_POLICY = [
 // two policies and is decided by the accepted request (see the 429 branch).
 var AGENT_API_PATH_RE = /^\/(api|v1|x402|openapi\.json|llms(-full)?\.txt|\.well-known|agent\/auth|auth\.md|robots\.txt|sitemap\.xml|security\.txt|ai\.txt|api-catalog|blog\/feed\.xml|oauth\/(authorize|token)|favicon\.(ico|svg)|[0-9a-f]{32}\.txt)(\/|$)/;
 
-function applySecurityHeaders(headers, kind) {
+function applySecurityHeaders(headers: Headers, kind: string) {
   headers.delete("nel");
   headers.delete("report-to");
   headers.delete("reporting-endpoints");
@@ -6997,7 +6997,7 @@ Facts stated as data rather than prose, and the same fact visible in more than o
 // lists that had drifted apart. It lives here now.
 var PRIMARY_PATHS = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
 var AUX_PATHS = ["/badge", "/auth.md", "/samples/audit-report", "/samples/shopify-agent-storefront-check"];
-var _guideOrderCache = null;
+var _guideOrderCache: string[] | null = null;
 function guideOrder() {
   if (_guideOrderCache === null) {
     _guideOrderCache = [];
@@ -7007,7 +7007,7 @@ function guideOrder() {
   }
   return _guideOrderCache;
 }
-function siteRank(path) {
+function siteRank(path: string) {
   const p = PRIMARY_PATHS.indexOf(path);
   if (p !== -1) return { group: 0, sub: p, date: "" };
   const a = AUX_PATHS.indexOf(path);
@@ -7015,11 +7015,11 @@ function siteRank(path) {
   if (path === "/guides") return { group: 2, sub: -1, date: "" };
   if (path.indexOf("/guides/") === 0) { const g = guideOrder().indexOf(path); return { group: 2, sub: g === -1 ? 9999 : g, date: "" }; }
   if (path === "/blog") return { group: 3, sub: -1, date: "9999-99-99" };
-  if (path.indexOf("/blog/") === 0) return { group: 3, sub: 0, date: (META_BY_PATH[path] || {}).date || "" };
+  if (path.indexOf("/blog/") === 0) return { group: 3, sub: 0, date: ((META_BY_PATH as Record<string, Partial<PageMeta>>)[path] || {}).date || "" };
   return { group: 4, sub: 0, date: "" };
 }
 // Stable: entries carry their source index (idx) as the last tie-break.
-function compareSiteRank(a, b) {
+function compareSiteRank(a: { r: { group: number; sub: number; date: string }; idx: number }, b: { r: { group: number; sub: number; date: string }; idx: number }) {
   return a.r.group - b.r.group || a.r.sub - b.r.sub || b.r.date.localeCompare(a.r.date) || a.idx - b.idx;
 }
 
@@ -7051,7 +7051,7 @@ function buildLlmsFullTxt() {
     // author are added to its own copy of a checked guide's section, closing the gap
     // named in V08-21 without moving the parity-tested boundary (mds/decisions.md
     // Tek-499 F08 declined the twin-side fix for exactly that reason).
-    const checked = META_BY_PATH[path] && META_BY_PATH[path].checked;
+    const checked = (META_BY_PATH as Record<string, Partial<PageMeta>>)[path] && (META_BY_PATH as Record<string, Partial<PageMeta>>)[path].checked;
     const body = checked ? content + "\n\nSources checked " + checked + ". Erik Rekola." : content;
     return `<!-- ============================================================
  Source: ${canonical}
@@ -7067,7 +7067,7 @@ ${AUTH_MD}`;
   return header + sections + authSection;
 }
 
-var _llmsFullCache = null;
+var _llmsFullCache: string | null = null;
 function getLlmsFullTxt() {
   if (_llmsFullCache === null) _llmsFullCache = buildLlmsFullTxt();
   return _llmsFullCache;
@@ -7450,7 +7450,7 @@ var PGP_WKD_HASH = "agk5kn8g6dnzi4z7szws1t9ns6xgw14y";
 // WKD serves the raw version 4 key, not the armored block. Deriving the bytes from
 // PGP_PUBLIC_KEY keeps one source of truth: a replaced key cannot leave the
 // two surfaces disagreeing, because there is only one place to replace it.
-var pgpKeyBytes = null;
+var pgpKeyBytes: Uint8Array | null = null;
 function getPgpKeyBytes() {
   if (pgpKeyBytes) return pgpKeyBytes;
   const lines = PGP_PUBLIC_KEY.split("\n");
@@ -7983,8 +7983,8 @@ var ARD_REPRESENTATIVE_QUERIES = {
   ]
 };
 var ARD_MANIFEST = JSON.stringify(Object.assign({}, JSON.parse(AI_CATALOG), {
-  "entries": JSON.parse(AI_CATALOG).entries.map((e) => Object.assign({}, e,
-    ARD_REPRESENTATIVE_QUERIES[e.identifier] ? { "representativeQueries": ARD_REPRESENTATIVE_QUERIES[e.identifier] } : {}))
+  "entries": JSON.parse(AI_CATALOG).entries.map((e: { identifier: string }) => Object.assign({}, e,
+    ARD_REPRESENTATIVE_QUERIES[e.identifier as keyof typeof ARD_REPRESENTATIVE_QUERIES] ? { "representativeQueries": ARD_REPRESENTATIVE_QUERIES[e.identifier as keyof typeof ARD_REPRESENTATIVE_QUERIES] } : {}))
 }), null, 2);
 
 // A conformant x402 client reads the challenge body and acts on it. It never reads
@@ -8106,7 +8106,7 @@ var X402_INDEX_402 = JSON.stringify({
   "error": "Payment required to access this resource"
 }, null, 2);
 
-function build402Body(resource, label, amountUsdcMicro, amountEurCents, description) {
+function build402Body(resource: string, label: string, amountUsdcMicro: string, amountEurCents: number, description: string) {
   const extra = { "name": X402_USDC_NAME, "version": "2", "label": label } as { name: string; version: string; label: any; eurCents?: number; settlement?: any };
   // /api is a discovery probe with no EUR equivalent. Writing "eurCents": 0 into the
   // body states a price of 0,00 EUR for a resource that is not free, so the field is
@@ -8219,7 +8219,7 @@ var UCP_PROFILE = JSON.stringify({
   }
 }, null, 2);
 
-function buildAgentAuthInstruction(action) {
+function buildAgentAuthInstruction(action: string) {
   return JSON.stringify({
     "action": action,
     "transport": "async-email",
@@ -8326,7 +8326,7 @@ var SKILLS = [
   { name: "company-info", content: SKILL_COMPANY }
 ];
 
-async function sha256Hex(str) {
+async function sha256Hex(str: string) {
   const buf = new TextEncoder().encode(str);
   const hash = await crypto.subtle.digest("SHA-256", buf);
   return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -8352,7 +8352,7 @@ async function buildSkillsIndex() {
 
 // Built once per isolate, like the sitemap and llms-full.txt: the three digests only change on a
 // deploy (round 19, K2-P3).
-var _skillsIndexCache = null;
+var _skillsIndexCache: string | null = null;
 async function getSkillsIndex() {
   if (_skillsIndexCache === null) _skillsIndexCache = await buildSkillsIndex();
   return _skillsIndexCache;
@@ -8603,11 +8603,11 @@ var SITEMAP_ENTRIES = [
 ];
 // The sitemap's lastmod for one path, shared by buildSitemapXml and the weekly IndexNow run so
 // the two cannot disagree about what changed (round 19, K1-P5).
-function sitemapLastmodOf(path) {
+function sitemapLastmodOf(path: string) {
   if (path.indexOf("/blog/") === 0) {
-    return (META_BY_PATH[path] && (META_BY_PATH[path].modified || META_BY_PATH[path].date)) || SITEMAP_LASTMOD;
+    return ((META_BY_PATH as Record<string, Partial<PageMeta>>)[path] && ((META_BY_PATH as Record<string, Partial<PageMeta>>)[path].modified || (META_BY_PATH as Record<string, Partial<PageMeta>>)[path].date)) || SITEMAP_LASTMOD;
   } else if (path === "/blog") {
-    const ds = Object.keys(META_BY_PATH).filter(function(k) { return k.indexOf("/blog/") === 0; }).map(function(k) { return META_BY_PATH[k].modified || META_BY_PATH[k].date; }).filter(Boolean).sort();
+    const ds = Object.keys(META_BY_PATH).filter(function(k) { return k.indexOf("/blog/") === 0; }).map(function(k) { return (META_BY_PATH as Record<string, Partial<PageMeta>>)[k].modified || (META_BY_PATH as Record<string, Partial<PageMeta>>)[k].date; }).filter(Boolean).sort() as string[];
     return ds.length ? ds[ds.length - 1] : SITEMAP_LASTMOD;
   } else {
     return SITEMAP_LASTMOD;
@@ -8626,21 +8626,21 @@ function buildSitemapXml() {
   }).join("\n");
   return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows + "\n</urlset>";
 }
-var _sitemapCache = null;
+var _sitemapCache: string | null = null;
 function getSitemapXml() {
   if (_sitemapCache === null) _sitemapCache = buildSitemapXml();
   return _sitemapCache;
 }
 
-var _blogFeedCache = null;
+var _blogFeedCache: string | null = null;
 
 function buildBlogFeedXml() {
-  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const posts = Object.keys(PAGE_MARKDOWN)
     .filter((k) => k.startsWith("/blog/"))
-    .map((k) => ({ path: k, meta: META_BY_PATH[k] || {} }))
+    .map((k) => ({ path: k, meta: (META_BY_PATH as Record<string, Partial<PageMeta>>)[k] || {} }))
     .filter((p) => p.meta.date)
-    .sort((a, b) => b.meta.date.localeCompare(a.meta.date));
+    .sort((a, b) => b.meta.date!.localeCompare(a.meta.date!));
   const items = posts.map(({ path, meta }) => {
     const url = "https://turva.dev" + path;
     const title = esc((meta.title || "").replace(/ [|\u00B7] turva\.dev$/, ""));
@@ -8675,7 +8675,7 @@ function getBlogFeedXml() {
 
 var CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
-function getCanonicalForPath(pathname) {
+function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
     return "https://turva.dev" + pathname;
   }
@@ -9333,8 +9333,8 @@ var META_BY_PATH = {
   }
 };
 
-function buildMetaBlock(pathname, canonicalUrl) {
-  const m = META_BY_PATH[pathname] || META_BY_PATH["/"];
+function buildMetaBlock(pathname: string, canonicalUrl: string) {
+  const m: PageMeta = META_BY_PATH[pathname as keyof typeof META_BY_PATH] || META_BY_PATH["/"];
   const url = canonicalUrl || "https://turva.dev" + pathname;
   const isArticle = pathname.startsWith("/guides/") || pathname.startsWith("/blog/");
   const ogType = isArticle ? "article" : "website";
@@ -9398,7 +9398,7 @@ ${jsonLdSafe(mdFaqBlocks("/", "Frequently asked").pairs.map((p) => `{"@type":"Qu
 ]}
 <\/script>`;
 
-function appendAgentLinks(headers) {
+function appendAgentLinks(headers: Headers) {
   headers.append("Link", '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"');
   headers.append("Link", '</.well-known/ard.json>; rel="ard"; type="application/json"');
   headers.append("Link", '</.well-known/ai-catalog.json>; rel="ai-catalog"; type="application/json"');
@@ -9444,7 +9444,7 @@ var FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" f
 // response. The kind follows the path, as it does for 405 and 429.
 // A caller that knows the target's kind better than the path regex passes it: a markdown twin's
 // case redirect is an agent resource like the twin it points to (round 19 review of P1).
-function redirectTo(location, status, pathLower, kind?) {
+function redirectTo(location: string, status: number, pathLower: string, kind?: string | null) {
   const headers = new Headers({ location: location });
   applySecurityHeaders(headers, kind || (AGENT_API_PATH_RE.test(pathLower || "") ? "agent-api" : "default"));
   return new Response(null, { status: status, headers: headers });
@@ -9456,12 +9456,12 @@ function redirectTo(location, status, pathLower, kind?) {
 // lower-cases to a served page moves, so any other path keeps its honest 404, and a brief
 // keeps its exact address, because its id is lower case by construction. Returns null when
 // no case redirect applies, or { lowerPath, twin } when it does.
-function caseNormalizedTarget(pathname, pathLower) {
+function caseNormalizedTarget(pathname: string, pathLower: string) {
   if (pathname === pathLower || pathLower.startsWith("/brief/")) return null;
   const lowerPath = pathLower.length > 1 && pathLower.endsWith("/") ? pathLower.slice(0, -1) : pathLower;
   const twinBase = lowerPath.endsWith(".html.md") ? lowerPath.slice(0, -8) : lowerPath.endsWith(".md") ? lowerPath.slice(0, -3) : null;
-  const twin = lowerPath === "/index.md" || lowerPath === "/index.html.md" || (twinBase !== null && !!PAGE_MARKDOWN[twinBase]);
-  if (PAGE_MARKDOWN[lowerPath] || twin) return { lowerPath: lowerPath, twin: twin };
+  const twin = lowerPath === "/index.md" || lowerPath === "/index.html.md" || (twinBase !== null && !!PAGE_MARKDOWN[twinBase as keyof typeof PAGE_MARKDOWN]);
+  if (PAGE_MARKDOWN[lowerPath as keyof typeof PAGE_MARKDOWN] || twin) return { lowerPath: lowerPath, twin: twin };
   return null;
 }
 
@@ -9471,7 +9471,7 @@ function caseNormalizedTarget(pathname, pathLower) {
 // compresses on the way out and a strong tag would not survive that. A response marked no-store
 // or private (the validator, the parity check, a brief, the OAuth errors) and a body that is not
 // text are left as they are.
-async function withValidator(request, response) {
+async function withValidator(request: Request, response: Response) {
   if (request.method !== "GET" || response.status !== 200 || !response.body || response.headers.has("etag")) return response;
   const cc = (response.headers.get("cache-control") || "").toLowerCase();
   if (cc.includes("no-store") || cc.includes("private")) return response;
@@ -9492,7 +9492,7 @@ async function withValidator(request, response) {
   return new Response(bytes, { status: 200, headers });
 }
 
-function serve405(allow, pathLower) {
+function serve405(allow: string, pathLower: string) {
   const agent = AGENT_API_PATH_RE.test(pathLower);
   const headers = new Headers({ "content-type": "text/plain; charset=utf-8", "allow": allow, "cache-control": "no-store" });
   if (agent) headers.set("access-control-allow-origin", "*");
@@ -9504,7 +9504,7 @@ function serve405(allow, pathLower) {
 // 404 as markdown too. Cloudflare's AI Crawl Control counted every HTML 404 answered to
 // such a request as an unfulfilled markdown request. The path is not echoed here: the
 // HTML page escapes it, and markdown has no escaping that a reader of the raw text sees.
-function serve404(pathname, request) {
+function serve404(pathname: string, request?: Request | null) {
   if ((request && wantsMarkdown(request)) || /\.md$/i.test(pathname || "")) {
     const md = "# Page not found\n\nThis address does not exist on turva.dev. It may have moved.\n\nEvery page is listed in https://turva.dev/llms.txt, and the markdown version of each page is at its own address with .md added. Try the [home page](https://turva.dev/index.md), the [guides](https://turva.dev/guides.md) or the [blog](https://turva.dev/blog.md).\n";
     const mdHeaders = new Headers({
@@ -9588,7 +9588,7 @@ ${footerHtml()}
   return new Response(body, { status: 404, headers });
 }
 
-function stripBody(response) {
+function stripBody(response: Response) {
   return new Response(null, { status: response.status, statusText: response.statusText, headers: response.headers });
 }
 
@@ -9602,7 +9602,7 @@ function stripBody(response) {
 // a conformant client reads response.message and a bare Message hands it undefined.
 var A2A_SKILL_IDS = ["services", "contact-info", "company-info"];
 
-function a2aSkillData(home, skillId) {
+function a2aSkillData(home: { services: unknown; bundledImplementation: unknown; engagement: unknown; email: unknown; signal: unknown; sameAs?: string[]; businessId: unknown; name: unknown; description: unknown; founder: unknown; location: unknown }, skillId: string) {
   if (skillId === "services") {
     return { skill: "services", services: home.services, bundledImplementation: home.bundledImplementation, engagement: home.engagement };
   }
@@ -9619,7 +9619,7 @@ function a2aSkillData(home, skillId) {
       // site's own data, so there is no attack path here, but this repo is public
       // reference material that gets read and forked, and a line that is a hole
       // with foreign input is a hole wherever it is copied.
-      linkedin: (home.sameAs || []).find((u) => {
+      linkedin: (home.sameAs || []).find((u: string) => {
         try {
           const h = new URL(u).hostname.toLowerCase();
           return h === "linkedin.com" || h.endsWith(".linkedin.com");
@@ -9645,7 +9645,7 @@ function a2aSkillData(home, skillId) {
   return null;
 }
 
-function a2aJson(body, status?, allow?) {
+function a2aJson(body: unknown, status?: number, allow?: string) {
   const headers = new Headers({
     "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store",
@@ -9662,7 +9662,7 @@ function a2aJson(body, status?, allow?) {
 // message and never creates a task, so every task id is unknown. The routes exist so a client that
 // follows the A2A transport reads the protocol error for an unknown task (-32001) instead of the
 // generic method-not-found. The id is echoed, cut to 128 characters.
-function parseA2aTaskPath(pathname) {
+function parseA2aTaskPath(pathname: string) {
   const prefix = "/v1/tasks/";
   if (!pathname.toLowerCase().startsWith(prefix)) return null;
   let rest = pathname.slice(prefix.length);
@@ -9674,7 +9674,7 @@ function parseA2aTaskPath(pathname) {
   return { id: id.slice(0, 128), cancel };
 }
 
-function a2aError(code, message, data, status, allow?) {
+function a2aError(code: number, message: string, data: unknown, status: number, allow?: string) {
   const err: { code: any; message: any; data?: any } = { code, message };
   if (data) err.data = data;
   return a2aJson({ error: err }, status, allow);
@@ -9701,7 +9701,7 @@ async function readAgentJson(request) {
   }
 }
 
-async function serveA2AMessageSend(request) {
+async function serveA2AMessageSend(request: Request) {
   if (request.method !== "POST") {
     return a2aError(-32600, "invalid request: A2A message:send is POST only", null, 405, "POST, OPTIONS");
   }
@@ -9727,7 +9727,7 @@ async function serveA2AMessageSend(request) {
     return a2aError(-32602, "invalid params: unknown skillId", { skillId: named, skills: A2A_SKILL_IDS }, 400);
   }
   const text = msg.parts
-    .map((pt) => (pt && typeof pt.text === "string" ? pt.text : ""))
+    .map((pt: { text?: unknown } | null) => (pt && typeof pt.text === "string" ? pt.text : ""))
     .join(" ")
     .toLowerCase();
   const matched = named
@@ -9752,7 +9752,7 @@ async function serveA2AMessageSend(request) {
 }
 // lang names the language of a text body. Markdown is always English prose here, and the
 // two llms files pass "en" themselves; tokens, keys and JSON carry no language header.
-function serveStatic(body, contentType, kind, lang?) {
+function serveStatic(body: BodyInit, contentType: string, kind?: string, lang?: string) {
   const headers = new Headers({
     "content-type": contentType,
     "cache-control": "public, max-age=3600",
@@ -9787,8 +9787,8 @@ var API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "
 // old wantsMarkdown returned true whenever text/markdown appeared at all, so markdown
 // won every tie, and the old wantsJson carried an explicit text/html exclusion, so JSON
 // lost every tie. Only the discarded q-value is fixed here.
-function acceptRanking(request) {
-  const ranking = {};
+function acceptRanking(request: Request) {
+  const ranking: Record<string, number> = {};
   const accept = (request.headers.get("Accept") || "").toLowerCase();
   if (!accept) return ranking;
   for (const part of accept.split(",")) {
@@ -9811,7 +9811,7 @@ function acceptRanking(request) {
   return ranking;
 }
 
-function prefersType(request, wanted, htmlWinsTie) {
+function prefersType(request: Request, wanted: string, htmlWinsTie: boolean) {
   const ranking = acceptRanking(request);
   const q = ranking[wanted];
   if (!(q > 0)) return false;
@@ -9825,11 +9825,11 @@ function prefersType(request, wanted, htmlWinsTie) {
   return true;
 }
 
-function wantsMarkdown(request) {
+function wantsMarkdown(request: Request) {
   return prefersType(request, "text/markdown", false);
 }
 
-function wantsJson(request) {
+function wantsJson(request: Request) {
   return prefersType(request, "application/json", true);
 }
 
@@ -9839,11 +9839,11 @@ function wantsJson(request) {
 // applies, and the spec names index.md for a URL with no file name, which is the
 // homepage. One helper builds it so the head link, the Link header and the route can
 // never disagree about the address.
-function markdownUrlFor(canonicalUrl) {
+function markdownUrlFor(canonicalUrl: string) {
   return canonicalUrl.endsWith("/") ? canonicalUrl + "index.md" : canonicalUrl + ".md";
 }
 
-function serveMarkdown(body, canonicalUrl) {
+function serveMarkdown(body: string, canonicalUrl?: string | null) {
   const tokens = body.split(/\s+/).filter(Boolean).length;
   const headers = new Headers({
     "content-type": "text/markdown; charset=utf-8",
@@ -9862,7 +9862,7 @@ function serveMarkdown(body, canonicalUrl) {
   return new Response(body, { status: 200, headers });
 }
 
-function stripTags(s) {
+function stripTags(s: string) {
   // Drops every <...> run by index scan instead of a tag regex, so nothing that looks like
   // a tag survives one pass (CodeQL js/incomplete-multi-character-sanitization, alerts #10
   // and #11, 2026-09-06). Input is our own rendered HTML; an unterminated "<" drops the tail.
@@ -9878,7 +9878,7 @@ function stripTags(s) {
   }
   return out.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
-function escapeHtml(s) {
+function escapeHtml(s: string) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
@@ -9887,7 +9887,7 @@ function escapeHtml(s) {
 // leaves half of it, and workerd serialises that half as three bytes that are not valid
 // UTF-8 under a charset=utf-8 header (round 16 S3-1, measured 2026-09-03 with a 300 character
 // url= parameter whose 300th unit opened an emoji). Mirrored in the npm package.
-function cut(s, n) {
+function cut(s: string | number, n: number) {
   s = String(s).slice(0, n);
   return /[\uD800-\uDBFF]$/.test(s) ? s.slice(0, -1) : s;
 }
@@ -9908,21 +9908,21 @@ function stripBidi(s) {
 // C0 and C1 control characters leave a check's detail as well. JSON escapes them, but a program
 // that prints a detail to a terminal passes ESC through, so a published link could carry a
 // sequence that clears the screen (Tek-496).
-function stripControls(s) {
+function stripControls(s: string) {
   return String(s).replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
 }
 
 // A JSON text with every bidirectional control written as an escape (round 19 review of V6-P1).
 // The parsed value is the same, so the parity report stays the package's own, and no raw control
 // character can reorder what a person reads in the page, in a saved file or in a terminal.
-function jsonBidiEscape(json) {
-  return String(json).replace(/[\u202A-\u202E\u2066-\u2069]/g, (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"));
+function jsonBidiEscape(json: string) {
+  return String(json).replace(/[\u202A-\u202E\u2066-\u2069]/g, (c: string) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"));
 }
 
 // A root-relative link target stays on this site only if it resolves to this origin. A list of
 // refused characters misses what the parser knows: "/\host" is "//host" to every WHATWG parser in
 // an http or https URL (round 19, K4-1; the trap of mds/gotchas.md 2026-09-09 (jatko 1)).
-function mdSameOrigin(path) {
+function mdSameOrigin(path: string) {
   try { return new URL(path, "https://turva.dev/").origin === "https://turva.dev"; } catch { return false; }
 }
 
@@ -9931,13 +9931,13 @@ function mdSameOrigin(path) {
 // 19, K4-4: SCHEMA_HOME's FAQ was the one without it).
 // A replacement that must happen: it throws when its anchor is missing or repeated, so a renamed
 // heading fails the build instead of shipping unchanged (round 19, K6-P4).
-function replaceExactlyOnce(s, from, to) {
+function replaceExactlyOnce(s: string, from: string, to: string) {
   const n = s.split(from).length - 1;
   if (n !== 1) throw new Error("replaceExactlyOnce: " + JSON.stringify(from) + " occurs " + n + " times");
   return s.replace(from, to);
 }
 
-function jsonLdSafe(s) {
+function jsonLdSafe(s: string) {
   return String(s).split("</").join("<" + String.fromCharCode(92) + "/");
 }
 
@@ -9951,12 +9951,12 @@ function renderInline(text) {
   // them made a brief with a code span and an escaped "#7#" answer 500 (independent review,
   // Tek-488). A text that already carries the marker gets no inline code at all, and a marker
   // pair that names no stored span is left as it is.
-  const code = [];
+  const code: string[] = [];
   const mark = String.fromCharCode(0xE0F0);
-  const src = typeof text === "string" && !text.includes(mark) ? text.replace(/`([^`]+)`/g, (m, c) => { code.push(c); return mark + (code.length - 1) + mark; }) : text;
+  const src = typeof text === "string" && !text.includes(mark) ? text.replace(/`([^`]+)`/g, (m: string, c: string) => { code.push(c); return mark + (code.length - 1) + mark; }) : text;
   let out = escapeHtml(src);
-  out = out.replace(/&lt;mailto:(.+?)&gt;/g, (m, a) => { const v = stripBidi(a); return '<a href="mailto:' + v + '">' + v + "</a>"; });
-  out = out.replace(/&lt;(https?:\/\/.+?)&gt;/g, (m, a) => { const v = stripBidi(a); return '<a href="' + v + '">' + v + "</a>"; });
+  out = out.replace(/&lt;mailto:(.+?)&gt;/g, (m: string, a: string) => { const v = stripBidi(a); return '<a href="mailto:' + v + '">' + v + "</a>"; });
+  out = out.replace(/&lt;(https?:\/\/.+?)&gt;/g, (m: string, a: string) => { const v = stripBidi(a); return '<a href="' + v + '">' + v + "</a>"; });
   out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, label, href) => {
     // out has already been through escapeHtml, so href arrives escaped, and escaping it
     // again would double-encode: the first link to carry two query parameters would render
@@ -9976,15 +9976,15 @@ function renderInline(text) {
   // v3.134.0 (Tek-360) a label such as "email info@turva.dev" inside a [label](mailto:)
   // link got a second <a> inside the first, which is invalid HTML and reached both sample
   // reports live; a Sonnet checker found it on 2026-09-06.
-  const outside = (text, fn) => text.split(/(<a [^>]*>[\s\S]*?<\/a>)/).map((seg, i) => (i % 2 ? seg : fn(seg))).join("");
-  out = outside(out, (t) => t.replace(/(^|[\s(])(info@turva\.dev)/g, '$1<a href="mailto:info@turva.dev">$2</a>'));
-  out = outside(out, (t) => t.replace(/(^|[\s(])(https?:\/\/[^\s<)"]+)/g, function(m, pre, url) {
+  const outside = (text: string, fn: (s: string) => string) => text.split(/(<a [^>]*>[\s\S]*?<\/a>)/).map((seg: string, i: number) => (i % 2 ? seg : fn(seg))).join("");
+  out = outside(out, (t: string) => t.replace(/(^|[\s(])(info@turva\.dev)/g, '$1<a href="mailto:info@turva.dev">$2</a>'));
+  out = outside(out, (t: string) => t.replace(/(^|[\s(])(https?:\/\/[^\s<)"]+)/g, function(m: string, pre: string, url: string) {
     var tm = url.match(/[.,;:!?]+$/);
     var tail = "";
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
     return pre + '<a href="' + stripBidi(url) + '">' + stripBidi(url) + '</a>' + tail;
   }));
-  out = outside(out, (t) => t.replace(/(^|[\s(])((?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/[^\s<)"]*)/gi, function(m, pre, url) {
+  out = outside(out, (t: string) => t.replace(/(^|[\s(])((?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/[^\s<)"]*)/gi, function(m: string, pre: string, url: string) {
     // Kierros 18 (2026-09-06, S5-1): this branch used to link ANY "label.label/path"
     // string, and a reverse-DNS identifier has exactly that shape, so two MCP metadata
     // keys in a blog post rendered as links to a host that does not resolve. The last
@@ -10001,7 +10001,7 @@ function renderInline(text) {
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
     return pre + '<a href="https://' + stripBidi(url) + '">' + stripBidi(url) + '</a>' + tail;
   }));
-  if (code.length) out = out.replace(new RegExp(mark + "([0-9]+)" + mark, "g"), (m, i) => (Number(i) < code.length ? "<code>" + escapeHtml(code[Number(i)]) + "</code>" : m));
+  if (code.length) out = out.replace(new RegExp(mark + "([0-9]+)" + mark, "g"), (m: string, i: string) => (Number(i) < code.length ? "<code>" + escapeHtml(code[Number(i)]) + "</code>" : m));
   return out;
 }
 
@@ -10019,14 +10019,14 @@ var AUTOLINK_NOT_HOSTS = new Set(["io.modelcontextprotocol/protocolVersion", "io
 // rendered as one h2 with the fence as literal text. A fence that never closes stays ordinary
 // text, as it was. A site twin never uses a fence, because verify.mts fails one that does, so no
 // page's output changes.
-function mdFenceOpen(line) {
+function mdFenceOpen(line: string) {
   const m = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
   if (!m) return null;
   if (m[1].charAt(0) === "`" && m[2].includes("`")) return null;
   return m[1];
 }
 
-function mdFenceCloses(line, fence) {
+function mdFenceCloses(line: string, fence: string) {
   const m = /^ {0,3}(`{3,}|~{3,}) *$/.exec(line);
   return !!m && m[1].charAt(0) === fence.charAt(0) && m[1].length >= fence.length;
 }
@@ -10035,7 +10035,7 @@ function mdFenceCloses(line, fence) {
 // reads as the source wrote it (round 19, K6-1). Until v3.164.0 the release step turned an escaped
 // # in code into a bare #, while an unescaped $ beside it kept its backslash. A site page carries
 // no placeholder, so for it this returns the text as it is.
-function mdCodeText(s) {
+function mdCodeText(s: string) {
   let out = "";
   for (let i = 0; i < s.length; i++) {
     const c = s.charCodeAt(i);
@@ -10046,10 +10046,10 @@ function mdCodeText(s) {
   return out;
 }
 
-function markdownToHtml(md) {
+function markdownToHtml(md: string) {
   const lines = md.replace(/\r\n/g, "\n").split("\n");
-  const blocks = [];
-  let prose = [];
+  const blocks: (string | { code: string })[] = [];
+  let prose: string[] = [];
   // An ATX heading is one line (round 19, F1). Until v3.164.0 a heading block took every line
   // under it, so a list written directly below a heading rendered inside the h2.
   const flush = () => {
@@ -10081,8 +10081,8 @@ function markdownToHtml(md) {
   // Heading ids are unique within one document (round 19, K4-3): a second heading with the same
   // slug gets -2, a third -3, so a contents link cannot land on the wrong section. No page had a
   // repeated slug when this was added, so no existing anchor moved.
-  const usedIds = new Map();
-  const uniqueId = (id) => {
+  const usedIds = new Map<string, number>();
+  const uniqueId = (id: string) => {
     if (!id) return id;
     const n = (usedIds.get(id) || 0) + 1;
     usedIds.set(id, n);
@@ -10095,21 +10095,21 @@ function markdownToHtml(md) {
     }
     const trimmed = block.trim();
     if (!trimmed) continue;
-    const rawLines = block.split("\n").filter((l) => l.trim() !== "");
-    const tl = trimmed.split("\n").map((l) => l.trim());
-    if (rawLines.length && rawLines.every((l) => l.startsWith("    "))) {
-      html.push(`<pre><code>${escapeHtml(mdCodeText(rawLines.map((l) => l.slice(4)).join("\n")))}</code></pre>`);
+    const rawLines = block.split("\n").filter((l: string) => l.trim() !== "");
+    const tl = trimmed.split("\n").map((l: string) => l.trim());
+    if (rawLines.length && rawLines.every((l: string) => l.startsWith("    "))) {
+      html.push(`<pre><code>${escapeHtml(mdCodeText(rawLines.map((l: string) => l.slice(4)).join("\n")))}</code></pre>`);
     } else if (tl.length >= 2 && tl[0].startsWith("|") && /^\|[\s:|-]+\|$/.test(tl[1])) {
-      const cells = (l) => l.replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => renderInline(c.trim()));
+      const cells = (l: string) => l.replace(/^\|/, "").replace(/\|$/, "").split("|").map((c: string) => renderInline(c.trim()));
       // Since v3.133.0 (Tek-358) every cell carries its column name as data-label and the
       // table sits in a bounded, keyboard-focusable scroll box. Since Tek-488 every table, of
       // any width, stacks into one named card per row below 640 px, so no cell is hidden and
       // the document never scrolls sideways.
       const headCells = cells(tl[0]);
-      const labels = headCells.map((c) => stripTags(c).replace(/"/g, "&quot;"));
-      const head = headCells.map((c) => `<th>${c}</th>`).join("");
-      const rows = tl.slice(2).filter((l) => l.startsWith("|")).map((l) => `<tr>${cells(l).map((c, i) => `<td data-label="${labels[i] || ""}">${c}</td>`).join("")}</tr>`).join("");
-      const tableHtml = (cls) => `<table class="cols-${headCells.length}${cls}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
+      const labels = headCells.map((c: string) => stripTags(c).replace(/"/g, "&quot;"));
+      const head = headCells.map((c: string) => `<th>${c}</th>`).join("");
+      const rows = tl.slice(2).filter((l: string) => l.startsWith("|")).map((l: string) => `<tr>${cells(l).map((c: string, i: number) => `<td data-label="${labels[i] || ""}">${c}</td>`).join("")}</tr>`).join("");
+      const tableHtml = (cls: string) => `<table class="cols-${headCells.length}${cls}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
       // A table wider than four columns used to be offered a second time inside <details> as
       // a list of the same cells (v3.134.0, Tek-360), so <main> carried its text twice while
       // the Markdown carries it once. The stacked cards replace that copy: do not bring it back.
@@ -10139,7 +10139,7 @@ function markdownToHtml(md) {
     } else if (trimmed.startsWith("# ")) {
       html.push(`<h1>${renderInline(trimmed.slice(2).trim())}</h1>`);
     } else if (/^- /.test(trimmed)) {
-      const items = trimmed.split("\n").filter((l) => /^- /.test(l.trim())).map((l) => `<li>${renderInline(l.trim().slice(2).trim())}</li>`).join("");
+      const items = trimmed.split("\n").filter((l: string) => /^- /.test(l.trim())).map((l: string) => `<li>${renderInline(l.trim().slice(2).trim())}</li>`).join("");
       html.push(`<ul>${items}</ul>`);
     } else if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
       html.push(`<p class="date">${trimmed}</p>`);
@@ -10158,21 +10158,21 @@ function markdownToHtml(md) {
 // the function body, and every referenced section heading must exist in
 // the twin. A missing heading throws here, which the render harness and
 // the static gate catch before any deploy.
-function mdTwin(path) {
-  return PAGE_MARKDOWN[path].replace(/\r\n/g, "\n");
+function mdTwin(path: string) {
+  return PAGE_MARKDOWN[path as keyof typeof PAGE_MARKDOWN].replace(/\r\n/g, "\n");
 }
-function mdLead(path) {
+function mdLead(path: string) {
   const md = mdTwin(path);
   const cut = md.indexOf("\n## ");
   const blocks = (cut === -1 ? md : md.slice(0, cut)).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
   // A line directly above the H1 is the page's eyebrow (Tek-488): the Markdown carries the label
   // the HTML shows over the heading, in the same place.
-  const eyebrow = blocks.length > 1 && !blocks[0].startsWith("#") && blocks[1].startsWith("# ") ? blocks.shift() : "";
+  const eyebrow = blocks.length > 1 && !blocks[0].startsWith("#") && blocks[1].startsWith("# ") ? blocks.shift()! : "";
   const title = blocks.length && blocks[0].startsWith("# ") ? blocks[0].slice(2).trim() : "";
   const paras = blocks.slice(1).filter((b) => !/^[-|>#]|^ {4}/.test(b));
   return { eyebrow, title, paras };
 }
-function mdSection(path, heading) {
+function mdSection(path: string, heading: string) {
   const md = mdTwin(path);
   const key = "\n## " + heading + "\n";
   const at = md.indexOf(key);
@@ -10181,29 +10181,29 @@ function mdSection(path, heading) {
   const next = md.indexOf("\n## ", from);
   return (next === -1 ? md.slice(from) : md.slice(from, next)).trim();
 }
-function mdBodyHtml(path, heading) {
+function mdBodyHtml(path: string, heading: string) {
   return markdownToHtml(mdSection(path, heading)).replace(/href="https:\/\/turva\.dev\//g, 'href="/');
 }
-function mdPageStart(path, ctaCls?, ctaLinks?) {
+function mdPageStart(path: string, ctaCls?: string, ctaLinks?: string[]) {
   // ctaCls and ctaLinks: the lead closes with the page's button row, read from the twin
   // (mdLeadCta) and rendered after the intro paragraphs.
-  const lead: { eyebrow: any; title: any; paras: any; cta?: any } = ctaCls ? mdLeadCta(path, ctaCls, ctaLinks) : mdLead(path);
+  const lead: { eyebrow: string; title: string; paras: string[]; cta?: string } = ctaCls ? mdLeadCta(path, ctaCls, ctaLinks!) : mdLead(path);
   // A lead paragraph that is only the feed link keeps the feed style (/blog, Tek-486).
-  const intro = lead.paras.map((p, i) => `<p${i === 0 ? ' class="intro"' : /^\[RSS feed\]\(\/[^)]+\)$/.test(p) ? ' class="feed"' : ""}>${renderInline(p)}</p>`).join("\n  ");
+  const intro = lead.paras.map((p: string, i: number) => `<p${i === 0 ? ' class="intro"' : /^\[RSS feed\]\(\/[^)]+\)$/.test(p) ? ' class="feed"' : ""}>${renderInline(p)}</p>`).join("\n  ");
   return `${lead.eyebrow ? `<p class="eyebrow">${renderInline(lead.eyebrow)}</p>\n  ` : ""}<h1>${renderInline(lead.title)}</h1>
   ${intro}${lead.cta ? "\n  " + lead.cta : ""}`;
 }
-function mdCard(path, heading) {
+function mdCard(path: string, heading: string) {
   return `<div class="scard"><h2>${renderInline(heading)}</h2>
     ${mdBodyHtml(path, heading)}
   </div>`;
 }
-function mdKvsCard(path, heading, extra?) {
-  const rows = mdSection(path, heading).split("\n").filter((l) => l.startsWith("- ")).map((l) => {
+function mdKvsCard(path: string, heading: string, extra?: string) {
+  const rows = mdSection(path, heading).split("\n").filter((l: string) => l.startsWith("- ")).map((l: string) => {
     const m = l.slice(2).match(/^(?:\*\*(.+?):\*\*|([^:]+):)\s*(.+)$/);
     return m ? { k: (m[1] || m[2]).trim(), v: m[3].trim() } : null;
-  }).filter(Boolean);
-  const cell = (v) => {
+  }).filter(Boolean) as { k: string; v: string }[];
+  const cell = (v: string) => {
     // A markdown link in a key-value row is rendered as a link, not printed as
     // source. The Signal row is the first row whose value carries one.
     const lm = v.match(/^\[(.+?)\]\((https?:\/\/[^)]+)\)$/);
@@ -10252,12 +10252,12 @@ ${paras.map((t, i) => `        <p${i ? ' class="hint"' : ""}>${renderInline(t)}<
       </div>
     </div>`;
 }
-function mdFaqBlocks(path, heading) {
+function mdFaqBlocks(path: string, heading: string) {
   // One markdown block per answer. A non-question block that does not
   // directly follow a question is section tail prose (rendered by
   // mdFaqTailHtml at main level), not part of the last answer.
-  const pairs = [];
-  const tail = [];
+  const pairs: { q: string; a: string }[] = [];
+  const tail: string[] = [];
   let expectAnswer = false;
   for (const block of mdSection(path, heading).split(/\n{2,}/)) {
     const t = block.trim();
@@ -10278,29 +10278,29 @@ function mdFaqBlocks(path, heading) {
 }
 // A question or answer as FAQPage text: inline code keeps its text and drops its backticks, as
 // the HTML shows it (Tek-488), so the published answer stays the text the reader sees.
-function mdFaqPlain(s) {
+function mdFaqPlain(s: string) {
   return s.replace(/`([^`]+)`/g, "$1");
 }
-function mdFaqRows(path, heading) {
+function mdFaqRows(path: string, heading: string) {
   return mdFaqBlocks(path, heading).pairs.map((p) => `    <p class="q" role="heading" aria-level="3">${renderInline(p.q)}</p>
     <p>${renderInline(p.a)}</p>`).join("\n");
 }
-function mdFaqCard(path, heading) {
+function mdFaqCard(path: string, heading: string) {
   return `<div class="scard"><h2>${renderInline(heading)}</h2><div class="faq">
 ${mdFaqRows(path, heading)}
   </div></div>`;
 }
-function mdFaqTailHtml(path, heading) {
+function mdFaqTailHtml(path: string, heading: string) {
   return mdFaqBlocks(path, heading).tail.map((t) => `<p>${renderInline(t)}</p>`).join("\n  ");
 }
-function mdLinksCard(path, heading) {
+function mdLinksCard(path: string, heading: string) {
   const html = mdBodyHtml(path, heading).replace(/<p>/g, '<p class="sub">');
   return `<div class="scard"><h2>${renderInline(heading)}</h2>${html}
   </div>`;
 }
-function mdTermsHtml(path, heading) {
-  const out = [];
-  let dl = [];
+function mdTermsHtml(path: string, heading: string) {
+  const out: string[] = [];
+  let dl: string[] = [];
   const flush = () => {
     if (dl.length) {
       out.push(`<div class="dl">
@@ -10323,17 +10323,17 @@ function mdTermsHtml(path, heading) {
   flush();
   return out.join("\n    ");
 }
-function mdTermsCard(path, heading) {
+function mdTermsCard(path: string, heading: string) {
   return `<div class="scard"><h2>${renderInline(heading)}</h2>
     ${mdTermsHtml(path, heading)}
   </div>`;
 }
-function mdParas(path, heading, count) {
+function mdParas(path: string, heading: string, count?: number) {
   const paras = mdSection(path, heading).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean).filter((b) => !/^[-|>]|^ {4}/.test(b)).map((b) => renderInline(b.replace(/\s*\n\s*/g, " ")));
   if (count && paras.length !== count) throw new Error("mdParas: " + path + " " + heading + " has " + paras.length + " blocks, expected " + count);
   return paras;
 }
-function mdPcard(path, heading) {
+function mdPcard(path: string, heading: string) {
   // Price cards on /services. The twin section shape is fixed: a **price.
   // meta. meta.** lead, a description, labelled checklists ("What you
   // get:" / "What you do not get:" / "Typical work:" followed by - items,
@@ -10349,7 +10349,7 @@ function mdPcard(path, heading) {
   if (pm) { price = pm[1]; meta = [pm[2], ...meta]; }
   const parts = [`<div class="pcard-head"><h2 class="pcard-t">${renderInline(heading)}</h2><span class="pcard-price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span> <span class="pcard-meta">${meta.map((m) => escapeHtml(m)).join(" &middot; ")}</span></div>`];
   const bodyBlocks = blocks.slice(1);
-  bodyBlocks.forEach((b, i) => {
+  bodyBlocks.forEach((b: string, i: number) => {
     const lines = b.split("\n");
     if (/:$/.test(lines[0].trim()) && lines.slice(1).some((l) => l.startsWith("- "))) {
       const label = lines[0].trim().replace(/:$/, "");
@@ -10372,10 +10372,10 @@ function mdPcard(path, heading) {
     ${parts.join("\n    ")}
   </div>`;
 }
-function mdLists(path, heading) {
+function mdLists(path: string, heading: string) {
   // Every "- item" list block in the section, in order; continuation lines
   // (indented) join their item. Returns an array of item arrays.
-  const lists = [];
+  const lists: string[][] = [];
   for (const block of mdSection(path, heading).split(/\n{2,}/)) {
     const lines = block.split("\n");
     if (!lines.some((l) => l.startsWith("- "))) continue;
@@ -10394,12 +10394,12 @@ function mdLists(path, heading) {
 // (offers, tools, results). Every sentence still comes from the twin; these helpers add
 // structure and never prose. The section id is the same slug rule as markdownToHtml's
 // h2 ids, so an anchor written by hand and one generated here agree.
-function mdSlug(text) {
+function mdSlug(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 // The drawn size of every image a twin section renders through mdSecBodyHtml (Tek-486).
-var MD_IMG_SIZE = { "/badge.svg": [216, 36] };
-function mdSecBodyHtml(path, heading, listOnly?, dropRow?) {
+var MD_IMG_SIZE: Record<string, number[]> = { "/badge.svg": [216, 36] };
+function mdSecBodyHtml(path: string, heading: string, listOnly?: boolean, dropRow?: boolean) {
   // Like mdPcard's body: an opening **price. meta.** block becomes the price line, a
   // "Label:" block followed by "- items" becomes a labelled checklist, and everything
   // else is markdown. Continuation lines of a list item (indented) join the item.
@@ -10409,8 +10409,8 @@ function mdSecBodyHtml(path, heading, listOnly?, dropRow?) {
     .filter((b) => !listOnly || b.trim().startsWith("- "));
   // dropRow: the section's button row is rendered by mdOpenCtaSec, so it is not a paragraph here.
   if (dropRow) blocks = mdCtaSplit(blocks, path + " " + heading).rest;
-  const parts = [];
-  blocks.forEach((b, i) => {
+  const parts: string[] = [];
+  blocks.forEach((b: string, i: number) => {
     const lines = b.split("\n");
     const head = i === 0 ? b.trim().match(/^\*\*(.+)\*\*$/) : null;
     if (head) {
@@ -10437,7 +10437,7 @@ function mdSecBodyHtml(path, heading, listOnly?, dropRow?) {
     } else if (/^!\[[^\]]+\]\(\/[a-z0-9._-]+\)$/.test(b.trim())) {
       // A lone image line: the twin carries the image and its alt text, and the page renders it
       // at the size it was drawn, so the layout does not shift (Tek-486).
-      const im = b.trim().match(/^!\[([^\]]+)\]\((\/[a-z0-9._-]+)\)$/);
+      const im = b.trim().match(/^!\[([^\]]+)\]\((\/[a-z0-9._-]+)\)$/)!;
       const size = MD_IMG_SIZE[im[2]];
       if (!size) throw new Error("mdSecBodyHtml: no drawn size for image " + im[2]);
       parts.push(`<p><img src="${escapeHtml(im[2])}" alt="${escapeHtml(im[1])}" width="${size[0]}" height="${size[1]}"></p>`);
@@ -10447,7 +10447,7 @@ function mdSecBodyHtml(path, heading, listOnly?, dropRow?) {
   });
   return parts.join("\n    ");
 }
-function mdOpenSec(path, heading, id?, extra?, listOnly?, dropRow?) {
+function mdOpenSec(path: string, heading: string, id?: string, extra?: string, listOnly?: boolean, dropRow?: boolean) {
   const html = `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
     ${mdSecBodyHtml(path, heading, listOnly, dropRow)}${extra || ""}
   </section>`;
@@ -10468,49 +10468,49 @@ function mdOpenSec(path, heading, id?, extra?, listOnly?, dropRow?) {
 // from the HTML unnoticed. A button that points at a place on the same page links the heading's
 // own slug, which the Markdown view's heading carries as well, so since Tek-488 no row stays in
 // the HTML only (/services and the two samples were the last three).
-function mdCtaSplit(blocks, where) {
+function mdCtaSplit(blocks: string[], where: string) {
   let at = -1;
-  blocks.forEach((b, i) => { if (/^(?:\[[^\]]+\]\([^)\s]+\)[ \t]*)+$/.test(b.trim())) at = i; });
+  blocks.forEach((b: string, i: number) => { if (/^(?:\[[^\]]+\]\([^)\s]+\)[ \t]*)+$/.test(b.trim())) at = i; });
   if (at === -1) throw new Error("mdCta: no links-only paragraph in " + where);
   return { rest: blocks.filter((_, i) => i !== at), row: blocks[at].trim(), at };
 }
-function mdCtaHtml(row, divCls, linkCls) {
+function mdCtaHtml(row: string, divCls: string, linkCls: string[]) {
   const links = [...row.matchAll(/\[([^\]]+)\]\(([^)\s]+)\)/g)];
   if (links.length > linkCls.length) throw new Error("mdCta: " + links.length + " links for " + linkCls.length + " button classes: " + row);
   return `<div class="${divCls}">` + links.map((m, i) => `<a class="${linkCls[i]}" href="${escapeHtml(m[2])}">${escapeHtml(m[1])}</a>`).join(" ") + "</div>";
 }
-function mdLeadCta(path, divCls, linkCls) {
+function mdLeadCta(path: string, divCls: string, linkCls: string[]) {
   const lead = mdLead(path);
   const cut = mdCtaSplit(lead.paras, path + " lead");
   return { eyebrow: lead.eyebrow, title: lead.title, paras: cut.rest, cta: mdCtaHtml(cut.row, divCls, linkCls) };
 }
-function mdParasCta(path, heading, count, divCls, linkCls) {
+function mdParasCta(path: string, heading: string, count: number, divCls: string, linkCls: string[]) {
   const blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean).filter((b) => !/^[-|>]|^ {4}/.test(b));
   const cut = mdCtaSplit(blocks, path + " " + heading);
   const paras = cut.rest.map((b) => renderInline(b.replace(/\s*\n\s*/g, " ")));
   if (paras.length !== count) throw new Error("mdParasCta: " + path + " " + heading + " has " + paras.length + " blocks, expected " + count);
   return { paras, cta: mdCtaHtml(cut.row, divCls, linkCls) };
 }
-function mdOpenCtaSec(path, heading, id, divCls, linkCls) {
+function mdOpenCtaSec(path: string, heading: string, id: string, divCls: string, linkCls: string[]) {
   const blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
   const cut = mdCtaSplit(blocks, path + " " + heading);
   if (cut.at !== blocks.length - 1) throw new Error("mdOpenCtaSec: the button row must close " + path + " " + heading);
   return mdOpenSec(path, heading, id, "\n    " + mdCtaHtml(cut.row, divCls, linkCls), false, true);
 }
-function mdFaqSec(path, heading, id) {
+function mdFaqSec(path: string, heading: string, id?: string) {
   return `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2><div class="faq">
 ${mdFaqRows(path, heading)}
   </div>
   ${mdFaqTailHtml(path, heading)}
   </section>`;
 }
-function mdKvsSec(path, heading, extra?) {
+function mdKvsSec(path: string, heading: string, extra?: string) {
   const grid = mdKvsCard(path, heading).replace(/^<div class="scard"><h2>.*?<\/h2>/, "").replace(/<\/div>$/, "");
   return `<section class="sec" id="${mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
     ${grid}${extra || ""}
   </section>`;
 }
-function mdOfferCards(path, heading, idFor?) {
+function mdOfferCards(path: string, heading: string, idFor?: Record<string, string>) {
   // The same row shape as the home page offers: "- [name](href). €price. covers Delivered ... [One retest ...]".
   // idFor carries an old section anchor onto the card that replaced that section, so a link
   // written before the section became a card still lands on the same offer (/services#shopify).
@@ -10527,7 +10527,7 @@ function mdOfferCards(path, heading, idFor?) {
     return `<li class="card ocard"${cardId}><span class="card-top"><span class="name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="price">${escapeHtml(price)}.</span></span> <span class="cov">${escapeHtml(covers)}</span> <span class="when">${escapeHtml(when)}</span>${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""}</li>`;
   }).join("\n      ");
 }
-function mdActionCards(path, headings) {
+function mdActionCards(path: string, headings: string[]) {
   // /contact (2026-09-08): one card per prepared message, the section's paragraphs and
   // its last "[label](href)" line as a button-sized action. The href is the twin's, so the
   // prefilled mailto stays in one place.
@@ -10539,7 +10539,7 @@ function mdActionCards(path, headings) {
     return `<div class="card"><h2>${renderInline(h)}</h2>${paras}<a class="btn" href="${escapeHtml(last[2])}">${escapeHtml(last[1])}</a></div>`;
   }).join("\n      ");
 }
-function mdToolCards(path, headings) {
+function mdToolCards(path: string, headings: string[]) {
   // One card per section: the section's paragraphs, then its last "[label](href)" line as the action.
   return headings.map((h) => {
     const blocks = mdSection(path, h).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
@@ -10549,7 +10549,7 @@ function mdToolCards(path, headings) {
     return `<div class="card"><h2>${renderInline(h)}</h2>${paras}<a class="go" href="${escapeHtml(last[2])}">${escapeHtml(last[1])}</a></div>`;
   }).join("\n      ");
 }
-function mdTidyUrlText(html) {
+function mdTidyUrlText(html: string) {
   // Autolinked bare URLs keep the full URL as their visible text; strip the
   // scheme, www. and a trailing slash from the TEXT only (hrefs untouched).
   return html.replace(/>https?:\/\/(?:www\.)?([^<]*?)\/?</g, ">$1<");
@@ -10558,13 +10558,13 @@ function mdTidyUrlText(html) {
 // Guide pages are rendered to HTML right here by the worker. Agents that
 // send Accept: text/markdown are served PAGE_MARKDOWN earlier; this is the
 // human/HTML representation.
-function buildGuideJsonLd(pathname, canonicalUrl) {
-  const m = META_BY_PATH[pathname] || META_BY_PATH["/"];
+function buildGuideJsonLd(pathname: string, canonicalUrl: string) {
+  const m: PageMeta = META_BY_PATH[pathname as keyof typeof META_BY_PATH] || META_BY_PATH["/"];
   // The headline is the page heading, not the title tag. It comes from the
   // PAGE_MARKDOWN h1 so the structured data and the visible heading cannot
   // drift, and the site suffix never leaks in. The title fallback strips
   // either separator, because META_BY_PATH uses both.
-  const mdH1 = (PAGE_MARKDOWN[pathname] || "").match(/^# (.+)$/m);
+  const mdH1 = (PAGE_MARKDOWN[pathname as keyof typeof PAGE_MARKDOWN] || "").match(/^# (.+)$/m);
   const headline = mdH1 ? mdH1[1].trim() : m.title.replace(/ [|\u00B7] turva\.dev$/, "");
   const url = canonicalUrl || "https://turva.dev" + pathname;
   const isGuide = pathname === "/guides" || pathname.startsWith("/guides/");
@@ -10595,8 +10595,8 @@ function buildGuideJsonLd(pathname, canonicalUrl) {
   }
   if (isBlogHub) {
     const posts = Object.keys(PAGE_MARKDOWN).filter((k) => k.startsWith("/blog/")).map((k) => {
-      const pm = META_BY_PATH[k] || {};
-      const pmH1 = (PAGE_MARKDOWN[k] || "").match(/^# (.+)$/m);
+      const pm: Partial<PageMeta> = META_BY_PATH[k as keyof typeof META_BY_PATH] || {};
+      const pmH1 = (PAGE_MARKDOWN[k as keyof typeof PAGE_MARKDOWN] || "").match(/^# (.+)$/m);
       const item: { [k: string]: any } = { "@type": "BlogPosting", "headline": pmH1 ? pmH1[1].trim() : (pm.title || "").replace(/ [|\u00B7] turva\.dev$/, ""), "url": "https://turva.dev" + k };
       if (pm.date) { item.datePublished = pm.date; item.dateModified = pm.modified || pm.date; }
       return item;
@@ -10700,9 +10700,9 @@ var GUIDE_PAGE_FAQ = {
   "/guides/get-cited-by-ai-assistants": mdFaqBlocks("/guides/get-cited-by-ai-assistants", "Frequently asked").pairs,
   "/guides/choosing-an-agent-readiness-audit": mdFaqBlocks("/guides/choosing-an-agent-readiness-audit", "Frequently asked").pairs,
 };
-
-function buildGuidePageFaqJsonLd(pathname, canonicalUrl) {
-  const items = GUIDE_PAGE_FAQ[pathname];
+type PageMeta = { title: string; titleTag?: string; description: string; date?: string; modified?: string; checked?: string; kind?: string; image?: string; imageAlt: string };
+function buildGuidePageFaqJsonLd(pathname: string, canonicalUrl: string) {
+  const items: (typeof GUIDE_PAGE_FAQ)[keyof typeof GUIDE_PAGE_FAQ] | undefined = GUIDE_PAGE_FAQ[pathname as keyof typeof GUIDE_PAGE_FAQ];
   if (!items || !items.length) return "";
   const url = canonicalUrl || "https://turva.dev" + pathname;
   const faq = {
@@ -10710,7 +10710,7 @@ function buildGuidePageFaqJsonLd(pathname, canonicalUrl) {
     "@type": "FAQPage",
     "@id": url + "#faq",
     "inLanguage": "en",
-    "mainEntity": items.map((item) => ({
+    "mainEntity": items.map((item: { q: string; a: string }) => ({
       "@type": "Question",
       "name": mdFaqPlain(item.q),
       "acceptedAnswer": { "@type": "Answer", "text": mdFaqPlain(item.a) }
@@ -10720,7 +10720,7 @@ function buildGuidePageFaqJsonLd(pathname, canonicalUrl) {
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
-function buildShopifyServiceJsonLd(canonicalUrl) {
+function buildShopifyServiceJsonLd(canonicalUrl: string) {
   const url = canonicalUrl || "https://turva.dev/shopify-agent-storefront-check";
   const svc = {
     "@context": "https://schema.org",
@@ -10753,7 +10753,7 @@ function buildShopifyServiceJsonLd(canonicalUrl) {
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
-function buildAuditServiceJsonLd(canonicalUrl) {
+function buildAuditServiceJsonLd(canonicalUrl: string) {
   // The same audit as the OfferCatalog row in SCHEMA_SERVICE: one product, its own page URL,
   // the price from facts.json through the same literal the catalog uses.
   const url = canonicalUrl || "https://turva.dev/agent-readiness-audit";
@@ -10788,7 +10788,7 @@ function buildAuditServiceJsonLd(canonicalUrl) {
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
-function buildParityAppJsonLd(canonicalUrl) {
+function buildParityAppJsonLd(canonicalUrl: string) {
   const url = canonicalUrl || "https://turva.dev/markdown-parity-check";
   const app = {
     "@context": "https://schema.org",
@@ -10809,7 +10809,7 @@ function buildParityAppJsonLd(canonicalUrl) {
   return `<script type="application/ld+json">\n${json2}\n<\/script>`;
 }
 
-function buildValidatorAppJsonLd(canonicalUrl) {
+function buildValidatorAppJsonLd(canonicalUrl: string) {
   const url = canonicalUrl || "https://turva.dev/llms-txt-validator";
   const app = {
     "@context": "https://schema.org",
@@ -10882,7 +10882,7 @@ var FAQ_CSS = `.faq .q{color:#F2F4F3;font-weight:700;font-size:1rem;margin:1.15r
 // E03 (Tek-496 audit round): the Mastodon icon path in the footer HTML below matches Boxicons
 // 2.0.8's bxl-mastodon.svg (three numeric differences). That version's own README states its
 // SVG license as CC BY 4.0 and also states that attribution is not required.
-function footerHtml(kieli?) { const fi = kieli === "fi"; return `<footer class="tv-foot">
+function footerHtml(kieli?: string) { const fi = kieli === "fi"; return `<footer class="tv-foot">
   <div class="foot-brand">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle><path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
     <span class="nv-word">turva<b>·</b>dev</span>
@@ -10969,8 +10969,8 @@ var GUIDE_ANCHOR_ALIASES = {
     "verification": ["make-it-checkable"]
   }
 };
-function withAnchorAliases(pathname, html) {
-  const aliases: Record<string, string[]> = GUIDE_ANCHOR_ALIASES[pathname];
+function withAnchorAliases(pathname: string, html: string) {
+  const aliases: Record<string, string[]> | undefined = GUIDE_ANCHOR_ALIASES[pathname as keyof typeof GUIDE_ANCHOR_ALIASES];
   if (!aliases) return html;
   let out = html;
   for (const [id, olds] of Object.entries(aliases)) {
@@ -10991,11 +10991,11 @@ var GUIDE_NEXT = {
   "/guides/mcp-server-card": 'Read this site\'s card: <a class="btn-ghost" href="/tools">See the free tools</a>'
 };
 
-function serveGuideHtml(pathname, canonicalUrl) {
+function serveGuideHtml(pathname: string, canonicalUrl: string) {
   const md = mdTwin(pathname);
   const metaBlock = buildMetaBlock(pathname, canonicalUrl);
   const jsonLd = buildGuideJsonLd(pathname, canonicalUrl) +
-    (GUIDE_PAGE_FAQ[pathname] ? "\n" + buildGuidePageFaqJsonLd(pathname, canonicalUrl) : "");
+    (GUIDE_PAGE_FAQ[pathname as keyof typeof GUIDE_PAGE_FAQ] ? "\n" + buildGuidePageFaqJsonLd(pathname, canonicalUrl) : "");
   // The Frequently asked section renders as a card and the rest of the article renders
   // around it, so a question appears once rather than twice. Before v3.92.0 no guide twin
   // carried the section at all and this function served a FAQPage nothing on the page said.
@@ -11042,7 +11042,7 @@ function serveGuideHtml(pathname, canonicalUrl) {
   // frame's own dates, the contents list is a second named <nav> (Erik 2026-09-25), and a guide's
   // next step follows <main>. A post keeps the twin's bare date line under the H1 as the twin has
   // it; the author and the update date, which the twin does not carry, are in the page head.
-  const meta = META_BY_PATH[pathname] || {};
+  const meta: Partial<PageMeta> = META_BY_PATH[pathname as keyof typeof META_BY_PATH] || {};
   const twinDate = (aliased.match(/<p class="date">(\d{4}-\d{2}-\d{2})<\/p>/) || [])[1];
   const byline = navSection === "/blog" && twinDate
     ? `<p class="date">Erik Rekola${meta.modified && meta.modified !== twinDate ? ` &middot; updated ${meta.modified}` : ""}</p>\n`
@@ -11067,10 +11067,10 @@ function serveGuideHtml(pathname, canonicalUrl) {
   // date line. Since Tek-488 the label is the twin's line above the H1 and the actions are the
   // links-only paragraph that closes that section (the Tek-484 row), so the Markdown carries
   // both. All three fail closed: a sample whose label, row or date line is missing does not render.
-  const sample = SAMPLE_HEAD[pathname];
+  const sample: (typeof SAMPLE_HEAD)[keyof typeof SAMPLE_HEAD] | undefined = SAMPLE_HEAD[pathname as keyof typeof SAMPLE_HEAD];
   let withSample = withToc;
   if (sample) {
-    const blocks = mdSection(pathname, sample.cta).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+    const blocks: string[] = mdSection(pathname, sample.cta).split(/\n{2,}/).map((b: string) => b.trim()).filter(Boolean);
     const cut = mdCtaSplit(blocks, pathname + " " + sample.cta);
     if (cut.at !== blocks.length - 1) throw new Error("the sample's button row must close " + pathname + " " + sample.cta);
     withSample = replaceExactlyOnce(withSample, `<p>${renderInline(cut.row)}</p>`, mdCtaHtml(cut.row, "cta", ["btn", "btn-ghost"]));
@@ -11082,7 +11082,7 @@ function serveGuideHtml(pathname, canonicalUrl) {
     withSample = withSample.replace(dateRe, '<p class="date">$1</p>');
   }
   const next = navSection === "/guides"
-    ? `<aside class="next"><p>${GUIDE_NEXT[pathname] || GUIDE_NEXT.default}</p></aside>`
+    ? `<aside class="next"><p>${GUIDE_NEXT[pathname as keyof typeof GUIDE_NEXT] || GUIDE_NEXT.default}</p></aside>`
     : "";
   const body = `<!doctype html>
 <html lang="en">
@@ -11195,7 +11195,7 @@ var HOME_MARKDOWN = (function () {
   return cut === -1 ? PAGE_MARKDOWN["/"] : PAGE_MARKDOWN["/"].slice(0, cut);
 })();
 
-function serveHomeHtml(canonicalUrl) {
+function serveHomeHtml(canonicalUrl: string) {
   const metaBlock = buildMetaBlock("/", canonicalUrl);
   const lead = mdLeadCta("/", "cta", ["btn", "btn-ghost"]);
   if (!lead.eyebrow) throw new Error("the home twin carries no eyebrow line above its H1");
@@ -11212,14 +11212,14 @@ function serveHomeHtml(canonicalUrl) {
   const heroH1 = renderInline(lead.title).replace("AI assistants", '<span class="hl">AI assistants</span>');
   // "Title. Body." paragraphs become a titled card; the split is the first ". " and a paragraph
   // without one throws, so a twin edit that drops the title cannot render an empty card.
-  const titled = (t, what) => { const k = t.indexOf(". "); if (k < 0) throw new Error("home " + what + " paragraph has no title: " + t.slice(0, 40)); return { t: t.slice(0, k), b: t.slice(k + 2) }; };
+  const titled = (t: string, what: string) => { const k = t.indexOf(". "); if (k < 0) throw new Error("home " + what + " paragraph has no title: " + t.slice(0, 40)); return { t: t.slice(0, k), b: t.slice(k + 2) }; };
   // The two offers are read from the twin list, one card each: name, price, what it covers and
   // when it is delivered, plus a retest line when the service has one. Fail closed: a list line that stops matching the shape throws here
   // instead of rendering a card with an empty price (Tek-355, Tek-357).
   const offerParas = mdParas("/", "Choose the check you need", 2);
-  const offerRaw = mdSection("/", "Choose the check you need").split("\n").filter((l) => l.startsWith("- "));
+  const offerRaw = mdSection("/", "Choose the check you need").split("\n").filter((l: string) => l.startsWith("- "));
   if (offerRaw.length !== 2) throw new Error("home starting-point list does not carry exactly two offers: " + offerRaw.length);
-  const offerCards = offerRaw.map((line) => {
+  const offerCards = offerRaw.map((line: string) => {
     const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)(?: (One retest [^.]+\.))?$/);
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
     const [, name, href, price, covers, when, retest] = m;
@@ -11261,12 +11261,12 @@ function serveHomeHtml(canonicalUrl) {
   if (boardRows.length !== 5) throw new Error("home scan board twin does not carry five category rows: " + boardRows.length);
   // Tek-488 round 3: a titled card is one paragraph, the title and its period first, so the card
   // reads as the twin's "Title. Body." paragraph.
-  const workCards = work.slice(0, 3).map((t) => titled(t, "inspect")).map((c) => `<div class="svc"><p><span class="svc-t">${c.t}.</span> ${c.b}</p></div>`).join("\n      ");
+  const workCards = work.slice(0, 3).map((t: string) => titled(t, "inspect")).map((c: { t: string; b: string }) => `<div class="svc"><p><span class="svc-t">${c.t}.</span> ${c.b}</p></div>`).join("\n      ");
   const secList = mdLists("/", "See what the work looks like")[1].map((x) => `<li>${mdTidyUrlText(x)}</li>`).join("\n      ");
   const proc = mdParas("/", "How we work", 4);
   // The step numbers are a CSS counter: the order is the twin's paragraph order, and the number
   // only repeats it (Tek-488 round 3).
-  const procCards = proc.slice(0, 3).map((t, i) => titled(t, "process")).map((c) => `<div class="step"><p><span class="step-t">${c.t}.</span> ${c.b}</p></div>`).join("\n      ");
+  const procCards = proc.slice(0, 3).map((t: string, i: number) => titled(t, "process")).map((c: { t: string; b: string }) => `<div class="step"><p><span class="step-t">${c.t}.</span> ${c.b}</p></div>`).join("\n      ");
   const contact = mdParasCta("/", "Tell me what you want to understand", 2, "cta-row", ["cta-btn", "mail-link"]);
   const body = `<!doctype html>
 <html lang="en">
@@ -11502,7 +11502,7 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers });
 }
 
-function serveServicesHtml(canonicalUrl) {
+function serveServicesHtml(canonicalUrl: string) {
   const metaBlock = buildMetaBlock("/services", canonicalUrl);
   const jsonLd = buildGuideJsonLd("/services", canonicalUrl) +
     (GUIDE_PAGE_FAQ["/services"] ? "\n" + buildGuidePageFaqJsonLd("/services", canonicalUrl) : "") +
@@ -11749,7 +11749,7 @@ ${TOC_SUB_CSS}
 ${TBL_CSS}
 @media (max-width:360px){main{padding-left:20px;padding-right:20px;}}`;
 
-function cardPageHead(metaBlock, jsonLd, canonicalUrl, extraHead?) {
+function cardPageHead(metaBlock: string, jsonLd: string, canonicalUrl: string, extraHead?: string) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -11780,7 +11780,7 @@ ${FOOTER_CSS}
 // screens and a <details> with a visible Menu button for narrow ones. CSS-only on purpose: the
 // site carries exactly one inline script under a hashed CSP, and a menu does not earn a second.
 // Every nav on the site is built through this helper so the two forms cannot drift.
-function navMenuHtml(lis) {
+function navMenuHtml(lis: string) {
   return `  <ul class="nv-menu">
 ${lis}
   </ul>
@@ -11791,7 +11791,7 @@ ${lis}
     </ul>
   </details>`;
 }
-function cardPageNav(current) {
+function cardPageNav(current: string) {
   const items = [["/","home"],["/services","services"],["/guides","guides"],["/blog","blog"],["/tools","tools"],["/company","company"],["/legal","legal"],["/contact","contact"]];
   const lis = items.map(([href,label]) => `    <li><a href="${href}"${href === current ? ' aria-current="page"' : ''}>${label}</a></li>`).join("\n");
   return `<nav class="turva-nav" aria-label="Main">
@@ -11806,7 +11806,7 @@ ${navMenuHtml(lis)}
 </nav>`;
 }
 
-function cardPageHeaders(canonicalUrl) {
+function cardPageHeaders(canonicalUrl: string) {
   const headers = new Headers({
     "content-type": "text/html; charset=utf-8",
     "cache-control": "public, max-age=3600",
@@ -11846,7 +11846,7 @@ function cardPageHeaders(canonicalUrl) {
 // A separate "no such brief" page would tell an outsider that the path exists.
 var BRIEF_ID = /^[a-z0-9][a-z0-9-]{7,79}$/;
 
-function briefRoute(pathname) {
+function briefRoute(pathname: string) {
   if (!pathname.startsWith("/brief/")) return null;
   var rest = pathname.slice("/brief/".length);
   var muoto = "html";
@@ -11878,7 +11878,7 @@ function briefRoute(pathname) {
 // A trailing slash joined the set in round 19 (K6-P1): /brief/<id>/ answered 404.
 var BRIEF_LOPPUVALIMERKIT = /[.,;:!?)\]\/]+$/;
 
-function briefSiivousKohde(pathname) {
+function briefSiivousKohde(pathname: string) {
   if (!pathname.startsWith("/brief/")) return null;
   if (!BRIEF_LOPPUVALIMERKIT.test(pathname)) return null;
   var siivottu = pathname.replace(BRIEF_LOPPUVALIMERKIT, "");
@@ -11900,20 +11900,20 @@ function briefSiivousKohde(pathname) {
 // goes out byte for byte as it is in KV, because it is written for a markdown parser.
 var BRIEF_ESCAPABLE = "#>+*-.)";
 
-function briefHoldEscapes(md) {
-  return md.replace(/[\uE000-\uE007]/g, "\uE007$&").replace(/\\([#>+*\-.)])/g, function (m, c) {
+function briefHoldEscapes(md: string) {
+  return md.replace(/[\uE000-\uE007]/g, "\uE007$&").replace(/\\([#>+*\-.)])/g, function (m: string, c: string) {
     return String.fromCharCode(0xE000 + BRIEF_ESCAPABLE.indexOf(c));
   });
 }
 
-function briefReleaseEscapes(html) {
-  return html.replace(/\uE007([\uE000-\uE007])|[\uE000-\uE006]/g, function (p, kept) {
+function briefReleaseEscapes(html: string) {
+  return html.replace(/\uE007([\uE000-\uE007])|[\uE000-\uE006]/g, function (p: string, kept: string | undefined) {
     if (kept) return kept;
     return escapeHtml(BRIEF_ESCAPABLE.charAt(p.charCodeAt(0) - 0xE000));
   });
 }
 
-function briefHeaders(kind, kieli) {
+function briefHeaders(kind: string, kieli: string | undefined) {
   var headers = new Headers();
   // A private page, not for the cache. A brief can gain a dated rescan block, and an old
   // copy at the edge would then say something different from KV.
@@ -11947,7 +11947,7 @@ main strong{color:#F2F4F3;}
 main pre{max-width:100%;}
 main a{overflow-wrap:anywhere;}`;
 
-function briefHtmlPage(rec, canonicalUrl) {
+function briefHtmlPage(rec: BriefRec, canonicalUrl: string) {
   var kieli = rec.kieli === "fi" ? "fi" : "en";
   var otsikko = (rec.otsikko || rec.yritys || "agent readiness brief") + " · turva.dev";
   var kuvaus = kieli === "fi"
@@ -12017,8 +12017,8 @@ ${footerHtml(kieli)}
 </body>
 </html>`;
 }
-
-async function serveBrief(route, pathname, env: Env, request) {
+type BriefRec = { md: string; json?: unknown; kieli?: string; otsikko?: string; yritys?: string };
+async function serveBrief(route: { id: string; muoto: string }, pathname: string, env: Env, request: Request) {
   var kv = env && env.BRIEFIT;
   // Without the binding the route does not exist. This way the tests and the pre-deploy
   // state answer as they would for an unknown path, and a missing binding is not a 500.
@@ -12027,7 +12027,7 @@ async function serveBrief(route, pathname, env: Env, request) {
   try {
     rec = await kv.get(route.id, { type: "json" });
   } catch (err) {
-    console.error("brief KV error:", err && err.stack ? err.stack : String(err));
+    console.error("brief KV error:", err && (err as { stack?: string }).stack ? (err as { stack?: string }).stack : String(err));
     return serve404(pathname, request);
   }
   if (!rec || typeof rec.md !== "string" || !rec.json) return serve404(pathname, request);
@@ -12065,7 +12065,7 @@ async function serveBrief(route, pathname, env: Env, request) {
 }
 
 
-function serveCompanyHtml(canonicalUrl) {
+function serveCompanyHtml(canonicalUrl: string) {
   const head = cardPageHead(buildMetaBlock("/company", canonicalUrl), buildGuideJsonLd("/company", canonicalUrl), canonicalUrl);
   const body = `${head}
 ${cardPageNav("/company")}
@@ -12084,7 +12084,7 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
 }
 
-function serveContactHtml(canonicalUrl) {
+function serveContactHtml(canonicalUrl: string) {
   const head = cardPageHead(buildMetaBlock("/contact", canonicalUrl), buildGuideJsonLd("/contact", canonicalUrl), canonicalUrl);
   // The email address is the primary action and also stands as plain text, so it can be
   // copied without opening a mail client; the two prefilled mailto links stay complete in
@@ -12111,11 +12111,11 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
 }
 
-function serveLegalHtml(canonicalUrl) {
+function serveLegalHtml(canonicalUrl: string) {
   const head = cardPageHead(buildMetaBlock("/legal", canonicalUrl), buildGuideJsonLd("/legal", canonicalUrl), canonicalUrl);
   const secs = ["Operator", "Engagement terms", "Privacy", "Data rights", "Reporting a vulnerability", "Cookies", "Updates"];
   const toc = `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${secs.map((h) => `<li><a href="#${mdSlug(h)}">${h}</a></li>`).join("")}</ul></nav>`;
-  const terms = (h) => `<section class="sec" id="${mdSlug(h)}"><h2>${h}</h2>
+  const terms = (h: string) => `<section class="sec" id="${mdSlug(h)}"><h2>${h}</h2>
     ${mdTermsHtml("/legal", h)}
   </section>`;
   const body = `${head}
@@ -12137,7 +12137,7 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
 }
 
-function serveShopifyHtml(canonicalUrl) {
+function serveShopifyHtml(canonicalUrl: string) {
   const head = cardPageHead(
     buildMetaBlock("/shopify-agent-storefront-check", canonicalUrl),
     buildGuideJsonLd("/shopify-agent-storefront-check", canonicalUrl) + "\n" +
@@ -12174,7 +12174,7 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
 }
 
-function serveAuditHtml(canonicalUrl) {
+function serveAuditHtml(canonicalUrl: string) {
   // The commercial page of the website and API audit (2026-09-08). The guide at
   // /guides/agent-readiness-audit stays a guide. Same shape as the Shopify product page:
   // twin first, open sections, one prepared mailto. Since the 2026-09-09 text round the page
@@ -12220,7 +12220,7 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
 }
 
-function serveBadgeHtml(canonicalUrl) {
+function serveBadgeHtml(canonicalUrl: string) {
   const head = cardPageHead(buildMetaBlock("/badge", canonicalUrl), buildGuideJsonLd("/badge", canonicalUrl), canonicalUrl);
   const body = `${head}
 ${cardPageNav("/badge")}
@@ -12239,7 +12239,7 @@ ${footerHtml()}
   return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
 }
 
-function serveToolsHtml(canonicalUrl) {
+function serveToolsHtml(canonicalUrl: string) {
   const head = cardPageHead(buildMetaBlock("/tools", canonicalUrl), buildGuideJsonLd("/tools", canonicalUrl), canonicalUrl);
   const body = `${head}
 ${cardPageNav("/tools")}
@@ -14251,9 +14251,9 @@ var PARITY_EXAMPLE_URL = "https://turva.dev/tools";
 // this bounds how many synchronous comparisons one isolate holds at once, and a request over it gets
 // 503 with Retry-After instead of waiting.
 var parityActive = 0;
-
-class ParityError extends Error { declare kind: string; declare status: number; declare field: string | null; declare values: Record<string, unknown>;
-  constructor(kind, status, message, field?) {
+type ParityReport = ReturnType<typeof mpcRun>; type ParityRunOptions = Parameters<typeof mpcRun>[2]; type ParityPage = Parameters<typeof mpcRun>[0] & { meta: { status: number } }; type ParityValues = { url?: string; markdownUrl?: string; selector?: string; strict?: boolean; frontMatter?: string }; type ParityInput = { url?: string; markdownUrl?: string; selector?: string; strict: boolean; frontMatter: "keep" | "strip" }; type ParityState = { values?: ParityValues; field?: string | null; report?: ParityReport; status?: number };
+class ParityError extends Error { declare kind: string; declare status: number; declare field: string | null; declare values?: ParityValues;
+  constructor(kind: string, status: number, message: string, field?: string) {
     super(message);
     this.name = "ParityError";
     this.kind = kind;
@@ -14262,7 +14262,7 @@ class ParityError extends Error { declare kind: string; declare status: number; 
   }
 }
 
-async function parityReadCapped(body, cap) {
+async function parityReadCapped(body: ReadableStream<Uint8Array> | null, cap: number): Promise<{ buf: Uint8Array; bytes: number; over: false } | { buf: null; bytes: number; over: true }> {
   if (!body) return { buf: new Uint8Array(0), bytes: 0, over: false };
   const reader = body.getReader();
   const chunks = [];
@@ -14285,7 +14285,7 @@ async function parityReadCapped(body, cap) {
 
 // Same decoding as the CLI's decodeBody: the charset from Content-Type, UTF-8 when it is missing or
 // the runtime does not know it.
-function parityDecode(buf, contentType) {
+function parityDecode(buf: Uint8Array, contentType: string | null) {
   const m = /charset=([^;]+)/i.exec(contentType || "");
   const charset = (m ? m[1] : "utf-8").trim().replace(/^"|"$/g, "").toLowerCase();
   try {
@@ -14297,11 +14297,11 @@ function parityDecode(buf, contentType) {
 
 // The request: JSON from an agent, or the page's form. Field values are kept so the form can show
 // what was sent next to the error.
-async function parityParseInput(request) {
+async function parityParseInput(request: Request) {
   const type = (request.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
   const form = type === "application/x-www-form-urlencoded";
   const values: { url?: string; markdownUrl?: string; selector?: string; strict?: boolean; frontMatter?: string } = {};
-  const fail = (kind, status, message, field?) => {
+  const fail = (kind: string, status: number, message: string, field?: string) => {
     const e = new ParityError(kind, status, message, field);
     e.values = values;
     return e;
@@ -14318,10 +14318,10 @@ async function parityParseInput(request) {
     try { raw = JSON.parse(text); } catch { throw fail("invalid_json", 400, "The request body is not valid JSON."); }
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw fail("invalid_json", 400, "The request body must be a JSON object.");
   }
-  for (const k of ["url", "markdownUrl", "selector"]) if (typeof raw[k] === "string") values[k] = cut(raw[k], PARITY_MAX_URL_CHARS);
+  for (const k of ["url", "markdownUrl", "selector"] as const) if (typeof raw[k] === "string") values[k] = cut(raw[k], PARITY_MAX_URL_CHARS);
   if (typeof raw.strict === "boolean") values.strict = raw.strict;
   if (raw.frontMatter === "strip") values.frontMatter = "strip";
-  const str = (v, field, max, label) => {
+  const str = (v: unknown, field: string, max: number, label: string) => {
     if (v === undefined || v === null) return undefined;
     if (typeof v !== "string") throw fail("invalid_field", 400, label + " must be a string.", field);
     const s = v.trim();
@@ -14343,7 +14343,7 @@ async function parityParseInput(request) {
 
 // https only, a public DNS name (the validator's isValidPublicHost: no IP literals, no local or
 // internal names), no port, no credentials. The fragment is dropped, as a browser does.
-function parityTarget(raw, field, label) {
+function parityTarget(raw: string, field: string, label: string) {
   let u;
   try { u = new URL(raw); } catch { throw new ParityError("invalid_url", 400, label + " is not a full address. Start it with https://.", field); }
   if (u.protocol !== "https:") throw new ParityError("invalid_url", 400, label + " must start with https://.", field);
@@ -14357,19 +14357,19 @@ function parityTarget(raw, field, label) {
   return u;
 }
 
-function paritySameSite(a, b) {
-  const apex = (h) => (h.startsWith("www.") ? h.slice(4) : h).toLowerCase();
+function paritySameSite(a: URL, b: URL) {
+  const apex = (h: string) => (h.startsWith("www.") ? h.slice(4) : h).toLowerCase();
   return apex(a.hostname) === apex(b.hostname);
 }
 
-function parityIsSelf(u) {
+function parityIsSelf(u: URL) {
   const h = u.hostname.toLowerCase();
   return h === "turva.dev" || h === "www.turva.dev";
 }
 
 // A published page: the home page or a PAGE_MARKDOWN key, as the page, its .md twin or with a
 // trailing slash. The two tool pages are not: a check must never start a check or a fetch.
-function paritySelfPathAllowed(pathname) {
+function paritySelfPathAllowed(pathname: string) {
   // Letter case is folded first, because another case of a page now answers 301 to the lower-case
   // path (round 19, P1), and the home page's twin is /index.md or /index.html.md although /index
   // itself is not served (round 19 review of K8-P4).
@@ -14385,14 +14385,14 @@ function paritySelfPathAllowed(pathname) {
 
 // The two tool pages are published pages that this version declines to check, so they get a
 // refusal of their own instead of the one for an address that is not a page (Tek-486).
-function parityToolPage(pathname) {
+function parityToolPage(pathname: string) {
   let base = String(pathname).toLowerCase();
   base = base.endsWith(".html.md") ? base.slice(0, -8) : base.endsWith(".md") ? base.slice(0, -3) : base;
   if (base.length > 1 && base.endsWith("/")) base = base.slice(0, -1);
   return base === PARITY_PATH || base === "/llms-txt-validator";
 }
 
-async function paritySource(requested, final, res, accept, redirects) {
+async function paritySource(requested: string, final: string, res: Response, accept: string, redirects: number): Promise<ParityPage> {
   const cap = accept === "text/html" ? PARITY_MAX_HTML_BYTES : PARITY_MAX_MARKDOWN_BYTES;
   const read = await parityReadCapped(res.body, cap);
   const label = accept === "text/html" ? "HTML" : "Markdown";
@@ -14407,7 +14407,7 @@ async function paritySource(requested, final, res, accept, redirects) {
 
 // One of turva.dev's own pages, rendered in process with the Accept header the CLI sends. Redirects
 // are followed within turva.dev only, and every hop is checked against the published-page list again.
-async function parityFetchSelf(start, accept, env: Env) {
+async function parityFetchSelf(start: URL, accept: string, env: Env): Promise<ParityPage> {
   let url = new URL(start.href);
   let redirects = 0;
   const visited = new Set();
@@ -14417,7 +14417,7 @@ async function parityFetchSelf(start, accept, env: Env) {
     if (!parityIsSelf(url)) throw new ParityError("off_host", 422, "The address redirects to another host, " + mpcMaskUrl(url.href) + ". Redirects are followed within the same site only.");
     if (!paritySelfPathAllowed(url.pathname) && parityToolPage(url.pathname)) throw new ParityError("tool_page", 403, mpcMaskUrl(url.href) + " is one of turva.dev's two tool pages. This version does not check them, because a check must never start another check or a fetch.", "url");
     if (!paritySelfPathAllowed(url.pathname)) throw new ParityError("not_published", 403, mpcMaskUrl(url.href) + " is not one of turva.dev's published pages, so this version does not check it.", "url");
-    const res = await handleRequest(new Request(url.href, { method: "GET", headers: { accept } }), env);
+    const res: Response = await handleRequest(new Request(url.href, { method: "GET", headers: { accept } }), env);
     if (res.status >= 300 && res.status < 400) {
       try { await res.body?.cancel(); } catch { /* nothing to release */ }
       const loc = res.headers.get("location");
@@ -14434,7 +14434,7 @@ async function parityFetchSelf(start, accept, env: Env) {
 
 // Phase 2: the remote transport lives in its own Worker behind a service binding, so its CPU limit
 // and its failures stay out of this isolate. Its answer is { status, report }.
-async function parityRemote(input, env: Env) {
+async function parityRemote(input: ParityInput, env: Env) {
   let res;
   try {
     res = await env.PARITY!.fetch("https://parity.internal/check", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(input) });
@@ -14442,21 +14442,21 @@ async function parityRemote(input, env: Env) {
     throw new ParityError("remote_failed", 503, "The comparison service did not answer. Try again later.");
   }
   if (res.status !== 200) throw new ParityError("remote_failed", 503, "The comparison service did not answer. Try again later.");
-  const out = await res.json();
+  const out = await res.json() as { status?: unknown; report?: ParityReport; field?: string } | null;
   if (!out || !out.report || typeof out.status !== "number") throw new ParityError("remote_failed", 503, "The comparison service sent an answer this page cannot read.");
   return { status: out.status, report: out.report, field: out.field || null };
 }
 
-function parityOptions(input) {
+function parityOptions(input: ParityInput | null): ParityRunOptions {
   return { selector: input ? input.selector : undefined, frontMatter: input ? input.frontMatter : "keep", strict: input ? input.strict : false, mode: "url" as const, limits: PARITY_LIMITS };
 }
 
-async function parityRunCheck(input, env: Env) {
+async function parityRunCheck(input: ParityInput, env: Env): Promise<{ status: number; report: ParityReport; field: string | null }> {
   const options = parityOptions(input);
   let html = null;
   let markdown = null;
   try {
-    const page = parityTarget(input.url, "url", "The page URL");
+    const page = parityTarget(input.url!, "url", "The page URL");
     const mdTarget = input.markdownUrl ? parityTarget(input.markdownUrl, "markdownUrl", "The Markdown URL") : page;
     if (!paritySameSite(page, mdTarget)) throw new ParityError("off_host", 422, "The Markdown URL must be on the same site as the page.", "markdownUrl");
     // A .md address always answers with Markdown here, whatever the Accept header says, so as the page
@@ -14484,7 +14484,7 @@ async function parityRunCheck(input, env: Env) {
       if (/^(Invalid selector|Selector )/.test(message)) field = "selector";
     } else {
       // Unexpected: the name only, so no page content or address can reach a log.
-      console.error("parity check failed unexpectedly:", err && err.name ? err.name : "unknown");
+      console.error("parity check failed unexpectedly:", err && (err as { name?: unknown }).name ? (err as { name?: unknown }).name : "unknown");
       message = "The comparison failed unexpectedly. Nothing about the page was stored.";
     }
     // Decision 19 (Tek-526): the package's own selector-rejection message repeats the CSS
@@ -14506,7 +14506,7 @@ async function parityRunCheck(input, env: Env) {
   }
 }
 
-function parityResponse(asJson, status, report, state, retryAfter?) {
+function parityResponse(asJson: boolean, status: number, report: ParityReport, state: ParityState | null, retryAfter?: number) {
   if (asJson) {
     // A browser-based agent may call the JSON form from another origin (round 19, P2, Erik
     // 2026-09-23); the answer carries no cookie and no credential, so any origin may read it,
@@ -14521,9 +14521,9 @@ function parityResponse(asJson, status, report, state, retryAfter?) {
   return res;
 }
 
-async function handleParityPost(request, env: Env) {
+async function handleParityPost(request: Request, env: Env): Promise<Response> {
   const asJson = wantsJson(request) || (request.headers.get("content-type") || "").toLowerCase().startsWith("application/json");
-  const refuse = (status, message, retryAfter) => parityResponse(asJson, status, mpcErrorReport(parityOptions(null), null, null, message), null, retryAfter);
+  const refuse = (status: number, message: string, retryAfter: number) => parityResponse(asJson, status, mpcErrorReport(parityOptions(null), null, null, message), null, retryAfter);
   // Fail closed: without its limiter this endpoint does not run, unlike the site-wide limiter,
   // which fails open because a page must never go dark over it.
   if (!env || !env.PARITY_LIMITER) return refuse(503, "The check is unavailable because its rate limiter is not configured. Try again later.", 60);
@@ -14554,17 +14554,17 @@ async function handleParityPost(request, env: Env) {
   }
 }
 
-function parityFormHtml(state) {
+function parityFormHtml(state: ParityState | null) {
   const v = (state && state.values) || {};
   const report = state && state.report;
   const err = report && report.summary.result === "error" ? stripBidi(report.summary.error) : null;
-  const field = err && state.field ? state.field : null;
-  const errFor = (f) => (field === f ? `<p class="verr" id="mpc-${f}-err">${escapeHtml(err)}</p>` : "");
-  const desc = (f) => (field === f ? ` aria-invalid="true" aria-describedby="mpc-${f}-hint mpc-${f}-err"` : ` aria-describedby="mpc-${f}-hint"`);
+  const field = err && state!.field ? state!.field : null;
+  const errFor = (f: string) => (field === f ? `<p class="verr" id="mpc-${f}-err">${escapeHtml(err!)}</p>` : "");
+  const desc = (f: string) => (field === f ? ` aria-invalid="true" aria-describedby="mpc-${f}-hint mpc-${f}-err"` : ` aria-describedby="mpc-${f}-hint"`);
   const open = v.markdownUrl || v.selector || v.strict || v.frontMatter === "strip" || field === "markdownUrl" || field === "selector";
   // The addresses come back masked, like everything else a check answers with: a secret in a query
   // string is not repeated in the response, even to the person who sent it.
-  const shown = (s) => (s ? stripBidi(mpcMaskUrl(s)) : "");
+  const shown = (s: string | undefined) => (s ? stripBidi(mpcMaskUrl(s)) : "");
   return `<form class="vform pform" id="mpc-form" method="post" action="/markdown-parity-check#result" novalidate>
     <label for="mpc-url">Page URL</label>
     <input type="url" id="mpc-url" name="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://turva.dev/tools" value="${escapeHtml(shown(v.url))}"${desc("url")}>
@@ -14592,17 +14592,17 @@ function parityFormHtml(state) {
   </form>`;
 }
 
-function parityResultHtml(input, status) {
+function parityResultHtml(input: ParityReport, status: number | undefined) {
   const r = mpcRedactReport(input);
   const s = r.summary;
   const word = { pass: "Pass", fail: "Fail", error: "Error" };
   const sev = { error: "Error", warning: "Warning", info: "Information" };
   const cls = { error: "fail", warning: "warn", info: "info" };
   const dir = { html_only: "HTML only", markdown_only: "Markdown only", both: "both versions" };
-  const src = (label, m) => (m && m.kind === "url" && m.url
+  const src = (label: string, m: ParityReport["sources"]["html"]) => (m && m.kind === "url" && m.url
     ? `<p class="aview-cmd">${label}: ${escapeHtml(m.url)}, HTTP ${escapeHtml(String(m.status))}, ${escapeHtml(m.contentType || "no content type")}, ${m.bytes} bytes, ${m.redirects} redirect(s)</p>`
     : "");
-  const where = (label, side) => {
+  const where = (label: string, side: ParityReport["findings"][number]["html"]) => {
     if (!side) return "";
     const parts = [];
     if (side.line !== undefined) parts.push("line " + side.line);
@@ -14649,7 +14649,7 @@ function parityResultHtml(input, status) {
   return out + `\n  </section>`;
 }
 
-function serveParityHtml(canonicalUrl, state) {
+function serveParityHtml(canonicalUrl: string, state: ParityState | null) {
   const head = cardPageHead(buildMetaBlock("/markdown-parity-check", canonicalUrl), buildGuideJsonLd("/markdown-parity-check", canonicalUrl) + "\n" + buildParityAppJsonLd(canonicalUrl), canonicalUrl, `<script src="${PARITY_SCRIPT_PATH}" defer></script>`);
   const body = `${head}
 ${cardPageNav("/markdown-parity-check")}
@@ -14757,8 +14757,8 @@ var PARITY_JS = `(function () {
 })();
 `;
 
-function mdGuideGroupSec(path, h) {
-  const blocks = mdSection(path, h).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+function mdGuideGroupSec(path: string, h: string) {
+  const blocks: string[] = mdSection(path, h).split(/\n{2,}/).map((b: string) => b.trim()).filter(Boolean);
   const first = blocks.findIndex((b) => b.startsWith("### "));
   if (first === -1) throw new Error("guide section has no guide: " + h);
   // A list row before the first guide heading is a guide the page would show as a paragraph,
@@ -14784,7 +14784,7 @@ function mdGuideGroupSec(path, h) {
 </section>`;
 }
 
-function serveGuidesHtml(canonicalUrl) {
+function serveGuidesHtml(canonicalUrl: string) {
   const head = cardPageHead(buildMetaBlock("/guides", canonicalUrl), buildGuideJsonLd("/guides", canonicalUrl) + "\n" + buildGuidesFaqJsonLd(), canonicalUrl);
   const body = `${head}
 ${cardPageNav("/guides")}
@@ -14806,9 +14806,9 @@ ${footerHtml()}
 function blogPostLinks() {
   const posts = Object.keys(PAGE_MARKDOWN)
     .filter((k) => k.startsWith("/blog/"))
-    .map((k) => ({ path: k, meta: META_BY_PATH[k] || {} }))
+    .map((k): { path: string; meta: Partial<PageMeta> } => ({ path: k, meta: META_BY_PATH[k as keyof typeof META_BY_PATH] || {} }))
     .filter((p) => p.meta.date)
-    .sort((a, b) => b.meta.date.localeCompare(a.meta.date));
+    .sort((a, b) => b.meta.date!.localeCompare(a.meta.date!));
   // Since v3.133.0 (Tek-358) each card shows the title, the date, the kind of article and
   // its one-sentence description, all from META_BY_PATH, so the index and the page agree.
   // Since 2026-09-08 each card also carries the kind and a lowercased title-plus-summary in
@@ -14828,9 +14828,9 @@ function blogPostLinks() {
 // the three named kinds, or the filter would silently hide a post from every filtered view.
 var BLOG_KINDS = ["Research", "Protocol notes", "Build notes"];
 function blogFilterHtml() {
-  const posts = Object.keys(PAGE_MARKDOWN).filter((k) => k.startsWith("/blog/")).map((k) => META_BY_PATH[k] || {}).filter((m) => m.date);
+  const posts = Object.keys(PAGE_MARKDOWN).filter((k) => k.startsWith("/blog/")).map((k): Partial<PageMeta> => META_BY_PATH[k as keyof typeof META_BY_PATH] || {}).filter((m) => m.date);
   for (const m of posts) {
-    if (!BLOG_KINDS.includes(m.kind)) throw new Error("blog post kind is not one of the filters: " + JSON.stringify(m.kind) + " in " + m.title);
+    if (!BLOG_KINDS.includes(m.kind as string)) throw new Error("blog post kind is not one of the filters: " + JSON.stringify(m.kind) + " in " + m.title);
   }
   const n = posts.length;
   const buttons = [["", "All"]].concat(BLOG_KINDS.map((k) => [k, k])).map(([k, label]) =>
@@ -14913,7 +14913,7 @@ var NAV_JS = `(function () {
 })();
 `;
 
-function serveBlogHtml(canonicalUrl) {
+function serveBlogHtml(canonicalUrl: string) {
   const head = cardPageHead(buildMetaBlock("/blog", canonicalUrl), buildGuideJsonLd("/blog", canonicalUrl), canonicalUrl, '<script src="/blog-filter.js" defer></script>');
   const body = `${head}
 ${cardPageNav("/blog")}
@@ -14961,8 +14961,8 @@ var ACP_SERVICES = {
   implementation: { item: "implementation", name: "Implementation day", amount: 150000, description: "Hands-on work at your edge, scoped per task." }
 };
 
-function buildAcpCheckoutSession(serviceId, sessionId) {
-  const svc = ACP_SERVICES[serviceId] || ACP_SERVICES.audit;
+function buildAcpCheckoutSession(serviceId: string, sessionId: string) {
+  const svc = ACP_SERVICES[serviceId as keyof typeof ACP_SERVICES] || ACP_SERVICES.audit;
   return {
     "id": sessionId,
     "status": "not_ready_for_payment",
@@ -15009,7 +15009,7 @@ function buildAcpCheckoutSession(serviceId, sessionId) {
   };
 }
 
-function acpHeaders(allow?) {
+function acpHeaders(allow?: string) {
   const h = new Headers({
     "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store",
@@ -15127,7 +15127,7 @@ async function serveAcpCheckout(request, pathLower) {
     return new Response(JSON.stringify(session, null, 2), { status: 201, headers: acpHeaders() });
   }
   const rest = pathLower.slice(base.length + 1);
-  const parts = rest.split("/").filter((s) => s !== "");
+  const parts = rest.split("/").filter((s: string) => s !== "");
   const sessionId = parts[0] || "";
   const action = parts[1] || "";
   if (!sessionId || parts.length > 2 || (action && action !== "cancel" && action !== "complete")) {
@@ -15166,7 +15166,7 @@ async function serveAcpCheckout(request, pathLower) {
   return new Response(JSON.stringify({ "type": "invalid_request", "code": "not_found", "message": "Unknown checkout session route." }, null, 2), { status: 404, headers: acpHeaders() });
 }
 
-function serveOauthClosed(kind) {
+function serveOauthClosed(kind: string) {
   // turva.dev publishes OAuth Authorization Server metadata so an agent can
   // discover scopes and the registration entry point. It runs no interactive
   // login and issues no tokens automatically, because nothing on the site sits
@@ -15189,7 +15189,7 @@ function serveOauthClosed(kind) {
   return new Response(body, { status: 400, headers });
 }
 
-function serve402(pathname, route) {
+function serve402(pathname: string, route: { label: string; description: string; amountUsdcMicro: string; amountEurCents: number }) {
   const resource = "https://turva.dev" + pathname;
   const body = build402Body(resource, route.label, route.amountUsdcMicro, route.amountEurCents, route.description);
   const headers = new Headers({
@@ -15220,7 +15220,7 @@ function serveX402Root() {
   applySecurityHeaders(headers, "agent-api");
   return new Response(X402_INDEX_402, { status: 402, headers });
 }
-interface Env { BRIEFIT?: { get(key: string, options: { type: "json" }): Promise<unknown> }; RATE_LIMITER?: RateLimit; PARITY_LIMITER?: RateLimit; PARITY?: Pick<Fetcher, "fetch">; PARITY_REMOTE_FETCH?: string } type SatisfiesExportedHandler<T extends ExportedHandler<Env>> = T;
+interface Env { BRIEFIT?: { get(key: string, options: { type: "json" }): Promise<BriefRec | null> }; RATE_LIMITER?: RateLimit; PARITY_LIMITER?: RateLimit; PARITY?: Pick<Fetcher, "fetch">; PARITY_REMOTE_FETCH?: string } type SatisfiesExportedHandler<T extends ExportedHandler<Env>> = T;
 var worker_default: SatisfiesExportedHandler<{ fetch(request: Request, env: Env, ctx?: unknown): Promise<Response>; scheduled(event: Pick<ScheduledController, "scheduledTime">, env: Env, ctx: Pick<ExecutionContext, "waitUntil">): Promise<void> }> = {
   async fetch(request, env) {
     const originalMethod = request.method;
@@ -15330,7 +15330,7 @@ var worker_default: SatisfiesExportedHandler<{ fetch(request: Request, env: Env,
   }
 };
 
-async function handleRequest(request, env: Env) {
+async function handleRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const pathname = url.pathname;
   const hostname = url.hostname;
@@ -15397,7 +15397,7 @@ async function handleRequest(request, env: Env) {
   const a2aTask = parseA2aTaskPath(pathname);
   const postAllowed = pathLower === "/v1/message:send" || pathLower === "/v1/message:send/" || (a2aTask !== null && a2aTask.cancel)
     || pathLower === "/api" || pathLower === "/api/" || pathLower === "/x402" || pathLower === "/x402/"
-    || !!X402_ROUTES[pathLower] || !!X402_ROUTES[pathLower.replace(/\/$/, "")]
+    || !!X402_ROUTES[pathLower as keyof typeof X402_ROUTES] || !!X402_ROUTES[pathLower.replace(/\/$/, "") as keyof typeof X402_ROUTES]
     || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token"
     || pathname === "/markdown-parity-check";
   if (!acpFamily && request.method !== "GET" && request.method !== "OPTIONS" && !(request.method === "POST" && postAllowed)) {
@@ -15415,7 +15415,7 @@ async function handleRequest(request, env: Env) {
     applySecurityHeaders(headers, "agent-api");
     return new Response(null, { status: 204, headers });
   }
-  if (request.method === "OPTIONS" && pathLower !== "/v1/message:send" && pathLower !== "/v1/message:send/" && a2aTask === null && !fediPath && !LEGACY_REDIRECTS[pathname]) {
+  if (request.method === "OPTIONS" && pathLower !== "/v1/message:send" && pathLower !== "/v1/message:send/" && a2aTask === null && !fediPath && !LEGACY_REDIRECTS[pathname as keyof typeof LEGACY_REDIRECTS]) {
     // A page or an unknown path: answer the method question and nothing else. Until v3.115.0
     // OPTIONS / fell through to serveHomeHtml and returned the whole page. The fediverse
     // aliases and the legacy paths keep redirecting on OPTIONS, as they do on GET.
@@ -15453,8 +15453,8 @@ async function handleRequest(request, env: Env) {
     return serveOauthClosed("token");
   }
 
-  if (X402_ROUTES[pathLower]) {
-    const route = X402_ROUTES[pathLower];
+  if (X402_ROUTES[pathLower as keyof typeof X402_ROUTES]) {
+    const route = X402_ROUTES[pathLower as keyof typeof X402_ROUTES];
     // x402 settlement is not wired up: this is a quote-on-request service with
     // no facilitator or on-chain settlement, so an X-PAYMENT header cannot be
     // verified here. We must never report an unverified payment as paid, so every
@@ -15463,8 +15463,8 @@ async function handleRequest(request, env: Env) {
     return serve402(pathLower, route);
   }
 
-  if (LEGACY_REDIRECTS[pathname]) {
-    return redirectTo("https://turva.dev" + LEGACY_REDIRECTS[pathname] + url.search, 301, pathLower);
+  if (LEGACY_REDIRECTS[pathname as keyof typeof LEGACY_REDIRECTS]) {
+    return redirectTo("https://turva.dev" + LEGACY_REDIRECTS[pathname as keyof typeof LEGACY_REDIRECTS] + url.search, 301, pathLower);
   }
 
   // Round 19, P1 (Erik 2026-09-23): a page or its markdown twin asked for in another letter case
@@ -15497,11 +15497,11 @@ async function handleRequest(request, env: Env) {
   // promised a 402 challenge.
   if (pathname.length > 1 && pathname.endsWith("/")) {
     const strippedPath = pathname.slice(0, -1);
-    if (PAGE_MARKDOWN[strippedPath]) {
+    if (PAGE_MARKDOWN[strippedPath as keyof typeof PAGE_MARKDOWN]) {
       return redirectTo("https://turva.dev" + strippedPath + url.search, 301, pathLower);
     }
     const strippedLower = strippedPath.toLowerCase();
-    if (X402_ROUTES[strippedLower] || strippedLower === "/x402") {
+    if (X402_ROUTES[strippedLower as keyof typeof X402_ROUTES] || strippedLower === "/x402") {
       return redirectTo("https://turva.dev" + strippedLower + url.search, 301, pathLower);
     }
   }
@@ -15511,9 +15511,9 @@ async function handleRequest(request, env: Env) {
   // not serve, so send it on to the guide with the same slug. A real blog post has
   // a PAGE_MARKDOWN entry and never enters this branch, so /blog/open-knowledge-format
   // keeps serving the blog post and does not redirect to the guide of the same slug.
-  if (pathname.startsWith("/blog/") && !PAGE_MARKDOWN[pathname]) {
+  if (pathname.startsWith("/blog/") && !PAGE_MARKDOWN[pathname as keyof typeof PAGE_MARKDOWN]) {
     const guidePath = "/guides/" + pathname.slice(6).replace(/\/$/, "");
-    if (PAGE_MARKDOWN[guidePath]) {
+    if (PAGE_MARKDOWN[guidePath as keyof typeof PAGE_MARKDOWN]) {
       return redirectTo("https://turva.dev" + guidePath + url.search, 301, pathLower);
     }
   }
@@ -15556,8 +15556,8 @@ async function handleRequest(request, env: Env) {
     // both forms. Answering it costs one line and keeps that sentence from
     // reading as a promise this site does not keep.
     const mdBase = pathname.endsWith(".html.md") ? pathname.slice(0, -8) : pathname.slice(0, -3);
-    if (PAGE_MARKDOWN[mdBase]) {
-      return serveMarkdown(PAGE_MARKDOWN[mdBase], getCanonicalForPath(mdBase) || "https://turva.dev" + mdBase);
+    if (PAGE_MARKDOWN[mdBase as keyof typeof PAGE_MARKDOWN]) {
+      return serveMarkdown(PAGE_MARKDOWN[mdBase as keyof typeof PAGE_MARKDOWN], getCanonicalForPath(mdBase) || "https://turva.dev" + mdBase);
     }
   }
 
@@ -15571,9 +15571,9 @@ async function handleRequest(request, env: Env) {
     return serveMarkdown(HOME_MARKDOWN, "https://turva.dev/");
   }
 
-  if (wantsMarkdown(request) && PAGE_MARKDOWN[pathname]) {
+  if (wantsMarkdown(request) && PAGE_MARKDOWN[pathname as keyof typeof PAGE_MARKDOWN]) {
     const canonicalUrl = getCanonicalForPath(pathname) || "https://turva.dev" + pathname;
-    return serveMarkdown(PAGE_MARKDOWN[pathname], canonicalUrl);
+    return serveMarkdown(PAGE_MARKDOWN[pathname as keyof typeof PAGE_MARKDOWN], canonicalUrl);
   }
 
   // Worker-rendered HTML pages. Every page is rendered directly by the worker:
@@ -15621,7 +15621,7 @@ async function handleRequest(request, env: Env) {
   if (pathname === "/markdown-parity-check.js") {
     return serveStatic(PARITY_JS, "text/javascript; charset=utf-8", "asset");
   }
-  if ((pathname.startsWith("/guides/") || pathname.startsWith("/blog/") || pathname.startsWith("/samples/")) && PAGE_MARKDOWN[pathname]) {
+  if ((pathname.startsWith("/guides/") || pathname.startsWith("/blog/") || pathname.startsWith("/samples/")) && PAGE_MARKDOWN[pathname as keyof typeof PAGE_MARKDOWN]) {
     return serveGuideHtml(pathname, "https://turva.dev" + pathname);
   }
 
