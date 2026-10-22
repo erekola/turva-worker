@@ -215,3 +215,35 @@ test("Tek-560 V-2: the line after a fence needs the item's content column, and t
   // A lazy continuation of a plain item is unchanged.
   assert.equal(await status(item("-   item\n" + link), "sections"), "pass");
 });
+
+// Tek-680: every request the validator sends to the checked site carries CF-Connecting-IP and x-real-ip
+// set to the fixed address, never the visitor's, on both documents and on every redirect hop.
+test("Tek-680: the validator sets the client IP headers to the fixed address on every outbound request", async () => {
+  const fixed = "2a06:98c0:3600::103";
+  const visitor = "203.0.113.7";
+  const seen: { url: string; headers: Headers }[] = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    const u = String(url);
+    seen.push({ url: u, headers: new Headers(init?.headers) });
+    if (u === "https://example.com/llms.txt") return new Response(null, { status: 301, headers: { location: "https://www.example.com/llms.txt" } });
+    if (u === "https://www.example.com/llms.txt") return new Response(base, { status: 200, headers: { "content-type": "text/plain; charset=utf-8" } });
+    if (u === "https://example.com/") return new Response("<html></html>", { status: 200, headers: { "content-type": "text/html" } });
+    throw new Error("unexpected fetch to " + u);
+  };
+  try {
+    const req = new Request("https://turva.dev/llms-txt-validator?url=example.com", {
+      headers: { accept: "application/json", "cf-connecting-ip": visitor, "x-real-ip": visitor, "x-forwarded-for": visitor }
+    });
+    const res = await worker.fetch(req, {});
+    assert.equal(res.status, 200);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+  assert.deepEqual(seen.map((s) => s.url), ["https://example.com/llms.txt", "https://www.example.com/llms.txt", "https://example.com/"]);
+  for (const s of seen) {
+    assert.equal(s.headers.get("cf-connecting-ip"), fixed, s.url);
+    assert.equal(s.headers.get("x-real-ip"), fixed, s.url);
+    for (const [name, value] of s.headers) assert.ok(!value.includes(visitor), s.url + " carries the visitor's address in " + name);
+  }
+});

@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.213.0 - outside review 2026-10-22, section A: the llms.txt validator and /legal follow Cloudflare's current CF-Connecting-IP documentation (the Worker controls the header toward a site not on Cloudflare, the validator sends new requests without the visitor's headers, and what such a site receives is not yet measured); the VAT note names reverse charge for business customers in another EU member state and no Finnish VAT outside the EU on /services, the audit and Shopify pages, /company, the MCP server card (re-sign) and AP2; /tools says any public site and limits the CLI's matching JSON to a completed validation; corrections against primary sources in the mcp-server-card, agentic-resource-discovery, llms-txt, agent-authentication and agent-commerce-discovery guides; the x402 priceNote states the rounding to whole USDC; OpenAPI declares GET on the three payable routes and on /api, and a media type with a schema on every response; /company names the Shopify prepayment exception and points to the provider list; /legal gives a worked example of the retention rule. Tek-679 in the same release: the structured fields of the MCP server card, AP2, MPP, UCP and HOME_JSON and the MCP get_services catalog state that the Shopify check and the audit run from the agreed written kickoff and that advisory can be ended in its first month; /company and /legal gain a continuity clause; /company and the home page say there are no named client references yet; the Shopify check refunds a third of its fee, EUR 333, for each of its three interfaces that could not be checked, and offers a whole-store correction at one fixed total price set by the size of the store; the home page leads with the comparison of the web page, structured data and API and puts the Shopify check forward as the place to start. Tek-680: the hosted llms.txt validator sets CF-Connecting-IP and x-real-ip on its outbound requests to the fixed address 2a06:98c0:3600::103, and the validator page and /legal say so. MCP 1.6.21.
 // turva.dev worker v3.212.0 - new Build notes post /blog/tla-plus-in-numbers (TLA+ series part 4, 2026-10-22), with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count.
 // turva.dev worker v3.211.4 - the dated scanner readings move to 2026-10-21 (measurement day): isitagentready.com, Internet.nl and Hardenize, scores unchanged (Level 5, 21 of 21 checks, 98/100 website, 90/100 email), in the home, audit-method and sample-report pages, the markdown twins and HOME_JSON lastVerified; the Hardenize report is re-run the same day, so its date moves to 2026-10-21 too; turva-mcp 1.6.20 carries the new snapshot dates, so the MCP server card is re-signed.
 // turva.dev worker v3.211.3 - TypeScript migration, step 3 finished: src/worker.ts type-checks under strict, the last eight untyped functions carry parameter types, three overload signatures are moved onto their implementations, and every var declaration is now const or let. The hosted llms.txt validator no longer leaves an undefined value in a check's detail for two inputs no hosted route reaches. Responses change only in the version number and the sitemap date.
@@ -3493,7 +3494,7 @@ The validator requests two documents: /llms.txt and the home page. A path in the
 
 Fetched content is checked and discarded. The response uses a no-store header.
 
-The address you enter is part of the request URL, so it appears in the Worker logs, which are kept for at most seven days as the [legal page](/legal) describes. Cloudflare's documentation says that when the checked site is not hosted on Cloudflare, the request to it carries your IP address in the CF-Connecting-IP header, and a Worker cannot remove that header.
+The address you enter is part of the request URL, so it appears in the Worker logs, which are kept for at most seven days as the [legal page](/legal) describes. The validator's code sends the checked site new requests with its own user agent and accept headers and does not pass on the headers of your request. Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when the checked site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers, so the validator sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. Cloudflare adds to every such request a CF-Worker header carrying the name of the zone that runs the validator, turva.dev. turva.dev has not yet measured which headers such a site receives, so until turva.dev publishes that measurement here, assume that it may see your IP address.
 
 ## Use it from an agent or CI
 
@@ -3618,7 +3619,7 @@ Enter a domain to check the structure of its llms.txt file and its home-page dis
 
 ## Compare HTML and Markdown
 
-Enter a turva.dev page address to compare the main content of its HTML and Markdown versions. The open npm package runs the same comparison on any site.
+Enter a turva.dev page address to compare the main content of its HTML and Markdown versions. The open npm package runs the same comparison on any public site.
 
 [Open the parity check](/markdown-parity-check)
 
@@ -3636,8 +3637,8 @@ Read the eligibility criteria and get the embed code. The badge is self-declared
 
 ## For developers
 
-- The validator returns the same checks as JSON when requested with Accept: application/json. Its eight structural checks use pass, warn or fail. The two v2 discovery checks use pass or information and do not change the structural result. The same checks are available in the open npm package [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI and matching JSON output. Source on [GitHub](https://github.com/erekola/llms-txt-validator).
-- The Markdown parity check takes a JSON POST and returns the report format of the open npm package [markdown-parity-check](https://www.npmjs.com/package/markdown-parity-check), which runs the same comparison on any site. Source on [GitHub](https://github.com/erekola/markdown-parity-check).
+- The validator returns the same checks as JSON when requested with Accept: application/json. Its eight structural checks use pass, warn or fail. The two v2 discovery checks use pass or information and do not change the structural result. The same checks are available in the open npm package [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI that returns the same JSON result shape for a completed validation, while error responses are shaped differently. Source on [GitHub](https://github.com/erekola/llms-txt-validator).
+- The Markdown parity check takes a JSON POST and returns the report format of the open npm package [markdown-parity-check](https://www.npmjs.com/package/markdown-parity-check), which runs the same comparison on any public site. Source on [GitHub](https://github.com/erekola/markdown-parity-check).
 - The read-only MCP endpoint is https://mcp.turva.dev/mcp. It uses Streamable HTTP and requires no authentication. Connect with an MCP client rather than a browser. Its server card is published at https://turva.dev/.well-known/mcp/server-card.json.
 - The badge is an SVG served by turva.dev. Its link takes readers to the eligibility criteria.
 
@@ -4841,7 +4842,7 @@ A checkout endpoint does not have to support instant payment to be real. The ACP
 
 The Universal Commerce Protocol adds a profile at /.well-known/ucp. The profile names the merchant, lists the services it offers under namespaced keys, each with a version, a transport and an endpoint, and carries two blocks, capabilities and payment_handlers, that state what an agent may do through the profile and how it may pay. The same rule holds as for the three surfaces above: a capability the profile declares has to answer at the endpoint behind it, and an empty block is more honest than a declared one nothing serves.
 
-A storefront that runs UCP over MCP carries a checkout state called requires_escalation. It means the agent has reached the edge of what it may finish alone, because the business needs buyer input its API cannot collect or buyer review that policy, regulatory or entitlement rules require, so the platform can hand the buyer to the business's continue_url and a person completes that step before the session continues. It is a handoff inside a checkout and not a substitute for one. A business that sells on a written quote can state that through the ACP session state above, and UCP checkout also lets the payment object be omitted for uses such as quote generation.
+A storefront that runs UCP over MCP carries a checkout state called requires_escalation. It means the agent has reached the edge of what it may finish alone, because the business needs buyer input its API cannot collect or buyer review that policy, regulatory or entitlement rules require. The UCP checkout specification then requires the business to return a continue_url and at least one message naming which of the two it needs, and requires the platform to use that continue_url, so a person completes the step in the business's own interface before the session continues. It is a handoff inside a checkout and not a substitute for one. Even without escalation, the same specification has the user finalize a UCP checkout manually in a trusted UI unless the AP2 Mandates extension is supported. A business that sells on a written quote can state that through the ACP session state above, and UCP checkout also lets the payment object be omitted for uses such as quote generation.
 
 turva.dev publishes a UCP profile with empty capabilities and payment_handlers blocks on purpose, because the code behind it settles nothing automatically, and the Shopify agent storefront check reads a store's UCP surface as one of the three agent surfaces it measures.
 
@@ -4867,7 +4868,7 @@ Usually the case of the extension URI is the cause. Some fix texts show a V0.1.0
 
 **What does a UCP profile declare?**
 
-A UCP profile at /.well-known/ucp names the merchant, the services it offers with a transport and an endpoint each, and two blocks for capabilities and payment handlers. A block left empty says the site settles nothing through the profile, which is the truthful state for a business that sells on a written quote.
+A UCP profile at /.well-known/ucp names the merchant and the services it offers, each with a transport and an endpoint. It also holds two blocks, one for capabilities and one for payment handlers. The specification calls the profile what the business advertises, so an empty block advertises nothing of its kind through UCP, which is the truthful state for a business that sells on a written quote. An empty block is not a standard statement about how the business takes payment, so the business says that in its own words, for example on its pages or in its ACP session messages.
 
 ## Sources
 
@@ -4875,6 +4876,7 @@ A UCP profile at /.well-known/ucp names the merchant, the services it offers wit
 - [Agent Payments Protocol (AP2) repository](https://github.com/google-agentic-commerce/AP2)
 - [Agentic Commerce Protocol (ACP)](https://www.agenticcommerce.dev/)
 - [Universal Commerce Protocol (UCP)](https://ucp.dev/)
+- [UCP checkout capability, 2026-08-25 release](https://ucp.dev/2026-08-25/specification/shopping/checkout/)
 
 ## Related
 
@@ -4887,9 +4889,9 @@ A UCP profile at /.well-known/ucp names the merchant, the services it offers wit
 
 # Know what AI assistants can find out about your product
 
-I'm Erik. I check what AI assistants can read on your website or API, where the information disagrees, and what they say about your product. You get a written report explaining what I found, what to fix first, and how to check the changes.
+I'm Erik. I compare what your web page, its structured data and your API say about the same product, because an AI assistant may read any of the three and get a different answer from each. I also record what selected assistants say about your product. You get a written report of what I found and what to fix first, with a way to check each change.
 
-For Shopify stores, I offer a focused check of product information and the shopping journey before payment.
+For a Shopify store, start with the €999 [Shopify agent storefront check](/shopify-agent-storefront-check). It covers up to three products and is delivered within 48 hours of the agreed written kickoff.
 
 [Request an audit](/contact) [Read a sample report](/samples/audit-report)
 
@@ -4926,7 +4928,7 @@ Implementation, ongoing advisory, agent operations and MCP server design are sco
 
 ## See what the work looks like
 
-Sample reports. See how I explain a finding, show the evidence and describe the fix. Both reports use fictional businesses. [Sample audit report](/samples/audit-report) and [sample Shopify report](/samples/shopify-agent-storefront-check).
+Sample reports. See how I explain a finding, show the evidence and describe the fix. Both reports use fictional businesses, and there are no named client references yet. [Sample audit report](/samples/audit-report) and [sample Shopify report](/samples/shopify-agent-storefront-check).
 
 Research. Read what I measured across company websites and AI assistants. Each study includes its methods, dates and limits. These are research observations, not client results. [Website agent-readiness study](/blog/website-agent-readiness-567-sites), [What AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit) and [Thirty days after the brief](/blog/thirty-days-after-the-brief).
 
@@ -5297,7 +5299,7 @@ We work in writing. There are no calls or calendar links.
 
 [Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
-All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.
+All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business customers in another EU member state with a valid VAT ID, no Finnish VAT for customers outside the EU, because the place of supply is outside Finland.
 `,
 
   "/agent-readiness-audit": `# Website and API agent-readiness audit
@@ -5405,7 +5407,7 @@ We work in writing, with no calls or meetings.
 
 [Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
-All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.
+All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business customers in another EU member state with a valid VAT ID, no Finnish VAT for customers outside the EU, because the place of supply is outside Finland.
 `,
 
   "/shopify-agent-storefront-check": `# Shopify agent storefront check
@@ -5463,7 +5465,7 @@ The scope is agreed before delivery starts.
 - Shopify-hosted MCP for remote clients. Storefront Catalog MCP and Cart MCP on /api/ucp/mcp, and the Policy and FAQs tool on /api/mcp.
 - Catalog and Agentic channels. The catalog preview and settings evidence relevant to the selected products.
 
-I compare these within the same test session and product scope. If one cannot be checked, the report says so.
+I compare these within the same test session and product scope. If any of the three cannot be checked, the report says so, and a third of the fee, €333, is refunded for each interface that could not be checked. If the preflight shows that none of the three can be checked, the check is not sold. An interface that was checked and found restricted or unavailable is a finding and is not refunded.
 
 ## Access and the stopping point
 
@@ -5486,6 +5488,8 @@ If I do not send the four-item package within 48 elapsed hours, the fee is refun
 Your team can use the plan directly. For an additional €499, sold only with this check, I implement the complete correction list. It can be bought together with the check, with its report, or after the report and before implementation starts.
 
 This requires collaborator access to the store, agreed in writing before work starts. With access in place, the fixed price covers every correction on the plan. If access cannot be arranged, the add-on is not sold and your team still receives the instructions. With the add-on, the 14-day retest window starts on the day the corrections are delivered.
+
+If the check shows that the same fault runs through the whole store, I can correct the whole store. That correction gets one fixed total price, set in writing by the size of the store before the work starts, and it is not billed by the day.
 
 Work outside the plan is scoped separately at €1,500 per day.
 
@@ -5525,14 +5529,14 @@ I reply within one business day with the preflight and a fixed quote. The work i
 
 [Request a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A)
 
-All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.
+All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business customers in another EU member state with a valid VAT ID, no Finnish VAT for customers outside the EU, because the place of supply is outside Finland.
 `,
 
   "/company": `# Work directly with Erik Rekola
 
 I'm an independent consultant in Tampere, Finland. I check websites, APIs and Shopify stores to understand what AI agents can access and where the information needs attention.
 
-You work directly with me, from agreeing the scope to reading the findings and deciding what to do next. I do not use subcontractors.
+You work directly with me, from agreeing the scope to reading the findings and deciding what to do next. I do not use subcontractors. The service providers that client material and correspondence can reach are listed on the [legal page](/legal).
 
 ## My background
 
@@ -5540,7 +5544,7 @@ From 2015 to 2021, I worked hands-on with industrial and laboratory equipment: p
 
 Those roles involved reliable machine data and working within defined limits.
 
-After a career break from 2021 to early 2026, I built turva.dev around technical checks, reviews and implementation. You can inspect my current work through [public source code](https://github.com/erekola), [dated research](/blog) and clearly labelled [sample reports](/samples/audit-report).
+After a career break from 2021 to early 2026, I built turva.dev around technical checks, reviews and implementation. You can inspect my current work through [public source code](https://github.com/erekola), [dated research](/blog) and clearly labelled [sample reports](/samples/audit-report). There are no named client references yet, and both sample reports describe fictional businesses.
 
 ## Why I do this work
 
@@ -5551,6 +5555,8 @@ I check what the client can reach, what it receives and what needs correcting. I
 ## How we work
 
 I work remotely and in writing. There are no calls, calendar bookings or on-site engagements.
+
+turva.dev is one person. If I fall ill or am otherwise unable to work, delivery moves. You can then cancel the part not yet delivered, and anything you paid for that part is refunded in full.
 
 The audit uses public information and does not require production credentials. If you buy implementation, we agree any required access separately and limit it to the task.
 
@@ -5571,9 +5577,9 @@ The report records what I checked and what I observed, so your team can understa
 
 ## Invoicing
 
-Payment is due within fourteen days of the invoice date unless we agree otherwise in writing.
+Payment is due within fourteen days of the invoice date unless we agree otherwise in writing. The Shopify agent storefront check is the written exception: it is paid by bank transfer against an invoice before its agreed written kickoff, as its [service page](/shopify-agent-storefront-check) states.
 
-VAT is added according to Finnish law. Reverse charge applies to EU B2B customers with a valid VAT ID. Non-EU customers are invoiced without VAT. turva.dev's own VAT ID is FI36002817.
+VAT is added according to Finnish law. Reverse charge applies to business customers in another EU member state with a valid VAT ID. Customers outside the EU are invoiced without Finnish VAT, because the place of supply is outside Finland. turva.dev's own VAT ID is FI36002817.
 
 ## Tell me about your project
 
@@ -5690,9 +5696,11 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 **Payment.** Payment is due within fourteen days of the invoice date unless agreed otherwise in writing. The Shopify agent storefront check is paid by bank transfer against an invoice before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
 
-**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay takes precedence over this share. A missed-deadline refund that a service page states, such as the refund of the Shopify check fee when its four-item package is not sent within 48 elapsed hours, applies in place of the charge for delivered parts. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
+**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay or Continuity takes precedence over this share. A missed-deadline refund that a service page states, such as the refund of the Shopify check fee when its four-item package is not sent within 48 elapsed hours, applies in place of the charge for delivered parts. The Shopify check also refunds a third of its fee, €333, for each of its three interfaces that could not be checked, as its service page states, within fourteen days of the report that records it. The refunds for one check never add up to more than its fee. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
 
 **Delay.** If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered, and it is not charged. A late advisory review is still delivered in full, and the delay is stated with it.
+
+**Continuity.** turva.dev is run by one person. If Erik Rekola falls ill or is otherwise unable to work, delivery moves. You can then cancel the part not yet delivered, and anything already paid for that part is refunded in full.
 
 **Confidentiality.** Information shared during the work is confidential. Your own non-disclosure agreement is signed as it stands, at no charge, before material is shared. If the work gives turva.dev access to personal data you control, turva.dev acts as your processor, and your data processing agreement is signed before that data is shared. As your processor, turva.dev notifies you without undue delay after becoming aware of a personal data breach affecting that data, as Article 33(2) of the GDPR requires. Sub-processor changes follow the terms of that agreement. The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work.
 
@@ -5706,15 +5714,15 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 The site does not use analytics cookies, tracking pixels or third-party scripts. Cookies are described under Cookies below.
 
-**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, operating the llms.txt validator, meaning fetching and checking the documents it names, its forwarding of a visitor's IP address to the site named, the site's rate limit, and processing a client's own contact persons rest on legitimate interest. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
+**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, operating the llms.txt validator, meaning fetching and checking the documents it names, any forwarding of a visitor's IP address to the site named, the site's rate limit, and processing a client's own contact persons rest on legitimate interest. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
-**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to 31 days of both security analytics and security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within one month at most. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name. Cloudflare's documentation says that when that site is not hosted on Cloudflare, the request carries your IP address in the CF-Connecting-IP header.
+**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to 31 days of both security analytics and security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within one month at most. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name, with new requests that do not pass on the headers of your request. Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when that site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers, and the validator sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. turva.dev has not yet measured which headers such a site receives, so this page assumes that the site may receive your IP address until turva.dev publishes that measurement.
 
-**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. For the Anthropic API, Anthropic's data processing addendum incorporates the EU Standard Contractual Clauses, Module Two or Module Three, for data transferred out of the EEA, including to Anthropic, PBC in the United States. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA that is not hosted on Cloudflare, Cloudflare adds that visitor's IP address to the requests the check makes, and a Worker cannot remove it. If the site is in a country without an adequacy decision, no standard contractual clauses cover those requests: the address reaches the site only because the user entered it and started the check, and a user who does not want that can leave the check unrun.
+**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. Anthropic's data processing addendum for the Anthropic API incorporates the EU Standard Contractual Clauses, Module Two or Module Three, for data transferred out of the EEA, including to Anthropic, PBC in the United States. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA that is not hosted on Cloudflare, the requests the check makes may carry that visitor's IP address, as the Server logs paragraph above describes. If the site is in a country without an adequacy decision, no standard contractual clauses cover those requests: the address can reach the site only because the user entered it and started the check, and a user who does not want that can leave the check unrun.
 
 **Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. A question sent by email, Signal or LinkedIn that does not lead to an engagement is deleted 24 months after the latest message.
 
-**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies, each new copy replaces the oldest, and every backup, version history included, is overwritten within one month. A backup is never restored for any other purpose. Deleted client material has left every backup within one month at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them, within the same month. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. For example, when the last deliverable arrives on 1 March and no retest is requested, the engagement closes on 30 May. The material is then deleted from the working systems by 29 June, about 120 days after delivery, and has left every backup by 29 July. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Encrypted backups made during the engagement keep a copy until the rotation replaces them. The rotation keeps at most ten backup copies, each new copy replaces the oldest, and every backup, version history included, is overwritten within one month. A backup is never restored for any other purpose. Deleted client material has left every backup within one month at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them, within the same month. The workstation uses full disk encryption, credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
 **Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
@@ -6056,7 +6064,7 @@ The proposal reached v2 in August 2026 and the file format did not change. What 
 
 ## How clients find it
 
-A client finds llms.txt at the root of the site, /llms.txt, or through the rel="describedby" link a page names, and it finds the markdown version of a page through rel="alternate" or by asking for text/markdown. The file is worth publishing for cost and clarity. A normal HTML page carries navigation, scripts, and styling that an agent has to wade through, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a fraction of the HTML, which lowers the chance that a long page runs past a reading tool's content limit and arrives cut short. turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. Whether a client fetches any of it depends on the client. A clear llms.txt serves the clients that read it, and no assistant is obliged to be one of them.
+A client finds llms.txt at the root of the site, /llms.txt, or through the rel="describedby" link a page names, and it finds the markdown version of a page through rel="alternate" or by asking for text/markdown. The llms.txt proposal recommends the markdown address and the two link relations and does not require that negotiation, and HTTP lets a server that has no markdown version disregard the Accept header and send HTML, so a client that asks for text/markdown reads the Content-Type of the answer and falls back to the declared markdown address. The file is worth publishing for cost and clarity. A normal HTML page wraps the content in navigation markup and scripts that an agent has to read past, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a fraction of the HTML, which lowers the chance that a long page runs past a reading tool's content limit and arrives cut short. turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. Whether a client fetches any of it depends on the client.
 
 ## What it does not replace
 
@@ -6090,6 +6098,7 @@ The file format did not change. v2 added two standard link relations so an agent
 
 - [llms.txt proposal](https://llmstxt.org/)
 - [Web linking, RFC 8288](https://www.rfc-editor.org/rfc/rfc8288.html)
+- [HTTP semantics, RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)
 
 ## Related
 
@@ -6120,7 +6129,7 @@ A server card sits in the same family as other well-known manifests a client loo
 
 ## Practical steps
 
-Publish the card at the deployed convention your target clients actually check, and confirm it with a live connection attempt rather than a directory listing. Where a client supports the location the proposal recommends, publish there too rather than choosing one over the other, since the two conventions have not converged. The card is a low-cost step for a site that wants to expose a capability to agents, and it only becomes useful once a client can reach and use the endpoint it names. For an audit of whether a site's MCP server card and its live endpoint agree, contact info@turva.dev.
+Publish the card at the deployed convention your target clients actually check, and confirm it with a live connection attempt rather than a directory listing. The extension's discovery document requires HTTPS with TLS 1.2 or later in production, and CORS headers that let a browser-based client read the card, such as Access-Control-Allow-Origin: *. turva.dev's own card is served with those CORS headers. Where a client supports the location the proposal recommends, publish there too rather than choosing one over the other, since the two conventions have not converged. The card is a low-cost step for a site that wants to expose a capability to agents, and it only becomes useful once a client can reach and use the endpoint it names. For an audit of whether a site's MCP server card and its live endpoint agree, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -6130,7 +6139,7 @@ An MCP server card is a small JSON file that describes a site's Model Context Pr
 
 **Why publish an MCP server card?**
 
-Without a card or a registry listing, a client has no reliable way to discover that the server exists or what it offers, so the capability stays hidden even when it is live. Publishing the card is a low cost way to make the server discoverable, though discovery alone does not confirm the endpoint works.
+Without a card or a registry listing, a client that knows only the domain has no standard way to find the server or learn what it offers before it connects. The card is optional, so a client that is already configured with the endpoint still connects and learns the capabilities at runtime. Publishing the card is a low-cost way to make the server discoverable from the domain, though discovery alone does not confirm the endpoint works.
 
 **Where does an MCP server card live?**
 
@@ -6141,6 +6150,7 @@ Deployed cards commonly sit at /.well-known/mcp/server-card.json, and turva.dev 
 - [MCP Server Card extension repository](https://github.com/modelcontextprotocol/ext-server-card)
 - [Server Card discovery document](https://github.com/modelcontextprotocol/ext-server-card/blob/main/docs/discovery.md)
 - [SEP-2127, the proposal, merged on 2026-10-06](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127)
+- [SEP-2127 as accepted, with Final status](https://modelcontextprotocol.io/seps/2127-mcp-server-cards)
 
 ## Related
 
@@ -6481,7 +6491,7 @@ Agentic Resource Discovery, or ARD, is an open specification for telling AI agen
 
 A site advertises its agentic resources by serving a static JSON manifest under /.well-known. ARD v0.91, published 26 August 2026, names the file /.well-known/ard.json and the link relation ard, and says a conformant client MUST read that path. The predecessor path /.well-known/ai-catalog.json and the relation ai-catalog are ones a client MAY also consult, so a site that serves only the old path may not be found by a client that follows the current revision.
 
-The current specification defines the manifest itself as a JSON document holding an entries array. Other top-level members, such as the specVersion and host fields the predecessor AI Catalog convention still carries, are transport-defined and ignored by ARD. Each entry describes one resource with a stable identifier, a display name, a type and a url or inline data. A resource can be an MCP server, an A2A agent, an API or a skill set. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
+The current specification defines the manifest itself as a JSON document holding an entries array. Other top-level members, such as the specVersion and host fields the predecessor AI Catalog convention still carries, are transport-defined and ignored by ARD. Each entry describes one resource with a stable identifier, a display name, a type and a url or inline data. An ARD entry SHOULD also carry representativeQueries, two to five sample questions the resource can answer, because a registry builds its search index from them and an entry without them cannot be found by search. The schema still accepts an entry without them and the conformance tester only warns, so a manifest can validate and still stay out of a registry's search results. A resource can be an MCP server, an A2A agent, an API or a skill set. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
 
 ## Where it sits, and how it differs from llms.txt
 
@@ -6534,11 +6544,11 @@ Authentication identifies a client. Authorisation determines what it may access 
 
 Authentication tells a site who is asking. Authorisation tells the site what that identity may do. A client can authenticate successfully and still be authorised for nothing beyond a read-only scope, and it is authorisation, not authentication, that turns a read-only client into one that can act on a person's behalf.
 
-The pattern follows existing standards. OAuth discovery at a well-known path tells an agent where to request access and what scopes exist. An authorization server and a protected resource description let the agent ask for a token tied to a specific permission rather than a blanket login. When a site also advertises an agent registration flow, an agent can register and claim access on a user's behalf without someone provisioning credentials by hand. None of this removes the case for a person confirming a specific high-stakes action at the point it happens, and a service can require that confirmation on top of scoped auth without contradicting either.
+The pattern follows existing standards. OAuth discovery at a well-known path tells an agent where to request access and, when the metadata lists them, what scopes exist. An authorization server and a protected resource description let the agent ask for a token limited to a specific permission rather than a blanket login. When a site also advertises an agent registration flow, an agent can register and claim access on a user's behalf without someone provisioning credentials by hand. None of this removes the case for a person confirming a specific high-stakes action at the point it happens, and a service can require that confirmation on top of scoped auth without contradicting either.
 
 ## What an agent must discover before it acts
 
-Discovery answers two questions: where to request access, and what scopes exist. OAuth discovery at a well-known path answers both, so an agent can request a token tied to one named permission instead of a blanket login. A protected resource description lists the scopes the resource supports, and that list can be incomplete, so it is not the same as what one operation needs. The scope a request requires comes from the service's own challenge, such as the scope value in a WWW-Authenticate response, or from its documentation, and the agent asks for that scope and nothing wider, except in a step-up or reauthorization flow, where the MCP authorization specification recommends keeping the scopes already granted for other operations rather than dropping them. The service still decides at request time whether to grant it, and discovery only describes the route, it does not grant anything by itself.
+Discovery answers two questions: where to request access, and what scopes exist. OAuth discovery at a well-known path answers the first. It answers the second only when the metadata publishes a scopes_supported list, which RFC 8414 for the authorization server and RFC 9728 for the protected resource both mark RECOMMENDED rather than required. Where the list exists, an agent can request a token limited to one named permission instead of a blanket login. A protected resource description lists the scopes the resource supports, and that list can be incomplete, so it is not the same as what one operation needs. The scope a request requires comes from the service's own challenge, such as the scope value in a WWW-Authenticate response, or from its documentation, and the agent asks for that scope and nothing wider, except in a step-up or reauthorization flow, where the MCP authorization specification recommends keeping the scopes already granted for other operations rather than dropping them. When the challenge names no scope, the same specification has the client request the scopes in the scopes_supported list of the protected resource metadata, which it describes as the minimal set for basic functionality, and leave the scope parameter out when that list is undefined. The service still decides at request time whether to grant the scope, and discovery only describes the route and does not grant anything by itself.
 
 ## The written entry point, and its two dialects
 
@@ -6554,7 +6564,7 @@ turva.dev publishes OAuth discovery, a protected resource description and an age
 
 **How do AI agents authenticate?**
 
-An agent proves who it is by authenticating to the service, and discoverable standards such as OAuth discovery at a well-known path tell it where to request access and what scopes exist. It can then request a token tied to a specific permission rather than a blanket login.
+An agent authenticates to the service, and discoverable standards such as OAuth discovery at a well-known path tell it where to request access and, when the metadata lists them, what scopes exist. It can then request a token limited to a specific permission rather than a blanket login. A bearer token shows what access was granted, not which program sends the request: OAuth 2.0 forbids using a client identifier alone for client authentication, and any party that holds a bearer token can use it.
 
 **Why does scoped, discoverable auth matter?**
 
@@ -6562,12 +6572,14 @@ A site that lets an agent act for a user or read private data without scoped aut
 
 **What does an agent need to discover before it can authenticate?**
 
-Where to request access and what scopes exist. OAuth discovery at a well-known path tells it both, so it can request a token tied to a specific permission rather than a blanket login.
+Where to request access and what scopes exist. OAuth discovery at a well-known path tells an agent where to request access, and its scopes_supported list names the scopes when the metadata carries one, since both metadata standards recommend the list without requiring it. With a scope named, the agent can request a token limited to a specific permission rather than a blanket login.
 
 ## Sources
 
 - [OAuth 2.0 protected resource metadata, RFC 9728](https://www.rfc-editor.org/rfc/rfc9728.html)
 - [OAuth 2.0 authorization server metadata, RFC 8414](https://www.rfc-editor.org/rfc/rfc8414.html)
+- [The OAuth 2.0 authorization framework, RFC 6749](https://www.rfc-editor.org/rfc/rfc6749.html)
+- [OAuth 2.0 bearer token usage, RFC 6750](https://www.rfc-editor.org/rfc/rfc6750.html)
 - [MCP authorization specification, 2026-07-28 revision](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization)
 - [Web Bot Auth, Cloudflare reference](https://developers.cloudflare.com/bots/reference/bot-verification/web-bot-auth/)
 
@@ -7754,7 +7766,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.212.0",
+    "version": "3.213.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7767,6 +7779,13 @@ const OPENAPI_SPEC = JSON.stringify({
   },
   "paths": {
     "/api/agent/audit": {
+      "get": {
+        "summary": "Agent-readiness audit, read only. Answers 402 with the same payment description as POST",
+        "operationId": "getAuditPaymentDescription",
+        "responses": {
+          "402": { "description": "Payment Required (x402)", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      },
       "post": {
         "summary": "Agent-readiness audit. Answers 402: the order is agreed by email and a written scope",
         "operationId": "orderAudit",
@@ -7778,11 +7797,18 @@ const OPENAPI_SPEC = JSON.stringify({
           "description": "Card checkout link, completed by a person after the scope is agreed in writing. Not an agent-settleable rail: no API completes this payment. https://buy.stripe.com/bJe5kD5Tu0dBcFG9o75EY03 Amount is in minor units (cents)."
         },
         "responses": {
-          "402": { "description": "Payment Required (x402)" }
+          "402": { "description": "Payment Required (x402)", "content": { "application/json": { "schema": { "type": "object" } } } }
         }
       }
     },
     "/api/agent/advisory": {
+      "get": {
+        "summary": "Monthly advisory, read only. Answers 402 with the same payment description as POST",
+        "operationId": "getAdvisoryPaymentDescription",
+        "responses": {
+          "402": { "description": "Payment Required (x402)", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      },
       "post": {
         "summary": "Monthly advisory, three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. Answers 402: the engagement is agreed by email and a written scope",
         "operationId": "subscribeAdvisory",
@@ -7794,11 +7820,18 @@ const OPENAPI_SPEC = JSON.stringify({
           "description": "Card checkout link, completed by a person after the scope is agreed in writing. Not an agent-settleable rail: no API completes this payment. https://buy.stripe.com/7sYcN5eq04tRfRSeIr5EY01 Amount is in minor units (cents)."
         },
         "responses": {
-          "402": { "description": "Payment Required (x402)" }
+          "402": { "description": "Payment Required (x402)", "content": { "application/json": { "schema": { "type": "object" } } } }
         }
       }
     },
     "/api/agent/implementation": {
+      "get": {
+        "summary": "Implementation day, read only. Answers 402 with the same payment description as POST",
+        "operationId": "getImplementationPaymentDescription",
+        "responses": {
+          "402": { "description": "Payment Required (x402)", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      },
       "post": {
         "summary": "Book an implementation day",
         "operationId": "bookImplementationDay",
@@ -7810,41 +7843,42 @@ const OPENAPI_SPEC = JSON.stringify({
           "description": "Card checkout link, completed by a person after the scope is agreed in writing. Not an agent-settleable rail: no API completes this payment. https://buy.stripe.com/6oUaEX81C0dBfRSbwf5EY02 Amount is in minor units (cents)."
         },
         "responses": {
-          "402": { "description": "Payment Required (x402)" }
+          "402": { "description": "Payment Required (x402)", "content": { "application/json": { "schema": { "type": "object" } } } }
         }
       }
     },
-    "/x402": { "get": { "summary": "x402 discovery endpoint (HTTP 402)", "operationId": "getX402Endpoint", "responses": { "402": { "description": "Payment required" } } } },
-    "/agent/auth/register": { "get": { "summary": "Agent registration instructions", "operationId": "getAgentAuthRegister", "responses": { "200": { "description": "ok" } } }, "post": { "summary": "Agent registration instructions", "operationId": "postAgentAuthRegister", "responses": { "200": { "description": "ok" } } } },
-    "/agent/auth/claim": { "get": { "summary": "Agent claim instructions", "operationId": "getAgentAuthClaim", "responses": { "200": { "description": "ok" } } }, "post": { "summary": "Agent claim instructions", "operationId": "postAgentAuthClaim", "responses": { "200": { "description": "ok" } } } },
-    "/agent/auth/revoke": { "get": { "summary": "Agent revocation instructions", "operationId": "getAgentAuthRevoke", "responses": { "200": { "description": "ok" } } }, "post": { "summary": "Agent revocation instructions", "operationId": "postAgentAuthRevoke", "responses": { "200": { "description": "ok" } } } },
-    "/oauth/authorize": { "get": { "summary": "OAuth authorization endpoint, closed: a spec-valid access_denied error pointing to the agent auth flow", "operationId": "getOauthAuthorize", "responses": { "400": { "description": "access_denied, see /auth.md" } } }, "post": { "summary": "OAuth authorization endpoint, closed", "operationId": "postOauthAuthorize", "responses": { "400": { "description": "access_denied, see /auth.md" } } } },
-    "/oauth/token": { "get": { "summary": "OAuth token endpoint, closed: a spec-valid invalid_request error pointing to the agent auth flow", "operationId": "getOauthToken", "responses": { "400": { "description": "invalid_request, see /auth.md" } } }, "post": { "summary": "OAuth token endpoint, closed", "operationId": "postOauthToken", "responses": { "400": { "description": "invalid_request, see /auth.md" } } } },
-    "/llms.txt": { "get": { "summary": "LLM summary", "operationId": "getLlmsTxt", "responses": { "200": { "description": "ok" } } } },
-    "/llms-full.txt": { "get": { "summary": "Full concatenated content", "operationId": "getLlmsFullTxt", "responses": { "200": { "description": "ok" } } } },
-    "/auth.md": { "get": { "summary": "Agent registration metadata", "operationId": "getAuthMd", "responses": { "200": { "description": "ok" } } } },
-    "/sitemap.xml": { "get": { "summary": "Sitemap", "operationId": "getSitemap", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/ai.txt": { "get": { "summary": "AI policy", "operationId": "getAiPolicy", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/mcp/server-card.json": { "get": { "summary": "MCP Server Card", "operationId": "getMcpCard", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/agent-skills/index.json": { "get": { "summary": "Agent Skills index", "operationId": "getSkillsIndex", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/api-catalog": { "get": { "summary": "API catalog", "operationId": "getApiCatalog", "responses": { "200": { "description": "ok" } } } },
+    "/x402": { "get": { "summary": "x402 discovery endpoint (HTTP 402)", "operationId": "getX402Endpoint", "responses": { "402": { "description": "Payment required", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/api": { "get": { "summary": "x402 challenge root (HTTP 402), the second root the x402 manifest names", "operationId": "getApiChallenge", "responses": { "402": { "description": "Payment required", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/agent/auth/register": { "get": { "summary": "Agent registration instructions", "operationId": "getAgentAuthRegister", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } }, "post": { "summary": "Agent registration instructions", "operationId": "postAgentAuthRegister", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/agent/auth/claim": { "get": { "summary": "Agent claim instructions", "operationId": "getAgentAuthClaim", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } }, "post": { "summary": "Agent claim instructions", "operationId": "postAgentAuthClaim", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/agent/auth/revoke": { "get": { "summary": "Agent revocation instructions", "operationId": "getAgentAuthRevoke", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } }, "post": { "summary": "Agent revocation instructions", "operationId": "postAgentAuthRevoke", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/oauth/authorize": { "get": { "summary": "OAuth authorization endpoint, closed: a spec-valid access_denied error pointing to the agent auth flow", "operationId": "getOauthAuthorize", "responses": { "400": { "description": "access_denied, see /auth.md", "content": { "application/json": { "schema": { "type": "object" } } } } } }, "post": { "summary": "OAuth authorization endpoint, closed", "operationId": "postOauthAuthorize", "responses": { "400": { "description": "access_denied, see /auth.md", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/oauth/token": { "get": { "summary": "OAuth token endpoint, closed: a spec-valid invalid_request error pointing to the agent auth flow", "operationId": "getOauthToken", "responses": { "400": { "description": "invalid_request, see /auth.md", "content": { "application/json": { "schema": { "type": "object" } } } } } }, "post": { "summary": "OAuth token endpoint, closed", "operationId": "postOauthToken", "responses": { "400": { "description": "invalid_request, see /auth.md", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/llms.txt": { "get": { "summary": "LLM summary", "operationId": "getLlmsTxt", "responses": { "200": { "description": "ok", "content": { "text/plain": { "schema": { "type": "string" } } } } } } },
+    "/llms-full.txt": { "get": { "summary": "Full concatenated content", "operationId": "getLlmsFullTxt", "responses": { "200": { "description": "ok", "content": { "text/plain": { "schema": { "type": "string" } } } } } } },
+    "/auth.md": { "get": { "summary": "Agent registration metadata", "operationId": "getAuthMd", "responses": { "200": { "description": "ok", "content": { "text/markdown": { "schema": { "type": "string" } } } } } } },
+    "/sitemap.xml": { "get": { "summary": "Sitemap", "operationId": "getSitemap", "responses": { "200": { "description": "ok", "content": { "application/xml": { "schema": { "type": "string" } } } } } } },
+    "/.well-known/ai.txt": { "get": { "summary": "AI policy", "operationId": "getAiPolicy", "responses": { "200": { "description": "ok", "content": { "text/plain": { "schema": { "type": "string" } } } } } } },
+    "/.well-known/mcp/server-card.json": { "get": { "summary": "MCP Server Card", "operationId": "getMcpCard", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/agent-skills/index.json": { "get": { "summary": "Agent Skills index", "operationId": "getSkillsIndex", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/api-catalog": { "get": { "summary": "API catalog", "operationId": "getApiCatalog", "responses": { "200": { "description": "ok", "content": { "application/linkset+json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/ard.json": { "get": { "summary": "ARD manifest (v0.91)", "operationId": "getArdManifest", "responses": { "200": { "description": "Agentic Resource Discovery manifest, same entries as ai-catalog.json with the MCP Server Card media type on the MCP entry", "content": { "application/json": {} } } } } },
-    "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok" } } } },
-    "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with message.metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["message"], "properties": { "message": { "type": "object", "required": ["parts"], "properties": { "messageId": { "type": "string", "description": "A unique identifier for the message, typically a UUID, generated by the sender." }, "kind": { "type": "string", "enum": ["message"] }, "role": { "type": "string" }, "parts": { "type": "array", "maxItems": 32, "items": { "type": "object", "properties": { "kind": { "type": "string" }, "text": { "type": "string", "description": "Read for skill names when metadata.skillId is absent" } } } }, "metadata": { "type": "object", "properties": { "skillId": { "type": "string", "enum": ["services", "contact-info", "company-info"] } } } } } } }, "example": { "message": { "kind": "message", "messageId": "3f8c1a52-7e4b-4d19-9a6e-5c0b2d7f8e41", "role": "user", "parts": [{ "kind": "text", "text": "What does turva.dev sell?" }], "metadata": { "skillId": "services" } } } } } }, "responses": { "200": { "description": "ok" }, "400": { "description": "invalid params, or more than 32 parts" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
-    "/.well-known/agent-card.json": { "get": { "summary": "A2A Agent Card", "operationId": "getAgentCard", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/security.txt": { "get": { "summary": "Security", "operationId": "getSecurity", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/oauth-authorization-server": { "get": { "summary": "OAuth Authorization Server Metadata", "operationId": "getOauthDiscovery", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/oauth-protected-resource": { "get": { "summary": "OAuth Protected Resource Metadata", "operationId": "getOauthProtectedResource", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/ap2": { "get": { "summary": "AP2 manifest", "operationId": "getAp2", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/acp": { "get": { "summary": "ACP manifest", "operationId": "getAcp", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/x402": { "get": { "summary": "x402 discovery manifest", "operationId": "getX402", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok" } } } },
-    "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok" } } } },
-    "/api/v1": { "get": { "summary": "Agent endpoint index", "operationId": "getApiIndex", "description": "Free JSON index of the main agent entrypoints, with links to the full catalogs. No payment, no authentication.", "responses": { "200": { "description": "ok" } } } },
-    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id, quantity }] } with id one of audit, advisory, implementation, shopify (omit id for the default service, but id must not be null) and quantity, if present, exactly 1. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session" }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, an item id is null, an item quantity is present and not exactly 1, or an unknown item id" }, "405": { "description": "POST only" }, "413": { "description": "body larger than 16384 bytes" } } } },
-    "/api/acp/checkout_sessions/{session_id}": { "get": { "summary": "Retrieve an ACP checkout session", "operationId": "acpGetCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "session" }, "404": { "description": "unknown session id" }, "405": { "description": "GET only" } } } },
-    "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Scope is agreed in writing before payment; no API completes it. The response is 422 intervention_required, never 200.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "422": { "description": "intervention_required: human confirmation in writing is required before this session can complete" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } },
-    "/api/acp/checkout_sessions/{session_id}/cancel": { "post": { "summary": "Cancel an ACP checkout session", "operationId": "acpCancelCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "canceled" }, "404": { "description": "unknown session id" }, "405": { "description": "POST only" } } } }
+    "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with message.metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["message"], "properties": { "message": { "type": "object", "required": ["parts"], "properties": { "messageId": { "type": "string", "description": "A unique identifier for the message, typically a UUID, generated by the sender." }, "kind": { "type": "string", "enum": ["message"] }, "role": { "type": "string" }, "parts": { "type": "array", "maxItems": 32, "items": { "type": "object", "properties": { "kind": { "type": "string" }, "text": { "type": "string", "description": "Read for skill names when metadata.skillId is absent" } } } }, "metadata": { "type": "object", "properties": { "skillId": { "type": "string", "enum": ["services", "contact-info", "company-info"] } } } } } } }, "example": { "message": { "kind": "message", "messageId": "3f8c1a52-7e4b-4d19-9a6e-5c0b2d7f8e41", "role": "user", "parts": [{ "kind": "text", "text": "What does turva.dev sell?" }], "metadata": { "skillId": "services" } } } } } }, "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "invalid params, or more than 32 parts", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } }, "413": { "description": "body larger than 16384 bytes", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/agent-card.json": { "get": { "summary": "A2A Agent Card", "operationId": "getAgentCard", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/security.txt": { "get": { "summary": "Security", "operationId": "getSecurity", "responses": { "200": { "description": "ok", "content": { "text/plain": { "schema": { "type": "string" } } } } } } },
+    "/.well-known/oauth-authorization-server": { "get": { "summary": "OAuth Authorization Server Metadata", "operationId": "getOauthDiscovery", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/oauth-protected-resource": { "get": { "summary": "OAuth Protected Resource Metadata", "operationId": "getOauthProtectedResource", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/ap2": { "get": { "summary": "AP2 manifest", "operationId": "getAp2", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/acp": { "get": { "summary": "ACP manifest", "operationId": "getAcp", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/x402": { "get": { "summary": "x402 discovery manifest", "operationId": "getX402", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/api/v1": { "get": { "summary": "Agent endpoint index", "operationId": "getApiIndex", "description": "Free JSON index of the main agent entrypoints, with links to the full catalogs. No payment, no authentication.", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id, quantity }] } with id one of audit, advisory, implementation, shopify (omit id for the default service, but id must not be null) and quantity, if present, exactly 1. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, an item id is null, an item quantity is present and not exactly 1, or an unknown item id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } }, "413": { "description": "body larger than 16384 bytes", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/api/acp/checkout_sessions/{session_id}": { "get": { "summary": "Retrieve an ACP checkout session", "operationId": "acpGetCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "session", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "GET only", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Scope is agreed in writing before payment; no API completes it. The response is 422 intervention_required, never 200.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "422": { "description": "intervention_required: human confirmation in writing is required before this session can complete", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/api/acp/checkout_sessions/{session_id}/cancel": { "post": { "summary": "Cancel an ACP checkout session", "operationId": "acpCancelCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "canceled", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } } } } }
   }
 }, null, 2);
 
@@ -7864,7 +7898,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MAqPdnHYCMz6iKWHeom44o0tGk4qL9htg56SZXKw0zmUOXrC2MdxTYBO5SPlcAJvouatId72_sFI-3D32pziCQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"JImn9xUTFGOft3ut9IAzDibOyp0Qe16OirRi3GCtkWpQaGgVUfD9dL-c1x6dnkk9cUOmaR8HkSdliSp4EjL-BQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"ZMQX9dOdtyDg8A106ZSP7Dbv0UV0wVsqaW-W-oP-0Z2LFOA8RPCkG1q67wMfYpKUwBa1qiquQiEoavm8HRQrCQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"JImn9xUTFGOft3ut9IAzDibOyp0Qe16OirRi3GCtkWpQaGgVUfD9dL-c1x6dnkk9cUOmaR8HkSdliSp4EjL-BQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7879,7 +7913,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.20",
+  "version": "1.6.21",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -7888,7 +7922,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.20",
+    "version": "1.6.21",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -7925,13 +7959,13 @@ const MCP_SERVER_CARD = JSON.stringify({
     "authMd": "https://turva.dev/auth.md",
     "contact": "info@turva.dev",
     "languages": ["en"],
-    "vatNote": "All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.",
+    "vatNote": "All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business customers in another EU member state with a valid VAT ID, no Finnish VAT for customers outside the EU, because the place of supply is outside Finland.",
     "pricing": {
       "currency": "EUR",
       "vatIncluded": false,
-      "shopify": { "price": 999, "unit": "fixed", "duration": "48 hours" },
-      "audit": { "price": 4300, "unit": "fixed", "duration": "2 weeks" },
-      "advisory": { "price": 3000, "unit": "month", "minimumCommitment": "3 months" },
+      "shopify": { "price": 999, "unit": "fixed", "duration": "48 hours", "durationFrom": "agreed written kickoff" },
+      "audit": { "price": 4300, "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff" },
+      "advisory": { "price": 3000, "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged." },
       "implementation": { "price": 1500, "unit": "day" }
     },
     "bundledImplementation": [
@@ -7986,11 +8020,11 @@ const AP2_MANIFEST = JSON.stringify({
   "pricing": {
     "currency": "EUR",
     "vat_included": false,
-    "vat_note": "All prices exclude VAT. 25,5% for Finnish customers, reverse charge for EU B2B customers with a valid VAT ID, 0% for non-EU.",
+    "vat_note": "All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business customers in another EU member state with a valid VAT ID, no Finnish VAT for customers outside the EU, because the place of supply is outside Finland.",
     "items": [
-      { "name": "Shopify agent storefront check", "price": 999, "unit": "fixed", "duration": "48 hours" },
-      { "name": "Audit", "price": 4300, "unit": "fixed", "duration": "2 weeks" },
-      { "name": "Advisory", "price": 3000, "unit": "month", "minimum_commitment_months": 3 },
+      { "name": "Shopify agent storefront check", "price": 999, "unit": "fixed", "duration": "48 hours", "duration_from": "agreed written kickoff" },
+      { "name": "Audit", "price": 4300, "unit": "fixed", "duration": "2 weeks", "duration_from": "agreed written kickoff" },
+      { "name": "Advisory", "price": 3000, "unit": "month", "minimum_commitment_months": 3, "first_month_opt_out": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged." },
       { "name": "Implementation", "price": 1500, "unit": "day" }
     ]
   },
@@ -8033,7 +8067,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.212.0",
+  "version": "3.213.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8210,7 +8244,7 @@ const X402_MANIFEST = JSON.stringify({
   "network": "eip155:8453",
   "asset": "USDC",
   "scheme": "exact",
-  "priceNote": "The USDC amounts are the EUR list prices converted at 1.1404 USDC per EUR, the rate read on 2026-07-01, and they do not follow the market. The written quote sets the amount and the currency that are settled.",
+  "priceNote": "The USDC amounts are the EUR list prices converted at 1.1404 USDC per EUR, the rate read on 2026-07-01, and rounded to the nearest whole USDC. They do not follow the market. The written quote sets the amount and the currency that are settled.",
   "accepts": [
     {
       "scheme": "exact",
@@ -8370,9 +8404,9 @@ const MPP_MANIFEST = JSON.stringify({
     "currency": "EUR",
     "vat_included": false,
     "items": [
-      { "name": "Shopify agent storefront check", "price": 999, "unit": "fixed", "duration": "48 hours" },
-      { "name": "Audit", "price": 4300, "unit": "fixed", "duration": "2 weeks" },
-      { "name": "Advisory", "price": 3000, "unit": "month", "minimum_commitment_months": 3 },
+      { "name": "Shopify agent storefront check", "price": 999, "unit": "fixed", "duration": "48 hours", "duration_from": "agreed written kickoff" },
+      { "name": "Audit", "price": 4300, "unit": "fixed", "duration": "2 weeks", "duration_from": "agreed written kickoff" },
+      { "name": "Advisory", "price": 3000, "unit": "month", "minimum_commitment_months": 3, "first_month_opt_out": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged." },
       { "name": "Implementation", "price": 1500, "unit": "day" }
     ]
   }
@@ -8415,7 +8449,7 @@ const UCP_PROFILE = JSON.stringify({
       "items": [
         { "name": "Shopify agent storefront check", "price": 999, "unit": "fixed" },
         { "name": "Audit", "price": 4300, "unit": "fixed" },
-        { "name": "Advisory", "price": 3000, "unit": "month", "minimum_commitment_months": 3 },
+        { "name": "Advisory", "price": 3000, "unit": "month", "minimum_commitment_months": 3, "first_month_opt_out": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged." },
         { "name": "Implementation", "price": 1500, "unit": "day" }
       ]
     }
@@ -9985,7 +10019,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 999, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-10-21" }, null, 2);
+const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 999, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-10-21" }, null, 2);
 const API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"
@@ -12607,6 +12641,14 @@ function validatorEcho(typed: string, shown: string): string {
   if (!/[@?#]/.test(typed)) return shown;
   return normalizeHostInput(typed) || "";
 }
+// Tek-680: the visitor's address must not reach the checked site. Cloudflare's HTTP headers
+// documentation (updated 2026-10-09) says a Worker controls CF-Connecting-IP and x-real-ip on a
+// subrequest to a site outside Cloudflare, and its Transform Rules page says a value set on a
+// fetch() subrequest must be a valid IP address. Both headers are therefore set to the address
+// that documentation names for a Worker's subrequest to another Cloudflare zone. What a site
+// outside Cloudflare actually receives is measured after the deploy, and the validator page and
+// /legal say it is unmeasured until then.
+const VALIDATOR_CLIENT_IP = "2a06:98c0:3600::103";
 // The second argument was added for the v2 discovery checks, which need the site's
 // home page as well as its llms.txt. It is one parameter and nothing else moved:
 // the redirect budget, the same-host rule, the credential and port rejections and
@@ -12627,7 +12669,9 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
       signal: AbortSignal.timeout(Math.max(1, deadline - Date.now())),
       headers: {
         "user-agent": "turva-llms-txt-validator (+https://turva.dev/llms-txt-validator)",
-        "accept": accept || "text/plain, text/markdown;q=0.9, */*;q=0.1"
+        "accept": accept || "text/plain, text/markdown;q=0.9, */*;q=0.1",
+        "cf-connecting-ip": VALIDATOR_CLIENT_IP,
+        "x-real-ip": VALIDATOR_CLIENT_IP
       }
     });
     if (res.status >= 300 && res.status < 400) {
