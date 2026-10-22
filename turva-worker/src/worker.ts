@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.212.0 - new Build notes post /blog/tla-plus-in-numbers (TLA+ series part 4, 2026-10-22), with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count.
 // turva.dev worker v3.211.4 - the dated scanner readings move to 2026-10-21 (measurement day): isitagentready.com, Internet.nl and Hardenize, scores unchanged (Level 5, 21 of 21 checks, 98/100 website, 90/100 email), in the home, audit-method and sample-report pages, the markdown twins and HOME_JSON lastVerified; the Hardenize report is re-run the same day, so its date moves to 2026-10-21 too; turva-mcp 1.6.20 carries the new snapshot dates, so the MCP server card is re-signed.
 // turva.dev worker v3.211.3 - TypeScript migration, step 3 finished: src/worker.ts type-checks under strict, the last eight untyped functions carry parameter types, three overload signatures are moved onto their implementations, and every var declaration is now const or let. The hosted llms.txt validator no longer leaves an undefined value in a check's detail for two inputs no hosted route reaches. Responses change only in the version number and the sitemap date.
 // turva.dev worker v3.211.2 - the Worker source is renamed from src/worker.js to src/worker.ts, a rename that by itself changes no byte, and wrangler bundles the .ts file with no build step (TypeScript migration, step 2); /blog/the-twin-is-the-page keeps its sentences and gets an Update, October 20 note naming src/worker.ts and the CI workflow that has run since September 10, with its modified date.
@@ -320,6 +321,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [TLA+ on my own tools, in numbers](https://turva.dev/blog/tla-plus-in-numbers.md)
 - [What Shopify changed for agent shopping since August](https://turva.dev/blog/what-shopify-changed-for-agent-shopping.md)
 - [Three outside reviews of my TLA+ models](https://turva.dev/blog/three-outside-reviews-of-my-tla-plus-models.md)
 - [Microsoft's own CVE count is up nearly eightfold in a year](https://turva.dev/blog/microsofts-own-cve-count.md)
@@ -539,6 +541,204 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 const PAGE_MARKDOWN = {
+  "/blog/tla-plus-in-numbers": `# TLA+ on my own tools, in numbers
+
+2026-10-22
+
+This is the fourth and last part of the series that began with [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus), continued in [Thirteen review rounds and one rollback](/blog/thirteen-review-rounds-and-one-rollback) and went on with [Three outside reviews of my TLA+ models](/blog/three-outside-reviews-of-my-tla-plus-models). It closes the series with the full numbers. Part 3 set a condition for a fourth outside review, and I did not keep it, so that comes up below too.
+
+## How long did the work run?
+
+The first pilot started on 27 September and this post is written on 22 October, 25 days later. The table lists the stretches that carried the work.
+
+| Date | What happened |
+|---|---|
+| 27 September | Pilot on the script that removes sync conflict copies. |
+| 28 September | Six more phases in one day: send chain, shared logs, pipeline, rescan obligations, ship and cross-posting scripts. |
+| 1 October | Inventory of 27 model files with 23 distinct models. I created the library itself on 14 October. |
+| 8 to 9 October | First outside review read and verified. Part 1 published on 9 October. |
+| 10 to 12 October | Gate fix session with 13 review rounds. Part 2 published on 12 October. |
+| 12 to 15 October | A plan of 12 items before the second review. |
+| 15 and 16 October | Second and third outside reviews. |
+| 17 October | Part 3 published. Packages for the fourth review built. |
+| 17 to 19 October | Fourth review verified and its fix chain shipped. |
+| 19 October | Internal audit of every TLA+ decision. |
+| 21 October | Re-evaluation of the fixes. |
+| 22 October | Overnight chain of five fix sessions, a full mutation run in 48 parts, this post. |
+
+## How big did the model library get?
+
+The library is a versioned folder of models with a manifest of the code each model covers. A drifted model is one whose covered code has changed since the model last ran, so its stored PASS describes older code.
+
+| Point in time | Models | Drifted |
+|---|---|---|
+| 27 September, pilot | 3 | not tracked |
+| 1 October, before the library | 23 | not tracked |
+| 14 October, library created | 32 | 20 at the first run |
+| 15 October, before the second review | 41 | 21 |
+| 17 October, before the acknowledgement | 88 | 56 |
+| 17 October, after the acknowledgement | 88 | 17 |
+| 19 October, internal audit | 115, of which 111 valid | 79 |
+| 21 October, re-evaluation | 112 valid | 102 |
+| 22 October, after the first fix session of the night | 116, of which 105 valid | 95 |
+| 22 October, after the second | 116 | 69 |
+| 22 October, after the third | 116 | 7 |
+
+The 116 models are 105 valid, 4 replaced by later models and 7 marked historical. Their registry holds 880 stored runs: 351 pass runs, 394 vacuity runs and 135 liveness runs. A vacuity check shows that a property can fail at all. Drift grew again as the fix chain of the fourth review changed code, which is why 79 models had drifted by the audit. The acknowledgement of 17 October and the one of 22 October use different definitions, and the audit section explains why.
+
+## What real faults did the work find?
+
+This is a selection. It has 14 rows, one of them four separate causes, across 11 tools or tool groups. Some came from the outside readers and the audit. Each either happened in real use or was reproduced against real code or a test copy of it, and not only in a model. Every fix chain also named smaller limits that are not in the table.
+
+| Tool | Fault | How it was reproduced |
+|---|---|---|
+| Sync conflict cleaner | Deleted the newest version of a file when sync restored an old version under the original name. | Run on the unchanged script. |
+| Sync conflict cleaner | Quarantine folder names collided within one millisecond: old code lost 1 of 300 copies, fixed code 0 of 300. | Real processes. |
+| Send script and batch publisher | Four separate causes of sending the same message twice. | Real send loop against a fake mail server on the local machine. |
+| Send script | A late 354 reply after the end dot of an SMTP message counted as a certain refusal, so a retry delivered twice. | Fake server. |
+| Send script | A late 4xx or 5xx reply after the end dot removed the reservation and a retry delivered twice. The fourth outside review named it as a limit, and the internal audit reproduced the double delivery. | Replay. |
+| Pipeline writer | Two overlapping additions lost the first record while three existing checks stayed green. | Replay. |
+| Log size registry | Two runs that read the same registry version silently lost each other's entries. | Replay. |
+| Ship script | Pushed another session's undeployed work and created public tags ahead of the deploy. | Happened in a real ship on 28 September, and the model reproduced the sequence. |
+| Publish scripts for dev.to and Hashnode | Duplicate posts. In the model the old scripts broke in 28 of 48 configurations on dev.to and 30 of 48 on Hashnode. Both scripts are retired now. | Fake server replay: the old script broke 7 of 8 cases, the fixed one 0 of 8. |
+| Plugin hook state file | One gate silently skipped its check in 20 of 300 rounds, 0 of 300 after the fix. | Replay against the real hook code. |
+| Batch import | An interrupted run stayed at 4 of 5 records after three retries. | Real code. |
+| Tag release script | Exited 0 and sent a release for a tag one patch ahead of the version in the tagged commit. | Old code against the fix in a test setup. |
+| Archive tool | Restore exited 0 with "0 records updated" when it had updated nothing. | Replay. |
+| Hand-log writer | Exited 0 and printed PASS when the row to add was missing. | Replay. |
+
+I count a fault only when it happened in the unchanged tool or was reproduced against it. A model's counterexample alone does not count.
+
+## What did the four outside reviews find?
+
+Each review read packages of models together with the code they describe. Sonnet subagents checked every claim against TLC and the real code. A claim was rated high when, in the reader's words, a verdict or a fix might not hold for the real code. After the check I kept the high rating only for a silent loss that contradicts a general statement in one of my reports.
+
+| Round | Date | Packages | Claims | Confirmed | Refined | Refuted | Rated high before and after |
+|---|---|---|---|---|---|---|---|
+| 1 | 8 October | 4, 19 models | 68 | 39 | 29 | 0 | 33 before, 2 after |
+| 2 | 15 October | 6, 35 models | 49 | 35 | 14 | 0 | 20 before, 2 after |
+| 3 | 16 October | 6, 55 models | 37 | 24 | 13 | 0 | 10 before, 0 after |
+| 4 | 17 to 18 October | 8, 82 models | 35 | 20 | 15 | 0 | 8 before, 0 after |
+| All four | | | 189 | 118 | 71 | 0 | 71 before, 4 after |
+
+Rounds 1 and 2 were read by Sol 6.1 and round 3 by Astra, all through ChatGPT at its Ultra effort setting. Round 4 was read by Opus 5.5, and I chose the reader and handed over the packages by hand. Opus 5.5 also led the fix work, so round 4 was not read by a model from outside the family that wrote the fixes.
+
+The falling number of high-rated claims cannot be read as a quality trend, because the reader changed between rounds and the prompt changed after round 2. All four rounds also share one limit that the internal audit named: no claim was refuted in 189, and I never planted a false claim to see whether the method would refute it. The verifiers are the same model family as the implementers. Zero refuted therefore says little about the method.
+
+## What did the internal audit of 19 October find?
+
+I asked for an internal audit, because I needed to be able to trust the decisions. Eight Sonnet reviewers read and did not run anything. They covered 85 distinct decisions and the questions of the four outside reviews, in eight tool families. For each decision they checked the code on disk, the test and mutation protection, the evidence, the model and its drift, and the status line.
+
+The audit gave 116 verdict rows. The decision held in 36 rows, held while its model had drifted in 60 rows and needed refining in 20. In none did it fail to hold, and in none was it impossible to check. The refinements were nearly always an outdated status line or a moved line number. A few were a sentence that a later decision had overruled.
+
+Three structural findings came out of it.
+
+The acknowledgement by re-run could not fail. A TLC run checks the model, and the model does not read the code. On 17 October I had acknowledged 39 of 56 drifted models by reading the diff and re-running 508 stored runs with no deviation. The re-run added nothing, because it could only pass. Of the 111 valid models, 79 had drifted. A classification of the diffs gave 16 comment-only drifts, 60 with real code changes after the last run and 3 without a recorded hash. The gotchas log had noted this problem on 16 October, but the code, the skill and one decision still said "by re-run".
+
+The mutation suite had not run whole for six days. On 13 October the last full run caught 786 of 788, and 110 mutations had been added since without a full run.
+
+Third came the finding about zero refuted claims, described above.
+
+The audit also found eight code issues, and I confirmed six of them on disk. One of them was the late 4xx or 5xx reply in the send script.
+
+The full mutation run of the audit caught 896 of 898, and the two survivors were a classification error and not a hole in the protection. Each of two mutations of the model library tool was expected to turn one named test red, and each also turned red a control test that was defined to stay green. The fix added that control to the expected-red lists of both mutations.
+
+## Did the fixes have to be redone?
+
+On 21 October I wrote that so much had changed in the workspace that the whole fix plan probably had to be redone. Three Sonnet subagents measured it. Of the 41 covered files, 8 had changed since the last fix. For three of them I measured the diff and none touched a fixed spot. For the other five I inferred it from the changelog and the file times, because no comparison copy existed. The checks covering them were green. Five limited mutation runs passed with 7 of 7, 25 of 25, 87 of 87, 79 of 79 and 71 of 71, and a full run passed 936 of 936. The suspicion did not hold when I measured it. One caveat stays: that full run used an older version of the mutation file, and the 24 mutations added after it ran only in limited mode.
+
+## What did the full mutation runs show?
+
+A mutation changes one line of a tool. It counts as caught when the test named for it fails and the control tests stay green. A full run applies every mutation of the tools suite.
+
+| Date | Caught of total | Duration | Parts |
+|---|---|---|---|
+| 9 October | 577 of 577 | 2 hours 37 minutes | 1 |
+| 12 to 13 October | 786 of 788 | about 3 hours 45 minutes | 1 |
+| 19 October | 896 of 898 | about 6 hours 40 minutes | 1 |
+| 21 October | 936 of 936 | 6 hours 29 minutes | 1 |
+| 22 October, filtered load test of five tool families | 291 of 291 | 28 minutes | 48 |
+| 22 October | 1 002 of 1 002 | 64 minutes | 48 |
+
+Serial, the 1 002 mutations would take about 7 hours at the rate of the 936. The 48 parts took 64 minutes, so the run is about 6 and a half times faster. The machine has 32 logical processors and 48 GB of memory. During the run the processor averaged about 86 percent, memory about 56 percent and peaked at about 61 percent, with at most 199 node processes. The baseline of 249 named cases ran 1 086 times in the parts and the parent, and one run was red, a baseline case under load. Four mutations were run again alone and all four were caught alone.
+
+The plugin's hook gates have a mutation suite of their own, which I do not add to this table. It caught 643 of 643 on 12 October and 828 of 828 on 22 October. The second run took 927 seconds as three parts, alone, because its timing tests fail under load.
+
+A full run is now weekly. A scheduled task created on 22 October runs it on Sunday nights, and its first run is on 25 October. The export gate for outside review packages refuses a package unless the stored result of a full run passed at most 7 days earlier. If the tools have changed since that run, it only prints a note.
+
+## What did it cost?
+
+For this work I have only subagent tokens, and only for some steps. These are the figures for the main steps. A few more exist for single steps, and I left them out.
+
+| Step | Subagents | Tokens |
+|---|---|---|
+| Review 1 verification, three workflows | 33 | 7 111 799 |
+| Gate fix session of part 2, through round 9 | 23 runs | about 7 820 000 |
+| Review 2 verification | 16 | 3 860 337 |
+| Review 3 verification | 16 and 1 collation | 3 085 356 and 354 764 |
+| Review 4 verification | 16 and 1 collation | 3 260 693 and 385 767 |
+| Review 4 planning | 2 | 1 325 087 |
+| Review 4 fix chain, four of seven sessions | 8, 2, 8 and 11 | 1 108 424, at least 220 342, at least 1 272 894 and about 1 800 000 |
+
+The review 1 figure leaves out its 22 QA agents, which have no figure, and 2 baseline check agents with 248 981 tokens. In the review 4 fix chain I summed the figures of two sessions from their item rows. The audit used 8 subagents and the re-evaluation 3. On the night of 22 October the three fix sessions used 6, 6 and 11 subagents, and the next one about 6.
+
+I have not totalled the lead model's tokens or the money for this work, and the transcripts could give both. Subagent tokens are missing for the pilot and the six phases after it, the second and third fix chains, the audit, the re-evaluation and the fix sessions of 22 October. I have not counted the cost of the outside readers or the number of Claude Code sessions either, and neither is the cost of the aborted runs.
+
+## What went wrong?
+
+I picked five problems that taught me something.
+
+- The acknowledgement by re-run could not fail. I had written the problem down on 16 October. The acknowledgement of 17 October rested on reading the diffs, but the tool, the skill and one decision still said re-run. The audit found that two days later.
+- A replay script overwrote the real log size registry with test data on 18 October and reset its recorded size peaks. The audit later confirmed that the test keys were still in the file. A guard now refuses writes to the real workspace from a test process.
+- Mutation parts ran into a limit. A run in 96 parts gave Windows a system error about stack guard pages, so the limit is now 48. An earlier serial run by another session ran about 16 hours before I stopped it, at about 140 W for about 14 hours, and the cause was never found.
+- A diff reader proposed acknowledging a model because the code had later implemented the name of a mode the model only imagined, although the reader itself listed three differences. A name does not acknowledge a model. A counter-checker also argued for acknowledging it, with reasoning that held for one of the model's five pass runs. I read the runs and kept the model drifted.
+- Four parallel readers shared one scratchpad and one reader's script overwrote another's. The decisive numbers came from run outputs, so I did not measure any damage.
+
+## Did the condition of part 3 hold?
+
+Part 3 said that a fourth outside review makes sense only after the full mutation run and the drift runs, and with a reader other than Astra. I chose acknowledgement first and left the full run for later. A session built the packages of the fourth review on 17 October with 39 of 56 drifted models acknowledged and 17 not, and the full run came on 19 October. The condition did not hold, because the review ran before the full run, and the acknowledgement behind those 39 was later found unable to fail as well.
+
+The corrected rule is in the tools now. No fifth review is planned, and a package for one needs a passing full run at most 7 days old.
+
+## What is still open?
+
+Seven models are still drifted, in three families. Five belong to the tag release family: the tag layer was rewritten and the fresh-tag readback is not in those models. One is a send model whose own correction says it describes code from before the late-reply fix, and the corrected mode lives in another model. One is the hand-log model, whose code gained two paths the model does not describe. The choice between a refinement check and the status historical is mine and I have not made it.
+
+Several environments are unmeasured. They are a mail server that answers wrongly, which only the scripted replies of my fake server cover, how often my sync client restores files, a full disk and file symlinks, which this account cannot create. The send reservation also rests on two assumptions I have not measured: that creating a file exclusively is atomic in a synced folder, and how the Sent folder of my mail provider behaves. Five load-sensitive timing tests behave differently under load than alone.
+
+The audit counted 13 other open limits. One of them is closed since, and I have not rechecked the rest. A list sorted by cost and consequence still does not exist. One limit cannot be closed on the client side: a late success reply after a reset marks a message as sent.
+
+## What does this not show?
+
+A passing model holds for its small constants and for the code it was run against. Of the 105 valid models, 90 carry an acknowledgement under the new definition, which requires reading the diff, a replay test and a mutation pass. Seven are still drifted and 8 never drifted.
+
+The mutation figures show that every mutation was caught by the test named for it while the controls stayed green. They do not show that the tests cover every behaviour. The reviews show that the readers described the code correctly in 118 of 189 claims and only in a narrower form in the other 71, and four rounds of outside reading are a narrow sample.
+
+Many fix choices were made by a session on its own recommendation. In round 3 the chain made 31 such choices, in round 4 about 43, and the first four fix sessions after the audit made 17. The audit found none implemented wrongly. I confirmed the 31 and the 43 in one blanket answer on 19 October without deciding them one by one, and the 17 since then are the sessions' own recommendations.
+
+I made the counts in this post from my decision log, the review and audit reports, the mutation run files and the subagents' usage readings.
+
+## Frequently asked
+
+**Did the models find real faults in the tools?**
+
+Yes, and the outside readers and the audit found some too. Across 11 tools or tool groups the work exposed faults that I then reproduced against the real code or a test copy of it, such as a cleaner that deleted the newest file and a send script that delivered the same message twice.
+
+**What does 1 002 of 1 002 mean?**
+
+Every one of the 1 002 mutations, each a one-line change to a tool, made the test meant to catch it fail while the control tests stayed green. It says nothing about behaviour that no test and no mutation touches.
+
+**Does a passing model prove the tool is correct?**
+
+No. TLC checks the model, and the model does not read the code. A pass applies to the code the model was run against, so a model whose code has changed needs a diff read, a replay test and a mutation pass before it says anything about today's code.
+
+## Related
+
+- [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus)
+- [Thirteen review rounds and one rollback](/blog/thirteen-review-rounds-and-one-rollback)
+- [Three outside reviews of my TLA+ models](/blog/three-outside-reviews-of-my-tla-plus-models)
+`,
+
   "/blog/what-shopify-changed-for-agent-shopping": `# What Shopify changed for agent shopping since August
 
 2026-10-18
@@ -3503,8 +3703,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-44 articles.
+45 articles.
 
+- [TLA+ on my own tools, in numbers](/blog/tla-plus-in-numbers). 2026-10-22. Build notes. Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.
 - [What Shopify changed for agent shopping since August](/blog/what-shopify-changed-for-agent-shopping). 2026-10-18. Protocol notes. Shopify moved store agent tools to /api/ucp/mcp and opened checkout to agents. What a merchant can check publicly and what stays hidden.
 - [Three outside reviews of my TLA+ models](/blog/three-outside-reviews-of-my-tla-plus-models). 2026-10-17. Build notes. Three outside reviews read my TLA+ models, none of their claims was refuted, and the third left no high rated finding.
 - [Microsoft's own CVE count is up nearly eightfold in a year](/blog/microsofts-own-cve-count). 2026-10-14. Research. Microsoft-assigned CVEs rose from 180 to 1417 a month in a year, and the monthly release keeps growing after Patch Tuesday.
@@ -7553,7 +7754,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.211.4",
+    "version": "3.212.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7663,7 +7864,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MAqPdnHYCMz6iKWHeom44o0tGk4qL9htg56SZXKw0zmUOXrC2MdxTYBO5SPlcAJvouatId72_sFI-3D32pziCQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"9bV75kSxEdm6taDeNSizEc6BJprYPQ0WbwE3zGDqPj36eLRKZyBwDJRQHI5ucnbKTWANwi_a5wQ1GLpBYmozAw\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zueat4wWhQoVS6AEd4DyjI_CEcDsl3yPZEO_aZZjAl3PKdp5vJriJWGlBOaFZI8JsTMdq39WVNmSxSyleIfxDQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"MAqPdnHYCMz6iKWHeom44o0tGk4qL9htg56SZXKw0zmUOXrC2MdxTYBO5SPlcAJvouatId72_sFI-3D32pziCQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"JImn9xUTFGOft3ut9IAzDibOyp0Qe16OirRi3GCtkWpQaGgVUfD9dL-c1x6dnkk9cUOmaR8HkSdliSp4EjL-BQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7832,7 +8033,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.211.4",
+  "version": "3.212.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8516,7 +8717,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-10-21";
+const SITEMAP_LASTMOD = "2026-10-22";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -8558,6 +8759,7 @@ const SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/tla-plus-in-numbers", "monthly", "0.6"],
   ["/blog/what-shopify-changed-for-agent-shopping", "monthly", "0.6"],
   ["/blog/three-outside-reviews-of-my-tla-plus-models", "monthly", "0.6"],
   ["/blog/microsofts-own-cve-count", "monthly", "0.6"],
@@ -8675,7 +8877,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/five-rounds-before-the-agent-signed", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -8685,6 +8887,14 @@ function getCanonicalForPath(pathname: string) {
 }
 
 const META_BY_PATH = {
+  "/blog/tla-plus-in-numbers": {
+    title: "TLA+ on my own tools, in numbers · turva.dev",
+    description: "Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.",
+    date: "2026-10-22",
+    kind: "Build notes",
+    image: "/og-tla-plus-in-numbers.jpg",
+    imageAlt: "TLA+ on my own tools, in numbers, a turva.dev build note that closes the series with timeline, reviews, mutation runs and cost.",
+  },
   "/blog/what-shopify-changed-for-agent-shopping": {
     title: "What Shopify changed for agent shopping since August · turva.dev",
     titleTag: "What Shopify changed for agent shopping · turva.dev",
@@ -10649,6 +10859,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 const GUIDE_PAGE_FAQ = {
+  "/blog/tla-plus-in-numbers": mdFaqBlocks("/blog/tla-plus-in-numbers", "Frequently asked").pairs,
   "/blog/what-shopify-changed-for-agent-shopping": mdFaqBlocks("/blog/what-shopify-changed-for-agent-shopping", "Frequently asked").pairs,
   "/blog/three-outside-reviews-of-my-tla-plus-models": mdFaqBlocks("/blog/three-outside-reviews-of-my-tla-plus-models", "Frequently asked").pairs,
   "/blog/microsofts-own-cve-count": mdFaqBlocks("/blog/microsofts-own-cve-count", "Frequently asked").pairs,
