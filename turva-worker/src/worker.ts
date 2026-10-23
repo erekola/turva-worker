@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.213.5 - fixes from the outside review of 2026-10-07, content session S1 (Tek-578): the AI patch surge post no longer says curl is run by volunteers who cannot fund a filter, and cites curl's sponsor page and Stenberg's own reason for ending the bounty; dated corrections in the posts on the clean Windows install (IVPN boot protection), the Open Knowledge Format (what v0.1 defines) and secret hygiene (an OS vault after a reinstall); the sample report no longer says ai.txt merged into Content Signals; the llms.txt validator states its limits in KiB; the ACP messages and the Shopify page promise a first written reply within one business day, with scope and a fixed quote confirmed in writing before payment; the blog card's subhead and alt text name the three post kinds.
 // turva.dev worker v3.213.4 - the hosted Markdown parity check moves to markdown-parity-check 0.2.29, so a query is masked in one pass and report text drops C1 and bidi controls.
 // turva.dev worker v3.213.3 - the markdown link rule refuses an href carrying a quote, an angle bracket or whitespace (outside review R1-1, 2026-10-22), the disabled phase-2 PARITY path checks the report shape before use (R4-1), and the MCP server card moves to MCP 1.6.22 (the MCP Worker answers a non-JSON Content-Type with 415 and no id).
 // turva.dev worker v3.213.2 - the Shopify agent storefront check's line in LLMS_TXT and in AGENT_JSON's description_for_model (served as ai-plugin.json and agent.json) states that the 48 hours run from the agreed written kickoff, as the audit's line in both already does; re-sign of llms.txt and of ai-plugin.json and agent.json.
@@ -1416,7 +1417,7 @@ A third case I know of is my own code, from before the reinstall, so it is not o
 
 ## What else sits between the machine and the internet?
 
-My connection goes out through IVPN, which I have set to rotate its WireGuard key every day. Its firewall is set to always on, so it starts at boot before any other process and blocks traffic outside the VPN even when the IVPN app is not running. It lets through traffic to IVPN's own servers and to my local network. Windows treats both the IVPN tunnel and my wired connection as public networks, so its firewall applies its most restrictive profile to both. IVPN is behind three of these pieces: it runs the VPN and modDNS, and in December 2024 it bought Safing, the company behind Portmaster. In the IVPN app I have set modDNS as the custom DNS, and it filters with the HaGeZi Threat Intelligence Feeds and Pro lists, plus a HaGeZi list of domains registered within the last seven days. I have checked that my lookups reach it. For one day I collected the domains modDNS blocked, and I copied every one whose block breaks nothing into the Windows hosts file, as a second block in Windows itself. After that they disappeared from the modDNS log, so those lookups now stop in Windows before they reach it. The browsers have a modDNS setup of their own. HaGeZi publishes stricter lists than Pro, so I still count these list choices as relaxed. I use these lists in all my work. If the machine ever reached my router without the VPN, the router runs the NextDNS CLI with much stricter HaGeZi lists. As far as I know, that has never happened without me choosing it.
+My connection goes out through IVPN, which I have set to rotate its WireGuard key every day. Its firewall is set to always on, so on Windows it [applies its blocking rules at boot](https://www.ivpn.net/knowledgebase/general/do-you-offer-a-kill-switch-or-vpn-firewall/), before the system has finished loading, and they block traffic outside the VPN even when the IVPN app is not running. It lets through traffic to IVPN's own servers and to my local network. Windows treats both the IVPN tunnel and my wired connection as public networks, so its firewall applies its most restrictive profile to both. IVPN is behind three of these pieces: it runs the VPN and modDNS, and in December 2024 it bought Safing, the company behind Portmaster. In the IVPN app I have set modDNS as the custom DNS, and it filters with the HaGeZi Threat Intelligence Feeds and Pro lists, plus a HaGeZi list of domains registered within the last seven days. I have checked that my lookups reach it. For one day I collected the domains modDNS blocked, and I copied every one whose block breaks nothing into the Windows hosts file, as a second block in Windows itself. After that they disappeared from the modDNS log, so those lookups now stop in Windows before they reach it. The browsers have a modDNS setup of their own. HaGeZi publishes stricter lists than Pro, so I still count these list choices as relaxed. I use these lists in all my work. If the machine ever reached my router without the VPN, the router runs the NextDNS CLI with much stricter HaGeZi lists. As far as I know, that has never happened without me choosing it.
 
 ## What may an agent session not touch?
 
@@ -1466,6 +1467,8 @@ The clone is a full copy of the system disk. A session that can read it can read
 **What does Block Secure DNS Bypassing do in Portmaster?**
 
 It prevents apps from going past Portmaster's Secure DNS resolver, for example by using DNS over HTTPS or a public resolver. Lookups then go through Portmaster, which can filter them.
+
+Corrected 2026-10-23. The IVPN sentence said its firewall starts at boot before any other process. IVPN's own description makes no claim about process order. On Windows, it says, the persistent firewall applies its blocking rules at boot, before the system is fully loaded, so the sentence now says: "Its firewall is set to always on, so on Windows it applies its blocking rules at boot, before the system has finished loading, and they block traffic outside the VPN even when the IVPN app is not running."
 
 ## Related
 
@@ -3080,9 +3083,9 @@ That has a consequence worth sitting with. Access to Mythos is controlled by Ant
 
 In January 2026 the curl project shut down its bug bounty. Twenty reports arrived in the first twenty-one days of the year, seven of them in one 16-hour window, and none was a real vulnerability, according to [Bugcrowd's account of the shutdown](https://www.bugcrowd.com/blog/hacker-opinion-piece-how-lazy-hacking-killed-curls-bug-bounty). Daniel Stenberg called such reports AI slop. HackerOne reported March 2026 submissions up 76 % year over year, with the share of valid findings steady at roughly 25 % ([HackerOne](https://www.hackerone.com/blog/continuous-threat-exposure-management-remediation-crisis)). Google raised the proof it requires in its open-source reward programme after a surge of low-quality reports ([Google's rule update](https://bughunters.google.com/blog/ossvrp-rule-updates-2026)). GitHub tightened its requirements.
 
-So in the same six months, one organisation shipped 1150 real CVEs and credited AI-assisted discovery for the rise, and another was driven out of the bounty business by AI reports that were worth nothing.
+So in the same six months, one organisation shipped 1150 real CVEs and credited AI-assisted discovery for the rise, and another ended its bug bounty when its share of real findings collapsed, with AI slop the first of three causes its lead developer names.
 
-Same technology. The difference is the prove pipeline. Microsoft built one, with dedicated cloud infrastructure behind it. curl is volunteers, and volunteers cannot fund a filter, so the only move left was to close the door.
+Same technology. The difference is the prove pipeline. Microsoft built one, with dedicated cloud infrastructure behind it. curl has paid backing too: its [sponsor page](https://curl.se/sponsors.html) names Haxx as the primary sponsor and says wolfSSL employs Daniel Stenberg and lets him spend paid work hours on curl. For bounty reports it relied on the platform's reputation system and program settings, and in [his account of the shutdown](https://daniel.haxx.se/blog/2026/01/26/the-end-of-the-curl-bug-bounty/) Stenberg writes that these were not enough to keep the bad reports out. The share of submissions confirmed as vulnerabilities fell from above 15 % in earlier years to below 5 % in 2025, and curl dropped the rewards to remove the incentive to submit made-up reports. Pull requests are a different case, Stenberg writes: tests, scanners and 200 CI jobs check a contribution before anyone spends human time on it, so they are not a problem for curl.
 
 ## Check it yourself
 
@@ -3113,6 +3116,8 @@ Corrected 2026-09-28. A sentence said the two benchmark figures came from condit
 Corrected 2026-10-02. Several sentences claimed more than their sources. The Mythos sentence said Anthropic's own evaluation conditions are not published, and the 2026-09-28 note above repeats it. Anthropic's system card publishes the task count, pass@1 scoring and sampling settings but does not name the CyberGym difficulty level, so it now says: "Microsoft names its side of the setup, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, but Anthropic's system card gives only part of its setup for Mythos, pass@1 over the same 1507 tasks with no extended thinking, and does not name the CyberGym difficulty level, so the two scores cannot be assumed to share a setup, and a gap of 5,35 percentage points does not show that either approach is better." The same sentence also said five points is well inside what a difference in evaluation setup can produce, which no cited source quantifies, so it now says the gap does not show either approach is better. The Microsoft post is longer than about 1400 words and carries ordinary numerals, so the sentence now says it gives no figure for the increase. HackerOne's 76 % is March 2026 against March 2025, not a year through March, and HackerOne reports the valid share steady at roughly 25 %, so the noise claim is gone. The three-quarters-noise wording, the DDoS attribution and the claim that Google stopped taking AI-generated submissions are replaced by what the linked sources say.
 
 Corrected 2026-10-14. This post counted every CVE in each monthly document, including the CVEs other numbering authorities assigned, mostly Chromium CVEs for Edge and Linux CVEs for Azure Linux. Counted as Microsoft-assigned only, the rise is steeper: the eight baseline months average 130 and July 2026 is 663, or 5,1 times. The severity table does not hold under that count. For Microsoft-assigned CVEs the median CVSS was 7,8 in July 2025 and 7,8 in July 2026, with 76,6 % and 74,2 % scoring 7,0 or above. The shift reported above therefore came from the mix of CVEs in the documents and not from Microsoft's own findings. The July 2026 document has also grown to 2005 entries since this post was written, and most of the added entries are Chromium and Linux CVEs. The tables above are left as the endpoint returned them, and the full series is in [the October follow-up](/blog/microsofts-own-cve-count).
+
+Corrected 2026-10-23. The bounty section said curl had no money to fund a filter for reports, so closing the bounty was its only option, and that AI reports worth nothing drove it out of the bounty business. curl's sponsor page contradicts the first claim. Stenberg's own account of the shutdown names three causes, AI slop the first of them, and does not call closing the bounty the only option. The paragraph now says: "curl has paid backing too: its sponsor page names Haxx as the primary sponsor and says wolfSSL employs Daniel Stenberg and lets him spend paid work hours on curl." It gives the reason Stenberg gives for dropping the rewards, and the paragraph before it now says that AI slop is the first of three causes he names.
 
 ## Related
 
@@ -3150,7 +3155,7 @@ Credential managers are built to store one username and password per host. They 
 
 For those, a small file based vault does the job. Encrypt each value with the same OS primitive, keep them in one file, and give it a get command. A deploy script then reads the token when it runs, setting the environment variable from that call instead of from a file on disk. The file is encrypted and tied to your account, so a backup or a stray copy exposes nothing.
 
-Two caveats. A vault tied to your OS user cannot be decrypted after a reinstall, so keep an offline backup of anything you cannot regenerate, like a private signing key. And do not write your own crypto here. Call the OS primitive. It is audited, and it is the same mechanism your credential manager already trusts.
+Two caveats. A vault encrypted with a key from your OS account stays readable after a reinstall only if that key material survived it, through a backup or a migration the platform supports, so keep an offline backup of anything you cannot regenerate, like a private signing key. And do not write your own crypto here. Call the OS primitive. It is audited, and it is the same mechanism your credential manager already trusts.
 
 The vault only changes where a secret sits at rest. It does not by itself stop an agent from reaching the value, because if the agent can run the script that calls get, it can still see what that command returns or read it from the environment of the process it started. Encrypting the secret and scoping what the agent is allowed to run and access at runtime are two separate controls, and the vault only provides the first one.
 
@@ -3175,6 +3180,8 @@ Because the file is no longer only yours. A coding agent reads your files and ru
 Windows Credential Manager caps a single entry at 2560 bytes and some forges issue OAuth tokens past that. The write fails while fetch still works, so nothing looks wrong until every command re-authenticates. Git Credential Manager's Bitbucket provider splits a large token across entries, but its GitLab provider and generic store write one entry, so a token over the limit can still fail there.
 
 Corrected 2026-10-02. Two sentences claimed more than their sources. The Linux sentence said the Secret Service encrypts the value and only your account can decrypt it. It now says: "On Linux libsecret through the Secret Service, whose backend usually encrypts the value at rest. The specification leaves access control to the implementation, so check what your keyring does when the machine is locked and which applications it lets read the value." The credential manager sentence said splitting a large token across entries is how Git Credential Manager handles it for self-hosted forges. At commit 9c3b25d, only the Bitbucket provider splits. It now says: "Git Credential Manager's Bitbucket provider splits a large token across entries. At Git Credential Manager commit 9c3b25d, its GitLab provider and the generic store path write the token as one entry, so the Windows size limit still applies there. If a self-hosted forge keeps opening a browser prompt on push, a token over the limit is one possible cause." The summary and the frequently asked answer on storage still stated the Linux guarantee without that limit, and both now carry it.
+
+Corrected 2026-10-23. The first caveat said such a vault cannot be decrypted after a reinstall. A reinstall that keeps or migrates the key material leaves the vault readable, so the caveat now says: "A vault encrypted with a key from your OS account stays readable after a reinstall only if that key material survived it, through a backup or a migration the platform supports, so keep an offline backup of anything you cannot regenerate, like a private signing key."
 
 ## Related
 
@@ -3474,7 +3481,7 @@ Eight checks examine the file:
 - It includes the recommended blockquote summary directly after the title. A blockquote that comes later but before the first H2 heading gets the same warning with its line number.
 - H2 headings group the content.
 - Markdown links parse and use absolute URLs.
-- The file is small enough to read cheaply. A file over 50 KB gets a warning, and one over 256 KB is read truncated. With --strict, a warning fails the run.
+- The file is small enough to read cheaply. A file over 50 KiB gets a warning, and one over 256 KiB is read truncated. With --strict, a warning fails the run.
 - It contains no inline HTML. HTML produces a warning.
 
 Two more checks look at the home page:
@@ -3853,7 +3860,7 @@ OKF represents a body of knowledge as a folder of markdown files. Each file is o
 
 It is not a data-model format, even though that is how it is being pitched. A concept can be a metric, a runbook or an API just as easily as a table, so framing it mainly as a way to draw data models narrows it to the one use that makes a good demo.
 
-It is also not a semantic standard yet. Version 0.1 fixes the shape of the files, the folder, the frontmatter and the one required field. It does not fix what any field means or how two teams should agree on the same names. The spec itself is clear that this is structural interoperability, with the semantic half left to producers and to conventions that do not exist yet. A shared folder layout is real progress. It is not the same as a shared meaning, and that gap is the whole reason these formats are hard.
+It is also not a semantic standard yet. Version 0.1 fixes the shape of the files, the folder and the frontmatter. It requires a type field and gives a short definition for each of five recommended fields, but it registers no type values and does not say how two teams should agree on the same names. The spec itself is clear that this is structural interoperability, with the semantic half left to producers and to conventions that do not exist yet. A shared folder layout is real progress. It is not the same as a shared meaning, and that gap is the whole reason these formats are hard.
 
 ## Why it still matters
 
@@ -3866,6 +3873,8 @@ An agent-readiness audit asks whether an agent can read your public site. OKF is
 For now OKF is worth understanding and worth watching. It is early to rebuild a knowledge catalog around it. If you already serve clean text to agents, you are most of the way there already.
 
 For an audit of how legibly AI agents read your site and the data behind it, contact info@turva.dev.
+
+Corrected 2026-10-23. A sentence said version 0.1 does not fix what any field means. Section 4.1 of the spec defines the required type field and five recommended fields, so the sentence now says: "It requires a type field and gives a short definition for each of five recommended fields, but it registers no type values and does not say how two teams should agree on the same names."
 
 ## Related
 
@@ -4310,7 +4319,7 @@ The surfaces the scanner does not score, read by hand on 2026-09-03 and 2026-09-
 | /.well-known/ | Empty. Every path under it returns the HTML 404 page with status 200. | F3 and F6 populate it. The soft 404 is F6's first line. |
 | robots.txt | The CMS default. One wildcard group, Disallow: /wp-admin/, no Sitemap line, no AI crawler, no Content-Signal. | F5 |
 | sitemap.xml | 14 URLs. The front page, eleven content pages and two template pages titled Sample Page and Privacy Policy Draft. No product page. | F4 |
-| ai.txt and llms.txt | Neither exists. | F3 publishes llms.txt. ai.txt is not published: the norm it followed has merged into robots.txt Content Signals. |
+| ai.txt and llms.txt | Neither exists. | F3 publishes llms.txt. ai.txt is not published: F5 states the AI preferences in the Content-Signal line of robots.txt, and ai.txt is an optional second place for them. |
 | REST API | /wp-json/wc/store/v1/products, the WooCommerce Store API v1, answers publicly, 100 products per page, two pages, X-WP-Total 138. As the Store API does by default, the listing leaves the variations out. Every row has prices.price as an empty string and is_purchasable true. The other stock fields show 90 rows in stock with no backorder, is_on_backorder true on 41 and is_in_stock false on 7. No field in the response carries a price basis. | F1 corrects the data, F6 declares the API. |
 | OpenAPI description | None. The index at /wp-json/ lists its routes in WordPress's own JSON format, which is not an OpenAPI document, and the site publishes no OpenAPI file. | F6 declares the REST index. An OpenAPI description is added under F6 when the company asks for one. |
 | Old documents still served | /wp-content/uploads/2022/hinnasto-2022.pdf is a 2022 price list with the company's previous Tampere address on its cover, linked from nowhere on the site and indexed by two search engines. | F9 |
@@ -5529,7 +5538,7 @@ You receive the same report, with the matching results recorded. The plan explai
 
 Email [info@turva.dev](mailto:info@turva.dev) with your storefront URL, .myshopify.com domain, primary market and up to three priority products.
 
-I reply within one business day with the preflight and a fixed quote. The work is handled in writing.
+I reply within one business day. The preflight result, the scope and a fixed quote are confirmed in writing before payment, and the work is handled in writing.
 
 [Request a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A)
 
@@ -7770,7 +7779,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.213.4",
+    "version": "3.213.5",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8071,7 +8080,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.213.4",
+  "version": "3.213.5",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8995,6 +9004,7 @@ const META_BY_PATH = {
     title: "A clean Windows install for agent work · turva.dev",
     description: "How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.",
     date: "2026-10-05",
+    modified: "2026-10-23",
     kind: "Build notes",
     image: "/og-clean-windows-install-for-agent-work.jpg",
     imageAlt: "turva.dev card: A clean Windows install for agent work",
@@ -9195,7 +9205,7 @@ const META_BY_PATH = {
     description: "A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.",
     date: "2026-07-15",
     kind: "Research",
-    modified: "2026-10-14",
+    modified: "2026-10-23",
     image: "/og-measuring-the-ai-patch-surge.jpg",
     imageAlt: "Measuring the AI patch surge from MSRC data"
   },
@@ -9203,7 +9213,7 @@ const META_BY_PATH = {
     title: "Reducing secret exposure in coding-agent workflows · turva.dev",
     description: "Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.",
     date: "2026-07-12",
-    modified: "2026-10-02",
+    modified: "2026-10-23",
     kind: "Build notes",
     image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
@@ -9290,7 +9300,7 @@ const META_BY_PATH = {
     title: "Agent-readiness research and field notes · turva.dev",
     description: "Dated studies and technical notes on website agent-readiness, AI answers and implementation. Read the methods, observations and limitations.",
     image: "/og-blog.jpg",
-    imageAlt: "turva.dev blog card: dated notes on AI agents and the work of letting them act."
+    imageAlt: "turva.dev blog card: dated notes on AI agents and the work of letting them act, sorted into research, protocol notes and build notes."
   },
   "/blog/agent-access-is-now-a-setting": {
     title: "Agent access is now a setting · turva.dev",
@@ -9314,6 +9324,7 @@ const META_BY_PATH = {
     title: "What the Open Knowledge Format is, and what it is not · turva.dev",
     description: "An early reading of Open Knowledge Format version 0.1 separates the file structure it defines from the semantic promises it leaves open.",
     date: "2026-06-27",
+    modified: "2026-10-23",
     kind: "Protocol notes",
     image: "/og-open-knowledge-format.jpg",
     imageAlt: "turva.dev blog card: Google Cloud shipped the Open Knowledge Format. What it is, what it is not yet, and how it relates to an agent-readiness audit."
@@ -12518,7 +12529,7 @@ ${footerHtml()}
 // and every hop is re-guarded: https only, a public DNS name (no IP literals,
 // no localhost/internal names, no ports, no credentials). An off-host or
 // unsafe redirect is never fetched and fails the first check. The fetch times
-// out after 8 seconds and the body read is capped at 256 KB. Results are
+// out after 8 seconds and the body read is capped at 256 KiB. Results are
 // never stored and result pages are served with no-store.
 function normalizeHostInput(raw: unknown): string | null {
   let s = String(raw || "").trim().toLowerCase();
@@ -12659,7 +12670,7 @@ const VALIDATOR_CLIENT_IP = "2a06:98c0:3600::103";
 // The second argument was added for the v2 discovery checks, which need the site's
 // home page as well as its llms.txt. It is one parameter and nothing else moved:
 // the redirect budget, the same-host rule, the credential and port rejections and
-// the 256 KB cap are the guards this function was measured against, and a rewrite
+// the 256 KiB cap are the guards this function was measured against, and a rewrite
 // would have put them back in play for a feature that does not need them.
 async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promise<LlmsFetchResult> {
   const reqApex = host.startsWith("www.") ? host.slice(4) : host;
@@ -13411,7 +13422,7 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
     add("links", "warn", "Markdown links an agent can follow", named.length + " links, " + relativeCount + " relative" + (hostless > 0 ? " and " + hostless + " that are not valid http or https URLs" : "") + "; absolute URLs travel better when the file is read out of context");
   }
   if (f.truncated) {
-    add("size", "warn", "Small enough to be cheap to read", "over 256 KB, read truncated");
+    add("size", "warn", "Small enough to be cheap to read", "over 256 KiB, read truncated");
   } else if (f.bytes <= 51200) {
     add("size", "pass", "Small enough to be cheap to read", f.bytes + " bytes");
   } else {
@@ -15280,7 +15291,7 @@ function buildAcpCheckoutSession(serviceId: string, sessionId: string) {
       "type": "info",
       "resolution": "requires_buyer_review",
       "content_type": "plain",
-      "content": "This engagement is scoped and confirmed in writing before payment. turva confirms scope and a fixed quote within one business day. Engagement is async only, with no calls and no calendar links. Agent-initiated instant payment is not available."
+      "content": "First written reply within one business day. Scope and a fixed quote are confirmed in writing before payment. Engagement is async only, with no calls and no calendar links. Agent-initiated instant payment is not available."
     }, {
       "type": "info",
       "content_type": "plain",
@@ -15445,7 +15456,7 @@ async function serveAcpCheckout(request: Request, pathLower: string) {
     if (method !== "POST") {
       return new Response(JSON.stringify({ "type": "invalid_request", "code": "method_not_allowed", "message": "Use POST to complete a checkout session." }, null, 2), { status: 405, headers: acpHeaders("POST, OPTIONS") });
     }
-    return new Response(JSON.stringify({ "type": "processing_error", "code": "intervention_required", "message": "This engagement is confirmed in writing before payment. turva confirms scope and a fixed quote within one business day, then invoices directly. Agent-initiated instant completion is not available. Contact info@turva.dev.", "param": "$.payment_data" }, null, 2), { status: 422, headers: acpHeaders() });
+    return new Response(JSON.stringify({ "type": "processing_error", "code": "intervention_required", "message": "First written reply within one business day. Scope and a fixed quote are confirmed in writing before payment, then turva invoices directly. Agent-initiated instant completion is not available. Contact info@turva.dev.", "param": "$.payment_data" }, null, 2), { status: 422, headers: acpHeaders() });
   }
   return new Response(JSON.stringify({ "type": "invalid_request", "code": "not_found", "message": "Unknown checkout session route." }, null, 2), { status: 404, headers: acpHeaders() });
 }
