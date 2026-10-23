@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.213.4 - the hosted Markdown parity check moves to markdown-parity-check 0.2.29, so a query is masked in one pass and report text drops C1 and bidi controls.
 // turva.dev worker v3.213.3 - the markdown link rule refuses an href carrying a quote, an angle bracket or whitespace (outside review R1-1, 2026-10-22), the disabled phase-2 PARITY path checks the report shape before use (R4-1), and the MCP server card moves to MCP 1.6.22 (the MCP Worker answers a non-JSON Content-Type with 415 and no id).
 // turva.dev worker v3.213.2 - the Shopify agent storefront check's line in LLMS_TXT and in AGENT_JSON's description_for_model (served as ai-plugin.json and agent.json) states that the 48 hours run from the agreed written kickoff, as the audit's line in both already does; re-sign of llms.txt and of ai-plugin.json and agent.json.
 // turva.dev worker v3.213.1 - Tek-680 measured on 2026-10-22: a test site outside Cloudflare received CF-Connecting-IP set to the fixed address 2a06:98c0:3600::103 on both validator requests, no X-Real-IP or X-Forwarded-For header and no header carrying the visitor's address, over a connection from a Cloudflare address; the validator page and the /legal Server logs paragraph state that result scoped to that one measurement, the International transfers paragraph says the requests are built to send the fixed address and the measurement found no visitor address, and the Roles list no longer names a forwarding of the visitor's address.
@@ -7769,7 +7770,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.213.3",
+    "version": "3.213.4",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8070,7 +8071,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.213.3",
+  "version": "3.213.4",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"

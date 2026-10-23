@@ -1,6 +1,6 @@
 {
   "name": "turva-worker",
-  "version": "3.213.3",
+  "version": "3.213.4",
   "license": "MIT",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     "node": "^22.18.0 || >=24.11.0"
   },
   "dependencies": {
-    "markdown-parity-check": "0.2.27"
+    "markdown-parity-check": "0.2.29"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260523.1",

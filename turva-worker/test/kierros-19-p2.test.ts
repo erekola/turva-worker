@@ -614,10 +614,13 @@ test("V6-P1: a bidi override character in a remote report's finding message, exc
   assert.ok(!findingsSection.includes(RTL), "the rendered finding text must not carry the override character");
 
   // The review of patch 2 found the JSON report embedded in the same page, and the plain JSON
-  // answer, still carrying the raw character. Both now write it as a JSON escape: the parsed value
-  // is the package's own, and no raw control character reaches the page or a saved file.
+  // answer, still carrying the raw character. From markdown-parity-check 0.2.29 the package's own
+  // report text drops C1 and bidi controls (redactReport), so the embedded JSON report carries the
+  // text without the character instead of a JSON escape, and no raw control character reaches the
+  // page or a saved file either way.
   assert.ok(!html.includes(RTL), "no raw override character anywhere on the result page, the embedded JSON report included");
-  assert.ok(html.includes("hidden\\u202emessage"), "the embedded JSON report writes the override character as an escape");
+  assert.ok(!html.includes("\\u202e"), "the embedded JSON report carries no escape of the override character either");
+  assert.ok(html.includes("hiddenmessage"), "the embedded JSON report keeps the finding text with the character dropped");
 
   const jsonRes = await worker.fetch(new Request("https://turva.dev/markdown-parity-check", {
     method: "POST",
@@ -626,7 +629,7 @@ test("V6-P1: a bidi override character in a remote report's finding message, exc
   }), remoteEnv);
   const jsonText = await jsonRes.text();
   assert.ok(!jsonText.includes(RTL), "the plain JSON answer carries no raw override character");
-  assert.equal(JSON.parse(jsonText).findings[0].message, "hidden" + RTL + "message", "the escape parses back to the package's own value");
+  assert.equal(JSON.parse(jsonText).findings[0].message, "hiddenmessage", "the package's own value has the override character dropped");
 });
 
 // ---- The review of patch 2 (adversarial reviewers, confirmed by a second reader and measured) ----
