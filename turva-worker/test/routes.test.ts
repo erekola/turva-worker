@@ -855,7 +855,7 @@ const DOCUMENTED_ROUTES: [string, number, RegExp][] = [
   ["/.well-known/ard.json", 200, /application\/json/],
   ["/.well-known/ai-catalog.json", 200, /application\/json/],
   ["/.well-known/agent-skills/index.json", 200, /application\/json/],
-  // SKILLS names services with skill.md content, src/worker.js:4572-4576.
+  // SKILLS names services with skill.md content, src/worker.ts.
   ["/.well-known/agent-skills/services/skill.md", 200, /text\/markdown/],
   ["/.well-known/api-catalog", 200, /application\/linkset\+json/],
   ["/.well-known/ap2", 200, /application\/json/],
@@ -866,7 +866,7 @@ const DOCUMENTED_ROUTES: [string, number, RegExp][] = [
   ["/.well-known/oauth-protected-resource", 200, /application\/json/],
   ["/.well-known/signatures.json", 200, /application\/json/],
   ["/.well-known/jwks.json", 200, /application\/json/],
-  // The IndexNow key file address, src/worker.js:4 (INDEXNOW_KEY, not exported,
+  // The IndexNow key file address, src/worker.ts (INDEXNOW_KEY, not exported,
   // so the value is copied here rather than derived).
   ["/9b7e4c21a8f3d65e0c1b9a4d7f2e8c63.txt", 200, /text\/plain/],
   // Aliases row.
@@ -888,7 +888,7 @@ test("R3b-1: every documented path without a prior test resolves as endpoints.md
 });
 
 test("R3b-1: the fediverse well-known paths redirect to social.turva.dev, not this Worker", async () => {
-  // src/worker.js:8171-8173. Everything else the apex serves stays here; only
+  // src/worker.ts. Everything else the apex serves stays here; only
   // host-meta, webfinger and nodeinfo hand off to the Mastodon instance.
   for (const path of ["/.well-known/host-meta", "/.well-known/webfinger", "/.well-known/nodeinfo"]) {
     const r = await get(path);
@@ -899,7 +899,7 @@ test("R3b-1: the fediverse well-known paths redirect to social.turva.dev, not th
 
 test("R3b-1: OPTIONS on a payable path is not swallowed by the CORS preflight when the host is not the apex", async () => {
   // Round 13 R1g-3 moved the CORS-preflight block to run after the www/mta-sts
-  // host redirects (src/worker.js:8154-8169), specifically so that promise ("everything
+  // host redirects (src/worker.ts), specifically so that promise ("everything
   // else sends to turva.dev") holds for OPTIONS too. A 204 here would mean the
   // preflight block had drifted back in front of the host checks.
   for (const host of ["www.turva.dev", "mta-sts.turva.dev"]) {
@@ -909,15 +909,15 @@ test("R3b-1: OPTIONS on a payable path is not swallowed by the CORS preflight wh
 });
 
 test("R3b-1: the IndexNow key file carries the agent-api security-header profile", async () => {
-  // applySecurityHeaders (src/worker.js:74-95) differs between "agent-api" and
+  // applySecurityHeaders (src/worker.ts) differs between "agent-api" and
   // "default" only in Cross-Origin-Resource-Policy: cross-origin vs same-origin.
-  // /<indexnow-key>.txt is served with kind "agent-api" (src/worker.js:8344-8345).
+  // /<indexnow-key>.txt is served with kind "agent-api" (src/worker.ts).
   const indexnow = await get("/9b7e4c21a8f3d65e0c1b9a4d7f2e8c63.txt");
   assert.equal(indexnow.status, 200);
   assert.equal(indexnow.headers.get("cross-origin-resource-policy"), "cross-origin",
     "the IndexNow key file must use the agent-api CORP value");
   // serveMtaStsPolicy is the one route in the file that explicitly asks for the
-  // "default" profile (src/worker.js:5468-5475), which is what makes this a real
+  // "default" profile (src/worker.ts), which is what makes this a real
   // comparison and not just a restatement of one constant.
   const defaultProfile = await worker.fetch(new Request("https://mta-sts.turva.dev/.well-known/mta-sts.txt"), env);
   assert.equal(defaultProfile.status, 200);

@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.213.3 - the markdown link rule refuses an href carrying a quote, an angle bracket or whitespace (outside review R1-1, 2026-10-22), the disabled phase-2 PARITY path checks the report shape before use (R4-1), and the MCP server card moves to MCP 1.6.22 (the MCP Worker answers a non-JSON Content-Type with 415 and no id).
 // turva.dev worker v3.213.2 - the Shopify agent storefront check's line in LLMS_TXT and in AGENT_JSON's description_for_model (served as ai-plugin.json and agent.json) states that the 48 hours run from the agreed written kickoff, as the audit's line in both already does; re-sign of llms.txt and of ai-plugin.json and agent.json.
 // turva.dev worker v3.213.1 - Tek-680 measured on 2026-10-22: a test site outside Cloudflare received CF-Connecting-IP set to the fixed address 2a06:98c0:3600::103 on both validator requests, no X-Real-IP or X-Forwarded-For header and no header carrying the visitor's address, over a connection from a Cloudflare address; the validator page and the /legal Server logs paragraph state that result scoped to that one measurement, the International transfers paragraph says the requests are built to send the fixed address and the measurement found no visitor address, and the Roles list no longer names a forwarding of the visitor's address.
 // turva.dev worker v3.213.0 - outside review 2026-10-22, section A: the llms.txt validator and /legal follow Cloudflare's current CF-Connecting-IP documentation (the Worker controls the header toward a site not on Cloudflare, the validator sends new requests without the visitor's headers, and what such a site receives is not yet measured); the VAT note names reverse charge for business customers in another EU member state and no Finnish VAT outside the EU on /services, the audit and Shopify pages, /company, the MCP server card (re-sign) and AP2; /tools says any public site and limits the CLI's matching JSON to a completed validation; corrections against primary sources in the mcp-server-card, agentic-resource-discovery, llms-txt, agent-authentication and agent-commerce-discovery guides; the x402 priceNote states the rounding to whole USDC; OpenAPI declares GET on the three payable routes and on /api, and a media type with a schema on every response; /company names the Shopify prepayment exception and points to the provider list; /legal gives a worked example of the retention rule. Tek-679 in the same release: the structured fields of the MCP server card, AP2, MPP, UCP and HOME_JSON and the MCP get_services catalog state that the Shopify check and the audit run from the agreed written kickoff and that advisory can be ended in its first month; /company and /legal gain a continuity clause; /company and the home page say there are no named client references yet; the Shopify check refunds a third of its fee, EUR 333, for each of its three interfaces that could not be checked, and offers a whole-store correction at one fixed total price set by the size of the store; the home page leads with the comparison of the web page, structured data and API and puts the Shopify check forward as the place to start. Tek-680: the hosted llms.txt validator sets CF-Connecting-IP and x-real-ip on its outbound requests to the fixed address 2a06:98c0:3600::103, and the validator page and /legal say so. MCP 1.6.21.
@@ -7768,7 +7769,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.213.2",
+    "version": "3.213.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7900,7 +7901,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"ZMQX9dOdtyDg8A106ZSP7Dbv0UV0wVsqaW-W-oP-0Z2LFOA8RPCkG1q67wMfYpKUwBa1qiquQiEoavm8HRQrCQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"TsdaI2_SrkTDi-AqCqdOWu6jHQlXPCoo45bE7Kve4iozn5Hdz7RDrluiNiV9MBz8szigBmMmIzCjlNg1ihMKAw\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"HZ_LnAArBtfDPwzNQdhdGUGHGZ8LHabQa7rF9yTIygUkeCPQvkNy2xfqXrr4fgVGpqgnISsI5nLxvcQdzNbZDA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"TsdaI2_SrkTDi-AqCqdOWu6jHQlXPCoo45bE7Kve4iozn5Hdz7RDrluiNiV9MBz8szigBmMmIzCjlNg1ihMKAw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7915,7 +7916,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.21",
+  "version": "1.6.22",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -7924,7 +7925,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.21",
+    "version": "1.6.22",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -8069,7 +8070,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.213.2",
+  "version": "3.213.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8753,7 +8754,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-10-22";
+const SITEMAP_LASTMOD = "2026-10-23";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -10215,7 +10216,10 @@ function renderInline(text: string) {
     // the href (round 19, K4-1 and K4-2).
     const h = href.trim();
     const low = h.toLowerCase();
-    const ok = low.startsWith("https://") || low.startsWith("http://") || low.startsWith("mailto:") || h.startsWith("#") || (h.startsWith("/") && mdSameOrigin(h));
+    // An href that already carries a quote, an angle bracket or whitespace was cut out of markup an
+    // autolinker built above (audit R1-1, 2026-10-22): kept, it would close the attribute and let a
+    // brief add its own, so the link degrades to its label.
+    const ok = !/["<>\s]/.test(h) && (low.startsWith("https://") || low.startsWith("http://") || low.startsWith("mailto:") || h.startsWith("#") || (h.startsWith("/") && mdSameOrigin(h)));
     const shown = stripBidi(label);
     return ok ? `<a href="${stripBidi(href)}">${shown}</a>` : escapeHtml(shown);
   });
@@ -14690,6 +14694,28 @@ async function parityFetchSelf(start: URL, accept: string, env: Env): Promise<Pa
 
 // Phase 2: the remote transport lives in its own Worker behind a service binding, so its CPU limit
 // and its failures stay out of this isolate. Its answer is { status, report }.
+// Defence in depth for the disabled phase-2 path (audit R4-1): a PARITY report is used only when it has
+// every field parityResultHtml and the JSON renderer read, so a malformed answer takes remote_failed, not a
+// 500. The tool's own error report carries extraction and summary.coverage as null, which is accepted.
+function parityReportShape(r: unknown): r is ParityReport {
+  const isObj = (x: unknown): x is Record<string, any> => !!x && typeof x === "object" && !Array.isArray(x);
+  if (!isObj(r) || !isObj(r.summary) || !isObj(r.sources)) return false;
+  const s = r.summary;
+  if (s.result !== "pass" && s.result !== "fail" && s.result !== "error") return false;
+  if (s.result === "error") { if (s.error !== undefined && typeof s.error !== "string") return false; }
+  else if (typeof s.errors !== "number" || typeof s.warnings !== "number" || typeof s.infos !== "number" || typeof s.strict !== "boolean") return false;
+  if (s.coverage != null && (!isObj(s.coverage) || ["htmlMatched", "htmlBlocks", "markdownMatched", "markdownBlocks"].some((k) => typeof s.coverage[k] !== "number"))) return false;
+  if (!Array.isArray(r.findings) || !Array.isArray(r.limitations) || r.limitations.some((l: unknown) => typeof l !== "string")) return false;
+  if (r.findings.some((f: unknown) => !isObj(f) || typeof f.code !== "string" || typeof f.message !== "string" || typeof f.severity !== "string" || typeof f.direction !== "string")) return false;
+  if (r.extraction != null) {
+    const e = r.extraction;
+    if (!isObj(e)) return false;
+    for (const side of [e.html, e.markdown]) if (!isObj(side) || typeof side.blockCount !== "number" || !Array.isArray(side.notes)) return false;
+    if (typeof e.html.strategy !== "string" || typeof e.html.confidence !== "string") return false;
+  }
+  return true;
+}
+
 async function parityRemote(input: ParityInput, env: Env) {
   let res;
   try {
@@ -14698,8 +14724,9 @@ async function parityRemote(input: ParityInput, env: Env) {
     throw new ParityError("remote_failed", 503, "The comparison service did not answer. Try again later.");
   }
   if (res.status !== 200) throw new ParityError("remote_failed", 503, "The comparison service did not answer. Try again later.");
-  const out = await res.json() as { status?: unknown; report?: ParityReport; field?: string } | null;
-  if (!out || !out.report || typeof out.status !== "number") throw new ParityError("remote_failed", 503, "The comparison service sent an answer this page cannot read.");
+  let out: { status?: unknown; report?: ParityReport; field?: string } | null;
+  try { out = await res.json() as typeof out; } catch { out = null; }
+  if (!out || !parityReportShape(out.report) || typeof out.status !== "number") throw new ParityError("remote_failed", 503, "The comparison service sent an answer this page cannot read.");
   return { status: out.status, report: out.report, field: out.field || null };
 }
 

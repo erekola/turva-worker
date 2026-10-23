@@ -567,3 +567,40 @@ test("Tek-488: the finding card, the offers, the work cards and the steps read a
     assert.ok(md.includes("\n\n" + t + ". ") && html.includes('<p><span class="step-t">' + t + ".</span> "), t);
   }
 });
+
+test("parity check: a PARITY report of the wrong shape takes the remote failure path (audit R4-1)", async () => {
+  const good = JSON.parse(await (await post({ url: "https://turva.dev/tools" })).text());
+  const bad: [string, unknown][] = [
+    ["empty report", {}],
+    ["no summary", { ...good, summary: undefined }],
+    ["summary not an object", { ...good, summary: "pass" }],
+    ["unknown result", { ...good, summary: { ...good.summary, result: "maybe" } }],
+    ["counts missing", { ...good, summary: { result: "pass" } }],
+    ["no sources", { ...good, sources: undefined }],
+    ["findings not an array", { ...good, findings: {} }],
+    ["finding without a message", { ...good, findings: [{ code: "x", severity: "error", direction: "both" }] }],
+    ["limitations not strings", { ...good, limitations: [1] }],
+    ["extraction without sides", { ...good, extraction: {} }],
+  ];
+  for (const [name, report] of bad) {
+    const env = { PARITY_LIMITER: limiter(true), PARITY_REMOTE_FETCH: "on", PARITY: { fetch: async () => new Response(JSON.stringify({ status: 200, report })) } };
+    const api = await post({ url: "https://example.com/page" }, { env });
+    assert.equal(api.status, 503, name + " (JSON)");
+    const page = await form({ url: "https://example.com/page" }, { env });
+    assert.equal(page.status, 503, name + " (form)");
+    assert.ok((await page.text()).includes("an answer this page cannot read"), name + " (form text)");
+  }
+  const notJson = { PARITY_LIMITER: limiter(true), PARITY_REMOTE_FETCH: "on", PARITY: { fetch: async () => new Response("<html>") } };
+  assert.equal((await post({ url: "https://example.com/page" }, { env: notJson })).status, 503, "a body that is not JSON");
+  const okEnv = { PARITY_LIMITER: limiter(true), PARITY_REMOTE_FETCH: "on", PARITY: { fetch: async () => new Response(JSON.stringify({ status: 200, report: good })) } };
+  assert.equal((await post({ url: "https://example.com/page" }, { env: okEnv })).status, 200, "a well-formed report still passes");
+  assert.equal((await form({ url: "https://example.com/page" }, { env: okEnv })).status, 200, "a well-formed report renders in the form");
+  // The tool's own error report (run.ts baseReport) carries extraction and summary.coverage as null, not
+  // undefined; the shape check must accept it, or every remote error would read as a 503 (QA 1, Q1).
+  const errorReport = { ...good, extraction: null, findings: [], summary: { result: "error", strict: false, errors: 0, warnings: 0, infos: 0, coverage: null, exitCode: 2, error: "The HTML page could not be read." } };
+  const errEnv = { PARITY_LIMITER: limiter(true), PARITY_REMOTE_FETCH: "on", PARITY: { fetch: async () => new Response(JSON.stringify({ status: 422, report: errorReport })) } };
+  assert.equal((await post({ url: "https://example.com/page" }, { env: errEnv })).status, 422, "the tool's own error report passes the shape check");
+  const errPage = await form({ url: "https://example.com/page" }, { env: errEnv });
+  assert.notEqual(errPage.status, 503, "the error report renders in the form");
+  assert.ok(!(await errPage.text()).includes("an answer this page cannot read"), "the error report is not read as a malformed answer");
+});
