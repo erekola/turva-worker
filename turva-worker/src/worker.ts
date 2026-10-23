@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.213.7 - the correction note of the proof-of-work post names the right place: the section on what I see but cannot get across, not the opening section.
 // turva.dev worker v3.213.6 - the blog post removed on 2026-10-23 is gone from the site: its page, listings, sitemap row, FAQ registration, card and the inline link in the post on this site as proof of work; the blog index counts 44 articles.
 // turva.dev worker v3.213.5 - fixes from the outside review of 2026-10-07, content session S1 (Tek-578): the AI patch surge post no longer says curl is run by volunteers who cannot fund a filter, and cites curl's sponsor page and Stenberg's own reason for ending the bounty; dated corrections in the posts on the clean Windows install (IVPN boot protection), the Open Knowledge Format (what v0.1 defines) and secret hygiene (an OS vault after a reinstall); the sample report no longer says ai.txt merged into Content Signals; the llms.txt validator states its limits in KiB; the ACP messages and the Shopify page promise a first written reply within one business day, with scope and a fixed quote confirmed in writing before payment; the blog card's subhead and alt text name the three post kinds.
 // turva.dev worker v3.213.4 - the hosted Markdown parity check moves to markdown-parity-check 0.2.29, so a query is masked in one pass and report text drops C1 and bidi controls.
@@ -1616,7 +1617,7 @@ Corrected 2026-09-29. The same sentence could be read as seven of the 54 minor v
 
 Corrected 2026-10-02. One sentence said Level 1 is what an ordinary CMS site reaches without anyone trying. That is my reading, and the study did not record which CMS each site runs, so the sentence now says so. No number changed.
 
-Corrected 2026-10-23. The opening section had a sentence linking to one of my other posts, which I have since withdrawn. That sentence and the post's row under Related are removed. No figure about this site changed.
+Corrected 2026-10-23. The section on what I see but cannot get across had a sentence linking to one of my other posts, which I have since withdrawn. That sentence and the post's row under Related are removed. No figure about this site changed.
 
 ## Related
 
@@ -7709,7 +7710,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.213.6",
+    "version": "3.213.7",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8010,7 +8011,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.213.6",
+  "version": "3.213.7",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
