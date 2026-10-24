@@ -183,6 +183,12 @@ npm --prefix turva-worker ci
 npm --prefix turva-worker run deploy
 ```
 
+## From JavaScript to TypeScript
+
+Until 20 October 2026 the Worker was one JavaScript file, `src/worker.js`, with 15 798 lines. That day it was renamed to `src/worker.ts` as a byte-identical copy, in site release 3.211.2. Types were then added in steps until `tsc` passed with `strict` on 21 October 2026, in site release 3.211.3. The tests and `tools/verify.mts` moved to TypeScript in the same work. `tools/verify.mts` now fails if a JavaScript file appears in the repository.
+
+Renaming alone did not change what the site serves. Wrangler bundled the TypeScript source to the same bytes as the JavaScript source apart from one header comment line, so the signed manifests kept their signatures. Before the move, a strict type check of the JavaScript reported 644 errors. Typing the hosted llms.txt validator found two inputs on which it could leave `undefined` in a check's detail. A real fetch never produces them. Release 3.211.3 fixed both.
+
 ## Guides and contact
 
 [The guides](https://turva.dev/guides) explain the surfaces implemented here. [The blog](https://turva.dev/blog) contains implementation notes and research.

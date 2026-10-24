@@ -321,7 +321,7 @@ console.log('\nSecret files stay out of the public repo');
   // Written out one by one rather than looped, so each excluded path is named in the check
   // itself. A loop over a list reads the same and hides which entry went missing.
   check(giLines.includes('THREAT_MODEL.md'), '.gitignore still excludes THREAT_MODEL.md');
-  check(giLines.includes('VULN-FINDINGS.*'), '.gitignore still excludes VULN-FINDINGS.*');
+  check(giLines.includes('VULN-FINDINGS*'), '.gitignore still excludes VULN-FINDINGS*');
   check(giLines.includes('tools/verify.proxy.mts'), '.gitignore still excludes tools/verify.proxy.mts');
 }
 

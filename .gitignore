@@ -151,7 +151,7 @@ Thumbs.db
 
 # Security analysis artifacts, do not commit to the public repo
 THREAT_MODEL.md
-VULN-FINDINGS.*
+VULN-FINDINGS*
 
 # Stale copy of the deploy gate. Deleted 2026-08-09 by Erik's decision, the second time:
 # the first deletion was recorded 2026-08-02 (CHANGELOG) and the file was on disk again a
