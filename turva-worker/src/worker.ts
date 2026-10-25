@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.213.8 - the MCP server card moves to MCP 1.6.23 (the MCP tool descriptions and instructions point to the published sample reports, and the instructions say the server scans no site); re-sign of the server card.
 // turva.dev worker v3.213.7 - the correction note of the proof-of-work post names the right place: the section on what I see but cannot get across, not the opening section.
 // turva.dev worker v3.213.6 - the blog post removed on 2026-10-23 is gone from the site: its page, listings, sitemap row, FAQ registration, card and the inline link in the post on this site as proof of work; the blog index counts 44 articles.
 // turva.dev worker v3.213.5 - fixes from the outside review of 2026-10-07, content session S1 (Tek-578): the AI patch surge post no longer says curl is run by volunteers who cannot fund a filter, and cites curl's sponsor page and Stenberg's own reason for ending the bounty; dated corrections in the posts on the clean Windows install (IVPN boot protection), the Open Knowledge Format (what v0.1 defines) and secret hygiene (an OS vault after a reinstall); the sample report no longer says ai.txt merged into Content Signals; the llms.txt validator states its limits in KiB; the ACP messages and the Shopify page promise a first written reply within one business day, with scope and a fixed quote confirmed in writing before payment; the blog card's subhead and alt text name the three post kinds.
@@ -7710,7 +7711,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.213.7",
+    "version": "3.213.8",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7842,7 +7843,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"HZ_LnAArBtfDPwzNQdhdGUGHGZ8LHabQa7rF9yTIygUkeCPQvkNy2xfqXrr4fgVGpqgnISsI5nLxvcQdzNbZDA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LOR8Q0FJtvOs4eBXYDzpivCSX9WIpvdpjdXNQQ6jg4VqofDp-xe1ijQyxrjqL2bU95l8vBSJumlOCru7gQb6CA\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"njldUZ7eBONvwCp9flJ5uHULGqsNiVCPn62tnl6ohkEje238uNwhIcgHYhL01dQ7fAouhN1Wy-_zl31TOkOxBQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LOR8Q0FJtvOs4eBXYDzpivCSX9WIpvdpjdXNQQ6jg4VqofDp-xe1ijQyxrjqL2bU95l8vBSJumlOCru7gQb6CA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7857,7 +7858,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.22",
+  "version": "1.6.23",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -7866,7 +7867,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.22",
+    "version": "1.6.23",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -8011,7 +8012,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.213.7",
+  "version": "3.213.8",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
