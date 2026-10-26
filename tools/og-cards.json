@@ -293,6 +293,12 @@
     "subhead": "Seven days, 367 findings across 2 307 text files, nothing billable.",
     "white": "I thought it was"
   },
+  "og-keeping-my-lab-and-client-work-apart.jpg": {
+    "green": "kept apart.",
+    "kicker": "Blog",
+    "subhead": "Client work now runs in its own Windows virtual machine, tested end to end with two test clients.",
+    "white": "My lab and my client work,"
+  },
   "og-legal.jpg": {
     "green": "in plain language",
     "kicker": "Legal",

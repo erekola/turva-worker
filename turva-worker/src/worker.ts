@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.214.0 - new Build notes post /blog/keeping-my-lab-and-client-work-apart (2026-10-26) on keeping the lab apart from client work in a Windows virtual machine, tested with two test clients, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row, sitemap row, canonical path and FAQ registration.
 // turva.dev worker v3.213.9 - the legal page says where client work runs: a virtual machine kept apart from the workstation, a folder per client, no turva.dev credentials inside it, and how its session records and restore points are deleted; the AI tools paragraph names the client's own folder; the backup rotation names the disk images and one limit of 16 weeks on /legal and in the /services FAQ, which also drop the full disk encryption claim; Privacy last updated 2026-10-26.
 // turva.dev worker v3.213.8 - the MCP server card moves to MCP 1.6.23 (the MCP tool descriptions and instructions point to the published sample reports, and the instructions say the server scans no site); re-sign of the server card.
 // turva.dev worker v3.213.7 - the correction note of the proof-of-work post names the right place: the section on what I see but cannot get across, not the opening section.
@@ -329,6 +330,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Keeping my lab and my client work apart](https://turva.dev/blog/keeping-my-lab-and-client-work-apart.md)
 - [TLA+ on my own tools, in numbers](https://turva.dev/blog/tla-plus-in-numbers.md)
 - [What Shopify changed for agent shopping since August](https://turva.dev/blog/what-shopify-changed-for-agent-shopping.md)
 - [Three outside reviews of my TLA+ models](https://turva.dev/blog/three-outside-reviews-of-my-tla-plus-models.md)
@@ -548,6 +550,87 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 const PAGE_MARKDOWN = {
+  "/blog/keeping-my-lab-and-client-work-apart": `# Keeping my lab and my client work apart
+
+2026-10-26
+
+The security news of 17 to 24 October made me think hard about one question: how safely do I keep my own lab apart from client work? The lab is where I try things out and build my own tools and skills. The field moves so fast that the learning never ends, so the lab is in use every day. Client work needs a place of its own. What I built is a Windows virtual machine for client work, and I ran it end to end with two test clients before I wrote a word about it on the site.
+
+## What happened that week?
+
+Three incidents landed close together. PHP2Shell is a pair of unauthenticated remote code execution flaws, CVE-2026-109618 and CVE-2026-109619, which [Wiz says](https://www.wiz.io/blog/php2shell-php-rce) reach back to PHP 5.4. PHP released fixes for its supported branches on 21 October, and [Amazon's threat intelligence team](https://aws.amazon.com/blogs/security/amazon-threat-intelligence-identifies-php2shell-exploitation-prior-to-public-disclosure-in-madpot/) had seen an attempt to exploit them in its honeypot telemetry on 17 October, four days before the disclosure. The same day [Node.js fixed CVE-2026-111497](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases), an out of bounds write in the Brotli decoder bundled with Node.js that permits remote code execution. Also on 21 October, LiteLLM's release pipeline published a compromised version 1.107.0 carrying malware that steals credentials. [LiteLLM's own account](https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain) of the attack chain starts from a master key that was committed to a public repository in May and never revoked.
+
+The background is volume. [Google's Threat Intelligence Group](https://cloud.google.com/blog/topics/threat-intelligence/vulnerability-discovery-and-exploitation-trends-in-the-ai-era/) counted 5 045 disclosed vulnerabilities in January 2026 and 10 740 in August. It also found that only 0,23 percent of the vulnerabilities disclosed in 2026 up to August had been seen exploited. Few become an attack. The patching load grows with the count all the same.
+
+On 22 October Jason D. Clinton, deputy CISO at Anthropic, wrote [on his own X account](https://x.com/JasonDClinton/status/2113325263157395456) that things "are going to get a lot worse before they get better". He asked security leaders to go to their boards for help with the basics, not with AI, and added: "(we need to hold on for ~18 months.)" In August he had written that network isolation was needed now. I count keeping work apart among the basics, and it is the part I can do on my own machine.
+
+## Why does the place an agent runs matter?
+
+On my workstation a Claude Code session runs commands as me. It installs packages and reads web pages with my rights. A poisoned package or a prompt injection in a page it reads would see what I can see: my workspace, my publishing tools, and any client material on the same disk. I already have gates that read each command as text before it runs. They catch a session's mistakes. For client work I wanted a boundary that the operating system enforces.
+
+## What runs where now?
+
+Work agreed with a client runs in the virtual machine. Each client has a folder of their own. No credentials for my site, my repositories or my publishing are stored there. The AI tool's connectors that could write to them are blocked by rules in its settings, and each client session is instructed to check at the start that they still are. The report the client receives is moved out of the virtual machine and sent from my workstation. Riskier work of my own goes there too, such as installing someone else's packages or running a prospect's code. So does reading content I do not trust. That work runs in a working folder I can throw away.
+
+My lab stays on the workstation, and so do the encrypted vault and everything that deploys or publishes. Scheduled tasks and everyday sessions stay there too, as do the briefs I prepare for prospects.
+
+## Why a hybrid and not a full move?
+
+I first planned to move all agent work into the virtual machine, and I ran a pilot before deciding. The pilot measured what a session loses there. In the Claude desktop app a session in the virtual machine runs over SSH, and it has no browser pane, no terminal panel and no command panel. The browser extension I use is not available there either. According to the app's documentation, scheduled tasks run only on the local machine or in the cloud, not on an SSH target. For the way I work, each missing panel is more manual work for me, every day.
+
+A full move would also have needed separate runs on the workstation for the key that signs my site's manifests, the key for the MCP registry and the mail credentials, with narrower tokens inside the virtual machine. With the hybrid, no token and no secret goes into the virtual machine. If something inside it goes wrong, there are no credentials to my site, my repositories or my publishing there to steal.
+
+So I chose a hybrid. It gives me the separation I was after. My lab keeps every tool it needs on the workstation, which matters because I learn in it every day. Client work gets a machine of its own, and so do code and packages I did not write and content I do not trust. My everyday sessions pay for this by not being isolated, and the limits section below says what that leaves open.
+
+## How is the machine built?
+
+It is a Hyper-V generation 2 virtual machine with a virtual TPM and Secure Boot, installed from an answer file. The Claude desktop app stays on the workstation and opens sessions in the virtual machine over SSH, which accepts only a key. The virtual machine shares no folders and no clipboard with the workstation. It has an internal network of its own with NAT and a fixed address, so it needs nothing from the workstation's network services, and the workstation's firewall blocks traffic coming in from it. Its password was generated inside a script and went straight into the vault, so it never passed through an agent's conversation. After setup I removed app packages, 112 down to 80, and a Hyper-V checkpoint taken on a clean state is the restore point.
+
+## What did the build teach me?
+
+Most of what went wrong showed up only in a real run. Every script had a dry run and an independent review before it ran, and the reviews found real faults, such as a restart that would have gone ahead after a failed restore of the SSH settings and could have left SSH broken. They did not find these:
+
+- The installer stopped for an hour. The keystrokes my script sent to get past the boot prompt had landed on Setup's Cancel button. From the workstation it looked like a network fault, and only a screenshot of the virtual machine's own screen showed the dialog.
+- The virtual machine got no address on the default Hyper-V network. As far as I could establish, the workstation's application firewall blocks incoming traffic from the virtual machine, the address request included. I did not loosen the firewall. I gave the virtual machine its own network, which needs nothing from the workstation.
+- Behind my VPN, the virtual machine's MTU of 1500 lost large TLS packets. Connections opened and a small test passed. Then the first large download from GitHub hung. An MTU of 1380 fixed it.
+- The virtual machine's SSH firewall rule applied to the Private profile, and the fixed address network was classified as Public. Every readiness check looked true, and the connection still timed out.
+- The desktop app syncs a plugin's skills into an SSH session but not its hooks, so my own gates were missing there without any error. I wired them in through the virtual machine's own settings and confirmed that a gate blocks the same command there with the same message. The copies do not update themselves, so I compare them after every release of my plugin.
+- The virtual machine has only Windows PowerShell 5.1, and my workstation runs PowerShell 7. Version 5.1 turned a null passed to a .NET method into an empty string and serialised a list of names as objects. A function that returned an array of one item handed back the bare item, which PowerShell does in every version, so a count of one came out as two. The code read correctly and ran wrong, so four independent reviews passed it, and the first real run failed on it.
+
+## How did I test it end to end?
+
+I ran two test clients through the whole lane: start, the work, fetching the result, closing the engagement. Before building it, I had checked that the scanner loads in a session there and that the audit report's document and PDF come out with the same text as on my workstation. In the first test client, the four writing connectors I tried were blocked, the scanner ran, a PDF came out with its Finnish letters intact, and the fetched result was byte for byte the same at both ends. The closing script then reported success. My own measurement afterwards found two session records in the virtual machine that had been written after the deletion. Idle session processes had written their last prompt and title as they shut down.
+
+So the closing script gained two steps: a check that refuses to close while a session for that client is still running, and a scan for records written late. In the second test client the check stopped the close while the session was open. After I archived the session it stopped again, on a protected Windows system process whose command line cannot be read, so I narrowed the exception to the system accounts, and an unknown owner still blocks. Then the close went through and the scan found nothing. A separate measurement found no mention of either test client in the session transcripts on either machine.
+
+The claim about this on my site came after the two runs, and it got narrower in review. It says the connectors are "blocked by rules" in the tool's settings, because they are still installed and a rule refuses each call. It says each session "is instructed to check" that they are still blocked, because the model follows that rule and no mechanical gate enforces it.
+
+## What does this not isolate?
+
+The virtual machine isolates execution. Code that runs and packages that are installed stay inside it. It does not isolate what the model reads: the model runs at the AI tool's provider, so it sees whatever the session reads. The desktop app also keeps a record of every session in the virtual machine on my workstation, so the content of a client session reaches the workstation even though the work runs elsewhere. My [legal page](/legal) says both of these and how those records are deleted when an engagement closes.
+
+The everyday sessions on my workstation still read web pages there, so a prompt injection in a page they read meets my gates, not this boundary. Deletion removes files and does not overwrite the freed disk space. The virtual machine's disk file sits on my workstation's own disk and is in its disk images. Two test clients are not a real engagement.
+
+## Frequently asked
+
+**Why Windows and not Linux for the virtual machine?**
+
+My tools are PowerShell scripts with Windows paths, and the virtual machine uses the same user name and the same paths as my workstation, so most of my scripts run there as they are. My gates run there from copies that I compare after every release. The Claude desktop app also supports a Windows machine as an SSH target.
+
+**Does client data ever leave the virtual machine?**
+
+Yes, in three ways. Whatever the session reads goes to the model, the desktop app keeps the session records on my workstation, and the delivered report is moved to my workstation and sent from there. My legal page names all three and says when the copies on my side are deleted.
+
+**Does every agent session run in the virtual machine now?**
+
+No. Client work and risky work of my own run there. My own work stays on my workstation, where the browser pane, the terminal panel and the scheduled tasks are, and my gates check those sessions.
+
+## Related
+
+- [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work)
+- [The browser my agent and I both run](/blog/browser-my-agent-and-i-run)
+`,
+
   "/blog/tla-plus-in-numbers": `# TLA+ on my own tools, in numbers
 
 2026-10-22
@@ -3649,8 +3732,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-44 articles.
+45 articles.
 
+- [Keeping my lab and my client work apart](/blog/keeping-my-lab-and-client-work-apart). 2026-10-26. Build notes. Client work now runs in a Windows virtual machine apart from my own lab. How I tested it with two test clients, and what it does not isolate.
 - [TLA+ on my own tools, in numbers](/blog/tla-plus-in-numbers). 2026-10-22. Build notes. Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.
 - [What Shopify changed for agent shopping since August](/blog/what-shopify-changed-for-agent-shopping). 2026-10-18. Protocol notes. Shopify moved store agent tools to /api/ucp/mcp and opened checkout to agents. What a merchant can check publicly and what stays hidden.
 - [Three outside reviews of my TLA+ models](/blog/three-outside-reviews-of-my-tla-plus-models). 2026-10-17. Build notes. Three outside reviews read my TLA+ models, none of their claims was refuted, and the third left no high rated finding.
@@ -7716,7 +7800,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.213.9",
+    "version": "3.214.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7848,7 +7932,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"njldUZ7eBONvwCp9flJ5uHULGqsNiVCPn62tnl6ohkEje238uNwhIcgHYhL01dQ7fAouhN1Wy-_zl31TOkOxBQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LOR8Q0FJtvOs4eBXYDzpivCSX9WIpvdpjdXNQQ6jg4VqofDp-xe1ijQyxrjqL2bU95l8vBSJumlOCru7gQb6CA\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"njldUZ7eBONvwCp9flJ5uHULGqsNiVCPn62tnl6ohkEje238uNwhIcgHYhL01dQ7fAouhN1Wy-_zl31TOkOxBQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"RdYjt_csX-DzfzIkmnyp0QxIXfYlnwIyHNbaEogI6FEOYDnjMHhKJTFGRTiNX6bNwFfzb3SBH0YqTaW9HFuWBA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8017,7 +8101,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.213.9",
+  "version": "3.214.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8743,6 +8827,7 @@ const SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/keeping-my-lab-and-client-work-apart", "monthly", "0.6"],
   ["/blog/tla-plus-in-numbers", "monthly", "0.6"],
   ["/blog/what-shopify-changed-for-agent-shopping", "monthly", "0.6"],
   ["/blog/three-outside-reviews-of-my-tla-plus-models", "monthly", "0.6"],
@@ -8860,7 +8945,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -8870,6 +8955,14 @@ function getCanonicalForPath(pathname: string) {
 }
 
 const META_BY_PATH = {
+  "/blog/keeping-my-lab-and-client-work-apart": {
+    title: "Keeping my lab and my client work apart · turva.dev",
+    description: "Client work now runs in a Windows virtual machine apart from my own lab. How I tested it with two test clients, and what it does not isolate.",
+    date: "2026-10-26",
+    kind: "Build notes",
+    image: "/og-keeping-my-lab-and-client-work-apart.jpg",
+    imageAlt: "Keeping my lab and my client work apart, a turva.dev build note on client work in its own virtual machine and what it does not isolate.",
+  },
   "/blog/tla-plus-in-numbers": {
     title: "TLA+ on my own tools, in numbers · turva.dev",
     description: "Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.",
@@ -10839,6 +10932,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 const GUIDE_PAGE_FAQ = {
+  "/blog/keeping-my-lab-and-client-work-apart": mdFaqBlocks("/blog/keeping-my-lab-and-client-work-apart", "Frequently asked").pairs,
   "/blog/tla-plus-in-numbers": mdFaqBlocks("/blog/tla-plus-in-numbers", "Frequently asked").pairs,
   "/blog/what-shopify-changed-for-agent-shopping": mdFaqBlocks("/blog/what-shopify-changed-for-agent-shopping", "Frequently asked").pairs,
   "/blog/three-outside-reviews-of-my-tla-plus-models": mdFaqBlocks("/blog/three-outside-reviews-of-my-tla-plus-models", "Frequently asked").pairs,
