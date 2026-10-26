@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.214.1 - the post Keeping my lab and my client work apart no longer describes which sessions on the workstation run outside the virtual machine, and its paragraph on agent session rights is general.
 // turva.dev worker v3.214.0 - new Build notes post /blog/keeping-my-lab-and-client-work-apart (2026-10-26) on keeping the lab apart from client work in a Windows virtual machine, tested with two test clients, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row, sitemap row, canonical path and FAQ registration.
 // turva.dev worker v3.213.9 - the legal page says where client work runs: a virtual machine kept apart from the workstation, a folder per client, no turva.dev credentials inside it, and how its session records and restore points are deleted; the AI tools paragraph names the client's own folder; the backup rotation names the disk images and one limit of 16 weeks on /legal and in the /services FAQ, which also drop the full disk encryption claim; Privacy last updated 2026-10-26.
 // turva.dev worker v3.213.8 - the MCP server card moves to MCP 1.6.23 (the MCP tool descriptions and instructions point to the published sample reports, and the instructions say the server scans no site); re-sign of the server card.
@@ -566,13 +567,13 @@ On 22 October Jason D. Clinton, deputy CISO at Anthropic, wrote [on his own X ac
 
 ## Why does the place an agent runs matter?
 
-On my workstation a Claude Code session runs commands as me. It installs packages and reads web pages with my rights. A poisoned package or a prompt injection in a page it reads would see what I can see: my workspace, my publishing tools, and any client material on the same disk. I already have gates that read each command as text before it runs. They catch a session's mistakes. For client work I wanted a boundary that the operating system enforces.
+An agent session runs commands with the rights of the person who started it. It installs packages and reads web pages with those rights, so a poisoned package or a prompt injection in a page it reads would see what that person can see. My gates read each command as text before it runs, and they catch a session's mistakes. For client work I wanted a boundary that the operating system enforces.
 
 ## What runs where now?
 
 Work agreed with a client runs in the virtual machine. Each client has a folder of their own. No credentials for my site, my repositories or my publishing are stored there. The AI tool's connectors that could write to them are blocked by rules in its settings, and each client session is instructed to check at the start that they still are. The report the client receives is moved out of the virtual machine and sent from my workstation. Riskier work of my own goes there too, such as installing someone else's packages or running a prospect's code. So does reading content I do not trust. That work runs in a working folder I can throw away.
 
-My lab stays on the workstation, and so do the encrypted vault and everything that deploys or publishes. Scheduled tasks and everyday sessions stay there too, as do the briefs I prepare for prospects.
+My lab stays on the workstation, and so do the encrypted vault and everything that deploys or publishes. Scheduled tasks stay there too, as do the briefs I prepare for prospects.
 
 ## Why a hybrid and not a full move?
 
@@ -580,7 +581,7 @@ I first planned to move all agent work into the virtual machine, and I ran a pil
 
 A full move would also have needed separate runs on the workstation for the key that signs my site's manifests, the key for the MCP registry and the mail credentials, with narrower tokens inside the virtual machine. With the hybrid, no token and no secret goes into the virtual machine. If something inside it goes wrong, there are no credentials to my site, my repositories or my publishing there to steal.
 
-So I chose a hybrid. It gives me the separation I was after. My lab keeps every tool it needs on the workstation, which matters because I learn in it every day. Client work gets a machine of its own, and so do code and packages I did not write and content I do not trust. My everyday sessions pay for this by not being isolated, and the limits section below says what that leaves open.
+So I chose a hybrid. It gives me the separation I was after. My lab keeps every tool it needs on the workstation, which matters because I learn in it every day. Client work gets a machine of its own, and so do code and packages I did not write and content I do not trust.
 
 ## How is the machine built?
 
@@ -609,7 +610,7 @@ The claim about this on my site came after the two runs, and it got narrower in 
 
 The virtual machine isolates execution. Code that runs and packages that are installed stay inside it. It does not isolate what the model reads: the model runs at the AI tool's provider, so it sees whatever the session reads. The desktop app also keeps a record of every session in the virtual machine on my workstation, so the content of a client session reaches the workstation even though the work runs elsewhere. My [legal page](/legal) says both of these and how those records are deleted when an engagement closes.
 
-The everyday sessions on my workstation still read web pages there, so a prompt injection in a page they read meets my gates, not this boundary. Deletion removes files and does not overwrite the freed disk space. The virtual machine's disk file sits on my workstation's own disk and is in its disk images. Two test clients are not a real engagement.
+Deletion removes files and does not overwrite the freed disk space. The virtual machine's disk file sits on my workstation's own disk and is in its disk images. Two test clients are not a real engagement.
 
 ## Frequently asked
 
@@ -623,7 +624,7 @@ Yes, in three ways. Whatever the session reads goes to the model, the desktop ap
 
 **Does every agent session run in the virtual machine now?**
 
-No. Client work and risky work of my own run there. My own work stays on my workstation, where the browser pane, the terminal panel and the scheduled tasks are, and my gates check those sessions.
+No. Client work and risky work of my own run there. The rest of my work stays on my workstation, where the browser pane, the terminal panel and the scheduled tasks are.
 
 ## Related
 
@@ -7800,7 +7801,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.214.0",
+    "version": "3.214.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8101,7 +8102,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.214.0",
+  "version": "3.214.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
