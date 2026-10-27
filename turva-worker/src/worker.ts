@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.214.3 - the post A clean Windows install for agent work says that the IVPN app no longer sets modDNS as a custom DNS and leaves DNS to Portmaster, and it names the HaGeZi Pro++ list in modDNS and Ultimate on the router, with an Updated note. No signed surface changes bytes.
 // turva.dev worker v3.214.2 - the post A clean Windows install for agent work says that every name lookup now goes through Portmaster with Block Secure DNS Bypassing on, that the browsers no longer resolve names through a DNS setup of their own and that the block on direct connections now covers them too, and it records a leak check with dnscheck.tools, where MLDSA44 failed, and its deny list no longer says the agent has a browser of its own; the post The browser my agent and I both run says the agent's own Brave install is removed for now. Both posts carry an Updated note. The last Frequently asked answer of Keeping my lab and my client work apart now names the command panel too. No signed surface changes bytes.
 // turva.dev worker v3.214.1 - the post Keeping my lab and my client work apart no longer describes which sessions on the workstation run outside the virtual machine, and its paragraph on agent session rights is general.
 // turva.dev worker v3.214.0 - new Build notes post /blog/keeping-my-lab-and-client-work-apart (2026-10-26) on keeping the lab apart from client work in a Windows virtual machine, tested with two test clients, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row, sitemap row, canonical path and FAQ registration.
@@ -1507,7 +1508,7 @@ I now count this setup as the right one: every name lookup that leaves Windows g
 
 ## What else sits between the machine and the internet?
 
-My connection goes out through IVPN, which I have set to rotate its WireGuard key every day. Its firewall is set to always on, so on Windows it [applies its blocking rules at boot](https://www.ivpn.net/knowledgebase/general/do-you-offer-a-kill-switch-or-vpn-firewall/), before the system has finished loading, and they block traffic outside the VPN even when the IVPN app is not running. It lets through traffic to IVPN's own servers and to my local network. Windows treats both the IVPN tunnel and my wired connection as public networks, so its firewall applies its most restrictive profile to both. IVPN is behind three of these pieces: it runs the VPN and modDNS, and in December 2024 it bought Safing, the company behind Portmaster. In the IVPN app I have set modDNS as the custom DNS, and it filters with the HaGeZi Threat Intelligence Feeds and Pro lists, plus a HaGeZi list of domains registered within the last seven days. I have checked that my lookups reach it. Today they reach it through Portmaster's resolver, as the DNS section says. For one day I collected the domains modDNS blocked, and I copied every one whose block breaks nothing into the Windows hosts file, as a second block in Windows itself. After that they disappeared from the modDNS log, so those lookups now stop in Windows before they reach it. HaGeZi publishes stricter lists than Pro, so I still count these list choices as relaxed. I use these lists in all my work. If the machine ever reached my router without the VPN, the router runs the NextDNS CLI with much stricter HaGeZi lists. As far as I know, that has never happened without me choosing it.
+My connection goes out through IVPN, which I have set to rotate its WireGuard key every day. Its firewall is set to always on, so on Windows it [applies its blocking rules at boot](https://www.ivpn.net/knowledgebase/general/do-you-offer-a-kill-switch-or-vpn-firewall/), before the system has finished loading, and they block traffic outside the VPN even when the IVPN app is not running. It lets through traffic to IVPN's own servers and to my local network. Windows treats both the IVPN tunnel and my wired connection as public networks, so its firewall applies its most restrictive profile to both. IVPN is behind three of these pieces: it runs the VPN and modDNS, and in December 2024 it bought Safing, the company behind Portmaster. My modDNS profile filters with the HaGeZi Threat Intelligence Feeds and Pro++ lists, plus a HaGeZi list of domains registered within the last seven days. I no longer set modDNS as a custom DNS in the IVPN app. The app leaves DNS to Portmaster, and its settings say that Portmaster manages DNS on this system. My lookups reach modDNS through Portmaster's resolver, as the DNS section says, and I have checked that they reach it. For one day I collected the domains modDNS blocked, and I copied every one whose block breaks nothing into the Windows hosts file, as a second block in Windows itself. After that they disappeared from the modDNS log, so those lookups now stop in Windows before they reach it. HaGeZi calls Pro++ more aggressive than Pro, and its one stricter all-in-one list is Ultimate. I use the modDNS lists in all my work. If the machine ever reached my router without the VPN, the router runs the NextDNS CLI with HaGeZi Ultimate, which is stricter than Pro++. As far as I know, that has never happened without me choosing it.
 
 ## What may an agent session not touch?
 
@@ -1561,6 +1562,8 @@ It prevents apps from going past Portmaster's Secure DNS resolver, for example b
 Corrected 2026-10-23. The IVPN sentence said its firewall starts at boot before any other process. IVPN's own description makes no claim about process order. On Windows, it says, the persistent firewall applies its blocking rules at boot, before the system is fully loaded, so the sentence now says: "Its firewall is set to always on, so on Windows it applies its blocking rules at boot, before the system has finished loading, and they block traffic outside the VPN even when the IVPN app is not running."
 
 Updated 2026-10-26. The DNS section now ends with today's setup, in which every name lookup that leaves Windows goes through Portmaster with Block Secure DNS Bypassing on and the browsers have no modDNS setup of their own. The block on direct connections now covers the browsers too. I removed the agent's own browser for now, so the deny list no longer says it has one.
+
+Updated 2026-10-27. The section on what else sits between the machine and the internet said that I had set modDNS as the custom DNS in the IVPN app. I no longer do. The app leaves DNS to Portmaster, and its settings say that Portmaster manages DNS on this system. The same section now names HaGeZi Pro++ where it said Pro, and Ultimate as the router's list.
 
 ## Related
 
@@ -7808,7 +7811,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.214.2",
+    "version": "3.214.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8109,7 +8112,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.214.2",
+  "version": "3.214.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
