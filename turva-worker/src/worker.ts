@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.214.2 - the post A clean Windows install for agent work says that every name lookup now goes through Portmaster with Block Secure DNS Bypassing on, that the browsers no longer resolve names through a DNS setup of their own and that the block on direct connections now covers them too, and it records a leak check with dnscheck.tools, where MLDSA44 failed, and its deny list no longer says the agent has a browser of its own; the post The browser my agent and I both run says the agent's own Brave install is removed for now. Both posts carry an Updated note. The last Frequently asked answer of Keeping my lab and my client work apart now names the command panel too. No signed surface changes bytes.
 // turva.dev worker v3.214.1 - the post Keeping my lab and my client work apart no longer describes which sessions on the workstation run outside the virtual machine, and its paragraph on agent session rights is general.
 // turva.dev worker v3.214.0 - new Build notes post /blog/keeping-my-lab-and-client-work-apart (2026-10-26) on keeping the lab apart from client work in a Windows virtual machine, tested with two test clients, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row, sitemap row, canonical path and FAQ registration.
 // turva.dev worker v3.213.9 - the legal page says where client work runs: a virtual machine kept apart from the workstation, a folder per client, no turva.dev credentials inside it, and how its session records and restore points are deleted; the AI tools paragraph names the client's own folder; the backup rotation names the disk images and one limit of 16 weeks on /legal and in the /services FAQ, which also drop the full disk encryption claim; Privacy last updated 2026-10-26.
@@ -624,7 +625,7 @@ Yes, in three ways. Whatever the session reads goes to the model, the desktop ap
 
 **Does every agent session run in the virtual machine now?**
 
-No. Client work and risky work of my own run there. The rest of my work stays on my workstation, where the browser pane, the terminal panel and the scheduled tasks are.
+No. Client work and risky work of my own run there. The rest of my work stays on my workstation, where the browser pane, the terminal panel, the command panel and the scheduled tasks are.
 
 ## Related
 
@@ -1409,7 +1410,9 @@ By my estimate at least 43 hours on an RTX 4080 SUPER, if a quantized cache lets
 
 2026-10-06
 
-Brave is the only browser I use, and my agent has a separate Brave install of its own, so it does not use the browser I use myself. Both run with the V8 optimizer off by default and Brave's own ad blocker on. I also use Forgetful Browsing, and I sign in with a passkey or a YubiKey wherever a site accepts one. This post says what each setting covers, what the sources behind it measured and where the setup rubs.
+Brave is the only browser I use. Until late October my agent had its own Brave install, so it did not use mine. Both ran with the V8 optimizer off by default and Brave's own ad blocker on, and mine still does. I also use Forgetful Browsing, and I sign in with a passkey or a YubiKey wherever a site accepts one. This post says what each setting covers, what the sources behind it measured and where the setup rubs.
+
+Updated 2026-10-26. After [the security news of 17 to 24 October](/blog/keeping-my-lab-and-client-work-apart) I removed my agent's own Brave install, for now. I have not yet decided what the agent will use in the end. The settings below are the ones my own Brave still runs.
 
 ## Why turn off the JavaScript optimizer?
 
@@ -1488,7 +1491,7 @@ Several of Windows' own protections were already on when I measured them: virtua
 
 ## What does the firewall decide?
 
-Portmaster decides which app may connect where. Its default action is Block, so a connection that no rule allows is refused. I also have it set to block incoming connections in its global settings. Connections made straight to an IP address without a DNS lookup first are blocked for every app except the browsers. The browsers do not work with that block, and I think it is because they resolve names through a modDNS setup of their own. In Portmaster I turned off its own relay network and set all 64 app profiles to match.
+Portmaster decides which app may connect where. Its default action is Block, so a connection that no rule allows is refused. I also have it set to block incoming connections in its global settings. Portmaster's block on P2P and direct connections, made straight to an IP address without a DNS lookup first, now covers every app. When I first set it up, the browsers did not work with that block, and I think it was because they resolved names through a modDNS setup of their own, so they had an exception. They no longer do, as the DNS section says, and the exception is gone. In Portmaster I turned off its own relay network and set all 64 app profiles to match.
 
 Windows Firewall stays on in all three profiles. It allows outgoing traffic by default, so for outgoing connections Portmaster makes the decision. On 1 October I removed 25 allow rules, nearly all for telemetry or for Store and system packages that Portmaster does not allow, such as the Xbox packages and Clipchamp. A second round since then removed 18 more and switched others off. Windows Firewall has 485 rules today, and 354 of them are switched off. Of the 131 allow rules that are on, 78 are Windows' own built-in rules and 39 belong to app packages, nearly all of them parts of Windows. The other 14 belong to apps I use, the browsers among them. I also disabled 22 services, among them the telemetry service and the SSDP and UPnP discovery services.
 
@@ -1500,9 +1503,11 @@ I first guessed that Node and Python do this by default. Python's standard name 
 
 A third case I know of is my own code, from before the reinstall, so it is not one of the warnings I saw. My local resolver did not answer the mail server queries of my sending script, so in August I made the script ask DNS over HTTPS first, with the system resolver and public resolvers as fallbacks. When Portmaster blocked those paths in September, the script learned to skip a blocked path and use the system resolver, which on this machine is Portmaster's.
 
+I now count this setup as the right one: every name lookup that leaves Windows goes through Portmaster, and Block Secure DNS Bypassing stays on. The browsers no longer use a DNS setup of their own. Portmaster's own resolver sends the lookups to modDNS using DNS over TLS, at one IPv4 and one IPv6 address, and it is set to use secure protocols only. Ignore System/Network Servers is still on, so Portmaster does not fall back to the servers Windows or the network hands out. Portmaster can filter each of those lookups, and the bypass block stops a program that tries to send its lookups past Portmaster's resolver. I have tested that lookups do not leak past this setup. The test site dnscheck.tools showed one IPv4 and one IPv6 resolver from the same operator and no other. Its DNSSEC validation tests passed for both ECDSA curves and for Ed25519. The tests for MLDSA44 failed, and the site notes that it is a new signature algorithm not yet widely validated.
+
 ## What else sits between the machine and the internet?
 
-My connection goes out through IVPN, which I have set to rotate its WireGuard key every day. Its firewall is set to always on, so on Windows it [applies its blocking rules at boot](https://www.ivpn.net/knowledgebase/general/do-you-offer-a-kill-switch-or-vpn-firewall/), before the system has finished loading, and they block traffic outside the VPN even when the IVPN app is not running. It lets through traffic to IVPN's own servers and to my local network. Windows treats both the IVPN tunnel and my wired connection as public networks, so its firewall applies its most restrictive profile to both. IVPN is behind three of these pieces: it runs the VPN and modDNS, and in December 2024 it bought Safing, the company behind Portmaster. In the IVPN app I have set modDNS as the custom DNS, and it filters with the HaGeZi Threat Intelligence Feeds and Pro lists, plus a HaGeZi list of domains registered within the last seven days. I have checked that my lookups reach it. For one day I collected the domains modDNS blocked, and I copied every one whose block breaks nothing into the Windows hosts file, as a second block in Windows itself. After that they disappeared from the modDNS log, so those lookups now stop in Windows before they reach it. The browsers have a modDNS setup of their own. HaGeZi publishes stricter lists than Pro, so I still count these list choices as relaxed. I use these lists in all my work. If the machine ever reached my router without the VPN, the router runs the NextDNS CLI with much stricter HaGeZi lists. As far as I know, that has never happened without me choosing it.
+My connection goes out through IVPN, which I have set to rotate its WireGuard key every day. Its firewall is set to always on, so on Windows it [applies its blocking rules at boot](https://www.ivpn.net/knowledgebase/general/do-you-offer-a-kill-switch-or-vpn-firewall/), before the system has finished loading, and they block traffic outside the VPN even when the IVPN app is not running. It lets through traffic to IVPN's own servers and to my local network. Windows treats both the IVPN tunnel and my wired connection as public networks, so its firewall applies its most restrictive profile to both. IVPN is behind three of these pieces: it runs the VPN and modDNS, and in December 2024 it bought Safing, the company behind Portmaster. In the IVPN app I have set modDNS as the custom DNS, and it filters with the HaGeZi Threat Intelligence Feeds and Pro lists, plus a HaGeZi list of domains registered within the last seven days. I have checked that my lookups reach it. Today they reach it through Portmaster's resolver, as the DNS section says. For one day I collected the domains modDNS blocked, and I copied every one whose block breaks nothing into the Windows hosts file, as a second block in Windows itself. After that they disappeared from the modDNS log, so those lookups now stop in Windows before they reach it. HaGeZi publishes stricter lists than Pro, so I still count these list choices as relaxed. I use these lists in all my work. If the machine ever reached my router without the VPN, the router runs the NextDNS CLI with much stricter HaGeZi lists. As far as I know, that has never happened without me choosing it.
 
 ## What may an agent session not touch?
 
@@ -1512,7 +1517,7 @@ On this machine a Claude Code session runs commands as me, and there is no sandb
 - My encrypted vaults, read from the vault app's own settings at run time.
 - Portmaster and its control interface.
 - Every drive letter except C:, the system drive. That covers the backup clone of the system disk and any vault I open, because an open vault gets a drive letter of its own.
-- The browser I use myself, because the agent has a browser of its own.
+- The browser I use myself.
 - Writes to the agent's own user settings and its installed plugin, so that a session cannot switch these rules off.
 
 Two layers do this. Claude Code's own settings carry 161 deny rules, and a gate in my own plugin reads each command and tool call as text before it runs.
@@ -1554,6 +1559,8 @@ The clone is a full copy of the system disk. A session that can read it can read
 It prevents apps from going past Portmaster's Secure DNS resolver, for example by using DNS over HTTPS or a public resolver. Lookups then go through Portmaster, which can filter them.
 
 Corrected 2026-10-23. The IVPN sentence said its firewall starts at boot before any other process. IVPN's own description makes no claim about process order. On Windows, it says, the persistent firewall applies its blocking rules at boot, before the system is fully loaded, so the sentence now says: "Its firewall is set to always on, so on Windows it applies its blocking rules at boot, before the system has finished loading, and they block traffic outside the VPN even when the IVPN app is not running."
+
+Updated 2026-10-26. The DNS section now ends with today's setup, in which every name lookup that leaves Windows goes through Portmaster with Block Secure DNS Bypassing on and the browsers have no modDNS setup of their own. The block on direct connections now covers the browsers too. I removed the agent's own browser for now, so the deny list no longer says it has one.
 
 ## Related
 
@@ -7801,7 +7808,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.214.1",
+    "version": "3.214.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8102,7 +8109,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.214.1",
+  "version": "3.214.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
