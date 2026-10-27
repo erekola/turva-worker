@@ -22,6 +22,10 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import * as nodeModule from 'node:module';
 import { dirname, join } from 'node:path';
+import {
+  scopeListsAgree, readmeMeasurementDates, homeRequiresMatches, requiredServiceName, markdownTwinProblem,
+  htmlTwinProblem, jwkToEd25519Key, isRealIsoDate,
+} from './verify-helpers.mts';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -388,12 +392,18 @@ check(secNear.length>=1 && secNear.every(d=>d===sec), `worker.ts security "Measu
 const lvm = src.worker.text.match(/"lastVerified":\s*"(\d{4}-\d{2}-\d{2})"/);
 check(!!lvm && lvm[1]===ar, `worker.ts HOME_JSON lastVerified == ${ar}`);
 check(src.readme.text.includes(ar), `README.md carries ${ar}`);
+// WL-25: on top of the includes() above, which passes on a date found anywhere in the README,
+// each date is read from its own sentence, so the scanner claim cannot borrow the security
+// date or the other way round. The includes() lines stay: tools/e16portti.mjs E1 reads them.
+const rmDates = readmeMeasurementDates(src.readme.text);
+check(rmDates.scannerDate === ar, `README.md scanner sentence carries ${ar} (saw ${JSON.stringify(rmDates.scannerDate)})`);
 // B2-06 (round 12, batch E16). Only the agent-readiness date was anchored in README.md,
 // although the same file carries the security measurement date in its own sentence
 // ("Measured on `turva.dev` on <date>") and `sec` was already read above. That sentence does
 // not match the "Measured <date>" pattern used for worker.ts either, because a word sits in
 // between, so nothing was watching it. Both dates are anchored now.
 check(src.readme.text.includes(sec), `README.md carries ${sec}`);
+check(rmDates.securityDate !== null && rmDates.securityLine.includes(sec), `README.md security sentence carries ${sec} (saw ${JSON.stringify(rmDates.securityDate)})`);
 
 console.log('\nScanner results');
 const iar = facts.agentReadiness.isitagentready, lvl = iar.level;
@@ -829,6 +839,8 @@ console.log('\nBundled implementation add-ons (Tek-317)');
     check(got.price === x.price, `HOME_JSON ${x.name} priced ${x.price} (saw ${JSON.stringify(got.price)})`);
     check(got.soldSeparately === false, `HOME_JSON ${x.name} says it is not sold separately (saw ${JSON.stringify(got.soldSeparately)})`);
     check(typeof got.requires === 'string' && got.requires.trim(), `HOME_JSON ${x.name} names what it requires (saw ${JSON.stringify(got.requires)})`);
+    // WL-26: not only a non-empty string, exactly the name of the service facts.json says it requires.
+    check(homeRequiresMatches(facts.services || [], x.requires, got.requires), `HOME_JSON ${x.name} requires exactly ${JSON.stringify(requiredServiceName(facts.services || [], x.requires))} (saw ${JSON.stringify(got.requires)})`);
     // G2-3 (round 19): scope was declared and type-checked in facts.json but never
     // compared to what HOME_JSON actually states, so the two could read differently
     // with no red check anywhere.
@@ -1697,7 +1709,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     for (const gp of guidePaths) {
       const blk = (metaRegion.match(new RegExp('  "' + gp.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + '": \\{[\\s\\S]*?\\n  \\}')) || [''])[0];
       const cm = blk.match(/checked: "(\d{4}-\d{2}-\d{2})"/);
-      if (cm && cm[1] <= today) withDate++; else bad(`${gp}: META_BY_PATH.checked is an ISO date not in the future (saw ${cm ? cm[1] : 'absent'})`);
+      if (cm && isRealIsoDate(cm[1]) && cm[1] <= today) withDate++; else bad(`${gp}: META_BY_PATH.checked is an ISO date not in the future (saw ${cm ? cm[1] : 'absent'})`);
     }
     check(guidePaths.length > 0 && withDate === guidePaths.length, `every guide twin has a META_BY_PATH.checked date (${withDate} of ${guidePaths.length})`);
   }
@@ -1980,12 +1992,15 @@ console.log('\nOAuth scope count in prose (round 14, R1a-14-1)');
 // are read directly and compared to EACH OTHER too, so a divergence between the two
 // specs is caught rather than papered over by trusting only one of them.
 {
+  // WL-24: the values are parsed and compared as unique sets, duplicates are refused, and the
+  // prose word is checked against the parsed unique count (a count compare let two different
+  // lists of the same length agree).
   const scopeMatches = [...src.worker.text.matchAll(/"scopes_supported":\s*\[([^\]]*)\]/g)];
-  const counts = scopeMatches.map((m) => (m[1].match(/"[^"]+"/g) || []).length);
-  check(scopeMatches.length === 2 && counts.length === 2 && counts[0] === counts[1] && counts[0] > 0,
-    `OAUTH_DISCOVERY and OAUTH_PROTECTED_RESOURCE scopes_supported agree on a nonzero count (saw ${JSON.stringify(counts)}, ${scopeMatches.length} scopes_supported arrays found)`);
+  const scopeAgree = scopeListsAgree(scopeMatches.map((m) => m[1]));
+  check(scopeAgree.ok,
+    `OAUTH_DISCOVERY and OAUTH_PROTECTED_RESOURCE scopes_supported agree on a nonzero set of unique values (saw ${scopeAgree.detail}, ${scopeMatches.length} scopes_supported arrays found)`);
   const SCOPE_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
-  const n = counts[0] || 0;
+  const n = scopeAgree.count;
   const word = SCOPE_WORDS[n] || String(n);
   const scopeWordM = src.worker.text.match(/authorization server, (\w+) scope names/);
   check(!!scopeWordM && n > 0 && scopeWordM[1] === word,
@@ -2279,12 +2294,8 @@ try {
   if (!jwksM || !sigsM) throw new Error('JWKS_JSON or SIGNATURES_JSON not found in worker.ts');
   const jwksLocal = JSON.parse(new Function('return "' + jwksM[1] + '"')());
   const sigsLocal = JSON.parse(new Function('return "' + sigsM[1] + '"')());
-  const jwkToKey = (jwk: { x: string }) => {
-    const raw = Buffer.from(jwk.x, 'base64url');
-    const der = Buffer.concat([Buffer.from('302a300506032b6570032100', 'hex'), raw]); // Ed25519 SPKI prefix
-    return createPublicKey({ key: der, format: 'der', type: 'spki' });
-  };
-  const keyByKid = Object.fromEntries(jwksLocal.keys.map((k: { kid: string; x: string }) => [k.kid, jwkToKey(k)]));
+  // WL-28: the key is built from the JWK itself, after kty, crv and alg are checked.
+  const keyByKid = Object.fromEntries(jwksLocal.keys.map((k: { kid: string; x: string }) => [k.kid, jwkToEd25519Key(k)]));
   const preDeployCount = Object.keys(sigsLocal.signatures).length;
   check(preDeployCount > 0, `worker.ts SIGNATURES_JSON declares at least one surface to check pre-deploy (saw ${preDeployCount})`);
   // F06: count equality alone passes a dropped path paired with an added query-variant
@@ -2564,7 +2575,8 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
         // --live run makes 40 to 65 other unpaced requests, all of which count against the same
         // 100/60 s quota. The pacing went up to 1100 milliseconds and a 429 is reported as itself.
         if (r.status === 429) { rajoitettu.push(pth); continue; }
-        if (!r.ok) { rikki.push(`${pth}: HTTP ${r.status}`); continue; }
+        const mdProblem = markdownTwinProblem(pth, r.status); // WL-27: exactly 200, not any 2xx
+        if (mdProblem) { rikki.push(mdProblem); continue; }
         if (!ct.includes('markdown')) { rikki.push(`${pth}: content-type ${ct || 'none'}`); continue; }
         if (/<!DOCTYPE/i.test(body)) { rikki.push(`${pth}: body is an HTML document`); continue; }
         if (!body.trim()) { rikki.push(`${pth}: empty body`); continue; }
@@ -2572,6 +2584,8 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
         await odota(1100);
         const htmlRes = await fetch(base + pth);
         const html = await htmlRes.text();
+        const htmlProblem = htmlTwinProblem(pth, htmlRes.status, htmlRes.headers.get('content-type')); // WL-27
+        if (htmlProblem) { rikki.push(htmlProblem); continue; }
         const htmlH1raw = (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1];
         if (!mdH1 || !htmlH1raw) { rikki.push(`${pth}: no h1 in ${!mdH1 ? 'markdown' : 'html'}`); continue; }
         const norm = (s: string) => h1Decode(h1Strip(s))
@@ -3085,12 +3099,8 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
     const fetchBytes = async (p: string) => Buffer.from(await (await fetch(base + p)).arrayBuffer());
     const jwks = JSON.parse((await fetchBytes('/.well-known/jwks.json')).toString());
     const sigs = JSON.parse((await fetchBytes('/.well-known/signatures.json')).toString());
-    const jwkToKey = (jwk: { x: string }) => {
-      const raw = Buffer.from(jwk.x, 'base64url');
-      const der = Buffer.concat([Buffer.from('302a300506032b6570032100', 'hex'), raw]); // Ed25519 SPKI prefix
-      return createPublicKey({ key: der, format: 'der', type: 'spki' });
-    };
-    const keyByKid = Object.fromEntries(jwks.keys.map((k: { kid: string; x: string }) => [k.kid, jwkToKey(k)]));
+    // WL-28: the key is built from the published JWK itself, after kty, crv and alg are checked.
+    const keyByKid = Object.fromEntries(jwks.keys.map((k: { kid: string; x: string }) => [k.kid, jwkToEd25519Key(k)]));
     // R2b14-2 (round 14). The loop below iterates Object.entries(sigs.signatures) and
     // never checked how many entries that was: a signatures.json that lost every entry
     // would run the loop zero times, issue zero bad() calls, and pass. The expected count

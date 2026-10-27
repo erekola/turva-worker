@@ -54,8 +54,9 @@ test("the nav script is not listed in the sitemap", async () => {
   assert.ok(!xml.includes("nav.js"));
 });
 
-test("the five example pre blocks on the two tool pages carry tabindex, other pages keep plain pre", async () => {
-  const want = { "/llms-txt-validator": 2, "/markdown-parity-check": 3 };
+test("the four example pre blocks on the two tool pages carry tabindex, other pages keep plain pre", async () => {
+  // The parity page's request example is one block since WL-07: its headers and its JSON body are separated by a blank line.
+  const want = { "/llms-txt-validator": 2, "/markdown-parity-check": 2 };
   for (const [p, n] of Object.entries(want)) {
     const html = await (await get(p, { Accept: "text/html" })).text();
     assert.equal(count(html, '<pre tabindex="0"><code>'), n, p + " tabindex pre count");

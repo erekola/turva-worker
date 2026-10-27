@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.214.4 - fixes from the outside review of 2026-10-07, logic session S2 (Tek-578): the markdown renderer keeps blank lines inside indented code, keeps backslash escapes in inline code, gives every heading line its own block and never reuses a heading id; the mta-sts and openpgpkey hosts answer other methods with 405 and OPTIONS with 204; markdown twins keep their agent policy and CORS on 429, on the www redirect and on OPTIONS; an unreadable parity request body is a 400 with no-store; WebMCP search_content matches link titles only; the mobile menu also closes when focus falls to nothing while the page keeps focus. SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.214.3 - the post A clean Windows install for agent work says that the IVPN app no longer sets modDNS as a custom DNS and leaves DNS to Portmaster, and it names the HaGeZi Pro++ list in modDNS and Ultimate on the router, with an Updated note. No signed surface changes bytes.
 // turva.dev worker v3.214.2 - the post A clean Windows install for agent work says that every name lookup now goes through Portmaster with Block Secure DNS Bypassing on, that the browsers no longer resolve names through a DNS setup of their own and that the block on direct connections now covers them too, and it records a leak check with dnscheck.tools, where MLDSA44 failed, and its deny list no longer says the agent has a browser of its own; the post The browser my agent and I both run says the agent's own Brave install is removed for now. Both posts carry an Updated note. The last Frequently asked answer of Keeping my lab and my client work apart now names the command panel too. No signed surface changes bytes.
 // turva.dev worker v3.214.1 - the post Keeping my lab and my client work apart no longer describes which sessions on the workstation run outside the virtual machine, and its paragraph on agent session rights is general.
@@ -187,7 +188,7 @@ max_age: 604800
 
 const CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-aYDvr8aW6OGCZCnuXXpdb79gguLAY+ZwnmUjQuB+7Qk='",
+  "script-src 'self' 'sha256-OhOQnkdnbTzQdOHjmwm7kuBySn4whVlJ8QKBfK7Q8Og='",
   "style-src 'self' 'unsafe-inline' data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -7811,7 +7812,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.214.3",
+    "version": "3.214.4",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8112,7 +8113,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.214.3",
+  "version": "3.214.4",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8733,12 +8734,12 @@ const WEBMCP_SCRIPT = `<script>
  for (var i = 0; i < lines.length && out.length < max; i++) {
   var line = lines[i];
   if (line.indexOf('- [') !== 0) continue;
-  if (line.toLowerCase().indexOf(q) === -1) continue;
   var t0 = line.indexOf('[') + 1;
   var t1 = line.indexOf(']', t0);
   var u0 = line.indexOf('(', t1) + 1;
   var u1 = line.indexOf(')', u0);
   if (t1 < 0 || u1 < 0) continue;
+  if (line.slice(t0, t1).toLowerCase().indexOf(q) === -1) continue;
   var mdU = line.slice(u0, u1);
   var pageU = mdU;
   if (pageU.slice(-9) === '/index.md') pageU = pageU.slice(0, -8);
@@ -8796,7 +8797,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-10-26";
+const SITEMAP_LASTMOD = "2026-10-27";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9743,6 +9744,30 @@ function redirectTo(location: string, status: number, pathLower: string, kind?: 
   return new Response(null, { status: status, headers: headers });
 }
 
+// A page's markdown twin, at any letter case of the path: /index.md, /index.html.md, and
+// <page>.md or <page>.html.md for a page in PAGE_MARKDOWN. A twin is an agent resource that sends
+// ACAO * on GET, so its 429, its www redirect and its OPTIONS answer carry the same policy
+// (Sol repo read 2026-10-07, WL-21, U-1, U-2). Takes the lower-cased path.
+function isMarkdownTwinPath(pathLower: string) {
+  if (pathLower === "/index.md" || pathLower === "/index.html.md") return true;
+  const base = pathLower.endsWith(".html.md") ? pathLower.slice(0, -8) : pathLower.endsWith(".md") ? pathLower.slice(0, -3) : "";
+  return base !== "" && !!PAGE_MARKDOWN[base as keyof typeof PAGE_MARKDOWN];
+}
+
+// The method gate for the two special hosts' resources (WL-02): GET (HEAD arrives as GET) serves,
+// OPTIONS answers 204 with Allow, any other method answers 405, exactly as on the apex. It runs
+// only where a resource is about to be served, so the redirect of every other path to turva.dev
+// stays as it was. Returns null when the request may go on.
+function hostMethodGate(request: Request, pathLower: string): Response | null {
+  if (request.method === "GET") return null;
+  if (request.method === "OPTIONS") {
+    const headers = new Headers({ "allow": "GET, HEAD, OPTIONS" });
+    applySecurityHeaders(headers, "default");
+    return new Response(null, { status: 204, headers });
+  }
+  return serve405("GET, HEAD, OPTIONS", pathLower);
+}
+
 // Round 19, P1 (Erik 2026-09-23), reused by the www redirect since HTTP-02 (Tek-496 audit
 // round): a page or its markdown twin asked for in another letter case answers 301 to the
 // lower-case path, as every agent surface here already answers any case. Only a path that
@@ -10297,7 +10322,7 @@ function renderInline(text: string) {
     if (tm) { tail = tm[0]; url = url.slice(0, url.length - tail.length); }
     return pre + '<a href="https://' + stripBidi(url) + '">' + stripBidi(url) + '</a>' + tail;
   }));
-  if (code.length) out = out.replace(new RegExp(mark + "([0-9]+)" + mark, "g"), (m: string, i: string) => (Number(i) < code.length ? "<code>" + escapeHtml(code[Number(i)]) + "</code>" : m));
+  if (code.length) out = out.replace(new RegExp(mark + "([0-9]+)" + mark, "g"), (m: string, i: string) => (Number(i) < code.length ? "<code>" + escapeHtml(mdCodeText(code[Number(i)])) + "</code>" : m));
   return out;
 }
 
@@ -10342,6 +10367,30 @@ function mdCodeText(s: string) {
   return out;
 }
 
+// Splits lines into blocks at empty lines. Two cases keep a block together or apart beyond that.
+// An empty line inside an indented code run stays in the block when the next non-empty line is
+// indented too, so a request example keeps the blank line between its headers and its body
+// (WL-07). With headings set, every ATX heading line is a block of its own wherever it sits:
+// under a paragraph line, under another heading, under a list (WL-10).
+function mdSplitBlocks(lines: string[], headings: boolean) {
+  const out: string[] = [];
+  let cur: string[] = [];
+  let blanks = 0;
+  const emit = () => { if (cur.length) out.push(cur.join("\n")); cur = []; };
+  const inCodeRun = () => cur.length > 0 && cur[0].startsWith("    ") && cur.every((l: string) => l.trim() === "" || l.startsWith("    "));
+  for (const line of lines) {
+    if (line === "") { blanks++; continue; }
+    if (blanks) {
+      if (inCodeRun() && line.startsWith("    ")) { for (let b = 0; b < blanks; b++) cur.push(""); } else emit();
+      blanks = 0;
+    }
+    if (headings && /^ {0,3}#{1,3} /.test(line)) { emit(); out.push(line); continue; }
+    cur.push(line);
+  }
+  emit();
+  return out;
+}
+
 function markdownToHtml(md: string) {
   const lines = md.replace(/\r\n/g, "\n").split("\n");
   const blocks: (string | { code: string })[] = [];
@@ -10350,12 +10399,7 @@ function markdownToHtml(md: string) {
   // under it, so a list written directly below a heading rendered inside the h2.
   const flush = () => {
     if (!prose.length) return;
-    for (const part of prose.join("\n").split(/\n{2,}/)) {
-      const t = part.trim();
-      const nl = t.indexOf("\n");
-      if (nl > 0 && /^#{1,3} /.test(t)) { blocks.push(t.slice(0, nl), t.slice(nl + 1)); continue; }
-      blocks.push(part);
-    }
+    for (const b of mdSplitBlocks(prose, true)) blocks.push(b);
     prose = [];
   };
   for (let i = 0; i < lines.length; i++) {
@@ -10376,13 +10420,16 @@ function markdownToHtml(md: string) {
   const html = [];
   // Heading ids are unique within one document (round 19, K4-3): a second heading with the same
   // slug gets -2, a third -3, so a contents link cannot land on the wrong section. No page had a
-  // repeated slug when this was added, so no existing anchor moved.
-  const usedIds = new Map<string, number>();
+  // repeated slug when this was added, so no existing anchor moved. The suffix counts up until
+  // the final id is unused and the final id is reserved too, so a heading whose own slug is
+  // "same-2" cannot collide with the second "same" (WL-09).
+  const usedIds = new Set<string>();
   const uniqueId = (id: string) => {
     if (!id) return id;
-    const n = (usedIds.get(id) || 0) + 1;
-    usedIds.set(id, n);
-    return n === 1 ? id : id + "-" + n;
+    let final = id;
+    for (let n = 2; usedIds.has(final); n++) final = id + "-" + n;
+    usedIds.add(final);
+    return final;
   };
   for (const block of blocks) {
     if (typeof block !== "string") {
@@ -10391,10 +10438,14 @@ function markdownToHtml(md: string) {
     }
     const trimmed = block.trim();
     if (!trimmed) continue;
-    const rawLines = block.split("\n").filter((l: string) => l.trim() !== "");
+    const codeLines = block.split("\n");
     const tl = trimmed.split("\n").map((l: string) => l.trim());
-    if (rawLines.length && rawLines.every((l: string) => l.startsWith("    "))) {
-      html.push(`<pre><code>${escapeHtml(mdCodeText(rawLines.map((l: string) => l.slice(4)).join("\n")))}</code></pre>`);
+    if (codeLines.some((l: string) => l.trim() !== "") && codeLines.every((l: string) => l.trim() === "" || l.startsWith("    "))) {
+      // Blank lines inside the run stay in the code text; the ones at its ends do not.
+      let from = 0, to = codeLines.length;
+      while (codeLines[from].trim() === "") from++;
+      while (codeLines[to - 1].trim() === "") to--;
+      html.push(`<pre><code>${escapeHtml(mdCodeText(codeLines.slice(from, to).map((l: string) => l.slice(4)).join("\n")))}</code></pre>`);
     } else if (tl.length >= 2 && tl[0].startsWith("|") && /^\|[\s:|-]+\|$/.test(tl[1])) {
       const cells = (l: string) => l.replace(/^\|/, "").replace(/\|$/, "").split("|").map((c: string) => renderInline(c.trim()));
       // Since v3.133.0 (Tek-358) every cell carries its column name as data-label and the
@@ -10449,7 +10500,15 @@ function markdownToHtml(md: string) {
 // ---- Prose from PAGE_MARKDOWN (T3, mds/decisions.md Tek-56) ----
 // Card pages render hand-built structure (nav, cards, key-value grids,
 // forms) around prose read from PAGE_MARKDOWN at request time, so every
-// sentence lives once and a page cannot drift from its markdown twin.
+// sentence lives once and a page cannot drift from its markdown twin, with
+// one named exception (Tek-358): the "How to use it" section of
+// /llms-txt-validator is rendered by hand per medium, because its form
+// instructions are worded for the medium. The browser page says "enter a
+// domain in the field above", links the example and sets the agent request
+// in a code span; the twin spells the page address out, prints the example
+// address bare and writes the request as plain text. tools/verify.mts lists
+// the section as hand, and test/validator-twin.test.ts compares the page with
+// the twin and allows exactly those three differences.
 // tools/verify.mts guards converted pages: no literal prose paragraphs in
 // the function body, and every referenced section heading must exist in
 // the twin. A missing heading throws here, which the render harness and
@@ -10701,7 +10760,7 @@ function mdSecBodyHtml(path: string, heading: string, listOnly?: boolean, dropRo
   // else is markdown. Continuation lines of a list item (indented) join the item.
   // listOnly: the paragraphs are rendered elsewhere in the same section (the /contact
   // Signal block, kierros 4 E-01: the twin says it once, the HTML said it twice).
-  let blocks = mdSection(path, heading).split(/\n{2,}/).map((b) => b.replace(/\s+$/, "")).filter(Boolean)
+  let blocks = mdSplitBlocks(mdSection(path, heading).split("\n"), false).map((b) => b.replace(/\s+$/, "")).filter(Boolean)
     .filter((b) => !listOnly || b.trim().startsWith("- "));
   // dropRow: the section's button row is rendered by mdOpenCtaSec, so it is not a paragraph here.
   if (dropRow) blocks = mdCtaSplit(blocks, path + " " + heading).rest;
@@ -14611,7 +14670,14 @@ async function parityParseInput(request: Request) {
     return e;
   };
   if (!form && type !== "application/json") throw fail("unsupported_media_type", 415, "Send the check as application/json or from the form on this page.");
-  const read = await parityReadCapped(request.body, PARITY_MAX_REQUEST_BYTES);
+  // A body stream that errors is a refused request, not an unexpected failure: the answer keeps the
+  // parity page's no-store header (WL-23).
+  let read;
+  try {
+    read = await parityReadCapped(request.body, PARITY_MAX_REQUEST_BYTES);
+  } catch {
+    throw fail("request_unreadable", 400, "The request body could not be read.");
+  }
   if (read.over) throw fail("request_too_large", 413, "The request body is larger than " + PARITY_MAX_REQUEST_BYTES + " bytes.");
   const text = new TextDecoder("utf-8").decode(read.buf);
   let raw;
@@ -15233,9 +15299,19 @@ const NAV_JS = `(function () {
       if (s) s.focus();
     }
   });
+  // A pointer press inside the menu can move focus to nothing (Safari does not focus a link or a
+  // button on click), so a null target during a press is not the focus leaving.
+  var pressed = false;
+  d.addEventListener("pointerdown", function () { pressed = true; });
+  document.addEventListener("pointerup", function () { pressed = false; });
+  document.addEventListener("pointercancel", function () { pressed = false; });
   d.addEventListener("focusout", function (e) {
+    if (!d.open) return;
     var to = e.relatedTarget;
-    if (d.open && to && !d.contains(to)) d.open = false;
+    // Another element took focus: close when it is outside the menu. No next target: close when the
+    // page itself still has focus (focus fell to the body), and stay open when the whole window lost
+    // it (a window switch), which is not a reason to close.
+    if (to ? !d.contains(to) : !pressed && document.hasFocus()) d.open = false;
   });
 })();
 `;
@@ -15590,6 +15666,7 @@ const worker_default: SatisfiesExportedHandler<{ fetch(request: Request, env: En
             // /markdown-parity-check is the same, and its JSON branch is a POST that asks for
             // JSON or sends a JSON body, the rule handleParityPost uses; a form POST gets a page.
             const rlAgent = AGENT_API_PATH_RE.test(rlPath)
+              || isMarkdownTwinPath(rlPath)
               || (rlPath === "/llms-txt-validator" && wantsJson(request))
               || (rlPath === "/markdown-parity-check" && request.method === "POST"
                 && (wantsJson(request) || (request.headers.get("content-type") || "").toLowerCase().startsWith("application/json")));
@@ -15664,7 +15741,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   const pathLower = pathname.toLowerCase();
 
   if (hostname === "mta-sts.turva.dev") {
-    if (pathLower === "/.well-known/mta-sts.txt") return serveMtaStsPolicy();
+    if (pathLower === "/.well-known/mta-sts.txt") return hostMethodGate(request, pathLower) || serveMtaStsPolicy();
     return redirectTo("https://turva.dev/", 301, pathLower);
   }
 
@@ -15675,10 +15752,10 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   // that never asks the advanced host still finds the direct one.
   if (hostname === "openpgpkey.turva.dev") {
     if (pathLower === "/.well-known/openpgpkey/turva.dev/hu/" + PGP_WKD_HASH) {
-      return serveStatic(getPgpKeyBytes(), "application/octet-stream", "agent-api");
+      return hostMethodGate(request, pathLower) || serveStatic(getPgpKeyBytes(), "application/octet-stream", "agent-api");
     }
     if (pathLower === "/.well-known/openpgpkey/turva.dev/policy") {
-      return serveStatic("", "text/plain; charset=utf-8", "agent-api");
+      return hostMethodGate(request, pathLower) || serveStatic("", "text/plain; charset=utf-8", "agent-api");
     }
     return redirectTo("https://turva.dev/", 301, pathLower);
   }
@@ -15692,7 +15769,13 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
       if (wwwCaseTarget.twin) moved.headers.set("access-control-allow-origin", "*");
       return moved;
     }
-    return redirectTo("https://turva.dev" + pathname + url.search, 301, pathLower);
+    // A markdown twin keeps its agent policy on this redirect too (WL-21). Live, the first www hop
+    // comes from a Cloudflare zone rule before the Worker (project-do-not-fix, Tek-526 decision 10),
+    // so this keeps the branch's own answer consistent without removing it.
+    const wwwTwin = isMarkdownTwinPath(pathLower);
+    const wwwMoved = redirectTo("https://turva.dev" + pathname + url.search, 301, pathLower, wwwTwin ? "agent-api" : null);
+    if (wwwTwin) wwwMoved.headers.set("access-control-allow-origin", "*");
+    return wwwMoved;
   }
 
   // CORS preflight answers only on the apex, after the host redirects above, so the
@@ -15712,7 +15795,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   // markdown twin, including /index.md and /services.md, and the validator's JSON branch does
   // the same on GET; the METHOD GATE just below already answers GET-only for these three, the
   // same set the preflight now advertises, so the allow list and the preflight list agree.
-  const preflightPath = pathLower === "/x402" || pathLower === "/x402/" || pathLower === "/api" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token" || pathLower === "/openapi.json" || pathLower === "/llms.txt" || pathLower === "/llms-full.txt" || pathLower === "/auth.md" || pathLower === "/robots.txt" || pathLower === "/sitemap.xml" || pathLower === "/markdown-parity-check" || pathLower === "/security.txt" || pathLower === "/ai.txt" || pathLower === "/api-catalog" || pathLower === "/blog/feed.xml" || pathLower === "/llms-txt-validator" || pathLower === "/index.md" || pathLower === "/services.md" || (pathLower.startsWith("/.well-known/") && !fediPath);
+  const preflightPath = pathLower === "/x402" || pathLower === "/x402/" || pathLower === "/api" || pathLower.startsWith("/api/") || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token" || pathLower === "/openapi.json" || pathLower === "/llms.txt" || pathLower === "/llms-full.txt" || pathLower === "/auth.md" || pathLower === "/robots.txt" || pathLower === "/sitemap.xml" || pathLower === "/markdown-parity-check" || pathLower === "/security.txt" || pathLower === "/ai.txt" || pathLower === "/api-catalog" || pathLower === "/blog/feed.xml" || pathLower === "/llms-txt-validator" || pathLower === "/index.md" || pathLower === "/services.md" || isMarkdownTwinPath(pathLower) || (pathLower.startsWith("/.well-known/") && !fediPath);
   // METHOD GATE, round 16 (S1-1 to S1-4, C1-2, C5-20, C7-2, measured 2026-09-03). GET and
   // OPTIONS are allowed everywhere; HEAD arrives here as GET (worker_default). POST is
   // allowed only where a handler or the OpenAPI document knows it: the A2A transport, the

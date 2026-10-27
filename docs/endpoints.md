@@ -60,4 +60,6 @@ The public routes this Worker serves, copied from the repository README so the R
 | `/blog-filter.js` | Same-origin script for the blog index search and kind filter, allowed by `script-src 'self'`; the index lists every post without it |
 | `/nav.js` | Same-origin script that closes the mobile menu on Escape and when focus leaves it, allowed by `script-src 'self'`; the menu opens and closes without it |
 
+Content negotiation on the page routes is simplified on purpose: the path decides when it names a representation (a `.md` address serves markdown), and otherwise the `Accept` header is read as the three explicit types `text/html`, `text/markdown` and `application/json` ranked by q-value, with markdown winning a tie against HTML and JSON losing one to HTML, so wildcards such as `text/*` and `*/*` and media type parameters other than `q` do not count in the ranking and a listed type the route does not offer can still outrank one it does, which RFC 9110 allows because a server may ignore `Accept`.
+
 Back to the [README](../README.md).
