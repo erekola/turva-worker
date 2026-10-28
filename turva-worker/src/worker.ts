@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.214.5 - design fixes from an Impeccable 4.8.0 scan (2026-10-27, CSS only): .rc-foot, .board-src and .price-line .terms are 13px and .terms is no longer uppercase or tracked; .eyebrow keeps its mono face at .875rem without tracked caps; h3 gets text-wrap:balance with h1 and h2.
 // turva.dev worker v3.214.4 - fixes from the outside review of 2026-10-07, logic session S2 (Tek-578): the markdown renderer keeps blank lines inside indented code, keeps backslash escapes in inline code, gives every heading line its own block and never reuses a heading id; the mta-sts and openpgpkey hosts answer other methods with 405 and OPTIONS with 204; markdown twins keep their agent policy and CORS on 429, on the www redirect and on OPTIONS; an unreadable parity request body is a 400 with no-store; WebMCP search_content matches link titles only; the mobile menu also closes when focus falls to nothing while the page keeps focus. SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.214.3 - the post A clean Windows install for agent work says that the IVPN app no longer sets modDNS as a custom DNS and leaves DNS to Portmaster, and it names the HaGeZi Pro++ list in modDNS and Ultimate on the router, with an Updated note. No signed surface changes bytes.
 // turva.dev worker v3.214.2 - the post A clean Windows install for agent work says that every name lookup now goes through Portmaster with Block Secure DNS Bypassing on, that the browsers no longer resolve names through a DNS setup of their own and that the block on direct connections now covers them too, and it records a leak check with dnscheck.tools, where MLDSA44 failed, and its deny list no longer says the agent has a browser of its own; the post The browser my agent and I both run says the agent's own Brave install is removed for now. Both posts carry an Updated note. The last Frequently asked answer of Keeping my lab and my client work apart now names the command panel too. No signed surface changes bytes.
@@ -7812,7 +7813,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.214.4",
+    "version": "3.214.5",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8113,7 +8114,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.214.4",
+  "version": "3.214.5",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -11205,7 +11206,7 @@ const FOOTER_CSS = `${READ_CSS}pre:focus-visible{outline:2px solid #5DF18F;outli
 a:focus-visible,button:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;border-radius:2px;}
 @media (prefers-reduced-motion:reduce){:root .cell,:root .step,:root .svc{transition:none;}:root .cell:hover,:root .step:hover,:root .svc:hover{transform:none;}}
 ::selection{background:#5DF18F;color:#06100F;}
-h1,h2{text-wrap:balance;}
+h1,h2,h3{text-wrap:balance;}
 p,li{text-wrap:pretty;}
 .skip{position:absolute;left:-999px;top:-999px;overflow:hidden;}
 .skip:focus{position:fixed;left:14px;top:12px;z-index:20;background:#5DF18F;color:#06100F;font-weight:700;padding:.55rem .95rem;border-radius:8px;text-decoration:none;}
@@ -11474,7 +11475,7 @@ article li::before{content:"\\203A";position:absolute;left:0.45rem;top:0;color:#
 article strong{color:#F2F4F3;}
 article pre{max-width:100%;}
 article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:-.35rem 0 1.4rem;}
-article .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
+article .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.875rem;letter-spacing:0;color:#5DF18F;margin:0 0 1rem;}
 .toc{margin:0 0 1.6rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;}
 ${TOC_SUB_CSS}
 .next{margin:clamp(36px,5vw,56px) 0 0;padding:1.4rem 1.5rem;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;}
@@ -11655,7 +11656,7 @@ main{max-width:none;margin:0;padding:0;}
 .page{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:0 clamp(24px,5vw,72px) 3rem;}
 .hero{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(48px,6vw,72px) clamp(24px,5vw,72px) clamp(40px,5vw,56px);border-bottom:0.5px solid rgba(255,255,255,0.07);}
 .hero-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:clamp(40px,4vw,48px);align-items:center;}
-.eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1.1rem;}
+.eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.875rem;letter-spacing:0;color:#5DF18F;margin:0 0 1.1rem;}
 .hero h1{color:#F2F4F3;font-size:clamp(34px,4.2vw,56px);line-height:1.08;letter-spacing:-0.02em;margin:0 0 24px;font-weight:700;hyphens:manual;}
 .hero h1 .hl{color:#5DF18F;}
 .lede{font-size:clamp(17px,1.35vw,20px);line-height:1.6;color:#C9D1CE;margin:0 0 30px;max-width:36rem;}
@@ -11681,7 +11682,7 @@ main{max-width:none;margin:0;padding:0;}
 .rc-impact{margin:0 0 10px;font-size:.98rem;line-height:1.45;color:#F2F4F3;font-weight:600;}
 .rc-fix{margin:0 0 8px;font-size:.88rem;line-height:1.5;color:#C9D1CE;}
 .rc-fix b{color:#5DF18F;font-weight:700;}
-.rc-foot{margin:12px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;letter-spacing:.03em;line-height:1.5;color:#9AA3A0;}
+.rc-foot{margin:12px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;letter-spacing:.03em;line-height:1.5;color:#9AA3A0;}
 .rc-more{display:inline-block;margin:16px 0 0;font-size:.9rem;font-weight:600;color:#5DF18F;border-bottom:1px solid rgba(93,241,143,0.4);padding:.1rem 0;}
 .rc-more:hover{border-color:#5DF18F;text-decoration:none;}
 .offers{max-width:68rem;margin:0 auto;padding:2.2rem clamp(24px,5vw,72px) 2rem;border-top:0;box-sizing:content-box;}
@@ -11705,7 +11706,7 @@ main{max-width:none;margin:0;padding:0;}
 .board-top p{margin:0;}
 .board-head{font-size:.92rem;color:#F2F4F3;font-weight:600;}
 .board-head .bh-date{color:#9AA3A0;font-weight:400;}
-.board-src{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;color:#9AA3A0;}
+.board-src{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;color:#9AA3A0;}
 .board-grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:0 0 1rem;}
 .cell{background:rgba(93,241,143,0.06);border:1px solid rgba(93,241,143,0.18);border-radius:9px;padding:.6rem .65rem;transition:border-color .15s ease,transform .15s ease;}
 .cell:hover{border-color:rgba(93,241,143,0.45);transform:translateY(-1px);}
@@ -11950,7 +11951,7 @@ main>p{color:#C9D1CE;font-size:17px;line-height:1.6;margin:0 0 1.1rem;}
 a{color:#5DF18F;text-decoration:none;}
 a:hover{text-decoration:underline;}
 a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
-.eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:#5DF18F;margin:0 0 1rem;}
+.eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.875rem;letter-spacing:0;color:#5DF18F;margin:0 0 1rem;}
 ${NAV_CORE_CSS}
 @media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:15px;}}
 .cta{display:flex;flex-wrap:wrap;gap:14px;margin:1.4rem 0 .6rem;}
@@ -11977,7 +11978,7 @@ ${NAV_CORE_CSS}
 .sec .fine,.fine{font-size:.9rem;color:#9AA3A0;margin:0 0 .6rem;}
 .price-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;margin:-.4rem 0 1.1rem;}
 .price-line .price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.35rem;font-weight:700;color:#5DF18F;}
-.price-line .terms{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;}
+.price-line .terms{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;color:#9AA3A0;}
 .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px);margin:.6rem 0 1.2rem;}
 .cards.three{grid-template-columns:repeat(3,minmax(0,1fr));}
 @media (max-width:767px){.cards,.cards.three{grid-template-columns:minmax(0,1fr);}}
