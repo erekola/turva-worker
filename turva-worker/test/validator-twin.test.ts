@@ -12,7 +12,16 @@ const env = {};
 const get = (path: string, accept: string) => worker.fetch(new Request("https://turva.dev" + path, { headers: { accept } }), env);
 
 const entities: Record<string, string> = { "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'" };
-const text = (html: string) => html.replace(/<[^>]+>/g, "").replace(/&(?:amp|lt|gt|quot|#39);/g, (e) => entities[e]).replace(/\s+/g, " ").trim();
+// Strip tags until nothing changes, so a tag split around an inner one cannot survive a single pass (CodeQL js/incomplete-multi-character-sanitization).
+const stripTags = (html: string) => {
+  let prev: string;
+  do {
+    prev = html;
+    html = html.replace(/<[^>]+>/g, "");
+  } while (html !== prev);
+  return html;
+};
+const text = (html: string) => stripTags(html).replace(/&(?:amp|lt|gt|quot|#39);/g, (e) => entities[e]).replace(/\s+/g, " ").trim();
 const noPeriod = (s: string) => s.replace(/\.$/, "");
 
 test("WL-06: the validator page's initial content matches its markdown twin except the three named per-medium differences", async () => {

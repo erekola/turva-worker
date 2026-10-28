@@ -217,6 +217,8 @@ test("WL-23: a parity request body that errors answers a 400 with cache-control 
 // ---- WL-30: an accepted redirect is followed, and a refused one is not ----
 
 type Mock = Record<string, () => Response>;
+// Exact membership in the list of fetched URLs, never a substring test of a URL string (CodeQL js/incomplete-url-substring-sanitization).
+const fetched = (calls: string[], url: string) => calls.some((c) => c === url);
 async function validate(url: string, mock: Mock) {
   const realFetch = globalThis.fetch;
   const calls: string[] = [];
@@ -242,7 +244,7 @@ test("WL-30: a same-host redirect is followed: the target is fetched, http-statu
     "https://probe-target.example/llms.txt": redirect("/llms.txt?v=2"),
     "https://probe-target.example/llms.txt?v=2": textOk("# Target Title\n\n> Target summary.\n")
   });
-  assert.ok(calls.includes("https://probe-target.example/llms.txt?v=2"), "the same-host target was fetched: " + calls.join(" "));
+  assert.ok(fetched(calls, "https://probe-target.example/llms.txt?v=2"), "the same-host target was fetched: " + calls.join(" "));
   assert.equal(check(json, "http-status")!.status, "pass");
   assert.match(check(json, "http-status")!.detail, /followed a redirect/);
   assert.match(check(json, "h1-title")!.detail, /Target Title/);
@@ -254,14 +256,14 @@ test("WL-30: a www and apex redirect is followed in both directions", async () =
     "https://probe-target.example/llms.txt": redirect("https://www.probe-target.example/llms.txt"),
     "https://www.probe-target.example/llms.txt": textOk("# Www Title\n\n> Www summary.\n")
   });
-  assert.ok(toWww.calls.includes("https://www.probe-target.example/llms.txt"));
+  assert.ok(fetched(toWww.calls, "https://www.probe-target.example/llms.txt"));
   assert.equal(check(toWww.json, "http-status")!.status, "pass");
   assert.match(check(toWww.json, "h1-title")!.detail, /Www Title/);
   const toApex = await validate("www.probe-target.example", {
     "https://www.probe-target.example/llms.txt": redirect("https://probe-target.example/llms.txt"),
     "https://probe-target.example/llms.txt": textOk("# Apex Title\n\n> Apex summary.\n")
   });
-  assert.ok(toApex.calls.includes("https://probe-target.example/llms.txt"));
+  assert.ok(fetched(toApex.calls, "https://probe-target.example/llms.txt"));
   assert.equal(check(toApex.json, "http-status")!.status, "pass");
   assert.match(check(toApex.json, "h1-title")!.detail, /Apex Title/);
 });
@@ -273,12 +275,12 @@ test("WL-30: the hop limit stops a long chain and an off-host redirect is refuse
   }
   const looped = await validate("probe-target.example", chain);
   assert.equal(check(looped.json, "http-status")!.status, "fail", "a chain past the limit fails");
-  assert.ok(!looped.calls.includes("https://probe-target.example/h6"), "the chain stopped before its sixth hop: " + looped.calls.join(" "));
+  assert.ok(!fetched(looped.calls, "https://probe-target.example/h6"), "the chain stopped before its sixth hop: " + looped.calls.join(" "));
 
   const off = await validate("probe-target.example", {
     "https://probe-target.example/llms.txt": redirect("https://other-host.example/llms.txt"),
     "https://other-host.example/llms.txt": textOk("# Off Title\n")
   });
   assert.equal(check(off.json, "http-status")!.status, "fail");
-  assert.ok(!off.calls.includes("https://other-host.example/llms.txt"), "the off-host target is never fetched");
+  assert.ok(!fetched(off.calls, "https://other-host.example/llms.txt"), "the off-host target is never fetched");
 });

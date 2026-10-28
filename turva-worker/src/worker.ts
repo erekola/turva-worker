@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.214.6 - the post TLA+ on my own tools, in numbers reports the pair test of 28 October, in which 26 confirmed review claims each got one changed fact and none of the 26 was refuted, and its sentence on what the reviews show no longer says that the readers described the code correctly in 118 claims, with an Updated note, and the post Three outside reviews of my TLA+ models no longer says that a confirmed claim shows the reviewer described the code correctly or that no review claim was wrong outright, with an Updated note too. No signed surface changes bytes.
 // turva.dev worker v3.214.5 - design fixes from an Impeccable 4.8.0 scan (2026-10-27, CSS only): .rc-foot, .board-src and .price-line .terms are 13px and .terms is no longer uppercase or tracked; .eyebrow keeps its mono face at .875rem without tracked caps; h3 gets text-wrap:balance with h1 and h2.
 // turva.dev worker v3.214.4 - fixes from the outside review of 2026-10-07, logic session S2 (Tek-578): the markdown renderer keeps blank lines inside indented code, keeps backslash escapes in inline code, gives every heading line its own block and never reuses a heading id; the mta-sts and openpgpkey hosts answer other methods with 405 and OPTIONS with 204; markdown twins keep their agent policy and CORS on 429, on the www redirect and on OPTIONS; an unreadable parity request body is a 400 with no-store; WebMCP search_content matches link titles only; the mobile menu also closes when focus falls to nothing while the page keeps focus. SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.214.3 - the post A clean Windows install for agent work says that the IVPN app no longer sets modDNS as a custom DNS and leaves DNS to Portmaster, and it names the HaGeZi Pro++ list in modDNS and Ultimate on the router, with an Updated note. No signed surface changes bytes.
@@ -718,7 +719,11 @@ Each review read packages of models together with the code they describe. Sonnet
 
 Rounds 1 and 2 were read by Sol 6.1 and round 3 by Astra, all through ChatGPT at its Ultra effort setting. Round 4 was read by Opus 5.5, and I chose the reader and handed over the packages by hand. Opus 5.5 also led the fix work, so round 4 was not read by a model from outside the family that wrote the fixes.
 
-The falling number of high-rated claims cannot be read as a quality trend, because the reader changed between rounds and the prompt changed after round 2. All four rounds also share one limit that the internal audit named: no claim was refuted in 189, and I never planted a false claim to see whether the method would refute it. The verifiers are the same model family as the implementers. Zero refuted therefore says little about the method.
+The falling number of high-rated claims cannot be read as a quality trend, because the reader changed between rounds and the prompt changed after round 2. All four rounds also share one limit that the internal audit named: no claim was refuted in 189, and at the time I had never planted a false claim to see whether the method would refute it. The verifiers are the same model family as the implementers.
+
+On 28 October I ran that test. In the rounds each claim went first to a verifier and then to an opposing reader, a second subagent that argued against the verdict, and I read the result myself. Of the 118 confirmed claims I left out four from round 4 that the verifier and the opposing reader both confirmed but whose scope, consequence or fix the opposing reader refined. From the other 114 I drew 32 with a recorded seed, and 8 more with the same seed to replace edits I had rejected. In 26 of the 40 I could change one fact the claim rests on, such as a reply code or a state name, so that the change hit the fault and the claim did not contradict its own text. The other 14 I left out. Each original and its edited copy went blind to different first-stage verifiers, with an adapted copy of the last round's verification instructions and only the round's package as the source. None of the 26 edited claims was refuted. Eighteen reports named the changed fact as wrong and still rated the claim refined, or in two cases confirmed it and called the error a typo or a small inaccuracy. Two of those eighteen were weak edits, because the claim held in substance after the change. Seven reports did not name the changed fact. One edit turned out to be true, and the verifiers confirmed 8 of the other 25. No original was refuted either.
+
+The verdict scale let a verifier rate a claim refined when it saw a wrong fact and the claim's general mechanism still held, so a refuted count of zero does not show that the claims were right. My test covers only the first-stage verifier, without the opposing reader and my own read that followed it in the rounds. The source was each round's package and not the whole tools folder, so for some items the verifiers worked with stand-ins for missing files. I approved the edits and classified the reports myself, and the sample leans toward claims that rest on one separable fact. With none of the 25 false edits refuted, the share of such edits this verifier refutes is at most about 11 percent at 95 percent confidence.
 
 ## What did the internal audit of 19 October find?
 
@@ -807,11 +812,11 @@ The audit counted 13 other open limits. One of them is closed since, and I have 
 
 A passing model holds for its small constants and for the code it was run against. Of the 105 valid models, 90 carry an acknowledgement under the new definition, which requires reading the diff, a replay test and a mutation pass. Seven are still drifted and 8 never drifted.
 
-The mutation figures show that every mutation was caught by the test named for it while the controls stayed green. They do not show that the tests cover every behaviour. The reviews show that the readers described the code correctly in 118 of 189 claims and only in a narrower form in the other 71, and four rounds of outside reading are a narrow sample.
+The mutation figures show that every mutation was caught by the test named for it while the controls stayed green. They do not show that the tests cover every behaviour. In the reviews 118 of 189 claims ended as confirmed and 71 as refined, after the verifier, the opposing reader and my own read. That is not a count of correct claims, because in the test of 28 October the first-stage verifiers confirmed 8 of the 25 edited claims whose changed fact was false, and four rounds of outside reading are a narrow sample.
 
 Many fix choices were made by a session on its own recommendation. In round 3 the chain made 31 such choices, in round 4 about 43, and the first four fix sessions after the audit made 17. The audit found none implemented wrongly. I confirmed the 31 and the 43 in one blanket answer on 19 October without deciding them one by one, and the 17 since then are the sessions' own recommendations.
 
-I made the counts in this post from my decision log, the review and audit reports, the mutation run files and the subagents' usage readings.
+I made the counts in this post from my decision log, the review and audit reports, the mutation run files, the subagents' usage readings and the result files of the pair test.
 
 ## Frequently asked
 
@@ -826,6 +831,8 @@ Every one of the 1 002 mutations, each a one-line change to a tool, made the tes
 **Does a passing model prove the tool is correct?**
 
 No. TLC checks the model, and the model does not read the code. A pass applies to the code the model was run against, so a model whose code has changed needs a diff read, a replay test and a mutation pass before it says anything about today's code.
+
+Updated 2026-10-28. The section on the outside reviews said that I had never planted a false claim to see whether the method refutes it. I have now run that test, and the section reports it. The sentence on what the reviews show no longer says that the readers described the code correctly in 118 claims, because the test showed that a confirmed claim can still carry a wrong fact.
 
 ## Related
 
@@ -954,7 +961,7 @@ The third review is the first with no claim left at the high rating. The two hig
 
 Not as a quality trend. ChatGPT read the packages in all three rounds at its Ultra effort setting, but the model changed: Sol 6.1 read rounds 1 and 2, and Astra read round 3. The prompt for round 3 also asked the reader not to report a point from an earlier round again unless it could show that the fix fails or that the stated limit understates the problem. Fewer claims in round 3 can come from the different reader or from better code, and the narrower prompt may have cut repeats as well. The numbers do not tell which.
 
-The steadier signal is that no review claim about the models was refuted in any round. Many claims held only in a narrower form or at a lower rating, but none was wrong outright.
+No review claim about the models was refuted in any round, and many held only in a narrower form or at a lower rating. That zero does not show that no claim was wrong, because in the test described in the Updated note below the first-stage verifiers refuted none of 26 claims that each carried one changed fact.
 
 ## What changed between the reviews?
 
@@ -992,9 +999,9 @@ Each fix session also named limits it chose not to close. Before I close any of 
 
 ## What does this not show?
 
-A confirmed claim shows that the reviewer described the code correctly. It does not show that the reviewers found everything, and three rounds by two models of one product family are a narrow sample. A model that passes holds for its small constants and for the code it was run against.
+A confirmed claim is the verdict of the check and does not prove that the reviewer described the code correctly. In a test across all four rounds on 28 October I changed one fact in each of 26 confirmed claims. One edit turned out to be true, and the first-stage verifiers still confirmed 8 of the other 25. The reviews also do not show that the reviewers found everything, and three rounds by two models of one product family are a narrow sample. A model that passes holds for its small constants and for the code it was run against.
 
-I made the counts in this post from my decision log, the review reports and the subagents' usage readings.
+I made the counts in this post from my decision log, the review reports, the subagents' usage readings and the result files of the pair test of 28 October.
 
 ## Frequently asked
 
@@ -1009,6 +1016,8 @@ The real tools run freely and log what they do, and TLC checks that every log is
 **What is a drifted model?**
 
 A model whose covered code has changed since its last run. Its stored PASS still describes the old code, so it needs a fresh run before it says anything about the code that runs today.
+
+Updated 2026-10-28. Two sentences said more than the reviews carry: that a confirmed claim shows that the reviewer described the code correctly, and that no claim was wrong outright. A pair test on 28 October, reported in [TLA+ on my own tools, in numbers](/blog/tla-plus-in-numbers), gave 26 confirmed claims from the four outside reviews one changed fact each. None of the 26 was refuted, and the first-stage verifiers confirmed 8 of the 25 whose changed fact was false. Both sentences now say only what the verdicts show.
 
 ## Related
 
@@ -7813,7 +7822,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.214.5",
+    "version": "3.214.6",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8114,7 +8123,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.214.5",
+  "version": "3.214.6",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8798,7 +8807,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-10-27";
+const SITEMAP_LASTMOD = "2026-10-28";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
