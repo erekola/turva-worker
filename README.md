@@ -56,7 +56,7 @@ node tools/verify.mts --live
 
 [The workflow](.github/workflows/ci.yml) runs on every push and pull request with read-only permissions. It has two jobs and does not deploy the site.
 
-- `test` runs on Node.js 22 and 24. It installs with `npm ci --omit=dev --ignore-scripts` in `turva-worker`, runs `node --test` there and then runs `node tools/verify.mts` from the repository root.
+- `test` runs on Node.js 22, 24 and 26. It installs with `npm ci --omit=dev --ignore-scripts` in `turva-worker`, runs `node --test` there and then runs `node tools/verify.mts` from the repository root.
 - `typecheck` runs on Node.js 24. It installs with `npm ci --ignore-scripts` and runs `npm run typecheck`. It is a separate job because it needs the development dependencies, which the `test` job leaves out.
 
 ## Command-line tools
