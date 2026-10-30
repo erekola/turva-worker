@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.8 - /services (2026-10-30): the Implementation card opens with one sentence in the buyer's own words, that the work makes an existing website readable by AI agents, and that it follows the fix list of an audit or a Shopify check or is scoped separately in days. Scope and prices are unchanged.
 // turva.dev worker v3.215.7 - /contact (2026-10-30): the three action cards (External domain check, Shopify check, Website or API audit) use the cards three grid, three equal columns from 1000px and one column below, instead of the two-column cards grid that left the third card alone on a second row.
 // turva.dev worker v3.215.6 - guide corrections from the ChatGPT read of all 24 guides on 2026-10-30, each read against its primary source: the external domain check delivery sentence carries the service page's rerun condition on the home page, /services and the audit-choice guide; agent-readiness-gaps names the Markdown alternate link and HTTP Link header route; seo-vs-agent-readiness and agent-readiness-aeo-geo state Google's own conditions and limits; the UCP profile is described by its required members; OKF version 0.2 has one type-specific required field; the IETF ratelimit draft status is dated 30 October 2026; get-cited-by-ai-assistants and prerendering-for-agents say only what their sources support; markdown-for-agents states the Accept header condition; Agentic Catalog becomes Shopify Catalog in the Shopify sample report and guide, with the old C2 anchor aliased; every guide's checked date moves to 2026-10-30 and SITEMAP_LASTMOD with it.
 // turva.dev worker v3.215.5 - banner set v8 (2026-10-30): every per-page link preview card is rebuilt on the new base og-v8-pohja, with its kicker in sentence case and no tracking like the site eyebrow and its proof rows written 100/100 and 5/5; og.jpg now carries the home page eyebrow, headline and subtitle, and the home page image alt text describes it.
@@ -5248,6 +5249,8 @@ The audit is delivered within two weeks of the agreed written kickoff. You recei
 
 **€1,500 per day, scoped separately. €499 for the complete fix list from an audit or a Shopify check, bought together with that service, with its report, or after the report and before implementation starts.**
 
+I make your existing website readable by AI agents. The work follows the fix list of an audit or a Shopify check, or it is scoped separately in days.
+
 Your team can implement the report. If you want me to do it, the €499 add-on covers the complete fix list from the audit or the Shopify check. It is sold only with that service and can be bought together with it, with its report, or after the report and before implementation starts. It applies when the required access is arranged in advance. Access counts as arranged when the named account works.
 
 The fixed price covers the whole list, whatever the number of corrections. Work outside that list is agreed separately at the day rate. When the add-on is bought, the included retest or re-scan window starts on the day the corrections are delivered, so the check reads the finished work.
@@ -8111,7 +8114,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.7",
+    "version": "3.215.8",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8414,7 +8417,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.7",
+  "version": "3.215.8",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
