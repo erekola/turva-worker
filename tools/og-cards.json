@@ -313,7 +313,7 @@
   },
   "og-llms-txt-validator.jpg": {
     "green": "free and instant",
-    "kicker": "Free Tool",
+    "kicker": "Free tool",
     "subhead": "Fetches a site's /llms.txt and checks the structure against the format. JSON output for agents.",
     "white": "llms.txt validator,"
   },

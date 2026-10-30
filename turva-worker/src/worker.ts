@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.5 - banner set v8 (2026-10-30): every per-page link preview card is rebuilt on the new base og-v8-pohja, with its kicker in sentence case and no tracking like the site eyebrow and its proof rows written 100/100 and 5/5; og.jpg now carries the home page eyebrow, headline and subtitle, and the home page image alt text describes it.
 // turva.dev worker v3.215.4 - 195px follow-up to the mobile read (2026-10-30): the home page .steps and .svcgrid auto-fit grids cap their track minimum at the column width with min(175px,100%) and min(255px,100%), so the home page no longer scrolls sideways at 195px (a 390px phone at 200% browser zoom), and a lone image in a paragraph, the /badge preview, is capped at 100% of its column; CSS only.
 // turva.dev worker v3.215.3 - mobile read fixes (2026-10-30): the 760px nav row wraps instead of pushing the Menu button off screen at 200% text, the Menu button stays on the right when the row wraps, and its dead side padding is gone; .board-src may break the scanner host name; the validator field asks for the URL keyboard; .kvs, .posts and .bempty beat the .sec descendant rules, including the 420px .kvs rule; the /contact cards run External domain check, Shopify check, Website or API audit in the page and in the Markdown twin; the Signal QR and badge preview images load lazily; blog code blocks and the /badge code block join the tab order; the Menu summary plus and minus signs carry empty alternative text so the accessible name is Menu; the example button on /markdown-parity-check keeps 6px under it so the wrapped link clears it; twelve dead CSS declarations are removed.
 // turva.dev worker v3.215.2 - the price of a service card always sits on its own line under the name, on the /services cards (.card-top) and the home page offer cards (.offer-top), so a short name no longer pulls its price up to the right while longer names push theirs down to the left; and the home offers section gets its side gutter back, because .sec{padding:1.9rem 0}, later in the stylesheet, overrode the gutter of .offers and the offer cards ran to the screen edges below about 1140px (the hairline and the vertical padding stay as they render now); CSS only.
@@ -8108,7 +8109,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.4",
+    "version": "3.215.5",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8411,7 +8412,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.4",
+  "version": "3.215.5",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9725,7 +9726,7 @@ const META_BY_PATH = {
   "/": {
     title: "Agent-readiness audits for websites, APIs and Shopify · turva.dev",
     description: "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.",
-    imageAlt: "turva.dev: Agent-readiness audits and advisory. 100/100 and Level 5, Agent-Native, on isitagentready.com, with all five categories at 100."
+    imageAlt: "turva.dev: Independent agent-readiness audits. Know what AI assistants can find out about your product. A written report on where your facts disagree and what to fix first. 100/100 and Level 5, Agent-Native, on isitagentready.com, with all five categories at 100."
   },
   "/services": {
     title: "Agent-readiness services and pricing · turva.dev",
