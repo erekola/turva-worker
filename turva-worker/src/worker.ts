@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.3 - mobile read fixes (2026-10-30): the 760px nav row wraps instead of pushing the Menu button off screen at 200% text, the Menu button stays on the right when the row wraps, and its dead side padding is gone; .board-src may break the scanner host name; the validator field asks for the URL keyboard; .kvs, .posts and .bempty beat the .sec descendant rules, including the 420px .kvs rule; the /contact cards run External domain check, Shopify check, Website or API audit in the page and in the Markdown twin; the Signal QR and badge preview images load lazily; blog code blocks and the /badge code block join the tab order; the Menu summary plus and minus signs carry empty alternative text so the accessible name is Menu; the example button on /markdown-parity-check keeps 6px under it so the wrapped link clears it; twelve dead CSS declarations are removed.
 // turva.dev worker v3.215.2 - the price of a service card always sits on its own line under the name, on the /services cards (.card-top) and the home page offer cards (.offer-top), so a short name no longer pulls its price up to the right while longer names push theirs down to the left; and the home offers section gets its side gutter back, because .sec{padding:1.9rem 0}, later in the stylesheet, overrode the gutter of .offers and the offer cards ran to the screen edges below about 1140px (the hairline and the vertical padding stay as they render now); CSS only.
 // turva.dev worker v3.215.1 - /services shows its three offer cards in one row: the list carries the class three, and .cards.three is one column below 1000px and three columns from 1000px, the same breakpoint as the home page offer grid; CSS and one class only.
 // turva.dev worker v3.215.0 - new service page /external-domain-check for the external domain check at 99 euros plus VAT, ordered by email, with its sample report /samples/external-domain-check made from turva.dev's own domain with real readings (Tek-716); the home page shows three offer cards with the domain check first; /legal, /company, /contact and /services carry the new service, its payment exception, its refund rule and its order terms date, and the new price is on every catalog surface (the JSON-LD offers, HOME_JSON, ACP, the agent manifests, llms.txt, the MCP card at MCP 1.6.24 and the WebMCP script with its CSP hash).
@@ -5924,11 +5925,11 @@ Send your website, API or Shopify store URL and your question. If you're unsure 
 
 I'll reply within one business day with a proposed next step, scope and start date. We work in writing.
 
-## Website or API audit
+## External domain check
 
-Include the URL and what you want the audit to answer.
+Order the €99 check of one domain. The draft lists the order fields and ends with the line that accepts the terms. Add your company details, the domain and a contact address at the domain.
 
-[Ask about an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
+[Order the €99 check](mailto:info@turva.dev?subject=External%20domain%20check&body=Company%20name%3A%20%0ABusiness%20ID%20or%20equivalent%20register%20ID%3A%20%0AVAT%20ID%20if%20you%20have%20one%3A%20%0ABilling%20address%3A%20%0ADomain%3A%20%0AIs%20the%20store%20on%20Shopify%2C%20yes%20or%20no%3A%20%0AContact%20person%3A%20%0AContact%20email%20address%20at%20the%20domain%3A%20%0AWhere%20you%20heard%20about%20the%20check%2C%20optional%3A%20%0A%0AI%20accept%20the%20terms%20dated%202026-10-29%20at%20https%3A%2F%2Fturva.dev%2Flegal.)
 
 ## Shopify check
 
@@ -5936,11 +5937,11 @@ Include your storefront URL, .myshopify.com domain, primary market and up to thr
 
 [Ask about a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A)
 
-## External domain check
+## Website or API audit
 
-Order the €99 check of one domain. The draft lists the order fields and ends with the line that accepts the terms. Add your company details, the domain and a contact address at the domain.
+Include the URL and what you want the audit to answer.
 
-[Order the €99 check](mailto:info@turva.dev?subject=External%20domain%20check&body=Company%20name%3A%20%0ABusiness%20ID%20or%20equivalent%20register%20ID%3A%20%0AVAT%20ID%20if%20you%20have%20one%3A%20%0ABilling%20address%3A%20%0ADomain%3A%20%0AIs%20the%20store%20on%20Shopify%2C%20yes%20or%20no%3A%20%0AContact%20person%3A%20%0AContact%20email%20address%20at%20the%20domain%3A%20%0AWhere%20you%20heard%20about%20the%20check%2C%20optional%3A%20%0A%0AI%20accept%20the%20terms%20dated%202026-10-29%20at%20https%3A%2F%2Fturva.dev%2Flegal.)
+[Ask about an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
 ## Or write your own message
 
@@ -8106,7 +8107,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.2",
+    "version": "3.215.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8409,7 +8410,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.2",
+  "version": "3.215.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -10178,7 +10179,6 @@ ${NAV_MOBILE_CSS}
 .turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;}
 .turva-nav .nv-menu a{font-size:18px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
-@media (max-width:560px){.turva-nav .nv-menu{gap:16px;}.turva-nav .nv-menu a{font-size:14px;}}
 ${FOOTER_CSS}
 </style>
 </head>
@@ -10916,7 +10916,7 @@ function contactSignalQr() {
 ${paras.map((t, i) => `        <p${i ? ' class="hint"' : ""}>${renderInline(t)}</p>`).join("\r\n")}
       </div>
       <div>
-        <a class="sigqr-plate" href="${escapeHtml(qr[3])}"><img src="${escapeHtml(qr[2])}" width="147" height="147" alt="${escapeHtml(qr[1])}"></a>
+        <a class="sigqr-plate" href="${escapeHtml(qr[3])}"><img src="${escapeHtml(qr[2])}" width="147" height="147" loading="lazy" decoding="async" alt="${escapeHtml(qr[1])}"></a>
         <span class="sigqr-user">${escapeHtml(qr[4])}</span>
       </div>
     </div>`;
@@ -11109,7 +11109,7 @@ function mdSecBodyHtml(path: string, heading: string, listOnly?: boolean, dropRo
       const im = b.trim().match(/^!\[([^\]]+)\]\((\/[a-z0-9._-]+)\)$/)!;
       const size = MD_IMG_SIZE[im[2]];
       if (!size) throw new Error("mdSecBodyHtml: no drawn size for image " + im[2]);
-      parts.push(`<p><img src="${escapeHtml(im[2])}" alt="${escapeHtml(im[1])}" width="${size[0]}" height="${size[1]}"></p>`);
+      parts.push(`<p><img src="${escapeHtml(im[2])}" alt="${escapeHtml(im[1])}" width="${size[0]}" height="${size[1]}" loading="lazy" decoding="async"></p>`);
     } else {
       parts.push(markdownToHtml(b).replace(/href="https:\/\/turva\.dev\//g, 'href="/'));
     }
@@ -11121,8 +11121,8 @@ function mdOpenSec(path: string, heading: string, id?: string, extra?: string, l
     ${mdSecBodyHtml(path, heading, listOnly, dropRow)}${extra || ""}
   </section>`;
   // The example code blocks on the two tool pages scroll sideways on narrow screens, so they
-  // join the tab order (WCAG 2.1.1). Only these two pages: markdownToHtml stays unchanged and
-  // every other code block on the site keeps its markup.
+  // join the tab order (WCAG 2.1.1). The blog posts (serveGuideHtml) and /badge (serveBadgeHtml)
+  // do the same after their own render; guides keep their markup. markdownToHtml stays unchanged.
   return path === "/llms-txt-validator" || path === "/markdown-parity-check"
     ? html.replace(/<pre><code>/g, '<pre tabindex="0"><code>')
     : html;
@@ -11539,7 +11539,7 @@ function buildValidatorAppJsonLd(canonicalUrl: string) {
 // none of them read right on Erik's displays in three browsers. The whole site reads the full
 // 68rem frame (Tek-360 stands). READ_CSS stays as an empty hook so the templates need no change.
 const READ_CSS = ``;
-const FOOTER_CSS = `${READ_CSS}pre:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover),main .svcnote a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;margin:1.1rem 0;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
+const FOOTER_CSS = `${READ_CSS}pre:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover),main .svcnote a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:3rem clamp(24px,5vw,72px);display:flex;flex-direction:column;gap:1.5rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:10px;}.tv-foot .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}.tv-foot .nv-word b{color:#5DF18F;}
 .tv-foot .foot-brand svg{display:block;width:34px;height:34px;}
@@ -11736,6 +11736,10 @@ function serveGuideHtml(pathname: string, canonicalUrl: string) {
       article = replaceExactlyOnce(article, "<li>" + fsq + "</li>", `<li lang="fi">` + fsq + "</li>");
     }
   }
+  // Blog posts: a code block that scrolls sideways on a phone must be reachable from the keyboard
+  // (WCAG 2.1.1); Playwright's WebKit build did not focus one without tabindex (measured 2026-10-30).
+  // Guides keep their plain pre on purpose; markdownToHtml itself is unchanged.
+  if (pathname.startsWith("/blog/")) article = article.replace(/<pre><code>/g, '<pre tabindex="0"><code>');
   const aliased = withAnchorAliases(pathname, article);
   const navSection = pathname.startsWith("/blog/") ? "/blog" : (pathname.startsWith("/guides/") ? "/guides" : "");
   const crumb = navSection === "/blog" ? '<p class="crumb"><a href="/blog">&#8249; all posts</a></p>\n' : (navSection === "/guides" ? '<p class="crumb"><a href="/guides">&#8249; all guides</a></p>\n' : "");
@@ -11840,7 +11844,7 @@ ${TOC_SUB_CSS}
 .btn-ghost{color:#F2F4F3;font-weight:600;border:1px solid rgba(255,255,255,0.24);}
 .btn-ghost:hover{border-color:#5DF18F;color:#5DF18F;text-decoration:none;}
 @media (max-width:560px){.cta{flex-direction:column;}.btn,.btn-ghost{width:100%;}}
-.crumb{margin:0 0 1.2rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;}
+.crumb{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;}
 .crumb a{color:#9AA3A0;text-decoration:none;}
 .crumb a:hover{color:#5DF18F;text-decoration:none;}
 .pagehead{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(24px,5vw,72px) 1.2rem;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.35rem 1.5rem;}
@@ -11850,11 +11854,9 @@ ${TOC_SUB_CSS}
 main.has-next{padding-bottom:0;}
 .pagefoot{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:0 clamp(24px,5vw,72px) 3.5rem;}
 .pagefoot *,.pagefoot *::before,.pagefoot *::after{box-sizing:border-box;}
-a:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 ${TBL_CSS}
 @media (max-width:360px){main,.pagehead,.pagefoot{padding-left:20px;padding-right:20px;}}
 ${NAV_CORE_CSS}
-@media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:15px;}}
 ${faqAt === -1 ? "" : SCARD_CSS + "\n" + FAQ_CSS + "\n"}${FOOTER_CSS}
 </style>
 </head>
@@ -11995,8 +11997,6 @@ ${WEBMCP_SCRIPT}
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
 html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
-main{max-width:46rem;margin:0 auto;padding:0 clamp(20px,5vw,72px) 3rem;}
-h1{color:#5DF18F;overflow-wrap:break-word;hyphens:auto;font-size:2.4rem;line-height:1.1;letter-spacing:-0.02em;margin:0 0 1.1rem;font-weight:700;}
 h2{color:#F2F4F3;font-size:1.45rem;margin:0 0 0.85rem;font-weight:700;letter-spacing:-0.015em;}
 p{margin:0 0 1.05rem;color:#C9D1CE;}
 a{color:#5DF18F;text-decoration:none;}
@@ -12053,13 +12053,12 @@ main{max-width:none;margin:0;padding:0;}
 .muted{font-size:.9rem;color:#9AA3A0;}
 .mail-link{display:inline-block;margin-left:14px;color:#F2F4F3;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.3);padding:.15rem 0;}
 .mail-link:hover{color:#5DF18F;border-color:#5DF18F;text-decoration:none;}
-.board{margin:1.2rem 0 1.4rem;}
 .board{margin:0 0 1rem;border:1px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.25rem;}
 .board-top{display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline;justify-content:space-between;margin:0 0 .9rem;}
 .board-top p{margin:0;}
 .board-head{font-size:.92rem;color:#F2F4F3;font-weight:600;}
 .board-head .bh-date{color:#9AA3A0;font-weight:400;}
-.board-src{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;color:#9AA3A0;}
+.board-src{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;color:#9AA3A0;overflow-wrap:anywhere;}
 .board-grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:0 0 1rem;}
 .cell{background:rgba(93,241,143,0.06);border:1px solid rgba(93,241,143,0.18);border-radius:9px;padding:.6rem .65rem;transition:border-color .15s ease,transform .15s ease;}
 .cell:hover{border-color:rgba(93,241,143,0.45);transform:translateY(-1px);}
@@ -12087,9 +12086,9 @@ ${FAQ_CSS}
 .cta-row{margin:1.25rem 0 0;}
 .cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;transition:background-color .15s ease;}
 .cta-btn:hover{background:#7df7a6;text-decoration:none;}
-@media (max-width:700px){.offer-grid{grid-template-columns:minmax(0,1fr);}.hero-grid{grid-template-columns:minmax(0,1fr);gap:32px;}.hero{padding-top:44px;}.hero h1{font-size:clamp(34px,9vw,38px);line-height:1.1;}.lede{font-size:clamp(16px,4.4vw,18px);}.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:14px;}}
+@media (max-width:700px){.hero-grid{grid-template-columns:minmax(0,1fr);gap:32px;}.hero{padding-top:44px;}.hero h1{font-size:clamp(34px,9vw,38px);line-height:1.1;}.lede{font-size:clamp(16px,4.4vw,18px);}}
 @media (max-width:640px){.board-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
-@media (max-width:430px){.cta{flex-direction:column;}.btn,.btn-ghost{width:100%;}.hero{padding-left:24px;padding-right:24px;}.rcard{padding:20px;}}
+@media (max-width:430px){.cta{flex-direction:column;}.btn,.btn-ghost{width:100%;}.rcard{padding:20px;}}
 ${FOOTER_CSS}
 </style>
 </head>
@@ -12260,7 +12259,7 @@ ${footerHtml()}
 
 // Defined before CARDPAGE_CSS on purpose: that constant is built at module load and reads this one.
 const NAV_MOBILE_CSS = `.turva-nav .nv-mobile{display:none;}
-@media (max-width:760px){.turva-nav{flex-wrap:nowrap;justify-content:space-between;position:relative;padding:10px clamp(16px,4vw,24px);}.turva-nav > ul.nv-menu{display:none;}.turva-nav .nv-mobile{display:block;flex:0 0 auto;}.turva-nav .nv-mobile summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;color:#F2F4F3;font-weight:600;font-size:14px;user-select:none;}.turva-nav .nv-mobile summary::-webkit-details-marker{display:none;}.turva-nav .nv-mobile summary::after{content:"+";font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;line-height:1;}.turva-nav .nv-mobile[open] summary::after{content:"\\2212";}.turva-nav .nv-mobile summary:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}.turva-nav .nv-mobile .nv-list{position:absolute;left:0;right:0;top:100%;z-index:10;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;background:#0A1316;border-bottom:0.5px solid rgba(255,255,255,0.14);padding:6px 0 10px;box-shadow:0 14px 30px rgba(0,0,0,0.35);}.turva-nav .nv-mobile .nv-list li{margin:0;}.turva-nav .nv-mobile .nv-list a{display:block;box-sizing:border-box;min-height:44px;padding:12px clamp(16px,4vw,24px);font-size:16px;color:#F2F4F3;}.turva-nav .nv-mobile .nv-list a[aria-current]{color:#5DF18F;}}`;
+@media (max-width:760px){.turva-nav{flex-wrap:wrap;justify-content:space-between;position:relative;padding-block:10px;}.turva-nav > ul.nv-menu{display:none;}.turva-nav .nv-mobile{display:block;flex:0 0 auto;margin-left:auto;}.turva-nav .nv-mobile summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;color:#F2F4F3;font-weight:600;font-size:14px;user-select:none;}.turva-nav .nv-mobile summary::-webkit-details-marker{display:none;}.turva-nav .nv-mobile summary::after{content:"+";content:"+" / "";font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;line-height:1;}.turva-nav .nv-mobile[open] summary::after{content:"\\2212";content:"\\2212" / "";}.turva-nav .nv-mobile summary:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}.turva-nav .nv-mobile .nv-list{position:absolute;left:0;right:0;top:100%;z-index:10;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;background:#0A1316;border-bottom:0.5px solid rgba(255,255,255,0.14);padding:6px 0 10px;box-shadow:0 14px 30px rgba(0,0,0,0.35);}.turva-nav .nv-mobile .nv-list li{margin:0;}.turva-nav .nv-mobile .nv-list a{display:block;box-sizing:border-box;min-height:44px;padding:12px clamp(16px,4vw,24px);font-size:16px;color:#F2F4F3;}.turva-nav .nv-mobile .nv-list a[aria-current]{color:#5DF18F;}}`;
 // Hoisted 2026-09-25 (Tek-475, K5-P1, approved kierros 19): the .turva-nav skeleton
 // below was written three times, byte-identical, in serveGuideHtml, serveHomeHtml and
 // CARDPAGE_CSS. Defined here, right after NAV_MOBILE_CSS and before CARDPAGE_CSS, for
@@ -12308,7 +12307,6 @@ a:hover{text-decoration:underline;}
 a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.875rem;letter-spacing:0;color:#5DF18F;margin:0 0 1rem;}
 ${NAV_CORE_CSS}
-@media (max-width:640px){.turva-nav .nv-menu{gap:14px;}.turva-nav .nv-menu a{font-size:15px;}}
 .cta{display:flex;flex-wrap:wrap;gap:14px;margin:1.4rem 0 .6rem;}
 .btn,.btn-ghost{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:50px;padding:.75rem 1.35rem;border-radius:7px;font-size:15px;font-weight:700;max-width:100%;overflow-wrap:break-word;text-align:center;}
 .btn{background:#5DF18F;color:#06100F;transition:background-color .15s ease;}
@@ -12367,13 +12365,13 @@ ul.cards{list-style:none;padding:0;}
 .card .btn{margin-top:auto;align-self:flex-start;min-height:48px;}
 @media (max-width:640px){.card{padding:20px;}.card .btn{align-self:stretch;}}
 ${SCARD_CSS}
-.kvs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.55rem .9rem;align-items:baseline;}
+.kvs,.sec .kvs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:.55rem .9rem;align-items:baseline;}
 .kvs .kv{display:contents;font-size:inherit;line-height:inherit;color:inherit;}
 .kvs .kv::before{content:none;}
 .kv .k{color:#9AA3A0;font-size:.9rem;}
 .kv .v{color:#F2F4F3;font-weight:600;word-break:break-word;}
 a.v,.kv a.v{color:#5DF18F;}
-@media (max-width:420px){.kvs{grid-template-columns:minmax(0,1fr);gap:.15rem .9rem;}.kv .v{margin-bottom:.55rem;}}
+@media (max-width:420px){.kvs,.sec .kvs{grid-template-columns:minmax(0,1fr);gap:.15rem .9rem;}.kv .v{margin-bottom:.55rem;}}
 .sigqr{display:grid;grid-template-columns:1fr auto;gap:1.1rem 1.4rem;align-items:center;margin-top:1.1rem;padding-top:1.1rem;border-top:0.5px solid rgba(255,255,255,0.10);}
 .sigqr-txt p{color:#C9D1CE;margin:0;font-size:.97rem;}
 .sigqr-txt .hint{color:#9AA3A0;font-size:.88rem;margin-top:.35rem;}
@@ -12392,7 +12390,7 @@ ${FAQ_CSS}
 .sec .dl+p{margin-top:1rem;}
 .toc{margin:0 0 1.4rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;}
 ${TOC_SUB_CSS}
-.posts{list-style:none;margin:0;padding:0;}
+.posts,.sec .posts{list-style:none;margin:0;padding:0;}
 .posts .post{display:block;position:relative;box-sizing:border-box;min-width:0;border:1px solid #2D3D3D;border-radius:10px;background:#111F21;padding:18px 22px;margin:0 0 .75rem;transition:border-color .15s ease;}
 .posts .post::before{content:none;}
 .posts .post:hover{border-color:#5DF18F;}
@@ -12413,7 +12411,7 @@ ${TOC_SUB_CSS}
 .bkind:hover{border-color:#5DF18F;color:#F2F4F3;}
 .bkind[aria-pressed="true"]{background:#5DF18F;border-color:#5DF18F;color:#06100F;}
 .bcount,.sec .bcount{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:0 0 .9rem;}
-.bempty{color:#F2F4F3;font-size:17px;margin:0 0 .9rem;}
+.bempty,.sec .bempty{color:#F2F4F3;font-size:17px;margin:0 0 .9rem;}
 .bclear{min-height:44px;padding:0 16px;margin:0 0 1rem;border:1px solid rgba(255,255,255,0.24);border-radius:7px;background:transparent;color:#F2F4F3;font:600 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;}
 .bclear:hover{border-color:#5DF18F;color:#5DF18F;}
 .feed{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;letter-spacing:.04em;margin:-.6rem 0 1.4rem;}
@@ -12459,6 +12457,7 @@ ${TOC_SUB_CSS}
 #result .copy-btn{margin:0 10px 0 0;}
 .pform .copy-btn{margin:0;min-height:44px;background:transparent;color:#F2F4F3;border:1px solid rgba(255,255,255,0.24);font-weight:600;}
 .pform .copy-btn:hover{border-color:#5DF18F;color:#5DF18F;}
+.pform #mpc-example{margin-bottom:6px;}
 ${TBL_CSS}
 @media (max-width:360px){main{padding-left:20px;padding-right:20px;}}`;
 
@@ -12809,7 +12808,7 @@ ${cardPageNav("/contact")}
 <main id="main">
   ${mdPageStart("/contact")}
   <div class="cards">
-      ${mdActionCards("/contact", ["Website or API audit", "Shopify check", "External domain check"])}
+      ${mdActionCards("/contact", ["External domain check", "Shopify check", "Website or API audit"])}
   </div>
   ${mdOpenSec("/contact", "Or write your own message", "email")}
   ${mdOpenSec("/contact", "Other ways to reach me", "channels", contactSignalQr(), true)}
@@ -12983,7 +12982,7 @@ ${cardPageNav("/badge")}
   ${mdOpenSec("/badge", "Who can use it?", "eligibility")}
   ${mdOpenSec("/badge", "What the badge means", "not-a-certification")}
   <section class="sec" id="use-the-badge"><h2>Add the badge</h2>
-    ${mdSecBodyHtml("/badge", "Add the badge")}
+    ${mdSecBodyHtml("/badge", "Add the badge").replace(/<pre><code>/g, '<pre tabindex="0"><code>')}
   </section>
   ${mdOpenSec("/badge", "Want to know where your site stands?", "if-your-site-is-not-there-yet")}
 </main>
@@ -14952,7 +14951,7 @@ ${cardPageNav("/llms-txt-validator")}
   ${mdPageStart("/llms-txt-validator")}
   <form class="vform" method="get" action="/llms-txt-validator#result">
     <label for="vurl">Domain or website address to check</label>
-    <input type="text" id="vurl" name="url" placeholder="example.com" value="${escapeHtml(validatorEcho(typed, raw))}" aria-label="Domain or website address to check" required>
+    <input type="text" id="vurl" name="url" inputmode="url" autocapitalize="off" spellcheck="false" autocomplete="off" placeholder="example.com" value="${escapeHtml(validatorEcho(typed, raw))}" aria-label="Domain or website address to check" required>
     <button type="submit">Check llms.txt</button>
   </form>
   <p class="fine"><a href="/llms-txt-validator?url=turva.dev">Try it with turva.dev</a></p>

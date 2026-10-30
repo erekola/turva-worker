@@ -1507,3 +1507,27 @@ test("PGP: the version 6 key address is not in the sitemap and not served throug
   assert.notDeepEqual(wkd, v6, "WKD serves the version 4 key");
   assert.deepEqual(publicKeyPackets(wkd), [4]);
 });
+
+// Mobile read 2026-10-30, K6: the validator field is a web address typed on a phone.
+test("K6: #vurl asks for the URL keyboard and turns off capitalisation, spellcheck and autofill, and stays type=text", async () => {
+  const page = await (await get("/llms-txt-validator", { headers: { Accept: "text/html" } })).text();
+  const tag = /<input[^>]*id="vurl"[^>]*>/.exec(page);
+  assert.ok(tag, "the field exists");
+  for (const a of ['type="text"', 'inputmode="url"', 'autocapitalize="off"', 'spellcheck="false"', 'autocomplete="off"']) {
+    assert.ok(tag[0].includes(a), a + " in " + tag[0]);
+  }
+  assert.ok(/id="vurl" name="url"[^>]*value="/.test(tag[0]), "the echo rule of the redirect tests still reads value= after name=");
+});
+
+// Mobile read 2026-10-30, K10: Tek-717 P1 reads the 99, 999, 4 300 ladder as covering /contact.
+test("K10: /contact lists External domain check, Shopify check, Website or API audit in the HTML and in the Markdown twin", async () => {
+  const names = ["External domain check", "Shopify check", "Website or API audit"];
+  const html = await (await get("/contact", { headers: { Accept: "text/html" } })).text();
+  const hi = names.map((n) => html.indexOf("<h2>" + n + "</h2>"));
+  assert.ok(hi.every((i) => i > 0), "all three cards are rendered: " + hi.join(","));
+  assert.ok(hi[0] < hi[1] && hi[1] < hi[2], "HTML order " + hi.join(","));
+  const md = await (await get("/contact", { headers: { Accept: "text/markdown" } })).text();
+  const mi = names.map((n) => md.indexOf("## " + n + "\n"));
+  assert.ok(mi.every((i) => i > 0), "all three sections are in the twin: " + mi.join(","));
+  assert.ok(mi[0] < mi[1] && mi[1] < mi[2], "twin order " + mi.join(","));
+});
