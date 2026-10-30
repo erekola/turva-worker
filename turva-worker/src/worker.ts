@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.6 - guide corrections from the ChatGPT read of all 24 guides on 2026-10-30, each read against its primary source: the external domain check delivery sentence carries the service page's rerun condition on the home page, /services and the audit-choice guide; agent-readiness-gaps names the Markdown alternate link and HTTP Link header route; seo-vs-agent-readiness and agent-readiness-aeo-geo state Google's own conditions and limits; the UCP profile is described by its required members; OKF version 0.2 has one type-specific required field; the IETF ratelimit draft status is dated 30 October 2026; get-cited-by-ai-assistants and prerendering-for-agents say only what their sources support; markdown-for-agents states the Accept header condition; Agentic Catalog becomes Shopify Catalog in the Shopify sample report and guide, with the old C2 anchor aliased; every guide's checked date moves to 2026-10-30 and SITEMAP_LASTMOD with it.
 // turva.dev worker v3.215.5 - banner set v8 (2026-10-30): every per-page link preview card is rebuilt on the new base og-v8-pohja, with its kicker in sentence case and no tracking like the site eyebrow and its proof rows written 100/100 and 5/5; og.jpg now carries the home page eyebrow, headline and subtitle, and the home page image alt text describes it.
 // turva.dev worker v3.215.4 - 195px follow-up to the mobile read (2026-10-30): the home page .steps and .svcgrid auto-fit grids cap their track minimum at the column width with min(175px,100%) and min(255px,100%), so the home page no longer scrolls sideways at 195px (a 390px phone at 200% browser zoom), and a lone image in a paragraph, the /badge preview, is capped at 100% of its column; CSS only.
 // turva.dev worker v3.215.3 - mobile read fixes (2026-10-30): the 760px nav row wraps instead of pushing the Menu button off screen at 200% text, the Menu button stays on the right when the row wraps, and its dead side padding is gone; .board-src may break the scanner host name; the validator field asks for the URL keyboard; .kvs, .posts and .bempty beat the .sec descendant rules, including the 420px .kvs rule; the /contact cards run External domain check, Shopify check, Website or API audit in the page and in the Markdown twin; the Signal QR and badge preview images load lazily; blog code blocks and the /badge code block join the tab order; the Menu summary plus and minus signs carry empty alternative text so the accessible name is Menu; the example button on /markdown-parity-check keeps 6px under it so the wrapped link clears it; twelve dead CSS declarations are removed.
@@ -4682,13 +4683,13 @@ Illustrative report date: 6 September 2026, the delivery date in the engagement 
 ## What to fix first
 
 - **Priority:** Correct two product-data mismatches before sending more agent traffic to the store.
-- **Evidence:** The remote catalog quotes the blue Trail Bottle at 31,90 EUR against 29,90 EUR on the storefront, and the M size of the Merino Base Layer is sellable on every surface except the Agentic Catalog preview.
+- **Evidence:** The remote catalog quotes the blue Trail Bottle at 31,90 EUR against 29,90 EUR on the storefront, and the M size of the Merino Base Layer is sellable on every surface except the Shopify Catalog preview.
 - **Why it matters:** An agent may quote the wrong price or leave the sellable size out.
 - **Owner:** Shopify Markets, product data and Agentic storefront settings, on the merchant's side.
-- **Acceptance:** The same variant returns the same price, currency and availability on the storefront, in the WebMCP read, in the Storefront Catalog MCP read and in a remote UCP cart, and the M variant reads as sellable in the Agentic Catalog preview in the agreed market.
+- **Acceptance:** The same variant returns the same price, currency and availability on the storefront, in the WebMCP read, in the Storefront Catalog MCP read and in a remote UCP cart, and the M variant reads as sellable in the Shopify Catalog preview in the agreed market.
 - **Test limits:** Three products, one market, one anonymous session on 2026-09-05. Nothing was paid, ordered or signed in, and no customer detail was entered.
 
-Two of the three tested products need attention. The remote catalog shows one price 2 EUR higher than the storefront. The Agentic preview marks one variant unavailable even though the storefront sells it.
+Two of the three tested products need attention. The remote catalog shows one price 2 EUR higher than the storefront. The Shopify Catalog preview marks one variant unavailable even though the storefront sells it.
 
 The browser cart worked in the agreed anonymous session, and the checkout handoff reached the right store. No customer details were entered, no payment was submitted and no order was created.
 
@@ -4745,7 +4746,7 @@ These labels describe the test session, not a certification, an endorsement or a
 
 The table compares the product, variant, price, currency, availability and policy facts in the same market, language, currency and test window. A difference was reproduced before being marked Mismatch.
 
-| Product and variant | Storefront page | Browser WebMCP | Storefront Catalog MCP | Agentic Catalog preview | Result |
+| Product and variant | Storefront page | Browser WebMCP | Storefront Catalog MCP | Shopify Catalog preview | Result |
 | --- | --- | --- | --- | --- | --- |
 | Trail Bottle 750 ml, blue | 29,90 EUR, in stock | 29,90 EUR, in stock | 31,90 EUR, in stock | 29,90 EUR, in stock | Mismatch, remote price |
 | Merino Base Layer, M | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, in stock | 79,00 EUR, unavailable | Mismatch, variant eligibility |
@@ -4759,7 +4760,7 @@ Each row compares one variant. The three tool interfaces returned the same produ
 | Merino Base Layer, M | gid://shopify/ProductVariant/100000000002 | Merino Base Layer |
 | Camp Mug, green | gid://shopify/ProductVariant/100000000003 | Camp Mug |
 
-The 30-day return window, free shipping above 80 EUR and the delivery estimate of two to four working days matched across the storefront, the WebMCP policy tool and the remote Policy and FAQs tool on /api/mcp. The Agentic Catalog preview has no policy fields, so their absence is not a mismatch.
+The 30-day return window, free shipping above 80 EUR and the delivery estimate of two to four working days matched across the storefront, the WebMCP policy tool and the remote Policy and FAQs tool on /api/mcp. The Shopify Catalog preview has no policy fields, so their absence is not a mismatch.
 
 The price difference was reproduced at 11:20 and 14:05 EEST. The merchant's redacted settings screenshot shows the M variant's Agentic eligibility switched off. According to the merchant's written note at the kickoff, every product in scope was meant to be sellable in that channel. No settings were changed during the test.
 
@@ -4779,7 +4780,7 @@ Each row records the tool, the input, the result and the cart state for the five
 | Remote policy read | Policy and FAQs tool search_shop_policies_and_faqs on /api/mcp, "return and shipping policy" | 30-day return window, free shipping above 80 EUR and a delivery estimate of two to four working days, matching the storefront policy page | Empty | Aligned |
 | Remote product read, Merino Base Layer M | Storefront Catalog MCP get_product, M variant | Same title and variant ID as the storefront, 79,00 EUR, in stock | Empty | Aligned |
 | Remote product read, Camp Mug green | Storefront Catalog MCP get_product, green variant | Same title and variant ID as the storefront, 18,50 EUR, in stock | Empty | Aligned |
-| Agentic Catalog preview | Catalog search preview for the three products, from the merchant's redacted screenshots | Trail Bottle and Camp Mug sellable, Merino Base Layer M unavailable | Empty | Mismatch, variant eligibility |
+| Shopify Catalog preview | Catalog search preview for the three products, from the merchant's redacted screenshots | Trail Bottle and Camp Mug sellable, Merino Base Layer M unavailable | Empty | Mismatch, variant eligibility |
 | Product detail | WebMCP get_product and show_variant, Trail Bottle blue | Material, volume, price 29,90 EUR and stock matched the storefront page | Empty | Aligned |
 | Add to cart | WebMCP update_cart, one blue Trail Bottle | Cart line created, quantity 1, line price 29,90 EUR | One line, 29,90 EUR | Aligned |
 | Cart read | WebMCP get_cart | One line, 29,90 EUR, matches the visible storefront cart drawer | One line, 29,90 EUR | Aligned |
@@ -4804,15 +4805,15 @@ This plan contains three changes, ordered by their effect on the buyer. Each has
 
 **How to check.** Within one hour, the same variant must return 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront Catalog MCP response, using the fi-FI Finland EUR context. A remote cart is then created with Cart MCP create_cart for the same variant, quantity 1, in the same market and currency. Its unit price and its line subtotal must both read 29,90 EUR, which the cart returns as 2990 in minor units. The cart is cancelled with cancel_cart and kept apart from the browser cart, and the check stops before Checkout MCP. C1 stays open while the cart price differs. If the cart cannot be created, its reading is Unknown and C1 does not close on the other three readings.
 
-### C2. Make the M variant available in the Agentic Catalog
+### C2. Make the M variant available in the Shopify Catalog
 
-**What was found.** The Merino Base Layer in size M is available on the other tested interfaces but marked unavailable in the Agentic Catalog preview. An AI channel using that catalog may omit it. The settings screenshot shows the variant's eligibility switched off, and the kickoff note says no product in scope was meant to be left out, so the change below restores the intended setting.
+**What was found.** The Merino Base Layer in size M is available on the other tested interfaces but marked unavailable in the Shopify Catalog preview. An AI channel using that catalog may omit it. The settings screenshot shows the variant's eligibility switched off, and the kickoff note says no product in scope was meant to be left out, so the change below restores the intended setting.
 
 **Who makes the change.** The merchant's Agentic settings and catalog-mapping owner.
 
 **What to change.** Update the variant's eligibility and republish the mapping.
 
-**How to check.** After the propagation time stated in the settings page, the M variant reads as sellable in the Agentic Catalog preview, in the same market, language and currency as the comparison table. A public agent answer is not part of this check: an AI channel can keep an older copy of the catalog, and this report does not promise when it refreshes.
+**How to check.** After the propagation time stated in the settings page, the M variant reads as sellable in the Shopify Catalog preview, in the same market, language and currency as the comparison table. A public agent answer is not part of this check: an AI channel can keep an older copy of the catalog, and this report does not promise when it refreshes.
 
 ### C3. Repeat the comparison after catalog changes
 
@@ -4844,7 +4845,7 @@ The retest is pending. C1 and C2 are the two items selected for it, and it is du
 | Retest item | What is checked | Test date | Result |
 | --- | --- | --- | --- |
 | C1 | The blue Trail Bottle returns 29,90 EUR on the storefront, in the WebMCP product response and in the Storefront Catalog MCP response, and a remote UCP cart for the same variant, quantity 1, Finland market and EUR reads a 29,90 EUR unit price and subtotal before it is cancelled | Pending | Pending |
-| C2 | The Merino Base Layer in size M reads as sellable in the Agentic Catalog preview | Pending | Pending |
+| C2 | The Merino Base Layer in size M reads as sellable in the Shopify Catalog preview | Pending | Pending |
 
 Each item is then marked Aligned, Mismatch or Unknown. If an interface cannot be read, the result is Unknown. The product comparison above shows the original session on its own until the retest has been run, and the retest result is printed beside it once there is one.
 
@@ -5003,7 +5004,7 @@ A checkout endpoint does not have to support instant payment to be real. The ACP
 
 ## UCP, the fourth surface
 
-The Universal Commerce Protocol adds a profile at /.well-known/ucp. The profile names the merchant, lists the services it offers under namespaced keys, each with a version, a transport and an endpoint, and carries two blocks, capabilities and payment_handlers, that state what an agent may do through the profile and how it may pay. The same rule holds as for the three surfaces above: a capability the profile declares has to answer at the endpoint behind it, and an empty block is more honest than a declared one nothing serves.
+The Universal Commerce Protocol adds a profile at /.well-known/ucp. The profile is a JSON object whose ucp member lists the services the business offers under namespaced keys, each with a version, a transport and an endpoint, and carries two more blocks, capabilities and payment_handlers, that state what an agent may do through the profile and how it may pay. The same rule holds as for the three surfaces above: a capability the profile declares has to answer at the endpoint behind it, and an empty block is more honest than a declared one nothing serves.
 
 A storefront that runs UCP over MCP carries a checkout state called requires_escalation. It means the agent has reached the edge of what it may finish alone, because the business needs buyer input its API cannot collect or buyer review that policy, regulatory or entitlement rules require. The UCP checkout specification then requires the business to return a continue_url and at least one message naming which of the two it needs, and requires the platform to use that continue_url, so a person completes the step in the business's own interface before the session continues. It is a handoff inside a checkout and not a substitute for one. Even without escalation, the same specification has the user finalize a UCP checkout manually in a trusted UI unless the AP2 Mandates extension is supported. A business that sells on a written quote can state that through the ACP session state above, and UCP checkout also lets the payment object be omitted for uses such as quote generation.
 
@@ -5031,7 +5032,7 @@ Usually the case of the extension URI is the cause. Some fix texts show a V0.1.0
 
 **What does a UCP profile declare?**
 
-A UCP profile at /.well-known/ucp names the merchant and the services it offers, each with a transport and an endpoint. It also holds two blocks, one for capabilities and one for payment handlers. The specification calls the profile what the business advertises, so an empty block advertises nothing of its kind through UCP, which is the truthful state for a business that sells on a written quote. An empty block is not a standard statement about how the business takes payment, so the business says that in its own words, for example on its pages or in its ACP session messages.
+A UCP profile at /.well-known/ucp lists the services the business offers, each with a transport and an endpoint. It also holds two blocks, one for capabilities and one for payment handlers. The specification requires the services and payment_handlers blocks to be present even when empty and lets the capabilities block be omitted, so an empty block declares nothing of its kind through UCP, which is the truthful state for a business that sells on a written quote. An empty block is not a standard statement about how the business takes payment, so the business says that in its own words, for example on its pages or in its ACP session messages.
 
 ## Sources
 
@@ -5058,7 +5059,7 @@ To start small, order the €99 external domain check. It covers the domain only
 
 [Order the €99 check](/external-domain-check) [Request an audit](/contact)
 
-The domain check costs €99 plus VAT and is delivered within two business days of confirmed payment. If your company orders a Shopify agent storefront check or an audit for the same domain within 60 days of delivery, the €99 is deducted from that order, once per company.
+The domain check costs €99 plus VAT and is delivered within two business days of confirmed payment. If a main part has to be rerun, I send notice of that within the two business days instead, and the rerun follows within two business days of the notice. If your company orders a Shopify agent storefront check or an audit for the same domain within 60 days of delivery, the €99 is deducted from that order, once per company.
 
 We work in writing. I reply within one business day. [Scope and pricing](/services).
 
@@ -5084,7 +5085,7 @@ This example uses an invented business and invented readings. The sample's scann
 
 ## Choose the check you need
 
-- [External domain check](/external-domain-check). €99. What does your domain show from outside? I read one domain with two public tools, isitagentready.com and internet.nl, and a short published list of my own requests. You get the domain's agent-readiness reading, or the reason none could be taken. The report also lists the website and email settings visible from outside and up to three fixes in the order to make them. The check does not tell you how secure your company is. The €99 is deducted from a Shopify agent storefront check or an audit for the same domain ordered within 60 days of delivery, once per company. Delivered within two business days of confirmed payment.
+- [External domain check](/external-domain-check). €99. What does your domain show from outside? I read one domain with two public tools, isitagentready.com and internet.nl, and a short published list of my own requests. You get the domain's agent-readiness reading, or the reason none could be taken. The report also lists the website and email settings visible from outside and up to three fixes in the order to make them. The check does not tell you how secure your company is. The €99 is deducted from a Shopify agent storefront check or an audit for the same domain ordered within 60 days of delivery, once per company. Delivered within two business days of confirmed payment, unless a main part has to be rerun, in which case I send notice of that within those two days and the rerun follows within two business days of the notice.
 - [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package, or of the delivered corrections when the correction add-on is bought.
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 
@@ -5212,7 +5213,7 @@ You work directly with me, in writing. I reply within one business day. All pric
 
 ## Choose a starting point
 
-- [External domain check](/external-domain-check). €99. What does your domain show from outside? I read one domain with two public tools and a short published list of my own requests. You get the domain's agent-readiness reading, or the reason none could be taken, the website and email settings visible from outside and up to three fixes in the order to make them. The €99 is deducted from a Shopify check or an audit for the same domain ordered within 60 days of delivery, once per company. Delivered within two business days of confirmed payment.
+- [External domain check](/external-domain-check). €99. What does your domain show from outside? I read one domain with two public tools and a short published list of my own requests. You get the domain's agent-readiness reading, or the reason none could be taken, the website and email settings visible from outside and up to three fixes in the order to make them. The €99 is deducted from a Shopify check or an audit for the same domain ordered within 60 days of delivery, once per company. Delivered within two business days of confirmed payment, unless a main part has to be rerun, in which case I send notice of that within those two days and the rerun follows within two business days of the notice.
 - [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package, or of the delivered corrections when the correction add-on is bought.
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 
@@ -6107,7 +6108,7 @@ The Open Knowledge Format is an open specification from Google Cloud that repres
 
 A bundle is a folder of markdown files, and the unit inside it is a concept. A concept is anything worth capturing for an agent, such as a table, a dataset, a metric, a runbook or an API. Every concept is one UTF-8 markdown document with two parts, a YAML frontmatter block at the top fenced by a line of three dashes above and below, and a markdown body underneath.
 
-The format asks for exactly one field, type. Everything else is optional, including title, description, resource, tags and a generated block that records who last changed the concept and when. What types exist and what fields most of them carry is left to whoever produces the bundle, though a handful of OKF-defined types, such as Attested Computation, add their own required field on top of the one universal one. Concepts reference each other with ordinary markdown links, so the folder becomes a graph of related knowledge rather than a flat list of files.
+The format asks for exactly one field, type. Everything else is optional, including title, description, resource, tags and a generated block that records who last changed the concept and when. What types exist and what fields most of them carry is left to whoever produces the bundle, though one OKF-defined type, Attested Computation, adds its own required field, runtime, on top of the one universal one. Concepts reference each other with ordinary markdown links, so the folder becomes a graph of related knowledge rather than a flat list of files.
 
 ## Structure versus meaning
 
@@ -6137,7 +6138,7 @@ An open specification from Google Cloud that represents a body of knowledge as a
 
 **What does OKF actually standardize?**
 
-The shape of the files, not yet their meaning. Version 0.2 fixes the folder of markdown files, the frontmatter, two reserved filenames and one required field. What a concept must contain beyond that field is left to producers at the general conformance level; OKF's own concept types can add their own required fields on top of that floor, for example an Attested Computation concept, where the specification itself makes the runtime field required.
+The shape of the files, not yet their meaning. Version 0.2 fixes the folder of markdown files, the frontmatter, two reserved filenames and one required field. What a concept must contain beyond that field is left to producers at the general conformance level. In version 0.2 one OKF-defined concept type, Attested Computation, adds a required field of its own, runtime, on top of that floor.
 
 **Does OKF replace llms.txt?**
 
@@ -6622,7 +6623,7 @@ RateLimit-Policy states the quota a server enforces, and RateLimit adds the rema
 
 ## Verification
 
-As of July 2026 the [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/), revision 11 from May 2026, remains active without yet becoming a standard. Checking a site's headers means requesting a page and reading the response headers directly, then confirming the behaviour they describe, such as a different response for a different Accept value or a request that is actually throttled once a stated limit is passed. The fix for a missing or wrong header is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response. For an audit of a site's response headers and the behaviour behind them, contact info@turva.dev.
+As of 30 October 2026 the [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/) is at revision 11, dated 23 May 2026. Datatracker lists it as an active Internet-Draft that expires on 24 November 2026, and it has not become a standard. Checking a site's headers means requesting a page and reading the response headers directly, then confirming the behaviour they describe, such as a different response for a different Accept value or a request that is actually throttled once a stated limit is passed. The fix for a missing or wrong header is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response. For an audit of a site's response headers and the behaviour behind them, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -6673,7 +6674,7 @@ The terms above blur together because people use one word, visibility, for four 
 
 ## Where Google's AI features fit
 
-Indexing and search match are the classic SEO pair, and they are the input Google's own AI search features build on. Google states that its generative features in Search are rooted in the same core ranking and quality systems, so a page that indexes and ranks well feeds directly into AI Overviews and similar results inside Google Search. That connection does not extend to source citation from an assistant that retrieves outside a search index, which depends on whether the model can read the content cleanly and corroborate it elsewhere, and it does not extend to API action at all, which depends on machine-readable surfaces classic SEO never touched.
+Indexing and search match are the classic SEO pair, and they are the input Google's own AI search features build on. Google states that its generative features in Search are rooted in the same core ranking and quality systems, so indexing and ranking well is the starting point for AI Overviews and similar results inside Google Search. Google adds two conditions, a page that is eligible to show in Search with a snippet and a site that is included in Search generative AI features in Search Console, and it does not guarantee that a page is shown. That connection does not extend to source citation from an assistant that retrieves outside a search index, which depends on whether the model can read the content cleanly and corroborate it elsewhere, and it does not extend to API action at all, which depends on machine-readable surfaces classic SEO never touched.
 
 ## The gap is widening
 
@@ -6689,7 +6690,7 @@ No. SEO covers indexing, crawlability and ranking on a results page for a person
 
 **Why does search ranking not guarantee presence in AI answers?**
 
-It depends on the product. Google states that its generative features in Search use the same core ranking and quality systems, so indexing and search match carry over into results built inside Google Search. An assistant that retrieves outside a search index cites a site when it can read the content cleanly and corroborate it, which depends on the discovery and content surface rather than on ranking.
+It depends on the product. Google states that its generative features in Search use the same core ranking and quality systems, so indexing and search match are the starting point for results built inside Google Search, though Google does not guarantee that a page is shown there. An assistant that retrieves outside a search index cites a site when it can read the content cleanly and corroborate it, which depends on the discovery and content surface rather than on ranking.
 
 **Can a site rank well and still be invisible to agents?**
 
@@ -6993,7 +6994,7 @@ Some clients read the initial HTTP response without running a browser. Compare t
 
 Many sites render their content with JavaScript in the browser. A person's browser waits a moment and the page fills in. A client that reads only the raw HTTP response sees the page before that script runs, so it reads a loading shell instead of the content.
 
-Client behaviour varies. Some AI clients run a full browser and execute JavaScript before reading a page, so they see the same content a person sees. Others fetch the URL directly and read only the response body, without executing any script. A site cannot assume which behaviour applies without checking, and the practical fix is the same either way: make sure the finished content is present in the first response for clients that need it.
+Client behaviour varies. Some AI clients run a full browser and execute JavaScript before reading a page, so they see the same content a person sees. Google's JavaScript SEO guide notes that not all bots can run JavaScript, and a client that cannot run it reads only the response body. A site cannot assume which behaviour applies without checking, and the practical fix is the same either way: make sure the finished content is present in the first response for clients that need it.
 
 ## What the first response contains
 
@@ -7113,7 +7114,7 @@ Markdown delivery is not a separate site. It is the same content offered in a se
 
 The token saving can be large. On turva.dev the markdown form of a page has measured at a fraction of the tokens the HTML form costs for the same content, and that difference is what decides whether a client reads a page in full or runs out of budget partway through. That figure is tied to the page it was measured on and to how the receiving client counts tokens, so it is a measured example rather than a cost guarantee that holds for every client and every page. Checking a given page means comparing its own HTML and markdown byte counts, not assuming a figure measured elsewhere carries over.
 
-turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. Every page also answers at its own .md address, and /guides/markdown-for-agents and /guides/markdown-for-agents.md return the same markdown byte for byte. For an audit of whether a site's markdown and HTML agree, contact info@turva.dev.
+turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. Every page also answers at its own .md address, and /guides/markdown-for-agents.md returns the same markdown byte for byte as /guides/markdown-for-agents requested with Accept: text/markdown. Without that header the bare address returns HTML. For an audit of whether a site's markdown and HTML agree, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -7154,7 +7155,7 @@ A site that builds its content with client-side JavaScript, without server rende
 
 ## Discovery
 
-No llms.txt and a thin or missing sitemap leave an agent with nothing to read but rendered pages. Among the 74 Level 0 sites, 68 have a first-fix note, and robots.txt appears in 45 of those notes and the sitemap in 38, with 29 naming both: a robots.txt the CMS shipped by default and a sitemap that is missing or never announced in it. Among the 439 Level 1 sites with a note, the sitemap appears in 102 and llms.txt in 99.
+No llms.txt and a thin or missing sitemap leave an agent to follow page links, unless the site points to a Markdown version another way, such as an [alternate link or an HTTP Link header](https://llmstxt.org/). Among the 74 Level 0 sites, 68 have a first-fix note, and robots.txt appears in 45 of those notes and the sitemap in 38, with 29 naming both: a robots.txt the CMS shipped by default and a sitemap that is missing or never announced in it. Among the 439 Level 1 sites with a note, the sitemap appears in 102 and llms.txt in 99.
 
 ## Content
 
@@ -7215,7 +7216,7 @@ Every finding in the report rests on one of three kinds of evidence. A technical
 
 A written report that lists each check, what was found, and a concrete fix for each gap it asks you to close, ordered by priority, and the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan after a fix shows whether a scored fix passed, and a manual-review fix is verified by a direct test.
 
-The two fixed-scope diagnoses on the [services page](/services) are the website and API audit at €4,300 within two weeks of the agreed written kickoff and the Shopify agent storefront check at €999 within 48 hours of the agreed written kickoff. Implementing a diagnosis's own complete fix list is a €499 add-on when it is bought with that diagnosis, with its report, or after the report and before implementation starts, and the required access is arranged in advance: collaborator access to the store for a Shopify check, and an edge runtime, deployment access and any other access the listed fixes need for an audit. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions. The services page also lists the external domain check at €99 plus VAT, which reads one domain from outside and is delivered within two business days of confirmed payment. The add-on is not sold with it.
+The two fixed-scope diagnoses on the [services page](/services) are the website and API audit at €4,300 within two weeks of the agreed written kickoff and the Shopify agent storefront check at €999 within 48 hours of the agreed written kickoff. Implementing a diagnosis's own complete fix list is a €499 add-on when it is bought with that diagnosis, with its report, or after the report and before implementation starts, and the required access is arranged in advance: collaborator access to the store for a Shopify check, and an edge runtime, deployment access and any other access the listed fixes need for an audit. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions. The services page also lists the external domain check at €99 plus VAT, which reads one domain from outside and is delivered within two business days of confirmed payment. If a main part has to be rerun, notice of that comes within those two business days instead, and the rerun follows within two business days of the notice. The add-on is not sold with the domain check.
 
 ## Follow-up checks
 
@@ -7229,7 +7230,7 @@ turva.dev provides independent agent-readiness audits and advisory for product t
 
 **What does an agent-readiness audit cost?**
 
-turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. The Shopify agent storefront check is a separate fixed-scope diagnosis at €999, delivered within 48 hours of the agreed written kickoff. The external domain check is an entry check of one domain read from outside, at €99, delivered within two business days of confirmed payment, and that amount is deducted from an audit or a Shopify check for the same domain ordered within 60 days of delivery, once per company. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged, and implementation is €1,500 per day, scoped per task. Prices exclude VAT, and the scope is written before any payment.
+turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. The Shopify agent storefront check is a separate fixed-scope diagnosis at €999, delivered within 48 hours of the agreed written kickoff. The external domain check is an entry check of one domain read from outside, at €99, delivered within two business days of confirmed payment. If a main part has to be rerun, notice of that comes within those two business days instead, and the rerun follows within two business days of the notice. The domain check's price is deducted from an audit or a Shopify check for the same domain ordered within 60 days of delivery, once per company. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged, and implementation is €1,500 per day, scoped per task. Prices exclude VAT, and the scope is written before any payment.
 
 **How long does an agent-readiness audit take?**
 
@@ -7277,7 +7278,7 @@ Answer engine optimization, AEO, is about the pages, so an AI engine can quote t
 
 ## Answer engine optimization
 
-AEO engineers the page itself. Structure, schema, source density, and passages an engine can lift cleanly. The practical test is whether the first sentence under a heading stands alone as a quotable answer, and whether the facts on the page are stated as data rather than buried in prose. Most of what makes a page AEO-ready also makes it agent-readable, because both depend on a machine reading the content without guessing.
+AEO engineers the page itself. Structure, schema, source density, and passages an engine can lift cleanly. The practical test is whether the first sentence under a heading stands alone as a quotable answer, and whether the facts on the page are stated as data rather than buried in prose. Most of what makes a page AEO-ready also makes it agent-readable, because both depend on a machine reading the content without guessing. Google says that for its own generative AI search this is still SEO, and that neither splitting content into small pieces nor special schema.org markup is needed there. The advice in this section is for other answer engines and for agents that read the page.
 
 ## Generative engine optimization
 
@@ -7345,7 +7346,7 @@ Most catalogs lose the agent before checkout. A price that lives only in rendere
 
 Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built its own agent commerce surface this way, across A2A, AP2, ACP and x402, and an independent scanner checks its discovery files. The path stops on purpose before payment: the ACP checkout answers not_ready_for_payment and the x402 endpoint answers 402 whether or not a payment is sent, because turva.dev sells on a written quote. Tested 2026-09-28 by sending a POST to /api/acp/checkout_sessions and a GET to /x402: both answered exactly as described. The test shows where the path stops. It does not show a payment accepted or settled automatically.
 
-For a Shopify store, the [Shopify agent storefront check](/shopify-agent-storefront-check) reads selected products across the browser WebMCP tools, the Shopify-hosted Storefront Catalog MCP, Cart MCP and the Policy and FAQs tool, and the Agentic Catalog, records the buyer journey up to the stop before payment, and delivers a correction plan. For a website or API, the [audit](/agent-readiness-audit) covers the commerce surfaces among the rest.
+For a Shopify store, the [Shopify agent storefront check](/shopify-agent-storefront-check) reads selected products across the browser WebMCP tools, the Shopify-hosted Storefront Catalog MCP, Cart MCP, the Policy and FAQs tool and Shopify Catalog. It records the buyer journey up to the stop before payment and delivers a correction plan. For a website or API, the [audit](/agent-readiness-audit) covers the commerce surfaces among the rest.
 
 ## Frequently asked
 
@@ -7509,7 +7510,7 @@ An assistant is more likely to cite a claim it can confirm in more than one plac
 
 ## Be indexed where the assistant searches
 
-Several assistants retrieve through a search index before they answer. If a site is not indexed where the assistant looks, it cannot be cited regardless of quality. Submitting URLs through the index protocols a site supports, and keeping the sitemap current, is how new content reaches that layer.
+Several assistants retrieve through a search index before they answer. If a page is not in the index an assistant searches, that search cannot return it, whatever its quality. With web search on, Claude can also [fetch a page directly](https://support.claude.com/en/articles/10684626-enable-and-use-web-search) when a user gives its URL. Submitting URLs through the index protocols a site supports, and keeping the sitemap current, is how new content reaches that layer.
 
 ## Measure it
 
@@ -8109,7 +8110,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.5",
+    "version": "3.215.6",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8412,7 +8413,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.5",
+  "version": "3.215.6",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9099,7 +9100,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-10-29";
+const SITEMAP_LASTMOD = "2026-10-30";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9677,7 +9678,7 @@ const META_BY_PATH = {
   },
   "/guides/agent-commerce-discovery": {
     title: "Agent commerce discovery: A2A, AP2, ACP and UCP · turva.dev",
-    checked: "2026-10-01",
+    checked: "2026-10-30",
     description: "Commerce discovery describes the interfaces and payment-related capabilities a service supports.",
     image: "/og-guide-agent-commerce-discovery.jpg",
     imageAlt: "turva.dev guide card: A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint."
@@ -9693,14 +9694,14 @@ const META_BY_PATH = {
   },
   "/guides/agentic-resource-discovery": {
     title: "Agentic Resource Discovery and resource catalogs · turva.dev",
-    checked: "2026-10-01",
+    checked: "2026-10-30",
     description: "Resource catalogs describe the agent-facing interfaces a site exposes.",
     image: "/og-guide-agentic-resource-discovery.jpg",
     imageAlt: "turva.dev guide card: Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation."
   },
   "/guides/open-knowledge-format": {
     title: "Open Knowledge Format explained · turva.dev",
-    checked: "2026-09-28",
+    checked: "2026-10-30",
     description: "Open Knowledge Format describes knowledge as linked Markdown documents.",
     image: "/og-guide-open-knowledge-format.jpg",
     imageAlt: "turva.dev guide card: What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness."
@@ -9796,147 +9797,147 @@ const META_BY_PATH = {
   },
   "/guides/agent-readiness-audit": {
     title: "What a website and API agent-readiness audit covers · turva.dev",
-    checked: "2026-09-28",
+    checked: "2026-10-30",
     description: "A technical scan, manual review and observed AI answers reveal different problems.",
     image: "/og-guide-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored by an independent scanner."
   },
   "/guides/llms-txt": {
     title: "llms.txt explained · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "An llms.txt file offers a curated map of a site for clients that choose to read it. Learn its structure, discovery links and limits.",
     image: "/og-guide-llms-txt.jpg",
     imageAlt: "turva.dev guide card: llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives, and how it differs from robots.txt and sitemaps."
   },
   "/guides/mcp-server-card": {
     title: "MCP server cards and discovery · turva.dev",
-    checked: "2026-10-16",
+    checked: "2026-10-30",
     description: "A server card describes an MCP endpoint for clients that support the relevant discovery convention.",
     image: "/og-guide-mcp-server-card.jpg",
     imageAlt: "turva.dev guide card: An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and connect to it."
   },
   "/guides/agents-json": {
     title: "What agents.json describes · turva.dev",
-    checked: "2026-10-01",
+    checked: "2026-10-30",
     description: "agents.json is one pattern for describing actions and endpoints for automated clients.",
     image: "/og-guide-agents-json.jpg",
     imageAlt: "turva.dev guide card: agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one."
   },
   "/guides/x402-agent-payments": {
     title: "x402 and HTTP payment flows · turva.dev",
-    checked: "2026-10-01",
+    checked: "2026-10-30",
     description: "x402 describes an HTTP-based payment flow. A payment declaration, an accepted payment and settlement are different states and should be documented separately.",
     image: "/og-guide-x402-agent-payments.jpg",
     imageAlt: "turva.dev guide card: x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout."
   },
   "/guides/response-headers-for-agents": {
     title: "Response headers for AI clients · turva.dev",
-    checked: "2026-09-28",
+    checked: "2026-10-30",
     description: "Response headers describe formats, discovery links and request policy. Check both what a header declares and whether the server behaves accordingly.",
     image: "/og-guide-response-headers-for-agents.jpg",
     imageAlt: "turva.dev guide card: The right HTTP response headers let AI agents work without parsing full HTML."
   },
   "/guides/seo-vs-agent-readiness": {
     title: "SEO and agent-readiness: overlap and differences · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "SEO, AI-answer visibility and technical agent access overlap, but they answer different questions.",
     image: "/og-guide-seo-vs-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: SEO makes a site rank for people to click. Agent-readiness makes it legible and usable by AI agents."
   },
   "/guides/json-ld-structured-data": {
     title: "JSON-LD and structured data for AI clients · turva.dev",
-    checked: "2026-09-28",
+    checked: "2026-10-30",
     description: "Structured data makes page facts explicit, but those facts must agree with the visible page and underlying source.",
     image: "/og-guide-json-ld-structured-data.jpg",
     imageAlt: "turva.dev guide card: JSON-LD states a page's facts as data an AI agent can read without parsing prose."
   },
   "/guides/well-known-for-agents": {
     title: "The /.well-known directory for agent discovery · turva.dev",
-    checked: "2026-10-01",
+    checked: "2026-10-30",
     description: "Well-known URLs give clients predictable places to look for specific metadata.",
     image: "/og-guide-well-known-for-agents.jpg",
     imageAlt: "turva.dev guide card: The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata."
   },
   "/guides/agent-authentication": {
     title: "Authentication and authorisation for AI agents · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "Authentication identifies a client, authorisation determines what it may access or do.",
     image: "/og-guide-agent-authentication.jpg",
     imageAlt: "turva.dev guide card: Agent authentication lets an automated client gain scoped access without a human login."
   },
   "/guides/measurement-led-agent-readiness": {
     title: "Measure agent-readiness with evidence · turva.dev",
-    checked: "2026-09-28",
+    checked: "2026-10-30",
     description: "A scan is one source of evidence. Combine it with direct technical checks and observed AI answers, and record the method and date behind every conclusion.",
     image: "/og-guide-measurement-led-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: A hand-filled checklist records intentions. An independent scanner records what an agent actually finds."
   },
   "/guides/prerendering-for-agents": {
     title: "When AI clients cannot read rendered pages · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "Some clients read the initial HTTP response without running a browser.",
     image: "/og-guide-prerendering-for-agents.jpg",
     imageAlt: "turva.dev guide card: prerendering, and why some agents see empty pages. A client that does not run JavaScript can get only the loading shell of a rendered page."
   },
   "/guides/sitemaps-and-robots-for-agents": {
     title: "Sitemaps, robots.txt and AI crawler access · turva.dev",
-    checked: "2026-09-28",
+    checked: "2026-10-30",
     description: "Sitemaps describe published URLs, while robots.txt communicates crawler rules. Neither file guarantees retrieval or replaces access control.",
     image: "/og-guide-sitemaps-and-robots-for-agents.jpg",
     imageAlt: "turva.dev guide card: robots.txt and the sitemap decide whether an agent is allowed in and what it can find."
   },
   "/guides/markdown-for-agents": {
     title: "Serving Markdown to AI clients · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "A Markdown representation can make published content easier for text-based clients to consume. Keep its facts and links aligned with the HTML page.",
     image: "/og-guide-markdown-for-agents.jpg",
     imageAlt: "turva.dev guide card: Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens."
   },
   "/guides/agent-readiness-aeo-geo": {
     title: "Agent-readiness, AEO and GEO · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "These labels describe overlapping work around discovery, answers and automated use.",
     image: "/og-guide-agent-readiness-aeo-geo.jpg",
     imageAlt: "turva.dev guide card: How AEO, GEO and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice."
   },
   "/guides/agentic-commerce-readiness": {
     title: "Agentic commerce readiness · turva.dev",
-    checked: "2026-10-01",
+    checked: "2026-10-30",
     description: "Agent commerce involves product information, permitted actions and a supported checkout path.",
     image: "/og-guide-agentic-commerce-readiness.jpg",
     imageAlt: "turva.dev guide card: What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase."
   },
   "/guides/letting-agents-act-on-data": {
     title: "Define what an agent may do with your data · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "Reliable agent operations depend on usable inputs, explicit permissions and observable outcomes.",
     image: "/og-guide-letting-agents-act-on-data.jpg",
     imageAlt: "turva.dev guide card: Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds."
   },
   "/guides/ai-agent-use-cases": {
     title: "AI agent use cases and their operating limits · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "Explore examples of agents reading data and taking permitted actions.",
     image: "/og-guide-ai-agent-use-cases.jpg",
     imageAlt: "turva.dev guide card: AI agent use cases across commerce, monitoring, field support, remote operations and back-office data work, and what makes each one reliable."
   },
   "/guides/get-cited-by-ai-assistants": {
     title: "Make your website easier for AI assistants to find and cite · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "Clear, accessible content and consistent facts help retrieval systems understand a site.",
     image: "/og-guide-get-cited-by-ai-assistants.jpg",
     imageAlt: "turva.dev guide card: What it takes to be a source AI assistants cite: readable content, structured data, corroboration, indexing where assistants search, and measurement."
   },
   "/guides/choosing-an-agent-readiness-audit": {
     title: "How to choose an agent-readiness audit · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "Compare an audit by its scope, evidence, deliverables and follow-up checks. See how the website and API audit differs from a focused Shopify check.",
     image: "/og-guide-choosing-an-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: Who provides agent-readiness audits, what they cost, how long they take, and what you get."
   },
   "/guides/agent-readiness-gaps": {
     title: "Common agent-readiness gaps in a measured sample · turva.dev",
-    checked: "2026-09-15",
+    checked: "2026-10-30",
     description: "A prospecting sample of 567 company sites revealed recurring technical gaps.",
     image: "/og-guide-agent-readiness-gaps.jpg",
     imageAlt: "turva.dev guide card: Marketing sites are often strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes."
@@ -11660,7 +11661,7 @@ const GUIDE_ANCHOR_ALIASES = {
     "checking-the-corrections": ["retest"],
     "scope-limits": ["what-this-report-is-not"],
     "c1-align-the-remote-catalog-with-the-finnish-price-list": ["c1-publish-the-finnish-price-list-to-the-remote-catalog-surface"],
-    "c2-make-the-m-variant-available-in-the-agentic-catalog": ["c2-make-the-m-variant-eligible-in-the-agentic-catalog"],
+    "c2-make-the-m-variant-available-in-the-shopify-catalog": ["c2-make-the-m-variant-available-in-the-agentic-catalog", "c2-make-the-m-variant-eligible-in-the-agentic-catalog"],
     "c3-repeat-the-comparison-after-catalog-changes": ["c3-run-a-three-surface-acceptance-test-after-every-catalog-or-market-publish"]
   },
   "/guides/open-knowledge-format": {
