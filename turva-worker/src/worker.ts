@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.9 - /services (2026-10-30): the Implementation and Advisory price lines put a period after the price like the other three cards, so the price reads €1,500. and €3,000. and the terms follow. The Implementation line drops the clause on when the add-on can be bought, which the next paragraph states in full. Prices and terms are unchanged.
 // turva.dev worker v3.215.8 - /services (2026-10-30): the Implementation card opens with one sentence in the buyer's own words, that the work makes an existing website readable by AI agents, and that it follows the fix list of an audit or a Shopify check or is scoped separately in days. Scope and prices are unchanged.
 // turva.dev worker v3.215.7 - /contact (2026-10-30): the three action cards (External domain check, Shopify check, Website or API audit) use the cards three grid, three equal columns from 1000px and one column below, instead of the two-column cards grid that left the third card alone on a second row.
 // turva.dev worker v3.215.6 - guide corrections from the ChatGPT read of all 24 guides on 2026-10-30, each read against its primary source: the external domain check delivery sentence carries the service page's rerun condition on the home page, /services and the audit-choice guide; agent-readiness-gaps names the Markdown alternate link and HTTP Link header route; seo-vs-agent-readiness and agent-readiness-aeo-geo state Google's own conditions and limits; the UCP profile is described by its required members; OKF version 0.2 has one type-specific required field; the IETF ratelimit draft status is dated 30 October 2026; get-cited-by-ai-assistants and prerendering-for-agents say only what their sources support; markdown-for-agents states the Accept header condition; Agentic Catalog becomes Shopify Catalog in the Shopify sample report and guide, with the old C2 anchor aliased; every guide's checked date moves to 2026-10-30 and SITEMAP_LASTMOD with it.
@@ -5247,7 +5248,7 @@ The audit is delivered within two weeks of the agreed written kickoff. You recei
 
 ## Implementation
 
-**€1,500 per day, scoped separately. €499 for the complete fix list from an audit or a Shopify check, bought together with that service, with its report, or after the report and before implementation starts.**
+**€1,500. Per day, scoped separately. €499 for the complete fix list from an audit or a Shopify check.**
 
 I make your existing website readable by AI agents. The work follows the fix list of an audit or a Shopify check, or it is scoped separately in days.
 
@@ -5307,7 +5308,7 @@ I include one round of implementation handover questions submitted within 14 cal
 
 ## Ongoing advisory
 
-**€3,000 per month. Minimum three months.**
+**€3,000. Per month. Minimum three months.**
 
 If you are not satisfied with the first month, you can end the retainer by email sent at any time during the first month, up to the day before the second month starts. The retainer then ends when the first month ends, and the second and third months are not charged. Notice given in the second or third month ends the retainer at the end of the three-month minimum, and the months up to that end are charged. After the three-month minimum the retainer runs month to month, and either party can end it by email before the next month starts.
 
@@ -8114,7 +8115,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.8",
+    "version": "3.215.9",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8417,7 +8418,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.8",
+  "version": "3.215.9",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
