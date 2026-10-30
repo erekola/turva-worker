@@ -124,8 +124,9 @@ The pinned release can be older than the latest npm release, and the report's `t
 | `/api`, `/x402`, `/api/agent/*` | Payment-required responses and quote-on-request service routes |
 | `/llms-txt-validator` | Structure checker with HTML and JSON responses |
 | `/markdown-parity-check` | HTML and Markdown comparison of this site's pages, as a form and a JSON POST |
-| `/agent-readiness-audit`, `/shopify-agent-storefront-check` | Product pages, with the service comparison at `/services` |
+| `/external-domain-check`, `/agent-readiness-audit`, `/shopify-agent-storefront-check` | Product pages, with the service comparison at `/services` |
 | `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Sample reports using invented sites |
+| `/samples/external-domain-check` | Sample report made from turva.dev's own domain, with real readings |
 | `/blog-filter.js` | Search and kind filter for the blog index. Every post remains listed without it |
 | `/nav.js` | Closes the mobile menu on Escape and when focus leaves it. The menu works without it |
 

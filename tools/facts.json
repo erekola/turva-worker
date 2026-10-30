@@ -3,17 +3,18 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.214.6",
-    "mcp": "1.6.23"
+    "site": "3.215.0",
+    "mcp": "1.6.24"
   },
   "mtaSts": {
     "txtId": "20260910202321",
     "policySha256": "b056f5c25f57f294adb9e26a6b65f3734fa37ef965d3aa9b3095685f60e54199"
   },
   "released": {
-    "site": "2026-10-28"
+    "site": "2026-10-29"
   },
   "prices": {
+    "domain-check": 99,
     "shopify": 999,
     "audit": 4300,
     "advisory": 3000,
@@ -43,6 +44,11 @@
     }
   ],
   "services": [
+    {
+      "id": "domain-check",
+      "name": "External domain check",
+      "priceKey": "domain-check"
+    },
     {
       "id": "shopify",
       "name": "Shopify agent storefront check",

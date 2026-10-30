@@ -404,7 +404,7 @@ test("Tek-484: a block without a links-only paragraph fails the page build inste
 // ---- Tek-488: every checkable page passes for the right reason, round 1 ----
 
 test("Tek-488: the two sample reports, the Shopify page and the commerce guide pass in full", async () => {
-  for (const p of ["/samples/audit-report", "/samples/shopify-agent-storefront-check", "/shopify-agent-storefront-check", "/guides/agent-commerce-discovery"]) {
+  for (const p of ["/samples/audit-report", "/samples/shopify-agent-storefront-check", "/samples/external-domain-check", "/external-domain-check", "/shopify-agent-storefront-check", "/guides/agent-commerce-discovery"]) {
     const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
     assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f: { code: string; before?: string }) => f.code + " " + (f.before || ""))));
   }
@@ -419,7 +419,7 @@ test("Tek-488: the FAQ heading on the home, services and Shopify pages is the tw
 });
 
 test("Tek-488: a table is served once, and every table stacks on a narrow screen", async () => {
-  for (const p of ["/samples/audit-report", "/samples/shopify-agent-storefront-check"]) {
+  for (const p of ["/samples/audit-report", "/samples/shopify-agent-storefront-check", "/samples/external-domain-check"]) {
     const html = (await served(p, "text/html")).body;
     const tables = [...html.matchAll(/<table class="([^"]*)"/g)].map((m) => m[1]);
     assert.ok(tables.length >= 2, p + " has tables");
@@ -441,7 +441,7 @@ test("Tek-488: inline code renders as code, is never linked, and leaves the FAQP
 });
 
 test("Tek-488: the eyebrow over the H1 is the twin's line above its H1", async () => {
-  for (const p of ["/", "/samples/audit-report", "/samples/shopify-agent-storefront-check"]) {
+  for (const p of ["/", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/samples/external-domain-check"]) {
     const md = (await served(p, "text/markdown")).body.replace(/\r\n/g, "\n");
     const m = md.match(/^([^#\n][^\n]*)\n\n# /);
     assert.ok(m, p + ": the twin opens with a line above its H1");
@@ -515,7 +515,7 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
   const html = (await served("/services", "text/html")).body;
   const sec = md.slice(md.indexOf("\n## Choose a starting point\n"), md.indexOf("\n## ", md.indexOf("\n## Choose a starting point\n") + 4));
   const rows = [...sec.matchAll(/\n- \[([^\]]+)\]\(([^)]+)\)\. (\S+)\. /g)];
-  assert.equal(rows.length, 2, "two offers");
+  assert.equal(rows.length, 3, "three offers");
   for (const [, name, href, price] of rows) {
     assert.ok(html.includes('<span class="name"><a href="' + href + '">' + esc(name) + '</a>.</span> <span class="price">' + esc(price) + ".</span></span>"), href);
   }

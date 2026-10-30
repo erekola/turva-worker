@@ -123,10 +123,11 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
 
 // Tek-564 moved the card to MCP 1.6.15 and the 2026-10-05 measurement day to MCP 1.6.16 (both version fields, same length) and site 3.209.2 to MCP 1.6.17 and site 3.209.3 to MCP 1.6.18 and site 3.210.1 to MCP 1.6.19 and the 2026-10-21 measurement day to MCP 1.6.20 (same length again) and site 3.213.0 to MCP 1.6.21 with the narrower VAT note and the Tek-679 durationFrom and firstMonthOptOut fields (4621 bytes) and site 3.213.3 to MCP 1.6.22 and site 3.213.8 to MCP 1.6.23 (same length both times), so the pinned
 // digest is that card's; the signature lives in SIGNATURES_JSON, outside these bytes.
+// Tek-716: the card moved to MCP 1.6.24 and carries the domain-check pricing key and the external domain check in its name lists.
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
-  assert.equal(b.length, 4621);
-  assert.equal(await sha256Hex(b), "e707059693fffbe35ee5e3174250ba63836bb333b3d0fc46fc91d9f3ca9f1419");
+  assert.equal(b.length, 4829);
+  assert.equal(await sha256Hex(b), "d453d4da06a7990f54276eee75a5f2a1fd55d13de91f0fc9163c9a86a0fee57b");
 });
 
 // ---------------------------------------------------------------- PGP v6 key
@@ -242,7 +243,7 @@ test("page text: services reply promise, validator implementation sentence, lega
   assert.ok(validator.includes("If you want the findings fixed, [implementation](/services#implementation) is sold with the audit."));
   const legal = await (await get("/legal.md")).text();
   assert.ok(legal.includes("You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows."));
-  assert.ok(legal.includes("**Terms last updated:** 2026-10-03"));
+  assert.ok(legal.includes("**Terms last updated:** 2026-10-29"));
   const audit = await (await get("/samples/audit-report.md")).text();
   assert.ok(audit.includes("This page itself was last revised on 3 October 2026."));
   assert.ok(audit.includes("today each page weighs between 188 kB and 340 kB of markup"));

@@ -276,7 +276,7 @@ test("K2-1: the services skill no longer lumps agent operations and MCP server d
   assert.equal(res.status, 200);
   const md = await res.text();
   assert.ok(
-    md.includes("agent operations and MCP server design are quoted on request"),
+    md.includes("Agent operations and MCP server design are quoted on request"),
     "the skill must name the two quoted-on-request services"
   );
   assert.ok(!md.includes("the last two are quoted on request"), "the old vague phrasing must be gone");

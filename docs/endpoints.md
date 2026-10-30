@@ -56,6 +56,8 @@ The public routes this Worker serves, copied from the repository README so the R
 | `/markdown-parity-check` | Main-content comparison of this site's pages with the markdown-parity-check package (HTML form, JSON POST for agents); `/markdown-parity-check.js` adds the busy state and the JSON copy and save, and the form works without it |
 | `/badge` and `/badge.svg` | Agent-ready badge criteria and embeddable SVG |
 | `/samples/audit-report`, `/samples/shopify-agent-storefront-check` | Public synthetic sample reports for the two fixed-scope diagnoses, invented sites, markdown twins at `.md` |
+| `/external-domain-check` | Product page of the external domain check, ordered by email, markdown twin at `.md` |
+| `/samples/external-domain-check` | Public sample report of the external domain check, made from turva.dev's own domain with real readings, markdown twin at `.md` |
 | `/agent-readiness-audit` | Product page of the website and API audit (the guide at `/guides/agent-readiness-audit` stays a guide), markdown twin at `.md` |
 | `/blog-filter.js` | Same-origin script for the blog index search and kind filter, allowed by `script-src 'self'`; the index lists every post without it |
 | `/nav.js` | Same-origin script that closes the mobile menu on Escape and when focus leaves it, allowed by `script-src 'self'`; the menu opens and closes without it |

@@ -1096,7 +1096,7 @@ test("R16 S4-1: no live brief address and no prospect name sits in the source", 
 // derives the expectation from the same sources a reader would use: the /guides twin for the
 // guide order and the posts' dates for the blog, with the primary pages written out.
 test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guides in /guides order, blog newest first", async () => {
-  const primary = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
+  const primary = ["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
   const guidesMd = await (await get("/guides.md")).text();
   const guides = [...guidesMd.matchAll(/\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g)].map((m) => m[1]);
   assert.ok(guides.length >= 20, "the /guides twin lists the guides");
@@ -1110,7 +1110,7 @@ test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guid
 
   const xml = await (await get("/sitemap.xml")).text();
   const sm = [...xml.matchAll(/<loc>https:\/\/turva\.dev(\/[^<]*)?<\/loc>/g)].map((m) => m[1] || "/");
-  const samples = ["/samples/audit-report", "/samples/shopify-agent-storefront-check"]; // AUX_PATHS after /auth.md since v3.122.0 (Tek-342)
+  const samples = ["/samples/audit-report", "/samples/shopify-agent-storefront-check", "/samples/external-domain-check"]; // AUX_PATHS after /auth.md since v3.122.0 (Tek-342)
   assert.deepEqual(sm, [...primary, "/badge", "/auth.md", ...samples, "/guides", ...guides, "/blog", ...blog], "sitemap.xml order");
 
   const full = await (await get("/llms-full.txt")).text();
@@ -1118,9 +1118,10 @@ test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guid
   assert.deepEqual(sources, [...primary, "/badge", ...samples, "/guides", ...guides, "/blog", ...blog, "/auth.md"], "llms-full.txt order");
   assert.ok(full.indexOf("Source: https://turva.dev/\n") < full.indexOf("Source: https://turva.dev/blog"), "the home page comes before the blog");
 
-  // The services, shopify first, the same in every home that lists them.
+  // The services, domain-check first (Tek-716), then shopify, the same in every home that lists them.
   const priced = facts.services.filter((s: { priceKey: string | null; id: string }) => s.priceKey).map((s: { priceKey: string; id: string }) => s.id);
-  assert.equal(priced[0], "shopify");
+  assert.equal(priced[0], "domain-check");
+  assert.equal(priced[1], "shopify");
   const acp = JSON.parse(await (await get("/api/acp")).text());
   assert.deepEqual(acp.items, priced, "ACP index items");
   const skills = JSON.parse(await (await get("/.well-known/agent-skills/index.json")).text()).skills.map((s: { name: string }) => s.name);
@@ -1203,6 +1204,25 @@ test("F10: ACP checkout complete answers 422, matching the OpenAPI document", as
   const responses = spec.paths["/api/acp/checkout_sessions/{session_id}/complete"].post.responses;
   assert.ok(responses["422"], "the OpenAPI document declares the 422 response");
   assert.ok(!responses["200"], "the OpenAPI document no longer declares a misleading 200");
+});
+
+test("F14: the ACP complete answer for the domain check promises a payment link, not an invoice", async () => {
+  const create = await worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body: '{"items":[{"id":"domain-check"}]}' }), env, {});
+  assert.equal(create.status, 201);
+  const session = await json(create);
+  assert.equal(session.line_items[0].item.id, "domain-check");
+  assert.equal(session.line_items[0].total, 9900);
+  const read = await worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions/" + session.id), env, {});
+  assert.equal(read.status, 200);
+  const complete = await worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions/" + session.id + "/complete", { method: "POST" }), env, {});
+  assert.equal(complete.status, 422);
+  const body = await json(complete);
+  assert.equal(body.code, "intervention_required");
+  assert.ok(body.message.includes("then turva.dev sends a one-time payment link for that order."), body.message);
+  assert.ok(!/invoice/i.test(body.message), "no invoice wording for this service");
+  const audit = await json(await worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body: '{"items":[{"id":"audit"}]}' }), env, {}));
+  const auditComplete = await json(await worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions/" + audit.id + "/complete", { method: "POST" }), env, {}));
+  assert.ok(auditComplete.message.includes("then turva invoices directly."), "the other services keep their message");
 });
 
 // The hosted validator and the npm package are one implementation in two files and they

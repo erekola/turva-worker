@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.0 - new service page /external-domain-check for the external domain check at 99 euros plus VAT, ordered by email, with its sample report /samples/external-domain-check made from turva.dev's own domain with real readings (Tek-716); the home page shows three offer cards with the domain check first; /legal, /company, /contact and /services carry the new service, its payment exception, its refund rule and its order terms date, and the new price is on every catalog surface (the JSON-LD offers, HOME_JSON, ACP, the agent manifests, llms.txt, the MCP card at MCP 1.6.24 and the WebMCP script with its CSP hash).
 // turva.dev worker v3.214.6 - the post TLA+ on my own tools, in numbers reports the pair test of 28 October, in which 26 confirmed review claims each got one changed fact and none of the 26 was refuted, and its sentence on what the reviews show no longer says that the readers described the code correctly in 118 claims, with an Updated note, and the post Three outside reviews of my TLA+ models no longer says that a confirmed claim shows the reviewer described the code correctly or that no review claim was wrong outright, with an Updated note too. No signed surface changes bytes.
 // turva.dev worker v3.214.5 - design fixes from an Impeccable 4.8.0 scan (2026-10-27, CSS only): .rc-foot, .board-src and .price-line .terms are 13px and .terms is no longer uppercase or tracked; .eyebrow keeps its mono face at .875rem without tracked caps; h3 gets text-wrap:balance with h1 and h2.
 // turva.dev worker v3.214.4 - fixes from the outside review of 2026-10-07, logic session S2 (Tek-578): the markdown renderer keeps blank lines inside indented code, keeps backslash escapes in inline code, gives every heading line its own block and never reuses a heading id; the mta-sts and openpgpkey hosts answer other methods with 405 and OPTIONS with 204; markdown twins keep their agent policy and CORS on 429, on the www redirect and on OPTIONS; an unreadable parity request body is a 400 with no-store; WebMCP search_content matches link titles only; the mobile menu also closes when focus falls to nothing while the page keeps focus. SITEMAP_LASTMOD moves to the day the page text changed.
@@ -190,7 +191,7 @@ max_age: 604800
 
 const CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-OhOQnkdnbTzQdOHjmwm7kuBySn4whVlJ8QKBfK7Q8Og='",
+  "script-src 'self' 'sha256-v9jnrtkhkHv5fCdPTsA1yt6nOZgsKQLN/deXLArCfjw='",
   "style-src 'self' 'unsafe-inline' data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -263,6 +264,7 @@ const LLMS_TXT = `# turva.dev
 
 ## Services
 - [Services](https://turva.dev/services.md)
+- [External domain check](https://turva.dev/external-domain-check.md)
 - [Website and API agent-readiness audit](https://turva.dev/agent-readiness-audit.md)
 - [Shopify agent storefront check](https://turva.dev/shopify-agent-storefront-check.md)
 - [Free tools for agent-readiness](https://turva.dev/tools.md)
@@ -274,6 +276,7 @@ const LLMS_TXT = `# turva.dev
 - [The agent-ready badge](https://turva.dev/badge.md)
 
 ## Pricing (EUR, VAT not included)
+- External domain check: €99 (fixed scope, within two business days of confirmed payment)
 - Shopify agent storefront check: €999 (fixed scope, within 48 hours of the agreed written kickoff)
 - Audit: €4,300 (fixed scope, within two weeks of the agreed written kickoff)
 - Advisory: €3,000 / month (monthly retainer, three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged)
@@ -283,9 +286,11 @@ const LLMS_TXT = `# turva.dev
 
 Final price is confirmed in writing after scope is agreed.
 
-## Sample reports (synthetic, invented sites)
+## Sample reports
+Two samples use synthetic, invented sites and one uses a real domain.
 - [Sample audit report](https://turva.dev/samples/audit-report.md)
 - [Sample Shopify agent storefront check report](https://turva.dev/samples/shopify-agent-storefront-check.md)
+- [Sample external domain check report](https://turva.dev/samples/external-domain-check.md)
 
 ## Business details
 - Name: turva.dev
@@ -4851,6 +4856,107 @@ A real report includes timestamped tool calls and the merchant's redacted settin
 The check is described on its [product page](/shopify-agent-storefront-check). To start one, email [info@turva.dev](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A) with the storefront URL, the .myshopify.com domain, the primary market and up to three priority products. The agent-readiness audit has its own [sample report](/samples/audit-report).
 `,
 
+  "/samples/external-domain-check": `Example report, real readings
+
+# A sample external domain check of turva.dev
+
+This is turva.dev's own domain, checked the way a client's domain is checked. The readings are real, and each one carries its own measurement date. A client report has the same six parts. A Finnish client gets it in Finnish, addressed formally.
+
+Report date: 29 October 2026, the day of every reading below. This page was made on the same day.
+
+On these readings there is little to fix. Two optional fixes are listed, both marked low. Findings that belong to the platform or to the email provider are named as theirs and are not handed to the owner as fixes.
+
+[View the check and its scope](/external-domain-check) [Run the public tests yourself](#links)
+
+## Contents
+
+- [Limits](#limits)
+- [Agent-readiness](#agent-readiness)
+- [Observations](#observations)
+- [Fixes](#fixes)
+- [Next step](#next-step)
+- [Links](#links)
+
+## Limits
+
+The check does not tell you how secure your company is. From outside I cannot see passwords, backups, staff computers or how staff handle phishing. SPF, DKIM and DMARC only show whether someone can send mail in the domain's name.
+
+- Scope: the domain turva.dev, its www form, its email settings and its mta-sts subdomain. Other subdomains were not part of this check.
+- My own requests: six GET requests from the published list, of the seven allowed. The spare request was not used. I ran no port scan, no login and no form.
+- Cookies: I see only cookies that the home page response sets, not cookies that JavaScript sets.
+- The two public tools, isitagentready.com and internet.nl, make their own requests from their own servers. Their scope is their own.
+- Platform settings: the server header reads cloudflare, so the TLS and HTTP compression findings appear to be settings of the Cloudflare edge that serves the site.
+- Email provider settings: the domain's mail goes to Proton's servers, so the mail server findings describe Proton's servers.
+- A missing reading is never counted as a pass, and a missing header or a recommendation is an observation, not a confirmed vulnerability.
+
+## Agent-readiness
+
+I ran the isitagentready.com scanner twice on 2026-10-29, with the default profile, against https://turva.dev. Both runs gave Level 5 of 5, Agent-Native. Every scored check passed in both runs, and the two runs agreed on every check.
+
+The scanner tool returned the level and the result of each check, but no numeric score, so I print none. 23 checks ran, 21 of them scored and 2 informational.
+
+| Category | Result | Checks run |
+| --- | --- | --- |
+| Discoverability | 4 of 4 passed | robotsTxt, sitemap, linkHeaders, dnsAid |
+| Content Accessibility | 1 of 1 passed | markdownNegotiation |
+| Bot Access Control | 2 of 2 passed | robotsTxtAiRules, contentSignals |
+| API, Auth, MCP & A2A Discovery | 9 of 9 passed | apiCatalog, oauthDiscovery, oauthProtectedResource, authMd, mcpServerCard, a2aAgentCard, agentSkills, webMcp, ard |
+| Commerce | 5 of 5 passed | x402, mpp, ucp, acp, ap2 |
+
+Two informational checks are not scored. webBotAuth reported that the Web Bot Auth directory was not found. personalAgentProtocol reported that the Personal Agent Protocol manifest was not found. Neither counts towards the level.
+
+No scored check failed, so the report lists no gap.
+
+## Observations
+
+Every row is an observation. The mark compares the benefit of a fix with the work. It is not an estimate of how secure the company is. Own readings are made by my requests and DNS lookups, and no public test exists for them.
+
+| Measured | Source and date | Reading | What it means | Mark |
+| --- | --- | --- | --- | --- |
+| Home page | Own reading, 2026-10-29 | https://turva.dev/ answered 200. | The page loads over HTTPS from the bare domain. | low |
+| www form | Own reading, 2026-10-29 | https://www.turva.dev/ answered 301 with the Location https://turva.dev/. I did not follow it. | The www address sends visitors to the bare domain. | low |
+| robots.txt, sitemap.xml and llms.txt | Own reading, 2026-10-29 | Each answered 200 on turva.dev. | The three files exist at their standard locations. | low |
+| MTA-STS policy | Own reading, 2026-10-29 | https://mta-sts.turva.dev/.well-known/mta-sts.txt answered 200: version STSv1, mode enforce, mx mail.protonmail.ch, mx mailsec.protonmail.ch, max_age 604800. | Sending servers that honour MTA-STS are told to require TLS to these two mail hosts, the same two that internet.nl found. | low |
+| MTA-STS and TLS-RPT records | Own reading, 2026-10-29 | \`_mta-sts.turva.dev\` TXT: \`v=STSv1; id=20260910202321\`. \`_smtp._tls.turva.dev\` TXT: \`v=TLSRPTv1; rua=mailto:info@turva.dev\`. | The policy is announced, and reports about failed mail TLS connections go to a role address at the domain. | low |
+| CAA records | Own reading, 2026-10-29 | 13 records. \`0 iodef "mailto:info@turva.dev"\`, and both issue and issuewild for comodoca.com, digicert.com, letsencrypt.org, pki.goog, sectigo.com and ssl.com. | Only these six authorities may issue certificates for the domain, and internet.nl also passed CAA. | low |
+| Versions and third parties | Own reading, 2026-10-29 | Header server: cloudflare. No generator meta tag, no third-party script hosts, and no cookies set by the home page response. | No software version number shows in the headers, and the home page loads no script from another host. | low |
+| IPv6, DNSSEC and RPKI, website | internet.nl website test, 2026-10-29 20:44 UTC | Passed for the name servers and the web server. | These three settings need no work. | low |
+| HTTPS basics | internet.nl website test, 2026-10-29 20:44 UTC | HTTPS available, HTTPS redirect, HSTS, TLS version, cipher suites, cipher suite order and trust chain all passed. | The basics of HTTPS are in place. | low |
+| Hash function for key exchange | internet.nl website test, 2026-10-29 20:44 UTC | Failed on two addresses, 104.26.1.140 and 2606:4700:20::ac43:48d4, both among the addresses turva.dev resolves to: SHA1. This is the only failed HTTPS subtest. | The test calls a hash function the server supports for key exchange insufficiently secure, and it appears to be a setting of the Cloudflare edge rather than of the site's own files. | low |
+| HTTP compression | internet.nl website test, 2026-10-29 20:44 UTC | Information, not a failure: the web server supports HTTP compression. | The test notes that it could be a security risk, and it appears to be a Cloudflare edge setting. | low |
+| Security headers | internet.nl website test, 2026-10-29 20:44 UTC | X-Frame-Options and X-Content-Type-Options passed, and so did Referrer-Policy set to no-referrer. | These headers are in place. | low |
+| Content-Security-Policy | internet.nl website test, 2026-10-29 20:44 UTC | Recommendation. style-src contains 'unsafe-inline', and connect-src, img-src and media-src use the bare https: scheme. | The test recommends against 'unsafe-inline', which turva.dev keeps on purpose, and flags the bare scheme, which a small narrowing removes. | low |
+| security.txt | internet.nl website test, 2026-10-29 20:44 UTC | Information: the file is in the right location and its syntax is valid. Recommendation: sign it digitally. | Whoever finds a problem can see where to report it, and a signature is a small addition. | low |
+| Not testable | internet.nl website test, 2026-10-29 20:44 UTC | OCSP stapling: the certificate has no OCSP pointer. DANE validity: no TLSA record exists. | The test could not read these, and I do not count them as passes. | no reading |
+| IPv6 on the mail servers | internet.nl email test, 2026-10-29 20:44 UTC | Failed. mail.protonmail.ch and mailsec.protonmail.ch each have IPv4 addresses and no IPv6 address. IPv6 reachability was not testable. | The two receiving mail servers are Proton's, named by the domain's MX records, so this is a provider setting. | low |
+| Mail server certificate key | internet.nl email test, 2026-10-29 20:44 UTC | Recommendation. Both servers use RSA 2048, which the test says should be phased out. | The certificates are Proton's, so this is a provider setting. | low |
+| Email authentication and transport | internet.nl email test, 2026-10-29 20:44 UTC | Passed: DNSSEC for the domain and the MX records, and DANE, RPKI and CAA for the mail server. The test calls the SPF policy sufficiently strict. DKIM exists, DMARC exists with a policy and STARTTLS is available. | SPF, DKIM and DMARC show whether someone can send mail in the domain's name, nothing more, and the DANE, RPKI and CAA results are for Proton's mail servers. | low |
+
+internet.nl scored the website test 98 % and the email test 90 % on 2026-10-29. Those are the test's own summary figures. They are not a rating of the company.
+
+## Fixes
+
+There is little to fix on these readings, and I do not add more to fill the list. Two optional fixes follow in the order to make them, both marked low.
+
+- Sign the security.txt file. Ask whoever maintains the site to add a digital signature to it, as internet.nl recommends. Mark: low.
+- Narrow the bare https: scheme in the Content-Security-Policy. After checking what the pages load, ask the maintainer to replace it in connect-src, img-src and media-src with the specific hosts that are needed. Mark: low.
+
+The style-src 'unsafe-inline' recommendation is not on the list, because turva.dev keeps it on purpose. Inline styles are used throughout the pages and are not a meaningful route for script injection here, so removing it would cost more work than it returns.
+
+Three more findings are not on the list because they are not the owner's to change. The SHA1 hash for key exchange and HTTP compression appear to be Cloudflare edge settings. The two email findings concern Proton's mail servers. I did not check whether a Cloudflare plan setting can change the SHA1 finding.
+
+## Next step
+
+On these readings no follow-up is needed now.
+
+## Links
+
+- [internet.nl website test result for turva.dev](https://internet.nl/site/turva.dev/4380321/), 2026-10-29 20:44 UTC. Running the test again creates a new result.
+- [internet.nl email test result for turva.dev](https://internet.nl/mail/turva.dev/2077240/), 2026-10-29 20:44 UTC.
+- [isitagentready.com](https://isitagentready.com/), where anyone can run the scanner on a domain.
+- My own readings are marked in the Observations table, and no public test exists for them.
+`,
+
   "/guides/agent-commerce-discovery": `# Agent commerce discovery: A2A, AP2, ACP and UCP
 
 Commerce discovery describes the interfaces and payment-related capabilities a service supports. This guide separates the named protocols and the versions used in each example.
@@ -4943,9 +5049,11 @@ A UCP profile at /.well-known/ucp names the merchant and the services it offers,
 
 I'm Erik. I compare what your web page, its structured data and your API say about the same product, because an AI assistant may read any of the three and get a different answer from each. I also record what selected assistants say about your product. You get a written report of what I found and what to fix first, with a way to check each change.
 
-For a Shopify store, start with the €999 [Shopify agent storefront check](/shopify-agent-storefront-check). It covers up to three products and is delivered within 48 hours of the agreed written kickoff.
+To start small, order the €99 external domain check. It covers the domain only. I read it from outside with public tools and a short published list of my own requests, then send up to three fixes in the order to make them. For a Shopify store, the €999 [Shopify agent storefront check](/shopify-agent-storefront-check) covers up to three products and is delivered within 48 hours of the agreed written kickoff.
 
-[Request an audit](/contact) [Read a sample report](/samples/audit-report)
+[Order the €99 check](/external-domain-check) [Request an audit](/contact)
+
+The domain check costs €99 plus VAT and is delivered within two business days of confirmed payment. If your company orders a Shopify agent storefront check or an audit for the same domain within 60 days of delivery, the €99 is deducted from that order, once per company.
 
 We work in writing. I reply within one business day. [Scope and pricing](/services).
 
@@ -4971,16 +5079,17 @@ This example uses an invented business and invented readings. The sample's scann
 
 ## Choose the check you need
 
+- [External domain check](/external-domain-check). €99. What does your domain show from outside? I read one domain with two public tools, isitagentready.com and internet.nl, and a short published list of my own requests. You get the domain's agent-readiness reading, or the reason none could be taken. The report also lists the website and email settings visible from outside and up to three fixes in the order to make them. The check does not tell you how secure your company is. The €99 is deducted from a Shopify agent storefront check or an audit for the same domain ordered within 60 days of delivery, once per company. Delivered within two business days of confirmed payment.
 - [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package, or of the delivered corrections when the correction add-on is bought.
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 
-Prices exclude VAT. Both can be bought on their own. Prices are valid until 2026-12-31.
+Prices exclude VAT. All three can be bought on their own. Prices are valid until 2026-12-31.
 
 Implementation, ongoing advisory, agent operations and MCP server design are scoped separately. [All services and prices](/services).
 
 ## See what the work looks like
 
-Sample reports. See how I explain a finding, show the evidence and describe the fix. Both reports use fictional businesses, and there are no named client references yet. [Sample audit report](/samples/audit-report) and [sample Shopify report](/samples/shopify-agent-storefront-check).
+Sample reports. See how I explain a finding, show the evidence and describe the fix. The audit and Shopify reports use fictional businesses, and there are no named client references yet. [Sample audit report](/samples/audit-report) and [sample Shopify report](/samples/shopify-agent-storefront-check). The [sample domain check report](/samples/external-domain-check) uses turva.dev's own domain with real readings.
 
 Research. Read what I measured across company websites and AI assistants. Each study includes its methods, dates and limits. These are research observations, not client results. [Website agent-readiness study](/blog/website-agent-readiness-567-sites), [What AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit) and [Thirty days after the brief](/blog/thirty-days-after-the-brief).
 
@@ -5090,7 +5199,7 @@ document, at a fraction of the token cost of the HTML.
 
   "/services": `# Services and pricing
 
-Start with the question you need answered. I can check a Shopify store, audit a website or API, help implement the findings, or support your team over time.
+Start with the question you need answered. I can check a domain from outside, check a Shopify store, audit a website or API, help implement the findings, or support your team over time.
 
 You work directly with me, in writing. I reply within one business day. All prices exclude VAT.
 
@@ -5098,10 +5207,19 @@ You work directly with me, in writing. I reply within one business day. All pric
 
 ## Choose a starting point
 
+- [External domain check](/external-domain-check). €99. What does your domain show from outside? I read one domain with two public tools and a short published list of my own requests. You get the domain's agent-readiness reading, or the reason none could be taken, the website and email settings visible from outside and up to three fixes in the order to make them. The €99 is deducted from a Shopify check or an audit for the same domain ordered within 60 days of delivery, once per company. Delivered within two business days of confirmed payment.
 - [Shopify agent storefront check](/shopify-agent-storefront-check). €999. Do your selected products show the same price and availability across the shopping interfaces your store exposes? I check one store, one market and up to three named product and variant pairs. Delivered as one package of four written deliverables within 48 hours of the agreed written kickoff. One retest of up to two corrected items follows within 14 days of that first package, or of the delivered corrections when the correction add-on is bought.
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 
-See the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check) before choosing a service.
+See the [sample audit report](/samples/audit-report) and the [sample Shopify report](/samples/shopify-agent-storefront-check) before choosing a service. The [sample domain check report](/samples/external-domain-check) shows the entry check.
+
+## External domain check
+
+**€99. Two business days. One domain. Price valid until 2026-12-31.**
+
+What one domain shows from outside, read with two public tools and a short published list of my own requests. The report covers the agent-readiness reading, or the reason none could be taken, the website and email settings visible from outside and up to three fixes in the order to make them. It does not tell you how secure your company is.
+
+The €99 is deducted from a Shopify check or an audit for the same domain ordered within 60 days of delivery, once per company. [Read the full scope, the list of my requests and the order steps](/external-domain-check).
 
 ## Shopify agent storefront check
 
@@ -5350,6 +5468,164 @@ Email [info@turva.dev](mailto:info@turva.dev) with the URL and your question. I'
 We work in writing. There are no calls or calendar links.
 
 [Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
+
+All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business customers in another EU member state with a valid VAT ID, no Finnish VAT for customers outside the EU, because the place of supply is outside Finland.
+`,
+
+  "/external-domain-check": `# External domain check
+
+What does your domain show from outside?
+
+I read one domain from outside with two public tools, isitagentready.com and internet.nl, and a short published list of my own requests. You get the domain's agent-readiness reading, or the reason none could be taken, and up to three fixes in the order to make them.
+
+€99 plus VAT. Price valid until 2026-12-31. One domain. Delivered within two business days of confirmed payment. If a main part has to be rerun, I send notice of that within the two business days instead, and the rerun follows within two business days of the notice.
+
+[Order the €99 check](mailto:info@turva.dev?subject=External%20domain%20check&body=Company%20name%3A%20%0ABusiness%20ID%20or%20equivalent%20register%20ID%3A%20%0AVAT%20ID%20if%20you%20have%20one%3A%20%0ABilling%20address%3A%20%0ADomain%3A%20%0AIs%20the%20store%20on%20Shopify%2C%20yes%20or%20no%3A%20%0AContact%20person%3A%20%0AContact%20email%20address%20at%20the%20domain%3A%20%0AWhere%20you%20heard%20about%20the%20check%2C%20optional%3A%20%0A%0AI%20accept%20the%20terms%20dated%202026-10-29%20at%20https%3A%2F%2Fturva.dev%2Flegal.) [Read the sample report](/samples/external-domain-check)
+
+## What the check covers
+
+It covers the domain only. One order covers one registrable domain, its www form, its email settings and its mta-sts subdomain. Other subdomains are not part of it.
+
+The check does not tell you how secure your company is. From outside I cannot see passwords, backups, staff computers or how staff handle phishing. SPF, DKIM and DMARC only show whether someone can send mail in the domain's name. The report says this on its first page.
+
+A missing header, a visible version number or a missing SameSite flag is an observation, not a confirmed vulnerability, and the report says so. A missing result is never counted as a pass.
+
+## Who it is for
+
+The check is sold only to businesses and other organisations acting in their trade or profession, as my other services are. It is not sold to consumers.
+
+I run it as a pilot aimed at owner-run Shopify stores that have their own domain and their email on it. Other companies can order too and get the same report.
+
+In a Shopify store, some TLS, header and IPv6 settings and some root files, such as /llms.txt, can be under the platform's control. The report then puts the weight on email and DNS settings and on the agent-readiness gaps the store can fix itself. It says which settings belong to the platform and does not hand them to you as fixes.
+
+## What the report contains
+
+- Limits. What cannot be seen from outside, what was not measured and which settings the platform or your email provider controls.
+- Agent-readiness. The score and level, or "no reading" with the reason, the measurement date, the list of checks run and up to three of the largest gaps.
+- Observations. A table of what I measured, what it means in one sentence and how much a fix matters for this site, marked high, medium or low, or "no reading". The mark compares the benefit of a fix with the work. It is not an estimate of how secure your company is.
+- Fixes. Up to three, in the order to make them, chosen from the readings and the observations together. Security findings are written as tasks you can give to whoever maintains your site now. If there is little or nothing important to fix, the report says so and does not invent more.
+- Next step. Either no further work is needed now, or one follow-up with the reason. For a Shopify store the follow-up is the Shopify agent storefront check, and for another company or a wider need it is the audit. If I propose one, the report says in one sentence what it does beyond this report and which finding it answers.
+- Links. The public tests you can run again yourself, isitagentready.com and internet.nl. My own readings are marked, and there is no public test for them.
+
+The report is in Finnish for a company with a Finnish Business ID, unless you ask for English, and in English for every other company. A Finnish report addresses you formally.
+
+## Price and delivery
+
+The check costs €99 plus VAT. VAT is added as on my other services, at 25,5% for a Finnish customer. A business customer in another EU member state with a valid VAT ID and a customer outside the EU pay €99 with no Finnish VAT.
+
+I deliver within two business days of confirmed payment. A business day is Monday to Friday in Finnish time, excluding Finnish public holidays. In those two days I send either the report or notice that a main part is rerun. The rerun is then done within two business days of the notice.
+
+Measurement starts when Stripe confirms the payment. That is the agreed start of this service. A re-measurement after you make the fixes is not included.
+
+If you find a deviation from this page in the report, tell me in writing within 14 calendar days of delivery. I correct it at no charge within 10 business days of your message.
+
+### The 60-day deduction
+
+The €99 is deducted from a Shopify agent storefront check or an audit for the same domain ordered within 60 days of delivery, once per company. The conditions are these.
+
+- The order comes from the same company, with the same Business ID or equivalent register ID, and covers the same registrable domain.
+- The 60 days run from the day I deliver the report to the day you send the follow-up order in writing.
+- The deduction comes off the price of the follow-up order before VAT, and VAT is calculated on the reduced amount.
+- It shows as its own line on the follow-up invoice with a reference to the first order. The invoice for the €99 is not changed.
+- A company gets it once. It is never paid out as money.
+- A Shopify agent storefront check qualifies only for a Shopify store, because that check covers only Shopify stores.
+- It is not given if the price of the €99 check was refunded. If the refund comes after the deduction was used, the deduction is charged back on the follow-up invoice.
+- If you cancel the follow-up order before delivery, the deduction becomes available again until the original 60 days end.
+- If I stop offering the check, the 60 days for checks already delivered stay valid.
+
+Across both orders you pay what the larger work costs on its own, €999 for the Shopify check or €4,300 for the audit, and you also have the report from the €99 check.
+
+## How to order
+
+The order is an email. There is no form, and everything happens in writing. The button above opens a draft with the fields below, or you can write the same details in a plain email to [info@turva.dev](mailto:info@turva.dev).
+
+- Send the order by email with the fields listed below.
+- I acknowledge it in writing within one business day. The acknowledgement repeats your details so you can correct them by replying before any payment link exists. It links the terms on the [legal page](/legal) and its Markdown copy, names their date and contains a one-time code.
+- You verify that you may order for the company. Reply from an address at the domain with the code and this statement: \`I confirm that I am authorised to order this check for <company>.\` Or add a DNS TXT record at \`_turva-verification.<domain>\` with the value the acknowledgement gives, and reply from your contact address with the same statement. Either way the reply confirms the address I deliver to.
+- I check a Finnish Business ID in YTJ, the Finnish Trade Register. I check a foreign register ID in that country's open register and the VAT ID in the EU's VIES service. If an ID cannot be found or a check fails, I ask you for more information, and the order lapses without charge if you do not answer within seven days. The order also lapses without charge if the verification has not succeeded within seven days of the order.
+- I send a payment link for this order alone. It covers one payment and is valid for 14 days. If no payment arrives in that time, the link is closed and the order lapses without charge.
+- If a payment confirms late, the order does not lapse until the payment has confirmed or failed, at most 14 days after the payment session completed. After that the order lapses without charge, and a payment confirmed later is refunded. If a payment fails, I send one new link, valid for seven days.
+- Measurement starts when Stripe confirms the payment. A payment success page alone does not start it, because some payment methods confirm late.
+
+I keep your order email and my acknowledgement, and I give you a copy on request for as long as I keep them. The [legal page](/legal) sets how long that is. No code of conduct applies to this service. The contract language is English.
+
+The order template has these fields:
+
+- Company name.
+- Business ID or equivalent register ID.
+- VAT ID, if you have one.
+- Billing address.
+- Domain.
+- Whether the store is on Shopify.
+- Contact person.
+- Contact email address at the domain.
+- Where you heard about the check, optional.
+
+Its last line is the acceptance of the terms, \`I accept the terms dated 2026-10-29 at https://turva.dev/legal.\`
+
+## What I request from your domain
+
+My own requests are a fixed list. I send at most seven GET requests per order, one after another and at least two seconds apart. Every attempt and every followed redirect counts toward the seven. The requests carry this User-Agent string:
+
+\`Mozilla/5.0 (compatible; turva.dev-domain-check/1.0; +https://turva.dev/external-domain-check; info@turva.dev)\`
+
+The requests are these:
+
+- The home page, \`https://<domain>/\`.
+- The www form, \`https://www.<domain>/\`, only if it is a different address and the home page did not already redirect there. I record its status as an observation.
+- The file \`/robots.txt\` on the measured host.
+- The file \`/sitemap.xml\` on the measured host.
+- The file \`/llms.txt\` on the measured host.
+- The MTA-STS policy, \`https://mta-sts.<domain>/.well-known/mta-sts.txt\`, only if the DNS name \`_mta-sts.<domain>\` has a TXT record. I never follow a redirect there, as RFC 8461 requires, and the result is then "no reading: redirect".
+- One spare request. It is either the target of the home page's first redirect, if that target is the domain or its www form and I have not requested it yet, or one retry after a timeout, a connection error or a 5xx answer. It is never both.
+
+The measured host is the domain, or its www form if the home page redirected there. I follow a redirect from the home page at most once. If the home page redirects anywhere else, I do not follow it, and the report only says where it went. A redirect from \`/robots.txt\`, \`/sitemap.xml\` or \`/llms.txt\` is recorded from its Location header and not followed. I make no request to any host other than the domain, its www form and the mta-sts subdomain, and I do not guess other paths. If the domain points to a private or local network address, I make no request to it, and the report says why.
+
+I also make DNS queries from a fixed list. They ask for the CAA records of \`<domain>\`, the TXT records of \`_mta-sts.<domain>\` and \`_smtp._tls.<domain>\`, the TXT record of \`_turva-verification.<domain>\` on the DNS route only, and the A and AAAA records of every host I send a request to. They go to Cloudflare's 1.1.1.1 public resolver over DNS over HTTPS. The resolver receives the names I query, and [Cloudflare's privacy page for it](https://developers.cloudflare.com/1.1.1.1/privacy/public-dns-resolver/) describes what it keeps.
+
+From the home page response I read the server and software versions in headers such as Server and X-Powered-By and in the generator meta tag, the hosts of third-party scripts, and the Secure, HttpOnly and SameSite flags of cookies. I do not store cookie values. I record each cookie's name with its flags. The value of each Set-Cookie header is removed before anything is saved. I see only cookies that the home page sets in its response, and in the response after the one redirect I follow, not cookies that JavaScript sets, and the report says so. For the report I keep selected response headers without cookie values, and the first 20,000 bytes of robots.txt, sitemap.xml, llms.txt and the MTA-STS policy. I do not keep the home page's HTML.
+
+## The two public tools
+
+The two tools make their own requests from their own servers. Their scope is their own and is not part of my list of seven.
+
+- isitagentready.com. I run its scanner twice with the default profile and record the date and the checks it ran, because its scope changes over time. Its public description does not say how it handles redirects. Its footer links [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/).
+- internet.nl. I run its website and email tests, which cover IPv6, DNSSEC, HTTPS and TLS, security headers, security.txt, RPKI, SPF, DKIM, DMARC, STARTTLS and DANE. I read security.txt only from this test and never request it myself. Its [privacy statement](https://internet.nl/privacy/) says it stores the tested domain names, shows them in the test report at a permanent link and can show them in its Hall of Fame. I cannot remove a stored result. The statement also names WHOIS lookups, Team Cymru and Sentry as services that can receive details of a test.
+- Mail servers. The email test of internet.nl checks secure connections to mail servers, and those can be your email provider's servers, for example Microsoft 365 or Google Workspace. The result describes your domain's mail setup, which includes your choice of provider. It is not a rating of the provider, and the report says which settings only the provider can change.
+
+By accepting the terms you accept that both tools receive your domain and that internet.nl stores and publishes its result as described. The terms on the [legal page](/legal) name both tools.
+
+## What the check does not do
+
+- I run no port scans.
+- No logins and no forms submitted.
+- No credentials and no reading of your application's source code. I read the public HTML of the home page only for the readings listed above.
+- I try no other paths than the ones listed above.
+- It is not a penetration test, an audit of your security, a certification or a statement of compliance.
+- It is not a NIS2 assessment. It does not decide whether the Finnish cybersecurity act applies to your company, and it does not claim to meet any legal duty.
+- It gives no security rating of your company.
+
+## If a reading is missing
+
+The main parts are the agent-readiness reading and the internet.nl website and email results.
+
+A finished measurement that ends in "no reading" with a reason is a valid result, and it is not grounds for a refund. Examples are a report that your site blocked the scanner, and two finished runs of the scanner that disagree where the difference cannot be settled. A report with nothing to fix is also a valid delivery.
+
+I refund the price only when a measurement could not be run at all. A run is done when the tool returns a report, even a report in which checks fail or categories are missing. It is not done when the tool returns no report, for any reason, or when I could not start it. In that case I tell you and rerun the part that stopped within two business days of the notice. A scanner run that stopped is rerun so that there are two finished runs. It is not a third run to settle a difference between finished runs.
+
+If the rerun also fails within that time, I send a partial report and a notice of the missing part by the last day of that period, and I refund the whole price, VAT included.
+
+The delay and continuity terms on the [legal page](/legal) apply to this service as well. If the report is late because of turva.dev, or I cannot work, you can cancel, and the price you paid is refunded. Every refund is paid within 14 days of the cancellation or of the deadline that triggers it, under those terms.
+
+## See a sample
+
+The [sample report](/samples/external-domain-check) is made from turva.dev's own domain with real readings, each with its own measurement date. It shows the six parts of a report.
+
+## Order the check
+
+Email [info@turva.dev](mailto:info@turva.dev) with the fields above, or use the button. I acknowledge the order within one business day. The order, the verification, the payment link and the report are all handled in writing, and no call is needed.
+
+[Order the €99 check](mailto:info@turva.dev?subject=External%20domain%20check&body=Company%20name%3A%20%0ABusiness%20ID%20or%20equivalent%20register%20ID%3A%20%0AVAT%20ID%20if%20you%20have%20one%3A%20%0ABilling%20address%3A%20%0ADomain%3A%20%0AIs%20the%20store%20on%20Shopify%2C%20yes%20or%20no%3A%20%0AContact%20person%3A%20%0AContact%20email%20address%20at%20the%20domain%3A%20%0AWhere%20you%20heard%20about%20the%20check%2C%20optional%3A%20%0A%0AI%20accept%20the%20terms%20dated%202026-10-29%20at%20https%3A%2F%2Fturva.dev%2Flegal.)
 
 All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business customers in another EU member state with a valid VAT ID, no Finnish VAT for customers outside the EU, because the place of supply is outside Finland.
 `,
@@ -5629,7 +5905,7 @@ The report records what I checked and what I observed, so your team can understa
 
 ## Invoicing
 
-Payment is due within fourteen days of the invoice date unless we agree otherwise in writing. The Shopify agent storefront check is the written exception: it is paid by bank transfer against an invoice before its agreed written kickoff, as its [service page](/shopify-agent-storefront-check) states.
+Payment is due within fourteen days of the invoice date unless we agree otherwise in writing. The Shopify agent storefront check and the external domain check are the written exceptions. The Shopify check is paid by bank transfer against an invoice before its agreed written kickoff, as its [service page](/shopify-agent-storefront-check) states. A payment link for that order alone pays the domain check, which I send after confirming the written order and verifying the domain, as its [service page](/external-domain-check) states.
 
 VAT is added according to Finnish law. Reverse charge applies to business customers in another EU member state with a valid VAT ID. Customers outside the EU are invoiced without Finnish VAT, because the place of supply is outside Finland. turva.dev's own VAT ID is FI36002817.
 
@@ -5658,6 +5934,12 @@ Include your storefront URL, .myshopify.com domain, primary market and up to thr
 
 [Ask about a Shopify check](mailto:info@turva.dev?subject=Shopify%20agent%20storefront%20check&body=Storefront%20URL%3A%20%0A.myshopify.com%20domain%3A%20%0APrimary%20market%3A%20%0AUp%20to%20three%20priority%20products%3A%20%0A)
 
+## External domain check
+
+Order the €99 check of one domain. The draft lists the order fields and ends with the line that accepts the terms. Add your company details, the domain and a contact address at the domain.
+
+[Order the €99 check](mailto:info@turva.dev?subject=External%20domain%20check&body=Company%20name%3A%20%0ABusiness%20ID%20or%20equivalent%20register%20ID%3A%20%0AVAT%20ID%20if%20you%20have%20one%3A%20%0ABilling%20address%3A%20%0ADomain%3A%20%0AIs%20the%20store%20on%20Shopify%2C%20yes%20or%20no%3A%20%0AContact%20person%3A%20%0AContact%20email%20address%20at%20the%20domain%3A%20%0AWhere%20you%20heard%20about%20the%20check%2C%20optional%3A%20%0A%0AI%20accept%20the%20terms%20dated%202026-10-29%20at%20https%3A%2F%2Fturva.dev%2Flegal.)
+
 ## Or write your own message
 
 Email [info@turva.dev](mailto:info@turva.dev). Existing scanner results are welcome, but you do not need them to get started.
@@ -5681,7 +5963,7 @@ Signal encrypts messages end to end. Scanning the code opens my contact in Signa
 - LinkedIn: no set reply time
 - Weekends: no guaranteed response time
 
-You can write in English or Finnish. Reports are in English unless we agree on Finnish in the written scope. An unrequested brief is written in the language of the company it is about.
+You can write in English or Finnish. Reports are in English unless we agree on Finnish in the written scope. The external domain check report is in Finnish for a company with a Finnish Business ID, unless you ask for English, as its service page states. An unrequested brief is written in the language of the company it is about.
 
 ## Confidential material
 
@@ -5738,17 +6020,17 @@ Contact: [info@turva.dev](mailto:info@turva.dev)
 
 ## Engagement terms
 
-These terms apply to Shopify checks, audits, advisory, implementation, agent operations and MCP server design unless a written agreement replaces them. The services are sold only to businesses and other organisations acting in their trade or profession, not to consumers.
+These terms apply to external domain checks, Shopify checks, audits, advisory, implementation, agent operations and MCP server design unless a written agreement replaces them. The services are sold only to businesses and other organisations acting in their trade or profession, not to consumers.
 
 **Scope.** We agree the scope in writing before work starts. Changes need a new written agreement and may affect the price and schedule.
 
 **Business days.** A business day means Finland's business days, Monday to Friday, excluding Finnish public holidays, in Europe/Helsinki time.
 
-**Deliverables.** An audit produces a written report. The Shopify agent storefront check includes the five written deliverables listed on its [service page](/shopify-agent-storefront-check). Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a Shopify store, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it.
+**Deliverables.** An audit produces a written report. An external domain check produces one written report with the six parts listed on its [service page](/external-domain-check). The Shopify agent storefront check includes the five written deliverables listed on its [service page](/shopify-agent-storefront-check). Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a Shopify store, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it.
 
-**Payment.** Payment is due within fourteen days of the invoice date unless agreed otherwise in writing. The Shopify agent storefront check is paid by bank transfer against an invoice before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). Late-payment interest follows Finnish law.
+**Payment.** Payment is due within fourteen days of the invoice date unless agreed otherwise in writing. The Shopify agent storefront check is paid by bank transfer against an invoice before its agreed written kickoff, which is a written exception to this term and is stated on its [service page](/shopify-agent-storefront-check). The external domain check is a second written exception. Its price is paid through a payment link for that order alone, which turva.dev sends after it has confirmed the written order and verified the domain, and Stripe's confirmation of the payment is the agreed start of the check, as its [service page](/external-domain-check) states. An order that lapses before payment is not charged. Late-payment interest follows Finnish law.
 
-**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay or Continuity takes precedence over this share. A missed-deadline refund that a service page states, such as the refund of the Shopify check fee when its four-item package is not sent within 48 elapsed hours, applies in place of the charge for delivered parts. The Shopify check also refunds a third of its fee, €333, for each of its three interfaces that could not be checked, as its service page states, within fourteen days of the report that records it. The refunds for one check never add up to more than its fee. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
+**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or an implementation add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay or Continuity takes precedence over this share. A missed-deadline refund that a service page states, such as the refund of the Shopify check fee when its four-item package is not sent within 48 elapsed hours, applies in place of the charge for delivered parts. The Shopify check also refunds a third of its fee, €333, for each of its three interfaces that could not be checked, as its service page states, within fourteen days of the report that records it. The refunds for one check never add up to more than its fee. For a missing reading, an external domain check refunds its whole price, VAT included, only when a measurement could not be run at all and the rerun within two business days of the notice also fails, as its [service page](/external-domain-check) states. A finished measurement that ends in "no reading" with a reason is a valid result and is not refunded. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
 
 **Delay.** If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered, and it is not charged. A late advisory review is still delivered in full, and the delay is stated with it.
 
@@ -5766,15 +6048,15 @@ These terms apply to Shopify checks, audits, advisory, implementation, agent ope
 
 The site does not use analytics cookies, tracking pixels or third-party scripts. Cookies are described under Cookies below.
 
-**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, the site's rate limit and processing a client's own contact persons rest on legitimate interest. So does operating the llms.txt validator, which means fetching and checking the documents the user names. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
+**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, the site's rate limit and processing a client's own contact persons rest on legitimate interest. So does operating the llms.txt validator, which means fetching and checking the documents the user names. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. For an external domain check, the order, the verification code, the statement of authority, the date of the accepted terms and the discount record are processed to carry out the order, to show the agreement and to give the discount. They rest on the contract, or on legitimate interest when the contact person is not the contracting party. Two facts collected to evaluate the pilot, where the orderer came from and whether they had asked about a follow-up service before the check, rest on legitimate interest. They are kept until the pilot ends, which is when the 60-day follow-up of the last pilot order has ended, and after that only as counts without identifiers. The information that Article 13 of the GDPR requires for an order is on this page, which the acknowledgement of the order links. For personal data that reaches a report from public sources, Article 14 applies: the report masks names and personal contact details found in public results and shows only the role. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
 **Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to 31 days of both security analytics and security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within 16 weeks at most. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name, with new requests that do not pass on the headers of your request. Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when that site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers, and the validator sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. On 22 October 2026 turva.dev measured the two requests the validator made to one test site outside Cloudflare, one for /llms.txt and one for the home page, as the test site recorded them. Both carried the fixed address in CF-Connecting-IP. Neither carried X-Real-IP or X-Forwarded-For, although the validator sets X-Real-IP, and no header held the IP address of the person who ran the test. The connection came from a Cloudflare address.
 
 **International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. Anthropic's data processing addendum for the Anthropic API incorporates the EU Standard Contractual Clauses, Module Two or Module Three, for data transferred out of the EEA, including to Anthropic, PBC in the United States. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA, the validator builds its requests to send the fixed address in place of the visitor's IP address, and the measurement described in the Server logs paragraph above found no visitor address in the two requests it covered.
 
-**Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. A question sent by email, Signal or LinkedIn that does not lead to an engagement is deleted 24 months after the latest message.
+**Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. A question sent by email, Signal or LinkedIn that does not lead to an engagement is deleted 24 months after the latest message, except email of an external domain check order that lapses before payment, which is deleted within thirty days of the day it lapses.
 
-**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. For example, when the last deliverable arrives on 1 March and no retest is requested, the engagement closes on 30 May. The material is then deleted from the working systems by 29 June, about 120 days after delivery, and has left every backup by 19 October. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Backups made during the engagement keep a copy until their rotation replaces them. The file backups keep at most ten copies. Disk images of the workstation, which include the virtual machine's disk file, are kept for up to 14 weeks, plus up to 14 days in the snapshots of the storage that holds them. Every backup, version history included, is removed within 16 weeks. A backup is never restored for any other purpose. Deleted client material has left every backup within 16 weeks of its deletion at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them. Credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. For example, when the last deliverable arrives on 1 March and no retest is requested, the engagement closes on 30 May. The material is then deleted from the working systems by 29 June, about 120 days after delivery, and has left every backup by 19 October. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. An external domain check order that lapses before payment closes on the day it lapses, and its order data and its verification record, which includes the statement of authority, are deleted from the working systems within thirty days of that day. For a delivered external domain check, the verification record, the statement of authority, the accepted terms version and the discount record are kept for the same period as the order itself. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Backups made during the engagement keep a copy until their rotation replaces them. The file backups keep at most ten copies. Disk images of the workstation, which include the virtual machine's disk file, are kept for up to 14 weeks, plus up to 14 days in the snapshots of the storage that holds them. Every backup, version history included, is removed within 16 weeks. A backup is never restored for any other purpose. Deleted client material has left every backup within 16 weeks of its deletion at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them. Credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
 **Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
@@ -5786,7 +6068,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 The AI tool's record of each working session is kept both in the virtual machine and on the workstation. Within thirty days of the engagement closing, as the Client material paragraph sets out, the client's folder and its session records are deleted from the virtual machine, and the tool's shared prompt history there, which can also name the client, is deleted by hand. On the workstation, the delivered copy and the session records are deleted, the client's sessions are removed from the AI tool's list of past sessions by hand, and the restore point taken at kickoff is removed. Engagements do not overlap in the virtual machine by default. If they do, the restore point taken for the later engagement also holds the earlier client's folder, so that copy is removed only when the later engagement closes, which can be more than thirty days after the earlier one closed. Backups follow the rotation in the Client material paragraph. Deletion removes the files. It does not overwrite the freed disk space. The virtual machine's disk file sits on the workstation's own disk, and the disk images described in the Client material paragraph include it.
 
-No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic Ireland, Limited is the contracting party for the AI tool, and data can be transferred to Anthropic, PBC in the United States. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. A card payment made through a payment link is processed by Stripe. The audit's scanner, isitagentready.com, receives only the public address under test. A new provider is added to this list before it receives client material.
+No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic Ireland, Limited is the contracting party for the AI tool, and data can be transferred to Anthropic, PBC in the United States. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. A card payment made through a payment link is processed by Stripe. The audit's scanner, isitagentready.com, receives only the public address under test. For an external domain check, isitagentready.com and internet.nl both receive the domain under test, and turva.dev uses each as an ordinary user and not as a processor. The scanner's footer links [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/), and internet.nl has its own [privacy statement](https://internet.nl/privacy/). internet.nl stores the tested domain, shows the result at a permanent link and can list the domain in its Hall of Fame, and turva.dev cannot remove the stored result. Its email test checks secure connections to mail servers, which can be the email provider's servers. The Cloudflare 1.1.1.1 public DNS resolver receives the names that turva.dev queries, as its [privacy page](https://developers.cloudflare.com/1.1.1.1/privacy/public-dns-resolver/) describes. Looking up a Business ID in the Finnish Trade Register (YTJ), a foreign register ID in that country's open register or a VAT ID in the EU's VIES service sends that ID to the public register. A new provider is added to this list before it receives client material.
 
 ## Data rights
 
@@ -5806,8 +6088,8 @@ This site sets no cookies of its own. A check of the home page, this page and th
 
 This page is updated when the terms change. The current version applies to engagements started on or after the date below.
 
-- **Terms last updated:** 2026-10-03
-- **Privacy last updated:** 2026-10-26
+- **Terms last updated:** 2026-10-29
+- **Privacy last updated:** 2026-10-29
 `,
 
   "/guides/open-knowledge-format": `# Open Knowledge Format explained
@@ -6928,7 +7210,7 @@ Every finding in the report rests on one of three kinds of evidence. A technical
 
 A written report that lists each check, what was found, and a concrete fix for each gap it asks you to close, ordered by priority, and the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan after a fix shows whether a scored fix passed, and a manual-review fix is verified by a direct test.
 
-The two fixed-scope diagnoses on the [services page](/services) are the website and API audit at €4,300 within two weeks of the agreed written kickoff and the Shopify agent storefront check at €999 within 48 hours of the agreed written kickoff. Implementing a diagnosis's own complete fix list is a €499 add-on when it is bought with that diagnosis, with its report, or after the report and before implementation starts, and the required access is arranged in advance: collaborator access to the store for a Shopify check, and an edge runtime, deployment access and any other access the listed fixes need for an audit. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions.
+The two fixed-scope diagnoses on the [services page](/services) are the website and API audit at €4,300 within two weeks of the agreed written kickoff and the Shopify agent storefront check at €999 within 48 hours of the agreed written kickoff. Implementing a diagnosis's own complete fix list is a €499 add-on when it is bought with that diagnosis, with its report, or after the report and before implementation starts, and the required access is arranged in advance: collaborator access to the store for a Shopify check, and an edge runtime, deployment access and any other access the listed fixes need for an audit. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions. The services page also lists the external domain check at €99 plus VAT, which reads one domain from outside and is delivered within two business days of confirmed payment. The add-on is not sold with it.
 
 ## Follow-up checks
 
@@ -6942,7 +7224,7 @@ turva.dev provides independent agent-readiness audits and advisory for product t
 
 **What does an agent-readiness audit cost?**
 
-turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. The Shopify agent storefront check is a separate fixed-scope diagnosis at €999, delivered within 48 hours of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged, and implementation is €1,500 per day, scoped per task. Prices exclude VAT, and the scope is written before any payment.
+turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. The Shopify agent storefront check is a separate fixed-scope diagnosis at €999, delivered within 48 hours of the agreed written kickoff. The external domain check is an entry check of one domain read from outside, at €99, delivered within two business days of confirmed payment, and that amount is deducted from an audit or a Shopify check for the same domain ordered within 60 days of delivery, once per company. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged, and implementation is €1,500 per day, scoped per task. Prices exclude VAT, and the scope is written before any payment.
 
 **How long does an agent-readiness audit take?**
 
@@ -7266,8 +7548,8 @@ Facts stated as data rather than prose, and the same fact visible in more than o
 // reads all three against this order. Round 17 (2026-09-03) found the blog ahead of the home
 // page in llms-full.txt and the pricing on line 78 of llms.txt; the order lived in five hand
 // lists that had drifted apart. It lives here now.
-const PRIMARY_PATHS = ["/", "/services", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
-const AUX_PATHS = ["/badge", "/auth.md", "/samples/audit-report", "/samples/shopify-agent-storefront-check"];
+const PRIMARY_PATHS = ["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
+const AUX_PATHS = ["/badge", "/auth.md", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/samples/external-domain-check"];
 let _guideOrderCache: string[] | null = null;
 function guideOrder() {
   if (_guideOrderCache === null) {
@@ -7822,7 +8104,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.214.6",
+    "version": "3.215.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -7931,7 +8213,7 @@ const OPENAPI_SPEC = JSON.stringify({
     "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/ucp": { "get": { "summary": "UCP profile", "operationId": "getUcp", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/api/v1": { "get": { "summary": "Agent endpoint index", "operationId": "getApiIndex", "description": "Free JSON index of the main agent entrypoints, with links to the full catalogs. No payment, no authentication.", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
-    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id, quantity }] } with id one of audit, advisory, implementation, shopify (omit id for the default service, but id must not be null) and quantity, if present, exactly 1. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, an item id is null, an item quantity is present and not exactly 1, or an unknown item id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } }, "413": { "description": "body larger than 16384 bytes", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id, quantity }] } with id one of audit, advisory, implementation, shopify, domain-check (omit id for the default service, but id must not be null) and quantity, if present, exactly 1. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, an item id is null, an item quantity is present and not exactly 1, or an unknown item id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } }, "413": { "description": "body larger than 16384 bytes", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/api/acp/checkout_sessions/{session_id}": { "get": { "summary": "Retrieve an ACP checkout session", "operationId": "acpGetCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "session", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "GET only", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Scope is agreed in writing before payment; no API completes it. The response is 422 intervention_required, never 200.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "422": { "description": "intervention_required: human confirmation in writing is required before this session can complete", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/api/acp/checkout_sessions/{session_id}/cancel": { "post": { "summary": "Cancel an ACP checkout session", "operationId": "acpCancelCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "canceled", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } } } } }
@@ -7944,7 +8226,7 @@ const AGENT_JSON = JSON.stringify({
   "name_for_human": "turva.dev",
   "name_for_model": "turva_dev",
   "description_for_human": "Agent-readiness audits and advisory for product teams.",
-  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Async-only engagement. Pricing (EUR, VAT not included): Shopify agent storefront check €999 (fixed, within 48 hours of the agreed written kickoff), Audit €4,300 (fixed, within two weeks of the agreed written kickoff), Advisory €3,000/month (three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
+  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Async-only engagement. Pricing (EUR, VAT not included): External domain check €99 (fixed, within two business days of confirmed payment), Shopify agent storefront check €999 (fixed, within 48 hours of the agreed written kickoff), Audit €4,300 (fixed, within two weeks of the agreed written kickoff), Advisory €3,000/month (three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
   "contact_email": "info@turva.dev",
   "legal_info_url": "https://turva.dev/legal",
   "logo_url": "https://turva.dev/logo.png",
@@ -7954,7 +8236,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o_7KDZE_aBjcnapPwzufKjQGnZzKE0fdDZ6NizMJWMVvo6vl5aXx2VGvAwQQDp5rd6mG_n4eZcrXq02l8axvDw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"njldUZ7eBONvwCp9flJ5uHULGqsNiVCPn62tnl6ohkEje238uNwhIcgHYhL01dQ7fAouhN1Wy-_zl31TOkOxBQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"RdYjt_csX-DzfzIkmnyp0QxIXfYlnwIyHNbaEogI6FEOYDnjMHhKJTFGRTiNX6bNwFfzb3SBH0YqTaW9HFuWBA\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"tOWBKw5fTs3rKOKcqarYNdQ9lay0yv5yz-yIaTpMe9OaEPr75aIhEa4DZXyu4MbkzMzol56T8rZiLYq8tjxiBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"tOWBKw5fTs3rKOKcqarYNdQ9lay0yv5yz-yIaTpMe9OaEPr75aIhEa4DZXyu4MbkzMzol56T8rZiLYq8tjxiBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"EuKvuKAc_W9dhkvRqcwGa_rjc9rvMrSKbSlG9uyRhHVz-uZfI3RtB80GBpgUG2fCKs7VQ67z-S1uwKVgdBcbCw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"iydS7rjFiXt3YXyG0uu4ORdnXGriHG7LdLoihvGLOi2yHVvaAlGEKPY5Spufb70P_ncQGlYRbZt_fnnjNj76Ag\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -7969,7 +8251,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.6.23",
+  "version": "1.6.24",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -7978,8 +8260,8 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.6.23",
-    "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
+    "version": "1.6.24",
+    "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (external domain check, Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
     "type": "streamable-http",
@@ -7998,7 +8280,7 @@ const MCP_SERVER_CARD = JSON.stringify({
     "tools": { "listChanged": false }
   },
   "tools": [
-    { "name": "get_services", "description": "Service catalog (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
+    { "name": "get_services", "description": "Service catalog (external domain check, Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
     { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, measurement date, and a link to the scanner start page." },
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl site and mail), each with its scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." },
@@ -8019,6 +8301,7 @@ const MCP_SERVER_CARD = JSON.stringify({
     "pricing": {
       "currency": "EUR",
       "vatIncluded": false,
+      "domain-check": { "price": 99, "unit": "fixed", "duration": "2 business days", "durationFrom": "confirmed payment" },
       "shopify": { "price": 999, "unit": "fixed", "duration": "48 hours", "durationFrom": "agreed written kickoff" },
       "audit": { "price": 4300, "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff" },
       "advisory": { "price": 3000, "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged." },
@@ -8078,6 +8361,7 @@ const AP2_MANIFEST = JSON.stringify({
     "vat_included": false,
     "vat_note": "All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business customers in another EU member state with a valid VAT ID, no Finnish VAT for customers outside the EU, because the place of supply is outside Finland.",
     "items": [
+      { "name": "External domain check", "price": 99, "unit": "fixed", "duration": "2 business days", "duration_from": "confirmed payment" },
       { "name": "Shopify agent storefront check", "price": 999, "unit": "fixed", "duration": "48 hours", "duration_from": "agreed written kickoff" },
       { "name": "Audit", "price": 4300, "unit": "fixed", "duration": "2 weeks", "duration_from": "agreed written kickoff" },
       { "name": "Advisory", "price": 3000, "unit": "month", "minimum_commitment_months": 3, "first_month_opt_out": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged." },
@@ -8123,7 +8407,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.214.6",
+  "version": "3.215.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8171,7 +8455,7 @@ const A2A_AGENT_CARD = JSON.stringify({
     {
       "id": "services",
       "name": "Service catalog",
-      "description": "List the service offerings of turva.dev (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design). Fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation.",
+      "description": "List the service offerings of turva.dev (external domain check, Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design). Fixed prices in EUR for the external domain check, Shopify agent storefront check, audit, advisory and implementation.",
       "tags": [
         "services",
         "pricing",
@@ -8460,6 +8744,7 @@ const MPP_MANIFEST = JSON.stringify({
     "currency": "EUR",
     "vat_included": false,
     "items": [
+      { "name": "External domain check", "price": 99, "unit": "fixed", "duration": "2 business days", "duration_from": "confirmed payment" },
       { "name": "Shopify agent storefront check", "price": 999, "unit": "fixed", "duration": "48 hours", "duration_from": "agreed written kickoff" },
       { "name": "Audit", "price": 4300, "unit": "fixed", "duration": "2 weeks", "duration_from": "agreed written kickoff" },
       { "name": "Advisory", "price": 3000, "unit": "month", "minimum_commitment_months": 3, "first_month_opt_out": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged." },
@@ -8503,6 +8788,7 @@ const UCP_PROFILE = JSON.stringify({
       "currency": "EUR",
       "vat_included": false,
       "items": [
+        { "name": "External domain check", "price": 99, "unit": "fixed" },
         { "name": "Shopify agent storefront check", "price": 999, "unit": "fixed" },
         { "name": "Audit", "price": 4300, "unit": "fixed" },
         { "name": "Advisory", "price": 3000, "unit": "month", "minimum_commitment_months": 3, "first_month_opt_out": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged." },
@@ -8565,14 +8851,15 @@ Use this skill to retrieve official contact methods for turva.dev.
 
 const SKILL_SERVICES = `---
 name: services
-description: List the service offerings of turva.dev, with fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation.
+description: List the service offerings of turva.dev, with fixed prices in EUR for the external domain check, Shopify agent storefront check, audit, advisory and implementation.
 ---
 
 # services
 
 Use this skill to learn which services turva.dev offers, and which of them carry a fixed price.
 
-## Services (fixed prices in EUR for the Shopify agent storefront check, audit, advisory and implementation, VAT not included; agent operations and MCP server design are quoted on request)
+## Services (fixed prices in EUR for the external domain check, Shopify agent storefront check, audit, advisory and implementation, VAT not included. Agent operations and MCP server design are quoted on request)
+- **External domain check.** €99. Fixed scope, two business days. One domain read from outside with two public tools, isitagentready.com and internet.nl, and a short published list of requests. The report gives the domain's agent-readiness reading, or the reason none could be taken, lists the website and email settings visible from outside and gives up to three fixes in the order to make them. The check does not tell you how secure your company is. Delivered within two business days of confirmed payment. The €99 is deducted from a Shopify agent storefront check or an audit for the same domain ordered within 60 days of delivery, once per company.
 - **Shopify agent storefront check.** €999. Fixed scope, 48 hours. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront Catalog MCP, Cart MCP and the Policy and FAQs tool, and Catalog and Agentic channels. Four written deliverables within 48 hours of the agreed written kickoff, and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought.
 - **Audit.** €4,300. Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, month to month; either party can end it by email before the next month starts. Async-only. Ongoing review and score tracking: a monthly re-scan with the same scanner and profile, and a monthly repeat of the AI question set across the same assistants.
@@ -8707,11 +8994,11 @@ const WEBMCP_SCRIPT = `<script>
  },
  {
  name: 'get_services',
- description: 'Return the services offered by turva.dev (Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) as the full services page in markdown, together with fixed prices in EUR for the four priced services.',
+ description: 'Return the services offered by turva.dev (external domain check, Shopify agent storefront check, audit, advisory, implementation, agent operations, MCP server design) as the full services page in markdown, together with fixed prices in EUR for the five priced services.',
  inputSchema: { type: 'object', properties: {} },
- outputSchema: { type: 'object', properties: { markdown: { type: 'string' }, pricing: { type: 'object', properties: { currency: { type: 'string' }, vatIncluded: { type: 'boolean' }, shopify: { type: 'object' }, audit: { type: 'object' }, advisory: { type: 'object' }, implementation: { type: 'object' } }, required: ['currency', 'vatIncluded', 'shopify', 'audit', 'advisory', 'implementation'] }, bundledImplementation: { type: 'array', items: { type: 'object' } }, error: { type: 'string' }, status: { type: 'number' } }, required: ['pricing'] },
+ outputSchema: { type: 'object', properties: { markdown: { type: 'string' }, pricing: { type: 'object', properties: { currency: { type: 'string' }, vatIncluded: { type: 'boolean' }, 'domain-check': { type: 'object' }, shopify: { type: 'object' }, audit: { type: 'object' }, advisory: { type: 'object' }, implementation: { type: 'object' } }, required: ['currency', 'vatIncluded', 'domain-check', 'shopify', 'audit', 'advisory', 'implementation'] }, bundledImplementation: { type: 'array', items: { type: 'object' } }, error: { type: 'string' }, status: { type: 'number' } }, required: ['pricing'] },
  execute: async function() {
- var pricing = { currency: 'EUR', vatIncluded: false, shopify: { price: 999, unit: 'fixed' }, audit: { price: 4300, unit: 'fixed' }, advisory: { price: 3000, unit: 'month', minimumCommitmentMonths: 3 }, implementation: { price: 1500, unit: 'day' } };
+ var pricing = { currency: 'EUR', vatIncluded: false, 'domain-check': { price: 99, unit: 'fixed' }, shopify: { price: 999, unit: 'fixed' }, audit: { price: 4300, unit: 'fixed' }, advisory: { price: 3000, unit: 'month', minimumCommitmentMonths: 3 }, implementation: { price: 1500, unit: 'day' } };
  var bundled = [{ name: 'Audit fix implementation', price: 499, currency: 'EUR', unit: 'fixed', requires: 'audit', soldSeparately: false }, { name: 'Shopify correction implementation', price: 499, currency: 'EUR', unit: 'fixed', requires: 'shopify', soldSeparately: false }];
  var got = await readOwn('/services', 'text/markdown');
  if (got.error) return { error: got.error, status: got.status, pricing: pricing, bundledImplementation: bundled };
@@ -8807,10 +9094,11 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-10-28";
+const SITEMAP_LASTMOD = "2026-10-29";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
+  ["/external-domain-check", "monthly", "0.9"],
   ["/agent-readiness-audit", "monthly", "0.9"],
   ["/shopify-agent-storefront-check", "monthly", "0.9"],
   ["/tools", "monthly", "0.6"],
@@ -8823,6 +9111,7 @@ const SITEMAP_ENTRIES = [
   ["/auth.md", "yearly", "0.4"],
   ["/samples/audit-report", "monthly", "0.6"],
   ["/samples/shopify-agent-storefront-check", "monthly", "0.6"],
+  ["/samples/external-domain-check", "monthly", "0.6"],
   ["/guides", "monthly", "0.8"],
   ["/guides/agent-readiness-audit", "monthly", "0.7"],
   ["/guides/choosing-an-agent-readiness-audit", "monthly", "0.8"],
@@ -8967,7 +9256,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/samples/external-domain-check", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -9438,7 +9727,13 @@ const META_BY_PATH = {
     title: "Agent-readiness services and pricing · turva.dev",
     description: "Fixed-scope website and API audits and Shopify checks. Compare prices, deliverables, follow-up checks and optional implementation.",
     image: "/og-services.jpg",
-    imageAlt: "turva.dev services card: the Shopify agent storefront check €999, the audit €4,300, advisory €3,000 per month, implementation €1,500 per day, and two more on request."
+    imageAlt: "turva.dev services card: the external domain check €99, the Shopify agent storefront check €999, the audit €4,300, advisory €3,000 per month, implementation €1,500 per day, and two more on request."
+  },
+  "/external-domain-check": {
+    title: "External domain check, one domain, €99 · turva.dev",
+    description: "Read one domain from outside with public tests and a published request list. A report with up to three fixes within two business days of confirmed payment.",
+    image: "/og-external-domain-check.jpg",
+    imageAlt: "turva.dev product card: the external domain check, €99, one domain read from outside with two public tools, a published request list and up to three fixes."
   },
   "/agent-readiness-audit": {
     title: "Website and API agent-readiness audit, €4,300 · turva.dev",
@@ -9463,6 +9758,12 @@ const META_BY_PATH = {
     description: "A fictional Shopify storefront check compares product data across agent interfaces and follows a shopping journey through to the checkout handoff.",
     image: "/og-samples-shopify-agent-storefront-check.jpg",
     imageAlt: "turva.dev sample card: the synthetic Shopify agent storefront check report for an invented store, the five deliverables in the format a merchant receives."
+  },
+  "/samples/external-domain-check": {
+    title: "Sample external domain check report, real readings · turva.dev",
+    description: "A real external domain check of turva.dev's own domain, with each reading dated 2026-10-29, six report parts and at most three fixes.",
+    image: "/og-samples-external-domain-check.jpg",
+    imageAlt: "turva.dev sample card: the external domain check report made from turva.dev's own domain, real readings in the six-part format a client receives."
   },
   "/company": {
     title: "Erik Rekola, independent agent-readiness consultant · turva.dev",
@@ -9683,7 +9984,8 @@ const PRICE_VALID_UNTIL = "2026-12-31";
 // The Service node with its AggregateOffer and OfferCatalog is one constant because two
 // pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
 // second copy would be a second price list, and verify.mts reads this one against facts.json.
-const SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"999","highPrice":"4300","offerCount":"4","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
+const SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"99","highPrice":"4300","offerCount":"5","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
+{"@type":"Offer","name":"External domain check","description":"Fixed scope, one domain read from outside with two public tools, isitagentready.com and internet.nl, and a short published list of requests. The report gives the domain's agent-readiness reading, or the reason none could be taken, lists the website and email settings visible from outside and gives up to three fixes in the order to make them. Delivered within two business days of confirmed payment. The €99 is deducted from a Shopify agent storefront check or an audit for the same domain ordered within 60 days of delivery, once per company.","url":"https://turva.dev/external-domain-check","price":"99","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"99","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€99 fixed price, delivered within two business days of confirmed payment. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"External domain check"}},
 {"@type":"Offer","name":"Shopify agent storefront check","description":"Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store read across browser WebMCP, Shopify-hosted Storefront Catalog MCP, Cart MCP and the Policy and FAQs tool, and Catalog and Agentic channels, with a product truth matrix and a prioritised correction plan.","url":"https://turva.dev/shopify-agent-storefront-check","price":"999","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"999","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€999 fixed price, 48 hours from the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Shopify agent storefront check"},"addOn":{"@type":"Offer","name":"Shopify correction implementation","description":"Exactly the corrections the check's plan lists. Sold only with the Shopify agent storefront check: bought with it, with its report, or after the report and before implementation starts, and only when collaborator access to the store is arranged in advance.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Shopify correction implementation"}}},
 {"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across the same assistants, written review of shipped work within one business day up to four reviews a month, roadmap input, a monthly written summary within five business days after the month ends and a quarterly summary of measured changes within five business days after every third service month. Minimum three months, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, the retainer runs month to month and either party can end it by email before the next month starts. Corrected 2026-09-28. Added the month-to-month continuation, its email cancellation, the first-month cancellation and the monthly and quarterly summary deadlines.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
@@ -10101,7 +10403,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Shopify agent storefront check", "price": 999, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-10-21" }, null, 2);
+const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs, plus focused Shopify checks. Evidence, prioritised fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "External domain check", "price": 99, "currency": "EUR", "unit": "fixed", "duration": "2 business days", "durationFrom": "confirmed payment", "vatIncluded": false }, { "name": "Shopify agent storefront check", "price": 999, "currency": "EUR", "unit": "fixed", "duration": "48 hours", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }, { "name": "Shopify correction implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Shopify agent storefront check", "scope": "Exactly the corrections the check's plan lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-10-21" }, null, 2);
 const API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"
@@ -10341,7 +10643,7 @@ function renderInline(text: string) {
 // turva-worker/tools/verify.mts, so these are the only copies. Added kierros 18
 // (2026-09-06) after two reverse-DNS metadata keys rendered as dead links.
 const AUTOLINK_TLDS = new Set(["com", "dev", "org", "net", "io", "fi", "nl", "eu", "se", "no", "dk", "de", "uk", "ai", "app", "me", "info"]);
-const AUTOLINK_NOT_HOSTS = new Set(["io.modelcontextprotocol/protocolVersion", "io.modelcontextprotocol/clientCapabilities"]);
+const AUTOLINK_NOT_HOSTS = new Set(["io.modelcontextprotocol/protocolVersion", "io.modelcontextprotocol/clientCapabilities", "turva.dev-domain-check/1.0"]);
 
 // Fenced code, since v3.164.0 (round 19, F1). A block that opens with three or more backticks or
 // tildes, up to three spaces in, runs to a closing fence of the same character and at least the
@@ -11119,6 +11421,41 @@ function buildShopifyServiceJsonLd(canonicalUrl: string) {
   return `<script type="application/ld+json">\n${json}\n<\/script>`;
 }
 
+function buildDomainCheckServiceJsonLd(canonicalUrl: string) {
+  // The same service as the OfferCatalog row in SCHEMA_SERVICE: one product, its own page URL,
+  // the price from facts.json through the same literal the catalog uses (gated in verify.mts).
+  const url = canonicalUrl || "https://turva.dev/external-domain-check";
+  const svc = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": url + "#service",
+    "name": "External domain check",
+    "serviceType": "Domain check from outside",
+    "provider": { "@id": "https://turva.dev/#business" },
+    "areaServed": { "@type": "Place", "name": "Worldwide" },
+    "description": "A fixed-scope check of one domain read from outside with two public tools, isitagentready.com and internet.nl, and a short published list of requests. A written report with the domain's agent-readiness reading, or the reason none could be taken, the website and email settings visible from outside and up to three fixes in the order to make them, within two business days of confirmed payment.",
+    "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
+    "offers": {
+      "@type": "Offer",
+      "url": url,
+      "price": "99",
+      "priceCurrency": "EUR",
+      "priceValidUntil": PRICE_VALID_UNTIL,
+      "availability": "https://schema.org/InStock",
+      "businessFunction": "http://purl.org/goodrelations/v1#Sell",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "price": "99",
+        "priceCurrency": "EUR",
+        "valueAddedTaxIncluded": false,
+        "description": "€99 fixed price, delivered within two business days of confirmed payment. VAT (25,5%) added per Finnish law."
+      }
+    }
+  };
+  const json = jsonLdSafe(JSON.stringify(svc));
+  return `<script type="application/ld+json">\n${json}\n<\/script>`;
+}
+
 function buildAuditServiceJsonLd(canonicalUrl: string) {
   // The same audit as the OfferCatalog row in SCHEMA_SERVICE: one product, its own page URL,
   // the price from facts.json through the same literal the catalog uses.
@@ -11267,9 +11604,11 @@ function footerHtml(kieli?: string) { const fi = kieli === "fi"; return `<footer
 // One restrained next step at the end of a guide (Tek-358). The default points at the
 // services page; a guide about a free tool or about Shopify points at that instead. Short
 // lines by design: the twin gate reads any paragraph over 80 characters as prose.
-const SAMPLE_HEAD = {
+// The domain check sample (Tek-716) has real readings and no illustrative date: its button row stands in the lead (cta empty) and its date line starts with "Report date".
+const SAMPLE_HEAD: { [path: string]: { cta: string; date?: string } } = {
   "/samples/audit-report": { cta: "What to fix first" },
-  "/samples/shopify-agent-storefront-check": { cta: "What to fix first" }
+  "/samples/shopify-agent-storefront-check": { cta: "What to fix first" },
+  "/samples/external-domain-check": { cta: "", date: "Report date" }
 };
 // Kierros 4 (2026-09-06, worker-02): Tek-362 renamed headings in three guides and the id is
 // derived from the heading, so ten fragment addresses that had been served stopped resolving.
@@ -11436,14 +11775,14 @@ function serveGuideHtml(pathname: string, canonicalUrl: string) {
   const sample: (typeof SAMPLE_HEAD)[keyof typeof SAMPLE_HEAD] | undefined = SAMPLE_HEAD[pathname as keyof typeof SAMPLE_HEAD];
   let withSample = withToc;
   if (sample) {
-    const blocks: string[] = mdSection(pathname, sample.cta).split(/\n{2,}/).map((b: string) => b.trim()).filter(Boolean);
+    const blocks: string[] = sample.cta ? mdSection(pathname, sample.cta).split(/\n{2,}/).map((b: string) => b.trim()).filter(Boolean) : mdLead(pathname).paras.map((b: string) => b.trim()).filter(Boolean);
     const cut = mdCtaSplit(blocks, pathname + " " + sample.cta);
-    if (cut.at !== blocks.length - 1) throw new Error("the sample's button row must close " + pathname + " " + sample.cta);
+    if (sample.cta && cut.at !== blocks.length - 1) throw new Error("the sample's button row must close " + pathname + " " + sample.cta);
     withSample = replaceExactlyOnce(withSample, `<p>${renderInline(cut.row)}</p>`, mdCtaHtml(cut.row, "cta", ["btn", "btn-ghost"]));
     const eyebrowRe = /^<p>([^<\n]+)<\/p>\n<h1>/;
     if (!eyebrowRe.test(withSample)) throw new Error("sample carries no eyebrow line above its H1: " + pathname);
     withSample = withSample.replace(eyebrowRe, '<p class="eyebrow">$1</p>\n<h1>');
-    const dateRe = /<p>(Illustrative report date: [^<]+)<\/p>/;
+    const dateRe = new RegExp("<p>(" + (sample.date || "Illustrative report date") + ": [^<]+)</p>");
     if (!dateRe.test(withSample)) throw new Error("sample carries no illustrative report date line: " + pathname);
     withSample = withSample.replace(dateRe, '<p class="date">$1</p>');
   }
@@ -11567,10 +11906,11 @@ function serveHomeHtml(canonicalUrl: string) {
   if (!lead.eyebrow) throw new Error("the home twin carries no eyebrow line above its H1");
   // The measured date comes from the twin's own agent-readiness sentence, so the hero row and
   // the markdown agree by construction and the Measured-date gate in verify.mts reads one copy.
-  // Tek-488 round 3: the lead carries five paragraphs, the two ledes, the service note, the
-  // agent-readiness sentence and the label of the finding card, and the page shows all five.
-  if (lead.paras.length !== 5) throw new Error("home lead carries " + lead.paras.length + " paragraphs, want 5");
-  const evMeasured = ((lead.paras[3] || "").match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
+  // Tek-488 round 3, Tek-716: the lead carries six paragraphs, the two ledes, the price note of the
+  // domain check, the service note, the agent-readiness sentence and the label of the finding card,
+  // and the page shows all six.
+  if (lead.paras.length !== 6) throw new Error("home lead carries " + lead.paras.length + " paragraphs, want 6");
+  const evMeasured = ((lead.paras[4] || "").match(/Measured (\d{4}-\d{2}-\d{2})/) || [])[1] || "";
   if (!evMeasured) throw new Error("home lead carries no Measured date for the scan row");
   // The hero H1 is the twin's title. The words "AI assistants" are the one green highlight the
   // layout guide (2026-09-06, Tek-354) allows in the heading; if the title stops carrying them,
@@ -11579,12 +11919,12 @@ function serveHomeHtml(canonicalUrl: string) {
   // "Title. Body." paragraphs become a titled card; the split is the first ". " and a paragraph
   // without one throws, so a twin edit that drops the title cannot render an empty card.
   const titled = (t: string, what: string) => { const k = t.indexOf(". "); if (k < 0) throw new Error("home " + what + " paragraph has no title: " + t.slice(0, 40)); return { t: t.slice(0, k), b: t.slice(k + 2) }; };
-  // The two offers are read from the twin list, one card each: name, price, what it covers and
+  // The three offers (Tek-716) are read from the twin list, one card each: name, price, what it covers and
   // when it is delivered, plus a retest line when the service has one. Fail closed: a list line that stops matching the shape throws here
   // instead of rendering a card with an empty price (Tek-355, Tek-357).
   const offerParas = mdParas("/", "Choose the check you need", 2);
   const offerRaw = mdSection("/", "Choose the check you need").split("\n").filter((l: string) => l.startsWith("- "));
-  if (offerRaw.length !== 2) throw new Error("home starting-point list does not carry exactly two offers: " + offerRaw.length);
+  if (offerRaw.length !== 3) throw new Error("home starting-point list does not carry exactly three offers: " + offerRaw.length);
   const offerCards = offerRaw.map((line: string) => {
     const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)(?: (One retest [^.]+\.))?$/);
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
@@ -11695,7 +12035,8 @@ main{max-width:none;margin:0;padding:0;}
 .rc-more{display:inline-block;margin:16px 0 0;font-size:.9rem;font-weight:600;color:#5DF18F;border-bottom:1px solid rgba(93,241,143,0.4);padding:.1rem 0;}
 .rc-more:hover{border-color:#5DF18F;text-decoration:none;}
 .offers{max-width:68rem;margin:0 auto;padding:2.2rem clamp(24px,5vw,72px) 2rem;border-top:0;box-sizing:content-box;}
-.offer-grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px);margin:.4rem 0 1.4rem;}
+.offer-grid{list-style:none;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(16px,2vw,24px);margin:.4rem 0 1.4rem;}
+@media (min-width:1000px){.offer-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
 .offer{position:relative;display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:22px 24px;color:#C9D1CE;text-decoration:none;transition:border-color .15s ease;}
 .offer:hover{border-color:#5DF18F;text-decoration:none;}
 .offer:focus-within{outline:2px solid #5DF18F;outline-offset:3px;}
@@ -11779,9 +12120,10 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
         ${lead.cta}
         <p class="svcnote">${renderInline(lead.paras[2])}</p>
         <p class="svcnote">${renderInline(lead.paras[3])}</p>
+        <p class="svcnote">${renderInline(lead.paras[4])}</p>
       </div>
       <div class="rcard" role="group" aria-label="One finding from the synthetic sample audit report">
-        <p class="rc-top">${renderInline(lead.paras[4])}</p>
+        <p class="rc-top">${renderInline(lead.paras[5])}</p>
         <h2 class="rc-title">${renderInline(findHead)}</h2>
         <ul class="rc-cmp">
           ${findRowHtml}
@@ -11890,6 +12232,7 @@ ${cardPageNav("/services")}
     </ul>
     <p>${offerParas[0]}</p>
   </section>
+  ${mdOpenSec("/services", "External domain check", "external-domain-check")}
   ${mdOpenSec("/services", "Shopify agent storefront check", "shopify")}
   ${mdOpenSec("/services", "Website and API agent-readiness audit", "audit")}
   ${mdOpenSec("/services", "Implementation")}
@@ -12462,7 +12805,7 @@ ${cardPageNav("/contact")}
 <main id="main">
   ${mdPageStart("/contact")}
   <div class="cards">
-      ${mdActionCards("/contact", ["Website or API audit", "Shopify check"])}
+      ${mdActionCards("/contact", ["Website or API audit", "Shopify check", "External domain check"])}
   </div>
   ${mdOpenSec("/contact", "Or write your own message", "email")}
   ${mdOpenSec("/contact", "Other ways to reach me", "channels", contactSignalQr(), true)}
@@ -12496,6 +12839,47 @@ ${cardPageNav("/legal")}
   ${mdOpenSec("/legal", "Reporting a vulnerability")}
   ${mdOpenSec("/legal", "Cookies")}
   ${mdOpenSec("/legal", "Updates")}
+</main>
+${footerHtml()}
+</body>
+</html>`;
+  return new Response(body, { status: 200, headers: cardPageHeaders(canonicalUrl) });
+}
+
+function serveDomainCheckHtml(canonicalUrl: string) {
+  // The entry check (Tek-716, 2026-10-29): ordered by email, so the page is the twin, open sections,
+  // the lead's price sentence as the price line the audit page uses, and one closing order block.
+  const head = cardPageHead(
+    buildMetaBlock("/external-domain-check", canonicalUrl),
+    buildGuideJsonLd("/external-domain-check", canonicalUrl) + "\n" +
+      buildDomainCheckServiceJsonLd(canonicalUrl),
+    canonicalUrl);
+  const start = mdParasCta("/external-domain-check", "Order the check", 2, "cta-row", ["cta-btn"]);
+  // Fail closed if the price sentence moves, so the page never shows a plain paragraph where the price belongs.
+  const priceRe = /<p>(€[\d,]+) plus VAT\. ([\s\S]+?)<\/p>/;
+  const pageStart = mdPageStart("/external-domain-check", "cta", ["btn", "btn-ghost"]);
+  if (!priceRe.test(pageStart)) throw new Error("domain check page lead carries no price sentence");
+  const startHtml = pageStart.replace(priceRe, (m, price, terms) => `<p class="price-line"><span class="price">${price.replace(/€/g, "&#8364;")}</span> <span class="terms">plus VAT. ${terms}</span></p>`);
+  const body = `${head}
+${cardPageNav("/external-domain-check")}
+<main id="main">
+  ${startHtml}
+  ${mdOpenSec("/external-domain-check", "What the check covers")}
+  ${mdOpenSec("/external-domain-check", "Who it is for")}
+  ${mdOpenSec("/external-domain-check", "What the report contains")}
+  ${mdOpenSec("/external-domain-check", "Price and delivery")}
+  ${mdOpenSec("/external-domain-check", "How to order")}
+  ${mdOpenSec("/external-domain-check", "What I request from your domain")}
+  ${mdOpenSec("/external-domain-check", "The two public tools")}
+  ${mdOpenSec("/external-domain-check", "What the check does not do")}
+  ${mdOpenSec("/external-domain-check", "If a reading is missing")}
+  ${mdOpenSec("/external-domain-check", "See a sample")}
+  <div class="start" id="order-the-check">
+    <h2>Order the check</h2>
+    <p>${start.paras[0]}</p>
+    ${start.cta}
+    <p class="fine">${start.paras[1]}</p>
+  </div>
 </main>
 ${footerHtml()}
 </body>
@@ -15368,6 +15752,7 @@ const X402_ROUTES = {
 };
 
 const ACP_SERVICES = {
+  "domain-check": { item: "domain-check", name: "External domain check", amount: 9900, description: "Fixed scope, one domain read from outside, delivered within two business days of confirmed payment. Ordered by email. turva.dev verifies the domain and sends a one-time payment link for that order." },
   shopify: { item: "shopify", name: "Shopify agent storefront check", amount: 99900, description: "Fixed scope, four written deliverables within 48 hours of the agreed written kickoff and a retest within 14 days of that package, or of the delivered corrections when the correction add-on is bought. One live Shopify store across browser WebMCP, remote MCP and Catalog and Agentic channels." },
   audit: { item: "audit", name: "Agent-readiness audit", amount: 430000, description: "Fixed scope, delivered within two weeks of the agreed written kickoff. Independent scanner sweep, manual review, written report with prioritized fixes. Includes one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought." },
   advisory: { item: "advisory", name: "Continuous advisory", amount: 300000, description: "Monthly re-scan, score delta report, written review, roadmap input. Minimum three months, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged." },
@@ -15451,7 +15836,7 @@ const ACP_INDEX_JSON = JSON.stringify({
   "api_version": "2026-01-16",
   "description": "Agentic Commerce Protocol base for turva.dev. Checkout sessions are created and read under this base. Settlement is quote-on-request: completion returns intervention_required and no agent-initiated instant payment is available.",
   "discovery": "https://turva.dev/.well-known/acp",
-  "items": ["shopify", "audit", "advisory", "implementation"],
+  "items": ["domain-check", "shopify", "audit", "advisory", "implementation"],
   "endpoints": {
     "create_checkout_session": { "method": "POST", "url": "https://turva.dev/api/acp/checkout_sessions" },
     "retrieve_checkout_session": { "method": "GET", "url": "https://turva.dev/api/acp/checkout_sessions/{checkout_session_id}" },
@@ -15533,8 +15918,8 @@ async function serveAcpCheckout(request: Request, pathLower: string) {
     if (rawItemId !== undefined) {
       serviceId = typeof rawItemId === "string" ? rawItemId.toLowerCase() : "";
     }
-    if (!["audit", "advisory", "implementation", "shopify"].includes(serviceId)) {
-      return new Response(JSON.stringify({ "type": "invalid_request", "code": "invalid_item", "message": "Unknown item id. Valid item ids: audit, advisory, implementation, shopify." }, null, 2), { status: 400, headers: acpHeaders() });
+    if (!["audit", "advisory", "implementation", "shopify", "domain-check"].includes(serviceId)) {
+      return new Response(JSON.stringify({ "type": "invalid_request", "code": "invalid_item", "message": "Unknown item id. Valid item ids: audit, advisory, implementation, shopify, domain-check." }, null, 2), { status: 400, headers: acpHeaders() });
     }
     const session = buildAcpCheckoutSession(serviceId, "acp_sess_" + serviceId + "_" + crypto.randomUUID());
     return new Response(JSON.stringify(session, null, 2), { status: 201, headers: acpHeaders() });
@@ -15546,7 +15931,7 @@ async function serveAcpCheckout(request: Request, pathLower: string) {
   if (!sessionId || parts.length > 2 || (action && action !== "cancel" && action !== "complete")) {
     return new Response(JSON.stringify({ "type": "invalid_request", "code": "not_found", "message": "Unknown checkout session route." }, null, 2), { status: 404, headers: acpHeaders() });
   }
-  const idMatch = sessionId.match(/^acp_sess_(audit|advisory|implementation|shopify)_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+  const idMatch = sessionId.match(/^acp_sess_(audit|advisory|implementation|shopify|domain-check)_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
   if (!idMatch) {
     return new Response(JSON.stringify({ "type": "invalid_request", "code": "not_found", "message": "Unknown checkout session id. Sessions are stateless: create one with POST " + base + " and reuse the id it returns, which encodes the service." }, null, 2), { status: 404, headers: acpHeaders() });
   }
@@ -15574,7 +15959,7 @@ async function serveAcpCheckout(request: Request, pathLower: string) {
     if (method !== "POST") {
       return new Response(JSON.stringify({ "type": "invalid_request", "code": "method_not_allowed", "message": "Use POST to complete a checkout session." }, null, 2), { status: 405, headers: acpHeaders("POST, OPTIONS") });
     }
-    return new Response(JSON.stringify({ "type": "processing_error", "code": "intervention_required", "message": "First written reply within one business day. Scope and a fixed quote are confirmed in writing before payment, then turva invoices directly. Agent-initiated instant completion is not available. Contact info@turva.dev.", "param": "$.payment_data" }, null, 2), { status: 422, headers: acpHeaders() });
+    return new Response(JSON.stringify({ "type": "processing_error", "code": "intervention_required", "message": "First written reply within one business day. Scope and a fixed quote are confirmed in writing before payment, then " + (sessionService === "domain-check" ? "turva.dev sends a one-time payment link for that order" : "turva invoices directly") + ". Agent-initiated instant completion is not available. Contact info@turva.dev.", "param": "$.payment_data" }, null, 2), { status: 422, headers: acpHeaders() });
   }
   return new Response(JSON.stringify({ "type": "invalid_request", "code": "not_found", "message": "Unknown checkout session route." }, null, 2), { status: 404, headers: acpHeaders() });
 }
@@ -16004,6 +16389,9 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   }
   if (pathname === "/services") {
     return serveServicesHtml("https://turva.dev/services");
+  }
+  if (pathname === "/external-domain-check") {
+    return serveDomainCheckHtml("https://turva.dev/external-domain-check");
   }
   if (pathname === "/agent-readiness-audit") {
     return serveAuditHtml("https://turva.dev/agent-readiness-audit");

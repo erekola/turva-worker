@@ -755,13 +755,31 @@ console.log('\nPricing');
 // Enumerate, do not search: a search for each expected name passes a list missing one.
 const PRICED_STATIC = (facts.services || []).filter((s: VerifyFactsService) => s.priceKey);
 check(PRICED_STATIC.length > 0, `facts.json names at least one priced service (${PRICED_STATIC.length})`);
+// Tek-716. The presence check below read "price": 99 and €99 as substrings, and both are the first
+// characters of "price": 999 and €999, so a price of 99 was found before any surface carried it. A price
+// token now counts only as a whole number: no digit may follow it, and no thousands separator that
+// continues it either (€99,500). Nothing in the token's own surroundings is trusted beyond that.
+const hasWholePrice = (text: string, token: string): boolean => {
+  for (let i = text.indexOf(token); i >= 0; i = text.indexOf(token, i + 1)) {
+    const next = text.charAt(i + token.length);
+    const after = text.charAt(i + token.length + 1);
+    const continues = (next >= '0' && next <= '9') || (next === ',' && after >= '0' && after <= '9');
+    if (!continues) return true;
+  }
+  return false;
+};
+// Negative control, both ways: 99 must not be found inside 999 or inside 99,500, and a whole 99 must be found.
+check(!hasWholePrice('{ "price": 999 } costs €999.', '"price": 99') && !hasWholePrice('{ "price": 999 } costs €999.', '€99') && !hasWholePrice('costs €99,500.', '€99'),
+  'price presence self-test: 99 is not found inside 999 or 99,500');
+check(hasWholePrice('{ "price": 99, "unit": "fixed" }', '"price": 99') && hasWholePrice('costs €99.', '€99') && hasWholePrice('€99,€999', '€99'),
+  'price presence self-test: a whole 99 is found');
 for (const svc of PRICED_STATIC) {
   const val = facts.prices[svc.priceKey];
   check(Number.isFinite(val), `facts.prices resolves ${svc.priceKey} to a number (${svc.name})`);
   if (!Number.isFinite(val)) continue;
   const euro = '€' + val.toLocaleString('en-US');
-  check(src.worker.text.includes(`"price": ${val}`), `worker.ts "price": ${val} (${svc.name})`);
-  check(src.worker.text.includes(euro), `worker.ts ${euro} (${svc.name})`);
+  check(hasWholePrice(src.worker.text, `"price": ${val}`), `worker.ts "price": ${val} (${svc.name})`);
+  check(hasWholePrice(src.worker.text, euro), `worker.ts ${euro} (${svc.name})`);
 }
 
 console.log('\nBundled implementation add-ons (Tek-317)');
@@ -995,6 +1013,8 @@ const twConverted: Record<string, any> = {
   '/company': { fn: 'serveCompanyHtml', mdOnly: [] },
   '/legal':   { fn: 'serveLegalHtml',   mdOnly: [] },
   '/shopify-agent-storefront-check': { fn: 'serveShopifyHtml', mdOnly: [] },
+  // The entry check (Tek-716): the twin's sections render through mdOpenSec and the closing order block through mdParasCta.
+  '/external-domain-check': { fn: 'serveDomainCheckHtml', mdOnly: [] },
   // The audit product page: since the 2026-09-09 text round every rendered heading is the
   // twin's own, so no display alias is needed and the page carries no FAQ section.
   '/agent-readiness-audit': { fn: 'serveAuditHtml', mdOnly: [] },
@@ -1283,7 +1303,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   }
   {
     const acp = region('const ACP_SERVICES', '\nfunction buildAcpCheckoutSession');
-    const rows = [...acp.matchAll(/^  (\w+): \{ item: "(\w+)", name: "([^"]+)", amount: (\d+)/gm)];
+    const rows = [...acp.matchAll(/^  "?([\w-]+)"?: \{ item: "([\w-]+)", name: "([^"]+)", amount: (\d+)/gm)];
     setSame('ACP_SERVICES', rows.map((m) => m[1]), PRICED.map((s) => s.priceKey));
     for (const m of rows) {
       check(m[1] === m[2], `ACP_SERVICES ${m[1]} key == item id (saw ${m[2]})`);
@@ -1305,6 +1325,28 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const prices = [...shop.matchAll(/"price": "(\d+)"/g)].map((m) => m[1]);
     check(prices.length === 2 && prices.every((p) => p === String(facts.prices.shopify)),
       `buildShopifyServiceJsonLd states ${facts.prices.shopify} in both price fields (saw [${prices.join(', ')}])`);
+    // Tek-716: the external domain check page publishes its own Service node, and the price in it is
+    // read against facts.json the way the Shopify node's is.
+    const domJson = region('function buildDomainCheckServiceJsonLd', '\nfunction ');
+    const domPrices = [...domJson.matchAll(/"price": "(\d+)"/g)].map((m) => m[1]);
+    check(domPrices.length === 2 && domPrices.every((p) => p === String(facts.prices['domain-check'])),
+      `buildDomainCheckServiceJsonLd states ${facts.prices['domain-check']} in both price fields (saw [${domPrices.join(', ')}])`);
+    // Tek-716: the order template's acceptance line names the terms by their date, and a date that
+    // is not the /legal page's own date accepts terms that no longer exist. The date appears in the
+    // service page twin three times (the body line and the two mailto bodies, where the spaces are
+    // %20) and once in the /contact mailto.
+    const acceptedDates = (text: string) => [...text.matchAll(/terms(?: |%20)dated(?: |%20)(\d{4}-\d{2}-\d{2})(?: |%20)at/g)].map((m) => m[1]);
+    check(acceptedDates('I accept the terms dated 2026-01-02 at x. terms%20dated%202026-03-04%20at').join() === '2026-01-02,2026-03-04'
+      && acceptedDates('terms dated TERMS_DATE at').length === 0,
+      'terms date self-test: both spellings are read and a placeholder is not');
+    const legalTwin = (twMdTwin('/legal') || '').replace(/\r\n/g, '\n');
+    const termsDate = (legalTwin.match(/\*\*Terms last updated:\*\* (\d{4}-\d{2}-\d{2})/) || [])[1];
+    const domDates = acceptedDates(twMdTwin('/external-domain-check') || '');
+    const conDates = acceptedDates(twMdTwin('/contact') || '');
+    check(!!termsDate && domDates.length === 3 && domDates.every((d) => d === termsDate),
+      `the terms date in the external domain check twin (body line and both mailto bodies) is /legal Terms last updated ${termsDate} (saw [${domDates.join(', ')}])`);
+    check(!!termsDate && conDates.length === 1 && conDates[0] === termsDate,
+      `the terms date in the /contact mailto is /legal Terms last updated ${termsDate} (saw [${conDates.join(', ')}])`);
   }
 
   console.log('\nNavigation menus (B1-15)');
@@ -1610,7 +1652,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     seqSame('SITEMAP_ENTRIES primary and auxiliary rows (the literal)', smRows.filter((p) => primary.includes(p) || aux.includes(p)), primary.concat(aux));
     // 4. the service lists: facts.json services is the order, shopify first, and the two ACP homes and the two skills homes agree
     const priced = (facts.services || []).filter((s: { priceKey: string | null }) => s.priceKey).map((s: { id: string }) => s.id);
-    seqSame('ACP_SERVICES keys', [...region('const ACP_SERVICES = {', '\n};').matchAll(/\n  ([a-z-]+): \{ item:/g)].map((m) => m[1]), priced);
+    seqSame('ACP_SERVICES keys', [...region('const ACP_SERVICES = {', '\n};').matchAll(/\n  "?([a-z-]+)"?: \{ item:/g)].map((m) => m[1]), priced);
     seqSame('ACP_INDEX_JSON items', [...((region('const ACP_INDEX_JSON', '\n}, null, 2);').match(/"items": \[([^\]]*)\]/) || ['', ''])[1].matchAll(/"([a-z-]+)"/g))].map((m) => m[1]), priced);
     const a2aSkills = [...region('const A2A_AGENT_CARD', '\n}, null, 2);').matchAll(/\n      "id": "([a-z-]+)"/g)].map((m) => m[1]);
     seqSame('SKILLS (agent-skills index) vs the A2A card skills', [...region('const SKILLS = [', '\n];').matchAll(/name: "([a-z-]+)"/g)].map((m) => m[1]), a2aSkills);
@@ -1674,7 +1716,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
         if (path === '/') homePriceHtml = html;
         if (path === '/services') servicesPriceHtml = html;
       }
-      // K5-P3 (round 19): the home page's two starting-point offers render as
+      // K5-P3 (round 19): the home page's three starting-point offers render as
       // .offer-price spans, but /services states each priced service's rate as bold
       // prose inside an open section (mdOpenSec, Tek-358) with no dedicated price
       // element, so /services is checked by substring: every facts.json price must be
@@ -1684,12 +1726,12 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       const priceNum = (s: string) => Number(s.replace(/&#8364;|\u20ac/g, '').replace(/,/g, ''));
       if (homePriceHtml) {
         const homePrices = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => priceNum(m[1]));
-        setSame('home page offer-price spans vs facts.json (shopify, audit)', homePrices, ['shopify', 'audit'].map((k) => facts.prices[k]));
+        setSame('home page offer-price spans vs facts.json (domain-check, shopify, audit)', homePrices, ['domain-check', 'shopify', 'audit'].map((k) => facts.prices[k]));
       } else bad('K5-P3: the home page was not rendered, cannot check its prices');
       if (servicesPriceHtml) {
         const wantEuro = (n: number) => '\u20ac' + n.toLocaleString('en-US');
         const svcPriced = Object.entries(facts.prices).filter(([k]) => k !== 'currency');
-        const svcMissing = svcPriced.filter(([, v]) => !servicesPriceHtml.includes(wantEuro(v as number)));
+        const svcMissing = svcPriced.filter(([, v]) => !hasWholePrice(servicesPriceHtml, wantEuro(v as number)));
         check(svcPriced.length > 0 && svcMissing.length === 0,
           `/services states every facts.json price in EUR${svcMissing.length ? ' :: missing ' + svcMissing.map(([k, v]) => k + '=' + wantEuro(v as number)).join(', ') : ' (' + svcPriced.map(([k]) => k).join(', ') + ')'}`);
       } else bad('K5-P3: /services was not rendered, cannot check its prices');
