@@ -160,3 +160,19 @@ test("K5: both Menu summary content declarations carry the empty alternative tex
   assert.ok(/summary::after\{content:"\+";content:"\+" \/ "";/.test(decls[0]), decls[0]);
   assert.ok(/summary::after\{content:"\\\\2212";content:"\\\\2212" \/ "";\}/.test(decls[1]), decls[1]);
 });
+
+// N1 (195 px follow-up to the mobile read 2026-10-30): at 195 px (a 390 px phone at 200% browser zoom) the page column is
+// 147 px wide. A grid track minimum above that pushed the home page 84 px sideways (.steps 175 px, .svcgrid 255 px), and
+// the 216 px badge preview image did the same on /badge. Every auto-fit track minimum is capped at the column
+// width with min(<px>,100%), and a lone image inside a paragraph may not be wider than its column.
+test("N1: no auto-fit grid track minimum exceeds the column and a lone page image is capped at 100%", async () => {
+  const home = await (await get("/", { Accept: "text/html" })).text();
+  for (const px of [175, 255]) {
+    assert.ok(home.includes("repeat(auto-fit,minmax(min(" + px + "px,100%),1fr))"), "the home grid with a " + px + " px minimum is capped");
+    assert.ok(!home.includes("minmax(" + px + "px,1fr)"), "no uncapped " + px + " px track minimum on the home page");
+  }
+  assert.deepEqual(workerSrc.match(/auto-fit,minmax\(\d+px/g) || [], [], "no auto-fit track minimum anywhere in the source is a bare pixel length");
+  const badge = await (await get("/badge", { Accept: "text/html" })).text();
+  assert.equal(count(badge, "main p>img{max-width:100%;height:auto;}"), 1, "the shared page CSS caps a lone image once");
+  assert.ok(/<p><img src="\/badge\.svg"[^>]*width="216" height="36"/.test(badge), "the badge preview is a lone image in a paragraph and keeps its drawn size");
+});

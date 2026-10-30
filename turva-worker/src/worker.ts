@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.4 - 195px follow-up to the mobile read (2026-10-30): the home page .steps and .svcgrid auto-fit grids cap their track minimum at the column width with min(175px,100%) and min(255px,100%), so the home page no longer scrolls sideways at 195px (a 390px phone at 200% browser zoom), and a lone image in a paragraph, the /badge preview, is capped at 100% of its column; CSS only.
 // turva.dev worker v3.215.3 - mobile read fixes (2026-10-30): the 760px nav row wraps instead of pushing the Menu button off screen at 200% text, the Menu button stays on the right when the row wraps, and its dead side padding is gone; .board-src may break the scanner host name; the validator field asks for the URL keyboard; .kvs, .posts and .bempty beat the .sec descendant rules, including the 420px .kvs rule; the /contact cards run External domain check, Shopify check, Website or API audit in the page and in the Markdown twin; the Signal QR and badge preview images load lazily; blog code blocks and the /badge code block join the tab order; the Menu summary plus and minus signs carry empty alternative text so the accessible name is Menu; the example button on /markdown-parity-check keeps 6px under it so the wrapped link clears it; twelve dead CSS declarations are removed.
 // turva.dev worker v3.215.2 - the price of a service card always sits on its own line under the name, on the /services cards (.card-top) and the home page offer cards (.offer-top), so a short name no longer pulls its price up to the right while longer names push theirs down to the left; and the home offers section gets its side gutter back, because .sec{padding:1.9rem 0}, later in the stylesheet, overrode the gutter of .offers and the offer cards ran to the screen edges below about 1140px (the hairline and the vertical padding stay as they render now); CSS only.
 // turva.dev worker v3.215.1 - /services shows its three offer cards in one row: the list carries the class three, and .cards.three is one column below 1000px and three columns from 1000px, the same breakpoint as the home page offer grid; CSS and one class only.
@@ -8107,7 +8108,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.3",
+    "version": "3.215.4",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8410,7 +8411,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.3",
+  "version": "3.215.4",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -11539,7 +11540,7 @@ function buildValidatorAppJsonLd(canonicalUrl: string) {
 // none of them read right on Erik's displays in three browsers. The whole site reads the full
 // 68rem frame (Tek-360 stands). READ_CSS stays as an empty hook so the templates need no change.
 const READ_CSS = ``;
-const FOOTER_CSS = `${READ_CSS}pre:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover),main .svcnote a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
+const FOOTER_CSS = `${READ_CSS}pre:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}main p>img{max-width:100%;height:auto;}main p a:not([class]),main li a:not([class]),main td a:not([class]){text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}main .offer-name a[href]:not(:hover),main .ocard .name a[href]:not(:hover),main .post .pt a[href]:not(:hover),main .gcard h3 a[href]:not(:hover),main .toc a[href]:not(:hover),main .svcnote a[href]:not(:hover){text-decoration:none}main table{border-collapse:collapse;width:100%;font-size:.93rem}main th,main td{border:0.5px solid rgba(255,255,255,0.14);padding:.5rem .65rem;text-align:left;vertical-align:top;color:#C9D1CE}main th{color:#F2F4F3;font-weight:600}pre{background:#07110D;border:1px solid #1E3328;border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;color:#CFE3D6;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;max-width:100%}pre code{font-family:inherit}.aview-cmd,.sec .aview-cmd{font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:13px;color:#5DF18F;margin:0 0 10px;overflow-wrap:anywhere}.verr,.sec .verr{color:#F17F5D}
 .tv-foot{box-sizing:border-box;width:100%;background:#06100F;border-top:1px solid rgba(255,255,255,0.1);padding:3rem clamp(24px,5vw,72px);display:flex;flex-direction:column;gap:1.5rem;}
 .tv-foot .foot-brand{display:flex;align-items:center;gap:10px;}.tv-foot .nv-word{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700;font-size:21px;letter-spacing:.02em;color:#F2F4F3;}.tv-foot .nv-word b{color:#5DF18F;}
 .tv-foot .foot-brand svg{display:block;width:34px;height:34px;}
@@ -12071,13 +12072,13 @@ main{max-width:none;margin:0;padding:0;}
 ${FAQ_CSS}
 .evlist{margin:0 0 1.05rem;padding:0 0 0 1.2rem;color:#C9D1CE;}
 .evlist li{margin:0 0 .5rem;font-size:.92rem;}
-.steps{counter-reset:step;display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:.7rem;margin:.2rem 0 1.3rem;}
+.steps{counter-reset:step;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(175px,100%),1fr));gap:.7rem;margin:.2rem 0 1.3rem;}
 .step{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:1rem;transition:border-color .15s ease,transform .15s ease;}
 .step:hover{border-color:rgba(93,241,143,0.38);transform:translateY(-1px);}
 .step::before{counter-increment:step;content:counter(step,decimal-leading-zero);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#5DF18F;font-weight:700;margin:0 0 .3rem;}
 .step-t{display:block;font-size:1rem;font-weight:700;color:#F2F4F3;margin:0 0 .45rem;}
 .step p{font-size:.86rem;margin:0;color:#9AA3A0;line-height:1.55;}
-.svcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:.7rem;margin:.2rem 0 0;}
+.svcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(255px,100%),1fr));gap:.7rem;margin:.2rem 0 0;}
 .svc{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:1.05rem 1.05rem 1.1rem;transition:border-color .15s ease,transform .15s ease;}
 .svc:hover{border-color:rgba(93,241,143,0.4);transform:translateY(-1px);}
 .svc-t{display:block;font-size:1.05rem;font-weight:700;color:#5DF18F;margin:0 0 .45rem;min-width:0;}
