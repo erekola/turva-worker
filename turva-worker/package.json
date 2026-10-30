@@ -1,6 +1,6 @@
 {
   "name": "turva-worker",
-  "version": "3.215.11",
+  "version": "3.215.12",
   "license": "MIT",
   "private": true,
   "type": "module",

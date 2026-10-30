@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.12 - /shopify-agent-storefront-check (2026-10-30, Erik): the EUR 499 add-on also covers a correction that runs through the whole store, whatever the size of the store; the separate whole-store total price set by store size (Tek-679 P9) is removed. No other price or term changes.
 // turva.dev worker v3.215.11 - Hardenize re-measured (2026-10-30): the public report link on the home page answered with no report after the 2026-10-21 run expired, so Hardenize was run again on 2026-10-30, all 24 categories passed as before, and the home page names its own Hardenize date beside the 2026-10-21 Internet.nl tests. The MCP server card moves to 1.6.25 for the same date in get_security_evidence.
 // turva.dev worker v3.215.10 - content (2026-10-30): corrections from an outside read of the site, each checked against the live page. /company names all three sample reports, the external domain check and its sample describe what SPF, DKIM and DMARC show, the /services retention answer names the restore point exception the legal page states, the agentic commerce guide no longer says most catalogs lose the agent or that a failing agent always moves to a competitor, and names client-side JavaScript, the markdown guide separates token counts from byte counts, three dated posts carry a Corrected line (a file count, an unsourced majority claim, raw markup cost), one direct question ends in a question mark, and four posts with an Updated line declare that date as modified.
 // turva.dev worker v3.215.9 - /services (2026-10-30): the Implementation and Advisory price lines put a period after the price like the other three cards, so the price reads €1,500. and €3,000. and the terms follow. The Implementation line drops the clause on when the add-on can be bought, which the next paragraph states in full. Prices and terms are unchanged.
@@ -5836,7 +5837,7 @@ Your team can use the plan directly. For an additional €499, sold only with th
 
 This requires collaborator access to the store, agreed in writing before work starts. With access in place, the fixed price covers every correction on the plan. If access cannot be arranged, the add-on is not sold and your team still receives the instructions. With the add-on, the 14-day retest window starts on the day the corrections are delivered.
 
-If the check shows that the same fault runs through the whole store, I can correct the whole store. That correction gets one fixed total price, set in writing by the size of the store before the work starts, and it is not billed by the day.
+If the check shows that the same fault runs through the whole store, the add-on corrects it across the whole store at the same €499, whatever the size of the store.
 
 Work outside the plan is scoped separately at €1,500 per day.
 
@@ -8123,7 +8124,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.11",
+    "version": "3.215.12",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8426,7 +8427,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.11",
+  "version": "3.215.12",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
