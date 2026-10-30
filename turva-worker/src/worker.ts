@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.1 - /services shows its three offer cards in one row: the list carries the class three, and .cards.three is one column below 1000px and three columns from 1000px, the same breakpoint as the home page offer grid; CSS and one class only.
 // turva.dev worker v3.215.0 - new service page /external-domain-check for the external domain check at 99 euros plus VAT, ordered by email, with its sample report /samples/external-domain-check made from turva.dev's own domain with real readings (Tek-716); the home page shows three offer cards with the domain check first; /legal, /company, /contact and /services carry the new service, its payment exception, its refund rule and its order terms date, and the new price is on every catalog surface (the JSON-LD offers, HOME_JSON, ACP, the agent manifests, llms.txt, the MCP card at MCP 1.6.24 and the WebMCP script with its CSP hash).
 // turva.dev worker v3.214.6 - the post TLA+ on my own tools, in numbers reports the pair test of 28 October, in which 26 confirmed review claims each got one changed fact and none of the 26 was refuted, and its sentence on what the reviews show no longer says that the readers described the code correctly in 118 claims, with an Updated note, and the post Three outside reviews of my TLA+ models no longer says that a confirmed claim shows the reviewer described the code correctly or that no review claim was wrong outright, with an Updated note too. No signed surface changes bytes.
 // turva.dev worker v3.214.5 - design fixes from an Impeccable 4.8.0 scan (2026-10-27, CSS only): .rc-foot, .board-src and .price-line .terms are 13px and .terms is no longer uppercase or tracked; .eyebrow keeps its mono face at .875rem without tracked caps; h3 gets text-wrap:balance with h1 and h2.
@@ -8104,7 +8105,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.0",
+    "version": "3.215.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8407,7 +8408,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.0",
+  "version": "3.215.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -12227,7 +12228,7 @@ ${cardPageNav("/services")}
 <main id="main">
   ${mdPageStart("/services", "cta", ["btn", "btn-ghost"])}
   <section class="sec" id="choose-a-starting-point"><h2>Choose a starting point</h2>
-    <ul class="cards">
+    <ul class="cards three">
       ${offers}
     </ul>
     <p>${offerParas[0]}</p>
@@ -12332,7 +12333,8 @@ ${NAV_CORE_CSS}
 .price-line .price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.35rem;font-weight:700;color:#5DF18F;}
 .price-line .terms{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;color:#9AA3A0;}
 .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px);margin:.6rem 0 1.2rem;}
-.cards.three{grid-template-columns:repeat(3,minmax(0,1fr));}
+.cards.three{grid-template-columns:minmax(0,1fr);}
+@media (min-width:1000px){.cards.three{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media (max-width:767px){.cards,.cards.three{grid-template-columns:minmax(0,1fr);}}
 .card{display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:24px;color:#C9D1CE;text-decoration:none;transition:border-color .15s ease;}
 a.card:hover{border-color:#5DF18F;text-decoration:none;}
