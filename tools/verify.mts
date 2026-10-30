@@ -1771,6 +1771,9 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       const md = (twMdTwin(path) || '').replace(/\r\n/g, '\n');
       const marks = [];
       for (const x of md.matchAll(/^Corrected (\d{4}-\d{2}-\d{2})/gm)) marks.push(x[1]);
+      // An "Updated YYYY-MM-DD." line is a modification the prose declares too: four posts
+      // carried one while modified kept an older date (outside read 2026-10-30, C05).
+      for (const x of md.matchAll(/^Updated (\d{4}-\d{2}-\d{2})\./gm)) marks.push(x[1]);
       for (const x of md.matchAll(/^(?:Note added|Update,|Status,) ([A-Z][a-z]+) (\d{1,2})[:,]/gm)) {
         if (MONTHS[x[1]]) marks.push(date.slice(0, 4) + '-' + MONTHS[x[1]] + '-' + String(x[2]).padStart(2, '0'));
       }

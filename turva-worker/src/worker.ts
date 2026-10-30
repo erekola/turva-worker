@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.10 - content (2026-10-30): corrections from an outside read of the site, each checked against the live page. /company names all three sample reports, the external domain check and its sample describe what SPF, DKIM and DMARC show, the /services retention answer names the restore point exception the legal page states, the agentic commerce guide no longer says most catalogs lose the agent or that a failing agent always moves to a competitor, and names client-side JavaScript, the markdown guide separates token counts from byte counts, three dated posts carry a Corrected line (a file count, an unsourced majority claim, raw markup cost), one direct question ends in a question mark, and four posts with an Updated line declare that date as modified.
 // turva.dev worker v3.215.9 - /services (2026-10-30): the Implementation and Advisory price lines put a period after the price like the other three cards, so the price reads €1,500. and €3,000. and the terms follow. The Implementation line drops the clause on when the add-on can be bought, which the next paragraph states in full. Prices and terms are unchanged.
 // turva.dev worker v3.215.8 - /services (2026-10-30): the Implementation card opens with one sentence in the buyer's own words, that the work makes an existing website readable by AI agents, and that it follows the fix list of an audit or a Shopify check or is scoped separately in days. Scope and prices are unchanged.
 // turva.dev worker v3.215.7 - /contact (2026-10-30): the three action cards (External domain check, Shopify check, Website or API audit) use the cards three grid, three equal columns from 1000px and one column below, instead of the two-column cards grid that left the third card alone on a second row.
@@ -915,7 +916,7 @@ Two limits hold whatever you choose. You cannot opt out of Shopify Catalog itsel
 
 ## What can you check on your own store?
 
-Three public files show what your store announces to agents, and you can open each one in a browser:
+Four public files show what your store announces to agents, and you can open each one in a browser:
 
 - /.well-known/ucp is the UCP discovery profile. It lists the protocol versions and capabilities your store advertises and the address of its MCP endpoint. After 4 September it should list version 2026-08-25, and after 16 October the buyer consent extension.
 - /agents.md is a Markdown summary for agents that points to the UCP profile and the MCP endpoint. Every Shopify store serves it by default, and a theme can replace it with an agents.md.liquid template.
@@ -946,6 +947,8 @@ The 2 November date concerns apps that call the Global Catalog REST API. If you 
 **Can I see from outside whether my products are in Shopify Catalog?**
 
 Not from the storefront files. The UCP profile, agents.md and llms.txt show what your store announces. A search through Shop MCP needs no API key and can show whether a product comes up for a query, but it does not show why a product is missing.
+
+Corrected 2026-10-30. The sentence before the list of files said three public files where the list names four.
 
 ## Related
 
@@ -2052,7 +2055,7 @@ Yes. The correction instructions and acceptance checks are part of the report. I
 
 A dated scan of 19 identity vendors examines what their public sites expose for agents, and what the results cannot say about the products behind them.
 
-I measured 19 companies that build digital identity and trust products, wallets and verifiable credential infrastructure, the parts of the stack meant to let one machine prove something to another machine. Then I asked the simplest question I could think of about them. Can an agent find out anything at all about these companies without a human in the loop.
+I measured 19 companies that build digital identity and trust products, wallets and verifiable credential infrastructure, the parts of the stack meant to let one machine prove something to another machine. Then I asked the simplest question I could think of about them. Can an agent find out anything at all about these companies without a human in the loop?
 
 ## How this was measured
 
@@ -3198,7 +3201,7 @@ Move every secret into storage the operating system encrypts and scopes to your 
 
 ## Git credentials through a credential manager
 
-Most people still authenticate git with a personal access token pasted into a credentials file. Drop that. Use a credential manager that speaks OAuth, so the token lives in the OS store, refreshes on its own, and never lands in a file you can commit or copy by accident.
+If git authenticates with a personal access token pasted into a credentials file, drop that. Use a credential manager that speaks OAuth, so the token lives in the OS store, refreshes on its own, and never lands in a file you can commit or copy by accident.
 
 One trap to know if you are on Windows and your forge is not GitHub. The common advice is git-credential-oauth with the wincred store. That store writes to Windows Credential Manager, which caps a single entry at 2560 bytes ([CRED_MAX_CREDENTIAL_BLOB_SIZE in the CREDENTIAL structure](https://learn.microsoft.com/en-us/windows/win32/api/wincred/ns-wincred-credentialw)). Some forges issue OAuth tokens well past that, and the write fails with a bare "CredWrite failed" while fetch still works, so nothing looks wrong until you notice every command re-authenticating. Git Credential Manager's Bitbucket provider splits a large token across entries. At [Git Credential Manager commit 9c3b25d](https://github.com/git-ecosystem/git-credential-manager/tree/9c3b25dcc030ae95bf489c5a3f9ec15b8914950d), its GitLab provider and the generic store path write the token as one entry, so the Windows size limit still applies there. If a self-hosted forge keeps opening a browser prompt on push, a token over the limit is one possible cause.
 
@@ -3235,6 +3238,8 @@ Windows Credential Manager caps a single entry at 2560 bytes and some forges iss
 Corrected 2026-10-02. Two sentences claimed more than their sources. The Linux sentence said the Secret Service encrypts the value and only your account can decrypt it. It now says: "On Linux libsecret through the Secret Service, whose backend usually encrypts the value at rest. The specification leaves access control to the implementation, so check what your keyring does when the machine is locked and which applications it lets read the value." The credential manager sentence said splitting a large token across entries is how Git Credential Manager handles it for self-hosted forges. At commit 9c3b25d, only the Bitbucket provider splits. It now says: "Git Credential Manager's Bitbucket provider splits a large token across entries. At Git Credential Manager commit 9c3b25d, its GitLab provider and the generic store path write the token as one entry, so the Windows size limit still applies there. If a self-hosted forge keeps opening a browser prompt on push, a token over the limit is one possible cause." The summary and the frequently asked answer on storage still stated the Linux guarantee without that limit, and both now carry it.
 
 Corrected 2026-10-23. The first caveat said such a vault cannot be decrypted after a reinstall. A reinstall that keeps or migrates the key material leaves the vault readable, so the caveat now says: "A vault encrypted with a key from your OS account stays readable after a reinstall only if that key material survived it, through a backup or a migration the platform supports, so keep an offline backup of anything you cannot regenerate, like a private signing key."
+
+Corrected 2026-10-30. A sentence said most people authenticate git with a personal access token pasted into a credentials file. Nothing in this post measures that, so the sentence now speaks only to a reader who does.
 
 ## Related
 
@@ -3941,7 +3946,7 @@ Corrected 2026-10-23. A sentence said version 0.1 does not fix what any field me
 
 This article examines the publisher's influence on the content a text-based client receives, using a dated HTML-versus-Markdown comparison.
 
-When an AI agent visits your site to check a price or finish a task for someone, it pays to read the page. That cost is counted in tokens, and a normal HTML page is expensive. Navigation, styling, scripts and structured data all arrive whether the agent needs them or not. The agent either spends its budget getting past that markup or runs out of room and reads only part of the page. Both outcomes are yours to deal with: a page an agent can read in full is more likely to give it your facts right, though this post measures page size rather than whether an agent completed a task or read a fact correctly.
+When an AI agent visits your site to check a price or finish a task for someone, it pays to read the page. That cost is counted in tokens, and a normal HTML page is expensive. When an agent reads the raw markup, navigation, styling, scripts and structured data all arrive whether it needs them or not. Such an agent either spends its budget getting past that markup or runs out of room and reads only part of the page. Both outcomes are yours to deal with: a page an agent can read in full is more likely to give it your facts right, though this post measures page size rather than whether an agent completed a task or read a fact correctly.
 
 ## Your surface sets the cost
 
@@ -3971,7 +3976,7 @@ For an audit of how cheaply agents can read your site, contact info@turva.dev.
 
 **Why does a normal HTML page cost an agent more to read?**
 
-Navigation, styling, scripts and structured data all arrive whether the agent needs them or not. The agent either spends its budget getting past that markup or runs out of room and reads only part of the page.
+When an agent reads the raw markup, navigation, styling, scripts and structured data all arrive whether it needs them or not. Such an agent either spends its budget getting past that markup or runs out of room and reads only part of the page.
 
 **How much cheaper is a markdown version of a page?**
 
@@ -3986,6 +3991,8 @@ Corrected 2026-09-27. A paragraph said a cheaper page is a more reliable one. Th
 Corrected 2026-09-28. The opening sentence said a cheaper page decides whether an agent gets your facts right. It now says a page an agent can read in full is more likely to, and names that this post measures page size rather than task success.
 
 Corrected 2026-09-28. A sentence said assistants read better from clean text and are therefore more likely to use a page in full and represent it accurately. It now ties that to the lower cost of reading the page rather than claiming reading quality itself improves.
+
+Corrected 2026-10-30. The opening and the first FAQ answer said that navigation, styling, scripts and structured data all arrive whether the agent needs them or not. That holds for an agent that reads the raw markup, and both now say so.
 
 ## Related
 
@@ -4888,7 +4895,7 @@ On these readings there is little to fix. Two optional fixes are listed, both ma
 
 ## Limits
 
-The check does not tell you how secure your company is. From outside I cannot see passwords, backups, staff computers or how staff handle phishing. SPF, DKIM and DMARC only show whether someone can send mail in the domain's name.
+The check does not tell you how secure your company is. From outside I cannot see passwords, backups, staff computers or how staff handle phishing. SPF, DKIM and DMARC only show how mail in the domain's name is authenticated and what the domain asks receivers to do with mail that fails those checks.
 
 - Scope: the domain turva.dev, its www form, its email settings and its mta-sts subdomain. Other subdomains were not part of this check.
 - My own requests: six GET requests from the published list, of the seven allowed. The spare request was not used. I ran no port scan, no login and no form.
@@ -4939,7 +4946,7 @@ Every row is an observation. The mark compares the benefit of a fix with the wor
 | Not testable | internet.nl website test, 2026-10-29 20:44 UTC | OCSP stapling: the certificate has no OCSP pointer. DANE validity: no TLSA record exists. | The test could not read these, and I do not count them as passes. | no reading |
 | IPv6 on the mail servers | internet.nl email test, 2026-10-29 20:44 UTC | Failed. mail.protonmail.ch and mailsec.protonmail.ch each have IPv4 addresses and no IPv6 address. IPv6 reachability was not testable. | The two receiving mail servers are Proton's, named by the domain's MX records, so this is a provider setting. | low |
 | Mail server certificate key | internet.nl email test, 2026-10-29 20:44 UTC | Recommendation. Both servers use RSA 2048, which the test says should be phased out. | The certificates are Proton's, so this is a provider setting. | low |
-| Email authentication and transport | internet.nl email test, 2026-10-29 20:44 UTC | Passed: DNSSEC for the domain and the MX records, and DANE, RPKI and CAA for the mail server. The test calls the SPF policy sufficiently strict. DKIM exists, DMARC exists with a policy and STARTTLS is available. | SPF, DKIM and DMARC show whether someone can send mail in the domain's name, nothing more, and the DANE, RPKI and CAA results are for Proton's mail servers. | low |
+| Email authentication and transport | internet.nl email test, 2026-10-29 20:44 UTC | Passed: DNSSEC for the domain and the MX records, and DANE, RPKI and CAA for the mail server. The test calls the SPF policy sufficiently strict. DKIM exists, DMARC exists with a policy and STARTTLS is available. | SPF, DKIM and DMARC show how mail in the domain's name is authenticated and what the domain asks of receivers, nothing more, and the DANE, RPKI and CAA results are for Proton's mail servers. | low |
 
 internet.nl scored the website test 98 % and the email test 90 % on 2026-10-29. Those are the test's own summary figures. They are not a rating of the company.
 
@@ -5464,7 +5471,7 @@ Yes. I sign your own NDA as it stands, at no charge, before material is shared.
 
 **How is our material handled?**
 
-Client material is kept only on systems needed for the work and deleted within thirty days of closure, as the legal page defines closure, unless the law requires retention. Four kinds of copy follow their own rules: bookkeeping material, which is kept for six years, what the AI tool's provider keeps under its own terms, a backup copy until its rotation replaces it, and earlier versions of files, which exist only inside those backups and leave with them. Deleted client material has left every backup within 16 weeks of its deletion at most. Engagement email and its attachments are deleted under the same closing rule. The legal page explains each. Credentials are stored in an encrypted vault, and backups are encrypted before upload.
+Client material is kept only on systems needed for the work and deleted within thirty days of closure, as the legal page defines closure, unless the law requires retention. If two engagements overlap in the virtual machine, which is not the default, the earlier client's folder also stays in the restore point taken for the later one until that engagement closes, which can be more than thirty days after the earlier one closed. Four kinds of copy follow their own rules: bookkeeping material, which is kept for six years, what the AI tool's provider keeps under its own terms, a backup copy until its rotation replaces it, and earlier versions of files, which exist only inside those backups and leave with them. Deleted client material has left every backup within 16 weeks of its deletion at most. Engagement email and its attachments are deleted under the same closing rule. The legal page explains each. Credentials are stored in an encrypted vault, and backups are encrypted before upload.
 
 **Do you use AI tools?**
 
@@ -5497,7 +5504,7 @@ I read one domain from outside with two public tools, isitagentready.com and int
 
 It covers the domain only. One order covers one registrable domain, its www form, its email settings and its mta-sts subdomain. Other subdomains are not part of it.
 
-The check does not tell you how secure your company is. From outside I cannot see passwords, backups, staff computers or how staff handle phishing. SPF, DKIM and DMARC only show whether someone can send mail in the domain's name. The report says this on its first page.
+The check does not tell you how secure your company is. From outside I cannot see passwords, backups, staff computers or how staff handle phishing. SPF, DKIM and DMARC only show how mail in the domain's name is authenticated and what the domain asks receivers to do with mail that fails those checks. The report says this on its first page.
 
 A missing header, a visible version number or a missing SameSite flag is an observation, not a confirmed vulnerability, and the report says so. A missing result is never counted as a pass.
 
@@ -5883,7 +5890,7 @@ From 2015 to 2021, I worked hands-on with industrial and laboratory equipment: p
 
 Those roles involved reliable machine data and working within defined limits.
 
-After a career break from 2021 to early 2026, I built turva.dev around technical checks, reviews and implementation. You can inspect my current work through [public source code](https://github.com/erekola), [dated research](/blog) and clearly labelled [sample reports](/samples/audit-report). There are no named client references yet, and both sample reports describe fictional businesses.
+After a career break from 2021 to early 2026, I built turva.dev around technical checks, reviews and implementation. You can inspect my current work through [public source code](https://github.com/erekola), [dated research](/blog) and clearly labelled [sample reports](/samples/audit-report). There are no named client references yet. The audit and Shopify sample reports describe fictional businesses, and the domain check sample uses turva.dev's own domain with real readings.
 
 ## Why I do this work
 
@@ -7117,7 +7124,7 @@ Markdown delivery is not a separate site. It is the same content offered in a se
 
 ## Verification
 
-The token saving can be large. On turva.dev the markdown form of a page has measured at a fraction of the tokens the HTML form costs for the same content, and that difference is what decides whether a client reads a page in full or runs out of budget partway through. That figure is tied to the page it was measured on and to how the receiving client counts tokens, so it is a measured example rather than a cost guarantee that holds for every client and every page. Checking a given page means comparing its own HTML and markdown byte counts, not assuming a figure measured elsewhere carries over.
+The token saving can be large. On turva.dev the markdown form of a page has measured at a fraction of the tokens the HTML form costs for the same content, and that difference is what decides whether a client reads a page in full or runs out of budget partway through. That figure is tied to the page it was measured on and to how the receiving client counts tokens, so it is a measured example rather than a cost guarantee that holds for every client and every page. Checking a given page means counting the tokens of its own HTML and markdown forms with the tokenizer of the client that reads it, not assuming a figure measured elsewhere carries over. A byte count is a quick first check, not a token count.
 
 turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. Every page also answers at its own .md address, and /guides/markdown-for-agents.md returns the same markdown byte for byte as /guides/markdown-for-agents requested with Accept: text/markdown. Without that header the bare address returns HTML. For an audit of whether a site's markdown and HTML agree, contact info@turva.dev.
 
@@ -7345,7 +7352,7 @@ UCP writes down the boundary between what an agent may finish alone and what a p
 
 ## Where sites fail the agent
 
-Most catalogs lose the agent before checkout. A price that lives only in rendered HTML stops an agent that does not render JavaScript, a CAPTCHA wall stops one with no way to solve it, a maintenance interstitial stops any agent mid-flow, and a discovery file that claims a capability the endpoint does not answer stops one that trusted the file. Each one ends the purchase silently for the agent it stops. The agent does not complain, it moves to a competitor whose path resolves. The failure looks like no traffic rather than a broken page, which is why it goes unmeasured.
+A catalog can lose the agent before checkout. A price that appears only after JavaScript runs in the browser stops an agent that does not run JavaScript, a CAPTCHA wall stops one with no way to solve it, a maintenance interstitial stops any agent mid-flow, and a discovery file that claims a capability the endpoint does not answer stops one that trusted the file. Each one ends the purchase silently for the agent it stops. The agent does not complain: it stops, or it moves on to a seller whose path resolves. The failure looks like no traffic rather than a broken page, which is why it goes unmeasured.
 
 ## Readiness is testable
 
@@ -7365,7 +7372,7 @@ That the business needs buyer input its API cannot collect or buyer review that 
 
 **Why does a failed agent purchase look like no traffic?**
 
-A price that lives only in rendered HTML stops an agent that does not render JavaScript, a CAPTCHA wall stops one with no way to solve it, a maintenance interstitial stops any agent mid-flow, and a discovery file that claims a capability the endpoint does not answer stops one that trusted the file. The agent does not complain about any of them, it moves to a competitor whose path resolves.
+A price that appears only after JavaScript runs in the browser stops an agent that does not run JavaScript, a CAPTCHA wall stops one with no way to solve it, a maintenance interstitial stops any agent mid-flow, and a discovery file that claims a capability the endpoint does not answer stops one that trusted the file. The agent does not complain about any of them: it stops, or it moves on to a seller whose path resolves.
 
 ## Sources
 
@@ -8115,7 +8122,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.9",
+    "version": "3.215.10",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8418,7 +8425,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.9",
+  "version": "3.215.10",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9289,6 +9296,7 @@ const META_BY_PATH = {
     title: "TLA+ on my own tools, in numbers · turva.dev",
     description: "Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.",
     date: "2026-10-22",
+    modified: "2026-10-28",
     kind: "Build notes",
     image: "/og-tla-plus-in-numbers.jpg",
     imageAlt: "TLA+ on my own tools, in numbers, a turva.dev build note that closes the series with timeline, reviews, mutation runs and cost.",
@@ -9298,6 +9306,7 @@ const META_BY_PATH = {
     titleTag: "What Shopify changed for agent shopping · turva.dev",
     description: "Shopify moved store agent tools to /api/ucp/mcp and opened checkout to agents. What a merchant can check publicly and what stays hidden.",
     date: "2026-10-18",
+    modified: "2026-10-30",
     kind: "Protocol notes",
     image: "/og-what-shopify-changed-for-agent-shopping.jpg",
     imageAlt: "What Shopify changed for agent shopping since August, a turva.dev protocol note for merchants on the new agent tools, checkout and catalog data.",
@@ -9306,6 +9315,7 @@ const META_BY_PATH = {
     title: "Three outside reviews of my TLA+ models · turva.dev",
     description: "Three outside reviews read my TLA+ models, none of their claims was refuted, and the third left no high rated finding.",
     date: "2026-10-17",
+    modified: "2026-10-28",
     kind: "Build notes",
     image: "/og-three-outside-reviews-of-my-tla-plus-models.jpg",
     imageAlt: "Three outside reviews of my TLA+ models, a turva.dev build note on review rounds, fix sessions and what is still open.",
@@ -9347,6 +9357,7 @@ const META_BY_PATH = {
     title: "The browser my agent and I both run · turva.dev",
     description: "Why my agent and I both run Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.",
     date: "2026-10-06",
+    modified: "2026-10-26",
     kind: "Build notes",
     image: "/og-browser-my-agent-and-i-run.jpg",
     imageAlt: "turva.dev card: The browser my agent and I both run",
@@ -9355,7 +9366,7 @@ const META_BY_PATH = {
     title: "A clean Windows install for agent work · turva.dev",
     description: "How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.",
     date: "2026-10-05",
-    modified: "2026-10-23",
+    modified: "2026-10-27",
     kind: "Build notes",
     image: "/og-clean-windows-install-for-agent-work.jpg",
     imageAlt: "turva.dev card: A clean Windows install for agent work",
@@ -9556,7 +9567,7 @@ const META_BY_PATH = {
     title: "Reducing secret exposure in coding-agent workflows · turva.dev",
     description: "Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.",
     date: "2026-07-12",
-    modified: "2026-10-23",
+    modified: "2026-10-30",
     kind: "Build notes",
     image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
@@ -9676,7 +9687,7 @@ const META_BY_PATH = {
     title: "What an agent pays to read your site · turva.dev",
     description: "This article examines the publisher's influence on the content a text-based client receives, using a dated HTML-versus-Markdown comparison.",
     date: "2026-06-26",
-    modified: "2026-09-28",
+    modified: "2026-10-30",
     kind: "Build notes",
     image: "/og-cheaper-pages-for-agents.jpg",
     imageAlt: "turva.dev blog card: An agent pays to read your site in tokens, and an HTML-only page is expensive."
