@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.7 - /contact (2026-10-30): the three action cards (External domain check, Shopify check, Website or API audit) use the cards three grid, three equal columns from 1000px and one column below, instead of the two-column cards grid that left the third card alone on a second row.
 // turva.dev worker v3.215.6 - guide corrections from the ChatGPT read of all 24 guides on 2026-10-30, each read against its primary source: the external domain check delivery sentence carries the service page's rerun condition on the home page, /services and the audit-choice guide; agent-readiness-gaps names the Markdown alternate link and HTTP Link header route; seo-vs-agent-readiness and agent-readiness-aeo-geo state Google's own conditions and limits; the UCP profile is described by its required members; OKF version 0.2 has one type-specific required field; the IETF ratelimit draft status is dated 30 October 2026; get-cited-by-ai-assistants and prerendering-for-agents say only what their sources support; markdown-for-agents states the Accept header condition; Agentic Catalog becomes Shopify Catalog in the Shopify sample report and guide, with the old C2 anchor aliased; every guide's checked date moves to 2026-10-30 and SITEMAP_LASTMOD with it.
 // turva.dev worker v3.215.5 - banner set v8 (2026-10-30): every per-page link preview card is rebuilt on the new base og-v8-pohja, with its kicker in sentence case and no tracking like the site eyebrow and its proof rows written 100/100 and 5/5; og.jpg now carries the home page eyebrow, headline and subtitle, and the home page image alt text describes it.
 // turva.dev worker v3.215.4 - 195px follow-up to the mobile read (2026-10-30): the home page .steps and .svcgrid auto-fit grids cap their track minimum at the column width with min(175px,100%) and min(255px,100%), so the home page no longer scrolls sideways at 195px (a 390px phone at 200% browser zoom), and a lone image in a paragraph, the /badge preview, is capped at 100% of its column; CSS only.
@@ -8110,7 +8111,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.6",
+    "version": "3.215.7",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8413,7 +8414,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.6",
+  "version": "3.215.7",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -12806,11 +12807,12 @@ function serveContactHtml(canonicalUrl: string) {
   // the twin and open a draft only. The QR code is an extra route for Signal, not a step.
   // Since 2026-09-08 the two prepared messages open the page as cards, each with its own
   // button, and the plain address follows for the reader who has not decided which fits.
+  // Since 3.215.7 the three cards use the cards three grid, three equal columns from 1000px and one column below, so no card sits alone on a second row.
   const body = `${head}
 ${cardPageNav("/contact")}
 <main id="main">
   ${mdPageStart("/contact")}
-  <div class="cards">
+  <div class="cards three">
       ${mdActionCards("/contact", ["External domain check", "Shopify check", "Website or API audit"])}
   </div>
   ${mdOpenSec("/contact", "Or write your own message", "email")}
