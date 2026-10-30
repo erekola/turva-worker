@@ -159,7 +159,7 @@ A Commerce pass means the scanner detected the payment discovery surfaces. The p
 
 ## Web security
 
-Measured on 2026-10-21: all 24 categories passed on [Hardenize](https://www.hardenize.com/report/turva.dev), 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
+Measured on 2026-10-30: all 24 categories passed on [Hardenize](https://www.hardenize.com/report/turva.dev). Measured on 2026-10-21: 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
 
 The website deduction concerned the key-exchange hash function in one HTTPS sub-test. Its IPv6, DNSSEC and RPKI checks passed in full. The email deduction concerned IPv6, because the receiving mail servers, operated by the mail provider, publish no IPv6 address. Its DNSSEC and RPKI checks passed in full. DMARC with DKIM and SPF, and STARTTLS with DANE, also passed.
 

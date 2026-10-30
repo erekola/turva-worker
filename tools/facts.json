@@ -3,8 +3,8 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.215.10",
-    "mcp": "1.6.24"
+    "site": "3.215.11",
+    "mcp": "1.6.25"
   },
   "mtaSts": {
     "txtId": "20260910202321",
@@ -169,7 +169,7 @@
     "hardenize": {
       "result": "all 24 categories passed",
       "url": "https://www.hardenize.com/report/turva.dev",
-      "measuredAt": "2026-10-21"
+      "measuredAt": "2026-10-30"
     },
     "internetnl": {
       "score": "98/100",
