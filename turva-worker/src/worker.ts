@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.2 - the price of a service card always sits on its own line under the name, on the /services cards (.card-top) and the home page offer cards (.offer-top), so a short name no longer pulls its price up to the right while longer names push theirs down to the left; and the home offers section gets its side gutter back, because .sec{padding:1.9rem 0}, later in the stylesheet, overrode the gutter of .offers and the offer cards ran to the screen edges below about 1140px (the hairline and the vertical padding stay as they render now); CSS only.
 // turva.dev worker v3.215.1 - /services shows its three offer cards in one row: the list carries the class three, and .cards.three is one column below 1000px and three columns from 1000px, the same breakpoint as the home page offer grid; CSS and one class only.
 // turva.dev worker v3.215.0 - new service page /external-domain-check for the external domain check at 99 euros plus VAT, ordered by email, with its sample report /samples/external-domain-check made from turva.dev's own domain with real readings (Tek-716); the home page shows three offer cards with the domain check first; /legal, /company, /contact and /services carry the new service, its payment exception, its refund rule and its order terms date, and the new price is on every catalog surface (the JSON-LD offers, HOME_JSON, ACP, the agent manifests, llms.txt, the MCP card at MCP 1.6.24 and the WebMCP script with its CSP hash).
 // turva.dev worker v3.214.6 - the post TLA+ on my own tools, in numbers reports the pair test of 28 October, in which 26 confirmed review claims each got one changed fact and none of the 26 was refuted, and its sentence on what the reviews show no longer says that the readers described the code correctly in 118 claims, with an Updated note, and the post Three outside reviews of my TLA+ models no longer says that a confirmed claim shows the reviewer described the code correctly or that no review claim was wrong outright, with an Updated note too. No signed surface changes bytes.
@@ -8105,7 +8106,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.1",
+    "version": "3.215.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8408,7 +8409,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.1",
+  "version": "3.215.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -12036,6 +12037,7 @@ main{max-width:none;margin:0;padding:0;}
 .rc-more{display:inline-block;margin:16px 0 0;font-size:.9rem;font-weight:600;color:#5DF18F;border-bottom:1px solid rgba(93,241,143,0.4);padding:.1rem 0;}
 .rc-more:hover{border-color:#5DF18F;text-decoration:none;}
 .offers{max-width:68rem;margin:0 auto;padding:2.2rem clamp(24px,5vw,72px) 2rem;border-top:0;box-sizing:content-box;}
+.sec.offers{padding-left:clamp(24px,5vw,72px);padding-right:clamp(24px,5vw,72px);}
 .offer-grid{list-style:none;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(16px,2vw,24px);margin:.4rem 0 1.4rem;}
 @media (min-width:1000px){.offer-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
 .offer{position:relative;display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-width:0;background:#111F21;border:1px solid #2D3D3D;border-radius:10px;padding:22px 24px;color:#C9D1CE;text-decoration:none;transition:border-color .15s ease;}
@@ -12043,7 +12045,7 @@ main{max-width:none;margin:0;padding:0;}
 .offer:focus-within{outline:2px solid #5DF18F;outline-offset:3px;}
 .offer-name a{color:inherit;text-decoration:none;outline:none;}
 .offer-name a::after{content:"";position:absolute;inset:0;border-radius:10px;}
-.offer-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px;}
+.offer-top{display:flex;flex-direction:column;align-items:flex-start;gap:6px;}
 .offer-name{font-size:1.15rem;font-weight:700;color:#F2F4F3;}
 .offer-price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
 .offer-covers{font-size:.95rem;line-height:1.55;color:#C9D1CE;}
@@ -12344,7 +12346,7 @@ a.card:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
 .gcard:focus-within{outline:2px solid #5DF18F;outline-offset:3px;}
 .gcard h3 a{color:inherit;text-decoration:none;outline:none;}
 .gcard h3 a::after{content:"";position:absolute;inset:0;border-radius:10px;}
-.card-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px;}
+.card-top{display:flex;flex-direction:column;align-items:flex-start;gap:6px;}
 .card h2,.card h3,.card .name{font-size:1.15rem;line-height:1.3;font-weight:700;color:#F2F4F3;margin:0;}
 .card .price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
 .card p{font-size:.97rem;line-height:1.55;color:#C9D1CE;margin:0;}
