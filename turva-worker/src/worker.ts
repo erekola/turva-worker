@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.215.14 - content (2026-10-31): the post TLA+ on my own tools, in numbers reports a second scoring of the pair-test and outside-review reports by a rule a reader proposed, under which a report that names a fact in the claim as wrong counts as a refutation: 18 of the 25 false edits, 2 of the 26 originals of which one was a verifier error, and 10 of the 189 first-stage reports; the post carries an Updated 2026-10-31 line.
 // turva.dev worker v3.215.13 - content (2026-10-31): corrections from audit round 21, a buyer's read of all 87 sitemap pages, each checked against the live page or its source. Guides: agentic-resource-discovery records that github.com and huggingface.co now serve ai-catalog.json, agent-readiness-gaps no longer ranks rendering as a measured gap, get-cited and seo-vs-agent-readiness drop two unmeasured claims, and mcp-server-card, well-known, agents-json, prerendering, agent-authentication, x402, json-ld, letting-agents-act, llms-txt and agent-commerce-discovery get wording fixes and sources. Seventeen dated posts carry a Corrected 2026-10-31 line with their modified date. The domain check sample counts four findings, the audit sample answer matches its error table, the tools description names all four tools, and two offer descriptions in the JSON-LD drop their correction notes. The /legal Delay paragraph now refunds what is already paid for the cancelled part, so the terms date moves to 2026-10-31 on /legal and in the order template (Tek-725 P1). The agent-readiness and Internet.nl readings move to 2026-10-29, the day of the domain check sample, Hardenize stays 2026-10-30, and the MCP server card moves to 1.6.26 for the same dates (Tek-725 P2). No price or scope changes.
 // turva.dev worker v3.215.12 - /shopify-agent-storefront-check (2026-10-30, Erik): the EUR 499 add-on also covers a correction that runs through the whole store, whatever the size of the store; the separate whole-store total price set by store size (Tek-679 P9) is removed. No other price or term changes.
 // turva.dev worker v3.215.11 - Hardenize re-measured (2026-10-30): the public report link on the home page answered with no report after the 2026-10-21 run expired, so Hardenize was run again on 2026-10-30, all 24 categories passed as before, and the home page names its own Hardenize date beside the 2026-10-21 Internet.nl tests. The MCP server card moves to 1.6.25 for the same date in get_security_evidence.
@@ -745,6 +746,10 @@ On 28 October I ran that test. In the rounds each claim went first to a verifier
 
 The verdict scale let a verifier rate a claim refined when it saw a wrong fact and the claim's general mechanism still held, so a refuted count of zero does not show that the claims were right. My test covers only the first-stage verifier, without the opposing reader and my own read that followed it in the rounds. The source was each round's package and not the whole tools folder, so for some items the verifiers worked with stand-ins for missing files. I approved the edits and classified the reports myself, and the sample leans toward claims that rest on one separable fact. With none of the 25 false edits refuted, the share of such edits this verifier refutes is at most about 11 percent at 95 percent confidence.
 
+On 31 October I scored the same reports again by a rule that a reader proposed: a report that names a fact in the claim as wrong counts as a refutation, whatever its verdict. I wrote the rule down before the scoring, and six Sonnet subagents applied it. The two that scored the test each saw one half of every pair and did not know which half it was. They marked the same 18 reports that I had, so by this rule the test refutes 18 of the 25 false edits. The bound of about 11 percent above belongs to the verdict scale and not to this rule.
+
+The rule also fired on 2 of the 26 originals. One hit a real fault. The invariant that claim proposed also fails without the crash. In the other the verifier misread a line number that the claim had right. On the first-stage reports of all 189 claims the rule finds 10 that name a fact as wrong. Six of the 10 ended as refined and 4 as confirmed. Of the other 65 claims that ended as refined, the reports of 59 qualified the claim without naming a wrong fact. Among the remaining six, one disputed only a scope word and five named nothing wrong. Read against the 7 false edits whose changed fact no report named, the 10 suggest roughly 14 claims that carry a wrong fact, a rough figure because the edits were chosen to rest on one separable fact. One of the two hits on originals was the verifier's own error, so a named error is not yet a refutation. None of the 10 counts until I check it against the source, and I have not made those checks. The subagents that scored the 189 could see each claim's final verdict, and they are the same model family as the verifiers.
+
 ## What did the internal audit of 19 October find?
 
 I asked for an internal audit, because I needed to be able to trust the decisions. Eight Sonnet reviewers read and did not run anything. They covered 85 distinct decisions and the questions of the four outside reviews, in eight tool families. For each decision they checked the code on disk, the test and mutation protection, the evidence, the model and its drift, and the status line.
@@ -838,7 +843,7 @@ The mutation figures show that every mutation was caught by the test named for i
 
 Many fix choices were made by a session on its own recommendation. In round 3 the chain made 31 such choices, in round 4 about 43, and the first four fix sessions after the audit made 17. The audit found none implemented wrongly. I confirmed the 31 and the 43 in one blanket answer on 19 October without deciding them one by one, and the 17 since then are the sessions' own recommendations.
 
-I made the counts in this post from my decision log, the review and audit reports, the mutation run files, the subagents' usage readings and the result files of the pair test.
+I made the counts in this post from my decision log, the review and audit reports, the mutation run files, the subagents' usage readings and the result files of the pair test and its rescoring.
 
 ## Frequently asked
 
@@ -855,6 +860,8 @@ Every one of the 1 002 mutations, each a one-line change to a tool, made the tes
 No. TLC checks the model, and the model does not read the code. A pass applies to the code the model was run against, so a model whose code has changed needs a diff read, a replay test and a mutation pass before it says anything about today's code.
 
 Updated 2026-10-28. The section on the outside reviews said that I had never planted a false claim to see whether the method refutes it. I have now run that test, and the section reports it. The sentence on what the reviews show no longer says that the readers described the code correctly in 118 claims, because the test showed that a confirmed claim can still carry a wrong fact.
+
+Updated 2026-10-31. The section on the outside reviews now also reports a second scoring of the same reports, by a rule that counts any report naming a wrong fact as a refutation.
 
 ## Related
 
@@ -8161,7 +8168,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.13",
+    "version": "3.215.14",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8464,7 +8471,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.13",
+  "version": "3.215.14",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
