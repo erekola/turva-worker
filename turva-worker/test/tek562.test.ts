@@ -124,10 +124,11 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
 // Tek-564 moved the card to MCP 1.6.15 and the 2026-10-05 measurement day to MCP 1.6.16 (both version fields, same length) and site 3.209.2 to MCP 1.6.17 and site 3.209.3 to MCP 1.6.18 and site 3.210.1 to MCP 1.6.19 and the 2026-10-21 measurement day to MCP 1.6.20 (same length again) and site 3.213.0 to MCP 1.6.21 with the narrower VAT note and the Tek-679 durationFrom and firstMonthOptOut fields (4621 bytes) and site 3.213.3 to MCP 1.6.22 and site 3.213.8 to MCP 1.6.23 (same length both times) and site 3.215.11 to MCP 1.6.25 (same length), so the pinned
 // digest is that card's; the signature lives in SIGNATURES_JSON, outside these bytes.
 // Tek-716: the card moved to MCP 1.6.24 and carries the domain-check pricing key and the external domain check in its name lists.
+// Tek-725: the card moved to MCP 1.6.26, whose snapshot dates are the 2026-10-29 readings; only the two version fields changed.
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
   assert.equal(b.length, 4829);
-  assert.equal(await sha256Hex(b), "6070550a3fcd5a7ecafc8d875f72f3275e5db83e95bac05d69a76b0c34f96df1");
+  assert.equal(await sha256Hex(b), "3b697779e93e8e47dfd6425c15cc118bfeedee931e48437e3dd9c7f8677dea96");
 });
 
 // ---------------------------------------------------------------- PGP v6 key
@@ -243,9 +244,9 @@ test("page text: services reply promise, validator implementation sentence, lega
   assert.ok(validator.includes("If you want the findings fixed, [implementation](/services#implementation) is sold with the audit."));
   const legal = await (await get("/legal.md")).text();
   assert.ok(legal.includes("You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows."));
-  assert.ok(legal.includes("**Terms last updated:** 2026-10-29"));
+  assert.ok(legal.includes("**Terms last updated:** 2026-10-31"));
   const audit = await (await get("/samples/audit-report.md")).text();
-  assert.ok(audit.includes("This page itself was last revised on 3 October 2026."));
+  assert.ok(audit.includes("This page itself was last revised on 31 October 2026."));
   assert.ok(audit.includes("today each page weighs between 188 kB and 340 kB of markup"));
   assert.ok(!audit.includes("more than 200 kB"));
   const shop = await (await get("/samples/shopify-agent-storefront-check.md")).text();

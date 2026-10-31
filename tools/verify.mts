@@ -387,7 +387,9 @@ check(wm.length>0 && wm.every(d=>allowed.has(d)), `worker.ts "Measured <date>" a
 // appears n=1 and agent-readiness n=3 (twin plus two guides).
 const arNear = [...src.worker.text.matchAll(/isitagentready\.com\. Measured (\d{4}-\d{2}-\d{2})/g)].map(m=>m[1]);
 check(arNear.length>=3 && arNear.every(d=>d===ar), `worker.ts agent-readiness "Measured" all == ${ar} (saw ${[...new Set(arNear)].join(', ')||'none'}, n=${arNear.length})`);
-const secNear = [...src.worker.text.matchAll(/asserted\. I measured all three on (\d{4}-\d{2}-\d{2})/g)].map(m=>m[1]);
+// Tek-725: the sentence may name a later Internet.nl run after the date of all three, and then that later date is
+// facts.security.measuredAt; without it the date of all three is.
+const secNear = [...src.worker.text.matchAll(/asserted\. I measured all three on (\d{4}-\d{2}-\d{2})(?:, Internet\.nl again on (\d{4}-\d{2}-\d{2}))?/g)].map(m=>m[2]||m[1]);
 check(secNear.length>=1 && secNear.every(d=>d===sec), `worker.ts security "Measured" all == ${sec} (saw ${[...new Set(secNear)].join(', ')||'none'}, n=${secNear.length})`);
 const lvm = src.worker.text.match(/"lastVerified":\s*"(\d{4}-\d{2}-\d{2})"/);
 check(!!lvm && lvm[1]===ar, `worker.ts HOME_JSON lastVerified == ${ar}`);

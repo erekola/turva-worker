@@ -134,7 +134,7 @@ See [docs/endpoints.md](docs/endpoints.md) for the other endpoints, including A2
 
 ## Scanner results
 
-The published turva.dev reference build recorded 100/100, Level 5 Agent-Native on [isitagentready.com](https://isitagentready.com/) on 2026-10-21. This is a dated measurement of this domain. A fork needs its own checks.
+The published turva.dev reference build recorded 100/100, Level 5 Agent-Native on [isitagentready.com](https://isitagentready.com/) on 2026-10-29. This is a dated measurement of this domain. A fork needs its own checks.
 
 <details>
 <summary>Category results and measurement limits</summary>
@@ -159,7 +159,7 @@ A Commerce pass means the scanner detected the payment discovery surfaces. The p
 
 ## Web security
 
-Measured on 2026-10-30: all 24 categories passed on [Hardenize](https://www.hardenize.com/report/turva.dev). Measured on 2026-10-21: 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
+Measured on 2026-10-30: all 24 categories passed on [Hardenize](https://www.hardenize.com/report/turva.dev). Measured on 2026-10-29: 98/100 on the [Internet.nl website test](https://internet.nl/site/turva.dev/) and 90/100 on the [Internet.nl email test](https://internet.nl/mail/turva.dev/).
 
 The website deduction concerned the key-exchange hash function in one HTTPS sub-test. Its IPv6, DNSSEC and RPKI checks passed in full. The email deduction concerned IPv6, because the receiving mail servers, operated by the mail provider, publish no IPv6 address. Its DNSSEC and RPKI checks passed in full. DMARC with DKIM and SPF, and STARTTLS with DANE, also passed.
 
