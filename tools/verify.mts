@@ -661,9 +661,9 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   // C2-2, and it shipped a wrong category name for at least three rounds unnoticed).
   // Matched by a scored reading in the same row (PASS, FAIL or INFO), because that is
   // what marks a row as a scan-result row and not some other table on either page: the
-  // Shopify sample's own tables never carry one, so it contributes zero rows here today.
+  // a sample without a scan table would contribute zero rows here.
   {
-    const SAMPLE_PATHS = ['/samples/audit-report', '/samples/shopify-agent-storefront-check'];
+    const SAMPLE_PATHS = ['/samples/audit-report'];
     const rows2 = [];
     for (const p of SAMPLE_PATHS) {
       const open = `\n  "${p}": \``;
@@ -1014,7 +1014,6 @@ const twConverted: Record<string, any> = {
   '/contact': { fn: 'serveContactHtml', mdOnly: [] },
   '/company': { fn: 'serveCompanyHtml', mdOnly: [] },
   '/legal':   { fn: 'serveLegalHtml',   mdOnly: [] },
-  '/shopify-agent-storefront-check': { fn: 'serveShopifyHtml', mdOnly: [] },
   // The entry check (Tek-716): the twin's sections render through mdOpenSec and the closing order block through mdParasCta.
   '/external-domain-check': { fn: 'serveDomainCheckHtml', mdOnly: [] },
   // The audit product page: since the 2026-09-09 text round every rendered heading is the
@@ -1323,12 +1322,8 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       check(s.priceKey ? got.price === facts.prices[s.priceKey] : got.pricing === 'on request',
         `HOME_JSON ${s.name} ${s.priceKey ? 'priced ' + facts.prices[s.priceKey] : 'stays on request'} (saw ${JSON.stringify(s.priceKey ? got.price : got.pricing)})`);
     }
-    const shop = region('function buildShopifyServiceJsonLd', '\nfunction ');
-    const prices = [...shop.matchAll(/"price": "(\d+)"/g)].map((m) => m[1]);
-    check(prices.length === 2 && prices.every((p) => p === String(facts.prices.shopify)),
-      `buildShopifyServiceJsonLd states ${facts.prices.shopify} in both price fields (saw [${prices.join(', ')}])`);
     // Tek-716: the external domain check page publishes its own Service node, and the price in it is
-    // read against facts.json the way the Shopify node's is.
+    // read against facts.json.
     const domJson = region('function buildDomainCheckServiceJsonLd', '\nfunction ');
     const domPrices = [...domJson.matchAll(/"price": "(\d+)"/g)].map((m) => m[1]);
     check(domPrices.length === 2 && domPrices.every((p) => p === String(facts.prices['domain-check'])),
@@ -1652,7 +1647,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     seqSame('SITEMAP_ENTRIES blog rows (the literal; sitemap.xml sorts by siteRank at runtime and is checked in routes.test.ts)', smRows.filter((p) => p.startsWith('/blog/')), blogWant);
     seqSame('SITEMAP_ENTRIES guide rows (the literal)', smRows.filter((p) => p.startsWith('/guides/')), guideWant);
     seqSame('SITEMAP_ENTRIES primary and auxiliary rows (the literal)', smRows.filter((p) => primary.includes(p) || aux.includes(p)), primary.concat(aux));
-    // 4. the service lists: facts.json services is the order, shopify first, and the two ACP homes and the two skills homes agree
+    // 4. the service lists: facts.json services is the order, and the two ACP homes and the two skills homes agree
     const priced = (facts.services || []).filter((s: { priceKey: string | null }) => s.priceKey).map((s: { id: string }) => s.id);
     seqSame('ACP_SERVICES keys', [...region('const ACP_SERVICES = {', '\n};').matchAll(/\n  "?([a-z-]+)"?: \{ item:/g)].map((m) => m[1]), priced);
     seqSame('ACP_INDEX_JSON items', [...((region('const ACP_INDEX_JSON', '\n}, null, 2);').match(/"items": \[([^\]]*)\]/) || ['', ''])[1].matchAll(/"([a-z-]+)"/g))].map((m) => m[1]), priced);
@@ -1728,7 +1723,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       const priceNum = (s: string) => Number(s.replace(/&#8364;|\u20ac/g, '').replace(/,/g, ''));
       if (homePriceHtml) {
         const homePrices = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => priceNum(m[1]));
-        setSame('home page offer-price spans vs facts.json (domain-check, shopify, audit)', homePrices, ['domain-check', 'shopify', 'audit'].map((k) => facts.prices[k]));
+        setSame('home page offer-price spans vs facts.json (domain-check, audit)', homePrices, ['domain-check', 'audit'].map((k) => facts.prices[k]));
       } else bad('K5-P3: the home page was not rendered, cannot check its prices');
       if (servicesPriceHtml) {
         const wantEuro = (n: number) => '\u20ac' + n.toLocaleString('en-US');
@@ -2234,21 +2229,18 @@ console.log('\nAutolink: bare hosts in the served markdown (kierros 18, S5-1)');
 console.log('\nRetest window: the correction add-on exception (Tek-481, Tek-482)');
 // Tek-481 gave every served sentence that names the start day of an included retest
 // window the exception for the correction add-on: when it is bought, the window starts on
-// the day the corrections are delivered, not on the report or first-package day. Twenty-one
-// sentences carry it, written by hand across the home and /services cards, the product
-// pages, a guide, the services skill, the JSON-LD offers and the ACP session. Nothing read
+// the day the corrections are delivered, not on the report or first-package day. Eight
+// sentences carry it since the Shopify check left (3.218.0; twenty-one before), written by hand across the home and
+// /services audit cards, the audit page, a guide, the services skill, the JSON-LD offer and the ACP session. Nothing read
 // it back, and the same promise had drifted between two repos once already (the PROMISES
 // comment below, 2026-09-10). This gate reads every sentence of worker.ts that names a
 // window start and fails when one of them lacks the exception, and it fails when fewer
 // sentences than the measured floor name a start at all, so a rewording that slips past
-// the pattern is loud rather than silently unread. The Shopify sample's dated window
-// (/samples/shopify-agent-storefront-check, "Until 2026-09-20" and "due by 2026-09-20")
-// names a date, not a start day, so it does not match the pattern and needs no exception:
-// in that fictional engagement the add-on was not bought.
+// the pattern is loud rather than silently unread.
 {
   const START = /re-scan within 30 days of the report|within 14 days of (that|the) (first )?(package|delivery)|within 14 days of the day the first four arrive/i;
   const EXC = /delivered corrections|corrections are delivered/i;
-  const FLOOR = 21; // measured 2026-09-26 on v3.174.0: 21 sentences, all carrying the exception (the audit ACP session joined, Tek-484)
+  const FLOOR = 8; // measured 2026-10-31 on v3.218.0: 8 sentences, all carrying the exception; it was 21 on v3.174.0 until the Shopify check left the site, which took 13 of those sentences with it (Tek-734 point 7)
   const found = [];
   const missing: string[] = [];
   src.worker.text.replace(/\r\n/g, '\n').split('\n').forEach((line: string, i: number) => {
@@ -3450,11 +3442,8 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
           ['advisory', /monthly re-scan/i, 'the monthly re-scan'],
           ['advisory', /monthly written summary/i, 'the monthly written summary'],
           ['advisory', /quarterly summary/i, 'the quarterly summary'],
-          ['shopify', /within 48 hours of the agreed written kickoff/i, 'the 48 hour first package'],
-          ['shopify', /within 14 days of that first package/i, 'the day the 14 day retest counts from'],
           // Tek-481 added the correction add-on exception to both retest windows; Tek-482 reads it back.
           ['audit', /or within 30 days of the delivered corrections when the correction add-on is bought/i, 'the re-scan window of the correction add-on'],
-          ['shopify', /or of the delivered corrections when the correction add-on is bought/i, 'the retest window of the correction add-on'],
         ];
         for (const [id, re, what] of PROMISES) {
           const one = (svc.services || []).find((x: { id: string; deliverable?: unknown }) => x.id === id);

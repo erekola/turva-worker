@@ -1096,7 +1096,7 @@ test("R16 S4-1: no live brief address and no prospect name sits in the source", 
 // derives the expectation from the same sources a reader would use: the /guides twin for the
 // guide order and the posts' dates for the blog, with the primary pages written out.
 test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guides in /guides order, blog newest first", async () => {
-  const primary = ["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/shopify-agent-storefront-check", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
+  const primary = ["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/tools", "/llms-txt-validator", "/markdown-parity-check", "/company", "/contact", "/legal"];
   const guidesMd = await (await get("/guides.md")).text();
   const guides = [...guidesMd.matchAll(/\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g)].map((m) => m[1]);
   assert.ok(guides.length >= 20, "the /guides twin lists the guides");
@@ -1110,7 +1110,7 @@ test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guid
 
   const xml = await (await get("/sitemap.xml")).text();
   const sm = [...xml.matchAll(/<loc>https:\/\/turva\.dev(\/[^<]*)?<\/loc>/g)].map((m) => m[1] || "/");
-  const samples = ["/samples/audit-report", "/samples/shopify-agent-storefront-check", "/samples/external-domain-check"]; // AUX_PATHS after /auth.md since v3.122.0 (Tek-342)
+  const samples = ["/samples/audit-report", "/samples/external-domain-check"]; // AUX_PATHS after /auth.md since v3.122.0 (Tek-342)
   assert.deepEqual(sm, [...primary, "/badge", "/auth.md", ...samples, "/guides", ...guides, "/blog", ...blog], "sitemap.xml order");
 
   const full = await (await get("/llms-full.txt")).text();
@@ -1118,10 +1118,10 @@ test("one site order: sitemap.xml and llms-full.txt run primary, auxiliary, guid
   assert.deepEqual(sources, [...primary, "/badge", ...samples, "/guides", ...guides, "/blog", ...blog, "/auth.md"], "llms-full.txt order");
   assert.ok(full.indexOf("Source: https://turva.dev/\n") < full.indexOf("Source: https://turva.dev/blog"), "the home page comes before the blog");
 
-  // The services, domain-check first (Tek-716), then shopify, the same in every home that lists them.
+  // The services, domain-check first (Tek-716), then the audit, the same in every home that lists them.
   const priced = facts.services.filter((s: { priceKey: string | null; id: string }) => s.priceKey).map((s: { priceKey: string; id: string }) => s.id);
   assert.equal(priced[0], "domain-check");
-  assert.equal(priced[1], "shopify");
+  assert.equal(priced[1], "audit");
   const acp = JSON.parse(await (await get("/api/acp")).text());
   assert.deepEqual(acp.items, priced, "ACP index items");
   const skills = JSON.parse(await (await get("/.well-known/agent-skills/index.json")).text()).skills.map((s: { name: string }) => s.name);
@@ -1156,17 +1156,20 @@ test("A10-1: the ACP checkout refuses a body it cannot read, and keeps the defau
 // session id encodes which one (Tek-383).
 test("A10-2: the ACP checkout reads every item, not only the first", async () => {
   const post = (body: string) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
-  const two = await post('{"items":[{"id":"shopify"},{"id":"audit"}]}');
+  const two = await post('{"items":[{"id":"advisory"},{"id":"audit"}]}');
   assert.equal(two.status, 400, "two items are refused rather than truncated to the first");
   assert.equal((await json(two)).code, "too_many_items");
-  const twoBad = await post('{"items":[{"id":"shopify"},{"id":"not-a-service"}]}');
+  const twoBad = await post('{"items":[{"id":"advisory"},{"id":"not-a-service"}]}');
   assert.equal(twoBad.status, 400, "a second entry that is not a service does not pass behind a valid first one");
   assert.equal((await json(await post('{"items":"audit"}'))).code, "invalid_items");
   assert.equal((await json(await post('{"items":[null]}'))).code, "invalid_item");
   assert.equal((await json(await post('{"items":[{"id":1}]}'))).code, "invalid_item");
-  const one = await post('{"items":[{"id":"shopify"}]}');
+  const one = await post('{"items":[{"id":"advisory"}]}');
   assert.equal(one.status, 201, "one valid item is unchanged");
-  assert.equal((await json(one)).line_items[0].item.id, "shopify");
+  assert.equal((await json(one)).line_items[0].item.id, "advisory");
+  const retired = await post('{"items":[{"id":"shopify"}]}');
+  assert.equal(retired.status, 400, "the retired shopify item id is an unknown item");
+  assert.equal((await json(retired)).code, "invalid_item");
 });
 
 // F09 (Tek-496 audit round): one checkout session buys one unit of one service. A quantity
@@ -1175,7 +1178,7 @@ test("A10-2: the ACP checkout reads every item, not only the first", async () =>
 // rejected as the distinct invalid input it is.
 test("F09: ACP checkout rejects a quantity other than 1 and an explicit null id", async () => {
   const post = (body: string) => worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body }), env, {});
-  for (const body of ['{"items":[{"id":"implementation","quantity":10}]}', '{"items":[{"id":"shopify","quantity":-1}]}', '{"items":[{"id":"audit","quantity":0}]}', '{"items":[{"id":"audit","quantity":1.5}]}']) {
+  for (const body of ['{"items":[{"id":"implementation","quantity":10}]}', '{"items":[{"id":"advisory","quantity":-1}]}', '{"items":[{"id":"audit","quantity":0}]}', '{"items":[{"id":"audit","quantity":1.5}]}']) {
     const r = await post(body);
     assert.equal(r.status, 400, body + " must be refused, not rewritten to quantity 1");
     assert.equal((await json(r)).code, "invalid_quantity");
@@ -1520,14 +1523,27 @@ test("K6: #vurl asks for the URL keyboard and turns off capitalisation, spellche
 });
 
 // Mobile read 2026-10-30, K10: Tek-717 P1 reads the 99, 999, 4 300 ladder as covering /contact.
-test("K10: /contact lists External domain check, Shopify check, Website or API audit in the HTML and in the Markdown twin", async () => {
-  const names = ["External domain check", "Shopify check", "Website or API audit"];
+test("K10: /contact lists External domain check and Website or API audit in the HTML and in the Markdown twin", async () => {
+  const names = ["External domain check", "Website or API audit"];
   const html = await (await get("/contact", { headers: { Accept: "text/html" } })).text();
   const hi = names.map((n) => html.indexOf("<h2>" + n + "</h2>"));
-  assert.ok(hi.every((i) => i > 0), "all three cards are rendered: " + hi.join(","));
-  assert.ok(hi[0] < hi[1] && hi[1] < hi[2], "HTML order " + hi.join(","));
+  assert.ok(hi.every((i) => i > 0), "both cards are rendered: " + hi.join(","));
+  assert.ok(hi[0] < hi[1], "HTML order " + hi.join(","));
+  assert.ok(!html.includes("Shopify check"), "no Shopify card");
   const md = await (await get("/contact", { headers: { Accept: "text/markdown" } })).text();
   const mi = names.map((n) => md.indexOf("## " + n + "\n"));
-  assert.ok(mi.every((i) => i > 0), "all three sections are in the twin: " + mi.join(","));
-  assert.ok(mi[0] < mi[1] && mi[1] < mi[2], "twin order " + mi.join(","));
+  assert.ok(mi.every((i) => i > 0), "both sections are in the twin: " + mi.join(","));
+  assert.ok(mi[0] < mi[1], "twin order " + mi.join(","));
+});
+
+// Tek-734 point 7 (2026-10-31): the Shopify check is no longer sold; its four old addresses move permanently to the audit pages.
+test("Tek-734: the retired Shopify check addresses answer 301 to the audit pages and their Markdown twins", async () => {
+  const pairs = [["/shopify-agent-storefront-check", "/agent-readiness-audit"], ["/shopify-agent-storefront-check/", "/agent-readiness-audit"], ["/shopify-agent-storefront-check.md", "/agent-readiness-audit.md"], ["/samples/shopify-agent-storefront-check", "/samples/audit-report"], ["/samples/shopify-agent-storefront-check/", "/samples/audit-report"], ["/samples/shopify-agent-storefront-check.md", "/samples/audit-report.md"]];
+  for (const [from, to] of pairs) {
+    const r = await get(from);
+    assert.equal(r.status, 301, from);
+    assert.equal(r.headers.get("location"), "https://turva.dev" + to, from);
+  }
+  const home = await (await get("/", { headers: { Accept: "text/html" } })).text();
+  assert.ok(!home.includes("shopify-agent-storefront-check"), "the home page links nothing retired");
 });

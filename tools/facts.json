@@ -3,8 +3,8 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.217.0",
-    "mcp": "1.6.26"
+    "site": "3.218.0",
+    "mcp": "1.7.0"
   },
   "mtaSts": {
     "txtId": "20260910202321",
@@ -15,7 +15,6 @@
   },
   "prices": {
     "domain-check": 99,
-    "shopify": 999,
     "audit": 4300,
     "advisory": 3000,
     "implementation": 1500,
@@ -34,13 +33,6 @@
       "price": 499,
       "requires": "audit",
       "scope": "Exactly the fixes the audit report lists."
-    },
-    {
-      "id": "shopify-fixes",
-      "name": "Shopify correction implementation",
-      "price": 499,
-      "requires": "shopify",
-      "scope": "Exactly the corrections the check's plan lists."
     }
   ],
   "services": [
@@ -48,11 +40,6 @@
       "id": "domain-check",
       "name": "External domain check",
       "priceKey": "domain-check"
-    },
-    {
-      "id": "shopify",
-      "name": "Shopify agent storefront check",
-      "priceKey": "shopify"
     },
     {
       "id": "audit",

@@ -125,10 +125,11 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
 // digest is that card's; the signature lives in SIGNATURES_JSON, outside these bytes.
 // Tek-716: the card moved to MCP 1.6.24 and carries the domain-check pricing key and the external domain check in its name lists.
 // Tek-725: the card moved to MCP 1.6.26, whose snapshot dates are the 2026-10-29 readings; only the two version fields changed.
+// Tek-734 point 7: the card moved to MCP 1.7.0 and no longer names the Shopify agent storefront check, its price key or its add-on in its description, tool text and pricing; the stored signature must be renewed by the resign script before the ship.
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
-  assert.equal(b.length, 4829);
-  assert.equal(await sha256Hex(b), "3b697779e93e8e47dfd6425c15cc118bfeedee931e48437e3dd9c7f8677dea96");
+  assert.equal(b.length, 4213);
+  assert.equal(await sha256Hex(b), "d92bcd29b9948a58931e8eac2b68ef0df9efaa878296351e48285417000e2876");
 });
 
 // ---------------------------------------------------------------- PGP v6 key
@@ -249,8 +250,6 @@ test("page text: services reply promise, validator implementation sentence, lega
   assert.ok(audit.includes("This page itself was last revised on 31 October 2026."));
   assert.ok(audit.includes("today each page weighs between 188 kB and 340 kB of markup"));
   assert.ok(!audit.includes("more than 200 kB"));
-  const shop = await (await get("/samples/shopify-agent-storefront-check.md")).text();
-  assert.ok(shop.includes("This page itself was last revised on 2 October 2026."));
   const parity = await (await get("/markdown-parity-check.md")).text();
   assert.ok(parity.includes("That page passed again on 2 October 2026."));
 });

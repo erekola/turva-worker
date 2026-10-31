@@ -457,7 +457,7 @@ test("K5-P5: mdOfferCards and mdToolCards wrap their href in escapeHtml() before
   // would change, so the rendered bytes are the same on both builds.
   const services = await (await get("/services")).text();
   // Since Tek-488 round 2 the offer card is a list item and its link sits on the offer name.
-  assert.match(services, /<li class="card ocard"[^>]*><span class="card-top"><span class="name"><a href="\/shopify-agent-storefront-check">/);
+  assert.match(services, /<li class="card ocard"[^>]*><span class="card-top"><span class="name"><a href="\/external-domain-check">/);
   const tools = await (await get("/tools")).text();
   assert.match(tools, /<a class="go" href="\/llms-txt-validator">/);
 });
@@ -513,7 +513,7 @@ test("K6-P4: replaceExactlyOnce replaces a single occurrence and throws on zero 
 test("K6-P5: the two prefilled mailto links carry a plain & in the twin rows the buttons are read from (Tek-484)", () => {
   // The constants moved into the twins in v3.174.0: every button row is a links-only paragraph
   // of its page's Markdown, and escapeHtml turns the & into &amp; when the row is rendered.
-  for (const [path, subject, rows] of [["/shopify-agent-storefront-check", "Shopify", 2], ["/agent-readiness-audit", "Agent-readiness", 3]] as [string, string, number][]) {
+  for (const [path, subject, rows] of [["/agent-readiness-audit", "Agent-readiness", 3]] as [string, string, number][]) {
     const at = workerSrc.indexOf('"' + path + '": `');
     assert.notEqual(at, -1, path);
     const twin = workerSrc.slice(at, workerSrc.indexOf("\n`,", at));
@@ -530,10 +530,6 @@ test("K6-P5: the two prefilled mailto links carry a plain & in the twin rows the
 // the exact same rendered bytes as the old hand-typed &amp; constant used unescaped, so this
 // proves the rewrite did not change what the page serves, not that it serves something new.
 test("K6-P5: the rendered mailto hrefs carry &amp;body= exactly as many times as there are buttons, never &amp;amp; (safety net: identical bytes on both builds)", async () => {
-  const shopify = await (await get("/shopify-agent-storefront-check")).text();
-  assert.equal((shopify.match(/&amp;body=/g) || []).length, 2, "two mailto hrefs on the Shopify page");
-  assert.ok(!shopify.includes("&amp;amp;"), "must never double-escape");
-
   const audit = await (await get("/agent-readiness-audit")).text();
   assert.equal((audit.match(/&amp;body=/g) || []).length, 3, "three mailto hrefs on the audit page");
   assert.ok(!audit.includes("&amp;amp;"), "must never double-escape");
