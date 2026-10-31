@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.216.0 - new Research post /blog/finnish-crypto-providers-and-ai-agents (2026-10-31) on the agent-readiness of the five Finnish crypto-asset service providers authorised under MiCA, read with isitagentready.com and own curl requests, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign) and the version mirrors.
 // turva.dev worker v3.215.14 - content (2026-10-31): the post TLA+ on my own tools, in numbers reports a second scoring of the pair-test and outside-review reports by a rule a reader proposed, under which a report that names a fact in the claim as wrong counts as a refutation: 18 of the 25 false edits, 2 of the 26 originals of which one was a verifier error, and 10 of the 189 first-stage reports; the post carries an Updated 2026-10-31 line.
 // turva.dev worker v3.215.13 - content (2026-10-31): corrections from audit round 21, a buyer's read of all 87 sitemap pages, each checked against the live page or its source. Guides: agentic-resource-discovery records that github.com and huggingface.co now serve ai-catalog.json, agent-readiness-gaps no longer ranks rendering as a measured gap, get-cited and seo-vs-agent-readiness drop two unmeasured claims, and mcp-server-card, well-known, agents-json, prerendering, agent-authentication, x402, json-ld, letting-agents-act, llms-txt and agent-commerce-discovery get wording fixes and sources. Seventeen dated posts carry a Corrected 2026-10-31 line with their modified date. The domain check sample counts four findings, the audit sample answer matches its error table, the tools description names all four tools, and two offer descriptions in the JSON-LD drop their correction notes. The /legal Delay paragraph now refunds what is already paid for the cancelled part, so the terms date moves to 2026-10-31 on /legal and in the order template (Tek-725 P1). The agent-readiness and Internet.nl readings move to 2026-10-29, the day of the domain check sample, Hardenize stays 2026-10-30, and the MCP server card moves to 1.6.26 for the same dates (Tek-725 P2). No price or scope changes.
 // turva.dev worker v3.215.12 - /shopify-agent-storefront-check (2026-10-30, Erik): the EUR 499 add-on also covers a correction that runs through the whole store, whatever the size of the store; the separate whole-store total price set by store size (Tek-679 P9) is removed. No other price or term changes.
@@ -355,6 +356,7 @@ Two samples use synthetic, invented sites and one uses a real domain.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Finnish MiCA crypto providers and AI agents](https://turva.dev/blog/finnish-crypto-providers-and-ai-agents.md)
 - [Keeping my lab and my client work apart](https://turva.dev/blog/keeping-my-lab-and-client-work-apart.md)
 - [TLA+ on my own tools, in numbers](https://turva.dev/blog/tla-plus-in-numbers.md)
 - [What Shopify changed for agent shopping since August](https://turva.dev/blog/what-shopify-changed-for-agent-shopping.md)
@@ -575,6 +577,76 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 const PAGE_MARKDOWN = {
+  "/blog/finnish-crypto-providers-and-ai-agents": `# Finnish MiCA crypto providers and AI agents
+
+2026-10-31
+
+I read the sites of the five Finnish entries in the EU register of crypto-asset service providers with an agent-readiness scanner and my own requests. All five sit at Level 1 of 5. None passes any of the scanner's nine checks for APIs and agent protocols, and three of the five have written an llms.txt.
+
+Binance put the impact of the theft from its hot wallets on 29 October at about 6.3 billion dollars, and Elliptic traced the withdrawals across 11 blockchains. Binance first linked the breach to a compromised DevOps engineer's laptop and has since said the attack had more points of entry, according to [Elliptic's analysis](https://www.elliptic.co/insights/binance-largest-hack-in-history/). The news sent me to look at the Finnish side of the market. From the outside I can measure whether these sites publish the files and formats an AI agent looks for. That says nothing about how a company protects funds.
+
+## Key figures
+
+- Five sites: every entry with Finland as the home state in ESMA's interim MiCA register of crypto-asset service providers, read from the [register file](https://www.esma.europa.eu/sites/default/files/2024-12/CASPS.csv) on 31 October 2026.
+- All five at isitagentready Level 1 of 5, in two separate runs each on the same day, with the same result both times.
+- Each passed 3 or 4 of the 16 checks the scanner applied.
+- None passed any of the nine checks in the scanner's API/Auth/MCP/A2A group. My own requests for five of those files returned 404 on every site.
+- No homepage returned Markdown when asked for it, and no robots.txt declares a content signal.
+- Three of the five publish an llms.txt, which the scanner does not score.
+
+## Who is in the set
+
+The European Securities and Markets Authority publishes its interim MiCA register of crypto-asset service providers as a CSV file. On 31 October it had five rows with Finland as the home state. I am not naming the companies here, because the point is the pattern and not any one of them, and anyone who wants the list can read it from the register.
+
+## What the scanner read
+
+I ran isitagentready.com with its default profile twice on each site, one site at a time. The two runs agreed on every site, down to which checks passed.
+
+Every site passed the scanner's checks for robots.txt and a sitemap, and its check on AI crawler rules. That check passed because none of the five robots.txt files names an AI crawler, so the general rules apply to them. Two sites passed a fourth check, on Link headers.
+
+In the API/Auth/MCP/A2A group every site passed 0 of 9: no API catalog, no OAuth discovery metadata, no MCP server card, no A2A agent card. I asked each site directly for five of those files, with an Accept header for JSON and without following redirects, and all 25 requests came back 404.
+
+## What my own requests added
+
+I asked each homepage for Markdown with an Accept: text/markdown header. Two of them first redirected to a language path, and I asked the target the same way. All five answered with HTML.
+
+None of the five robots.txt files has a Content-Signal line, the place where a site states whether its content may be used for search, for AI answers or for training.
+
+Three of the five publish an llms.txt, a curated Markdown map of the site written for language models. The scanner's 16 checks do not include llms.txt, so this work does not show in the Level. Of the files I requested, those three were the only ones written for agents.
+
+## What this does not say
+
+This scan says nothing about how well any of these companies protects customer funds. Binance's first account was that the breach may involve a compromised DevOps engineer's laptop, which let an attacker reach a service container and submit unauthorized withdrawals. No check here comes near that.
+
+It also does not mean a crypto provider should open its trading to agents. An authenticated API or an MCP server that can move funds is new attack surface, and that is a decision for the company's security team with its own threat model. The read-only part is a different matter. Markdown versions of public pages and an llms.txt give an agent something accurate to read, and a content signal states how the content may be used. None of them gives it a way to move money.
+
+## Method
+
+- Scanner: isitagentready.com scan_site, default profile, two serial runs per site on 31 October 2026, between about 14:35 and 14:45 UTC. I kept each run's pass and fail rows, and the full output of two runs.
+- Own reading: curl on the same day, one request at a time, without following redirects, with each redirect target fetched separately. Every request recorded its status and content type.
+- The Link header pass on two sites stays out of the conclusions. My own requests found no link meant for agents in those headers, so I read nothing into that check either way.
+
+## Frequently asked
+
+**Are Finnish crypto providers ready for AI agents?**
+
+Not by this measure. On 31 October 2026 all five Finnish entries in the MiCA register of crypto-asset service providers sat at isitagentready Level 1 of 5. None passed any of the scanner's nine checks for APIs and agent protocols, and no homepage served Markdown on request.
+
+**Does agent-readiness have anything to do with the Binance theft?**
+
+Not as a measure of security. The scanner reads public discovery files and says nothing about how a company protects funds. Binance said its breach may involve a compromised DevOps engineer's laptop, and no check in this scan comes near that.
+
+**What can a crypto provider publish for agents without opening trading to them?**
+
+The read-only layer: Markdown versions of public pages, an llms.txt and a Content-Signal line in robots.txt. None of it lets an agent move funds. Three of the five Finnish providers already publish an llms.txt.
+
+## Related
+
+- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b)
+- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites)
+- [llms.txt explained](/guides/llms-txt)
+- [Serving Markdown to AI clients](/guides/markdown-for-agents)
+`,
   "/blog/keeping-my-lab-and-client-work-apart": `# Keeping my lab and my client work apart
 
 2026-10-26
@@ -3813,8 +3885,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-45 articles.
+46 articles.
 
+- [Finnish MiCA crypto providers and AI agents](/blog/finnish-crypto-providers-and-ai-agents). 2026-10-31. Research. All five Finnish crypto providers in the MiCA register sit at isitagentready Level 1 of 5, and none passes the scanner's nine agent protocol checks.
 - [Keeping my lab and my client work apart](/blog/keeping-my-lab-and-client-work-apart). 2026-10-26. Build notes. Client work now runs in a Windows virtual machine apart from my own lab. How I tested it with two test clients, and what it does not isolate.
 - [TLA+ on my own tools, in numbers](/blog/tla-plus-in-numbers). 2026-10-22. Build notes. Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.
 - [What Shopify changed for agent shopping since August](/blog/what-shopify-changed-for-agent-shopping). 2026-10-18. Protocol notes. Shopify moved store agent tools to /api/ucp/mcp and opened checkout to agents. What a merchant can check publicly and what stays hidden.
@@ -8168,7 +8241,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.215.14",
+    "version": "3.216.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8300,7 +8373,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"tOWBKw5fTs3rKOKcqarYNdQ9lay0yv5yz-yIaTpMe9OaEPr75aIhEa4DZXyu4MbkzMzol56T8rZiLYq8tjxiBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"tOWBKw5fTs3rKOKcqarYNdQ9lay0yv5yz-yIaTpMe9OaEPr75aIhEa4DZXyu4MbkzMzol56T8rZiLYq8tjxiBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oNzU0JslnQ_OYCMvl5Nl24mYtmYiN-0cW5hz-ttaIqsymNDMr8_tT3qw9etOIS0QWm6rMmLmfX-HMZnP7dYeDA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"iydS7rjFiXt3YXyG0uu4ORdnXGriHG7LdLoihvGLOi2yHVvaAlGEKPY5Spufb70P_ncQGlYRbZt_fnnjNj76Ag\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"tOWBKw5fTs3rKOKcqarYNdQ9lay0yv5yz-yIaTpMe9OaEPr75aIhEa4DZXyu4MbkzMzol56T8rZiLYq8tjxiBQ\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"tOWBKw5fTs3rKOKcqarYNdQ9lay0yv5yz-yIaTpMe9OaEPr75aIhEa4DZXyu4MbkzMzol56T8rZiLYq8tjxiBQ\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"oNzU0JslnQ_OYCMvl5Nl24mYtmYiN-0cW5hz-ttaIqsymNDMr8_tT3qw9etOIS0QWm6rMmLmfX-HMZnP7dYeDA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"eKR_LgyKeTLCcGvkN9pInY5m7S5qYgKUh7QhG0ux5ECqDbf6usuDRlt8ZLdSKpHRQfrps0xTMLSGsMdXHSunBQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8471,7 +8544,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.215.14",
+  "version": "3.216.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9202,6 +9275,7 @@ const SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/finnish-crypto-providers-and-ai-agents", "monthly", "0.6"],
   ["/blog/keeping-my-lab-and-client-work-apart", "monthly", "0.6"],
   ["/blog/tla-plus-in-numbers", "monthly", "0.6"],
   ["/blog/what-shopify-changed-for-agent-shopping", "monthly", "0.6"],
@@ -9320,7 +9394,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/samples/external-domain-check", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/samples/audit-report", "/samples/shopify-agent-storefront-check", "/samples/external-domain-check", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools", "/shopify-agent-storefront-check"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -9330,6 +9404,14 @@ function getCanonicalForPath(pathname: string) {
 }
 
 const META_BY_PATH = {
+  "/blog/finnish-crypto-providers-and-ai-agents": {
+    title: "Finnish MiCA crypto providers and AI agents · turva.dev",
+    description: "All five Finnish crypto providers in the MiCA register sit at isitagentready Level 1 of 5, and none passes the scanner's nine agent protocol checks.",
+    date: "2026-10-31",
+    kind: "Research",
+    image: "/og-finnish-crypto-providers-and-ai-agents.jpg",
+    imageAlt: "Card with the headline Finland's MiCA crypto providers, scanned for agent-readiness, and the line Five providers in the MiCA register, all at Level 1 of 5.",
+  },
   "/blog/keeping-my-lab-and-client-work-apart": {
     title: "Keeping my lab and my client work apart · turva.dev",
     description: "Client work now runs in a Windows virtual machine apart from my own lab. How I tested it with two test clients, and what it does not isolate.",
@@ -11385,6 +11467,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 const GUIDE_PAGE_FAQ = {
+  "/blog/finnish-crypto-providers-and-ai-agents": mdFaqBlocks("/blog/finnish-crypto-providers-and-ai-agents", "Frequently asked").pairs,
   "/blog/keeping-my-lab-and-client-work-apart": mdFaqBlocks("/blog/keeping-my-lab-and-client-work-apart", "Frequently asked").pairs,
   "/blog/tla-plus-in-numbers": mdFaqBlocks("/blog/tla-plus-in-numbers", "Frequently asked").pairs,
   "/blog/what-shopify-changed-for-agent-shopping": mdFaqBlocks("/blog/what-shopify-changed-for-agent-shopping", "Frequently asked").pairs,
