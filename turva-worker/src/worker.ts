@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.217.0 - the hosted llms.txt validator stops warning on angle brackets inside code (inline code spans, fenced code and backslash-escaped brackets) and warns in the links check when a list line looks like a link entry but is not one (an unclosed destination, or an en dash, an em dash or a bullet in place of the list marker); guide pages carry their checked date as schema.org lastReviewed on the mainEntityOfPage WebPage in the JSON-LD (Tek-730).
 // turva.dev worker v3.216.0 - new Research post /blog/finnish-crypto-providers-and-ai-agents (2026-10-31) on the agent-readiness of the five Finnish crypto-asset service providers authorised under MiCA, read with isitagentready.com and own curl requests, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign) and the version mirrors.
 // turva.dev worker v3.215.14 - content (2026-10-31): the post TLA+ on my own tools, in numbers reports a second scoring of the pair-test and outside-review reports by a rule a reader proposed, under which a report that names a fact in the claim as wrong counts as a refutation: 18 of the 25 false edits, 2 of the 26 originals of which one was a verifier error, and 10 of the 189 first-stage reports; the post carries an Updated 2026-10-31 line.
 // turva.dev worker v3.215.13 - content (2026-10-31): corrections from audit round 21, a buyer's read of all 87 sitemap pages, each checked against the live page or its source. Guides: agentic-resource-discovery records that github.com and huggingface.co now serve ai-catalog.json, agent-readiness-gaps no longer ranks rendering as a measured gap, get-cited and seo-vs-agent-readiness drop two unmeasured claims, and mcp-server-card, well-known, agents-json, prerendering, agent-authentication, x402, json-ld, letting-agents-act, llms-txt and agent-commerce-discovery get wording fixes and sources. Seventeen dated posts carry a Corrected 2026-10-31 line with their modified date. The domain check sample counts four findings, the audit sample answer matches its error table, the tools description names all four tools, and two offer descriptions in the JSON-LD drop their correction notes. The /legal Delay paragraph now refunds what is already paid for the cancelled part, so the terms date moves to 2026-10-31 on /legal and in the order template (Tek-725 P1). The agent-readiness and Internet.nl readings move to 2026-10-29, the day of the domain check sample, Hardenize stays 2026-10-30, and the MCP server card moves to 1.6.26 for the same dates (Tek-725 P2). No price or scope changes.
@@ -3650,9 +3651,9 @@ Eight checks examine the file:
 - It starts with an H1 title.
 - It includes the recommended blockquote summary directly after the title. A blockquote that comes later but before the first H2 heading gets the same warning with its line number.
 - H2 headings group the content.
-- Markdown links parse and use absolute URLs.
+- Markdown links parse and use absolute URLs. A list line under an H2 that starts like a link entry but is not a Markdown link, such as one with an unclosed destination, gets a warning.
 - The file is small enough to read cheaply. A file over 50 KiB gets a warning, and one over 256 KiB is read truncated. With --strict, a warning fails the run.
-- It contains no inline HTML. HTML produces a warning.
+- It contains no inline HTML. HTML tags in prose produce a warning, and angle brackets inside inline code, code fences or after a backslash do not.
 
 Two more checks look at the home page:
 
@@ -8241,7 +8242,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.216.0",
+    "version": "3.217.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8544,7 +8545,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.216.0",
+  "version": "3.217.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -11412,6 +11413,11 @@ function buildGuideJsonLd(pathname: string, canonicalUrl: string) {
   }
   if (isGuide || isBlogPost) {
     article.mainEntityOfPage = { "@type": "WebPage", "@id": url };
+    // lastReviewed is a schema.org WebPage property: the date the content of the page was last
+    // reviewed for accuracy. A guide's checked date is exactly that, so it sits on the WebPage and
+    // not on the TechArticle (Tek-730, 2026-10-31). The hub /guides, the blog and every other page
+    // carry no checked date and get no property.
+    if (pathname.startsWith("/guides/") && m.checked) article.mainEntityOfPage.lastReviewed = m.checked;
   }
   if (isBlogHub) {
     const posts = Object.keys(PAGE_MARKDOWN).filter((k) => k.startsWith("/blog/")).map((k) => {
@@ -11913,7 +11919,9 @@ function serveGuideHtml(pathname: string, canonicalUrl: string) {
   // Guides carry no date line in the twin. Since 2026-09-06 (the whole-site review, item 6)
   // META_BY_PATH.checked is the day the guide was last read against its primary sources, and
   // /guides says that date is the one that counts, so it is rendered in the page head. It is not
-  // a publication or modification date and is not written into the JSON-LD as one.
+  // a publication or modification date and is not written into the JSON-LD as one. Since Tek-730
+  // (2026-10-31) it is carried as schema.org lastReviewed on the mainEntityOfPage WebPage, the
+  // property that names exactly this, and datePublished and dateModified stay off the guides.
   const checkedLine = navSection === "/guides" && meta.checked
     ? `<p class="date">Sources checked ${meta.checked}</p>\n`
     : "";
@@ -13801,6 +13809,60 @@ function isH2At(lines: string[], i: number, mask?: boolean[]): boolean {
   return !(mask && mask[i]) && (isAtxH2(lines[i]) || isSetextH2(lines, i, mask));
 }
 
+// Code is not markup (Tek-730, 2026-10-31). Before the HTML check reads the file, every character
+// of an inline code span and every backslash-escaped angle bracket is blanked, so
+// `https://fal.ai/models/<endpoint-id>/llms.txt`, `submit_<form>_form` and an escaped
+// \<node-name\> no longer read as tags. The text it receives is the prose the links check also
+// reads, with fenced lines already blanked, so fenced code is not markup either. Line breaks stay,
+// so a tag split over two lines keeps its shape. The span rule is codeSpanMask's, which is
+// CommonMark's: an unclosed backtick run, or a pair that crosses a block boundary, is literal text.
+// A real tag, a closing tag or a comment start in prose still warns, and an autolink is still not
+// a tag. The package turva-llms-txt-validator mirrors this from 0.5.0.
+function blankCodeForHtml(prose: string): string {
+  const mask = codeSpanMask(prose);
+  const out: string[] = [];
+  for (let i = 0; i < prose.length; i++) {
+    const c = prose[i];
+    out.push(c !== "\n" && (mask[i] === 1 || ((c === "<" || c === ">") && isEscaped(prose, i))) ? " " : c);
+  }
+  return out.join("");
+}
+
+// List lines that look like a link entry and are not one (Tek-730, 2026-10-31). Two measured
+// shapes: an entry whose destination is not closed, "- [Name](https://x.example/a.md: notes)",
+// which holds a space and so is no CommonMark link, and an entry whose marker is an en dash, an
+// em dash or a bullet, which is no Markdown list marker. Both read as links to a person and are
+// invisible to the parser, so the links check counted the file as fine while an agent skipped the
+// entry. Only lines outside fences and under an H2 are read. A line counts when it opens, after
+// optional indentation, with a list marker (a hyphen, an asterisk, a plus or a number with a
+// period or a parenthesis) or one of the three look-alike markers, then white space and "[", and
+// no link that collectLinks found starts at that "[". A line with one of the three look-alike
+// markers counts whether or not its link parses, because it is no list item either way. A task
+// list box such as "- [x] done" is not an entry. Returns the one-based line numbers.
+function unparsedLinkEntries(lines: string[], fenced: boolean[], linkAt: Set<number>): number[] {
+  const hits: number[] = [];
+  let inH2 = false, offset = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    const start = offset;
+    offset += (fenced[i] ? 0 : l.length) + 1;
+    if (fenced[i]) continue;
+    if (isH2At(lines, i, fenced)) { inH2 = true; continue; }
+    if (/^ {0,3}#(?:[ \t]|$)/.test(l)) { inH2 = false; continue; }
+    if (!inH2) continue;
+    const m = /^[ \t]*(?:[-*+]|\d{1,9}[.)]|[\u2013\u2014\u2022])[ \t]+\[/.exec(l);
+    if (!m) continue;
+    const alt = /^[ \t]*[\u2013\u2014\u2022]/.test(l);
+    if (/^\[[ xX]\](?:[ \t]|$)/.test(l.slice(m[0].length - 1))) continue;
+    if (alt || !linkAt.has(start + m[0].length - 1)) hits.push(i + 1);
+  }
+  return hits;
+}
+function unparsedEntriesNote(hits: number[]): string {
+  const n = hits.length;
+  return "; " + (n === 1 ? "1 list line looks like a link entry but is not a Markdown link, so an agent will not follow it" : n + " list lines look like link entries but are not Markdown links, so an agent will not follow them") + " (line" + (n === 1 ? "" : "s") + " " + hits.slice(0, 5).join(", ") + (n > 5 ? " and " + (n - 5) + " more" : "") + ")";
+}
+
 // The text of an ATX H1, or null when the line is not one. One to three leading spaces, a
 // single "#", then a space, a tab or the end of the line. A closing run of "#" preceded by a
 // space or a tab is not part of the title, and the title is what remains once both ends are
@@ -14062,6 +14124,13 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
     const hostless = named.length - absolute - relativeCount;
     add("links", "warn", "Markdown links an agent can follow", named.length + " links, " + relativeCount + " relative" + (hostless > 0 ? " and " + hostless + " that are not valid http or https URLs" : "") + "; absolute URLs travel better when the file is read out of context");
   }
+  // A list line that looks like a link entry but is not one (Tek-730) turns the links check to a warn.
+  const lookalikes = unparsedLinkEntries(lines, fenced, new Set(proseLinks.map((m) => m.at)));
+  if (lookalikes.length > 0) {
+    const lk = checks[checks.length - 1];
+    lk.status = "warn";
+    lk.detail += unparsedEntriesNote(lookalikes);
+  }
   if (f.truncated) {
     add("size", "warn", "Small enough to be cheap to read", "over 256 KiB, read truncated");
   } else if (f.bytes <= 51200) {
@@ -14076,8 +14145,10 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   // operator such as the "+" in "a <b + c > d" does not. The tag name itself is ASCII. An unquoted
   // value may not start with a quote, which keeps the quoted and the unquoted form from matching
   // the same text, so the scan stays linear. A tag still open at the end of the file, as in
-  // '<div class="x"', has no closing ">" and does not warn.
-  if (/<[a-zA-Z][a-zA-Z0-9-]*(?:\s+[^\s"'<>\/=\p{L}\p{N}_]*[\p{L}\p{N}_][^\s"'<>\/=]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|(?!["'])[^\s<>]+))?)*\s*\/?>|<\/[a-zA-Z][a-zA-Z0-9-]*\s*>|<!--/u.test(text)) {
+  // '<div class="x"', has no closing ">" and does not warn. Code is blanked first (Tek-730): a tag-like
+  // string inside an inline code span, a fenced block or after a backslash is not markup.
+  const htmlScan = blankCodeForHtml(proseText);
+  if (/<[a-zA-Z][a-zA-Z0-9-]*(?:\s+[^\s"'<>\/=\p{L}\p{N}_]*[\p{L}\p{N}_][^\s"'<>\/=]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|(?!["'])[^\s<>]+))?)*\s*\/?>|<\/[a-zA-Z][a-zA-Z0-9-]*\s*>|<!--/u.test(htmlScan)) {
     add("no-html", "warn", "No HTML markup in the file", "HTML tags found; llms.txt should be plain markdown");
   } else {
     add("no-html", "pass", "No HTML markup in the file", "plain markdown");

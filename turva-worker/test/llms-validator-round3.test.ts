@@ -55,25 +55,25 @@ function byId(checks: { id: string; status: string; detail: string }[], id: stri
 test("VREG1: a definition with an unquoted trailing word is not a definition", async () => {
   const text = prefix + "- [Guide][guide]\n\n[guide]: https://example.com/guide not-a-title\n";
   const { body } = await validate(text);
-  assert.equal(byId(body.checks, "links").detail, "no markdown links found");
+  assert.match(byId(body.checks, "links").detail, /^no markdown links found/);
 });
 
 test("VREG1: a definition-shaped line inside an inline code span is literal code", async () => {
   const text = prefix + "- [Guide][guide]\n\n`some code\n[guide]: https://example.com/guide\nend code`\n";
   const { body } = await validate(text);
-  assert.equal(byId(body.checks, "links").detail, "no markdown links found");
+  assert.match(byId(body.checks, "links").detail, /^no markdown links found/);
 });
 
 test("VREG1: a definition-shaped line that continues open paragraph text is not a definition", async () => {
   const text = prefix + "- [Guide][guide]\n\nA paragraph\n[guide]: https://example.com/guide\n";
   const { body } = await validate(text);
-  assert.equal(byId(body.checks, "links").detail, "no markdown links found");
+  assert.match(byId(body.checks, "links").detail, /^no markdown links found/);
 });
 
 test("VREG1: fence removal does not join a link target across a fenced code block", async () => {
   const text = prefix + "- [Guide](\n```\nanything\n```\n  https://example.com/guide\n  )\n";
   const { body } = await validate(text);
-  assert.equal(byId(body.checks, "links").detail, "no markdown links found");
+  assert.match(byId(body.checks, "links").detail, /^no markdown links found/);
 });
 
 // --- V03-VREG2: codeSpanMask must not cross a block boundary (list item, heading, or a blank
@@ -132,7 +132,7 @@ test("VN2: a shortcut reference does not resolve the definition line against its
 test("VN2: an unresolved shortcut reference is read as plain brackets", async () => {
   const text = prefix + "- [Guide]\n";
   const { body } = await validate(text);
-  assert.equal(byId(body.checks, "links").detail, "no markdown links found");
+  assert.match(byId(body.checks, "links").detail, /^no markdown links found/);
 });
 
 test("VN2: a collapsed reference, \"[label][]\", still resolves (regression guard)", async () => {
