@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.218.3 - Erik's answers to round 22 (2026-11-01): the advisory and implementation price lines on /services state the validity date the structured data already carries, and every outward text uses US spelling (authorization, organization, acknowledgment, behavior, labeled and the rest, 111 places including two LLMS_TXT lines, so llms.txt is re-signed). The OG card of the AI assistants post was rebuilt for the same reason.
 // turva.dev worker v3.218.2 - round 22 fixes (2026-11-01), read from the live 3.218.0 surface after the Shopify check was withdrawn: the guides call AI citation through corroboration a working assumption, the audit guide's FAQ names its three kinds of evidence, the commerce guide names the A2A 0.3.0 transport field, the prerendering guide points its token figure at the post that measured it, /legal drops the Shopify store example, the EUR 499 add-on has one prose name, and nine dated posts carry Corrected or Updated lines with their modified dates. public/_headers sends cross-origin CORP for /badge.svg so the embed /badge offers is not blocked on other sites.
 // turva.dev worker v3.218.1 - guide source review (2026-11-01): the seven agent-commerce and MCP discovery guides were read again against their primary sources by the fast-family review; their checked date moves to 2026-11-01 and no guide text changed in this release.
 // turva.dev worker v3.218.0 - the Shopify agent storefront check and its EUR 499 correction add-on are no longer sold (Erik 2026-10-31, Tek-734 point 7): the product page, the sample report, their Markdown twins, serve functions, routes, sitemap rows, OG cards, LLMS_TXT lines (re-sign), the priced-service lists, the JSON-LD offer, the ACP item, the WebMCP get_services data (CSP hash moved), the services skill, the A2A and MCP server card text, the home, /services and /contact cards, the legal terms and the guide call-to-actions are removed or reworded, the four old addresses answer 301 to the audit page, the audit sample and their Markdown twins, and dated posts keep their history without links to the removed pages.
@@ -281,7 +282,7 @@ const LLMS_TXT = `# turva.dev
 > Independent measurement of how readable a site or API is by AI agents,
 > with a prioritized fix list and implementation support.
 > An agent-readiness audit reads the website and its APIs, not an
-> organisation's readiness to adopt agents.
+> organization's readiness to adopt agents.
 > Based in Tampere, Finland. Async-only engagement.
 > Language: English. Correspondence in English or Finnish.
 
@@ -351,7 +352,7 @@ One sample uses a synthetic, invented site and one uses a real domain.
 - [What agents.json describes](https://turva.dev/guides/agents-json.md)
 - [The /.well-known directory for agent discovery](https://turva.dev/guides/well-known-for-agents.md)
 - [Agentic Resource Discovery and resource catalogs](https://turva.dev/guides/agentic-resource-discovery.md)
-- [Authentication and authorisation for AI agents](https://turva.dev/guides/agent-authentication.md)
+- [Authentication and authorization for AI agents](https://turva.dev/guides/agent-authentication.md)
 - [x402 and HTTP payment flows](https://turva.dev/guides/x402-agent-payments.md)
 - [Agent commerce discovery: A2A, AP2, ACP and UCP](https://turva.dev/guides/agent-commerce-discovery.md)
 - [Agentic commerce readiness](https://turva.dev/guides/agentic-commerce-readiness.md)
@@ -512,7 +513,7 @@ returns the same pathway as JSON. Email <mailto:info@turva.dev?subject=agent%20r
 - Expected request rate (per hour) and concurrency
 - Public contact for the operator
 
-A written acknowledgement is sent within one business day.
+A written acknowledgment is sent within one business day.
 
 ## Claim
 
@@ -702,7 +703,7 @@ Most of what went wrong showed up only in a real run. Every script had a dry run
 - Behind my VPN, the virtual machine's MTU of 1500 lost large TLS packets. Connections opened and a small test passed. Then the first large download from GitHub hung. An MTU of 1380 fixed it.
 - The virtual machine's SSH firewall rule applied to the Private profile, and the fixed address network was classified as Public. Every readiness check looked true, and the connection still timed out.
 - The desktop app syncs a plugin's skills into an SSH session but not its hooks, so my own gates were missing there without any error. I wired them in through the virtual machine's own settings and confirmed that a gate blocks the same command there with the same message. The copies do not update themselves, so I compare them after every release of my plugin.
-- The virtual machine has only Windows PowerShell 5.1, and my workstation runs PowerShell 7. Version 5.1 turned a null passed to a .NET method into an empty string and serialised a list of names as objects. A function that returned an array of one item handed back the bare item, which PowerShell does in every version, so a count of one came out as two. The code read correctly and ran wrong, so four independent reviews passed it, and the first real run failed on it.
+- The virtual machine has only Windows PowerShell 5.1, and my workstation runs PowerShell 7. Version 5.1 turned a null passed to a .NET method into an empty string and serialized a list of names as objects. A function that returned an array of one item handed back the bare item, which PowerShell does in every version, so a count of one came out as two. The code read correctly and ran wrong, so four independent reviews passed it, and the first real run failed on it.
 
 ## How did I test it end to end?
 
@@ -773,15 +774,15 @@ The library is a versioned folder of models with a manifest of the code each mod
 | 1 October, before the library | 23 | not tracked |
 | 14 October, library created | 32 | 20 at the first run |
 | 15 October, before the second review | 41 | 21 |
-| 17 October, before the acknowledgement | 88 | 56 |
-| 17 October, after the acknowledgement | 88 | 17 |
+| 17 October, before the acknowledgment | 88 | 56 |
+| 17 October, after the acknowledgment | 88 | 17 |
 | 19 October, internal audit | 115, of which 111 valid | 79 |
 | 21 October, re-evaluation | 112 valid | 102 |
 | 22 October, after the first fix session of the night | 116, of which 105 valid | 95 |
 | 22 October, after the second | 116 | 69 |
 | 22 October, after the third | 116 | 7 |
 
-The 116 models are 105 valid, 4 replaced by later models and 7 marked historical. Their registry holds 880 stored runs: 351 pass runs, 394 vacuity runs and 135 liveness runs. A vacuity check shows that a property can fail at all. Drift grew again as the fix chain of the fourth review changed code, which is why 79 models had drifted by the audit. The acknowledgement of 17 October and the one of 22 October use different definitions, and the audit section explains why.
+The 116 models are 105 valid, 4 replaced by later models and 7 marked historical. Their registry holds 880 stored runs: 351 pass runs, 394 vacuity runs and 135 liveness runs. A vacuity check shows that a property can fail at all. Drift grew again as the fix chain of the fourth review changed code, which is why 79 models had drifted by the audit. The acknowledgment of 17 October and the one of 22 October use different definitions, and the audit section explains why.
 
 ## What real faults did the work find?
 
@@ -838,7 +839,7 @@ The audit gave 116 verdict rows. The decision held in 36 rows, held while its mo
 
 Three structural findings came out of it.
 
-The acknowledgement by re-run could not fail. A TLC run checks the model, and the model does not read the code. On 17 October I had acknowledged 39 of 56 drifted models by reading the diff and re-running 508 stored runs with no deviation. The re-run added nothing, because it could only pass. Of the 111 valid models, 79 had drifted. A classification of the diffs gave 16 comment-only drifts, 60 with real code changes after the last run and 3 without a recorded hash. The gotchas log had noted this problem on 16 October, but the code, the skill and one decision still said "by re-run".
+The acknowledgment by re-run could not fail. A TLC run checks the model, and the model does not read the code. On 17 October I had acknowledged 39 of 56 drifted models by reading the diff and re-running 508 stored runs with no deviation. The re-run added nothing, because it could only pass. Of the 111 valid models, 79 had drifted. A classification of the diffs gave 16 comment-only drifts, 60 with real code changes after the last run and 3 without a recorded hash. The gotchas log had noted this problem on 16 October, but the code, the skill and one decision still said "by re-run".
 
 The mutation suite had not run whole for six days. On 13 October the last full run caught 786 of 788, and 110 mutations had been added since without a full run.
 
@@ -889,13 +890,13 @@ For this work I have only subagent tokens, and only for some steps. These are th
 
 The review 1 figure leaves out its 22 QA agents, which have no figure, and 2 baseline check agents with 248 981 tokens. In the review 4 fix chain I summed the figures of two sessions from their item rows. The audit used 8 subagents and the re-evaluation 3. On the night of 22 October the three fix sessions used 6, 6 and 11 subagents, and the next one about 6.
 
-I have not totalled the lead model's tokens or the money for this work, and the transcripts could give both. Subagent tokens are missing for the pilot and the six phases after it, the second and third fix chains, the audit, the re-evaluation and the fix sessions of 22 October. I have not counted the cost of the outside readers or the number of Claude Code sessions either, and neither is the cost of the aborted runs.
+I have not totaled the lead model's tokens or the money for this work, and the transcripts could give both. Subagent tokens are missing for the pilot and the six phases after it, the second and third fix chains, the audit, the re-evaluation and the fix sessions of 22 October. I have not counted the cost of the outside readers or the number of Claude Code sessions either, and neither is the cost of the aborted runs.
 
 ## What went wrong?
 
 I picked five problems that taught me something.
 
-- The acknowledgement by re-run could not fail. I had written the problem down on 16 October. The acknowledgement of 17 October rested on reading the diffs, but the tool, the skill and one decision still said re-run. The audit found that two days later.
+- The acknowledgment by re-run could not fail. I had written the problem down on 16 October. The acknowledgment of 17 October rested on reading the diffs, but the tool, the skill and one decision still said re-run. The audit found that two days later.
 - A replay script overwrote the real log size registry with test data on 18 October and reset its recorded size peaks. The audit later confirmed that the test keys were still in the file. A guard now refuses writes to the real workspace from a test process.
 - Mutation parts ran into a limit. A run in 96 parts gave Windows a system error about stack guard pages, so the limit is now 48. An earlier serial run by another session ran about 16 hours before I stopped it, at about 140 W for about 14 hours, and the cause was never found.
 - A diff reader proposed acknowledging a model because the code had later implemented the name of a mode the model only imagined, although the reader itself listed three differences. A name does not acknowledge a model. A counter-checker also argued for acknowledging it, with reasoning that held for one of the model's five pass runs. I read the runs and kept the model drifted.
@@ -903,7 +904,7 @@ I picked five problems that taught me something.
 
 ## Did the condition of part 3 hold?
 
-Part 3 said that a fourth outside review makes sense only after the full mutation run and the drift runs, and with a reader other than Astra. I chose acknowledgement first and left the full run for later. A session built the packages of the fourth review on 17 October with 39 of 56 drifted models acknowledged and 17 not, and the full run came on 19 October. The condition did not hold, because the review ran before the full run, and the acknowledgement behind those 39 was later found unable to fail as well.
+Part 3 said that a fourth outside review makes sense only after the full mutation run and the drift runs, and with a reader other than Astra. I chose acknowledgment first and left the full run for later. A session built the packages of the fourth review on 17 October with 39 of 56 drifted models acknowledged and 17 not, and the full run came on 19 October. The condition did not hold, because the review ran before the full run, and the acknowledgment behind those 39 was later found unable to fail as well.
 
 The corrected rule is in the tools now. No fifth review is planned, and a package for one needs a passing full run at most 7 days old.
 
@@ -917,9 +918,9 @@ The audit counted 13 other open limits. One of them is closed since, and I have 
 
 ## What does this not show?
 
-A passing model holds for its small constants and for the code it was run against. Of the 105 valid models, 90 carry an acknowledgement under the new definition, which requires reading the diff, a replay test and a mutation pass. Seven are still drifted and 8 never drifted.
+A passing model holds for its small constants and for the code it was run against. Of the 105 valid models, 90 carry an acknowledgment under the new definition, which requires reading the diff, a replay test and a mutation pass. Seven are still drifted and 8 never drifted.
 
-The mutation figures show that every mutation was caught by the test named for it while the controls stayed green. They do not show that the tests cover every behaviour. In the reviews 118 of 189 claims ended as confirmed and 71 as refined, after the verifier, the opposing reader and my own read. That is not a count of correct claims, because in the test of 28 October the first-stage verifiers confirmed 8 of the 25 edited claims whose changed fact was false, and four rounds of outside reading are a narrow sample.
+The mutation figures show that every mutation was caught by the test named for it while the controls stayed green. They do not show that the tests cover every behavior. In the reviews 118 of 189 claims ended as confirmed and 71 as refined, after the verifier, the opposing reader and my own read. That is not a count of correct claims, because in the test of 28 October the first-stage verifiers confirmed 8 of the 25 edited claims whose changed fact was false, and four rounds of outside reading are a narrow sample.
 
 Many fix choices were made by a session on its own recommendation. In round 3 the chain made 31 such choices, in round 4 about 43, and the first four fix sessions after the audit made 17. The audit found none implemented wrongly. I confirmed the 31 and the 43 in one blanket answer on 19 October without deciding them one by one, and the 17 since then are the sessions' own recommendations.
 
@@ -933,7 +934,7 @@ Yes, and the outside readers and the audit found some too. Across 11 tools or to
 
 **What does 1 002 of 1 002 mean?**
 
-Every one of the 1 002 mutations, each a one-line change to a tool, made the test meant to catch it fail while the control tests stayed green. It says nothing about behaviour that no test and no mutation touches.
+Every one of the 1 002 mutations, each a one-line change to a tool, made the test meant to catch it fail while the control tests stayed green. It says nothing about behavior that no test and no mutation touches.
 
 **Does a passing model prove the tool is correct?**
 
@@ -1080,7 +1081,7 @@ No review claim about the models was refuted in any round, and many held only in
 
 ## What changed between the reviews?
 
-The last five fix sessions of the first review ran on 12 October. Three of them changed real behaviour. The send script now refuses a rescan package whose target already has send evidence in another rescan batch. When the log rotation tool loses its lock after writing its size approval, it now prints the dropped entries and exits with an error instead of saying that nothing was approved. The restore path of the archive tool checks its lock again before it writes, so it no longer overwrites another writer's change.
+The last five fix sessions of the first review ran on 12 October. Three of them changed real behavior. The send script now refuses a rescan package whose target already has send evidence in another rescan batch. When the log rotation tool loses its lock after writing its size approval, it now prints the dropped entries and exits with an error instead of saying that nothing was approved. The restore path of the archive tool checks its lock again before it writes, so it no longer overwrites another writer's change.
 
 From 12 to 15 October I worked through a plan of 12 items before the second review. The first one found that some of my test scripts passed for the wrong reason. In the send test, 12 of 120 checks stayed green when the tool exited at once with an error, and 8 of 120 when it exited at once with a clean exit code. The test scripts now require proof that the tool actually ran. The last full mutation run so far, on the night of 12 to 13 October, caught 786 of 788 mutations in about 3 hours 45 minutes, and both survivors were faults in the mutations themselves: one was equivalent to the original code, and the other matched two places in its target file.
 
@@ -1092,7 +1093,7 @@ I tried three techniques that go beyond checking a model on its own. A liveness 
 
 State graph replay walked the lock model's state graph edge by edge against the real code. Across 5 502 edges it found no contradiction. In 465 edges the model allowed a write that the code refused, because the model is older than the code's later ownership check.
 
-Trace validation went the other way. Real tools ran freely in parallel and wrote an event log, and TLC checked that each log was a behaviour of the model. Of 300 traces, 298 were accepted, one failed because of the test setup and one exposed a model step that was coarser than the code. The data stayed correct, so the fix went into a finer model and not into the code.
+Trace validation went the other way. Real tools ran freely in parallel and wrote an event log, and TLC checked that each log was a behavior of the model. Of 300 traces, 298 were accepted, one failed because of the test setup and one exposed a model step that was coarser than the code. The data stayed correct, so the fix went into a finer model and not into the code.
 
 Two real bugs came from the same stretch. Parallel subagents share their parent session's id, so my plugin's hooks wrote the same state file at the same time. A replay against the real hook code showed one gate silently skipping its check in 20 of 300 rounds, and after the fix in 0 of 300. Batch import never finished an interrupted run: after three retries it stayed at 4 of 5 records, and now it resumes.
 
@@ -1126,7 +1127,7 @@ I cannot say it was only better code. The third round had a different reader mod
 
 **What is trace validation?**
 
-The real tools run freely and log what they do, and TLC checks that every log is a behaviour the model allows. A rejected log means the model and the code disagree or the test setup is wrong, and in this project the one real rejection pointed to a model step that was coarser than the code.
+The real tools run freely and log what they do, and TLC checks that every log is a behavior the model allows. A rejected log means the model and the code disagree or the test setup is wrong, and in this project the one real rejection pointed to a model step that was coarser than the code.
 
 **What is a drifted model?**
 
@@ -1208,7 +1209,7 @@ Handing patch triage to automation is the obvious response to a release this siz
 
 The first input is the feed. It changes after you read it, so the pull time and the document revision belong with every decision made from it. An agent that triaged the July document on release day and another that triaged it in October worked from different lists, and both were correct about what they were given.
 
-The second input is the answers. Whether the RDP gateway is exposed, which roles are deployed and who opens outside documents are facts about one organisation. If they are written down and kept current, an agent can apply them to 1417 CVEs consistently. If they are not, the agent fills the gap with a guess, and nothing in its output will show which answers were guessed.
+The second input is the answers. Whether the RDP gateway is exposed, which roles are deployed and who opens outside documents are facts about one organization. If they are written down and kept current, an agent can apply them to 1417 CVEs consistently. If they are not, the agent fills the gap with a guess, and nothing in its output will show which answers were guessed.
 
 That second input is the part I work on: the data an agent acts on and the limits of what it may decide on its own.
 
@@ -1331,7 +1332,7 @@ One rule came before the first model. A finding counts only when it reproduces a
 
 ## What did the first model find?
 
-The pilot on 27 September modelled the script that deletes the conflict copies file sync leaves behind. TLC found a run in which the script deleted the newest version of a file, because sync had restored an old version under the original name and the newer text sat in the copy. The same run reproduced against the unchanged script.
+The pilot on 27 September modeled the script that deletes the conflict copies file sync leaves behind. TLC found a run in which the script deleted the newest version of a file, because sync had restored an old version under the original name and the newer text sat in the copy. The same run reproduced against the unchanged script.
 
 I fixed it, and the model of the fixed script found a hole in the fix. The fix was safe only if sync kept the old file's modification time, and I had never measured whether it does. The script now handles only copies whose content is identical to the original, and since 28 September it moves them to a quarantine folder instead of deleting them.
 
@@ -1549,7 +1550,7 @@ Corrected 2026-10-31. The title and the card still say my agent and I both run B
 
 ## Why turn off the JavaScript optimizer?
 
-A browser runs JavaScript from every page it opens. Brave runs it in V8, the engine from Chromium, which compiles frequently run code to machine code while the page runs. Microsoft's Edge vulnerability research team wrote, in [its post on the Super Duper Secure Mode experiment](https://microsoftedge.github.io/edgevr/posts/Super-Duper-Secure-Mode), that CVE data after 2019 showed roughly 45% of the CVEs issued for V8 were related to the JIT engine. By their estimate, turning the JIT off would remove roughly half of the V8 bugs that must be fixed. The Chromium project [reports a related figure](https://www.chromium.org/Home/chromium-security/memory-safety/) for the whole browser: around 70% of the high-severity security bugs it analysed since 2015 are memory safety problems.
+A browser runs JavaScript from every page it opens. Brave runs it in V8, the engine from Chromium, which compiles frequently run code to machine code while the page runs. Microsoft's Edge vulnerability research team wrote, in [its post on the Super Duper Secure Mode experiment](https://microsoftedge.github.io/edgevr/posts/Super-Duper-Secure-Mode), that CVE data after 2019 showed roughly 45% of the CVEs issued for V8 were related to the JIT engine. By their estimate, turning the JIT off would remove roughly half of the V8 bugs that must be fixed. The Chromium project [reports a related figure](https://www.chromium.org/Home/chromium-security/memory-safety/) for the whole browser: around 70% of the high-severity security bugs it analyzed since 2015 are memory safety problems.
 
 ## How far do I turn it off?
 
@@ -1632,7 +1633,7 @@ Windows Firewall stays on in all three profiles. It allows outgoing traffic by d
 
 Portmaster has a setting called Block Secure DNS Bypassing. It stops programs from sending name lookups past Portmaster's own Secure DNS resolver, for example to DNS over HTTPS or to public resolvers. The setting was on before the reinstall too. After the reinstall, before I had forced it on again, I watched Portmaster show the same kind of warning again and again. Two of the warnings name a program, one Portmaster calls Git Curl and one it calls Python. Each says the program uses its own Secure DNS resolver, which would go past Portmaster.
 
-I first guessed that Node and Python do this by default. Python's standard name lookup asks the resolver the operating system is configured with, so I doubt the Python warning came from Python's default behaviour. Later I noticed that I also had Portmaster's Ignore System/Network Servers setting on, so it does not use the DNS servers that Windows or the network hands out. I think that setting is the likely cause of the warnings. With Block Secure DNS Bypassing forced on, I no longer get a notification. I did not test which of those two settings explains what I saw, and I did not trace which program behind either warning made the lookups.
+I first guessed that Node and Python do this by default. Python's standard name lookup asks the resolver the operating system is configured with, so I doubt the Python warning came from Python's default behavior. Later I noticed that I also had Portmaster's Ignore System/Network Servers setting on, so it does not use the DNS servers that Windows or the network hands out. I think that setting is the likely cause of the warnings. With Block Secure DNS Bypassing forced on, I no longer get a notification. I did not test which of those two settings explains what I saw, and I did not trace which program behind either warning made the lookups.
 
 A third case I know of is my own code, from before the reinstall, so it is not one of the warnings I saw. My local resolver did not answer the mail server queries of my sending script, so in August I made the script ask DNS over HTTPS first, with the system resolver and public resolvers as fallbacks. When Portmaster blocked those paths in September, the script learned to skip a blocked path and use the system resolver, which on this machine is Portmaster's.
 
@@ -1939,7 +1940,7 @@ Everything in the workspace is shaped for the agent. The site's code is public a
 
 It does not show that any of it is good. A word count says nothing about whether the rules are right, and one incident can leave entries in two or three logs at once, each in the home for its kind.
 
-The gates' log mixes stops with warnings about a write already made, and it does not say whether a stop was right. When new gate versions were replayed against old sessions, some of their new stops were real catches and some were false, and I have no such total for the whole log. I have no measurement of the same work done without the memory, so the difference in the first section is my own judgement. These are the counts of one person's workspace on one day.
+The gates' log mixes stops with warnings about a write already made, and it does not say whether a stop was right. When new gate versions were replayed against old sessions, some of their new stops were real catches and some were false, and I have no such total for the whole log. I have no measurement of the same work done without the memory, so the difference in the first section is my own judgment. These are the counts of one person's workspace on one day.
 
 ## Frequently asked
 
@@ -2285,7 +2286,7 @@ Corrected 2026-09-06. The answer to the last question said this site issues no c
 
 ## Related
 
-- [Agent authentication and authorisation](/guides/agent-authentication)
+- [Agent authentication and authorization](/guides/agent-authentication)
 - [Well-known files for agents](/guides/well-known-for-agents)
 - [When honesty and the checker disagree](/blog/honesty-and-the-checker)
 `,
@@ -2309,7 +2310,7 @@ The scanner is isitagentready.com, which grades a site from Level 0 to Level 5, 
 
 ## The four that moved
 
-Three went up. A site whose sitemap answered 404 in July answers 200 now, and reads Level 1 instead of Level 0. A site whose robots.txt redirected to itself and whose sitemap returned 500 has both working, Level 0 to Level 1. A site that now declares Content Signals in its robots.txt reads Level 2 instead of Level 1. One went down: its sitemap answered in July and answers 404 now, Level 1 to Level 0, confirmed with a request outside the scanner so that a scanner artefact is ruled out.
+Three went up. A site whose sitemap answered 404 in July answers 200 now, and reads Level 1 instead of Level 0. A site whose robots.txt redirected to itself and whose sitemap returned 500 has both working, Level 0 to Level 1. A site that now declares Content Signals in its robots.txt reads Level 2 instead of Level 1. One went down: its sitemap answered in July and answers 404 now, Level 1 to Level 0, confirmed with a request outside the scanner so that a scanner artifact is ruled out.
 
 None of the three that moved up had replied to the brief. So the brief cannot claim them, and I am not going to. I did not measure what moved them. Ordinary maintenance, a CMS update or a plugin that started generating a sitemap, is one plausible explanation, and the limit is worth writing down because a rescan series is the exact place where a consultant is tempted to count every improvement as an effect.
 
@@ -2362,27 +2363,27 @@ Corrected 2026-09-28. A sentence stated as fact that one unsolicited email rarel
 
 2026-09-03
 
-Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organisational AI adoption.
+Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organizational AI adoption.
 
 On 3 September 2026 fifty buyer questions were put to ChatGPT, Gemini, Perplexity and Google AI Mode from an anonymous browser session, one run per question, 193 answers in all. Seven of the 200 runs returned no answer: Google AI Mode was stopped by a reCAPTCHA four times, ChatGPT gave nothing twice and Gemini once, and those runs are counted as missing rather than as answers. The questions are the ones a buyer types: what an agent readiness audit is, what it costs, who does it in Finland, how it differs from SEO. Claude was not measured, because its answers sit behind a login and the instrument runs logged out.
 
 ## Two products share the words
 
-Eleven of the fifty questions use the words agent readiness, or agenttivalmius in Finnish, without saying whether they mean a website or a company. Those eleven got 41 answers. Eighteen of the 41 described the readiness of an organisation to deploy AI agents: its data, its governance, whether its teams are prepared. Thirteen described what this site means by the words, whether a website and its APIs can be read and acted on by an agent. Six described both, and four could not be placed.
+Eleven of the fifty questions use the words agent readiness, or agenttivalmius in Finnish, without saying whether they mean a website or a company. Those eleven got 41 answers. Eighteen of the 41 described the readiness of an organization to deploy AI agents: its data, its governance, whether its teams are prepared. Thirteen described what this site means by the words, whether a website and its APIs can be read and acted on by an agent. Six described both, and four could not be placed.
 
-The split is not even across assistants. Gemini gave the organisational reading in eight of its eleven answers and Google AI Mode in six of nine. Perplexity was the only one that leaned the other way, five of eleven for the website reading, and it was also the one that named this site most often in these 41 answers, five times against three for ChatGPT and one each for the other two. ChatGPT split evenly, three answers for each reading and three for both, with one unclear.
+The split is not even across assistants. Gemini gave the organizational reading in eight of its eleven answers and Google AI Mode in six of nine. Perplexity was the only one that leaned the other way, five of eleven for the website reading, and it was also the one that named this site most often in these 41 answers, five times against three for ChatGPT and one each for the other two. ChatGPT split evenly, three answers for each reading and three for both, with one unclear.
 
 ## The words are the problem, not the assistants
 
-Two Finnish questions in the set name the website outright or avoid the word agenttivalmius. All seven answers to those two read the question as being about the website. The assistants have no trouble with the concept once the question carries it. What drifts is the bare term, and it drifts toward the organisational meaning. The likely reason is what the assistants have read, because that meaning appears in far more published text, but this run does not measure that, and the control set is seven answers, so read it as the direction and not the proof.
+Two Finnish questions in the set name the website outright or avoid the word agenttivalmius. All seven answers to those two read the question as being about the website. The assistants have no trouble with the concept once the question carries it. What drifts is the bare term, and it drifts toward the organizational meaning. The likely reason is what the assistants have read, because that meaning appears in far more published text, but this run does not measure that, and the control set is seven answers, so read it as the direction and not the proof.
 
-That shows in who gets named. Thirty-five of the 41 answers named at least one provider, 112 different names between them, and almost none repeated. Both kinds of answer named a long tail of small consultancies and scanners with agent readiness in the brand, most of them once. The organisational answers also named large consultancies, and the Finnish questions a few Finnish agencies. Across all 193 answers this site was named in 27, and 23 of those carried a link to it. The two counts describe different things, a mention and a mention with a link, and neither is a share of any market.
+That shows in who gets named. Thirty-five of the 41 answers named at least one provider, 112 different names between them, and almost none repeated. Both kinds of answer named a long tail of small consultancies and scanners with agent readiness in the brand, most of them once. The organizational answers also named large consultancies, and the Finnish questions a few Finnish agencies. Across all 193 answers this site was named in 27, and 23 of those carried a link to it. The two counts describe different things, a mention and a mention with a link, and neither is a share of any market.
 
 ## What follows from it
 
-For a buyer, one question settles it: ask the provider what the report reads. If the answer is the organisation, its data and its teams, that is a strategy engagement. If the answer is the website and the API, the files an agent fetches and the data it gets back, that is the audit this site sells, and the report should name the checks. Both are real work. They are not the same work, and a proposal that does not say which one it is has not said much.
+For a buyer, one question settles it: ask the provider what the report reads. If the answer is the organization, its data and its teams, that is a strategy engagement. If the answer is the website and the API, the files an agent fetches and the data it gets back, that is the audit this site sells, and the report should name the checks. Both are real work. They are not the same work, and a proposal that does not say which one it is has not said much.
 
-For this site, the same finding turned into one sentence. The FAQ on the services page and the home page now says that the audit reads the website and its APIs and not the organisation's readiness to adopt agents, and llms.txt says the same in its summary, so an assistant that reads either gets the distinction in the first lines. Whether that moves the answers is what the next run of the same fifty questions will show, and it will be reported the same way.
+For this site, the same finding turned into one sentence. The FAQ on the services page and the home page now says that the audit reads the website and its APIs and not the organization's readiness to adopt agents, and llms.txt says the same in its summary, so an assistant that reads either gets the distinction in the first lines. Whether that moves the answers is what the next run of the same fifty questions will show, and it will be reported the same way.
 
 Corrected 2026-10-31. The paragraph above says the FAQ on the services page and the home page carries that sentence. Neither carries it in those words now, and llms.txt still does. A sentence earlier in this post now says that the counts of five, three and one are within the 41 answers.
 
@@ -2390,11 +2391,11 @@ Corrected 2026-10-31. The paragraph above says the FAQ on the services page and 
 
 **Is an agent readiness audit about the company or the website?**
 
-Both services exist under the same words. The audit on this site reads the website and its APIs with an independent scanner and reports per check. An organisational agent readiness assessment reads a company's data and governance and how prepared its teams are. Ask a provider which report they deliver.
+Both services exist under the same words. The audit on this site reads the website and its APIs with an independent scanner and reports per check. An organizational agent readiness assessment reads a company's data and governance and how prepared its teams are. Ask a provider which report they deliver.
 
-**Why do AI assistants describe the organisational version more often?**
+**Why do AI assistants describe the organizational version more often?**
 
-In a measurement of 41 answers on 3 September 2026, 18 described the organisational reading and 13 the website reading. When a question names the website, all seven answers in the control set read it that way, so the drift sits in the bare term and not in the assistants' ability to read the website meaning. Why the bare term drifts was not measured.
+In a measurement of 41 answers on 3 September 2026, 18 described the organizational reading and 13 the website reading. When a question names the website, all seven answers in the control set read it that way, so the drift sits in the bare term and not in the assistants' ability to read the website meaning. Why the bare term drifts was not measured.
 
 **How was this measured?**
 
@@ -2428,7 +2429,7 @@ In July I wrote up sixteen Finnish B2B sites. Since then the same measurement ha
 
 ## What website agent readiness means
 
-The phrase agent readiness is used for two different things, and AI assistants often answer the question with the other one. Ask an assistant what an agent-readiness audit is and the answer often describes an organisation: its data, its governance, whether its teams are ready to deploy AI agents. In [a measurement of 41 such answers](/blog/what-ai-assistants-call-an-agent-readiness-audit) on the day I published this post, 18 read the term that way and 13 read it as a website. That is a real question, and it is a different one.
+The phrase agent readiness is used for two different things, and AI assistants often answer the question with the other one. Ask an assistant what an agent-readiness audit is and the answer often describes an organization: its data, its governance, whether its teams are ready to deploy AI agents. In [a measurement of 41 such answers](/blog/what-ai-assistants-call-an-agent-readiness-audit) on the day I published this post, 18 read the term that way and 13 read it as a website. That is a real question, and it is a different one.
 
 Website agent readiness is a property of a site or an API. It asks whether a machine reading on someone's behalf can find the site, read its pages without a browser, learn what the company sells, and act on that through a declared interface. An independent scanner can measure it, and the result is a number a third party can check. That is the measurement below.
 
@@ -2474,7 +2475,7 @@ Corrected 2026-09-25. Three sentences said more than the data shows. Two describ
 
 Corrected 2026-09-27. Three places said the Finnish and the non-Finnish subsets read the same. Their Level 1 shares are 3,4 percentage points apart, so they now say both land on the same floor. The Level 1 notes now name the 485 sites they come from. No number changed.
 
-Corrected again 2026-09-27. The opening said an assistant's answer describes an organisation. A measurement of 41 answers found that reading in 18 and the website reading in 13, so the opening now says often and links that count. No number in this post changed.
+Corrected again 2026-09-27. The opening said an assistant's answer describes an organization. A measurement of 41 answers found that reading in 18 and the website reading in 13, so the opening now says often and links that count. No number in this post changed.
 
 Corrected 2026-09-28. A sentence said the audit starts with an email that carries the domain. It now adds that the email also carries the question you want answered, matching how /contact and the MCP get_contact tool describe the same email. No reading changed.
 
@@ -2518,13 +2519,13 @@ Level 1 requires the record to be signed by a key generated inside a verified TE
 
 Level 2 adds a SCITT transparency log entry at a resolvable address, so a third party can check later that the record has not been altered since it was logged. It still does not prove that every field in the record was correct in the first place.
 
-So "we use TRACE" is not a statement about assurance. The level is the statement, and a vendor who names the standard without naming the level has told you nothing. Anyone who has read an agent-readiness score without the scanner and the level next to it will recognise the shape of that problem.
+So "we use TRACE" is not a statement about assurance. The level is the statement, and a vendor who names the standard without naming the level has told you nothing. Anyone who has read an agent-readiness score without the scanner and the level next to it will recognize the shape of that problem.
 
 ## Two limits worth knowing before anyone builds on this
 
 The specification is honest about both, which is more than most standards manage.
 
-Revocation is the place where the project's own two documents pull in different directions. They agree on the underlying fact. A signature stays mathematically valid forever, so a record signed by a key that has since been revoked keeps verifying on a machine with no network. The limitations page then says the verifier has to consult current revocation status at verification time and calls that an online step by definition. The specification says close to the opposite and says it by design: revocation statements are anchored in the same transparency log as the records they govern, verifiers cache a signed revocation bundle carrying an expiry, and the text describes this as deliberately replacing a status endpoint that would require a callback. Which behaviour you get depends on which of the two a given implementation followed, so ask. Both documents agree on the fallback, and it is the sane one. A verifier holding no revocation bundle, or only an expired one, reports that instead of treating it as a pass.
+Revocation is the place where the project's own two documents pull in different directions. They agree on the underlying fact. A signature stays mathematically valid forever, so a record signed by a key that has since been revoked keeps verifying on a machine with no network. The limitations page then says the verifier has to consult current revocation status at verification time and calls that an online step by definition. The specification says close to the opposite and says it by design: revocation statements are anchored in the same transparency log as the records they govern, verifiers cache a signed revocation bundle carrying an expiry, and the text describes this as deliberately replacing a status endpoint that would require a callback. Which behavior you get depends on which of the two a given implementation followed, so ask. Both documents agree on the fallback, and it is the sane one. A verifier holding no revocation bundle, or only an expired one, reports that instead of treating it as a pass.
 
 Platform state is not appraised. On the AMD path the verification chain checks the report signature and the certificate chain from the VCEK up to a root the operator pins, and it checks the measurement binding. What it has no field for is the state of the machine that produced the report. As the documentation puts it, a verifier reading a conformant claim cannot appraise platform state even when the producer did check it.
 
@@ -2534,7 +2535,7 @@ Neither of these makes TRACE useless. They make it a layer with edges, and knowi
 
 A Trust Record proves how an agent ran. It says nothing about whether the systems that agent touched were readable to it, whether the tool it called should have been callable at all, or whether the decision boundary around it was written down anywhere.
 
-That is the split I keep running into. Attestation is evidence about execution. Agent-readiness is evidence about the surface: whether your site, your data and your endpoints answer a machine the way they answer a person, and whether the permissions around them are something you can point at rather than something living in one engineer's head. An organisation can have a perfect Level 2 record of an agent doing exactly the wrong thing, correctly, against data it should never have been given.
+That is the split I keep running into. Attestation is evidence about execution. Agent-readiness is evidence about the surface: whether your site, your data and your endpoints answer a machine the way they answer a person, and whether the permissions around them are something you can point at rather than something living in one engineer's head. An organization can have a perfect Level 2 record of an agent doing exactly the wrong thing, correctly, against data it should never have been given.
 
 Both halves are receipts. They are receipts about different questions.
 
@@ -2553,7 +2554,7 @@ Corrected 2026-09-28. A paragraph paraphrased the project's limitations page as 
 ## Related
 
 - [When an agent can prove it is Claude](/blog/verifiable-agent-identity)
-- [Authentication and authorisation for AI agents](/guides/agent-authentication)
+- [Authentication and authorization for AI agents](/guides/agent-authentication)
 - [Define what an agent may do with your data](/guides/letting-agents-act-on-data)
 `,
   "/blog/agent-readiness-code-hosts": `# I scanned thirteen code hosts. Not one served an MCP server card.
@@ -2649,7 +2650,7 @@ Corrected again 2026-09-27. A sentence said an agent has no way to discover GitH
 
 Corrected 2026-09-28. Two sentences read as findings about every possible discovery path rather than the ones this scan checked. Both now keep to the paths this scan read, and GitLab's 403 answers are named as checks that got no answer rather than confirmed absence. No reading changed.
 
-Corrected 2026-09-28. The H2 heading itself still generalised across the whole domain after the paragraph below it was narrowed to the paths this scan checked. The heading now names the same paths instead of all of github.com.
+Corrected 2026-09-28. The H2 heading itself still generalized across the whole domain after the paragraph below it was narrowed to the paths this scan checked. The heading now names the same paths instead of all of github.com.
 
 Corrected 2026-10-02. A sentence said the two passes were metadata published so people can log in and not so agents can find anything. The scanner counts that check in its discovery group and OAuth discovery tells an agent where to request access. It now says: "Both passes were OAuth and OpenID Connect discovery metadata, which tells a client where to log in and request tokens. Neither announced an MCP server or any code host action, so no host passed a check for what an agent can do there."
 
@@ -2852,11 +2853,11 @@ A sixth category went through three of the four static surfaces untouched. I mea
 
 | Shape | Where it hid | Why it passed |
 |---|---|---|
-| A filter that ran before the count | The README table rows are filtered down to the ones that resolve to a known category before they are counted | A row the fact file did not recognise disappeared in the filter, so the counter never went up |
+| A filter that ran before the count | The README table rows are filtered down to the ones that resolve to a known category before they are counted | A row the fact file did not recognize disappeared in the filter, so the counter never went up |
 | A span that ends on the last known element's own sentence | The gate lifts a paragraph out of the audit guide by anchoring on the first category and the last one | Anything added after the closing anchor falls outside the span the gate is reading |
 | A substring test standing in for an equality test | A twin sentence built from the fact file, compared against the page with an includes check | A sixth category inserted at the front was not caught, because the wanted string was still contained in the longer one |
 
-The first was a filter that ran before the count. The table rows in the README are collected, filtered down to the ones that resolve to a known category, and only then counted. A row whose name the fact file does not recognise disappeared in the filter, so the counter never went up. The filter is there to keep unrelated rows out of the count, and it kept the finding out with them.
+The first was a filter that ran before the count. The table rows in the README are collected, filtered down to the ones that resolve to a known category, and only then counted. A row whose name the fact file does not recognize disappeared in the filter, so the counter never went up. The filter is there to keep unrelated rows out of the count, and it kept the finding out with them.
 
 The second was a span that ends on the last element's own sentence. The gate lifts a paragraph out of the audit guide by anchoring on the first category and the last one, and the closing anchor is commerce's own sentence. That is exactly where a sixth gets appended. Anything added after it falls outside the span the gate is reading.
 
@@ -2886,7 +2887,7 @@ Then the part my original code had backwards. Every element that does not resolv
 
 None of this is new and none of it is rare. Anyone who has written against a schema has met it under the name additionalProperties, and the repair is the same repair. The reportable part is not the class of defect. It is that three instances of it were sitting in my own code, in a gate I had negative tested, on a day it reported green three separate ways.
 
-The version that transfers to anyone with a test suite: your test asserts that the fields you remembered are present in the response. It does not ask what else is in the response. Add a field to the payload and the test stays green, which is correct behaviour for a compatibility check and wrong for anything you believe is watching a set. If a test's name says it validates a schema or a contract, open it and check whether it enumerates or whether it searches.
+The version that transfers to anyone with a test suite: your test asserts that the fields you remembered are present in the response. It does not ask what else is in the response. Add a field to the payload and the test stays green, which is correct behavior for a compatibility check and wrong for anything you believe is watching a set. If a test's name says it validates a schema or a contract, open it and check whether it enumerates or whether it searches.
 
 ## About the hostile read
 
@@ -2939,7 +2940,7 @@ This is not a defect in the SDK and not a gap in the spec. The compatibility lan
 
 It is also not a story where the information was missing. Read the second and third rows again. The server named the envelope key I had left out, then the two keys I had misspelled. The correct request was written inside the failures from the moment the version header went on, and I read the first response as a verdict instead of reading the rest as instructions.
 
-Rechecking all of this turned up one more of my own. A note of mine says this endpoint refuses anything that does not accept both JSON and an event stream. That holds on the legacy lane. On the new one a plain JSON Accept is answered, and so is a request with no Accept header at all. I had written down the behaviour of the lane I happened to be standing in and filed it as the rule.
+Rechecking all of this turned up one more of my own. A note of mine says this endpoint refuses anything that does not accept both JSON and an event stream. That holds on the legacy lane. On the new one a plain JSON Accept is answered, and so is a request with no Accept header at all. I had written down the behavior of the lane I happened to be standing in and filed it as the rule.
 
 ## The shape, both times
 
@@ -2971,7 +2972,7 @@ Cutting a revision copies the living draft tree into a dated one, and every refe
 
 The promote step rewrote one link pattern when it copied the spec tree, and that part worked. Two other patterns were not covered. Three links still pointed at the draft schema, including the one whose own next line calls it the source of truth for all protocol messages and structures. Nine pointed at the draft docs tier, eight of those at the security best practices page. The changelog's compare link was the thirteenth.
 
-Not one of them was broken. Every one resolved, just to the living tier rather than the frozen one, which is presumably why a preview check did not catch them. The reader who follows a link labelled 2026-07-28 in a year gets whatever the draft has become by then, and nothing anywhere reports a problem.
+Not one of them was broken. Every one resolved, just to the living tier rather than the frozen one, which is presumably why a preview check did not catch them. The reader who follows a link labeled 2026-07-28 in a year gets whatever the draft has become by then, and nothing anywhere reports a problem.
 
 I filed it as [issue 3160](https://github.com/modelcontextprotocol/modelcontextprotocol/issues/3160), with the line numbers and the two greps I had run to find them. It was closed the same day, and [pull request 3163](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/3163) corrected the remaining draft links in the 2026-07-28 spec tree on the main branch, which the specification site serves. The 2026-07-28 release itself was not cut again. The promote step now runs all three rewrites over all three copied trees with the changelog compare pinned to the new tag. The second half is the half that matters. A file fix is good for one revision and a workflow fix is good for every revision after it.
 
@@ -3238,7 +3239,7 @@ The obvious objection is that volume without quality is just a bigger pile. If A
 | Remote code execution | 42 | 165 |
 | Elevation of privilege | 58 | 256 |
 
-More than twice the volume of the same month a year earlier, and the median CVE is a full point more severe. The Moderate band collapsed from a third of the package to under five per cent. Remote code execution roughly quadrupled.
+More than twice the volume of the same month a year earlier, and the median CVE is a full point more severe. The Moderate band collapsed from a third of the package to under five percent. Remote code execution roughly quadrupled.
 
 One caveat, stated plainly. The share of CVEs Microsoft did not assign a CVSS score to rose from 5 % to 38 %. Those are likely Chromium-inherited Edge issues, which Microsoft does not usually score itself. The severity claim above holds for what Microsoft scored. I cannot speak for the rest, and neither can anyone who has not opened the file.
 
@@ -3264,9 +3265,9 @@ That has a consequence worth sitting with. Access to Mythos is controlled by Ant
 
 ## The same technology closed a bug bounty
 
-In January 2026 the curl project shut down its bug bounty. Twenty reports arrived in the first twenty-one days of the year, seven of them in one 16-hour window, and none was a real vulnerability, according to [Bugcrowd's account of the shutdown](https://www.bugcrowd.com/blog/hacker-opinion-piece-how-lazy-hacking-killed-curls-bug-bounty). Daniel Stenberg called such reports AI slop. HackerOne reported March 2026 submissions up 76 % year over year, with the share of valid findings steady at roughly 25 % ([HackerOne](https://www.hackerone.com/blog/continuous-threat-exposure-management-remediation-crisis)). Google raised the proof it requires in its open-source reward programme after a surge of low-quality reports ([Google's rule update](https://bughunters.google.com/blog/ossvrp-rule-updates-2026)). GitHub tightened its requirements.
+In January 2026 the curl project shut down its bug bounty. Twenty reports arrived in the first twenty-one days of the year, seven of them in one 16-hour window, and none was a real vulnerability, according to [Bugcrowd's account of the shutdown](https://www.bugcrowd.com/blog/hacker-opinion-piece-how-lazy-hacking-killed-curls-bug-bounty). Daniel Stenberg called such reports AI slop. HackerOne reported March 2026 submissions up 76 % year over year, with the share of valid findings steady at roughly 25 % ([HackerOne](https://www.hackerone.com/blog/continuous-threat-exposure-management-remediation-crisis)). Google raised the proof it requires in its open-source reward program after a surge of low-quality reports ([Google's rule update](https://bughunters.google.com/blog/ossvrp-rule-updates-2026)). GitHub tightened its requirements.
 
-So in the same six months, one organisation shipped 1150 real CVEs and credited AI-assisted discovery for the rise, and another ended its bug bounty when its share of real findings collapsed, with AI slop the first of three causes its lead developer names.
+So in the same six months, one organization shipped 1150 real CVEs and credited AI-assisted discovery for the rise, and another ended its bug bounty when its share of real findings collapsed, with AI slop the first of three causes its lead developer names.
 
 Same technology. The difference is the prove pipeline. Microsoft built one, with dedicated cloud infrastructure behind it. curl has paid backing too: its [sponsor page](https://curl.se/sponsors.html) names Haxx as the primary sponsor and says wolfSSL employs Daniel Stenberg and lets him spend paid work hours on curl. For bounty reports it relied on the platform's reputation system and program settings, and in [his account of the shutdown](https://daniel.haxx.se/blog/2026/01/26/the-end-of-the-curl-bug-bounty/) Stenberg writes that these were not enough to keep the bad reports out. The share of submissions confirmed as vulnerabilities fell from above 15 % in earlier years to below 5 % in 2025, and curl dropped the rewards to remove the incentive to submit made-up reports. Pull requests are a different case, Stenberg writes: tests, scanners and 200 CI jobs check a contribution before anyone spends human time on it, so they are not a problem for curl.
 
@@ -3292,7 +3293,7 @@ That is what measurement is for. Not to catch anyone out. Microsoft's post is ac
 
 Agent-readiness works the same way. A site can assert it is ready for AI agents. A scanner reads the site and returns a number. One of those is an opinion.
 
-Note added September 27: two sentences went further than the numbers. The severity table compares July 2026 with July 2025, 1150 against 527, which is 2,2 times and not three. Three times is the multiple against the eight-month baseline. The bounty section said the organisation used AI to ship the 1150 CVEs, which is Microsoft's own attribution and not something this post measured, as the capacity section already says. Both sentences now say what this post measured. No CVE count changed.
+Note added September 27: two sentences went further than the numbers. The severity table compares July 2026 with July 2025, 1150 against 527, which is 2,2 times and not three. Three times is the multiple against the eight-month baseline. The bounty section said the organization used AI to ship the 1150 CVEs, which is Microsoft's own attribution and not something this post measured, as the capacity section already says. Both sentences now say what this post measured. No CVE count changed.
 
 Corrected 2026-09-28. A sentence said the two benchmark figures came from conditions neither party published. Microsoft's own linked source names its side, the CyberGym default level 1 configuration across 1507 tasks from 188 OSS-Fuzz projects, and the sentence now says that, and that Anthropic's own conditions for Mythos are not published.
 
@@ -3420,7 +3421,7 @@ For the larger sample, a later post ran the same scanner across [567 company sit
 
 To check where a site stands, the free llms.txt validator is at [turva.dev/llms-txt-validator](https://turva.dev/llms-txt-validator), and the agent-readiness audit and advisory work is at turva.dev.
 
-Corrected 2026-09-25. Three passages said more than the scan measured. The token figures were an estimate from a scanner this site no longer uses, and they are now labelled as reported and estimated. Two sentences drew what an agent can answer and whether a business appears in an answer from configuration checks, and a third said most of these sites rank fine in search, which was never measured. They now say what the scan read. The counts did not change.
+Corrected 2026-09-25. Three passages said more than the scan measured. The token figures were an estimate from a scanner this site no longer uses, and they are now labeled as reported and estimated. Two sentences drew what an agent can answer and whether a business appears in an answer from configuration checks, and a third said most of these sites rank fine in search, which was never measured. They now say what the scan read. The counts did not change.
 
 Corrected 2026-09-27. One more sentence still said these sites rank in search, which was not measured either. It now says only that they load and that a person can use them.
 
@@ -3467,7 +3468,7 @@ For an agent-readiness audit that reads your agent-facing claims the way a skept
 
 ## Related
 
-- [Authentication and authorisation for AI agents](/guides/agent-authentication)
+- [Authentication and authorization for AI agents](/guides/agent-authentication)
 - [Measure agent-readiness with evidence](/guides/measurement-led-agent-readiness)
 `,
 
@@ -3925,7 +3926,7 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 - [What 19 identity vendors publish for agents](/blog/agent-readiness-identity-vendors). 2026-09-05. Research. A dated scan of 19 identity vendors examines what their public sites expose for agents, and what the results cannot say about the products behind them.
 - [Two files called auth.md, and they disagree on the field names](/blog/two-auth-md-dialects). 2026-09-04. Protocol notes. Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.
 - [Thirty-day follow-up: 201 comparable readings from 210 sites](/blog/thirty-days-after-the-brief). 2026-09-03. Research. A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.
-- [What four AI assistants call an agent readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit). 2026-09-03. Research. Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organisational AI adoption.
+- [What four AI assistants call an agent readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit). 2026-09-03. Research. Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organizational AI adoption.
 - [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites). 2026-09-03. Research. One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.
 - [TRACE signs how an agent ran, not what it was allowed to reach](/blog/trace-runtime-attestation). 2026-08-30. Protocol notes. This article examines what a TRACE Trust Record attests to, and why runtime evidence does not itself establish the right permissions or correct decisions.
 - [I scanned thirteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts) 2026-08-22. Research. Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.
@@ -4188,7 +4189,7 @@ Corrected 2026-10-02. The post said copying the header does not reproduce a sign
 
 ## Related
 
-- [Authentication and authorisation for AI agents](/guides/agent-authentication)
+- [Authentication and authorization for AI agents](/guides/agent-authentication)
 - [The /.well-known directory for agent discovery](/guides/well-known-for-agents)
 - [What agents.json describes](/guides/agents-json)
 `,
@@ -4293,7 +4294,7 @@ Corrected 2026-09-28. Two more sentences overstated what the domain protects. Th
 ## Related
 
 - [The /.well-known directory for agent discovery](/guides/well-known-for-agents)
-- [Authentication and authorisation for AI agents](/guides/agent-authentication)
+- [Authentication and authorization for AI agents](/guides/agent-authentication)
 - [What agents.json describes](/guides/agents-json)
 `,
   "/samples/audit-report": `Fictional example
@@ -4554,7 +4555,7 @@ Run on 2026-09-04, recorded so that the client can re-run them without turva.dev
 
 ## The findings in detail
 
-Nine findings. Each one shows the evidence, why it matters, the correction, the owner and the check used to confirm the result. Observed effects and possible effects are labelled separately. The findings are numbered by impact on a buyer first and on the score second. F9 is the exception: the AI run raised it after the technical findings were numbered, so it comes last here, and the fix table above puts it second in the order of work, right after F1.
+Nine findings. Each one shows the evidence, why it matters, the correction, the owner and the check used to confirm the result. Observed effects and possible effects are labeled separately. The findings are numbered by impact on a buyer first and on the score second. F9 is the exception: the AI run raised it after the technical findings were numbered, so it comes last here, and the fix table above puts it second in the order of work, right after F1.
 
 ### F1. Product prices and availability disagree across the page, structured data and API
 
@@ -4680,7 +4681,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **Why it matters.** One scored check. DNSSEC moves the internet.nl website reading and is the prerequisite of dnsAid, so it is worth enabling now. The record itself is a pointer, and Northwind publishes nothing for it to point at.
 
-**What the check reads, with versions.** The record shape follows the IETF draft DNS for AI Discovery, draft-mozleywilliams-dnsop-dnsaid-02, which defines _index._agents under the domain as an SVCB record pointing at a registry of the organisation's agents, and leaves the registry's content, protocol and schema outside the draft. The scanner's dnsAid check, as it read on 2026-09-03, looks for that record and reports whether DNSSEC validated it. Both are moving: the draft has a revision number and an expiry date, and the scanner's check definition is not versioned by the scanner, so the report pins both to their state on 2026-09-03 and the retest reads them against their state on the retest day. If either has moved between the two dates, the retest report names both versions next to the two readings rather than treating the readings as comparable.
+**What the check reads, with versions.** The record shape follows the IETF draft DNS for AI Discovery, draft-mozleywilliams-dnsop-dnsaid-02, which defines _index._agents under the domain as an SVCB record pointing at a registry of the organization's agents, and leaves the registry's content, protocol and schema outside the draft. The scanner's dnsAid check, as it read on 2026-09-03, looks for that record and reports whether DNSSEC validated it. Both are moving: the draft has a revision number and an expiry date, and the scanner's check definition is not versioned by the scanner, so the report pins both to their state on 2026-09-03 and the retest reads them against their state on the retest day. If either has moved between the two dates, the retest report names both versions next to the two readings rather than treating the readings as comparable.
 
 **What to change.** Enable DNSSEC now: sign the zone and publish its DS record at the registrar. Hold the _index._agents record. Northwind publishes no agent registry, and F6 records that it runs no MCP server or agent card for one to list, so a record today would point at nothing and read as a claim the site cannot back. That is the same reason F6 declares no server card. When the company publishes a registry, the record is added as a separate change that names the registry's URL, what it lists and who keeps it current, with the exact record text as of the draft revision on that day.
 
@@ -4734,7 +4735,7 @@ In every case the retest is the same, and it is included in the audit price: onc
 
 ## Scope limits
 
-It is not a penetration test, a certification, an SEO audit or a promise of ranking on any AI platform. It reads what the site publishes and records what four assistants said on one day. Where it says an agent may do something, it says so as a possibility and not as a measurement. It does not read the organisation's readiness to adopt agents, which is a different question that often goes by the same name.
+It is not a penetration test, a certification, an SEO audit or a promise of ranking on any AI platform. It reads what the site publishes and records what four assistants said on one day. Where it says an agent may do something, it says so as a possibility and not as a measurement. It does not read the organization's readiness to adopt agents, which is a different question that often goes by the same name.
 
 ## Appendix A. From evidence to a checked fix
 
@@ -4880,7 +4881,7 @@ Every row is an observation. The mark compares the benefit of a fix with the wor
 | Home page | Own reading, 2026-10-29 | https://turva.dev/ answered 200. | The page loads over HTTPS from the bare domain. | low |
 | www form | Own reading, 2026-10-29 | https://www.turva.dev/ answered 301 with the Location https://turva.dev/. I did not follow it. | The www address sends visitors to the bare domain. | low |
 | robots.txt, sitemap.xml and llms.txt | Own reading, 2026-10-29 | Each answered 200 on turva.dev. | The three files exist at their standard locations. | low |
-| MTA-STS policy | Own reading, 2026-10-29 | https://mta-sts.turva.dev/.well-known/mta-sts.txt answered 200: version STSv1, mode enforce, mx mail.protonmail.ch, mx mailsec.protonmail.ch, max_age 604800. | Sending servers that honour MTA-STS are told to require TLS to these two mail hosts, the same two that internet.nl found. | low |
+| MTA-STS policy | Own reading, 2026-10-29 | https://mta-sts.turva.dev/.well-known/mta-sts.txt answered 200: version STSv1, mode enforce, mx mail.protonmail.ch, mx mailsec.protonmail.ch, max_age 604800. | Sending servers that honor MTA-STS are told to require TLS to these two mail hosts, the same two that internet.nl found. | low |
 | MTA-STS and TLS-RPT records | Own reading, 2026-10-29 | \`_mta-sts.turva.dev\` TXT: \`v=STSv1; id=20260910202321\`. \`_smtp._tls.turva.dev\` TXT: \`v=TLSRPTv1; rua=mailto:info@turva.dev\`. | The policy is announced, and reports about failed mail TLS connections go to a role address at the domain. | low |
 | CAA records | Own reading, 2026-10-29 | 13 records. \`0 iodef "mailto:info@turva.dev"\`, and both issue and issuewild for comodoca.com, digicert.com, letsencrypt.org, pki.goog, sectigo.com and ssl.com. | Only these six authorities may issue certificates for the domain, and internet.nl also passed CAA. | low |
 | Versions and third parties | Own reading, 2026-10-29 | Header server: cloudflare. No generator meta tag, no third-party script hosts, and no cookies set by the home page response. | No software version number shows in the headers, and the home page loads no script from another host. | low |
@@ -5154,7 +5155,7 @@ document, at a fraction of the token cost of the HTML.
 - [What agents.json describes](https://turva.dev/guides/agents-json)
 - [The /.well-known directory for agent discovery](https://turva.dev/guides/well-known-for-agents)
 - [Agentic Resource Discovery and resource catalogs](https://turva.dev/guides/agentic-resource-discovery)
-- [Authentication and authorisation for AI agents](https://turva.dev/guides/agent-authentication)
+- [Authentication and authorization for AI agents](https://turva.dev/guides/agent-authentication)
 - [x402 and HTTP payment flows](https://turva.dev/guides/x402-agent-payments)
 - [Agent commerce discovery: A2A, AP2, ACP and UCP](https://turva.dev/guides/agent-commerce-discovery)
 - [Agentic commerce readiness](https://turva.dev/guides/agentic-commerce-readiness)
@@ -5195,7 +5196,7 @@ The audit is delivered within two weeks of the agreed written kickoff. You recei
 
 ## Implementation
 
-**€1,500. Per day, scoped separately. €499 for the complete fix list from an audit.**
+**€1,500. Per day, scoped separately. €499 for the complete fix list from an audit. Prices valid until 2026-12-31.**
 
 I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
 
@@ -5220,7 +5221,7 @@ Cloudflare Workers is the default. Other supported edge runtimes can be agreed w
 - AI crawler rules, Content Signals and a Web Bot Auth directory.
 - Markdown responses alongside the existing HTML pages.
 - An agent skills index, auth.md and an API catalog.
-- JSON-LD for products, organisations and articles.
+- JSON-LD for products, organizations and articles.
 - ai.txt and llms.txt.
 - Signed content and agent authentication patterns.
 - Discovery cards for an MCP or agent-to-agent server that already runs.
@@ -5255,7 +5256,7 @@ I include one round of implementation handover questions submitted within 14 cal
 
 ## Ongoing advisory
 
-**€3,000. Per month. Minimum three months.**
+**€3,000. Per month. Minimum three months. Price valid until 2026-12-31.**
 
 If you are not satisfied with the first month, you can end the retainer by email sent at any time during the first month, up to the day before the second month starts. The retainer then ends when the first month ends, and the second and third months are not charged. Notice given in the second or third month ends the retainer at the end of the three-month minimum, and the months up to that end are charged. After the three-month minimum the retainer runs month to month, and either party can end it by email before the next month starts.
 
@@ -5317,7 +5318,7 @@ Within five business days of the agreed written kickoff, I deliver a draft map o
 
 Within ten business days of kickoff, I deliver a written control specification listing allowed actions, permission boundaries, human-decision thresholds and handover rules. With that specification, I deliver a findings table with evidence, an owner, a proposed correction and an acceptance check for each finding.
 
-I also deliver the results of ten agreed test scenarios, with the input, expected control behaviour, observed result and any part that could not be tested.
+I also deliver the results of ten agreed test scenarios, with the input, expected control behavior, observed result and any part that could not be tested.
 
 If the engagement includes control implementation, I name each change and its delivery deadline in business days from kickoff before work starts.
 
@@ -5331,7 +5332,7 @@ The review package excludes production changes, penetration testing, continuous 
 
 I need the workflow description, permission configuration, representative redacted traces, intended action limits and a named owner who can approve those limits in writing. The review also needs an agreed test environment or replay dataset and written permission for the specific tests, with real money movement and real deletion excluded from the review tests.
 
-I ask your named owner to confirm the intended limits against the draft map before I finalise the control specification. Dates in the written scope move by the business days spent waiting for that approval.
+I ask your named owner to confirm the intended limits against the draft map before I finalize the control specification. Dates in the written scope move by the business days spent waiting for that approval.
 
 ### Review acceptance checks
 
@@ -5446,7 +5447,7 @@ A missing header, a visible version number or a missing SameSite flag is an obse
 
 ## Who it is for
 
-The check is sold only to businesses and other organisations acting in their trade or profession, as my other services are. It is not sold to consumers.
+The check is sold only to businesses and other organizations acting in their trade or profession, as my other services are. It is not sold to consumers.
 
 It is for a company that has its own domain and its email on it.
 
@@ -5493,14 +5494,14 @@ Across both orders you pay what the audit costs on its own, €4,300, and you al
 The order is an email. There is no form, and everything happens in writing. The button above opens a draft with the fields below, or you can write the same details in a plain email to [info@turva.dev](mailto:info@turva.dev).
 
 - Send the order by email with the fields listed below.
-- I acknowledge it in writing within one business day. The acknowledgement repeats your details so you can correct them by replying before any payment link exists. It links the terms on the [legal page](/legal) and its Markdown copy, names their date and contains a one-time code.
-- You verify that you may order for the company. Reply from an address at the domain with the code and this statement: \`I confirm that I am authorised to order this check for <company>.\` Or add a DNS TXT record at \`_turva-verification.<domain>\` with the value the acknowledgement gives, and reply from your contact address with the same statement. Either way the reply confirms the address I deliver to.
+- I acknowledge it in writing within one business day. The acknowledgment repeats your details so you can correct them by replying before any payment link exists. It links the terms on the [legal page](/legal) and its Markdown copy, names their date and contains a one-time code.
+- You verify that you may order for the company. Reply from an address at the domain with the code and this statement: \`I confirm that I am authorized to order this check for <company>.\` Or add a DNS TXT record at \`_turva-verification.<domain>\` with the value the acknowledgment gives, and reply from your contact address with the same statement. Either way the reply confirms the address I deliver to.
 - I check a Finnish Business ID in YTJ, the Finnish Trade Register. I check a foreign register ID in that country's open register and the VAT ID in the EU's VIES service. If an ID cannot be found or a check fails, I ask you for more information, and the order lapses without charge if you do not answer within seven days. The order also lapses without charge if the verification has not succeeded within seven days of the order.
 - I send a payment link for this order alone. It covers one payment and is valid for 14 days. If no payment arrives in that time, the link is closed and the order lapses without charge.
 - If a payment confirms late, the order does not lapse until the payment has confirmed or failed, at most 14 days after the payment session completed. After that the order lapses without charge, and a payment confirmed later is refunded. If a payment fails, I send one new link, valid for seven days.
 - Measurement starts when Stripe confirms the payment. A payment success page alone does not start it, because some payment methods confirm late.
 
-I keep your order email and my acknowledgement, and I give you a copy on request for as long as I keep them. The [legal page](/legal) sets how long that is. No code of conduct applies to this service. The contract language is English.
+I keep your order email and my acknowledgment, and I give you a copy on request for as long as I keep them. The [legal page](/legal) sets how long that is. No code of conduct applies to this service. The contract language is English.
 
 The order template has these fields:
 
@@ -5650,7 +5651,7 @@ A written report that answers four questions:
 
 You also receive the recorded AI questions and answers, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers.
 
-Each finding includes correction instructions and, where available, a link to the relevant guide. The order reflects the effect on users and agent behaviour, with effort and scanner effects recorded separately.
+Each finding includes correction instructions and, where available, a link to the relevant guide. The order reflects the effect on users and agent behavior, with effort and scanner effects recorded separately.
 
 A synthetic [sample report](/samples/audit-report) shows the format: the per-check scanner readings, the manual review, the AI visibility run, nine findings with their owners and acceptance tests, and the decisions the company makes. It is not a report on a real client.
 
@@ -5699,11 +5700,11 @@ You work directly with me, from agreeing the scope to reading the findings and d
 
 ## My background
 
-From 2015 to 2021, I worked hands-on with industrial and laboratory equipment: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyser at Thermo Fisher Scientific and semiconductor production equipment at ASM International.
+From 2015 to 2021, I worked hands-on with industrial and laboratory equipment: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyzer at Thermo Fisher Scientific and semiconductor production equipment at ASM International.
 
 Those roles involved reliable machine data and working within defined limits.
 
-After a career break from 2021 to early 2026, I built turva.dev around technical checks, reviews and implementation. You can inspect my current work through [public source code](https://github.com/erekola), [dated research](/blog) and clearly labelled [sample reports](/samples/audit-report). There are no named client references yet. The audit sample report describes a fictional business, and the domain check sample uses turva.dev's own domain with real readings.
+After a career break from 2021 to early 2026, I built turva.dev around technical checks, reviews and implementation. You can inspect my current work through [public source code](https://github.com/erekola), [dated research](/blog) and clearly labeled [sample reports](/samples/audit-report). There are no named client references yet. The audit sample report describes a fictional business, and the domain check sample uses turva.dev's own domain with real readings.
 
 ## Why I do this work
 
@@ -5845,7 +5846,7 @@ Contact: [info@turva.dev](mailto:info@turva.dev)
 
 ## Engagement terms
 
-These terms apply to external domain checks, audits, advisory, implementation, agent operations and MCP server design unless a written agreement replaces them. The services are sold only to businesses and other organisations acting in their trade or profession, not to consumers.
+These terms apply to external domain checks, audits, advisory, implementation, agent operations and MCP server design unless a written agreement replaces them. The services are sold only to businesses and other organizations acting in their trade or profession, not to consumers.
 
 **Scope.** We agree the scope in writing before work starts. Changes need a new written agreement and may affect the price and schedule.
 
@@ -5855,7 +5856,7 @@ These terms apply to external domain checks, audits, advisory, implementation, a
 
 **Payment.** Payment is due within fourteen days of the invoice date unless agreed otherwise in writing. The external domain check is a written exception to this term. Its price is paid through a payment link for that order alone, which turva.dev sends after it has confirmed the written order and verified the domain, and Stripe's confirmation of the payment is the agreed start of the check, as its [service page](/external-domain-check) states. An order that lapses before payment is not charged. Late-payment interest follows Finnish law.
 
-**Cancellation and refunds.** An engagement cancelled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or the correction add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay or Continuity takes precedence over this share. A missed-deadline refund that a service page states applies in place of the charge for delivered parts. For a missing reading, an external domain check refunds its whole price, VAT included, only when a measurement could not be run at all and the rerun within two business days of the notice also fails, as its [service page](/external-domain-check) states. A finished measurement that ends in "no reading" with a reason is a valid result and is not refunded. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
+**Cancellation and refunds.** An engagement canceled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or the correction add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay or Continuity takes precedence over this share. A missed-deadline refund that a service page states applies in place of the charge for delivered parts. For a missing reading, an external domain check refunds its whole price, VAT included, only when a measurement could not be run at all and the rerun within two business days of the notice also fails, as its [service page](/external-domain-check) states. A finished measurement that ends in "no reading" with a reason is a valid result and is not refunded. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
 
 **Delay.** If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered. That part is not charged, and anything already paid for it is refunded in full. A late advisory review is still delivered in full, and the delay is stated with it.
 
@@ -5873,19 +5874,19 @@ These terms apply to external domain checks, audits, advisory, implementation, a
 
 The site does not use analytics cookies, tracking pixels or third-party scripts. Cookies are described under Cookies below.
 
-**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, the site's rate limit and processing a client's own contact persons rest on legitimate interest. So does operating the llms.txt validator, which means fetching and checking the documents the user names. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. For an external domain check, the order, the verification code, the statement of authority, the date of the accepted terms and the discount record are processed to carry out the order, to show the agreement and to give the discount. They rest on the contract, or on legitimate interest when the contact person is not the contracting party. Two facts collected to evaluate the pilot, where the orderer came from and whether they had asked about a follow-up service before the check, rest on legitimate interest. They are kept until the pilot ends, which is when the 60-day follow-up of the last pilot order has ended, and after that only as counts without identifiers. The information that Article 13 of the GDPR requires for an order is on this page, which the acknowledgement of the order links. For personal data that reaches a report from public sources, Article 14 applies: the report masks names and personal contact details found in public results and shows only the role. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
+**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, the site's rate limit and processing a client's own contact persons rest on legitimate interest. So does operating the llms.txt validator, which means fetching and checking the documents the user names. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. For an external domain check, the order, the verification code, the statement of authority, the date of the accepted terms and the discount record are processed to carry out the order, to show the agreement and to give the discount. They rest on the contract, or on legitimate interest when the contact person is not the contracting party. Two facts collected to evaluate the pilot, where the orderer came from and whether they had asked about a follow-up service before the check, rest on legitimate interest. They are kept until the pilot ends, which is when the 60-day follow-up of the last pilot order has ended, and after that only as counts without identifiers. The information that Article 13 of the GDPR requires for an order is on this page, which the acknowledgment of the order links. For personal data that reaches a report from public sources, Article 14 applies: the report masks names and personal contact details found in public results and shows only the role. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
-**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyses a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to 31 days of both security analytics and security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within 16 weeks at most. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name, with new requests that do not pass on the headers of your request. Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when that site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers, and the validator sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. On 22 October 2026 turva.dev measured the two requests the validator made to one test site outside Cloudflare, one for /llms.txt and one for the home page, as the test site recorded them. Both carried the fixed address in CF-Connecting-IP. Neither carried X-Real-IP or X-Forwarded-For, although the validator sets X-Real-IP, and no header held the IP address of the person who ran the test. The connection came from a Cloudflare address.
+**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyzes a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to 31 days of both security analytics and security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within 16 weeks at most. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name, with new requests that do not pass on the headers of your request. Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when that site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers, and the validator sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. On 22 October 2026 turva.dev measured the two requests the validator made to one test site outside Cloudflare, one for /llms.txt and one for the home page, as the test site recorded them. Both carried the fixed address in CF-Connecting-IP. Neither carried X-Real-IP or X-Forwarded-For, although the validator sets X-Real-IP, and no header held the IP address of the person who ran the test. The connection came from a Cloudflare address.
 
-**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. Anthropic's data processing addendum for the Anthropic API incorporates the EU Standard Contractual Clauses, Module Two or Module Three, for data transferred out of the EEA, including to Anthropic, PBC in the United States. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognises as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA, the validator builds its requests to send the fixed address in place of the visitor's IP address, and the measurement described in the Server logs paragraph above found no visitor address in the two requests it covered.
+**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. Anthropic's data processing addendum for the Anthropic API incorporates the EU Standard Contractual Clauses, Module Two or Module Three, for data transferred out of the EEA, including to Anthropic, PBC in the United States. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognizes as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA, the validator builds its requests to send the fixed address in place of the visitor's IP address, and the measurement described in the Server logs paragraph above found no visitor address in the two requests it covered.
 
 **Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. A question sent by email, Signal or LinkedIn that does not lead to an engagement is deleted 24 months after the latest message, except email of an external domain check order that lapses before payment, which is deleted within thirty days of the day it lapses.
 
-**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. For example, when the last deliverable arrives on 1 March and no retest is requested, the engagement closes on 30 May. The material is then deleted from the working systems by 29 June, about 120 days after delivery, and has left every backup by 19 October. An engagement cancelled after kickoff and before any delivery closes 90 days after the cancellation. An external domain check order that lapses before payment closes on the day it lapses, and its order data and its verification record, which includes the statement of authority, are deleted from the working systems within thirty days of that day. For a delivered external domain check, the verification record, the statement of authority, the accepted terms version and the discount record are kept for the same period as the order itself. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Backups made during the engagement keep a copy until their rotation replaces them. The file backups keep at most ten copies. Disk images of the workstation, which include the virtual machine's disk file, are kept for up to 14 weeks, plus up to 14 days in the snapshots of the storage that holds them. Every backup, version history included, is removed within 16 weeks. A backup is never restored for any other purpose. Deleted client material has left every backup within 16 weeks of its deletion at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them. Credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. For example, when the last deliverable arrives on 1 March and no retest is requested, the engagement closes on 30 May. The material is then deleted from the working systems by 29 June, about 120 days after delivery, and has left every backup by 19 October. An engagement canceled after kickoff and before any delivery closes 90 days after the cancellation. An external domain check order that lapses before payment closes on the day it lapses, and its order data and its verification record, which includes the statement of authority, are deleted from the working systems within thirty days of that day. For a delivered external domain check, the verification record, the statement of authority, the accepted terms version and the discount record are kept for the same period as the order itself. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Backups made during the engagement keep a copy until their rotation replaces them. The file backups keep at most ten copies. Disk images of the workstation, which include the virtual machine's disk file, are kept for up to 14 weeks, plus up to 14 days in the snapshots of the storage that holds them. Every backup, version history included, is removed within 16 weeks. A backup is never restored for any other purpose. Deleted client material has left every backup within 16 weeks of its deletion at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them. Credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
 **Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
-**Outreach records.** When turva.dev writes to a company, it records the company, the business contact it wrote to, the public page where that contact was found and the date. Keeping it stops the same company from being contacted twice and lets the promised rescan be sent. The lawful basis is legitimate interest, and the record is shown or removed on request. The record is kept for 24 months from the latest contact. A company that asks not to be contacted stays on an exclusion list for as long as that request stands, so that the request can be honoured. You can object to this processing at any time, and an objection stops further contact.
+**Outreach records.** When turva.dev writes to a company, it records the company, the business contact it wrote to, the public page where that contact was found and the date. Keeping it stops the same company from being contacted twice and lets the promised rescan be sent. The lawful basis is legitimate interest, and the record is shown or removed on request. The record is kept for 24 months from the latest contact. A company that asks not to be contacted stays on an exclusion list for as long as that request stands, so that the request can be honored. You can object to this processing at any time, and an objection stops further contact.
 
 **AI tools.** The AI tool used in the work is Claude. Client material, including what is read from a client's public site, is processed only through the Anthropic API, unless the engagement agreement names another route for part of the work at the client's request, such as Claude through Amazon Bedrock. The recorded questions of an audit are put to the assistants named in the written scope in anonymous sessions and contain only the public product name and the question text, never client material. The API is used on Anthropic's [commercial terms](https://www.anthropic.com/legal/commercial-terms), with Anthropic Ireland, Limited as the contracting party. Anthropic's [data processing addendum](https://www.anthropic.com/legal/data-processing-addendum) and the standard contractual clauses named under International transfers apply, and data can be transferred to Anthropic, PBC in the United States. For client work, Claude is instructed to work only in the client's own folder, which holds only the files the task needs, inside the virtual machine described under Where the work runs. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. Vault storage and the permissions a tool has while running are separate controls, each task has its own access limits, and the tools have no access to client systems. The audit reads what the client's site serves publicly. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
@@ -6082,9 +6083,9 @@ Well-known URLs give clients predictable places to look for specific metadata.
 
 Resource catalogs describe the agent-facing interfaces a site exposes.
 
-### [Authentication and authorisation for AI agents](https://turva.dev/guides/agent-authentication)
+### [Authentication and authorization for AI agents](https://turva.dev/guides/agent-authentication)
 
-Authentication identifies a client, authorisation determines what it may access or do.
+Authentication identifies a client, authorization determines what it may access or do.
 
 
 ## Commerce and agent operations
@@ -6153,7 +6154,7 @@ The audit checks the parts an agent reaches first. Discoverability covers robots
 
 The scanner's checks run against its current rule set, and what it does not score, such as llms.txt, is tested directly. That rule set moves, so a scan run today is a new measurement rather than a repeat of an earlier one.
 
-The table below records each surface's current status, drawn from the reference file this site maintains in its repository. Pilot means an early-stage mechanism with no ratifying body yet. It names the ratification state and does not rate adoption or production maturity. Accepted extension means the protocol's own proposal process has marked the extension Final, while the extension's reference repository can still be labelled experimental.
+The table below records each surface's current status, drawn from the reference file this site maintains in its repository. Pilot means an early-stage mechanism with no ratifying body yet. It names the ratification state and does not rate adoption or production maturity. Accepted extension means the protocol's own proposal process has marked the extension Final, while the extension's reference repository can still be labeled experimental.
 
 | Surface | Status |
 | --- | --- |
@@ -6320,7 +6321,7 @@ Deployed cards commonly sit at /.well-known/mcp/server-card.json, and turva.dev 
 
 - [What agents.json describes](/guides/agents-json)
 - [The /.well-known directory for agent discovery](/guides/well-known-for-agents)
-- [Authentication and authorisation for AI agents](/guides/agent-authentication)
+- [Authentication and authorization for AI agents](/guides/agent-authentication)
 `,
 
   "/guides/agents-json": `# What agents.json describes
@@ -6335,7 +6336,7 @@ The file lists the operations a site exposes to agents. In the 0.1.0 schema each
 
 ## Example
 
-A minimal agents.json entry names an action, such as checking an order status, and points to the operation in an OpenAPI description that performs it. The endpoint and method, and the authentication scheme the endpoint expects, come from that description. The file describes the shape of the call. It does not perform any authorisation itself and does not replace the checks the endpoint runs when the call actually arrives.
+A minimal agents.json entry names an action, such as checking an order status, and points to the operation in an OpenAPI description that performs it. The endpoint and method, and the authentication scheme the endpoint expects, come from that description. The file describes the shape of the call. It does not perform any authorization itself and does not replace the checks the endpoint runs when the call actually arrives.
 
 ## Alternatives
 
@@ -6343,7 +6344,7 @@ agents.json sits beside other declarations a client looks for. An MCP server car
 
 ## Limits
 
-Declaring an action in agents.json describes what exists. It does not grant a client permission to call it, and it does not perform the authorisation or rate limiting that has to happen on the server when the call arrives. Those checks live at the endpoint, not in the declaration file, and a site still has to enforce them regardless of what agents.json says. Treat the file as documentation a client can parse, not as an access control mechanism. For an audit of whether a site's endpoints enforce what its declared actions promise, contact info@turva.dev.
+Declaring an action in agents.json describes what exists. It does not grant a client permission to call it, and it does not perform the authorization or rate limiting that has to happen on the server when the call arrives. Those checks live at the endpoint, not in the declaration file, and a site still has to enforce them regardless of what agents.json says. Treat the file as documentation a client can parse, not as an access control mechanism. For an audit of whether a site's endpoints enforce what its declared actions promise, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -6353,7 +6354,7 @@ agents.json is a machine-readable file that declares what an AI agent can do on 
 
 **How is agents.json different from llms.txt?**
 
-llms.txt tells an agent what the site contains. agents.json describes the actions an agent can take, so a site moves from something an agent can read to something an agent can operate, though the authorisation for any given call still happens at the endpoint.
+llms.txt tells an agent what the site contains. agents.json describes the actions an agent can take, so a site moves from something an agent can read to something an agent can operate, though the authorization for any given call still happens at the endpoint.
 
 **Does agents.json replace llms.txt?**
 
@@ -6367,7 +6368,7 @@ No. llms.txt tells an agent what the site contains and agents.json describes the
 ## Related
 
 - [MCP server cards and discovery](/guides/mcp-server-card)
-- [Authentication and authorisation for AI agents](/guides/agent-authentication)
+- [Authentication and authorization for AI agents](/guides/agent-authentication)
 - [The /.well-known directory for agent discovery](/guides/well-known-for-agents)
 `,
 
@@ -6443,7 +6444,7 @@ RateLimit-Policy states the quota a server enforces, and RateLimit adds the rema
 
 ## Verification
 
-As of 30 October 2026 the [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/) is at revision 11, dated 23 May 2026. Datatracker lists it as an active Internet-Draft that expires on 24 November 2026, and it has not become a standard. Checking a site's headers means requesting a page and reading the response headers directly, then confirming the behaviour they describe, such as a different response for a different Accept value or a request that is actually throttled once a stated limit is passed. The fix for a missing or wrong header is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response it generates. For an audit of a site's response headers and the behaviour behind them, contact info@turva.dev.
+As of 30 October 2026 the [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/) is at revision 11, dated 23 May 2026. Datatracker lists it as an active Internet-Draft that expires on 24 November 2026, and it has not become a standard. Checking a site's headers means requesting a page and reading the response headers directly, then confirming the behavior they describe, such as a different response for a different Accept value or a request that is actually throttled once a stated limit is passed. The fix for a missing or wrong header is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response it generates. For an audit of a site's response headers and the behavior behind them, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -6590,14 +6591,14 @@ Yes. A price of 0 with an availability of InStock on every product passes every 
 
 Well-known URLs give clients predictable places to look for specific metadata. Publish the documents your service actually supports and identify the convention behind each one.
 
-The /.well-known directory is a standard place at the root of a site where clients look for machine-readable descriptions of what the site offers. Instead of crawling pages and guessing, a client fetches a predictable path and reads a manifest that points it to everything else. The idea comes from a long-standing web convention, and it now carries several files that matter to agents, each backed by a different level of standardisation.
+The /.well-known directory is a standard place at the root of a site where clients look for machine-readable descriptions of what the site offers. Instead of crawling pages and guessing, a client fetches a predictable path and reads a manifest that points it to everything else. The idea comes from a long-standing web convention, and it now carries several files that matter to agents, each backed by a different level of standardization.
 
 | Path | Purpose | Standard or convention |
 | --- | --- | --- |
 | /.well-known/api-catalog | Lists a site's public APIs from one URL | RFC 9727 |
 | /.well-known/oauth-authorization-server | Describes how a client authenticates | OAuth discovery, RFC 8414 |
 | /.well-known/security.txt | States where to report a security problem | RFC 9116 |
-| /.well-known/mcp/server-card.json | Describes an MCP server and how to reach it | Deployed convention, not yet standardised |
+| /.well-known/mcp/server-card.json | Describes an MCP server and how to reach it | Deployed convention, not yet standardized |
 | /.well-known/x402, /.well-known/mpp, /.well-known/ap2 | Payment and agent-payment manifests: how an agent is quoted and how it pays | x402 and the Machine Payments Protocol, deployed conventions. AP2 itself is declared in the A2A Agent Card, and turva.dev also serves /.well-known/ap2 |
 
 ## What each file establishes
@@ -6606,7 +6607,7 @@ An API catalog at a well-known path, defined by RFC 9727, lets a client enumerat
 
 ## Where MCP discovery still moves
 
-A server card describes an MCP server and how to reach it, but this one is not yet settled the way the three above are. Deployed cards, turva.dev's among them, sit at /.well-known/mcp/server-card.json. The Server Card extension specification, accepted in October 2026 as SEP-2127 although its repository is still labelled experimental, instead recommends the MCP endpoint URL followed by /server-card, and expects a client to follow the URL a site's own catalog gives rather than assume a fixed well-known path. Treat the MCP card path as a deployed convention, not as a ratified standard on the same footing as RFC 9727 or OAuth discovery.
+A server card describes an MCP server and how to reach it, but this one is not yet settled the way the three above are. Deployed cards, turva.dev's among them, sit at /.well-known/mcp/server-card.json. The Server Card extension specification, accepted in October 2026 as SEP-2127 although its repository is still labeled experimental, instead recommends the MCP endpoint URL followed by /server-card, and expects a client to follow the URL a site's own catalog gives rather than assume a fixed well-known path. Treat the MCP card path as a deployed convention, not as a ratified standard on the same footing as RFC 9727 or OAuth discovery.
 
 ## Why lookup beats crawling
 
@@ -6641,7 +6642,7 @@ Because it turns discovery into a lookup rather than a search. A client fetches 
 ## Related
 
 - [MCP server cards and discovery](/guides/mcp-server-card)
-- [Authentication and authorisation for AI agents](/guides/agent-authentication)
+- [Authentication and authorization for AI agents](/guides/agent-authentication)
 - [Sitemaps, robots.txt and AI crawler access](/guides/sitemaps-and-robots-for-agents)
 `,
 
@@ -6673,7 +6674,7 @@ A technical scan can check whether a manifest resolves at the declared path, par
 
 Adoption has started. A June 2026 check against public well-known paths found no discoverable ai-catalog.json at any of the launch partners the [announcement](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/) shows. On 31 October 2026 two large hosts, github.com and huggingface.co, both served one at /.well-known/ai-catalog.json with the application/ai-catalog+json media type. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
 
-turva.dev indexes the same four resources at both paths, /.well-known/ard.json with the MCP Server Card media type on its MCP entry and rel="ard" in every page head, and /.well-known/ai-catalog.json for clients and scanners that still read the predecessor. Only ard.json carries representativeQueries for each entry. Both index its MCP server, its A2A agent, its API and its agent skills, each of which already resolves on its own. The separate MCP Server Card discovery document, from the extension repository that is still labelled experimental, keeps its own convention, an AI Catalog at /.well-known/ai-catalog.json, so the two profiles are described apart and not merged. For an audit of a site's discovery surface, contact info@turva.dev.
+turva.dev indexes the same four resources at both paths, /.well-known/ard.json with the MCP Server Card media type on its MCP entry and rel="ard" in every page head, and /.well-known/ai-catalog.json for clients and scanners that still read the predecessor. Only ard.json carries representativeQueries for each entry. Both index its MCP server, its A2A agent, its API and its agent skills, each of which already resolves on its own. The separate MCP Server Card discovery document, from the extension repository that is still labeled experimental, keeps its own convention, an AI Catalog at /.well-known/ai-catalog.json, so the two profiles are described apart and not merged. For an audit of a site's discovery surface, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -6702,11 +6703,11 @@ Under ARD v0.91 at /.well-known/ard.json, announced with a link rel="ard" in the
 - [Agent commerce discovery: A2A, AP2, ACP and UCP](/guides/agent-commerce-discovery)
 `,
 
-  "/guides/agent-authentication": `# Authentication and authorisation for AI agents
+  "/guides/agent-authentication": `# Authentication and authorization for AI agents
 
-Authentication identifies a client. Authorisation determines what it may access or do. Discovery metadata explains the available flow, while the service must enforce the permissions.
+Authentication identifies a client. Authorization determines what it may access or do. Discovery metadata explains the available flow, while the service must enforce the permissions.
 
-Authentication tells a site who is asking. Authorisation tells the site what that identity may do. A client can authenticate successfully and still be authorised for nothing beyond a read-only scope, and it is authorisation, not authentication, that turns a read-only client into one that can act on a person's behalf.
+Authentication tells a site who is asking. Authorization tells the site what that identity may do. A client can authenticate successfully and still be authorized for nothing beyond a read-only scope, and it is authorization, not authentication, that turns a read-only client into one that can act on a person's behalf.
 
 The pattern follows existing standards. OAuth discovery at a well-known path tells an agent where to request access and, when the metadata lists them, what scopes exist. An authorization server and a protected resource description let the agent ask for a token limited to a specific permission rather than a blanket login. When a site also advertises an agent registration flow, an agent can register and claim access on a user's behalf without someone provisioning credentials by hand. None of this removes the case for a person confirming a specific high-stakes action at the point it happens, and a service can require that confirmation on top of scoped auth without contradicting either.
 
@@ -6814,7 +6815,7 @@ Some clients read the initial HTTP response without running a browser. Compare t
 
 Many sites render their content with JavaScript in the browser. A person's browser waits a moment and the page fills in. A client that reads only the raw HTTP response sees the page before that script runs, so it reads a loading shell instead of the content.
 
-Client behaviour varies. A client that runs a full browser executes JavaScript before reading a page, so it sees the same content a person sees. Google's JavaScript SEO guide notes that not all bots can run JavaScript, and a client that cannot run it reads only the response body. A site cannot assume which behaviour applies without checking, and the practical fix is the same either way: make sure the finished content is present in the first response for clients that need it.
+Client behavior varies. A client that runs a full browser executes JavaScript before reading a page, so it sees the same content a person sees. Google's JavaScript SEO guide notes that not all bots can run JavaScript, and a client that cannot run it reads only the response body. A site cannot assume which behavior applies without checking, and the practical fix is the same either way: make sure the finished content is present in the first response for clients that need it.
 
 ## What the first response contains
 
@@ -6875,7 +6876,7 @@ The sitemap answers the other question, which is what exists. A complete sitemap
 
 ## Content Signals
 
-A Content-Signal directive is a stated preference and not an enforcement mechanism. The Content Signals documentation says plainly that some automated systems may ignore it. Publishing the directive tells a compliant client what is welcome. It does not by itself stop a client that chooses not to read it or not to honour it.
+A Content-Signal directive is a stated preference and not an enforcement mechanism. The Content Signals documentation says plainly that some automated systems may ignore it. Publishing the directive tells a compliant client what is welcome. It does not by itself stop a client that chooses not to read it or not to honor it.
 
 ## Checks to run
 
@@ -7143,7 +7144,7 @@ Measure first, because the three overlap and the same fix should not be paid for
 
 Agent commerce involves product information, permitted actions and a supported checkout path. A readiness review records which steps work and where the test stops.
 
-Automatic purchasing is one authorized path among several, not the default behaviour of every agent. A buyer grants it explicitly, often with a spending limit or a category restriction, and the agent then completes a checkout for that purchase without a person filling in the form. Agentic commerce readiness is the work of making a site one of those agents can actually transact with, rather than one it skips because the path is unclear or blocked.
+Automatic purchasing is one authorized path among several, not the default behavior of every agent. A buyer grants it explicitly, often with a spending limit or a category restriction, and the agent then completes a checkout for that purchase without a person filling in the form. Agentic commerce readiness is the work of making a site one of those agents can actually transact with, rather than one it skips because the path is unclear or blocked.
 
 ## What an agent needs to buy
 
@@ -7246,7 +7247,7 @@ A log of what it decided and why, an envelope that is explicit rather than impli
 
 ## Related
 
-- [Authentication and authorisation for AI agents](/guides/agent-authentication)
+- [Authentication and authorization for AI agents](/guides/agent-authentication)
 - [Agentic commerce readiness](/guides/agentic-commerce-readiness)
 - [Measure agent-readiness with evidence](/guides/measurement-led-agent-readiness)
 - [AI agent use cases and their operating limits](/guides/ai-agent-use-cases)
@@ -7929,7 +7930,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.218.2",
+    "version": "3.218.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8061,7 +8062,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YJscJKDBo-C7w7jZOyitM_MKYRjMN-3rsvrGeobL9cYjiM7Kjzr5fg7TvG50bpgICSvV8lTt6_kmHDsAVm3rBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"hcpdaWu47kLH4OUfNsHtbPaZGCPBj9kpvOGLisOYAMe6x6ay__DWHEdZ0-Qw00dL-z6AZ6WwAd_p3Je9l-JVBQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"YJscJKDBo-C7w7jZOyitM_MKYRjMN-3rsvrGeobL9cYjiM7Kjzr5fg7TvG50bpgICSvV8lTt6_kmHDsAVm3rBg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yh_8yKs9i4-yjM6RiHbs9M3iDkjpqn7OvzuAm-rKzhAMO6dV-mJxvXBc-Y7_a_KU6vU-Qh0xtqjSjSK4HjzjCQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8229,7 +8230,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.218.2",
+  "version": "3.218.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9258,12 +9259,12 @@ const META_BY_PATH = {
   },
   "/blog/what-ai-assistants-call-an-agent-readiness-audit": {
     title: "What four AI assistants call an agent readiness audit · turva.dev",
-    description: "Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organisational AI adoption.",
+    description: "Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organizational AI adoption.",
     date: "2026-09-03",
     kind: "Research",
     modified: "2026-10-31",
     image: "/og-what-ai-assistants-call-an-agent-readiness-audit.jpg",
-    imageAlt: "turva.dev blog card: Fifty buyer questions to four AI assistants: 18 of 41 open answers describe an organisation's readiness and 13 the website. Two services share one name.",
+    imageAlt: "turva.dev blog card: Fifty buyer questions to four AI assistants: 18 of 41 open answers describe an organization's readiness and 13 the website. Two services share one name.",
   },
   "/blog/website-agent-readiness-567-sites": {
     title: "Website agent readiness, measured on 567 company sites · turva.dev",
@@ -9555,7 +9556,7 @@ const META_BY_PATH = {
   },
   "/": {
     title: "Agent-readiness audits for websites and APIs · turva.dev",
-    description: "Agent-readiness audits for websites and APIs. Evidence, prioritised fixes and optional implementation. Async-only.",
+    description: "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.",
     imageAlt: "turva.dev: Independent agent-readiness audits. Know what AI assistants can find out about your product. A written report on where your facts disagree and what to fix first. 100/100 and Level 5, Agent-Native, on isitagentready.com, with all five categories at 100."
   },
   "/services": {
@@ -9676,9 +9677,9 @@ const META_BY_PATH = {
     imageAlt: "turva.dev guide card: The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata."
   },
   "/guides/agent-authentication": {
-    title: "Authentication and authorisation for AI agents · turva.dev",
+    title: "Authentication and authorization for AI agents · turva.dev",
     checked: "2026-10-30",
-    description: "Authentication identifies a client, authorisation determines what it may access or do.",
+    description: "Authentication identifies a client, authorization determines what it may access or do.",
     image: "/og-guide-agent-authentication.jpg",
     imageAlt: "turva.dev guide card: Agent authentication lets an automated client gain scoped access without a human login."
   },
@@ -9816,7 +9817,7 @@ const SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","n
 
 const SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"Organization","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Agent-readiness audits for websites and APIs. Evidence, prioritised fixes and optional implementation. Async-only.","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
+{"@type":"Organization","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
 {"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 ${SCHEMA_SERVICE},
@@ -10224,7 +10225,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs. Evidence, prioritised fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "External domain check", "price": 99, "currency": "EUR", "unit": "fixed", "duration": "2 business days", "durationFrom": "confirmed payment", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-10-29" }, null, 2);
+const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "External domain check", "price": 99, "currency": "EUR", "unit": "fixed", "duration": "2 business days", "durationFrom": "confirmed payment", "vatIncluded": false }, { "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-10-29" }, null, 2);
 const API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"
