@@ -22,3 +22,10 @@
 
 /*.svg
   Cache-Control: public, max-age=86400
+
+# Round 22 V3-2 (2026-11-01): /badge.svg is the one asset other sites are told to embed
+# (/badge, /services), and the /* rule's same-origin CORP made browsers block it on their
+# pages. The rule detaches that value and sends cross-origin for this file only.
+/badge.svg
+  ! Cross-Origin-Resource-Policy
+  Cross-Origin-Resource-Policy: cross-origin
