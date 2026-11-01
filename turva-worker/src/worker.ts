@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.218.4 - two guides answer the question they are asked (2026-11-01): /guides/llms-txt gains the section and FAQ answer Does llms.txt really work? with the Ahrefs, SE Ranking and Gemini API sources and a new checked date, and /guides/agent-readiness-audit gains How do I audit my website for AI agent readiness? as a section and FAQ answer.
 // turva.dev worker v3.218.3 - Erik's answers to round 22 (2026-11-01): the advisory and implementation price lines on /services state the validity date the structured data already carries, and every outward text uses US spelling (authorization, organization, acknowledgment, behavior, labeled and the rest, 111 places including two LLMS_TXT lines, so llms.txt is re-signed). The OG card of the AI assistants post was rebuilt for the same reason.
 // turva.dev worker v3.218.2 - round 22 fixes (2026-11-01), read from the live 3.218.0 surface after the Shopify check was withdrawn: the guides call AI citation through corroboration a working assumption, the audit guide's FAQ names its three kinds of evidence, the commerce guide names the A2A 0.3.0 transport field, the prerendering guide points its token figure at the post that measured it, /legal drops the Shopify store example, the EUR 499 add-on has one prose name, and nine dated posts carry Corrected or Updated lines with their modified dates. public/_headers sends cross-origin CORP for /badge.svg so the embed /badge offers is not blocked on other sites.
 // turva.dev worker v3.218.1 - guide source review (2026-11-01): the seven agent-commerce and MCP discovery guides were read again against their primary sources by the fast-family review; their checked date moves to 2026-11-01 and no guide text changed in this release.
@@ -6187,6 +6188,18 @@ The result of an audit is a list. Each check passes or fails, and each failure c
 
 turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-10-29. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. That is one scan on one day against one named scanner, and it does not stand in for manual review or for how an assistant answers a buyer's question, so it counts as one input among the three above rather than a summary of all of them. A rescan after a fix shows whether that specific fix passed. The audit a client receives runs the same three kinds of check against their site.
 
+## How do I audit my website for AI agent readiness?
+
+Run an independent scanner, request the surfaces directly, including the ones it does not score, check that what the site publishes matches what it returns, and ask assistants what your buyers would ask. Record the date and result of each step, fix the failures and measure again.
+
+- Scan the site with [isitagentready.com](https://isitagentready.com/) and keep the result of each check with its date, because the rule set changes.
+- Request the surfaces yourself: robots.txt, the sitemap, a page with an Accept: text/markdown header and llms.txt, which the scanner does not score. The free [llms.txt validator](/llms-txt-validator) reads that file on any site, and the open package behind the [Markdown parity check](/markdown-parity-check) compares a page with its Markdown when you run it on your own machine.
+- Follow what the site publishes: open each link in llms.txt, try any published registration step and compare the structured data with the prose beside it.
+- Put the same written questions to each assistant and record the sources it names and what it gets wrong. An answer on one date is an observation and does not show what caused it.
+- Fix what failed, then run the scanner again for the scored checks and repeat the direct requests for the rest.
+
+A team can run these steps itself. What it cannot give itself is a reader who did not build the site. That is what an outside audit provides, and [How to choose an agent-readiness audit](/guides/choosing-an-agent-readiness-audit) covers what to ask for.
+
 ## Frequently asked
 
 **What is an agent-readiness audit?**
@@ -6196,6 +6209,10 @@ An agent-readiness audit measures how well an AI agent can discover, read, and a
 **What does an agent-readiness audit check?**
 
 It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, and each failure comes with a concrete fix or the reason the gap is left open. Fixes are verified by the scanner where the check is scored and by a direct test where it is not.
+
+**How do I audit my website for AI agent readiness?**
+
+Run an independent scanner, request the surfaces directly, including the ones it does not score, check that what the site publishes matches what it returns, and ask assistants what your buyers would ask. Record the date and result of each step, fix the failures and measure again.
 
 **What does an agent-readiness audit produce?**
 
@@ -6228,11 +6245,19 @@ The proposal reached v2 in August 2026 and the file format did not change. What 
 
 ## How clients find it
 
-A client finds llms.txt at the root of the site, /llms.txt, or through the rel="describedby" link a page names, and it finds the markdown version of a page through rel="alternate" or by asking for text/markdown. The llms.txt proposal recommends the markdown address and the two link relations and does not require that negotiation, and HTTP lets a server that has no markdown version disregard the Accept header and send HTML, so a client that asks for text/markdown reads the Content-Type of the answer and falls back to the declared markdown address. The file is worth publishing for cost and clarity. A normal HTML page wraps the content in navigation markup and scripts that an agent has to read past, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a fraction of the HTML, which lowers the chance that a long page runs past a reading tool's content limit and arrives cut short. turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. Whether a client fetches any of it depends on the client.
+A client finds llms.txt at the root of the site, /llms.txt, or through the rel="describedby" link a page names, and it finds the markdown version of a page through rel="alternate" or by asking for text/markdown. The llms.txt proposal recommends the markdown address and the two link relations and does not require that negotiation, and HTTP lets a server that has no markdown version disregard the Accept header and send HTML, so a client that asks for text/markdown reads the Content-Type of the answer and falls back to the declared markdown address. For a client that does fetch it, the file saves cost and adds clarity. A normal HTML page wraps the content in navigation markup and scripts that an agent has to read past, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a fraction of the HTML, which lowers the chance that a long page runs past a reading tool's content limit and arrives cut short. turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. Whether a client fetches any of it depends on the client.
 
 ## What it does not replace
 
 llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt. A sitemap lists the URLs a site wants crawlers to find, the canonical ones it prefers when the same content sits at more than one address, not necessarily every URL that exists. robots.txt sets crawl rules. llms.txt is a curated, human-written map of what matters, aimed at models. The three work together. Google states that Search, including its generative features, ignores the file, so publish it for the clients that fetch it rather than as a route into Google or into search rankings.
+
+## Does llms.txt really work?
+
+It works as a map for a client that fetches it, but in one large log study 97% of files received no request in a month. It has not been shown to earn AI citations, so publish it for coding agents rather than as a route to visibility.
+
+Ahrefs measured requests across 137,210 domains in May 2026. About 38,000 of them had a valid file, and 97% of those files received no request that month. GPTBot and Claude Code were among the most frequent AI requesters in that data, and Ahrefs notes that a request shows a file was fetched and does not show that anything acted on it. SE Ranking modelled nearly 300,000 domains and found no link between having the file and how often a domain is cited. Both are vendor studies of their own samples, and neither measures every client.
+
+The strongest case in this evidence is documentation read by coding agents. Google's Gemini API docs publish an llms.txt index and recommend a project rule that tells coding agents to consult its docs MCP server or that index, so an agent without the server can start from the index. A site whose readers work through coding agents has a stronger reason to publish the file than a site that hopes to be cited.
 
 ## Validate your file
 
@@ -6250,6 +6275,10 @@ llms.txt is a plain text file that tells AI agents and language models what a si
 
 No. It is not a ranking trick. Google states that the file neither harms nor helps visibility or rankings in Search, because Search ignores it. What llms.txt gives is a curated map of the content to those clients that do fetch it.
 
+**Does llms.txt really work?**
+
+It works as a map for a client that fetches it, but in one large log study 97% of files received no request in a month. It has not been shown to earn AI citations, so publish it for coding agents rather than as a route to visibility.
+
 **What does an llms.txt file contain?**
 
 The site name and a short summary, then the key pages and resources as markdown links, often grouped under headings. Some sites also publish llms-full.txt, which bundles the full text so an agent can read everything in one request.
@@ -6264,6 +6293,9 @@ The file format did not change. v2 added two standard link relations so an agent
 - [Google Search Central, guidance on AI features](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
 - [Web linking, RFC 8288](https://www.rfc-editor.org/rfc/rfc8288.html)
 - [HTTP semantics, RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)
+- [Ahrefs, study of llms.txt requests across 137,210 domains](https://ahrefs.com/blog/llmstxt-study/)
+- [SE Ranking, study of llms.txt and AI citations](https://seranking.com/blog/llms-txt/)
+- [Google, Gemini API docs for coding agents](https://ai.google.dev/gemini-api/docs/coding-agents)
 
 ## Related
 
@@ -7930,7 +7962,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.218.3",
+    "version": "3.218.4",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8230,7 +8262,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.218.3",
+  "version": "3.218.4",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9622,7 +9654,7 @@ const META_BY_PATH = {
   },
   "/guides/llms-txt": {
     title: "llms.txt explained · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-01",
     description: "An llms.txt file offers a curated map of a site for clients that choose to read it. Learn its structure, discovery links and limits.",
     image: "/og-guide-llms-txt.jpg",
     imageAlt: "turva.dev guide card: llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives, and how it differs from robots.txt and sitemaps."
