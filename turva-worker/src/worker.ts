@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.219.1 - the MCP server moves to 1.7.2 and the signed server card with it: an unknown argument key in a tool error is cut at 64 characters and at most five keys are listed, the same limit an unknown tool name has, and the refusal itself does not change. /blog/what-a-publisher-owes-someone-elses-agent gains a dated note on it and keeps the 1.7.1 reading it measured. wrangler 4.156.2 in both Workers.
 // turva.dev worker v3.219.0 - new Protocol notes post /blog/what-a-publisher-owes-someone-elses-agent (2026-11-02) on what the publisher of an MCP server or a site owes the operator of the agent that uses it, read from the ASD guidance Agentic AI Harnesses and the MCP specification, with the public turva-mcp server measured as one sample of the author's own: its metadata, OG card, index row, sitemap row, llms.txt line and FAQ registration. No tool, no price and no audit scope changes.
 // turva.dev worker v3.218.8 - Agent operations on /services names the tools and connectors, memory, change review and worst outcome in its scope, and cites the ASD guidance Agentic AI Harnesses as its checklist (2026-11-02).
 // turva.dev worker v3.218.7 - source corrections from an external read of the blog posts and two guides (2026-11-02): a publisher attribution in /blog/publishing-an-ai-catalog, a Moderate share that does not recount in /blog/measuring-the-ai-patch-surge, the download count in /blog/trace-runtime-attestation, the data importer wording on /legal, the card location and tools sentences in the MCP server card guides, and absolutes the sources do not support in nine more pages, each post with a dated Corrected note; no signed surface changes bytes.
@@ -600,7 +601,7 @@ The Australian Signals Directorate published [Agentic AI Harnesses](https://www.
 - 11 components in ASD's list. The connector layer row names MCP-enabled tools, and the tool registry row warns about poorly defined tools.
 - 4 things the MCP tools page says a server must do: validate inputs, implement access controls, rate limit invocations and sanitize outputs.
 - 15 427 bytes for the tool list of my own server, read on 2 November 2026, for five tools that take no arguments.
-- 64 characters is where that server cuts an unknown tool name in an error. An unknown argument key of 2 000 characters came back whole.
+- 64 characters is where that server cuts an unknown tool name in an error. An unknown argument key of 2 000 characters came back whole in version 1.7.1.
 
 ## What the guide asks of the operator
 
@@ -681,9 +682,11 @@ I read [turva-mcp](https://github.com/erekola/turva-mcp) at \`mcp.turva.dev/mcp\
 | One unknown argument key | \`isError\` true, a key of 2 000 characters echoed whole in 2 085 characters of text |
 | Unknown tool name | protocol error -32602, fixed message, name only in a data field, cut at 64 characters |
 
-Four of these readings count against the server or limit what it can prove.
+Four of these readings count against version 1.7.1 or limit what it can prove.
 
-First, the echo. The server cuts the unknown tool name at 64 characters and returns the unknown argument key whole, and the whole key comes back in a tool execution error, the kind MCP says clients should give to the model. The risk is small, since the caller gets its own text back. I found the gap while measuring for this post.
+First, the echo. The server cut the unknown tool name at 64 characters and returned the unknown argument key whole, and the whole key came back in a tool execution error, the kind MCP says clients should give to the model. The risk was small, since the caller got its own text back. I found the gap while measuring for this post.
+
+Updated 2026-11-02. Version 1.7.2 cuts an unknown argument key at 64 characters and lists at most five keys. The table above keeps the 1.7.1 reading.
 
 Second, size. Fifteen kilobytes is more than I want an operator to pay for five tools with no arguments. How much of it reaches a model depends on the client, and I measured no client.
 
@@ -8139,7 +8142,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.219.0",
+    "version": "3.219.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8271,7 +8274,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"3mGEcp9V-3N9XEb0UbIJawMVPHqbDicIaKV8z5tftCnogR1QG2Db1nb4g50lbK4uU_d2gTqy0jwhocKwdiZaBw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"VOg_Bv0SOfAL_F260u0-F1TOK_xTGErh70T_KyIVRvFnlkSikCXhpYbt2w6t2YG-9LO1YT_zm6vsecnbA7nnAg\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Vvog_jRi9D4CpsEHUmGGxlAKk9416IYAPc3w9xacJu6vqlRbA__jiKYXFDwDpUiOYQIt05jUwD1Z28mjhMUfBA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"VOg_Bv0SOfAL_F260u0-F1TOK_xTGErh70T_KyIVRvFnlkSikCXhpYbt2w6t2YG-9LO1YT_zm6vsecnbA7nnAg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8286,7 +8289,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -8295,7 +8298,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.7.1",
+    "version": "1.7.2",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (external domain check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -8439,7 +8442,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.219.0",
+  "version": "3.219.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9298,6 +9301,7 @@ const META_BY_PATH = {
     title: "What a publisher owes someone else's agent · turva.dev",
     description: "ASD's guide on agentic AI is written for operators. What an MCP server's publisher owes them, read from the MCP spec and from my own server.",
     date: "2026-11-02",
+    modified: "2026-11-02",
     kind: "Protocol notes",
     image: "/og-what-a-publisher-owes-someone-elses-agent.jpg",
     imageAlt: "Card with the headline What a publisher owes someone else's agent, and the line Tool definitions and error text, read from the MCP spec and my own server.",
