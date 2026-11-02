@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.218.8 - Agent operations on /services names the tools and connectors, memory, change review and worst outcome in its scope, and cites the ASD guidance Agentic AI Harnesses as its checklist (2026-11-02).
 // turva.dev worker v3.218.7 - source corrections from an external read of the blog posts and two guides (2026-11-02): a publisher attribution in /blog/publishing-an-ai-catalog, a Moderate share that does not recount in /blog/measuring-the-ai-patch-surge, the download count in /blog/trace-runtime-attestation, the data importer wording on /legal, the card location and tools sentences in the MCP server card guides, and absolutes the sources do not support in nine more pages, each post with a dated Corrected note; no signed surface changes bytes.
 // turva.dev worker v3.218.6 - the hosted Markdown parity check moves to markdown-parity-check 0.2.30 (2026-11-02, Tek-739): a linked card whose heading and body are faithfully in the Markdown now passes, and a linked heading that became a plain paragraph now fails; turva.dev's own 86 sitemap pages read the same on 0.2.29 and 0.2.30.
 // turva.dev worker v3.218.5 - three text corrections (2026-11-02): the order terms and the privacy section name YTJ as the Finnish business information system run by the Patent and Registration Office and the Tax Administration instead of the Finnish Trade Register, /blog/what-shopify-changed-for-agent-shopping says Shopify announced the list_price change on 9 October 2026 instead of saying it began that day and carries a dated correction line, and the MCP external domain check deliverable states the rerun condition (MCP 1.7.1, so the MCP server card changes by its version and is signed again; llms.txt, agent.json and ai-plugin.json keep their bytes).
@@ -5337,6 +5338,12 @@ I review the data and permissions an agent relies on, the decisions it can make,
 - Thresholds that require a human decision.
 - How control passes between the agent and a person.
 - Records and checks that help you review what happened.
+- Which tools and connectors the agent can reach, and whether each tool is defined clearly enough to call correctly.
+- What memory keeps between sessions, and where untrusted content reaches the agent.
+- How a change to the agent's tools or connectors is reviewed.
+- The worst outcome if these controls fail or are misconfigured, and what limits it.
+
+The Australian Signals Directorate [announced its Agentic AI Harnesses guidance](https://www.cyber.gov.au/news/asd-releases-new-guidance-on-the-agentic-ai-harnesses) in September 2026. The guidance describes the software layer that connects the model to an organization's data and tools, and it treats that layer as the part of an agent system that an organization can most directly govern. I use its eleven components and seven executive questions as a reference, and the written scope states which of them the engagement covers. ASD has no connection to this service and has not endorsed it.
 
 The price depends on the systems involved, whether the agent can move money or delete data, and whether I am reviewing existing limits or helping define and implement them. The written scope agreed before kickoff states which of the two the price covers.
 
@@ -5360,7 +5367,7 @@ The review package excludes production changes, penetration testing, continuous 
 
 ### Review kickoff requirements
 
-I need the workflow description, permission configuration, representative redacted traces, intended action limits and a named owner who can approve those limits in writing. The review also needs an agreed test environment or replay dataset and written permission for the specific tests, with real money movement and real deletion excluded from the review tests.
+I need the workflow description, permission configuration, representative redacted traces, intended action limits and a named owner who can approve those limits in writing. Where the written scope covers tool and memory review, I also need the tool definitions and memory configuration, and the record of how tools and connectors change. The review also needs an agreed test environment or replay dataset and written permission for the specific tests, with real money movement and real deletion excluded from the review tests.
 
 I ask your named owner to confirm the intended limits against the draft map before I finalize the control specification. Dates in the written scope move by the business days spent waiting for that approval.
 
@@ -7991,7 +7998,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.218.7",
+    "version": "3.218.8",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8291,7 +8298,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.218.7",
+  "version": "3.218.8",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
