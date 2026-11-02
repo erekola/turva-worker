@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.218.7 - source corrections from an external read of the blog posts and two guides (2026-11-02): a publisher attribution in /blog/publishing-an-ai-catalog, a Moderate share that does not recount in /blog/measuring-the-ai-patch-surge, the download count in /blog/trace-runtime-attestation, the data importer wording on /legal, the card location and tools sentences in the MCP server card guides, and absolutes the sources do not support in nine more pages, each post with a dated Corrected note; no signed surface changes bytes.
 // turva.dev worker v3.218.6 - the hosted Markdown parity check moves to markdown-parity-check 0.2.30 (2026-11-02, Tek-739): a linked card whose heading and body are faithfully in the Markdown now passes, and a linked heading that became a plain paragraph now fails; turva.dev's own 86 sitemap pages read the same on 0.2.29 and 0.2.30.
 // turva.dev worker v3.218.5 - three text corrections (2026-11-02): the order terms and the privacy section name YTJ as the Finnish business information system run by the Patent and Registration Office and the Tax Administration instead of the Finnish Trade Register, /blog/what-shopify-changed-for-agent-shopping says Shopify announced the list_price change on 9 October 2026 instead of saying it began that day and carries a dated correction line, and the MCP external domain check deliverable states the rerun condition (MCP 1.7.1, so the MCP server card changes by its version and is signed again; llms.txt, agent.json and ai-plugin.json keep their bytes).
 // turva.dev worker v3.218.4 - two guides answer the question they are asked (2026-11-01): /guides/llms-txt gains the section and FAQ answer Does llms.txt really work? with the Ahrefs, SE Ranking and Gemini API sources and a new checked date, and /guides/agent-readiness-audit gains How do I audit my website for AI agent readiness? as a section and FAQ answer.
@@ -785,7 +786,7 @@ The library is a versioned folder of models with a manifest of the code each mod
 | 22 October, after the second | 116 | 69 |
 | 22 October, after the third | 116 | 7 |
 
-The 116 models are 105 valid, 4 replaced by later models and 7 marked historical. Their registry holds 880 stored runs: 351 pass runs, 394 vacuity runs and 135 liveness runs. A vacuity check shows that a property can fail at all. Drift grew again as the fix chain of the fourth review changed code, which is why 79 models had drifted by the audit. The acknowledgment of 17 October and the one of 22 October use different definitions, and the audit section explains why.
+The 116 models are 105 valid, 4 replaced by later models and 7 marked historical. Their registry holds 880 stored runs: 351 pass runs, 394 vacuity runs and 135 liveness runs. In this registry a vacuity run is a negative control: it shows that a property can fail at all. Drift grew again as the fix chain of the fourth review changed code, which is why 79 models had drifted by the audit. The acknowledgment of 17 October and the one of 22 October use different definitions, and the audit section explains why.
 
 ## What real faults did the work find?
 
@@ -946,6 +947,8 @@ No. TLC checks the model, and the model does not read the code. A pass applies t
 Updated 2026-10-28. The section on the outside reviews said that I had never planted a false claim to see whether the method refutes it. I have now run that test, and the section reports it. The sentence on what the reviews show no longer says that the readers described the code correctly in 118 claims, because the test showed that a confirmed claim can still carry a wrong fact.
 
 Updated 2026-10-31. The section on the outside reviews now also reports a second scoring of the same reports, by a rule that counts any report naming a wrong fact as a refutation.
+
+Corrected 2026-11-02. A sentence defined a vacuity check as showing that a property can fail at all. In the literature vacuity means a property that holds trivially, so the sentence now says this registry uses the word for that negative control.
 
 ## Related
 
@@ -1309,13 +1312,15 @@ Eight independent review rounds in a row each found a new way to run git past th
 
 **What is a mutation run?**
 
-It breaks the code under test one small change at a time and runs the tests after each change. A mutation that no test notices points to a test that does not check what it claims to check.
+It breaks the code under test one small change at a time and runs the tests after each change. A mutation that no test notices points to a test that does not check what it claims to check, or to a change that alters no behavior.
 
 **Why did a mutation run take 16 hours?**
 
 I did not find the cause. The run started on the evening of 10 October, an hour before the fix session began, and I stopped it after about 16 hours, while the tools' suite in part 1 had taken 2 hours 37 minutes. A mutation now runs only the test meant to catch it, and a full run with 12 parts takes about 9 minutes.
 
 Corrected 2026-10-31. Two sentences compared the plugin's 16-hour run with 2 hours 37 minutes from part 1 as if both were the same suite. The part 1 figure was the run of the tools' mutations, and both sentences now name it.
+
+Corrected 2026-11-02. A sentence said a mutation no test notices points to a weak test. It can also be an equivalent mutant, a change that alters no behavior, and the sentence now says so.
 
 ## Related
 
@@ -1472,7 +1477,7 @@ No model ran on the graphics card.
 
 ## What limited the processor?
 
-HWiNFO names the reason a processor holds its clock back. During the run it named one: IA Electrical Design Point/Other, the current limit often called ICCmax. The cores drew up to 137,5 A. I set that limit conservatively on purpose, and this run was the first time anything reached it. Client work has never come near it.
+HWiNFO names the reason a processor holds its clock back. During the run it named one: IA Electrical Design Point/Other, a current limit that on my machine is ICCmax. The cores drew up to 137,5 A. I set that limit conservatively on purpose, and this run was the first time anything reached it. Client work has never come near it.
 
 Power and heat stayed out of it. The power limits PL1 and PL2 stand at 253 W, and the package peaked at 164,7 W. Every thermal reason for the cores stayed at No, and the package peaked at 65 °C.
 
@@ -1537,6 +1542,8 @@ Not as the agents run today. For Qwen3-14B, one agent's starting context of abou
 
 By my estimate at least 43 hours on an RTX 4080 SUPER, if a quantized cache lets the context fit at all, and about 23 days on a laptop processor without a discrete graphics card, one agent at a time and before the tools' own time. In the cloud the five workflows took 6 hours 45 minutes added together.
 
+Corrected 2026-11-02. A sentence equated the reason HWiNFO showed with ICCmax. Intel lists other causes for that throttling as well, so the sentence now says that on my machine the limit is ICCmax.
+
 ## Related
 
 - [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work)
@@ -1553,9 +1560,11 @@ Updated 2026-10-26. After [the security news of 17 to 24 October](/blog/keeping-
 
 Corrected 2026-10-31. The title and the card still say my agent and I both run Brave. That was true when I published this post on 6 October, and since 26 October only I do. The description now says ran.
 
+Corrected 2026-11-02. A sentence said a browser runs JavaScript from every page it opens. Not every page has a script, so it no longer says every.
+
 ## Why turn off the JavaScript optimizer?
 
-A browser runs JavaScript from every page it opens. Brave runs it in V8, the engine from Chromium, which compiles frequently run code to machine code while the page runs. Microsoft's Edge vulnerability research team wrote, in [its post on the Super Duper Secure Mode experiment](https://microsoftedge.github.io/edgevr/posts/Super-Duper-Secure-Mode), that CVE data after 2019 showed roughly 45% of the CVEs issued for V8 were related to the JIT engine. By their estimate, turning the JIT off would remove roughly half of the V8 bugs that must be fixed. The Chromium project [reports a related figure](https://www.chromium.org/Home/chromium-security/memory-safety/) for the whole browser: around 70% of the high-severity security bugs it analyzed since 2015 are memory safety problems.
+A browser runs the JavaScript of the pages it opens. Brave runs it in V8, the engine from Chromium, which compiles frequently run code to machine code while the page runs. Microsoft's Edge vulnerability research team wrote, in [its post on the Super Duper Secure Mode experiment](https://microsoftedge.github.io/edgevr/posts/Super-Duper-Secure-Mode), that CVE data after 2019 showed roughly 45% of the CVEs issued for V8 were related to the JIT engine. By their estimate, turning the JIT off would remove roughly half of the V8 bugs that must be fixed. The Chromium project [reports a related figure](https://www.chromium.org/Home/chromium-security/memory-safety/) for the whole browser: around 70% of the high-severity security bugs it analyzed since 2015 are memory safety problems.
 
 ## How far do I turn it off?
 
@@ -2281,13 +2290,15 @@ No. It is a convention published by two parties who do not agree on the field na
 
 **Which field names should I use?**
 
-That depends on what will read your site. If a scanner grades you, use the names its recipe publishes and verify with the scanner. If a specific agent platform will consume the file, use the names its specification publishes. There is no third answer that satisfies both, and the honest thing is to say in the file which one you followed.
+That depends on what will read your site. If a scanner grades you, use the names its recipe publishes and verify with the scanner. If a specific agent platform will consume the file, use the names its specification publishes. I have not found a third answer that satisfies both, and the honest thing is to say in the file which one you followed.
 
 **Does a site need an auth.md at all?**
 
 Only if an agent could ever need permission to do something there. A site that is entirely public and issues no credential that grants access can publish one to say exactly that, which is what this site does: its only credential is an optional api_key that attributes correspondence. There is nothing dishonest about not having the file when there is nothing to authenticate.
 
 Corrected 2026-09-06. The answer to the last question said this site issues no credentials. Its auth.md describes an optional api_key that attributes correspondence and grants no access, and the answer now says so.
+
+Corrected 2026-11-02. The answer on field names said no third answer exists. Neither document I read rules out publishing both sets of names, so it now says I have not found a third answer.
 
 ## Related
 
@@ -2538,7 +2549,7 @@ Neither of these makes TRACE useless. They make it a layer with edges, and knowi
 
 ## The half TRACE does not cover
 
-A Trust Record proves how an agent ran. It says nothing about whether the systems that agent touched were readable to it, whether the tool it called should have been callable at all, or whether the decision boundary around it was written down anywhere.
+A Trust Record attests how an agent ran. It says nothing about whether the systems that agent touched were readable to it, whether the tool it called should have been callable at all, or whether the decision boundary around it was written down anywhere.
 
 That is the split I keep running into. Attestation is evidence about execution. Agent-readiness is evidence about the surface: whether your site, your data and your endpoints answer a machine the way they answer a person, and whether the permissions around them are something you can point at rather than something living in one engineer's head. An organization can have a perfect Level 2 record of an agent doing exactly the wrong thing, correctly, against data it should never have been given.
 
@@ -2546,7 +2557,7 @@ Both halves are receipts. They are receipts about different questions.
 
 ## What this is worth today
 
-The specification is a developer preview. Version 0.2 is current and the draft says its fields and conformance requirements may change before v1.0. The download figure in the announcement is the contributing vendor's own number and it counts installs, not deployments, so it is not evidence of adoption. Treat all of that as a snapshot of this month, exactly as you should treat any number I publish about my own site.
+The specification is a developer preview. Version 0.2 is current and the draft says its fields and conformance requirements may change before v1.0. The download figure in the announcement is a PyPI download count, not a count of installs or deployments, so it is not evidence of adoption. Treat all of that as a snapshot of this month, exactly as you should treat any number I publish about my own site.
 
 The part that is already useful is the vocabulary. If you run agents against production data, the question to ask a vendor is not whether they support TRACE. Ask which level their records reach, whether their verification checks revocation, and what happens to the answer when the network is down. Those three questions are answerable today and they do not depend on the specification reaching v1.0.
 
@@ -2555,6 +2566,8 @@ For EU buyers there is one more concrete hook, and it cuts against the easy read
 Sources: [Linux Foundation press release, 25 August 2026](https://www.linuxfoundation.org/press/linux-foundation-welcomes-trace-to-advance-verifiable-runtime-evidence-for-ai-workloads), [TRACE v0.2 specification](https://trace.agentrust-io.com/spec/trace-v0.2/), [TRACE trust levels](https://trace.agentrust-io.com/docs/trust-levels/), [TRACE known limitations](https://trace.agentrust-io.com/LIMITATIONS/), [trace-spec on GitHub](https://github.com/agentrust-io/trace-spec).
 
 Corrected 2026-09-28. A paragraph paraphrased the project's limitations page as saying DORA needs Level 1 with transparency log anchoring. It now quotes the page's own wording, that neither a TRACE level nor log anchoring alone establishes compliance with the EU AI Act or DORA.
+
+Corrected 2026-11-02. A sentence called the download figure the contributing vendor's own number and said it counts installs. The Linux Foundation's announcement gives it as PyPI downloads and names no source for it, so the sentence now says that. Another sentence said a Trust Record proves how an agent ran. It now says attests, because a Level 0 record can be forged, as the project's limitations page says.
 
 ## Related
 
@@ -2790,7 +2803,7 @@ One measurement was written into two documents from the same run, one saying the
 
 A dependency update moved a package to a new version, and the allow list that permits that package to run its install script was pinned to the old version by name. The install script stayed blocked. Nothing broke, which is why it would have kept not breaking until something did.
 
-A grid track refused to shrink below 412 pixels inside a 336 pixel row. A one-fraction track is really a minmax of auto and one fraction, and that auto resolves to the width of the widest child that cannot be broken. That one pushed the home page sideways at 200 percent text zoom, and I fixed the wrong cause three times before measuring instead of guessing.
+A grid track refused to shrink below 412 pixels inside a 336 pixel row. A one-fraction track is really a minmax of auto and one fraction, and that auto often resolves to the width of the widest child that cannot be broken. That one pushed the home page sideways at 200 percent text zoom, and I fixed the wrong cause three times before measuring instead of guessing.
 
 ## What this does not prove
 
@@ -2821,6 +2834,8 @@ Block the action. The gates here stop the edit tool, git in the agent shell, gen
 No. It proves that 367 specific things were read and classified, and that each was either fixed or written down as a decision with a reason. Whether the week was worth it depends on whether the next audit is better, and that is not known yet.
 
 Corrected 2026-09-27. Two passages said all seven editor gates block the action. Two of them run after a write and cannot undo it, so both passages now say they report what they found. No number changed.
+
+Corrected 2026-11-02. A sentence said the auto in a one-fraction track resolves to the width of the widest child that cannot be broken. The CSS Grid specification says that is often, but not always, the case, and the sentence now says often.
 
 ## Related
 
@@ -2953,9 +2968,11 @@ Yesterday it was a green check reading a lane the server no longer serves. Today
 
 So the habit, for anything with a compatibility layer beneath it. Before reading the result, work out which lane answered. If the protocol will not tell you, put the discriminator in the request yourself and check that the answer moves.
 
-None of this is visible to an agent-readiness scanner. Scanners do not speak MCP, so a passing readiness level says nothing about whether an MCP endpoint serves the current revision. That one belongs to whoever runs the server.
+None of this is visible to the agent-readiness scanner I measure with. It checks for an MCP server card and, going by its published recipe, does not open an MCP session, so a passing readiness level says nothing about whether an MCP endpoint serves the current revision. That one belongs to whoever runs the server.
 
 Corrected 2026-09-27. The heading above the results said four requests. The first row covers two, so it now says five.
+
+Corrected 2026-11-02. Two sentences spoke of scanners in general. They now name the one scanner I measure with, which checks for an MCP server card and, going by its published recipe, does not open an MCP session.
 
 ## Related
 
@@ -3159,7 +3176,7 @@ Expect most of the burst to pass and a tail of it to be refused. My two runs spl
 
 The guide on this site names the current pair of fields, RateLimit and RateLimit-Policy. The code was sending RateLimit-Limit and RateLimit-Policy. Before touching anything I went to the IETF archive to check which surface was right, and the answer was unambiguous. Revision 11 of draft-ietf-httpapi-ratelimit-headers, the active revision from May 2026, defines exactly two fields, RateLimit-Policy and RateLimit. RateLimit-Limit belongs to the early revisions, and where revision 11 mentions it at all is inside a section whose own heading says it is to be removed before publication as an RFC, in a survey of the legacy header names the draft is trying to replace. The site was sending one field from the current draft and one from a retired lineage in the same response. The guide had been right all along. Only the code was wrong.
 
-The fix shipped yesterday: RateLimit-Limit is gone and RateLimit-Policy stays. The field the current draft does define, RateLimit, was deliberately not added. Revision 11 makes its r parameter, the remaining quota, required, and Cloudflare's limit() returns a success boolean and nothing else, no remaining and no reset, so sending RateLimit would mean inventing the very number the field exists to carry. The draft also says the policy field alone lets a client control its own flow of requests, and positions the RateLimit field for limits that are highly dynamic. This limit is a static 100 per 60 seconds. For a static limit, RateLimit-Policy alone is the correct form.
+The fix shipped yesterday: RateLimit-Limit is gone and RateLimit-Policy stays. The field the current draft does define, RateLimit, was deliberately not added. Revision 11 makes its r parameter, the remaining quota, required, and Cloudflare's limit() returns a success boolean and nothing else, no remaining and no reset, so sending RateLimit would mean inventing the very number the field exists to carry. The draft also says the policy field alone lets a client control its own flow of requests, and positions the RateLimit field for limits that are highly dynamic. This limit is a static 100 per 60 seconds. For a static limit, RateLimit-Policy alone is a correct form, and the only one this Worker can send without inventing a number.
 
 ## What to take from it
 
@@ -3178,6 +3195,8 @@ Corrected 2026-09-29. One more sentence said 130 requests never reach the point 
 Corrected 2026-09-29. The test section stated the all-200 result for a slow loop and a hundred requests as a general rule. It now says that is what my slow loop and my burst of 130 returned, and that counters in your own location can differ. No number changed.
 
 Corrected 2026-09-29. A sentence said that from the outside a guard that has failed open is indistinguishable from a guard doing its job. It now says that under a probe that stays below the refusal threshold both return 200, so they look the same from the outside, and that the logs or the code tell them apart. No number changed.
+
+Corrected 2026-11-02. A sentence said RateLimit-Policy alone is the correct form for a static limit. The draft also lets a server send both fields, so it now says a correct form, and the only one this Worker can send without inventing a number.
 
 ## Related
 
@@ -3239,12 +3258,12 @@ The obvious objection is that volume without quality is just a bigger pile. If A
 | CVSS mean | 6,47 | 7,26 |
 | CVSS 7,0 and above | 48,0 % | 71,9 % |
 | CVSS below 4,0 | 4,2 % | 0,8 % |
-| Rated Moderate | 33,4 % | 4,8 % |
+| Rated Moderate | 42,7 % | 4,8 % |
 | Rated Critical | 26 | 66 |
 | Remote code execution | 42 | 165 |
 | Elevation of privilege | 58 | 256 |
 
-More than twice the volume of the same month a year earlier, and the median CVE is a full point more severe. The Moderate band collapsed from a third of the package to under five percent. Remote code execution roughly quadrupled.
+More than twice the volume of the same month a year earlier, and the median CVE is a full point more severe. The Moderate band fell from about two fifths of the package to under five percent. Remote code execution roughly quadrupled.
 
 One caveat, stated plainly. The share of CVEs Microsoft did not assign a CVSS score to rose from 5 % to 38 %. Those are likely Chromium-inherited Edge issues, which Microsoft does not usually score itself. The severity claim above holds for what Microsoft scored. I cannot speak for the rest, and neither can anyone who has not opened the file.
 
@@ -3254,9 +3273,9 @@ Windows has been patched for thirty years. Intuition says the supply of findable
 
 The explanation is in Microsoft's own May post about MDASH, their multi-model agentic scanning harness. Run against five years of confirmed vulnerabilities in clfs.sys, it re-found 96 % of them. In tcpip.sys, 100 %.
 
-A harness re-found almost everything human researchers took five years to find. The bugs were discoverable the entire time. There were never fewer of them. Nobody was looking hard enough, because looking was rate-limited by human attention rather than by how many bugs were actually there.
+MDASH re-found almost all of the confirmed bugs in those two drivers from five years of cases. My reading is that they were discoverable the entire time, and that looking was rate-limited by human attention rather than by how many bugs were actually there.
 
-The well was not draining. It was being sipped. What we are watching is not a bug explosion. It is a backlog, and the backlog is as old as the code.
+On that reading the well was not draining, and what we are watching is a backlog as old as the code rather than a bug explosion.
 
 This explains capacity. It is not proof of cause. Microsoft's own post attributes the higher volume to AI-assisted discovery. The measurement in this post confirms that the volume rose and puts a size on it. It does not, on its own, prove that AI is the sole or demonstrated cause of that rise, only that the rise coincides with the capability Microsoft describes.
 
@@ -3307,6 +3326,8 @@ Corrected 2026-10-02. Several sentences claimed more than their sources. The Myt
 Corrected 2026-10-14. This post counted every CVE in each monthly document, including the CVEs other numbering authorities assigned, mostly Chromium CVEs for Edge and Linux CVEs for Azure Linux. Counted as Microsoft-assigned only, the rise is steeper: the eight baseline months average 130 and July 2026 is 663, or 5,1 times. The severity table does not hold under that count. For Microsoft-assigned CVEs the median CVSS was 7,8 in July 2025 and 7,8 in July 2026, with 76,6 % and 74,2 % scoring 7,0 or above. The shift reported above therefore came from the mix of CVEs in the documents and not from Microsoft's own findings. The July 2026 document has also grown to 2005 entries since this post was written, and most of the added entries are Chromium and Linux CVEs. The tables above are left as the endpoint returned them, and the full series is in [the October follow-up](/blog/microsofts-own-cve-count).
 
 Corrected 2026-10-23. The bounty section said curl had no money to fund a filter for reports, so closing the bounty was its only option, and that AI reports worth nothing drove it out of the bounty business. curl's sponsor page contradicts the first claim. Stenberg's own account of the shutdown names three causes, AI slop the first of them, and does not call closing the bounty the only option. The paragraph now says: "curl has paid backing too: its sponsor page names Haxx as the primary sponsor and says wolfSSL employs Daniel Stenberg and lets him spend paid work hours on curl." It gives the reason Stenberg gives for dropping the rewards, and the paragraph before it now says that AI slop is the first of three causes he names.
+
+Corrected 2026-11-02. The table gave 33,4 % of the July 2025 CVEs as rated Moderate. Recounted from Microsoft's CVRF data as pulled on 14 October 2026, 225 of the 527 CVEs this post counted have Moderate as their first severity rating, which is 42,7 %, and I could not reproduce 33,4 % by any rule I tried. The table and the sentence under it now carry the recount. The July 2026 figure is unchanged. A section also stated as fact that the bugs were discoverable the entire time. Microsoft's figures are recall on 28 and 7 confirmed cases, so that sentence and the next paragraph now mark it as my reading.
 
 ## Related
 
@@ -3987,12 +4008,14 @@ The Monetization Gateway waitlist points the same direction: charge for any page
 ## What to check this week
 
 - Open your CDN's AI crawler list and compare it against your intent. A block you did not choose is configuration drift, and it overrides everything your pages declare.
-- Re-scan after any edge change. The public agent-readiness scanners read a site from outside, so a network-level block shows up as a dropped score before a buyer sees the gap.
+- Re-scan after any edge change. The public agent-readiness scanners read a site from outside, so a network-level block that catches the scanner shows up as a dropped score before a buyer sees the gap.
 - If your content earns citations, look at the Pay Per Use programs. The reporting alone, which queries put your pages into AI answers, is visibility data Cloudflare describes for participants in its Ceramic program.
 
 For an agent-readiness audit that reads the edge configuration next to the content, contact info@turva.dev.
 
 Corrected 2026-10-02. A sentence said the Pay Per Use reporting is visibility data you cannot get anywhere else. That exclusivity was not checked, so it now says the reporting is visibility data the Pay Per Use programs offer. Cloudflare describes that reporting for the Cloudflare/Ceramic program only, so the article and the list item now attribute it to that program.
+
+Corrected 2026-11-02. A sentence said any network-level block shows up as a dropped score. A block aimed at another kind of bot need not touch the scanner, so it now says a block that catches the scanner.
 
 ## Related
 
@@ -4008,7 +4031,7 @@ A dated implementation log records adding an AI Catalog discovery manifest. Late
 
 Status: later Agentic Resource Discovery conventions are explained in the current guide, [Agentic Resource Discovery and resource catalogs](/guides/agentic-resource-discovery).
 
-Google and a Linux Foundation working group published Agentic Resource Discovery in 2026, an open specification for telling agents what a site offers in one machine-readable file at /.well-known/ai-catalog.json. turva.dev now serves one. This is the log of adding it, and of why the change could not move the scanner score either way.
+In 2026 Google announced Agentic Resource Discovery, an open specification built on the AI Catalog data model of a Linux Foundation working group, for telling agents what a site offers in one machine-readable file at /.well-known/ai-catalog.json. turva.dev now serves one. This is the log of adding it, and of why the change could not move the scanner score either way.
 
 ## What the file says
 
@@ -4031,6 +4054,8 @@ For an audit of a site's discovery surface, contact info@turva.dev.
 Corrected 2026-09-27. A sentence said adoption is near zero. The June check covered only the companies named as contributors, so it now says that. No reading changed.
 
 Corrected 2026-09-28. A sentence implied the June check covered a known number of contributor companies. It now says the check covered only the companies the announcement names as contributors, without stating that count, because it was not recorded at the time.
+
+Corrected 2026-11-02. The first sentence named a Linux Foundation working group as a publisher of the specification. Google announced it, and the announcement thanks the working group, whose AI Catalog data model it builds on. The sentence now says so.
 
 ## Related
 
@@ -5883,7 +5908,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyzes a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to 31 days of both security analytics and security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within 16 weeks at most. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name, with new requests that do not pass on the headers of your request. Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when that site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers, and the validator sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. On 22 October 2026 turva.dev measured the two requests the validator made to one test site outside Cloudflare, one for /llms.txt and one for the home page, as the test site recorded them. Both carried the fixed address in CF-Connecting-IP. Neither carried X-Real-IP or X-Forwarded-For, although the validator sets X-Real-IP, and no header held the IP address of the person who ran the test. The connection came from a Cloudflare address.
 
-**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. Anthropic's data processing addendum for the Anthropic API incorporates the EU Standard Contractual Clauses, Module Two or Module Three, for data transferred out of the EEA, including to Anthropic, PBC in the United States. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognizes as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA, the validator builds its requests to send the fixed address in place of the visitor's IP address, and the measurement described in the Server logs paragraph above found no visitor address in the two requests it covered.
+**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. Anthropic's data processing addendum for the Anthropic API incorporates the EU Standard Contractual Clauses, Module Two or Module Three, where data protection law requires them, with the Anthropic entity that signed the agreement as data importer. Anthropic says that data is stored in the US. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognizes as providing adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA, the validator builds its requests to send the fixed address in place of the visitor's IP address, and the measurement described in the Server logs paragraph above found no visitor address in the two requests it covered.
 
 **Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. A question sent by email, Signal or LinkedIn that does not lead to an engagement is deleted 24 months after the latest message, except email of an external domain check order that lapses before payment, which is deleted within thirty days of the day it lapses.
 
@@ -5920,7 +5945,7 @@ This site sets no cookies of its own. A check of the home page, this page and th
 This page is updated when the terms change. The current version applies to engagements started on or after the date below.
 
 - **Terms last updated:** 2026-10-31
-- **Privacy last updated:** 2026-10-29
+- **Privacy last updated:** 2026-11-02
 `,
 
   "/guides/open-knowledge-format": `# Open Knowledge Format explained
@@ -6134,7 +6159,7 @@ My working assumption, which no guide here measures, is that a model cites conte
 
 **What is an MCP server card?**
 
-An MCP server card is a JSON file that lets an agent discover a site's Model Context Protocol server, its endpoint and its transport, so the agent can connect without a human wiring up the connection. Deployed cards commonly sit at /.well-known/mcp/server-card.json.
+An MCP server card is a JSON file that lets an agent discover a site's Model Context Protocol server, its endpoint and its transport, so the agent can connect without a human wiring up the connection. The isitagentready.com scanner asks for a card at /.well-known/mcp/server-card.json.
 
 **Is agent-readiness the same as SEO?**
 
@@ -6312,13 +6337,13 @@ The file format did not change. v2 added two standard link relations so an agent
 
 A server card describes an MCP endpoint for clients that support the relevant discovery convention. The card, the live endpoint and the client's protocol support must agree.
 
-The server card lives in two places that have not converged. Deployed cards, turva.dev's among them, commonly sit at /.well-known/mcp/server-card.json. The proposal behind the card, [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), now develops as an [experimental MCP extension](https://github.com/modelcontextprotocol/ext-server-card), and its text sets a different default, the MCP endpoint URL followed by /server-card. It does not recommend a /.well-known path for the card itself, and site-level discovery instead sits in a catalog: the experimental Server Card document keeps an AI Catalog at /.well-known/ai-catalog.json, while ARD v0.91 names /.well-known/ard.json. The convention is still moving, so a client that checks only one location may miss a card that exists at the other. On 2026-10-06 SEP-2127 was merged, and its text now reads Status: Final on the Extensions Track. It recommends the MCP endpoint URL followed by /server-card, lets a card be hosted at any unreserved URI, lets an AI Catalog at /.well-known/ai-catalog.json link to or embed cards and leaves tools, resources and prompts out of the card, while the extension repository's README still labels itself Experimental. The two locations have still not converged in deployment.
+The server card lives in two places that have not converged. The isitagentready.com scanner asks for the card at /.well-known/mcp/server-card.json, and turva.dev serves its card there. The proposal behind the card, [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), now develops as an [experimental MCP extension](https://github.com/modelcontextprotocol/ext-server-card), and its text sets a different default, the MCP endpoint URL followed by /server-card. It does not recommend a /.well-known path for the card itself, and site-level discovery instead sits in a catalog: the experimental Server Card document keeps an AI Catalog at /.well-known/ai-catalog.json, while ARD v0.91 names /.well-known/ard.json. The convention is still moving, so a client that checks only one location may miss a card that exists at the other. On 2026-10-06 SEP-2127 was merged, and its text now reads Status: Final on the Extensions Track. It recommends the MCP endpoint URL followed by /server-card, lets a card be hosted at any unreserved URI, lets an AI Catalog at /.well-known/ai-catalog.json link to or embed cards and leaves tools, resources and prompts out of the card, while the extension repository's README still labels itself Experimental. The two locations have still not converged.
 
 An MCP server card is a small JSON file that describes a site's Model Context Protocol server so a client can find it and learn what it offers. The Model Context Protocol itself is a standard way for agents to use external tools and data. A server implements the protocol and may expose tools, resources or prompts, and the card is how that server announces itself before any connection is made.
 
 ## What the card states
 
-A useful card states the server name, the endpoint and the transport, in a shape a client can parse without guessing. Many published cards, including turva.dev's, also list the tools the server offers. The accepted proposal leaves that list to the live MCP connection instead, since a tools list answer from the running server does not depend on a separate static copy the way a list in a card does. A client may still cache that answer, and the protocol treats the cache lifetime as a freshness hint that does not guarantee the list is current.
+A useful card states the server name, the endpoint and the transport, in a shape a client can parse without guessing. The turva.dev card also lists the tools the server offers. The accepted proposal leaves that list to the live MCP connection instead, since a tools list answer from the running server does not depend on a separate static copy the way a list in a card does. A client may still cache that answer, and the protocol treats the cache lifetime as a freshness hint that does not guarantee the list is current.
 
 ## Where discovery can fail
 
@@ -6330,7 +6355,7 @@ A server card sits in the same family as other well-known manifests a client loo
 
 ## Practical steps
 
-Publish the card at the deployed convention your target clients actually check, and confirm it with a live connection attempt rather than a directory listing. The extension's discovery document requires HTTPS with TLS 1.2 or later in production, and CORS headers that let a browser-based client read the card, such as Access-Control-Allow-Origin: *. turva.dev's own card is served with those CORS headers. Where a client supports the location the proposal recommends, publish there too rather than choosing one over the other, since the two conventions have not converged. turva.dev itself does not yet serve its card at the MCP endpoint URL followed by /server-card. The card is a low-cost step for a site that wants to expose a capability to agents, and it only becomes useful once a client can reach and use the endpoint it names. For an audit of whether a site's MCP server card and its live endpoint agree, contact info@turva.dev.
+Publish the card at the location your target clients actually check, and confirm it with a live connection attempt rather than a directory listing. The extension's discovery document requires HTTPS with TLS 1.2 or later in production, and CORS headers that let a browser-based client read the card, such as Access-Control-Allow-Origin: *. turva.dev's own card is served with those CORS headers. Where a client supports the location the proposal recommends, publish there too rather than choosing one over the other, since the two conventions have not converged. turva.dev itself does not yet serve its card at the MCP endpoint URL followed by /server-card. The card is a low-cost step for a site that wants to expose a capability to agents, and it only becomes useful once a client can reach and use the endpoint it names. For an audit of whether a site's MCP server card and its live endpoint agree, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -6344,7 +6369,7 @@ Without a card or a registry listing, a client that knows only the domain has no
 
 **Where does an MCP server card live?**
 
-Deployed cards commonly sit at /.well-known/mcp/server-card.json, and turva.dev serves one there. The accepted proposal recommends a different default, the MCP endpoint URL followed by /server-card, so a client may need to check both locations until the convention settles.
+The isitagentready.com scanner asks for a card at /.well-known/mcp/server-card.json, and turva.dev serves one there. The accepted proposal recommends a different default, the MCP endpoint URL followed by /server-card, so a client may need to check both locations until the convention settles.
 
 ## Sources
 
@@ -6364,7 +6389,7 @@ Deployed cards commonly sit at /.well-known/mcp/server-card.json, and turva.dev 
 
 agents.json is one pattern for describing actions and endpoints for automated clients. Treat it as a specific declaration format, not as a universal requirement for an agent usable site.
 
-The specification has stayed at version 0.1.0 since early 2025, and adoption since then has shifted toward MCP and newer discovery surfaces. A site can adopt agents.json, but it should not be treated as the settled or required way to declare an action surface. Where llms.txt tells an agent what a site contains, agents.json describes the actions and endpoints a site offers to agents, so an automated client can move from reading to doing without a human wiring it up first.
+The specification has stayed at version 0.1.0 since early 2025, and my reading is that attention has since shifted toward MCP and newer discovery surfaces. A site can adopt agents.json, but it should not be treated as the settled or required way to declare an action surface. Where llms.txt tells an agent what a site contains, agents.json describes the actions and endpoints a site offers to agents, so an automated client can move from reading to doing without a human wiring it up first.
 
 ## Purpose
 
@@ -6634,7 +6659,7 @@ The /.well-known directory is a standard place at the root of a site where clien
 | /.well-known/api-catalog | Lists a site's public APIs from one URL | RFC 9727 |
 | /.well-known/oauth-authorization-server | Describes how a client authenticates | OAuth discovery, RFC 8414 |
 | /.well-known/security.txt | States where to report a security problem | RFC 9116 |
-| /.well-known/mcp/server-card.json | Describes an MCP server and how to reach it | Deployed convention, not yet standardized |
+| /.well-known/mcp/server-card.json | Describes an MCP server and how to reach it | Convention the isitagentready.com scanner checks, not yet standardized |
 | /.well-known/x402, /.well-known/mpp, /.well-known/ap2 | Payment and agent-payment manifests: how an agent is quoted and how it pays | x402 and the Machine Payments Protocol, deployed conventions. AP2 itself is declared in the A2A Agent Card, and turva.dev also serves /.well-known/ap2 |
 
 ## What each file establishes
@@ -6643,7 +6668,7 @@ An API catalog at a well-known path, defined by RFC 9727, lets a client enumerat
 
 ## Where MCP discovery still moves
 
-A server card describes an MCP server and how to reach it, but this one is not yet settled the way the three above are. Deployed cards, turva.dev's among them, sit at /.well-known/mcp/server-card.json. The Server Card extension specification, accepted in October 2026 as SEP-2127 although its repository is still labeled experimental, instead recommends the MCP endpoint URL followed by /server-card, and expects a client to follow the URL a site's own catalog gives rather than assume a fixed well-known path. Treat the MCP card path as a deployed convention, not as a ratified standard on the same footing as RFC 9727 or OAuth discovery.
+A server card describes an MCP server and how to reach it, but this one is not yet settled the way the three above are. The isitagentready.com scanner asks for the card at /.well-known/mcp/server-card.json, and turva.dev serves its card there. The Server Card extension specification, accepted in October 2026 as SEP-2127 although its repository is still labeled experimental, instead recommends the MCP endpoint URL followed by /server-card, and expects a client to follow the URL a site's own catalog gives rather than assume a fixed well-known path. Treat the MCP card path as a convention, not as a ratified standard on the same footing as RFC 9727 or OAuth discovery.
 
 ## Why lookup beats crawling
 
@@ -6661,7 +6686,7 @@ The /.well-known directory is a standard place at the root of a site where clien
 
 **What files do agents look for under /.well-known?**
 
-An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment and agent-payment manifests, and a security contact. The MCP card is the one whose home is still moving: deployed cards use /.well-known/mcp/server-card.json, while the Server Card extension specification recommends the MCP endpoint URL plus /server-card and does not recommend a well-known path for the card itself.
+An API catalog defined by RFC 9727, an MCP server card, OAuth metadata, payment and agent-payment manifests, and a security contact. The MCP card is the one whose home is still moving: the isitagentready.com scanner asks for /.well-known/mcp/server-card.json, while the Server Card extension specification recommends the MCP endpoint URL plus /server-card and does not recommend a well-known path for the card itself.
 
 **Why do clients use the well-known directory instead of crawling pages?**
 
@@ -6686,7 +6711,7 @@ Because it turns discovery into a lookup rather than a search. A client fetches 
 
 Resource catalogs describe the agent-facing interfaces a site exposes. This guide distinguishes ARD revisions, earlier AI Catalog conventions and the resources those manifests point to.
 
-Agentic Resource Discovery, or ARD, is an open specification for telling AI agents what a site offers, in one machine-readable file. Instead of inferring from pages whether a site has an MCP server, an agent interface or an API, the site publishes a single index that names each resource and where to reach it. The specification appeared in 2026, is licensed under Apache 2.0, and builds on the AI Catalog data model maintained by a working group under the Linux Foundation, as its [June 2026 announcement](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/) states.
+Agentic Resource Discovery, or ARD, is an open specification for telling AI agents what a site offers, in one machine-readable file. Instead of inferring from pages whether a site has an MCP server, an agent interface or an API, the site publishes a single index that names each resource and where to reach it. The specification appeared in 2026, is licensed under Apache 2.0, and builds on the AI Catalog data model, whose working group sits under the Linux Foundation, as its [June 2026 announcement](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/) states.
 
 ## What the manifest contains
 
@@ -7966,7 +7991,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.218.6",
+    "version": "3.218.7",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8266,7 +8291,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.218.6",
+  "version": "3.218.7",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9142,7 +9167,7 @@ const META_BY_PATH = {
     title: "TLA+ on my own tools, in numbers · turva.dev",
     description: "Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.",
     date: "2026-10-22",
-    modified: "2026-10-31",
+    modified: "2026-11-02",
     kind: "Build notes",
     image: "/og-tla-plus-in-numbers.jpg",
     imageAlt: "TLA+ on my own tools, in numbers, a turva.dev build note that closes the series with timeline, reviews, mutation runs and cost.",
@@ -9180,7 +9205,7 @@ const META_BY_PATH = {
     title: "Thirteen review rounds and one rollback · turva.dev",
     description: "Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.",
     date: "2026-10-12",
-    modified: "2026-10-31",
+    modified: "2026-11-02",
     kind: "Build notes",
     image: "/og-thirteen-review-rounds-and-one-rollback.jpg",
     imageAlt: "Thirteen review rounds and one rollback, a turva.dev build note on a gate fix that was undone and on mutation runs.",
@@ -9197,6 +9222,7 @@ const META_BY_PATH = {
     title: "What 497 cloud agents asked of my desktop · turva.dev",
     description: "497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. By my estimate a local model would have taken days.",
     date: "2026-10-08",
+    modified: "2026-11-02",
     kind: "Build notes",
     image: "/og-cloud-agents-on-my-desktop.jpg",
     imageAlt: "turva.dev card: What 497 cloud agents asked of my desktop",
@@ -9205,7 +9231,7 @@ const META_BY_PATH = {
     title: "The browser my agent and I both run · turva.dev",
     description: "Why my agent and I both ran Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.",
     date: "2026-10-06",
-    modified: "2026-10-31",
+    modified: "2026-11-02",
     kind: "Build notes",
     image: "/og-browser-my-agent-and-i-run.jpg",
     imageAlt: "turva.dev card: The browser my agent and I both run",
@@ -9278,7 +9304,7 @@ const META_BY_PATH = {
     titleTag: "Two auth.md formats compared · turva.dev",
     description: "Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.",
     date: "2026-09-04",
-    modified: "2026-10-31",
+    modified: "2026-11-02",
     kind: "Protocol notes",
     image: "/og-two-auth-md-dialects.jpg",
     imageAlt: "turva.dev blog card: WorkOS publishes an open auth.md protocol and the isitagentready scanner publishes another. Both live at the same path and name three fields differently.",
@@ -9316,7 +9342,7 @@ const META_BY_PATH = {
     titleTag: "TRACE runtime attestation and its limits · turva.dev",
     description: "This article examines what a TRACE Trust Record attests to, and why runtime evidence does not itself establish the right permissions or correct decisions.",
     date: "2026-08-30",
-    modified: "2026-10-31",
+    modified: "2026-11-02",
     kind: "Protocol notes",
     image: "/og-trace-runtime-attestation.jpg",
     imageAlt: "turva.dev blog card: The Linux Foundation now governs TRACE. Its own documentation is where the limits are: three trust levels, and Level 0 records a privileged operator can forge.",
@@ -9344,7 +9370,7 @@ const META_BY_PATH = {
     title: "I thought it was a small job · turva.dev",
     description: "A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that work.",
     date: "2026-08-16",
-    modified: "2026-09-27",
+    modified: "2026-11-02",
     kind: "Build notes",
     image: "/og-i-thought-it-was-a-small-job.jpg",
     imageAlt: "turva.dev blog card: I read my own workspace file by file. Seven days, 367 findings across 2 307 text files, and nothing billable shipped that week.",
@@ -9361,7 +9387,7 @@ const META_BY_PATH = {
     title: "A red reading that measured my own client · turva.dev",
     description: "An MCP request seemed to expose a server regression but selected the wrong compatibility path. The article records how request and response were told apart.",
     date: "2026-07-30",
-    modified: "2026-09-27",
+    modified: "2026-11-02",
     kind: "Build notes",
     image: "/og-red-reading-that-measured-my-own-client.jpg",
     imageAlt: "turva.dev blog card: My MCP server answered Method not found to the request its new revision requires, and the fault was in my request. What a compatibility lane hides."
@@ -9398,7 +9424,7 @@ const META_BY_PATH = {
     titleTag: "Every response promised a rate limit · turva.dev",
     description: "A response header advertised a request limit that no code enforced. The investigation separates a published policy, the code and what a probe can show.",
     date: "2026-07-18",
-    modified: "2026-10-31",
+    modified: "2026-11-02",
     kind: "Build notes",
     image: "/og-enforcing-the-rate-limit-i-advertised.jpg",
     imageAlt: "Every response promised a rate limit. Nothing enforced it."
@@ -9409,7 +9435,7 @@ const META_BY_PATH = {
     description: "A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.",
     date: "2026-07-15",
     kind: "Research",
-    modified: "2026-10-31",
+    modified: "2026-11-02",
     image: "/og-measuring-the-ai-patch-surge.jpg",
     imageAlt: "Measuring the AI patch surge from MSRC data"
   },
@@ -9510,7 +9536,7 @@ const META_BY_PATH = {
     title: "Agent access is now a setting · turva.dev",
     description: "A July product update illustrates how crawler access, discovery and payment controls can sit at the network edge, before the site's content is reached.",
     date: "2026-07-02",
-    modified: "2026-10-02",
+    modified: "2026-11-02",
     kind: "Protocol notes",
     image: "/og-agent-access-is-now-a-setting.jpg",
     imageAlt: "turva.dev blog card: Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration."
@@ -9519,10 +9545,10 @@ const META_BY_PATH = {
     title: "Publishing an ai-catalog.json for agentic discovery · turva.dev",
     description: "A dated implementation log records adding an AI Catalog discovery manifest. Later ARD conventions are explained in the current resource-discovery guide.",
     date: "2026-06-29",
-    modified: "2026-09-28",
+    modified: "2026-11-02",
     kind: "Build notes",
     image: "/og-publishing-an-ai-catalog.jpg",
-    imageAlt: "turva.dev blog card: Google and a Linux Foundation group published Agentic Resource Discovery in 2026."
+    imageAlt: "turva.dev blog card: Publishing an ai-catalog.json for agentic discovery."
   },
   "/blog/open-knowledge-format": {
     title: "What the Open Knowledge Format is, and what it is not · turva.dev",
