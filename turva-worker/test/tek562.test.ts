@@ -126,10 +126,11 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
 // Tek-716: the card moved to MCP 1.6.24 and carries the domain-check pricing key and the external domain check in its name lists.
 // Tek-725: the card moved to MCP 1.6.26, whose snapshot dates are the 2026-10-29 readings; only the two version fields changed.
 // Tek-734 point 7: the card moved to MCP 1.7.0 and no longer names the Shopify agent storefront check, its price key or its add-on in its description, tool text and pricing; the stored signature must be renewed by the resign script before the ship.
+// 2026-11-02: the card moved to MCP 1.7.1; only the two version fields changed, the length stays 4213.
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
   assert.equal(b.length, 4213);
-  assert.equal(await sha256Hex(b), "d92bcd29b9948a58931e8eac2b68ef0df9efaa878296351e48285417000e2876");
+  assert.equal(await sha256Hex(b), "b73254d47ce6f156c53ce0709000555ccc7b4b26c22c2d6838389ac91a689355");
 });
 
 // ---------------------------------------------------------------- PGP v6 key
