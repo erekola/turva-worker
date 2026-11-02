@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.219.0 - new Protocol notes post /blog/what-a-publisher-owes-someone-elses-agent (2026-11-02) on what the publisher of an MCP server or a site owes the operator of the agent that uses it, read from the ASD guidance Agentic AI Harnesses and the MCP specification, with the public turva-mcp server measured as one sample of the author's own: its metadata, OG card, index row, sitemap row, llms.txt line and FAQ registration. No tool, no price and no audit scope changes.
 // turva.dev worker v3.218.8 - Agent operations on /services names the tools and connectors, memory, change review and worst outcome in its scope, and cites the ASD guidance Agentic AI Harnesses as its checklist (2026-11-02).
 // turva.dev worker v3.218.7 - source corrections from an external read of the blog posts and two guides (2026-11-02): a publisher attribution in /blog/publishing-an-ai-catalog, a Moderate share that does not recount in /blog/measuring-the-ai-patch-surge, the download count in /blog/trace-runtime-attestation, the data importer wording on /legal, the card location and tools sentences in the MCP server card guides, and absolutes the sources do not support in nine more pages, each post with a dated Corrected note; no signed surface changes bytes.
 // turva.dev worker v3.218.6 - the hosted Markdown parity check moves to markdown-parity-check 0.2.30 (2026-11-02, Tek-739): a linked card whose heading and body are faithfully in the Markdown now passes, and a linked heading that became a plain paragraph now fails; turva.dev's own 86 sitemap pages read the same on 0.2.29 and 0.2.30.
@@ -366,6 +367,7 @@ One sample uses a synthetic, invented site and one uses a real domain.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [What a publisher owes someone else's agent](https://turva.dev/blog/what-a-publisher-owes-someone-elses-agent.md)
 - [Finnish MiCA crypto providers and AI agents](https://turva.dev/blog/finnish-crypto-providers-and-ai-agents.md)
 - [Keeping my lab and my client work apart](https://turva.dev/blog/keeping-my-lab-and-client-work-apart.md)
 - [TLA+ on my own tools, in numbers](https://turva.dev/blog/tla-plus-in-numbers.md)
@@ -587,6 +589,144 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 const PAGE_MARKDOWN = {
+  "/blog/what-a-publisher-owes-someone-elses-agent": `# What a publisher owes someone else's agent
+
+2026-11-02
+
+The Australian Signals Directorate published [Agentic AI Harnesses](https://www.cyber.gov.au/news/asd-releases-new-guidance-on-the-agentic-ai-harnesses) in September 2026. It is written for organizations adopting agents. An MCP server appears in it as a part of somebody else's system, a row in the connector layer or the tool registry, and a site that agents read appears as content a model processes. ASD gives publishers no instructions, so the question of what they owe that system is my reading of the guide. The duties I can point to come from the MCP specification, and I measured them on one server, my own. ASD has no connection with turva.dev and has not endorsed this post.
+
+## Key figures
+
+- 11 components in ASD's list. The connector layer row names MCP-enabled tools, and the tool registry row warns about poorly defined tools.
+- 4 things the MCP tools page says a server must do: validate inputs, implement access controls, rate limit invocations and sanitize outputs.
+- 15 427 bytes for the tool list of my own server, read on 2 November 2026, for five tools that take no arguments.
+- 64 characters is where that server cuts an unknown tool name in an error. An unknown argument key of 2 000 characters came back whole.
+
+## What the guide asks of the operator
+
+The audience is named at the start of the guide: executives, security chiefs and IT leaders in organizations adopting or considering agentic AI. Its subtitle calls the subject the layer above the model, and I use that phrase here. The guide's argument is that this layer is what an organization can govern, so the controls belong there.
+
+Three passages describe a publisher from the outside. Each tool, data source or connector the operator adds is a new path into the system. Content a model processes can read to it as an instruction, web pages and documents included, and ASD says no fully reliable technical mitigation for that exists yet. The good practice list then tells the operator to validate tool parameters and outputs and to keep context focused on the task.
+
+## What MCP asks of the server
+
+The [tools page of the 2026-07-28 revision](https://modelcontextprotocol.io/specification/2026-07-28/server/tools) has a security section with a list for each side. Servers must do the four things in the figures above. Clients should ask for confirmation on sensitive operations, validate results before they reach the model and log tool use.
+
+The same page rules out the easy answer. On annotations it says "clients MUST consider tool annotations to be untrusted unless they come from trusted servers". The [schema reference](https://modelcontextprotocol.io/specification/2026-07-28/schema) adds that they are hints with no guarantee of describing the tool faithfully.
+
+That narrows my question. A publisher cannot make somebody else's agent safe, and a flag proves nothing to the client that reads it. What a publisher can owe is accuracy and few surprises, so that the operator's controls have something true to work on.
+
+## The material, item by item
+
+### Tool names
+
+MCP recommends names of 1 to 128 characters, drawn from ASCII letters and digits plus a few punctuation marks. Uniqueness covers one server only. The page's own example of a collision is two servers that each expose a tool called \`search\`, and clients that aggregate servers should disambiguate.
+
+A publisher owes a name that says what the tool acts on, because the name will sit next to tools from servers it has never seen.
+
+### Schemas
+
+ASD tells the operator to validate tool parameters and outputs, and an operator can validate only against what you publish. \`outputSchema\` is optional in MCP, and a tool without one leaves the operator nothing to check a result against.
+
+A publisher owes an input schema that refuses what the tool does not read, an output schema where the result has a stable shape, and a server that enforces both.
+
+### Descriptions
+
+MCP calls a description human-readable. The same page also asks servers for a deterministic tool order, because that helps prompt caching when tools are included in model context. I read that as the specification allowing for these sentences to reach a model. A description is then text from you to a model you will never see.
+
+Say what the tool does and when it fits, and stop there. Nothing about other servers' tools, the operator's policy or what the user wants belongs in a description. Length is a cost charged to someone else's context, and my own five descriptions total 3 174 bytes.
+
+### Read-only signals
+
+The defaults in the schema reference are cautious. A tool with no annotations reads as modifying its environment, possibly destructive, not idempotent and open to outside systems.
+
+A publisher owes flags only where they are true, and a way to check them, such as public source or a published test. The operator still owes itself the assumption that a flag can be wrong.
+
+### Errors
+
+MCP separates protocol errors from tool execution errors, and it says clients should give tool execution errors to the model so that it can correct itself. That makes the text of an error model context.
+
+A publisher owes an error that says what to change, with a limit on anything in it that the caller or a third party wrote.
+
+### Outputs
+
+The requirement to sanitize tool outputs is one line, and the tools page gives no method. ASD's statement about mitigation applies here too. A tool that returns a customer review, a ticket body or a fetched page returns text a stranger wrote, and I know of no filter that makes such text safe.
+
+My suggestion, which neither ASD nor MCP makes, is to keep third-party text in named fields and to say in the output schema which fields those are, so that the operator can route them differently.
+
+### Changes
+
+ASD lists the path through updates and the supply chain as a component of its own. As I read it, a reworded description can reach the operator's model with nobody on their side approving it, unless they compare the list themselves. MCP gives servers \`ttlMs\` and \`cacheScope\` for caching and \`listChanged\` for notifications, and none of them says what changed.
+
+Give a definition a new version whenever it changes, and keep a record of the change that a person can read. An operator can then hash the tool list and notice a difference.
+
+## A site, when there is no server
+
+I have no measurement for this section, so it is reasoning only.
+
+Web pages come first in ASD's list of content that can read as an instruction. A site owes its agent-facing version the same text a person sees, because a person can review only what they can read. Text aimed at agents and hidden from people is the opposite of that. A page that republishes comments or reviews has the problem from the outputs section above.
+
+## One sample: my own server
+
+I read [turva-mcp](https://github.com/erekola/turva-mcp) at \`mcp.turva.dev/mcp\`, version 1.7.1, on 2 November 2026. It is one sample and it is mine, so it compares with nothing. The case is also an easy one: five tools, no arguments and data compiled into the server. With no write tool, no login and no third-party text passing through, the server cannot show the hardest items above.
+
+| Reading | Value |
+| --- | --- |
+| \`tools/list\` response | 15 427 bytes, same SHA-256 on three reads within five minutes |
+| Descriptions, all five | 3 174 bytes, longest 1 105 bytes |
+| Output schemas, all five | 9 801 bytes |
+| Server instructions field | 784 bytes |
+| Annotations | the same four values on all five tools |
+| \`get_services\` call | 22 142 bytes, with the same JSON as text and as structured content |
+| One unknown argument key | \`isError\` true, a key of 2 000 characters echoed whole in 2 085 characters of text |
+| Unknown tool name | protocol error -32602, fixed message, name only in a data field, cut at 64 characters |
+
+Four of these readings count against the server or limit what it can prove.
+
+First, the echo. The server cuts the unknown tool name at 64 characters and returns the unknown argument key whole, and the whole key comes back in a tool execution error, the kind MCP says clients should give to the model. The risk is small, since the caller gets its own text back. I found the gap while measuring for this post.
+
+Second, size. Fifteen kilobytes is more than I want an operator to pay for five tools with no arguments. How much of it reaches a model depends on the client, and I measured no client.
+
+Third, all five descriptions carry a sentence telling a model when to use the tool, and the instructions field adds more. Those are my sentences addressed to your model. I think they are honest, and you have the public source to go on and little else.
+
+Fourth, the flags. All five tools say read-only, in the annotations and again in the description text. The specification tells you not to rely on that, and reading the source still leaves you to accept that the deployed code matches it.
+
+turva.dev scored 100/100 Level 5 with the isitagentready.com scanner, and both runs on 2 November 2026 passed every scored check. The scanner's MCP row reads the fields of the server card. That is a discovery check, and it says nothing about any reading in this section.
+
+## What this does not say
+
+ASD does not state any of the duties above. They are my reading, and the MCP lines are the only normative text behind them.
+
+It does not say that a server meeting them is safe to connect. The operator's controls stay where ASD puts them.
+
+It does not rank anyone. I read one server and no client, and I tested neither rate limiting nor access control.
+
+## Method
+
+The ASD guide comes from text extracted from its PDF, and the publication date of 11 September 2026 from ASD's news page. The MCP tools page and schema reference of revision 2026-07-28 come from the extracted pages.
+
+For the server I made my own requests, one at a time, with every raw response saved. I listed the tools three times within five minutes, called each tool with no arguments, then sent an unknown argument key and an unknown tool name at short and long lengths. A first round of tool calls failed on a header that my own script left out, and I do not count it. Byte figures are UTF-8 bytes of the raw response or field. I ran the scanner twice with its default profile on 2 November 2026 and both runs read Level 5.
+
+## Frequently asked
+
+**Does ASD tell MCP publishers what to do?**
+
+No. The guide is written for organizations adopting agentic AI. An MCP server appears in it as a tool or connector in somebody else's system, and a site as content a model processes. Any duty on the publisher's side is a reading of the guide, and the normative text for servers is in the MCP specification.
+
+**Can a client rely on readOnlyHint?**
+
+Not from a server it does not trust. The MCP specification says clients must treat tool annotations as untrusted unless they come from trusted servers, and its schema reference calls them hints with no guarantee of describing the tool faithfully.
+
+**Does a high agent-readiness score mean an MCP server's tools are well defined?**
+
+No. On isitagentready.com the MCP row reads the fields of the server card, which is a discovery check. The row reports fields such as tools and description and nothing from a call to the server, so tool definitions and error text have to be read separately.
+
+## Related
+
+- [MCP server cards and discovery](/guides/mcp-server-card)
+- [Define what an agent may do with your data](/guides/letting-agents-act-on-data)
+`,
+
   "/blog/finnish-crypto-providers-and-ai-agents": `# Finnish MiCA crypto providers and AI agents
 
 2026-10-31
@@ -3932,8 +4072,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-46 articles.
+47 articles.
 
+- [What a publisher owes someone else's agent](/blog/what-a-publisher-owes-someone-elses-agent). 2026-11-02. Protocol notes. ASD's guide on agentic AI is written for operators. What an MCP server's publisher owes them, read from the MCP spec and from my own server.
 - [Finnish MiCA crypto providers and AI agents](/blog/finnish-crypto-providers-and-ai-agents). 2026-10-31. Research. All five Finnish crypto providers in the MiCA register sit at isitagentready Level 1 of 5, and none passes the scanner's nine agent protocol checks.
 - [Keeping my lab and my client work apart](/blog/keeping-my-lab-and-client-work-apart). 2026-10-26. Build notes. Client work now runs in a Windows virtual machine apart from my own lab. How I tested it with two test clients, and what it does not isolate.
 - [TLA+ on my own tools, in numbers](/blog/tla-plus-in-numbers). 2026-10-22. Build notes. Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.
@@ -7998,7 +8139,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.218.8",
+    "version": "3.219.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8130,7 +8271,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"3mGEcp9V-3N9XEb0UbIJawMVPHqbDicIaKV8z5tftCnogR1QG2Db1nb4g50lbK4uU_d2gTqy0jwhocKwdiZaBw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"yh_8yKs9i4-yjM6RiHbs9M3iDkjpqn7OvzuAm-rKzhAMO6dV-mJxvXBc-Y7_a_KU6vU-Qh0xtqjSjSK4HjzjCQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"3mGEcp9V-3N9XEb0UbIJawMVPHqbDicIaKV8z5tftCnogR1QG2Db1nb4g50lbK4uU_d2gTqy0jwhocKwdiZaBw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"VOg_Bv0SOfAL_F260u0-F1TOK_xTGErh70T_KyIVRvFnlkSikCXhpYbt2w6t2YG-9LO1YT_zm6vsecnbA7nnAg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8298,7 +8439,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.218.8",
+  "version": "3.219.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9023,6 +9164,7 @@ const SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/what-a-publisher-owes-someone-elses-agent", "monthly", "0.6"],
   ["/blog/finnish-crypto-providers-and-ai-agents", "monthly", "0.6"],
   ["/blog/keeping-my-lab-and-client-work-apart", "monthly", "0.6"],
   ["/blog/tla-plus-in-numbers", "monthly", "0.6"],
@@ -9142,7 +9284,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/samples/audit-report", "/samples/external-domain-check", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/samples/audit-report", "/samples/external-domain-check", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -9152,6 +9294,14 @@ function getCanonicalForPath(pathname: string) {
 }
 
 const META_BY_PATH = {
+  "/blog/what-a-publisher-owes-someone-elses-agent": {
+    title: "What a publisher owes someone else's agent · turva.dev",
+    description: "ASD's guide on agentic AI is written for operators. What an MCP server's publisher owes them, read from the MCP spec and from my own server.",
+    date: "2026-11-02",
+    kind: "Protocol notes",
+    image: "/og-what-a-publisher-owes-someone-elses-agent.jpg",
+    imageAlt: "Card with the headline What a publisher owes someone else's agent, and the line Tool definitions and error text, read from the MCP spec and my own server.",
+  },
   "/blog/finnish-crypto-providers-and-ai-agents": {
     title: "Finnish MiCA crypto providers and AI agents · turva.dev",
     description: "All five Finnish crypto providers in the MiCA register sit at isitagentready Level 1 of 5, and none passes the scanner's nine agent protocol checks.",
@@ -11210,6 +11360,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 const GUIDE_PAGE_FAQ = {
+  "/blog/what-a-publisher-owes-someone-elses-agent": mdFaqBlocks("/blog/what-a-publisher-owes-someone-elses-agent", "Frequently asked").pairs,
   "/blog/finnish-crypto-providers-and-ai-agents": mdFaqBlocks("/blog/finnish-crypto-providers-and-ai-agents", "Frequently asked").pairs,
   "/blog/keeping-my-lab-and-client-work-apart": mdFaqBlocks("/blog/keeping-my-lab-and-client-work-apart", "Frequently asked").pairs,
   "/blog/tla-plus-in-numbers": mdFaqBlocks("/blog/tla-plus-in-numbers", "Frequently asked").pairs,
