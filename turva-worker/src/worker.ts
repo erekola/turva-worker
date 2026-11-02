@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.218.6 - the hosted Markdown parity check moves to markdown-parity-check 0.2.30 (2026-11-02, Tek-739): a linked card whose heading and body are faithfully in the Markdown now passes, and a linked heading that became a plain paragraph now fails; turva.dev's own 86 sitemap pages read the same on 0.2.29 and 0.2.30.
 // turva.dev worker v3.218.5 - three text corrections (2026-11-02): the order terms and the privacy section name YTJ as the Finnish business information system run by the Patent and Registration Office and the Tax Administration instead of the Finnish Trade Register, /blog/what-shopify-changed-for-agent-shopping says Shopify announced the list_price change on 9 October 2026 instead of saying it began that day and carries a dated correction line, and the MCP external domain check deliverable states the rerun condition (MCP 1.7.1, so the MCP server card changes by its version and is signed again; llms.txt, agent.json and ai-plugin.json keep their bytes).
 // turva.dev worker v3.218.4 - two guides answer the question they are asked (2026-11-01): /guides/llms-txt gains the section and FAQ answer Does llms.txt really work? with the Ahrefs, SE Ranking and Gemini API sources and a new checked date, and /guides/agent-readiness-audit gains How do I audit my website for AI agent readiness? as a section and FAQ answer.
 // turva.dev worker v3.218.3 - Erik's answers to round 22 (2026-11-01): the advisory and implementation price lines on /services state the validity date the structured data already carries, and every outward text uses US spelling (authorization, organization, acknowledgment, behavior, labeled and the rest, 111 places including two LLMS_TXT lines, so llms.txt is re-signed). The OG card of the AI assistants post was rebuilt for the same reason.
@@ -7965,7 +7966,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.218.5",
+    "version": "3.218.6",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8265,7 +8266,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.218.5",
+  "version": "3.218.6",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
