@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.219.3 - monthly guide source review (2026-11-03), every guide read against its primary sources: the x402 guide separates the authorization, upfront and escrow flows, the well-known guide says what backs the payment paths, the llms.txt guide follows the moved Gemini page, the citation guide drops an absolute, the server card guide quotes the extension README, and the commerce guide says contributed. The /api 402 description says no payment is accepted there, the implementation POST summary matches its siblings, and the signed server card and agent manifests say each fix is checked with a scanner or a direct test (MCP 1.7.3).
 // turva.dev worker v3.219.2 - the validator and parity submit buttons inherit the site font instead of the browser's button font, and every page sets text-size-adjust to 100% so iOS Safari does not inflate text in landscape; pinch zoom is unaffected.
 // turva.dev worker v3.219.1 - the MCP server moves to 1.7.2 and the signed server card with it: an unknown argument key in a tool error is cut at 64 characters and at most five keys are listed, the same limit an unknown tool name has, and the refusal itself does not change. /blog/what-a-publisher-owes-someone-elses-agent gains a dated note on it and keeps the 1.7.1 reading it measured. wrangler 4.156.2 in both Workers.
 // turva.dev worker v3.219.0 - new Protocol notes post /blog/what-a-publisher-owes-someone-elses-agent (2026-11-02) on what the publisher of an MCP server or a site owes the operator of the agent that uses it, read from the ASD guidance Agentic AI Harnesses and the MCP specification, with the public turva-mcp server measured as one sample of the author's own: its metadata, OG card, index row, sitemap row, llms.txt line and FAQ registration. No tool, no price and no audit scope changes.
@@ -5125,7 +5126,7 @@ AP2 is the Agent Payments Protocol. Under the v0.1 specification, which is what 
 
 The detail that trips people up is the URI. Some helper guides write it as "github.com/google-agentic-commerce/AP2/tree/v0.1.0", with an uppercase name and a three-part version. The v0.1 specification uses "github.com/google-agentic-commerce/ap2/tree/v0.1", lowercase, version v0.1. A scanner that validates against that specification rejects the uppercase form even when everything else is correct. Copy the URI from the spec, not from a fix message. The URI is an identifier, not an address: the repository is named AP2 and its tag is v0.1.0, so the lowercase form answers 404 in a browser, and a validator compares the string instead of fetching it. Do not correct the identifier to a working URL to silence the 404. That answer is expected and the validator does not fetch it.
 
-Note that the current AP2 specification, v0.2 from April 2026, restructures the protocol around checkout and payment mandates and drops the Agent Card extension entirely. The deployed discovery convention and the scanners still follow v0.1, so publish the v0.1 declaration for discoverability today and expect this surface to change as v0.2 adoption arrives. In April 2026 Google [donated AP2 to the FIDO Alliance](https://fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/), where the standards work is carried out by the Agentic Authentication Technical Working Group and the Payments Technical Working Group.
+Note that the current AP2 specification, v0.2 from April 2026, restructures the protocol around checkout and payment mandates and drops the Agent Card extension entirely. The deployed discovery convention and the scanners still follow v0.1, so publish the v0.1 declaration for discoverability today and expect this surface to change as v0.2 adoption arrives. In April 2026 Google [contributed AP2 to the FIDO Alliance](https://fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/), where the standards work is carried out by the Agentic Authentication Technical Working Group and the Payments Technical Working Group.
 
 ## ACP discovery and checkout
 
@@ -6438,7 +6439,7 @@ It works as a map for a client that fetches it, but in one large log study 97% o
 
 Ahrefs measured requests across 137,210 domains in May 2026. About 38,000 of them had a valid file, and 97% of those files received no request that month. GPTBot and Claude Code were among the most frequent AI requesters in that data, and Ahrefs notes that a request shows a file was fetched and does not show that anything acted on it. SE Ranking modelled nearly 300,000 domains and found no link between having the file and how often a domain is cited. Both are vendor studies of their own samples, and neither measures every client.
 
-The strongest case in this evidence is documentation read by coding agents. Google's Gemini API docs publish an llms.txt index and recommend a project rule that tells coding agents to consult its docs MCP server or that index, so an agent without the server can start from the index. A site whose readers work through coding agents has a stronger reason to publish the file than a site that hopes to be cited.
+The strongest case in this evidence is documentation read by coding agents. As of November 2026, Google's Gemini API docs publish an llms.txt index and recommend a project rule that tells coding agents to consult its docs MCP server or that index, so an agent without the server can start from the index. A site whose readers work through coding agents has a stronger reason to publish the file than a site that hopes to be cited.
 
 ## Validate your file
 
@@ -6476,7 +6477,7 @@ The file format did not change. v2 added two standard link relations so an agent
 - [HTTP semantics, RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)
 - [Ahrefs, study of llms.txt requests across 137,210 domains](https://ahrefs.com/blog/llmstxt-study/)
 - [SE Ranking, study of llms.txt and AI citations](https://seranking.com/blog/llms-txt/)
-- [Google, Gemini API docs for coding agents](https://ai.google.dev/gemini-api/docs/coding-agents)
+- [Google, Gemini API docs for coding agents](https://aistudio.google.com/docs/coding-agents)
 
 ## Related
 
@@ -6489,7 +6490,7 @@ The file format did not change. v2 added two standard link relations so an agent
 
 A server card describes an MCP endpoint for clients that support the relevant discovery convention. The card, the live endpoint and the client's protocol support must agree.
 
-The server card lives in two places that have not converged. The isitagentready.com scanner asks for the card at /.well-known/mcp/server-card.json, and turva.dev serves its card there. The proposal behind the card, [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), now develops as an [experimental MCP extension](https://github.com/modelcontextprotocol/ext-server-card), and its text sets a different default, the MCP endpoint URL followed by /server-card. It does not recommend a /.well-known path for the card itself, and site-level discovery instead sits in a catalog: the experimental Server Card document keeps an AI Catalog at /.well-known/ai-catalog.json, while ARD v0.91 names /.well-known/ard.json. The convention is still moving, so a client that checks only one location may miss a card that exists at the other. On 2026-10-06 SEP-2127 was merged, and its text now reads Status: Final on the Extensions Track. It recommends the MCP endpoint URL followed by /server-card, lets a card be hosted at any unreserved URI, lets an AI Catalog at /.well-known/ai-catalog.json link to or embed cards and leaves tools, resources and prompts out of the card, while the extension repository's README still labels itself Experimental. The two locations have still not converged.
+The server card lives in two places that have not converged. The isitagentready.com scanner asks for the card at /.well-known/mcp/server-card.json, and turva.dev serves its card there. The proposal behind the card, [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), now develops as an [experimental MCP extension](https://github.com/modelcontextprotocol/ext-server-card), and its text sets a different default, the MCP endpoint URL followed by /server-card. It does not recommend a /.well-known path for the card itself, and site-level discovery instead sits in a catalog: the experimental Server Card document keeps an AI Catalog at /.well-known/ai-catalog.json, while ARD v0.91 names /.well-known/ard.json. The convention is still moving, so a client that checks only one location may miss a card that exists at the other. On 2026-10-06 SEP-2127 was merged, and its text now reads Status: Final on the Extensions Track. It recommends the MCP endpoint URL followed by /server-card, lets a card be hosted at any unreserved URI, lets an AI Catalog at /.well-known/ai-catalog.json link to or embed cards and leaves tools, resources and prompts out of the card. The extension repository's README, which still describes the SEP as under review, labels itself Experimental and not an accepted or official MCP extension. The two locations have still not converged.
 
 An MCP server card is a small JSON file that describes a site's Model Context Protocol server so a client can find it and learn what it offers. The Model Context Protocol itself is a standard way for agents to use external tools and data. A server implements the protocol and may expose tools, resources or prompts, and the card is how that server announces itself before any connection is made.
 
@@ -6601,7 +6602,7 @@ x402 belongs to a small family of agent payment standards, and its relationship 
 
 ## Declaration, acceptance and settlement are different states
 
-A 402 response with a PaymentRequired object is a declaration that a resource can be bought this way, and nothing more. An agent that signs a payload and retries has submitted a payment attempt, and the server's verification of that payload decides whether it is accepted. Acceptance is a second, later state. Settlement, where the server or its facilitator durably commits the payment, is a third state that can trail the first two by an interval the site should be able to name. Treating these three as one event hides the point where a purchase can still fail after the agent believes it has paid, so a site's own record keeps them apart rather than collapsing a declaration into a completed sale.
+A 402 response with a PaymentRequired object is a declaration that a resource can be bought this way, and nothing more. An agent that signs a payload and retries has submitted a payment attempt, which is not yet an accepted payment. In the default authorization flow of x402 v2, a read-only verification decides acceptance before the resource runs, and settlement, where the server or its facilitator durably commits the payment, comes after the resource has completed. As of November 2026 the specification also defines an upfront flow, which settles before the resource runs, and an escrow flow, which settles a deposit before the resource runs and records the final charge in a second settlement after it. Both leave the facilitator's /verify step out, so acceptance and the first settlement happen together there. Treating a declaration as a completed sale hides the point where a purchase can still fail after the agent believes it has paid, so a site's own record keeps these states apart.
 
 ## Why a declared payment surface matters
 
@@ -6812,7 +6813,7 @@ The /.well-known directory is a standard place at the root of a site where clien
 | /.well-known/oauth-authorization-server | Describes how a client authenticates | OAuth discovery, RFC 8414 |
 | /.well-known/security.txt | States where to report a security problem | RFC 9116 |
 | /.well-known/mcp/server-card.json | Describes an MCP server and how to reach it | Convention the isitagentready.com scanner checks, not yet standardized |
-| /.well-known/x402, /.well-known/mpp, /.well-known/ap2 | Payment and agent-payment manifests: how an agent is quoted and how it pays | x402 and the Machine Payments Protocol, deployed conventions. AP2 itself is declared in the A2A Agent Card, and turva.dev also serves /.well-known/ap2 |
+| /.well-known/x402, /.well-known/mpp, /.well-known/ap2 | Payment and agent-payment manifests: how an agent is quoted and how it pays | As of November 2026, /.well-known/x402 is described in an individual IETF Internet-Draft. MPP's discovery documentation names /openapi.json with x-payment-info, not a well-known path. AP2 v0.1 declares itself in the A2A Agent Card and v0.2 no longer defines that extension. turva.dev also serves /.well-known/mpp and /.well-known/ap2. |
 
 ## What each file establishes
 
@@ -7535,7 +7536,7 @@ An assistant that does not run JavaScript sees an empty shell where a client-ren
 
 ## State your facts as data
 
-Prose can be summarized wrongly. JSON-LD states the facts of a page, such as the organization, the service, and the price, as data an assistant reads without inference. Structured data also ties a page to an entity an assistant may already know, for example through a Wikidata item and consistent sameAs links across profiles. Neither one settles attribution by itself. What they remove is ambiguity about which entity a claim belongs to, which matters when the same name could point to more than one organization.
+Prose can be summarized wrongly. JSON-LD states the facts of a page, such as the organization, the service, and the price, as data an assistant can read directly instead of inferring them from prose. Structured data also ties a page to an entity an assistant may already know, for example through a Wikidata item and consistent sameAs links across profiles. Neither one settles attribution by itself. What they remove is ambiguity about which entity a claim belongs to, which matters when the same name could point to more than one organization.
 
 ## Be corroborated
 
@@ -8143,7 +8144,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.219.2",
+    "version": "3.219.3",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8210,7 +8211,7 @@ const OPENAPI_SPEC = JSON.stringify({
         }
       },
       "post": {
-        "summary": "Book an implementation day",
+        "summary": "Implementation day. Answers 402: the booking is agreed by email and a written scope",
         "operationId": "bookImplementationDay",
         "x-payment-info": {
           "intent": "charge",
@@ -8265,7 +8266,7 @@ const AGENT_JSON = JSON.stringify({
   "name_for_human": "turva.dev",
   "name_for_model": "turva_dev",
   "description_for_human": "Agent-readiness audits and advisory for product teams.",
-  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, the next scan verifies the result. Async-only engagement. Pricing (EUR, VAT not included): External domain check €99 (fixed, within two business days of confirmed payment), Audit €4,300 (fixed, within two weeks of the agreed written kickoff), Advisory €3,000/month (three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
+  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, and the follow-up checks each implemented fix with the relevant scanner or a direct test. Async-only engagement. Pricing (EUR, VAT not included): External domain check €99 (fixed, within two business days of confirmed payment), Audit €4,300 (fixed, within two weeks of the agreed written kickoff), Advisory €3,000/month (three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
   "contact_email": "info@turva.dev",
   "legal_info_url": "https://turva.dev/legal",
   "logo_url": "https://turva.dev/logo.png",
@@ -8275,7 +8276,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"quf3W9GM4u5RfcWEIfSNN496MdO-_CD4IazOWqZQmjnhdWPhDwbmdjtBZ8tMHbbRBQ_2r3VkpWngEQ1hr7cGBg\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Vvog_jRi9D4CpsEHUmGGxlAKk9416IYAPc3w9xacJu6vqlRbA__jiKYXFDwDpUiOYQIt05jUwD1Z28mjhMUfBA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"VOg_Bv0SOfAL_F260u0-F1TOK_xTGErh70T_KyIVRvFnlkSikCXhpYbt2w6t2YG-9LO1YT_zm6vsecnbA7nnAg\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dbX_qt85wVERuasvlKKazFn7Da18XQ6h9-X_TfIyMTz6bFA8dCf4M7b_KPEgUr8U6du2m0Zny2Yurfw4j52lBA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dbX_qt85wVERuasvlKKazFn7Da18XQ6h9-X_TfIyMTz6bFA8dCf4M7b_KPEgUr8U6du2m0Zny2Yurfw4j52lBA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"xSSTbm9qQ23hWscmTDTXMW5btkWN0xVpL5Ej0dgHNxW1FKdHGY_zCCNVb0DdcZ6b2EQXHQyXty6yr_Ez3UOECQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"VOg_Bv0SOfAL_F260u0-F1TOK_xTGErh70T_KyIVRvFnlkSikCXhpYbt2w6t2YG-9LO1YT_zm6vsecnbA7nnAg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8290,7 +8291,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -8299,7 +8300,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.7.2",
+    "version": "1.7.3",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (external domain check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -8322,7 +8323,7 @@ const MCP_SERVER_CARD = JSON.stringify({
     { "name": "get_services", "description": "Service catalog (external domain check, audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
     { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, measurement date, and a link to the scanner start page." },
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl site and mail), each with its scan date." },
-    { "name": "get_principles", "description": "Engagement principles: async-only, least access, the result shows up in scanner numbers, open and verifiable." },
+    { "name": "get_principles", "description": "Engagement principles: async-only, least access, each fix checked with a scanner or a direct test, open and verifiable." },
     { "name": "get_contact", "description": "Who runs turva.dev, the official contact channels, the first-reply time and what access an audit needs." }
   ],
   "_meta": {
@@ -8443,7 +8444,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.219.2",
+  "version": "3.219.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9126,7 +9127,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-02";
+const SITEMAP_LASTMOD = "2026-11-03";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9732,7 +9733,7 @@ const META_BY_PATH = {
   },
   "/guides/agent-commerce-discovery": {
     title: "Agent commerce discovery: A2A, AP2, ACP and UCP · turva.dev",
-    checked: "2026-11-01",
+    checked: "2026-11-03",
     description: "Commerce discovery describes the interfaces and payment-related capabilities a service supports.",
     image: "/og-guide-agent-commerce-discovery.jpg",
     imageAlt: "turva.dev guide card: A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint."
@@ -9748,14 +9749,14 @@ const META_BY_PATH = {
   },
   "/guides/agentic-resource-discovery": {
     title: "Agentic Resource Discovery and resource catalogs · turva.dev",
-    checked: "2026-11-01",
+    checked: "2026-11-03",
     description: "Resource catalogs describe the agent-facing interfaces a site exposes.",
     image: "/og-guide-agentic-resource-discovery.jpg",
     imageAlt: "turva.dev guide card: Agentic Resource Discovery explained: what an ai-catalog.json is, how it differs from llms.txt, and where it sits before MCP, A2A and API invocation."
   },
   "/guides/open-knowledge-format": {
     title: "Open Knowledge Format explained · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "Open Knowledge Format describes knowledge as linked Markdown documents.",
     image: "/og-guide-open-knowledge-format.jpg",
     imageAlt: "turva.dev guide card: What the Open Knowledge Format is: Google Cloud's open markdown spec for giving AI agents context, and where it fits agent-readiness."
@@ -9839,147 +9840,147 @@ const META_BY_PATH = {
   },
   "/guides/agent-readiness-audit": {
     title: "What a website and API agent-readiness audit covers · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "A technical scan, manual review and observed AI answers reveal different problems.",
     image: "/og-guide-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: An agent-readiness audit measures how well AI agents can discover, read and act on a website or API, scored by an independent scanner."
   },
   "/guides/llms-txt": {
     title: "llms.txt explained · turva.dev",
-    checked: "2026-11-01",
+    checked: "2026-11-03",
     description: "An llms.txt file offers a curated map of a site for clients that choose to read it. Learn its structure, discovery links and limits.",
     image: "/og-guide-llms-txt.jpg",
     imageAlt: "turva.dev guide card: llms.txt is a plain text guide that tells AI agents what a site contains and where its key content lives, and how it differs from robots.txt and sitemaps."
   },
   "/guides/mcp-server-card": {
     title: "MCP server cards and discovery · turva.dev",
-    checked: "2026-11-01",
+    checked: "2026-11-03",
     description: "A server card describes an MCP endpoint for clients that support the relevant discovery convention.",
     image: "/og-guide-mcp-server-card.jpg",
     imageAlt: "turva.dev guide card: An MCP server card is a JSON file that lets agents discover a site's Model Context Protocol server and connect to it."
   },
   "/guides/agents-json": {
     title: "What agents.json describes · turva.dev",
-    checked: "2026-11-01",
+    checked: "2026-11-03",
     description: "agents.json is one pattern for describing actions and endpoints for automated clients.",
     image: "/og-guide-agents-json.jpg",
     imageAlt: "turva.dev guide card: agents.json declares the actions and endpoints an AI agent can use on a site, turning a readable site into an operable one."
   },
   "/guides/x402-agent-payments": {
     title: "x402 and HTTP payment flows · turva.dev",
-    checked: "2026-11-01",
+    checked: "2026-11-03",
     description: "x402 describes an HTTP-based payment flow. A payment declaration, an accepted payment and settlement are different states and should be documented separately.",
     image: "/og-guide-x402-agent-payments.jpg",
     imageAlt: "turva.dev guide card: x402 uses HTTP 402 Payment Required so AI agents can discover a price, pay, and continue without a human checkout."
   },
   "/guides/response-headers-for-agents": {
     title: "Response headers for AI clients · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "Response headers describe formats, discovery links and request policy. Check both what a header declares and whether the server behaves accordingly.",
     image: "/og-guide-response-headers-for-agents.jpg",
     imageAlt: "turva.dev guide card: The right HTTP response headers let AI agents work without parsing full HTML."
   },
   "/guides/seo-vs-agent-readiness": {
     title: "SEO and agent-readiness: overlap and differences · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "SEO, AI-answer visibility and technical agent access overlap, but they answer different questions.",
     image: "/og-guide-seo-vs-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: SEO makes a site rank for people to click. Agent-readiness makes it legible and usable by AI agents."
   },
   "/guides/json-ld-structured-data": {
     title: "JSON-LD and structured data for AI clients · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "Structured data makes page facts explicit, but those facts must agree with the visible page and underlying source.",
     image: "/og-guide-json-ld-structured-data.jpg",
     imageAlt: "turva.dev guide card: JSON-LD states a page's facts as data an AI agent can read without parsing prose."
   },
   "/guides/well-known-for-agents": {
     title: "The /.well-known directory for agent discovery · turva.dev",
-    checked: "2026-11-01",
+    checked: "2026-11-03",
     description: "Well-known URLs give clients predictable places to look for specific metadata.",
     image: "/og-guide-well-known-for-agents.jpg",
     imageAlt: "turva.dev guide card: The /.well-known directory is where agents look for a site's machine-readable manifests, from the API catalog (RFC 9727) to server cards and OAuth metadata."
   },
   "/guides/agent-authentication": {
     title: "Authentication and authorization for AI agents · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "Authentication identifies a client, authorization determines what it may access or do.",
     image: "/og-guide-agent-authentication.jpg",
     imageAlt: "turva.dev guide card: Agent authentication lets an automated client gain scoped access without a human login."
   },
   "/guides/measurement-led-agent-readiness": {
     title: "Measure agent-readiness with evidence · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "A scan is one source of evidence. Combine it with direct technical checks and observed AI answers, and record the method and date behind every conclusion.",
     image: "/og-guide-measurement-led-agent-readiness.jpg",
     imageAlt: "turva.dev guide card: A hand-filled checklist records intentions. An independent scanner records what an agent actually finds."
   },
   "/guides/prerendering-for-agents": {
     title: "When AI clients cannot read rendered pages · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "Some clients read the initial HTTP response without running a browser.",
     image: "/og-guide-prerendering-for-agents.jpg",
     imageAlt: "turva.dev guide card: prerendering, and why some agents see empty pages. A client that does not run JavaScript can get only the loading shell of a rendered page."
   },
   "/guides/sitemaps-and-robots-for-agents": {
     title: "Sitemaps, robots.txt and AI crawler access · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "Sitemaps describe published URLs, while robots.txt communicates crawler rules. Neither file guarantees retrieval or replaces access control.",
     image: "/og-guide-sitemaps-and-robots-for-agents.jpg",
     imageAlt: "turva.dev guide card: robots.txt and the sitemap decide whether an agent is allowed in and what it can find."
   },
   "/guides/markdown-for-agents": {
     title: "Serving Markdown to AI clients · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "A Markdown representation can make published content easier for text-based clients to consume. Keep its facts and links aligned with the HTML page.",
     image: "/og-guide-markdown-for-agents.jpg",
     imageAlt: "turva.dev guide card: Serving a markdown version of a page gives agents the content without the markup, at a fraction of the tokens."
   },
   "/guides/agent-readiness-aeo-geo": {
     title: "Agent-readiness, AEO and GEO · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "These labels describe overlapping work around discovery, answers and automated use.",
     image: "/og-guide-agent-readiness-aeo-geo.jpg",
     imageAlt: "turva.dev guide card: How AEO, GEO and agent-readiness relate, what each one fixes, and how to sequence the work so you do not pay for the same fix twice."
   },
   "/guides/agentic-commerce-readiness": {
     title: "Agentic commerce readiness · turva.dev",
-    checked: "2026-11-01",
+    checked: "2026-11-03",
     description: "Agent commerce involves product information, permitted actions and a supported checkout path.",
     image: "/og-guide-agentic-commerce-readiness.jpg",
     imageAlt: "turva.dev guide card: What an AI shopping agent needs to discover an offer, drive a checkout protocol and complete a purchase."
   },
   "/guides/letting-agents-act-on-data": {
     title: "Define what an agent may do with your data · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "Reliable agent operations depend on usable inputs, explicit permissions and observable outcomes.",
     image: "/og-guide-letting-agents-act-on-data.jpg",
     imageAlt: "turva.dev guide card: Letting an agent act safely depends on data that arrives intact and a decision envelope of permissions and thresholds."
   },
   "/guides/ai-agent-use-cases": {
     title: "AI agent use cases and their operating limits · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "Explore examples of agents reading data and taking permitted actions.",
     image: "/og-guide-ai-agent-use-cases.jpg",
     imageAlt: "turva.dev guide card: AI agent use cases across commerce, monitoring, field support, remote operations and back-office data work, and what makes each one reliable."
   },
   "/guides/get-cited-by-ai-assistants": {
     title: "Make your website easier for AI assistants to find and cite · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "Clear, accessible content and consistent facts help retrieval systems understand a site.",
     image: "/og-guide-get-cited-by-ai-assistants.jpg",
     imageAlt: "turva.dev guide card: What it takes to be a source AI assistants cite: readable content, structured data, corroboration, indexing where assistants search, and measurement."
   },
   "/guides/choosing-an-agent-readiness-audit": {
     title: "How to choose an agent-readiness audit · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "Compare an audit by its scope, evidence, deliverables and follow-up checks.",
     image: "/og-guide-choosing-an-agent-readiness-audit.jpg",
     imageAlt: "turva.dev guide card: Who provides agent-readiness audits, what they cost, how long they take, and what you get."
   },
   "/guides/agent-readiness-gaps": {
     title: "Common agent-readiness gaps in a measured sample · turva.dev",
-    checked: "2026-10-30",
+    checked: "2026-11-03",
     description: "A prospecting sample of 567 company sites revealed recurring technical gaps.",
     image: "/og-guide-agent-readiness-gaps.jpg",
     imageAlt: "turva.dev guide card: Marketing sites are often strong for people and weak for agents. The predictable gaps in rendering, discovery, cost and structured data, and the fixes."
@@ -16498,7 +16499,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
     return serveStatic(AGENT_JSON, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/api" || pathLower === "/api/") {
-    return serve402("/api", { label: "API", amountUsdcMicro: "1000", amountEurCents: 0, description: "turva.dev agent API, payable via x402 on Base (USDC). Free discovery stays open at /openapi.json, /.well-known/* and /api/v1. Paid services: /api/agent/audit, /api/agent/advisory, /api/agent/implementation." });
+    return serve402("/api", { label: "API", amountUsdcMicro: "1000", amountEurCents: 0, description: "turva.dev agent API. This 402 response declares x402 payment in USDC on Base, and no payment is accepted here, so ask for a quote and settle against the written scope. Free discovery stays open at /openapi.json, /.well-known/* and /api/v1. Priced services: /api/agent/audit, /api/agent/advisory, /api/agent/implementation." });
   }
   if (pathLower === "/v1/message:send/") {
     return redirectTo(new URL("/v1/message:send", request.url).toString(), 301, pathLower);
