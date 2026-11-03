@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.219.4 - the x402 error text on /x402, /api and the three /api/agent/* routes now states that x402 payment is declared but not verified, so the resource answers 402 regardless of payment; the HTTP 402 status, the x402 v2 shape and every other field stay (MCP stays 1.7.3).
 // turva.dev worker v3.219.3 - monthly guide source review (2026-11-03), every guide read against its primary sources: the x402 guide separates the authorization, upfront and escrow flows, the well-known guide says what backs the payment paths, the llms.txt guide follows the moved Gemini page, the citation guide drops an absolute, the server card guide quotes the extension README, and the commerce guide says contributed. The /api 402 description says no payment is accepted there, the implementation POST summary matches its siblings, and the signed server card and agent manifests say each fix is checked with a scanner or a direct test (MCP 1.7.3).
 // turva.dev worker v3.219.2 - the validator and parity submit buttons inherit the site font instead of the browser's button font, and every page sets text-size-adjust to 100% so iOS Safari does not inflate text in landscape; pinch zoom is unaffected.
 // turva.dev worker v3.219.1 - the MCP server moves to 1.7.2 and the signed server card with it: an unknown argument key in a tool error is cut at 64 characters and at most five keys are listed, the same limit an unknown tool name has, and the refusal itself does not change. /blog/what-a-publisher-owes-someone-elses-agent gains a dated note on it and keeps the 1.7.1 reading it measured. wrangler 4.156.2 in both Workers.
@@ -8144,7 +8145,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.219.3",
+    "version": "3.219.4",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8444,7 +8445,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.219.3",
+  "version": "3.219.4",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8717,7 +8718,7 @@ const X402_INDEX_402 = JSON.stringify({
       "extra": { "name": X402_USDC_NAME, "version": "2", "settlement": X402_SETTLEMENT_NOTE }
     }
   ],
-  "error": "Payment required to access this resource"
+  "error": "x402 payment is declared but not verified, so this resource answers 402 regardless of payment"
 }, null, 2);
 
 function build402Body(resource: string, label: string, amountUsdcMicro: string, amountEurCents: number, description: string) {
@@ -8744,7 +8745,7 @@ function build402Body(resource: string, label: string, amountUsdcMicro: string, 
         "extra": extra
       }
     ],
-    "error": "Payment required to access this resource"
+    "error": "x402 payment is declared but not verified, so this resource answers 402 regardless of payment"
   }, null, 2);
 }
 
