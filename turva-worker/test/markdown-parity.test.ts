@@ -559,7 +559,11 @@ test("Tek-488: the finding card, the offers, the work cards and the steps read a
   assert.ok(md.includes("\n\nExample from a fictional audit, finding F1.\n\n## One product.") && html.includes('<p class="rc-top">Example from a fictional audit, finding F1.</p>'), "the card label is the twin's line above its heading");
   const bad = [...md.matchAll(new RegExp("\\n- ([^:\\n]+): ([^\\n]+) " + dot + " conflict(?=\\n)", "g"))];
   assert.equal(bad.length, 2, "two readings in conflict");
-  for (const [, k, v] of bad) assert.ok(html.includes('<span class="rc-k">' + k + ':</span> <span class="rc-v">' + v + " " + dot + '</span> <span class="rc-flag">conflict</span></li>'), k);
+  for (const [, k, v] of bad) assert.ok(html.includes('<span class="rc-k">' + k + ':</span> <span class="rc-v">' + v.replaceAll(" " + dot + " ", "&nbsp;" + dot + " ") + "&nbsp;" + dot + '</span> <span class="rc-flag">conflict</span></li>'), k);
+  const values = [...html.matchAll(/<span class="rc-v">([^<]*)<\/span>/g)];
+  assert.equal(values.length, 3, "three readings in the card");
+  for (const [, value] of values) assert.ok(!value.includes(" " + dot), "no width can start a line with a dot: " + value);
+  assert.ok(html.includes(".board{margin:.7rem 0 1rem;"), "the scan board keeps the card grid's gap");
   assert.ok(!html.includes("See the Shopify check") && !html.includes("See the audit") && html.includes('<span class="offer-name"><a href="/agent-readiness-audit">'), "the offer name is the link");
   for (const t of ["Sample reports", "Research", "My own site"]) assert.ok(html.includes('<p><span class="svc-t">' + t + ".</span> "), t);
   assert.ok(!html.includes('class="step-n"') && html.includes("counter(step,decimal-leading-zero)"), "the step number is a CSS counter, not text the twin lacks");

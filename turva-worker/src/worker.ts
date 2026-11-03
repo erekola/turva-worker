@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.219.5 - three small fixes from a visual review (2026-11-03): the home page scan board keeps the card grid's gap instead of touching the cards above it, a no-break space ties each dot in the finding card to the word before it so no width starts a line with a dot, and the sample audit report writes the structured price as 0,00 EUR like the rest of the report.
 // turva.dev worker v3.219.4 - the x402 error text on /x402, /api and the three /api/agent/* routes now states that x402 payment is declared but not verified, so the resource answers 402 regardless of payment; the HTTP 402 status, the x402 v2 shape and every other field stay (MCP stays 1.7.3).
 // turva.dev worker v3.219.3 - monthly guide source review (2026-11-03), every guide read against its primary sources: the x402 guide separates the authorization, upfront and escrow flows, the well-known guide says what backs the payment paths, the llms.txt guide follows the moved Gemini page, the citation guide drops an absolute, the server card guide quotes the extension README, and the commerce guide says contributed. The /api 402 description says no payment is accepted there, the implementation POST summary matches its siblings, and the signed server card and agent manifests say each fix is checked with a scanner or a direct test (MCP 1.7.3).
 // turva.dev worker v3.219.2 - the validator and parity submit buttons inherit the site font instead of the browser's button font, and every page sets text-size-adjust to 100% so iOS Safari does not inflate text in landscape; pinch zoom is unaffected.
@@ -4481,12 +4482,12 @@ Corrected 2026-09-28. Two more sentences overstated what the domain protects. Th
 
 Northwind Fasteners Oy and all readings in this report are invented. The example shows what a client receives: the finding, its evidence, who makes the correction and how the result is checked.
 
-Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 31 October 2026.
+Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 3 November 2026.
 
 ## What to fix first
 
 - **Priority:** Correct the product facts before improving scanner coverage.
-- **Evidence:** Product pages show a real price and lead time. Structured data reports €0.00 and InStock. The API leaves the price empty and marks the product purchasable.
+- **Evidence:** Product pages show a real price and lead time. Structured data reports 0,00 EUR and InStock. The API leaves the price empty and marks the product purchasable.
 - **Why it matters:** An assistant may give a buyer the wrong price or availability.
 - **Owner:** Implementation owner agreed with the client, and the source-data responsibilities remain explicit.
 - **Acceptance:** Compare the corrected page, structured data and API against the same product record across the catalog.
@@ -8145,7 +8146,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.219.4",
+    "version": "3.219.5",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8445,7 +8446,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.219.4",
+  "version": "3.219.5",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -11958,7 +11959,8 @@ function serveHomeHtml(canonicalUrl: string) {
     const v = r.slice(c + 2);
     const bad = / · conflict$/.test(v);
     if (bad !== (k !== 0)) throw new Error("home finding row " + (k + 1) + (k === 0 ? " is the reference reading and carries no conflict: " : " does not end in · conflict: ") + r);
-    return `<li class="rc-row${bad ? " rc-bad" : ""}"><span class="rc-k">${r.slice(0, c + 1)}</span> <span class="rc-v">${bad ? v.replace(/ conflict$/, "") : v}</span>${bad ? ' <span class="rc-flag">conflict</span>' : ""}</li>`;
+    // A no-break space ties each dot to the word before it, so no width can start a line with a dot. The parity check reads it as a space.
+    return `<li class="rc-row${bad ? " rc-bad" : ""}"><span class="rc-k">${r.slice(0, c + 1)}</span> <span class="rc-v">${(bad ? v.replace(/ conflict$/, "") : v).replace(/ ·(?= |$)/g, "&nbsp;·")}</span>${bad ? ' <span class="rc-flag">conflict</span>' : ""}</li>`;
   }).join("\n          ");
   const findLink = findParas[4].match(/^<a href="([^"]+)">([^<]+)<\/a>$/);
   if (!findLink) throw new Error("home finding card does not end in a link line");
@@ -12056,7 +12058,7 @@ main{max-width:none;margin:0;padding:0;}
 .muted{font-size:.9rem;color:#9AA3A0;}
 .mail-link{display:inline-block;margin-left:14px;color:#F2F4F3;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.3);padding:.15rem 0;}
 .mail-link:hover{color:#5DF18F;border-color:#5DF18F;text-decoration:none;}
-.board{margin:0 0 1rem;border:1px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.25rem;}
+.board{margin:.7rem 0 1rem;border:1px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.15rem 1.15rem 1.25rem;}
 .board-top{display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline;justify-content:space-between;margin:0 0 .9rem;}
 .board-top p{margin:0;}
 .board-head{font-size:.92rem;color:#F2F4F3;font-weight:600;}
