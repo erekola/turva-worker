@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.219.2 - the validator and parity submit buttons inherit the site font instead of the browser's button font, and every page sets text-size-adjust to 100% so iOS Safari does not inflate text in landscape; pinch zoom is unaffected.
 // turva.dev worker v3.219.1 - the MCP server moves to 1.7.2 and the signed server card with it: an unknown argument key in a tool error is cut at 64 characters and at most five keys are listed, the same limit an unknown tool name has, and the refusal itself does not change. /blog/what-a-publisher-owes-someone-elses-agent gains a dated note on it and keeps the 1.7.1 reading it measured. wrangler 4.156.2 in both Workers.
 // turva.dev worker v3.219.0 - new Protocol notes post /blog/what-a-publisher-owes-someone-elses-agent (2026-11-02) on what the publisher of an MCP server or a site owes the operator of the agent that uses it, read from the ASD guidance Agentic AI Harnesses and the MCP specification, with the public turva-mcp server measured as one sample of the author's own: its metadata, OG card, index row, sitemap row, llms.txt line and FAQ registration. No tool, no price and no audit scope changes.
 // turva.dev worker v3.218.8 - Agent operations on /services names the tools and connectors, memory, change review and worst outcome in its scope, and cites the ASD guidance Agentic AI Harnesses as its checklist (2026-11-02).
@@ -8142,7 +8143,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.219.1",
+    "version": "3.219.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8442,7 +8443,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.219.1",
+  "version": "3.219.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -10207,7 +10208,7 @@ function serve404(pathname: string, request?: Request | null) {
 <title>Page not found · turva.dev</title>
 <script src="/nav.js" defer></script>
 <style>
-html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;color-scheme:dark;}
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;color-scheme:dark;}
 main{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 4rem;}
 h1{color:#5DF18F;overflow-wrap:break-word;hyphens:auto;font-size:2rem;line-height:1.2;margin:0 0 1rem;}
 p{margin:0 0 1.1rem;}
@@ -11813,7 +11814,7 @@ ${WEBMCP_SCRIPT}
 <link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
-html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;color-scheme:dark;}
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(24px,5vw,72px) 3.5rem;}
 main *,main *::before,main *::after{box-sizing:border-box;}
 article h1{color:#F2F4F3;overflow-wrap:break-word;hyphens:manual;font-size:clamp(30px,3.4vw,46px);line-height:1.1;letter-spacing:-0.02em;margin:0 0 .9rem;font-weight:700;max-width:26ch;}
@@ -11996,7 +11997,7 @@ ${WEBMCP_SCRIPT}
 <link rel="ard" href="https://turva.dev/.well-known/ard.json" type="application/json" />
 <link rel="alternate" href="${markdownUrlFor(canonicalUrl)}" type="text/markdown" />
 <style>
-html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 h2{color:#F2F4F3;font-size:1.45rem;margin:0 0 0.85rem;font-weight:700;letter-spacing:-0.015em;}
 p{margin:0 0 1.05rem;color:#C9D1CE;}
 a{color:#5DF18F;text-decoration:none;}
@@ -12295,7 +12296,7 @@ const TBL_CSS = `.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:
 .tbl table{margin:0;min-width:100%;}
 .tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
 @media (max-width:640px){table.stack{display:block;border:0;min-width:0;}table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}table.stack tbody,table.stack tr{display:block;}table.stack tr{border:1px solid #2D3D3D;border-radius:10px;padding:.7rem .9rem;margin:0 0 .75rem;background:#111F21;}table.stack td{display:block;border:0;padding:.25rem 0;color:#C9D1CE;}table.stack td::before{content:attr(data-label);display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:#9AA3A0;margin:0 0 .1rem;}table.stack td:first-child{color:#F2F4F3;font-weight:600;}}`;
-const CARDPAGE_CSS = `html,body{background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;color-scheme:dark;}
+const CARDPAGE_CSS = `html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;background-color:#0A1316;overflow-wrap:break-word;color:#F2F4F3;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;color-scheme:dark;}
 main{max-width:68rem;box-sizing:content-box;margin:0 auto;padding:clamp(36px,5vw,56px) clamp(24px,5vw,72px) 3.5rem;}
 main *,main *::before,main *::after{box-sizing:border-box;}
 h1{color:#F2F4F3;overflow-wrap:break-word;font-size:clamp(30px,3.4vw,46px);line-height:1.1;letter-spacing:-0.02em;margin:0 0 .9rem;font-weight:700;max-width:24ch;}
@@ -12428,7 +12429,7 @@ ${TOC_SUB_CSS}
 .vform label{flex-basis:100%;font-size:.95rem;color:#F2F4F3;font-weight:600;}
 .vform input{flex:1 1 16rem;min-width:0;min-height:50px;background:#07110D;border:1px solid #5A6B68;border-radius:7px;padding:10px 14px;color:#F2F5F3;font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:16px;}
 #vurl::placeholder,#mpc-url::placeholder{color:#9AA3A0;}
-.vform button{min-height:50px;background:#5DF18F;color:#06100F;border:0;border-radius:7px;padding:10px 22px;font-weight:700;cursor:pointer;font-size:15px;}
+.vform button{font-family:inherit;min-height:50px;background:#5DF18F;color:#06100F;border:0;border-radius:7px;padding:10px 22px;font-weight:700;cursor:pointer;font-size:15px;}
 @media (max-width:560px){.vform input,.vform button{flex-basis:100%;width:100%;}.cta{flex-direction:column;}.btn,.btn-ghost,.cta-btn{width:100%;}}
 .result-sum,.sec .result-sum{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin:0 0 1rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;color:#C9D1CE;}
 .result-sum b{color:#F2F4F3;}
