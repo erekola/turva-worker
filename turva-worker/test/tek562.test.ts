@@ -194,7 +194,7 @@ test("hosted validator: a single-line setext H2 is a section and its links are t
 });
 
 test("hosted validator: what stays out of H2", async () => {
-  const noH2 = "no H2 sections found; sections are the convention for grouping links";
+  const noH2 = "no H2 sections found. Sections are the convention for grouping links";
   // A list item followed by a thematic break.
   let s = await sections(head + "- [Guide](https://example.org/a)\n---\n");
   assert.equal(s.status, "warn");

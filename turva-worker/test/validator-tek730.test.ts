@@ -81,7 +81,7 @@ test("Tek-730 A: the blanking stays linear on a document of unmatched backticks 
 test("Tek-730 B: a link entry with an unclosed destination warns in the links check", async () => {
   const nbdev = base + "- [Blogging](https://nbdev.fast.ai/tutorials/blogging.html.md: Creating a blog with notebooks)\n";
   assert.equal(await status(nbdev, "links"), "warn");
-  assert.equal(await detail(nbdev, "links"), "1 link, all absolute URLs; 1 list line looks like a link entry but is not a Markdown link (line 8)");
+  assert.equal(await detail(nbdev, "links"), "1 link, all absolute URLs. 1 list line looks like a link entry but is not a Markdown link (line 8)");
   assert.equal((await check(nbdev)).checks.length, (await check(base)).checks.length);
 });
 
@@ -92,7 +92,7 @@ test("Tek-730 B: an entry that starts with an en dash, an em dash or a bullet wa
     assert.match(await detail(t, "links"), /1 list line opens with a dash or bullet that is not a Markdown list marker \(line 8\)$/, mark);
   }
   const two = base + EN + " [A](https://example.com/a)\n" + EN + " [B](https://example.com/b)\n";
-  assert.equal(await detail(two, "links"), "3 links, all absolute URLs; 2 list lines open with a dash or bullet that is not a Markdown list marker (lines 8, 9)");
+  assert.equal(await detail(two, "links"), "3 links, all absolute URLs. 2 list lines open with a dash or bullet that is not a Markdown list marker (lines 8, 9)");
 });
 
 test("Tek-730 B: the detail names the first five lines and counts the rest", async () => {
@@ -128,7 +128,7 @@ test("Tek-730 B: only lines under an H2 and outside fences are read", async () =
 
 test("Tek-730 B: an unclosed entry in a file with no other link is one warning, not a second check", async () => {
   const lone = "# Example\n\n> Summary.\n\n## Docs\n\n- [Blogging](https://nbdev.fast.ai/b.md: notes)\n";
-  assert.equal(await detail(lone, "links"), "no markdown links found; 1 list line looks like a link entry but is not a Markdown link (line 7)");
+  assert.equal(await detail(lone, "links"), "no markdown links found. 1 list line looks like a link entry but is not a Markdown link (line 7)");
 });
 
 // Tek-745 K10a: the note has two kinds. A look-alike marker is no list item whether or not its link
@@ -136,14 +136,14 @@ test("Tek-730 B: an unclosed entry in a file with no other link is one warning, 
 test("Tek-745 K10a: a look-alike marker with a link that parses is counted and named as a marker, not as a broken link", async () => {
   const one = "# Example\n\n> Summary.\n\n## Docs\n\n" + EN + " [B](https://example.com/b)\n";
   assert.equal(await status(one, "links"), "warn");
-  assert.equal(await detail(one, "links"), "1 link, all absolute URLs; 1 list line opens with a dash or bullet that is not a Markdown list marker (line 7)");
+  assert.equal(await detail(one, "links"), "1 link, all absolute URLs. 1 list line opens with a dash or bullet that is not a Markdown list marker (line 7)");
 });
 
 test("Tek-745 K10a: a file with both kinds gives both notes, the broken link first", async () => {
   const both = base + "- [Bad](https://example.com/b: notes)\n" + EM + " [X](https://example.com/x)\n" + BULLET + " [Y](https://example.com/y)\n";
   assert.equal(await status(both, "links"), "warn");
   assert.equal(await detail(both, "links"),
-    "3 links, all absolute URLs; 1 list line looks like a link entry but is not a Markdown link (line 8); 2 list lines open with a dash or bullet that is not a Markdown list marker (lines 9, 10)");
+    "3 links, all absolute URLs. 1 list line looks like a link entry but is not a Markdown link (line 8). 2 list lines open with a dash or bullet that is not a Markdown list marker (lines 9, 10)");
   const none = await detail(base + "- [Bad](https://example.com/b: notes)\n" + EN + " [X](https://example.com/x)\n", "links");
   assert.doesNotMatch(none, /agent will not follow/);
 });
