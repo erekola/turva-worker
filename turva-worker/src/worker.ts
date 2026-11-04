@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.223.1 - /blog/why-i-back-up-every-night says that Macrium notifies on a failed backup and names the cause of the failed images of 18 and 19 October, with a dated update note.
 // turva.dev worker v3.223.0 - new Build notes post /blog/why-i-back-up-every-night (2026-11-04) on the nightly clone, the encrypted images on a mirrored NAS and what has failed so far; the blog index counts 48 articles; the clean install post gets a dated update that points at it.
 // turva.dev worker v3.222.0 - the hosted llms.txt validator has one reading of a fence (Tek-749). fenceMask takes its fences from inlineBlockReader, so a fence inside a list item or on its marker line is a fence for every check. A closing line inside the item no longer opens a new fence that hides the lines after it, and an unclosed fence inside a list item ends when the item closes. In a nested list, a line after a blank line or a fence counts for the outer item when it is indented to that item's content column. Section and link counts compared with commonmark.js 0.31.2.
 // turva.dev worker v3.221.0 - the hosted llms.txt validator reads more of CommonMark's blocks when it pairs backtick runs (Tek-747). A heading line is a block of its own, an empty list item or a numbered item that does not start at 1 continues an open paragraph unless the line closes an open item, a thematic break or a setext underline ends a paragraph, and a fence inside a list item that the caller did not blank and that is not indented code hides what it holds. Block quotes and HTML blocks are still not read. Compared with commonmark.js 0.31.2. The sentences the validator writes in a check's detail no longer hold a semicolon, a sentence break stands there, and no status moves with that.
@@ -637,7 +638,7 @@ They fail in different ways. The clone is meant to get me working again fastest,
 
 A clone copies whatever is on the disk that night, damage included. One of my agent sessions once truncated a shared log. A file damaged like that before the clone runs replaces the last good version on the clone. That log came back from git, and one session's entry was lost. For a file outside git, the images hold the older versions.
 
-A full image runs on the first Monday of the month, a differential every Monday and an incremental every day. I keep full images for 14 weeks, differentials for 4 weeks and incrementals for 7 days. Macrium encrypts each one with AES-256 and verifies it after the run. The full image of 2 November was 91,27 GB, and the run with its verification took 17 minutes 36 seconds.
+A full image runs on the first Monday of the month, a differential every Monday and an incremental every day. I keep full images for 14 weeks, differentials for 4 weeks and incrementals for 7 days. Macrium encrypts each image with AES-256 and verifies every backup after the run, and it notifies me if one fails. The full image of 2 November was 91,27 GB, and the run with its verification took 17 minutes 36 seconds.
 
 ## Is a mirrored NAS already a backup?
 
@@ -651,7 +652,7 @@ Five incidents from my records since August, and none of them forced me to start
 - 17 September. A second cloud sync service I ran then started with an empty sync state and rolled 1 380 files back to their July versions. I recovered them from the renamed files that the client left on my local disk, so no backup layer was used. I removed that service a week later.
 - 30 September. I reinstalled Windows and restored my workspace from a Proton file copy made before my first sign-in to the new Windows. Proton had not downloaded its online-only files, so the work folder came back as empty folders, and I refilled it from Proton. Whatever I wrote that day before the reinstall is lost. My secrets vault would not decrypt under the new Windows profile, and the private keys came back from encrypted copies kept elsewhere. I did not read the nightly disk, and no image was on a schedule yet.
 - 15 October. I deleted my first two images on the NAS by accident. No snapshot existed yet and the share had no recycle bin, so both are gone for good. I set up snapshots the same day.
-- 18 and 19 October. The image failed on both nights because the NAS path was not found, and the clone ran normally. I did not notice until 27 October, when an agent session read the header of every log. A morning check now goes red when the newest successful clone or image is older than 30 hours.
+- 18 and 19 October. The image failed on both nights because the power cord of the NAS was not pressed fully into its UPS, so the NAS path was not found. The clone ran normally. I did not follow it up until 27 October, when an agent session read the header of every log. A morning check now also goes red when the newest successful clone or image is older than 30 hours.
 
 From 16 October to 4 November the Macrium logs show a clone on each of the 20 days with no error, and an image on each of the 20 days with those two failures.
 
@@ -682,6 +683,8 @@ It keeps older generations at longer intervals. Mine makes a full image on the f
 **Does the 3-2-1 rule need a full machine image off site?**
 
 The rule counts copies of your data, so off-site copies of my files meet it for my work. My machine image has no off-site copy, so a fire would mean rebuilding Windows and restoring the files.
+
+Updated 2026-11-04. The post now says that Macrium notifies me when a backup fails, and it names the cause of the failed images of 18 and 19 October.
 
 ## Related
 
@@ -8256,7 +8259,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.223.0",
+    "version": "3.223.1",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8556,7 +8559,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.223.0",
+  "version": "3.223.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9416,6 +9419,7 @@ const META_BY_PATH = {
     title: "I can't start over, so I back up every night · turva.dev",
     description: "A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.",
     date: "2026-11-04",
+    modified: "2026-11-04",
     kind: "Build notes",
     image: "/og-why-i-back-up-every-night.jpg",
     imageAlt: "Card with the headline I can't start over, so I back up every night, and the line A nightly clone, encrypted NAS images and what has failed so far.",
