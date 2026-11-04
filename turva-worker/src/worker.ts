@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.220.0 - corrections from two outside reads of 2026-11-03 (Tek-745). /services says the access sentence is about the add-on. Five posts and the auth.md post carry dated corrections: the patch-surge post says the CVE count rose and marks the reading about supply as the author's, agent-secret-hygiene says a copy of the working directory holds only what is inside it, the TRACE table says attests with the Level 0 limit, the checks table no longer lists a counterfactual as observed, and identity-vendors says served at the addresses the scanner reads. /external-domain-check limits the refund sentence to measurement problems. /auth.md measures HEAD and says every resource this site lists is public, and the WebMCP get_page description no longer promises byte equality with the page, so the CSP hash moved. The llms.txt validator: a backtick pair across a block boundary no longer consumes its closer, the links note separates an unparsed link from a look-alike list marker and drops the unmeasured agent claim, and the discovery info names the 256 KiB read limit when the home page was cut. The hosted parity check moves to markdown-parity-check 0.2.31.
 // turva.dev worker v3.219.5 - three small fixes from a visual review (2026-11-03): the home page scan board keeps the card grid's gap instead of touching the cards above it, a no-break space ties each dot in the finding card to the word before it so no width starts a line with a dot, and the sample audit report writes the structured price as 0,00 EUR like the rest of the report.
 // turva.dev worker v3.219.4 - the x402 error text on /x402, /api and the three /api/agent/* routes now states that x402 payment is declared but not verified, so the resource answers 402 regardless of payment; the HTTP 402 status, the x402 v2 shape and every other field stay (MCP stays 1.7.3).
 // turva.dev worker v3.219.3 - monthly guide source review (2026-11-03), every guide read against its primary sources: the x402 guide separates the authorization, upfront and escrow flows, the well-known guide says what backs the payment paths, the llms.txt guide follows the moved Gemini page, the citation guide drops an absolute, the server card guide quotes the extension README, and the commerce guide says contributed. The /api 402 description says no payment is accepted there, the implementation POST summary matches its siblings, and the signed server card and agent manifests say each fix is checked with a scanner or a direct test (MCP 1.7.3).
@@ -226,7 +227,7 @@ max_age: 604800
 
 const CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-bcWHr5v+/YuuK/QA/Tr1gF881LA3xaEu6gm0X1K9gGQ='",
+  "script-src 'self' 'sha256-GzorUUaqkbE0fJnUuWF32TkiT9Ar7OcfnbRppjka5FQ='",
   "style-src 'self' 'unsafe-inline' data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -490,8 +491,8 @@ answers one carrying a token.
 
 The three names are read:services, read:principles and
 read:scan-evidence. They name areas of this site. No scope grants
-access that anonymous does not already have, because every
-resource is already public.
+access that anonymous does not already have, because no resource
+on this site sits behind a credential.
 
 ## Identity
 
@@ -505,13 +506,13 @@ resource is already public.
 
 ## Supported identity types
 
-- anonymous: no registration, every resource is public read-only;
-  an api_key can be issued out-of-band on request
+- anonymous: no registration, every resource this site lists is
+  public read-only. An api_key can be issued out-of-band on request
 - identity_assertion: a registered operator identity, backed by a
   verified email or a signed assertion; the same api_key applies
 
-A credential only attributes correspondence. Every resource is
-public, none requires a credential, and no credential grants
+A credential only attributes correspondence. Every resource this site
+lists is public, none requires a credential, and no credential grants
 additional access.
 
 ## Registration
@@ -545,10 +546,11 @@ six years for invoice records under Finnish accounting law.
 
 ## Endpoint responses
 
-Measured on this domain 2026-09-04.
+Measured on this domain 2026-11-04.
 
 - GET and POST to the registration, claim and revocation endpoints
   answer 200 with application/json describing the email pathway.
+- HEAD answers as GET does, without a body.
 - OPTIONS answers 204.
 - Any other method answers 405 with the header
   Allow: GET, HEAD, POST, OPTIONS.
@@ -2335,7 +2337,7 @@ Levels first. Fifteen came out at Level 1, three at Level 0 and one at Level 2. 
 
 ## The column where every one of them scored zero
 
-The scanner has a group for API, auth, MCP and A2A discovery, nine checks in all: apiCatalog, oauthDiscovery, oauthProtectedResource, authMd, mcpServerCard, a2aAgentCard, agentSkills, webMcp and ard. Every company scored zero of nine. Not one of the 19 publishes an API catalog, an OAuth discovery document, an MCP server card, an A2A agent card or an ARD manifest. One authMd check failed with a 500 rather than a 404, which is a broken answer and not evidence of a missing file, and that is the only nuance in the whole column. These are companies whose product is machine to machine verifiable identity.
+The scanner has a group for API, auth, MCP and A2A discovery, nine checks in all: apiCatalog, oauthDiscovery, oauthProtectedResource, authMd, mcpServerCard, a2aAgentCard, agentSkills, webMcp and ard. Every company scored zero of nine. Not one of the 19 served an API catalog, an OAuth discovery document, an MCP server card, an A2A agent card or an ARD manifest at the addresses the scanner reads. One authMd check failed with a 500 rather than a 404, which is a broken answer and not evidence of a missing file, and that is the only nuance in the whole column. These are companies whose product is machine to machine verifiable identity.
 
 ## The smaller readings
 
@@ -2381,6 +2383,8 @@ Corrected 2026-09-28. Two more sentences overreached in the same way. The zero c
 
 Corrected 2026-11-01. The FAQ called the nine checks nine addresses. One of them, webMcp, is not an address an agent fetches, so the answer now says checks.
 
+Corrected 2026-11-04. One sentence said "Not one of the 19 publishes" five kinds of document. The scan read only the addresses its checks use on each company's front-page host, so the sentence now says served at those addresses. No reading changed.
+
 ## Related
 
 - [I scanned thirteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts)
@@ -2422,7 +2426,7 @@ The gap is easy to walk into in one direction in particular. If you build agains
 
 This site follows the scanner's naming, because that is what was measurable when the file was written and because a rename would drop a check this site's own score rests on. The file is at https://turva.dev/auth.md, served as text/markdown, and the protected resource metadata carries all five fields the WorkOS discovery step names.
 
-What this site does not implement is both of the WorkOS ceremonies. Agent verified needs an identity provider to vouch for a user, and user claimed needs a device-code confirmation. Neither exists here for the same reason: there are no user accounts, every resource is public and read only, and nothing on the domain answers 401, so there is no challenge for an agent to bootstrap from. The file now says that in its own words rather than describing a flow that is not there, and it names the protocol so a reader can see the difference for themselves.
+What this site does not implement is both of the WorkOS ceremonies. Agent verified needs an identity provider to vouch for a user, and user claimed needs a device-code confirmation. Neither exists here for the same reason: there are no user accounts, every resource the site lists is public and read only, and nothing on the domain answers 401, so there is no challenge for an agent to bootstrap from. The file now says that in its own words rather than describing a flow that is not there, and it names the protocol so a reader can see the difference for themselves.
 
 The word claim is its own trap. On this site it means proving control of an identifier you already corresponded under. In the protocol it means a ceremony where the agent shows the user a code to confirm in a browser. Same word, two mechanisms, and the file now separates them.
 
@@ -2442,11 +2446,13 @@ That depends on what will read your site. If a scanner grades you, use the names
 
 **Does a site need an auth.md at all?**
 
-Only if an agent could ever need permission to do something there. A site that is entirely public and issues no credential that grants access can publish one to say exactly that, which is what this site does: its only credential is an optional api_key that attributes correspondence. There is nothing dishonest about not having the file when there is nothing to authenticate.
+Only if an agent could ever need permission to do something there. A site that asks for no credential and issues none that grants access can publish one to say exactly that, which is what this site does: its only credential is an optional api_key that attributes correspondence. There is nothing dishonest about not having the file when there is nothing to authenticate.
 
 Corrected 2026-09-06. The answer to the last question said this site issues no credentials. Its auth.md describes an optional api_key that attributes correspondence and grants no access, and the answer now says so.
 
 Corrected 2026-11-02. The answer on field names said no third answer exists. Neither document I read rules out publishing both sets of names, so it now says I have not found a third answer.
+
+Corrected 2026-11-04. A sentence said "every resource is public and read only", and an answer below called the site "entirely public". A brief sent to one company sits at an unlisted address, so the sentence now says every resource the site lists and the answer says the site asks for no credential. No other claim changed.
 
 ## Related
 
@@ -2659,9 +2665,9 @@ Corrected 2026-10-16. One sentence said Level 1 is the floor an ordinary CMS sit
 
 This article examines what a TRACE Trust Record attests to, and why runtime evidence does not itself establish the right permissions or correct decisions.
 
-| What a Trust Record establishes | What it does not establish |
+| What a Trust Record attests | What it does not establish |
 | --- | --- |
-| Which model ran, on what hardware, under which policy, against which class of data and which tools it called | Whether the systems the agent touched were readable to it, or should have been |
+| Which model ran, on what hardware, under which policy, against which class of data and which tools it called, as a claim that at Level 0 a privileged operator can forge | Whether the systems the agent touched were readable to it, or should have been |
 | At Level 1 and above, that the record was signed inside a verified TEE the operator cannot rewrite afterwards | Whether the tool it called should have been callable at all, or whether the decision boundary around it was written down anywhere |
 | At Level 2, that the record has not been altered since it was logged in a transparency log | The state of the machine that produced the report, even when the producer checked it |
 
@@ -2716,6 +2722,8 @@ Sources: [Linux Foundation press release, 25 August 2026](https://www.linuxfound
 Corrected 2026-09-28. A paragraph paraphrased the project's limitations page as saying DORA needs Level 1 with transparency log anchoring. It now quotes the page's own wording, that neither a TRACE level nor log anchoring alone establishes compliance with the EU AI Act or DORA.
 
 Corrected 2026-11-02. A sentence called the download figure the contributing vendor's own number and said it counts installs. The Linux Foundation's announcement gives it as PyPI downloads and names no source for it, so the sentence now says that. Another sentence said a Trust Record proves how an agent ran. It now says attests, because a Level 0 record can be forged, as the project's limitations page says.
+
+Corrected 2026-11-04. The table's first column was headed "establishes", and its first row stated which model ran without naming a level. At Level 0 a privileged operator can produce a valid-looking record for a run that never happened, so the header now says attests and the first row says it is a claim at that level. No other claim changed.
 
 ## Related
 
@@ -3160,18 +3168,20 @@ So the gate would have kept passing. It would have reported the same clean count
 
 ## What the two have in common, at a glance
 
-| Observed result | Intended target | Corrected check |
+| Result of the check | Intended target | Corrected check |
 |---|---|---|
 | Every rewritten link resolved with a normal response | The frozen 2026-07-28 tree | The promote step now runs all three rewrites over all three copied trees, with the changelog compare pinned to the new tag |
-| The parity script kept reporting a clean count | The live server running the new stateless revision | The parity block was rewritten around the new discovery request, with two checks added for what the old transport had no equivalent for |
+| The parity script would have kept reporting a clean count, had I not rewritten it before the migration shipped | The live server running the new stateless revision | The parity block was rewritten around the new discovery request, with two checks added for what the old transport had no equivalent for |
 
 ## What the two have in common
 
-Both are the same defect wearing different clothes. In the release it was links that resolve, so nothing is broken. In my gate it was a check that passes, so nothing is red. In both cases the text and the tooling were fine in isolation and the thing between them had quietly stopped being true.
+Both are the same defect wearing different clothes. In the release it was links that resolve, so nothing is broken. In my gate it was a check that would have passed, so nothing would have been red. In both cases the text and the tooling were fine in isolation, and the thing between them had stopped being true or, in the gate's case, was about to.
 
 The practical version, for anyone maintaining a checker: a gate that only fails on breakage cannot tell you that it has started measuring the wrong thing. When the thing under test changes shape, read what your own check actually speaks to. Mine was one line of code and a protocol version, and I would not have found it by running it.
 
 The lesson I took from reading a spec this way is narrower than I expected. On a mature spec, the prose has been over hundreds of eyes and the review process works. The publishing machinery around it has been over far fewer. That is where a fresh reader still has something to contribute.
+
+Corrected 2026-11-04. The table at a glance said under the heading "Observed result" that the parity script kept reporting a clean count. I rewrote the parity block before the migration shipped, so that result was never observed. The row now says would have, the column is headed "Result of the check", and the paragraph after the table and the image text say the same. No other claim changed.
 
 ## Related
 
@@ -3415,9 +3425,9 @@ More than twice the volume of the same month a year earlier, and the median CVE 
 
 One caveat, stated plainly. The share of CVEs Microsoft did not assign a CVSS score to rose from 5 % to 38 %. Those are likely Chromium-inherited Edge issues, which Microsoft does not usually score itself. The severity claim above holds for what Microsoft scored. I cannot speak for the rest, and neither can anyone who has not opened the file.
 
-## Why the well did not run dry
+## Why the count kept rising
 
-Windows has been patched for thirty years. Intuition says the supply of findable bugs should be thinning. Instead it tripled.
+Windows has been patched for thirty years. Intuition says the supply of findable bugs should be thinning. Instead the monthly CVE count reached about three times my sampled baseline in July 2026. A CVE count does not measure the supply of bugs directly, so what follows about supply is my reading.
 
 The explanation is in Microsoft's own May post about MDASH, their multi-model agentic scanning harness. Run against five years of confirmed vulnerabilities in clfs.sys, it re-found 96 % of them. In tcpip.sys, 100 %.
 
@@ -3477,6 +3487,8 @@ Corrected 2026-10-23. The bounty section said curl had no money to fund a filter
 
 Corrected 2026-11-02. The table gave 33,4 % of the July 2025 CVEs as rated Moderate. Recounted from Microsoft's CVRF data as pulled on 14 October 2026, 225 of the 527 CVEs this post counted have Moderate as their first severity rating, which is 42,7 %, and I could not reproduce 33,4 % by any rule I tried. The table and the sentence under it now carry the recount. The July 2026 figure is unchanged. A section also stated as fact that the bugs were discoverable the entire time. Microsoft's figures are recall on 28 and 7 confirmed cases, so that sentence and the next paragraph now mark it as my reading.
 
+Corrected 2026-11-04. A sentence said the supply of findable bugs tripled, with the words "Instead it tripled", and the heading above it said the well did not run dry. The post counts CVEs in monthly Microsoft documents, about 3,0 times the eight-month sample baseline and about 2,7 times the 21-month average. The sentence now says the count rose and marks what follows about supply as my reading, and the heading names the count. No count changed.
+
 ## Related
 
 - [Measure agent-readiness with evidence](/guides/measurement-led-agent-readiness)
@@ -3489,7 +3501,7 @@ Corrected 2026-11-02. The table gave 33,4 % of the July 2025 CVEs as rated Moder
 
 Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.
 
-Coding agents now run with your shell. They read your files and run your build. They push commits under your name. That is the point of them. It also means every plaintext secret on your disk is readable by the agent, and by every backup or synced folder that copies your working directory. A token in a text file was a small risk when only you could read it. It is a larger one the moment something else is holding the keyboard.
+Coding agents now run with your shell. They read your files and run your build. They push commits under your name. That is the point of them. It also means every plaintext secret your account can read is readable by the agent, and every backup or synced folder that copies your working directory holds a copy of each plaintext secret inside it. A token in a text file was a small risk when only you could read it. It is a larger one the moment something else is holding the keyboard.
 
 This is the question an agent-readiness audit asks about your product, turned inward. If you care how a third party exposes data to an agent, your own machine is the first place to get it right.
 
@@ -3531,7 +3543,7 @@ In storage the operating system encrypts and scopes to your account. The Data Pr
 
 **Why is a token in a plain file a bigger risk than it used to be?**
 
-Because the file is no longer only yours. A coding agent reads your files and runs your build, and so does every backup or synced folder that copies your working directory. A stray copy or a screen-share exposes the same plaintext.
+Because the file is no longer only yours. A coding agent reads your files and runs your build, and every backup or synced folder that copies your working directory copies the files in it. A stray copy or a screen-share exposes the same plaintext.
 
 **Why does a git push keep asking for authentication on Windows?**
 
@@ -3542,6 +3554,8 @@ Corrected 2026-10-02. Two sentences claimed more than their sources. The Linux s
 Corrected 2026-10-23. The first caveat said such a vault cannot be decrypted after a reinstall. A reinstall that keeps or migrates the key material leaves the vault readable, so the caveat now says: "A vault encrypted with a key from your OS account stays readable after a reinstall only if that key material survived it, through a backup or a migration the platform supports, so keep an offline backup of anything you cannot regenerate, like a private signing key."
 
 Corrected 2026-10-30. A sentence said most people authenticate git with a personal access token pasted into a credentials file. Nothing in this post measures that, so the sentence now speaks only to a reader who does.
+
+Corrected 2026-11-04. One sentence said "every plaintext secret on your disk is readable by the agent, and by every backup or synced folder that copies your working directory", and the FAQ answer said such a copy also runs your build. A copy of the working directory holds only the files inside it, and both sentences now say that. No other claim changed.
 
 ## Related
 
@@ -3844,7 +3858,7 @@ Eight checks examine the file:
 - It starts with an H1 title.
 - It includes the recommended blockquote summary directly after the title. A blockquote that comes later but before the first H2 heading gets the same warning with its line number.
 - H2 headings group the content.
-- Markdown links parse and use absolute URLs. A list line under an H2 that starts like a link entry but is not a Markdown link, such as one with an unclosed destination, gets a warning.
+- Markdown links parse and use absolute URLs. A list line under an H2 that starts like a link entry but is not a Markdown link, such as one with an unclosed destination, gets a warning, and so does one that opens with a dash or bullet that is not a Markdown list marker.
 - The file is small enough to read cheaply. A file over 50 KiB gets a warning, and one over 256 KiB is read truncated. With --strict, a warning fails the run.
 - It contains no inline HTML. HTML tags in prose produce a warning, and angle brackets inside inline code, code fences or after a backslash do not.
 
@@ -5383,7 +5397,7 @@ Your team can implement the report. If you want me to do it, the €499 correcti
 
 The fixed price covers the whole list, whatever the number of corrections. Work outside that list is agreed separately at the day rate. When the add-on is bought, the included retest or re-scan window starts on the day the corrections are delivered, so the check reads the finished work.
 
-For an audit, I need an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. If the required access cannot be arranged, the add-on is not sold. Your team still receives the correction instructions.
+For this add-on, I need an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. If the required access cannot be arranged, the add-on is not sold. Your team still receives the correction instructions.
 
 I estimate about two days to implement the fixes an audit identifies, based on the kind of fixes the sample report lists. This is not a fixed quote or a limit on the €499 add-on.
 
@@ -5750,7 +5764,7 @@ The main parts are the agent-readiness reading and the internet.nl website and e
 
 A finished measurement that ends in "no reading" with a reason is a valid result, and it is not grounds for a refund. Examples are a report that your site blocked the scanner, and two finished runs of the scanner that disagree where the difference cannot be settled. A report with nothing to fix is also a valid delivery.
 
-I refund the price only when a measurement could not be run at all. A run is done when the tool returns a report, even a report in which checks fail or categories are missing. It is not done when the tool returns no report, for any reason, or when I could not start it. In that case I tell you and rerun the part that stopped within two business days of the notice. A scanner run that stopped is rerun so that there are two finished runs. It is not a third run to settle a difference between finished runs.
+For a measurement problem, I refund the price only when a measurement could not be run at all. A run is done when the tool returns a report, even a report in which checks fail or categories are missing. It is not done when the tool returns no report, for any reason, or when I could not start it. In that case I tell you and rerun the part that stopped within two business days of the notice. A scanner run that stopped is rerun so that there are two finished runs. It is not a third run to settle a difference between finished runs.
 
 If the rerun also fails within that time, I send a partial report and a notice of the missing part by the last day of that period, and I refund the whole price, VAT included.
 
@@ -8104,7 +8118,7 @@ const AGENT_AUTH_BLOCK = {
   // and no document listed; verified_email is an ASSERTION type under identity_assertion, not
   // an identity type of its own (2026-08-01).
   supported_identity_types: ["anonymous", "identity_assertion"],
-  credentials_note: "Credentials only attribute correspondence. Every resource is public and none requires a credential."
+  credentials_note: "Credentials only attribute correspondence. Every resource this site lists is public and none requires a credential."
 };
 
 const API_CATALOG = JSON.stringify({
@@ -8146,7 +8160,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.219.5",
+    "version": "3.220.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8446,7 +8460,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.219.5",
+  "version": "3.220.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9083,7 +9097,7 @@ const WEBMCP_SCRIPT = `<script>
  },
  {
  name: 'get_page',
- description: 'Return the markdown source of one page on turva.dev, byte for byte the text a person reads on that page. Takes a path on this site, for example /guides/llms-txt or /agent-readiness-audit. Read-only. The path is resolved against this site and anything that resolves to another origin is refused, so the tool cannot be pointed elsewhere.',
+ description: 'Return the markdown twin of one page on turva.dev, as served for Accept: text/markdown. It carries the main content of the page. The frame around it, such as the Sources checked day of a guide, is only in the HTML. Takes a path on this site, for example /guides/llms-txt or /agent-readiness-audit. Read-only. The path is resolved against this site and anything that resolves to another origin is refused, so the tool cannot be pointed elsewhere.',
  inputSchema: { type: 'object', properties: { path: { type: 'string', description: 'A path on turva.dev beginning with a slash, for example /services. Use search_content to find one.' } }, required: ['path'] },
  outputSchema: { type: 'object', properties: { path: { type: 'string' }, markdown: { type: 'string' }, bytes: { type: 'number' }, error: { type: 'string' }, status: { type: 'number' } }, required: ['path'] },
  execute: async function(args) {
@@ -9129,7 +9143,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-03";
+const SITEMAP_LASTMOD = "2026-11-04";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9459,7 +9473,7 @@ const META_BY_PATH = {
     title: "What 19 identity vendors publish for agents · turva.dev",
     description: "A dated scan of 19 identity vendors examines what their public sites expose for agents, and what the results cannot say about the products behind them.",
     date: "2026-09-05",
-    modified: "2026-11-01",
+    modified: "2026-11-04",
     kind: "Research",
     image: "/og-agent-readiness-identity-vendors.jpg",
     imageAlt: "turva.dev blog card: 19 digital identity and trust vendors scanned, every one scored zero of nine on agent, API and MCP discovery.",
@@ -9469,7 +9483,7 @@ const META_BY_PATH = {
     titleTag: "Two auth.md formats compared · turva.dev",
     description: "Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.",
     date: "2026-09-04",
-    modified: "2026-11-02",
+    modified: "2026-11-04",
     kind: "Protocol notes",
     image: "/og-two-auth-md-dialects.jpg",
     imageAlt: "turva.dev blog card: WorkOS publishes an open auth.md protocol and the isitagentready scanner publishes another. Both live at the same path and name three fields differently.",
@@ -9507,7 +9521,7 @@ const META_BY_PATH = {
     titleTag: "TRACE runtime attestation and its limits · turva.dev",
     description: "This article examines what a TRACE Trust Record attests to, and why runtime evidence does not itself establish the right permissions or correct decisions.",
     date: "2026-08-30",
-    modified: "2026-11-02",
+    modified: "2026-11-04",
     kind: "Protocol notes",
     image: "/og-trace-runtime-attestation.jpg",
     imageAlt: "turva.dev blog card: The Linux Foundation now governs TRACE. Its own documentation is where the limits are: three trust levels, and Level 0 records a privileged operator can forge.",
@@ -9561,10 +9575,10 @@ const META_BY_PATH = {
     title: "The checks that pass for the wrong reason · turva.dev",
     description: "A link can resolve successfully and still point to the wrong version. This investigation examines checks that pass while validating the wrong target.",
     date: "2026-07-29",
-    modified: "2026-10-31",
+    modified: "2026-11-04",
     kind: "Build notes",
     image: "/og-checks-that-pass-for-the-wrong-reason.jpg",
-    imageAlt: "turva.dev blog card: A spec release left thirteen links pointing at the living draft, and my own gate kept passing while measuring the wrong lane. The same defect twice."
+    imageAlt: "turva.dev blog card: A spec release left thirteen links pointing at the living draft, and my own gate would have kept passing while measuring the wrong lane. The same defect twice."
   },
   "/blog/finishing-the-optional-commerce-checks": {
     title: "Finishing the optional commerce checks · turva.dev",
@@ -9600,7 +9614,7 @@ const META_BY_PATH = {
     description: "A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.",
     date: "2026-07-15",
     kind: "Research",
-    modified: "2026-11-02",
+    modified: "2026-11-04",
     image: "/og-measuring-the-ai-patch-surge.jpg",
     imageAlt: "Measuring the AI patch surge from MSRC data"
   },
@@ -9608,7 +9622,7 @@ const META_BY_PATH = {
     title: "Reducing secret exposure in coding-agent workflows · turva.dev",
     description: "Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.",
     date: "2026-07-12",
-    modified: "2026-10-30",
+    modified: "2026-11-04",
     kind: "Build notes",
     image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
@@ -13216,28 +13230,34 @@ type LlmsTxtInput = FetchRedirect | (Partial<FetchedLlmsTxt> & Pick<FetchedLlmsT
 // length anywhere in the text; a pair that crosses a block boundary, a blank line (blank or
 // made only of spaces and tabs), a heading line or a new list item, is not a code span in
 // CommonMark, so it is left unmasked and its backticks stay literal (VREG2, round 3 Tek-542:
-// backticks in two different list items used to enclose a real hyperlink between them). An
-// escaped first backtick is literal and the rest of its run still opens, while a closing run
-// is never escaped, because a backslash inside a code span is literal. Runs are grouped by
-// length and every group is read with one forward pointer, so the scan stays linear on a
-// document of unmatched runs. The package turva-llms-txt-validator mirrors this from 0.3.11.
-function crossesBlockBoundary(text: string, start: number, end: number): boolean {
-  const inner = text.slice(start, end);
-  if (/\n[ \t]*\n/.test(inner)) return true;
-  const lines = inner.split("\n");
-  for (let i = 1; i < lines.length; i++) {
-    if (/^ {0,3}(#{1,6}(?:[ \t]|$)|[-*+][ \t]|\d{1,9}[.)][ \t])/.test(lines[i])) return true;
-  }
-  return false;
+// backticks in two different list items used to enclose a real hyperlink between them). Such a
+// pair consumes neither run: its closer is still free to open a span of its own in its own
+// block. Until 2026-11-04 the scan jumped past the closer, so a stray backtick moved the mask by
+// one run, a link inside the next real span counted as a link and text after it could count as
+// code (Tek-745). An escaped first backtick is literal and the rest of its run still opens, while
+// a closing run is never escaped, because a backslash inside a code span is literal. Each run
+// carries the number of boundary lines before it, read once per line, so comparing two runs
+// costs nothing however far apart they sit. Runs are grouped by length and every group is read
+// with one forward pointer, so the scan stays linear on a document of unmatched runs. The
+// package turva-llms-txt-validator mirrors this from 0.5.1.
+function endsInlineBlock(line: string): boolean {
+  return /^[ \t]*$/.test(line) || /^ {0,3}(#{1,6}(?:[ \t]|$)|[-*+][ \t]|\d{1,9}[.)][ \t])/.test(line);
 }
 function codeSpanMask(text: string): Uint8Array {
   const mask = new Uint8Array(text.length);
   const runs = [];
+  let block = 0;
   for (let i = 0; i < text.length; ) {
+    if (text[i] === "\n") {
+      const next = text.indexOf("\n", i + 1);
+      if (endsInlineBlock(text.slice(i + 1, next < 0 ? text.length : next))) block++;
+      i++;
+      continue;
+    }
     if (text[i] !== "`") { i++; continue; }
     let j = i;
     while (j < text.length && text[j] === "`") j++;
-    runs.push({ at: i, len: j - i, escaped: isEscaped(text, i) });
+    runs.push({ at: i, len: j - i, escaped: isEscaped(text, i), block });
     i = j;
   }
   const byLen = new Map<number, number[]>();
@@ -13253,9 +13273,8 @@ function codeSpanMask(text: string): Uint8Array {
     ptr.set(len, p);
     if (p === list.length) continue;
     const close = runs[list[p]];
-    const start = r.escaped ? r.at + 1 : r.at;
-    const end = close.at + close.len;
-    if (!crossesBlockBoundary(text, start, end)) mask.fill(1, start, end);
+    if (close.block !== r.block) continue;
+    mask.fill(1, r.escaped ? r.at + 1 : r.at, close.at + close.len);
     k = list[p];
   }
   return mask;
@@ -13639,15 +13658,17 @@ function blankCodeForHtml(prose: string): string {
 // shapes: an entry whose destination is not closed, "- [Name](https://x.example/a.md: notes)",
 // which holds a space and so is no CommonMark link, and an entry whose marker is an en dash, an
 // em dash or a bullet, which is no Markdown list marker. Both read as links to a person and are
-// invisible to the parser, so the links check counted the file as fine while an agent skipped the
+// invisible to the parser, so the links check counted the file as fine and never counted the
 // entry. Only lines outside fences and under an H2 are read. A line counts when it opens, after
 // optional indentation, with a list marker (a hyphen, an asterisk, a plus or a number with a
 // period or a parenthesis) or one of the three look-alike markers, then white space and "[", and
 // no link that collectLinks found starts at that "[". A line with one of the three look-alike
 // markers counts whether or not its link parses, because it is no list item either way. A task
-// list box such as "- [x] done" is not an entry. Returns the one-based line numbers.
-function unparsedLinkEntries(lines: string[], fenced: boolean[], linkAt: Set<number>): number[] {
-  const hits: number[] = [];
+// list box such as "- [x] done" is not an entry. Returns the one-based line numbers by kind,
+// because the two kinds need different words: a look-alike marker with a link that parses is
+// counted as a link and is still no list item (Tek-745).
+function unparsedLinkEntries(lines: string[], fenced: boolean[], linkAt: Set<number>): { unparsed: number[]; marker: number[] } {
+  const unparsed: number[] = [], marker: number[] = [];
   let inH2 = false, offset = 0;
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
@@ -13661,13 +13682,19 @@ function unparsedLinkEntries(lines: string[], fenced: boolean[], linkAt: Set<num
     if (!m) continue;
     const alt = /^[ \t]*[\u2013\u2014\u2022]/.test(l);
     if (/^\[[ xX]\](?:[ \t]|$)/.test(l.slice(m[0].length - 1))) continue;
-    if (alt || !linkAt.has(start + m[0].length - 1)) hits.push(i + 1);
+    if (alt) marker.push(i + 1);
+    else if (!linkAt.has(start + m[0].length - 1)) unparsed.push(i + 1);
   }
-  return hits;
+  return { unparsed, marker };
 }
-function unparsedEntriesNote(hits: number[]): string {
+function entryLineList(hits: number[]): string {
   const n = hits.length;
-  return "; " + (n === 1 ? "1 list line looks like a link entry but is not a Markdown link, so an agent will not follow it" : n + " list lines look like link entries but are not Markdown links, so an agent will not follow them") + " (line" + (n === 1 ? "" : "s") + " " + hits.slice(0, 5).join(", ") + (n > 5 ? " and " + (n - 5) + " more" : "") + ")";
+  return " (line" + (n === 1 ? "" : "s") + " " + hits.slice(0, 5).join(", ") + (n > 5 ? " and " + (n - 5) + " more" : "") + ")";
+}
+function unparsedEntriesNote(found: { unparsed: number[]; marker: number[] }): string {
+  const u = found.unparsed.length, k = found.marker.length;
+  return (u > 0 ? "; " + (u === 1 ? "1 list line looks like a link entry but is not a Markdown link" : u + " list lines look like link entries but are not Markdown links") + entryLineList(found.unparsed) : "")
+    + (k > 0 ? "; " + (k === 1 ? "1 list line opens with a dash or bullet that is not a Markdown list marker" : k + " list lines open with a dash or bullet that is not a Markdown list marker") + entryLineList(found.marker) : "");
 }
 
 // The text of an ATX H1, or null when the line is not one. One to three leading spaces, a
@@ -13933,7 +13960,7 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   }
   // A list line that looks like a link entry but is not one (Tek-730) turns the links check to a warn.
   const lookalikes = unparsedLinkEntries(lines, fenced, new Set(proseLinks.map((m) => m.at)));
-  if (lookalikes.length > 0) {
+  if (lookalikes.unparsed.length + lookalikes.marker.length > 0) {
     const lk = checks[checks.length - 1];
     lk.status = "warn";
     lk.detail += unparsedEntriesNote(lookalikes);
@@ -14785,7 +14812,7 @@ function nextLinkValue(s: string, from: number): number {
   }
   return s.length;
 }
-interface LinkRelations { describedby: string | null; markdown: string | null; headCut?: boolean }
+interface LinkRelations { describedby: string | null; markdown: string | null; headCut?: boolean; readCut?: boolean }
 // v2 of the llms.txt proposal (August 2026) left the file format alone and added one
 // thing: a page should say where its markdown version and its llms.txt are, using
 // rel="alternate" type="text/markdown" and rel="describedby", as HTML link elements
@@ -14797,7 +14824,7 @@ interface LinkRelations { describedby: string | null; markdown: string | null; h
 // against, which is a change to who passes rather than a new measurement (Tek-160).
 // How common the relations are in the wild has not been measured, so nothing here
 // claims it.
-function findLinkRelations(html: unknown, linkHeader: unknown): LinkRelations {
+function findLinkRelations(html: unknown, linkHeader: unknown, readCut: boolean = false): LinkRelations {
   const found: LinkRelations = { describedby: null, markdown: null };
   // Only the head, and only what a parser would put there: a commented-out link element
   // is not published, a link element inside a script or a template is not published, and
@@ -14842,6 +14869,10 @@ function findLinkRelations(html: unknown, linkHeader: unknown): LinkRelations {
   // A head longer than the cap was read in part, so a relation missing from that part is
   // reported as missing from the part read, not from the page (Tek-496).
   if (whole.length > 65536) found.headCut = true;
+  // The home page itself is read up to the 256 KiB limit, and headOfDocument drops comments and
+  // scripts before the head is measured, so a page cut inside one of those reaches this point with
+  // a short head. Such a result reports what was read as well (Tek-745).
+  if (readCut) found.readCut = true;
   return found;
 }
 type ChecksSummary = "not valid" | "valid with warnings" | "valid";
@@ -14856,7 +14887,7 @@ function validateV2Discovery(found: LinkRelations | null, unreadReason: string =
   // A target is shown through maskLocation, as a redirect target is, so a user name, a password,
   // a query value or a fragment in a published link stays out of the report; until 2026-09-27 it
   // was only cut (Tek-496). A relative target stays relative.
-  const where = found.headCut ? "in the first 65,536 characters of the head, the part that was read, or in the Link header" : "in the head or the Link header";
+  const where = found.headCut ? "in the first 65,536 characters of the head, the part that was read, or in the Link header" : found.readCut ? "in the first 256 KiB of the home page, the part that was read, or in the Link header" : "in the head or the Link header";
   add("v2-describedby", found.describedby ? "pass" : "info", "Home page points to its llms.txt (v2)",
     found.describedby ? 'rel="describedby" to ' + cut(maskLocation(found.describedby), 120) : 'no rel="describedby" ' + where + '; v2 recommends it so an agent finds the file without guessing');
   add("v2-markdown-alternate", found.markdown ? "pass" : "info", "Home page points to a markdown version (v2)",
@@ -14917,7 +14948,7 @@ async function serveLlmsValidatorHtml(request: Request, canonicalUrl: string) {
             ? validateV2Discovery(null, "the home page redirects away from this host, so this was not measured")
             : home.status !== 200
               ? validateV2Discovery(null, "the home page returned HTTP " + home.status + ", so this was not measured")
-              : validateV2Discovery(findLinkRelations(home.text, home.linkHeader));
+              : validateV2Discovery(findLinkRelations(home.text, home.linkHeader, home.truncated));
         } catch {
           discovery = validateV2Discovery(null, "the home page could not be read, so this was not measured");
         }

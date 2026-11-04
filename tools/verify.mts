@@ -654,7 +654,8 @@ console.log('\nCategory set (facts.json owns which categories exist)');
     }
   }
 
-  // E. The two sample reports' technical-scan tables (C2-P4, round 19, C2-2 follow-up).
+  // E. The sample reports' technical-scan tables (C2-P4, round 19, C2-2 follow-up). SAMPLE_PATHS
+  // below lists the pages read, and the loop reads each one it lists; today that is one page.
   // A sample exists to show a buyer what a real report reads, so its own category column
   // is read against the same canonical list a real report's cells are checked against
   // above (block D), not left as an unwatched copy of its own invention (that gap is
@@ -678,7 +679,7 @@ console.log('\nCategory set (facts.json owns which categories exist)');
     }
     const unknown2 = rows2.filter((r) => !resolve(r.cat));
     check(rows2.length > 0 && unknown2.length === 0,
-      `both samples' scan tables use only the scanner's real category names (${rows2.length} rows checked)${unknown2.length ? ' :: unknown ' + unknown2.map((r) => `${r.path} "${r.cat}"`).join(', ') : ''}`);
+      `the scan table of each page in SAMPLE_PATHS (${SAMPLE_PATHS.length}) uses only the scanner's real category names (${rows2.length} rows checked)${unknown2.length ? ' :: unknown ' + unknown2.map((r) => `${r.path} "${r.cat}"`).join(', ') : ''}`);
   }
 
   // The dead-spelling rule. A spelling nobody uses is either a leftover from copy that
@@ -1423,9 +1424,17 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 
   console.log('\nMarkdown the renderer drops silently (B1-18)');
   // markdownToHtml knows ##, ### (since v3.133.0, Tek-358), paragraphs, "- " lists, tables
-  // and four-space code. A numbered list, a fenced block or a wrapped list item renders as
-  // literal markup on a published page, and node --check, node --test and this file all stay
-  // green. The card pages were skipped by name until Tek-489 (2026-09-26): their "- " lists reach
+  // and four-space code. A numbered list or a wrapped list item renders as literal markup on a
+  // published page, and node --check, node --test and this file all stay green. A fence is a
+  // different case: since v3.164.0 the renderer turns a closed fence into a code block, for the
+  // briefs, and a fence that never closes stays literal text. A site twin uses none (0 of 86
+  // twins on 2026-11-04), so one is banned here whichever way it renders, and the pattern reads
+  // every opener mdFenceOpen in worker.ts reads: three or more backticks or tildes, up to three
+  // spaces in. A twin is read here as source text, where every backtick inside the template
+  // literal is written \` , so the backtick form of the pattern allows the backslash; a bare
+  // three-backtick pattern can never match source text. The pattern also flags a backtick
+  // fence whose info string holds a backtick, which mdFenceOpen refuses; that over-reach is
+  // deliberate. The card pages were skipped by name until Tek-489 (2026-09-26): their "- " lists reach
   // the same markdownToHtml through mdBodyHtml, so a wrapped item vanishes there too. A headed
   // checklist ("Label:" or "### Label" over "- " items), which mdSecBodyHtml and mdPcard read and
   // whose continuation line they join to its item, does not open with "- " and is not flagged.
@@ -1439,7 +1448,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     for (const k of keys) {
       const md = (twMdTwin(k) || '').replace(/\r\n/g, '\n');
       if (/^\d+\. /m.test(md)) probs.push(k + ': numbered list');
-      if (/^```/m.test(md)) probs.push(k + ': fenced code block');
+      if (/^ {0,3}((?:\\?`){3,}|~{3,})/m.test(md)) probs.push(k + ': fenced code block');
       for (const block of md.split(/\n{2,}/)) {
         const lines = block.split('\n').filter((l: string) => l.trim() !== '');
         if (lines.length > 1 && /^- /.test(lines[0]) && lines.some((l: string) => !/^- /.test(l))) {
@@ -2731,10 +2740,13 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
   // this safe. First, the served script must be byte-identical to WEBMCP_SCRIPT in
   // this repo before a single line of it is executed, so what runs is code already in
   // the tree and the difference this gate exists to find is reported rather than run.
-  // Second, the context is built with no host object and no host prototype reachable
-  // from it: the stubs are constructed inside the context from a bootstrap string, the
-  // /services markdown is fetched out here and passed in as a string, and the context
-  // object itself has a null prototype.
+  // Second, the context is built with as few host objects as the script needs: no fetch,
+  // no console and no host prototype on the context object (it has a null prototype),
+  // the stubs are constructed inside the context from a bootstrap string, and the
+  // /services markdown is fetched out here and passed in as a string. Two host
+  // constructors, URL and TextEncoder, are still handed in below, and a host constructor
+  // reaches the host Function through its own .constructor, so the byte-identity check
+  // above is the boundary of this gate and the context is hygiene on top of it.
   try {
     const { createContext, runInContext } = await import('node:vm');
     const homeHtml2 = await (await fetch(base + '/')).text();

@@ -338,7 +338,7 @@
   "og-measuring-the-ai-patch-surge.jpg": {
     "green": "I measured how much bigger.",
     "kicker": "Blog",
-    "subhead": "Twelve months of MSRC data: the July package is 3,0 times the baseline, and the median CVE got more severe.",
+    "subhead": "Twelve months of MSRC data: the July package is 3,0 times the sampled baseline, and the CVE mix moved the severity figures.",
     "white": "Microsoft said the patches would get bigger."
   },
   "og-microsofts-own-cve-count.jpg": {

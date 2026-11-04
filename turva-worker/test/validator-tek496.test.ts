@@ -143,6 +143,35 @@ test("Tek-496, discovery: a relation past the 65,536 character cap is reported a
   assert.equal(status(short, "v2-describedby"), "pass");
 });
 
+// Tek-745 K10b: the home page is read up to 256 KiB. A page cut inside a long comment or script reaches the
+// relation scan with a short head, because the head drops comments and scripts before it is measured, so the
+// text says what was read. Only the text moves: the status stays info and the summary does not change.
+test("Tek-745 K10b: a home page cut by the 256 KiB read limit reports the part that was read", async () => {
+  const links = "<link rel=\"describedby\" href=\"/llms.txt\"><link rel=\"alternate\" type=\"text/markdown\" href=\"/index.md\">";
+  const detailOf = (body: { checks: { id: string; detail: string }[] }, id: string) => body.checks.find((c) => c.id === id)!.detail;
+  const pad = "x".repeat(300 * 1024);
+  const cutInComment = await check(base, { home: "<!doctype html><html><head><title>t</title><!-- " + pad + " -->" + links + "</head><body></body></html>" });
+  const cutInScript = await check(base, { home: "<!doctype html><html><head><title>t</title><script>" + pad + "</script>" + links + "</head><body></body></html>" });
+  for (const body of [cutInComment, cutInScript]) {
+    assert.equal(status(body, "v2-describedby"), "info");
+    assert.equal(status(body, "v2-markdown-alternate"), "info");
+    assert.equal(detailOf(body, "v2-describedby"),
+      "no rel=\"describedby\" in the first 256 KiB of the home page, the part that was read, or in the Link header; v2 recommends it so an agent finds the file without guessing");
+    assert.equal(detailOf(body, "v2-markdown-alternate"),
+      "no rel=\"alternate\" type=\"text/markdown\" in the first 256 KiB of the home page, the part that was read, or in the Link header; v2 recommends it so an agent finds the markdown form without guessing");
+    assert.equal(body.summary, "valid");
+  }
+  // a head that is itself over the 65,536 character cap keeps its own text, cut by the read limit or not
+  const longHead = await check(base, { home: "<html><head>" + "<meta name=\"a\" content=\"b\">".repeat(12000) + links + "</head></html>" });
+  assert.match(detailOf(longHead, "v2-describedby"), /^no rel="describedby" in the first 65,536 characters of the head, the part that was read, or in the Link header;/);
+  // a page under the limit, and a relation before the cut, keep their old wording and result
+  const small = await check(base, { home: "<head><title>t</title></head>" });
+  assert.match(detailOf(small, "v2-describedby"), /^no rel="describedby" in the head or the Link header;/);
+  const before = await check(base, { home: "<head>" + links + "<!-- " + pad + " --></head>" });
+  assert.equal(status(before, "v2-describedby"), "pass");
+  assert.equal(detailOf(before, "v2-describedby"), "rel=\"describedby\" to /llms.txt");
+});
+
 test("Tek-496: turva.dev's own llms.txt stays valid", async () => {
   const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=turva.dev", { headers: { accept: "application/json" } }), {});
   const body = JSON.parse(await res.text());

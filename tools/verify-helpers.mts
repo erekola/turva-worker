@@ -1,6 +1,7 @@
 // tools/verify-helpers.mts - the small pure comparison functions of tools/verify.mts.
 // They live here, with no side effects and no top-level code, so the tests under test/ can
-// import them without running the whole checker. verify.mts imports every one of them.
+// import them without running the whole checker. verify.mts imports eight of the nine exports;
+// parseScopeList is used inside scopeListsAgree and is exported for the tests.
 // MIT, same license as the repo.
 import { createPublicKey } from 'node:crypto';
 import type { KeyObject } from 'node:crypto';
