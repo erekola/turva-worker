@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.223.2 - /guides/mcp-server-card says what an MCP server is, with its local and remote forms and its three core primitives, and /guides/x402-agent-payments says what the x402 documentation claims about micropayments and what that does not show. Each guide gains one FAQ pair and one source.
 // turva.dev worker v3.223.1 - /blog/why-i-back-up-every-night says that Macrium notifies on a failed backup and names the cause of the failed images of 18 and 19 October, with a dated update note.
 // turva.dev worker v3.223.0 - new Build notes post /blog/why-i-back-up-every-night (2026-11-04) on the nightly clone, the encrypted images on a mirrored NAS and what has failed so far; the blog index counts 48 articles; the clean install post gets a dated update that points at it.
 // turva.dev worker v3.222.0 - the hosted llms.txt validator has one reading of a fence (Tek-749). fenceMask takes its fences from inlineBlockReader, so a fence inside a list item or on its marker line is a fence for every check. A closing line inside the item no longer opens a new fence that hides the lines after it, and an unclosed fence inside a list item ends when the item closes. In a nested list, a line after a blank line or a fence counts for the outer item when it is indented to that item's content column. Section and link counts compared with commonmark.js 0.31.2.
@@ -6609,6 +6610,18 @@ The server card lives in two places that have not converged. The isitagentready.
 
 An MCP server card is a small JSON file that describes a site's Model Context Protocol server so a client can find it and learn what it offers. The Model Context Protocol itself is a standard way for agents to use external tools and data. A server implements the protocol and may expose tools, resources or prompts, and the card is how that server announces itself before any connection is made.
 
+## What an MCP server is
+
+An MCP server is a program that provides context to MCP clients, in the words of the [MCP architecture overview](https://modelcontextprotocol.io/docs/learn/architecture). An AI application acts as the host and opens one client for each server it connects to. The server can run on the same machine, as the filesystem server does when Claude Desktop launches it over the STDIO transport, or remotely over Streamable HTTP, as the official Sentry MCP server does.
+
+What a server offers comes in three core primitives, and a client can ask for each kind with a list request such as tools/list:
+
+- Tools are functions an AI application can call to act, such as a file operation, an API call or a database query.
+- Resources are data sources that give the application context, such as file contents or database records.
+- Prompts are reusable templates that structure an interaction with a language model.
+
+The card only describes a server. It does none of that work itself.
+
 ## What the card states
 
 A useful card states the server name, the endpoint and the transport, in a shape a client can parse without guessing. The turva.dev card also lists the tools the server offers. The accepted proposal leaves that list to the live MCP connection instead, since a tools list answer from the running server does not depend on a separate static copy the way a list in a card does. A client may still cache that answer, and the protocol treats the cache lifetime as a freshness hint that does not guarantee the list is current.
@@ -6626,6 +6639,10 @@ A server card sits in the same family as other well-known manifests a client loo
 Publish the card at the location your target clients actually check, and confirm it with a live connection attempt rather than a directory listing. The extension's discovery document requires HTTPS with TLS 1.2 or later in production, and CORS headers that let a browser-based client read the card, such as Access-Control-Allow-Origin: *. turva.dev's own card is served with those CORS headers. Where a client supports the location the proposal recommends, publish there too rather than choosing one over the other, since the two conventions have not converged. turva.dev itself does not yet serve its card at the MCP endpoint URL followed by /server-card. The card is a low-cost step for a site that wants to expose a capability to agents, and it only becomes useful once a client can reach and use the endpoint it names. For an audit of whether a site's MCP server card and its live endpoint agree, contact info@turva.dev.
 
 ## Frequently asked
+
+**What is an MCP server?**
+
+An MCP server is a program that provides context to MCP clients through the Model Context Protocol. It can offer tools to call, resources to read and prompts that structure an interaction, and it can run on the same machine as the client or remotely over HTTP.
 
 **What is an MCP server card?**
 
@@ -6645,6 +6662,7 @@ The isitagentready.com scanner asks for a card at /.well-known/mcp/server-card.j
 - [Server Card discovery document](https://github.com/modelcontextprotocol/ext-server-card/blob/main/docs/discovery.md)
 - [SEP-2127, the proposal, merged on 2026-10-06](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127)
 - [SEP-2127 as accepted, with Final status](https://modelcontextprotocol.io/seps/2127-mcp-server-cards)
+- [MCP architecture overview](https://modelcontextprotocol.io/docs/learn/architecture)
 
 ## Related
 
@@ -6707,6 +6725,10 @@ x402 describes an HTTP-based payment flow. A payment declaration, an accepted pa
 
 x402 is a way for a site to ask an agent to pay before it returns a resource, using the long-reserved HTTP 402 Payment Required status. It lets an automated client discover a price, pay and continue, without a human stepping in to enter card details.
 
+## Micropayments for AI services
+
+A micropayment is a very small charge, for example one per request to a paid API. The [x402 documentation](https://docs.x402.org/) lists built-in micropayment support for usage-based services among the reasons to use the protocol, and it names batch settlement on EVM for high-volume use. That is the protocol's own claim. It does not show that a given site can collect such a charge, so the three states later in this guide, declaration, acceptance and settlement, still apply.
+
 ## How the flow works
 
 When an agent requests a paid resource, the server responds with 402 and a PaymentRequired object, which x402 v2 carries in the PAYMENT-REQUIRED response header, stating what is being sold and how to pay. The agent reads the terms, signs a payment payload for a supported method, and retries the request with the payload attached. The server or its facilitator then settles the payment. The transaction happens in the protocol, not in a checkout page built for human eyes.
@@ -6735,6 +6757,10 @@ x402 is a way for a site to ask an agent to pay before it returns a resource, us
 
 Checkout is one of the places agent commerce stalls today. An agent can find a product and compare options, then stall at a checkout flow built for a person. A payment surface that the site verifies and settles lets the agent complete the purchase the same way it completed the search. A declaration alone executes no payment and delivers nothing, so a site should say which of the three states it implements.
 
+**Does x402 support micropayments for AI services?**
+
+The x402 documentation lists built-in micropayment support for usage-based services, along with batch settlement on EVM for high-volume use. A site still has to verify and settle those payments itself or through a facilitator. turva.dev's own x402 surface is a declaration only and takes no payment.
+
 **What stops an agent from completing a purchase today?**
 
 Checkout is one common stopping point. An agent can find a product and compare options, then stall at a flow built for a person entering card details. A payment surface that the site verifies and settles removes that particular stop, and other gaps in agent commerce stay separate problems with their own fixes.
@@ -6742,6 +6768,7 @@ Checkout is one common stopping point. An agent can find a product and compare o
 ## Sources
 
 - [x402 protocol site](https://x402.org/)
+- [x402 documentation](https://docs.x402.org/)
 - [x402 repository](https://github.com/x402-foundation/x402)
 - [a2a-x402 extension](https://github.com/google-agentic-commerce/a2a-x402)
 - [Agent Payments Protocol (AP2) repository](https://github.com/google-agentic-commerce/AP2)
@@ -8259,7 +8286,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.223.1",
+    "version": "3.223.2",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8559,7 +8586,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.223.1",
+  "version": "3.223.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
