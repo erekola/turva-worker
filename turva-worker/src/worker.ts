@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.222.0 - the hosted llms.txt validator has one reading of a fence (Tek-749). fenceMask takes its fences from inlineBlockReader, so a fence inside a list item or on its marker line is a fence for every check. A closing line inside the item no longer opens a new fence that hides the lines after it, and an unclosed fence inside a list item ends when the item closes. In a nested list, a line after a blank line or a fence counts for the outer item when it is indented to that item's content column. Section and link counts compared with commonmark.js 0.31.2.
 // turva.dev worker v3.221.0 - the hosted llms.txt validator reads more of CommonMark's blocks when it pairs backtick runs (Tek-747). A heading line is a block of its own, an empty list item or a numbered item that does not start at 1 continues an open paragraph unless the line closes an open item, a thematic break or a setext underline ends a paragraph, and a fence inside a list item that the caller did not blank and that is not indented code hides what it holds. Block quotes and HTML blocks are still not read. Compared with commonmark.js 0.31.2. The sentences the validator writes in a check's detail no longer hold a semicolon, a sentence break stands there, and no status moves with that.
 // turva.dev worker v3.220.0 - corrections from two outside reads of 2026-11-03 (Tek-745). /services says the access sentence is about the add-on. Five posts and the auth.md post carry dated corrections: the patch-surge post says the CVE count rose and marks the reading about supply as the author's, agent-secret-hygiene says a copy of the working directory holds only what is inside it, the TRACE table says attests with the Level 0 limit, the checks table no longer lists a counterfactual as observed, and identity-vendors says served at the addresses the scanner reads. /external-domain-check limits the refund sentence to measurement problems. /auth.md measures HEAD and says every resource this site lists is public, and the WebMCP get_page description no longer promises byte equality with the page, so the CSP hash moved. The llms.txt validator: a backtick pair across a block boundary no longer consumes its closer, the links note separates an unparsed link from a look-alike list marker and drops the unmeasured agent claim, and the discovery info names the 256 KiB read limit when the home page was cut. The hosted parity check moves to markdown-parity-check 0.2.31.
 // turva.dev worker v3.219.5 - three small fixes from a visual review (2026-11-03): the home page scan board keeps the card grid's gap instead of touching the cards above it, a no-break space ties each dot in the finding card to the word before it so no width starts a line with a dot, and the sample audit report writes the structured price as 0,00 EUR like the rest of the report.
@@ -8161,7 +8162,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.221.0",
+    "version": "3.222.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8461,7 +8462,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.221.0",
+  "version": "3.222.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -13240,21 +13241,14 @@ type LlmsTxtInput = FetchRedirect | (Partial<FetchedLlmsTxt> & Pick<FetchedLlmsT
 // costs nothing however far apart they sit. Runs are grouped by length and every group is read
 // with one forward pointer, so the scan stays linear on a document of unmatched runs. The
 // package turva-llms-txt-validator mirrors this from 0.6.0.
-function codeSpanMask(text: string): Uint8Array {
+function codeSpanMask(text: string, lineBlocks: number[] = readBlocks(text.split("\n"))): Uint8Array {
   const mask = new Uint8Array(text.length);
   const runs = [];
-  const blockOf = inlineBlockReader();
-  let block = 0;
-  const readLine = (from: number) => {
-    const next = text.indexOf("\n", from);
-    const end = next < 0 ? text.length : next;
-    block = blockOf(text.slice(from, end));
-    if (block < 0) mask.fill(1, from, end);
-  };
-  readLine(0);
+  let line = 0;
+  let block = lineBlocks[0];
   for (let i = 0; i < text.length; ) {
     if (text[i] === "\n") {
-      readLine(i + 1);
+      block = lineBlocks[++line];
       i++;
       continue;
     }
@@ -13295,11 +13289,16 @@ function codeSpanMask(text: string): Uint8Array {
 // column closes that item, so "2." there is the list's next item, which is why the reader keeps
 // the content column of every open item. An empty item followed by a blank line is closed. An
 // indented line continues an open paragraph, and a run of indented lines with no paragraph open is
-// one block, so backticks in it still pair. A fence this reader sees is one the caller did not
-// blank, because fenceMask reads only lines at 0 to 3 columns: a fence indented further inside a
-// list item, or opened on a marker line. For every line of such a fence the reader returns -1 and
-// the scan masks the line whole, so a fence hides what it holds whatever closes it and whichever
-// character it uses. A fence ends when an open item it sits in closes. Block quotes and HTML blocks
+// one block, so backticks in it still pair. For every line of a fence the reader returns -1. The reader
+// runs over the raw lines only: readBlocks gives the numbers, fenceMask blanks
+// the lines marked -1 and codeSpanMask pairs by the same numbers, because reading the blanked text a
+// second time could disagree with the first reading and hide a real link (found by the independent
+// checks of Tek-749). A fence holds whatever comes before its closer, in either character, and it
+// ends when an open item it sits in closes. An opening backtick fence may
+// not carry a backtick in its info string, while a tilde fence may. A later round will read the
+// consequence as a bug and it is not: in ```js `x` the info string holds a backtick, so that line is
+// prose, and a bare ``` after it OPENS a block instead of closing one. CommonMark reads the same
+// input the same way, measured against the spec 2026-09-10. Block quotes and HTML blocks
 // are not read here, neither the start of one nor the lines of a block quote. Every pattern runs at
 // a fixed position, the thematic break test and the closing fence test run once per line, and the
 // walk over the open items stops at the line's own width, so the reader stays linear however deep
@@ -13312,6 +13311,10 @@ const INLINE_FENCE = /(`{3,})[^`]*$|(~{3,})/y;
 function matchAt(re: RegExp, s: string, at: number): RegExpExecArray | null {
   re.lastIndex = at;
   return re.exec(s);
+}
+function readBlocks(lines: string[]): number[] {
+  const blockOf = inlineBlockReader();
+  return lines.map((l) => blockOf(l));
 }
 function inlineBlockReader(): (line: string) => number {
   let block = 0, para = false, code = false, emptyItem = false;
@@ -13412,10 +13415,10 @@ function normalizeLinkLabel(s: string): string {
 // title's own value. Only the first definition of a given label counts, per spec. A destination
 // wrapped in angle brackets has them stripped. The package turva-llms-txt-validator mirrors this
 // from 0.3.11.
-function collectLinkDefinitions(text: string): Map<string, string> {
+function collectLinkDefinitions(text: string, lineBlocks?: number[]): Map<string, string> {
   const defs = new Map<string, string>();
   const lines = text.split("\n");
-  const code = codeSpanMask(text);
+  const code = codeSpanMask(text, lineBlocks);
   const starts = [];
   { let offset = 0; for (const l of lines) { starts.push(offset); offset += l.length + 1; } }
   const DEF_START = /^ {0,3}\[[^\]]+\]:/;
@@ -13453,10 +13456,10 @@ interface MdLink { name: string; target: string; at: number }
 // failed plain target is remembered as before, and the closing ">", quote and line end are
 // looked up through a cache that only moves forward, so a file that repeats "[a](" or
 // "[a](x \"" stays linear.
-function collectLinks(text: string, defs?: Map<string, string>): MdLink[] {
+function collectLinks(text: string, defs?: Map<string, string>, lineBlocks?: number[]): MdLink[] {
   const out: MdLink[] = [];
-  const code = codeSpanMask(text);
-  if (!defs) defs = collectLinkDefinitions(text);
+  const code = codeSpanMask(text, lineBlocks);
+  if (!defs) defs = collectLinkDefinitions(text, lineBlocks);
   const cache: Record<string, { from: number; at: number }> = Object.create(null);
   const nextIdx = (c: string, from: number): number => {
     const h = cache[c];
@@ -13582,38 +13585,14 @@ function collectLinks(text: string, defs?: Map<string, string>): MdLink[] {
 
 // CommonMark fenced code blocks, marked line by line. A "## " or a link inside a fence is
 // example text and not the file's own structure, but until 2026-09-10 both counted, so a
-// file whose only section and only link lived inside ``` or ~~~ was reported valid. The
-// scan is one pass over the lines with no backtracking pattern, because the ReDoS repair
-// of 2026-08-24 bought a worse accuracy defect with a bounded quantifier and the rule out
-// of it was to scan by index instead (mds/gotchas.md 2026-08-24 (jatko 12)).
+// file whose only section and only link lived inside ``` or ~~~ was reported valid. The fence
+// itself is read by inlineBlockReader, so the validator has one reading of a fence, inside a list
+// item too (Tek-749). Until 2026-11-04 this function read lines at 0 to 3 columns on its own, so
+// it did not see a fence opened on a list marker line or indented further, and that fence's
+// closing line at 0 to 3 columns opened a new fence that hid the lines up to the next fence. The package turva-llms-txt-validator mirrors this from 0.6.1.
 // Returns one boolean per line: true for a fence line and for everything inside it.
 function fenceMask(lines: string[]): boolean[] {
-  const mask = new Array<boolean>(lines.length).fill(false);
-  let fenceChar = "", fenceLen = 0;
-  for (let i = 0; i < lines.length; i++) {
-    const l = lines[i];
-    let p = 0;
-    while (p < 4 && l[p] === " ") p++;
-    if (p > 3) { mask[i] = fenceChar !== ""; continue; }
-    const c = l[p];
-    let run = 0;
-    if (c === "`" || c === "~") { while (l[p + run] === c) run++; }
-    if (fenceChar === "") {
-      // An opening backtick fence may not carry a backtick in its info string; a tilde
-      // fence may. Anything shorter than three markers is not a fence at all. A later
-      // round will read the consequence as a bug and it is not: in ```js `x` the info
-      // string holds a backtick, so that line is prose, and a bare ``` after it OPENS a
-      // block instead of closing one. CommonMark reads the same input the same way,
-      // measured against the spec 2026-09-10. Leave it.
-      if (run >= 3 && (c !== "`" || l.indexOf("`", p + run) === -1)) {
-        fenceChar = c; fenceLen = run; mask[i] = true;
-      }
-      continue;
-    }
-    mask[i] = true;
-    if (c === fenceChar && run >= fenceLen && l.slice(p + run).trim() === "") { fenceChar = ""; fenceLen = 0; }
-  }
-  return mask;
+  return readBlocks(lines).map((block) => block < 0);
 }
 // A markdown list item that carries a link. A bullet or an ordered marker (1. or 1)) followed by
 // a space or a tab opens the item; an ordered list and a tab after the marker were not read as
@@ -13757,8 +13736,8 @@ function isH2At(lines: string[], i: number, mask?: boolean[]): boolean {
 // CommonMark's: an unclosed backtick run, or a pair that crosses a block boundary, is literal text.
 // A real tag, a closing tag or a comment start in prose still warns, and an autolink is still not
 // a tag. The package turva-llms-txt-validator mirrors this from 0.5.0.
-function blankCodeForHtml(prose: string): string {
-  const mask = codeSpanMask(prose);
+function blankCodeForHtml(prose: string, lineBlocks?: number[]): string {
+  const mask = codeSpanMask(prose, lineBlocks);
   const out: string[] = [];
   for (let i = 0; i < prose.length; i++) {
     const c = prose[i];
@@ -13942,7 +13921,8 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   // listItemHasLink have allowed since 2026-08-29. Until 2026-09-10 this one line still
   // demanded column zero, so a correct file indented by one to three spaces was reported as
   // having no sections at all while its list under the same indentation counted fine.
-  const fenced = fenceMask(lines);
+  const lineBlocks = readBlocks(lines);
+  const fenced = lineBlocks.map((block) => block < 0);
   // Computed once for both the section-list scan below and the links check further down, so a
   // reference link definition written anywhere in the prose resolves the same way for each. V2
   // (Tek-526): "[text][label]" used to be recognized in the whole-document links check but not
@@ -13951,8 +13931,8 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   // joining the survivors let a link's own target span straight across a fenced code block, as
   // if the fence had never separated the two halves.
   const proseText = lines.map((l, i) => (fenced[i] ? "" : l)).join("\n");
-  const linkDefs = collectLinkDefinitions(proseText);
-  const proseLinks = collectLinks(proseText, linkDefs);
+  const linkDefs = collectLinkDefinitions(proseText, lineBlocks);
+  const proseLinks = collectLinks(proseText, linkDefs, lineBlocks);
   // Which original line each recognized link starts on, so the section scan below can ask "does
   // this line carry a link" against the same whole-document result the links check itself uses,
   // instead of re-finding links one isolated line at a time. V2 (Tek-526). proseLinks is already
@@ -13982,19 +13962,22 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   // Both passed until 2026-09-27 (Tek-496). The first one is named in the detail.
   let sectionsWithList = 0, misplaced = -1;
   {
-    let inSection = false, counted = false, seenH2 = false, itemOpen = false, itemGap = false, itemEmpty = false, itemCol = 0, afterFence = false;
+    let inSection = false, counted = false, seenH2 = false, itemOpen = false, itemGap = false, itemEmpty = false, emptyOuter = false, afterFence = false;
+    // The content column of the outermost open list item. A line after a blank line or a fence stays in
+    // the list when it reaches this column, so in a nested list it can be the outer item's (Tek-749).
+    let outerCol = 0;
     // Width of the leading white space of a line in columns, a tab running to the next multiple of 4.
     const indentWidth = (s: string) => { let c = 0; for (const ch of s) { if (ch === " ") c++; else if (ch === "\t") c += 4 - (c % 4); else break; } return c; };
     for (let i = 0; i < lines.length; i++) {
       const l = lines[i];
-      // A code fence indented less than the item's content column closes the open item, so a link
+      // A code fence indented less than an item's content column closes that item, so a link
       // after it is not that item's link. The content column is where the item's text starts, 2 for
       // "- item" and 4 for "-   item". A fence indented to that column is inside the item and keeps
       // it open, as in CommonMark, but the line after it then counts only when it is indented to
       // that column too, because a lazy continuation cannot follow a fence.
       if (fenced[i]) {
-        if (l.trim() !== "" && indentWidth(l) < itemCol) itemOpen = false;
-        if (itemOpen) afterFence = true;
+        if (l.trim() !== "" && indentWidth(l) < outerCol) itemOpen = false;
+        if (itemOpen) { afterFence = true; itemEmpty = false; }
         continue;
       }
       if (sx.under[i]) continue;
@@ -14008,11 +13991,10 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
       // heading, a blockquote or a thematic break ends the item. An empty marker takes no lazy
       // continuation (CommonMark): the next line counts only when indented to the content column,
       // and a blank line right after the empty marker closes the item.
-      if (l.trim() === "") { if (itemEmpty) itemOpen = false; itemGap = itemOpen; continue; }
+      if (l.trim() === "") { if (itemEmpty) { if (emptyOuter) itemOpen = false; itemEmpty = false; } itemGap = itemOpen; continue; }
       const fromFence = afterFence;
       afterFence = false;
       if (/^ {0,3}(?:[-*+]|\d{1,9}[.)])(?:[ \t]|$)/.test(l)) {
-        itemOpen = true;
         itemGap = false;
         itemEmpty = /^ {0,3}(?:[-*+]|\d{1,9}[.)])[ \t]*$/.test(l);
         {
@@ -14023,13 +14005,18 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
           const markerEnd = mk[1].length + mk[2].length;
           let c = markerEnd;
           for (const ch of mk[3]) c += ch === "\t" ? 4 - (c % 4) : 1;
-          itemCol = (mk[0].length === l.length || c - markerEnd > 4) ? markerEnd + 1 : c;
+          emptyOuter = false;
+          if (!itemOpen || mk[1].length < outerCol) {
+            outerCol = (mk[0].length === l.length || c - markerEnd > 4) ? markerEnd + 1 : c;
+            emptyOuter = itemEmpty;
+          }
         }
+        itemOpen = true;
         if (inSection && !counted && listItemHasLink(l, linkedLineIdx.has(i))) { sectionsWithList++; counted = true; }
         continue;
       }
       if (/^ {0,3}(?:#{1,6}(?:[ \t]|$)|>|([-*_])(?: *\1){2,} *$)/.test(l)) { itemOpen = false; continue; }
-      const indented = indentWidth(l) >= itemCol;
+      const indented = indentWidth(l) >= outerCol;
       if (itemOpen && (!itemGap || indented) && (!itemEmpty || indented) && (!fromFence || indented)) {
         if (inSection && !counted && linkedLineIdx.has(i)) { sectionsWithList++; counted = true; }
         itemGap = false;
@@ -14094,7 +14081,7 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   // the same text, so the scan stays linear. A tag still open at the end of the file, as in
   // '<div class="x"', has no closing ">" and does not warn. Code is blanked first (Tek-730): a tag-like
   // string inside an inline code span, a fenced block or after a backslash is not markup.
-  const htmlScan = blankCodeForHtml(proseText);
+  const htmlScan = blankCodeForHtml(proseText, lineBlocks);
   if (/<[a-zA-Z][a-zA-Z0-9-]*(?:\s+[^\s"'<>\/=\p{L}\p{N}_]*[\p{L}\p{N}_][^\s"'<>\/=]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|(?!["'])[^\s<>]+))?)*\s*\/?>|<\/[a-zA-Z][a-zA-Z0-9-]*\s*>|<!--/u.test(htmlScan)) {
     add("no-html", "warn", "No HTML markup in the file", "HTML tags found. llms.txt should be plain markdown");
   } else {
