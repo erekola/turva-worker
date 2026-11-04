@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.223.0 - new Build notes post /blog/why-i-back-up-every-night (2026-11-04) on the nightly clone, the encrypted images on a mirrored NAS and what has failed so far; the blog index counts 48 articles; the clean install post gets a dated update that points at it.
 // turva.dev worker v3.222.0 - the hosted llms.txt validator has one reading of a fence (Tek-749). fenceMask takes its fences from inlineBlockReader, so a fence inside a list item or on its marker line is a fence for every check. A closing line inside the item no longer opens a new fence that hides the lines after it, and an unclosed fence inside a list item ends when the item closes. In a nested list, a line after a blank line or a fence counts for the outer item when it is indented to that item's content column. Section and link counts compared with commonmark.js 0.31.2.
 // turva.dev worker v3.221.0 - the hosted llms.txt validator reads more of CommonMark's blocks when it pairs backtick runs (Tek-747). A heading line is a block of its own, an empty list item or a numbered item that does not start at 1 continues an open paragraph unless the line closes an open item, a thematic break or a setext underline ends a paragraph, and a fence inside a list item that the caller did not blank and that is not indented code hides what it holds. Block quotes and HTML blocks are still not read. Compared with commonmark.js 0.31.2. The sentences the validator writes in a check's detail no longer hold a semicolon, a sentence break stands there, and no status moves with that.
 // turva.dev worker v3.220.0 - corrections from two outside reads of 2026-11-03 (Tek-745). /services says the access sentence is about the add-on. Five posts and the auth.md post carry dated corrections: the patch-surge post says the CVE count rose and marks the reading about supply as the author's, agent-secret-hygiene says a copy of the working directory holds only what is inside it, the TRACE table says attests with the Level 0 limit, the checks table no longer lists a counterfactual as observed, and identity-vendors says served at the addresses the scanner reads. /external-domain-check limits the refund sentence to measurement problems. /auth.md measures HEAD and says every resource this site lists is public, and the WebMCP get_page description no longer promises byte equality with the page, so the CSP hash moved. The llms.txt validator: a backtick pair across a block boundary no longer consumes its closer, the links note separates an unparsed link from a look-alike list marker and drops the unmeasured agent claim, and the discovery info names the 256 KiB read limit when the home page was cut. The hosted parity check moves to markdown-parity-check 0.2.31.
@@ -375,6 +376,7 @@ One sample uses a synthetic, invented site and one uses a real domain.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [I can't start over, so I back up every night](https://turva.dev/blog/why-i-back-up-every-night.md)
 - [What a publisher owes someone else's agent](https://turva.dev/blog/what-a-publisher-owes-someone-elses-agent.md)
 - [Finnish MiCA crypto providers and AI agents](https://turva.dev/blog/finnish-crypto-providers-and-ai-agents.md)
 - [Keeping my lab and my client work apart](https://turva.dev/blog/keeping-my-lab-and-client-work-apart.md)
@@ -598,6 +600,95 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 const PAGE_MARKDOWN = {
+  "/blog/why-i-back-up-every-night": `# I can't start over, so I back up every night
+
+2026-11-04
+
+I could never imagine starting over, so my machine has a backup chain that goes past the 3-2-1 rule for my work. Every night a full clone of the system disk runs first, and an encrypted Grandfather, Father, Son image goes to a mirrored NAS with 16 TB of drives after it. My work also sits off site in Proton Drive.
+
+## What would starting over cost me?
+
+The work that no repo holds, and the machine set up around it. My site and my tools have git history, so that part survives a lost disk. My work folder has none. On 1 October it held 30 918 files and 873 MB of measurements and working files that exist nowhere in git.
+
+The machine takes longer to replace than its disk. [A clean install](/blog/clean-windows-install-for-agent-work) means setting up and measuring the firewall rules, the app profiles, the policy file and my own gates again. Two private keys cannot be regenerated at all.
+
+## How fast does the workspace change?
+
+The workspace changes every day. On 4 November it held 107 631 files and 3 785 MB without node_modules and the git folders, and the work folder had grown to 104 336 files and 3 674 MB. My logs hold 750 numbered decisions. On 3 and 4 November the incremental images were 35,14 GB and 18,29 GB of changes across the system disk. The clone and the image run every night because a copy from last week would lack those changes.
+
+## How does my setup map to the 3-2-1 rule?
+
+The rule asks for three copies, on two kinds of media, with one of them off site. My work meets all of it. The whole machine meets the first two parts, because no full image of it leaves the building.
+
+| Where | What it holds | What it is for |
+| --- | --- | --- |
+| 1 TB NVMe disk inside the machine | A full clone of the system disk, renewed every night | Meant to be the fastest way back after the system disk fails |
+| Synology NAS, two 8 TB drives mirrored | Encrypted Macrium images on a Grandfather, Father, Son schedule, every night | Going back to an earlier day |
+| Snapshots on the NAS | Immutable snapshots of the image folder, the latest 14 | An image deleted by mistake |
+| Proton Drive | An encrypted cloud copy of my workspace | The off-site copy of my work |
+| 1 TB encrypted disk kept off site | My important files, without a machine image | A second off-site copy |
+| Private GitHub repo | The version history of my knowledge base | A record of every committed change to it |
+
+The clone runs first, the image an hour later and the snapshot an hour after that, so that each snapshot can hold that day's image.
+
+## Why run both a clone and an image?
+
+They fail in different ways. The clone is meant to get me working again fastest, and it holds one moment. The image holds history, and a machine normally needs a restore before it can run from it.
+
+A clone copies whatever is on the disk that night, damage included. One of my agent sessions once truncated a shared log. A file damaged like that before the clone runs replaces the last good version on the clone. That log came back from git, and one session's entry was lost. For a file outside git, the images hold the older versions.
+
+A full image runs on the first Monday of the month, a differential every Monday and an incremental every day. I keep full images for 14 weeks, differentials for 4 weeks and incrementals for 7 days. Macrium encrypts each one with AES-256 and verifies it after the run. The full image of 2 November was 91,27 GB, and the run with its verification took 17 minutes 36 seconds.
+
+## Is a mirrored NAS already a backup?
+
+No. A mirror survives one drive failing, and a deleted file leaves both drives at once. When I set it up on 15 October my NAS had one 8 TB drive, and a drive failure then would have taken the images and the snapshots together. The second drive turned 16 TB of disks into 8 TB of mirrored space, and a full image of 91,27 GB leaves the schedule plenty of room. Snapshots guard against deletion, and they are lost along with the NAS.
+
+## What has gone wrong so far?
+
+Five incidents from my records since August, and none of them forced me to start over.
+
+- 24 August. The Proton Drive client died silently for about 39 hours, and nothing in my workspace showed it. A morning check now tests that the client runs and has written a fresh log.
+- 17 September. A second cloud sync service I ran then started with an empty sync state and rolled 1 380 files back to their July versions. I recovered them from the renamed files that the client left on my local disk, so no backup layer was used. I removed that service a week later.
+- 30 September. I reinstalled Windows and restored my workspace from a Proton file copy made before my first sign-in to the new Windows. Proton had not downloaded its online-only files, so the work folder came back as empty folders, and I refilled it from Proton. Whatever I wrote that day before the reinstall is lost. My secrets vault would not decrypt under the new Windows profile, and the private keys came back from encrypted copies kept elsewhere. I did not read the nightly disk, and no image was on a schedule yet.
+- 15 October. I deleted my first two images on the NAS by accident. No snapshot existed yet and the share had no recycle bin, so both are gone for good. I set up snapshots the same day.
+- 18 and 19 October. The image failed on both nights because the NAS path was not found, and the clone ran normally. I did not notice until 27 October, when an agent session read the header of every log. A morning check now goes red when the newest successful clone or image is older than 30 hours.
+
+From 16 October to 4 November the Macrium logs show a clone on each of the 20 days with no error, and an image on each of the 20 days with those two failures.
+
+## How do I know a restore works?
+
+I know part of it. I last tested a boot-from-image restore through Macrium's boot manager on 8 July, on the chain before the NAS, and it worked. In October I decrypted an encrypted image, hashed its whole content and compared it with the C: drive, and the hashes matched.
+
+I have not restored a full disk from a NAS image. In my post on the clean install I wrote that I would test a restore once the first image was on the NAS. The hash comparison is what I have done so far, and a full disk restore is still open.
+
+## What does this not show?
+
+This is one person's machine, and the run counts cover 20 days. My records show no boot from the clone and no restore from a snapshot. A fire at home would take the machine, the clone and the NAS together, and I would then rebuild Windows and restore my files from the off-site copies. I built the chain for hardware failures and my own mistakes, and I make no claim about a deliberate attacker.
+
+## Frequently asked
+
+**What is the difference between a clone and a disk image?**
+
+A clone is a second disk that is meant to boot as it stands, and each run replaces the last one, so it holds one moment. An image is a set of files that can hold many points in time, and a machine normally needs a restore before it can run from it.
+
+**Is a mirrored NAS a backup?**
+
+A mirror alone is not. It keeps working when one drive fails, and a deleted file leaves both drives at once. Mine holds backups, and snapshots on it protect those backups against deletion.
+
+**What does a Grandfather, Father, Son schedule keep?**
+
+It keeps older generations at longer intervals. Mine makes a full image on the first Monday of each month, a differential every Monday and an incremental every day. Full images stay 14 weeks, differentials 4 weeks and incrementals 7 days.
+
+**Does the 3-2-1 rule need a full machine image off site?**
+
+The rule counts copies of your data, so off-site copies of my files meet it for my work. My machine image has no off-site copy, so a fire would mean rebuilding Windows and restoring the files.
+
+## Related
+
+- [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work)
+- [What agent memory in local files gets me](/blog/local-agent-memory)
+- [Keeping my lab and my client work apart](/blog/keeping-my-lab-and-client-work-apart)`,
+
   "/blog/what-a-publisher-owes-someone-elses-agent": `# What a publisher owes someone else's agent
 
 2026-11-02
@@ -1863,6 +1954,8 @@ Corrected 2026-10-23. The IVPN sentence said its firewall starts at boot before 
 Updated 2026-10-26. The DNS section now ends with today's setup, in which every name lookup that leaves Windows goes through Portmaster with Block Secure DNS Bypassing on and the browsers have no modDNS setup of their own. The block on direct connections now covers the browsers too. I removed the agent's own browser for now, so the deny list no longer says it has one.
 
 Updated 2026-10-27. The section on what else sits between the machine and the internet said that I had set modDNS as the custom DNS in the IVPN app. I no longer do. The app leaves DNS to Portmaster, and its settings say that Portmaster manages DNS on this system. The same section now names HaGeZi Pro++ where it said Pro, and Ultimate as the router's list.
+
+Updated 2026-11-04. The drives are in and my disk images go to the NAS. [My post on the backup chain](/blog/why-i-back-up-every-night) says what I have tested so far, and a full disk restore from a NAS image is still open.
 
 ## Related
 
@@ -4095,8 +4188,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-47 articles.
+48 articles.
 
+- [I can't start over, so I back up every night](/blog/why-i-back-up-every-night). 2026-11-04. Build notes. A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.
 - [What a publisher owes someone else's agent](/blog/what-a-publisher-owes-someone-elses-agent). 2026-11-02. Protocol notes. ASD's guide on agentic AI is written for operators. What an MCP server's publisher owes them, read from the MCP spec and from my own server.
 - [Finnish MiCA crypto providers and AI agents](/blog/finnish-crypto-providers-and-ai-agents). 2026-10-31. Research. All five Finnish crypto providers in the MiCA register sit at isitagentready Level 1 of 5, and none passes the scanner's nine agent protocol checks.
 - [Keeping my lab and my client work apart](/blog/keeping-my-lab-and-client-work-apart). 2026-10-26. Build notes. Client work now runs in a Windows virtual machine apart from my own lab. How I tested it with two test clients, and what it does not isolate.
@@ -8162,7 +8256,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.222.0",
+    "version": "3.223.0",
     "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8294,7 +8388,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dbX_qt85wVERuasvlKKazFn7Da18XQ6h9-X_TfIyMTz6bFA8dCf4M7b_KPEgUr8U6du2m0Zny2Yurfw4j52lBA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dbX_qt85wVERuasvlKKazFn7Da18XQ6h9-X_TfIyMTz6bFA8dCf4M7b_KPEgUr8U6du2m0Zny2Yurfw4j52lBA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"xSSTbm9qQ23hWscmTDTXMW5btkWN0xVpL5Ej0dgHNxW1FKdHGY_zCCNVb0DdcZ6b2EQXHQyXty6yr_Ez3UOECQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"VOg_Bv0SOfAL_F260u0-F1TOK_xTGErh70T_KyIVRvFnlkSikCXhpYbt2w6t2YG-9LO1YT_zm6vsecnbA7nnAg\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dbX_qt85wVERuasvlKKazFn7Da18XQ6h9-X_TfIyMTz6bFA8dCf4M7b_KPEgUr8U6du2m0Zny2Yurfw4j52lBA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dbX_qt85wVERuasvlKKazFn7Da18XQ6h9-X_TfIyMTz6bFA8dCf4M7b_KPEgUr8U6du2m0Zny2Yurfw4j52lBA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"xSSTbm9qQ23hWscmTDTXMW5btkWN0xVpL5Ej0dgHNxW1FKdHGY_zCCNVb0DdcZ6b2EQXHQyXty6yr_Ez3UOECQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"WvmzbMkp7yfFt4lW9VjhxuP9RRUvxK1fHoctz9U27pawE_jVZyq0TWFHLYVROaOlwU4BBOtLwsKz5hz5t3bXCQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8462,7 +8556,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.222.0",
+  "version": "3.223.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9187,6 +9281,7 @@ const SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/why-i-back-up-every-night", "monthly", "0.6"],
   ["/blog/what-a-publisher-owes-someone-elses-agent", "monthly", "0.6"],
   ["/blog/finnish-crypto-providers-and-ai-agents", "monthly", "0.6"],
   ["/blog/keeping-my-lab-and-client-work-apart", "monthly", "0.6"],
@@ -9307,7 +9402,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/samples/audit-report", "/samples/external-domain-check", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/external-domain-check", "/agent-readiness-audit", "/samples/audit-report", "/samples/external-domain-check", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -9317,6 +9412,14 @@ function getCanonicalForPath(pathname: string) {
 }
 
 const META_BY_PATH = {
+  "/blog/why-i-back-up-every-night": {
+    title: "I can't start over, so I back up every night · turva.dev",
+    description: "A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.",
+    date: "2026-11-04",
+    kind: "Build notes",
+    image: "/og-why-i-back-up-every-night.jpg",
+    imageAlt: "Card with the headline I can't start over, so I back up every night, and the line A nightly clone, encrypted NAS images and what has failed so far.",
+  },
   "/blog/what-a-publisher-owes-someone-elses-agent": {
     title: "What a publisher owes someone else's agent · turva.dev",
     description: "ASD's guide on agentic AI is written for operators. What an MCP server's publisher owes them, read from the MCP spec and from my own server.",
@@ -9421,7 +9524,7 @@ const META_BY_PATH = {
     title: "A clean Windows install for agent work · turva.dev",
     description: "How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.",
     date: "2026-10-05",
-    modified: "2026-10-27",
+    modified: "2026-11-04",
     kind: "Build notes",
     image: "/og-clean-windows-install-for-agent-work.jpg",
     imageAlt: "turva.dev card: A clean Windows install for agent work",
@@ -11384,6 +11487,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 const GUIDE_PAGE_FAQ = {
+  "/blog/why-i-back-up-every-night": mdFaqBlocks("/blog/why-i-back-up-every-night", "Frequently asked").pairs,
   "/blog/what-a-publisher-owes-someone-elses-agent": mdFaqBlocks("/blog/what-a-publisher-owes-someone-elses-agent", "Frequently asked").pairs,
   "/blog/finnish-crypto-providers-and-ai-agents": mdFaqBlocks("/blog/finnish-crypto-providers-and-ai-agents", "Frequently asked").pairs,
   "/blog/keeping-my-lab-and-client-work-apart": mdFaqBlocks("/blog/keeping-my-lab-and-client-work-apart", "Frequently asked").pairs,
