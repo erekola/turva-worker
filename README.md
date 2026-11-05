@@ -25,7 +25,7 @@ There is no build step. Wrangler bundles `src/worker.ts` when you run or deploy 
 
 The repository root holds the docs, `tools/` and `SECURITY.md`. The Worker project is the nested folder `turva-worker/`, with `src/worker.ts`, `test/`, `wrangler.jsonc` and `public/`.
 
-The routes `/nav.js` and `/blog-filter.js` serve JavaScript on purpose. Those browser scripts are kept as strings inside `src/worker.ts` and served from the Worker under `script-src 'self'`, so they need no inline script and no change to the content security policy.
+The routes `/nav.js`, `/blog-filter.js` and `/markdown-parity-check.js` serve JavaScript on purpose. Those browser scripts are kept as strings inside `src/worker.ts` and served from the Worker under `script-src 'self'`, so they need no inline script and no change to the content security policy. The third one only adds the busy state, the example button and the copy and save of the JSON report to the hosted Markdown parity check, and the form works without it.
 
 ## Develop
 

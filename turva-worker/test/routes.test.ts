@@ -876,7 +876,19 @@ const DOCUMENTED_ROUTES: [string, number, RegExp][] = [
   ["/.well-known/openid-configuration", 200, /application\/json/],
   ["/.well-known/openapi.json", 200, /application\/json/],
   ["/favicon.ico", 200, /image\/svg\+xml/],
-  ["/favicon.svg", 200, /image\/svg\+xml/]
+  ["/favicon.svg", 200, /image\/svg\+xml/],
+  // Eight more paths endpoints.md lists as resolving. Status and type are read from the matching
+  // branches of src/worker.ts: the .json aliases of the AP2 and ACP manifests, the A2A card under
+  // /a2a/, the revocation instructions, the well-known alias of the PGP key and the registry
+  // verification file.
+  ["/.well-known/ap2.json", 200, /application\/json/],
+  ["/.well-known/acp.json", 200, /application\/json/],
+  ["/.well-known/acp/config.json", 200, /application\/json/],
+  ["/.well-known/acp/manifest.json", 200, /application\/json/],
+  ["/.well-known/a2a/agent-card.json", 200, /application\/json/],
+  ["/agent/auth/revocation", 200, /application\/json/],
+  ["/.well-known/pgp-key.asc", 200, /application\/pgp-keys/],
+  ["/.well-known/mcp-registry-auth", 200, /text\/plain/]
 ];
 
 test("R3b-1: every documented path without a prior test resolves as endpoints.md promises", async () => {

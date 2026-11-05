@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.223.3 - small corrections from the workspace audit of 2026-11-04 (decisions U1, U6, U14 and groups G-43, G-44, G-64, G-157, G-162, G-163, G-164, G-166, G-167, G-206): the guide review sentences say that I start the monthly AI read by hand and that nothing on the site enforces it, the external domain check page lists the level and the result of each check and the numeric score only when the scanner returns one, llms-full.txt tells a reader to read llms.txt first, the x402 probe and the OpenAPI description no longer call the three agent routes payable without the notice their own challenges carry, the Markdown parity twin defines 403 and 422 as the code returns them, the OpenAPI AI catalog summary calls ai-catalog.json the ARD predecessor path, the Shopify post notes that the check is no longer sold, four token counts in a dated post use a space as the thousands separator, the code hosts post dates its page count, the home page names the scanner among the re-measured readings, the A2A banner comment is correct, the audit Service JSON-LD comment says the two copies are kept in step by hand, and /auth.md no longer asks registrants for concurrency. The MCP server card carries MCP 1.7.4, the release that closes the listen stream after the acknowledgement frame. SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.223.2 - /guides/mcp-server-card says what an MCP server is, with its local and remote forms and its three core primitives, and /guides/x402-agent-payments says what the x402 documentation claims about micropayments and what that does not show. Each guide gains one FAQ pair and one source.
 // turva.dev worker v3.223.1 - /blog/why-i-back-up-every-night says that Macrium notifies on a failed backup and names the cause of the failed images of 18 and 19 October, with a dated update note.
 // turva.dev worker v3.223.0 - new Build notes post /blog/why-i-back-up-every-night (2026-11-04) on the nightly clone, the encrypted images on a mirrored NAS and what has failed so far; the blog index counts 48 articles; the clean install post gets a dated update that points at it.
@@ -529,7 +530,7 @@ returns the same pathway as JSON. Email <mailto:info@turva.dev?subject=agent%20r
 - Agent identifier and software name
 - Operator name and legal entity
 - Purpose of access (research, integration, monitoring)
-- Expected request rate (per hour) and concurrency
+- Expected request rate (per hour)
 - Public contact for the operator
 
 A written acknowledgment is sent within one business day.
@@ -1304,6 +1305,8 @@ Not from the storefront files. The UCP profile, agents.md and llms.txt show what
 
 Corrected 2026-10-30. The sentence before the list of files said three public files where the list names four.
 
+Updated 2026-11-05. Since 31 October 2026 I no longer sell the Shopify check, and its old addresses redirect to the audit page. The section on my own Shopify check is a record of what changed on 18 October.
+
 ## Related
 
 - [Agentic commerce readiness](/guides/agentic-commerce-readiness)
@@ -1984,7 +1987,9 @@ A published guide puts the same reading in front of anyone before a client pays.
 
 The rules I measure sites against change faster than client work arrives. If I read a specification only when a client needed it, I would be reading it on their time.
 
-Writing a guide makes me read the primary text first, and keeping it true makes me read it again. A scheduled AI review re-reads all 24 guides against their sources on the 15th of every month, and a second run re-reads the fastest-moving ones on the 1st. A second check reads each finding against the source before anything on the site changes, and each guide page shows the date its sources were last checked.
+Writing a guide makes me read the primary text first, and keeping it true makes me read it again. Every month I start an AI read that re-reads all 24 guides against their sources, and nothing on the site enforces that rhythm. A second check reads each finding against the source before anything on the site changes, and each guide page shows the date its sources were last checked.
+
+Corrected 2026-11-05. This paragraph said that a scheduled AI review runs on the 15th and the 1st of every month, and the answer on how often the guides are checked promised a second read of the fastest-moving guides at the start of each month. Those schedules are gone. I start the monthly read myself, and nothing on the site enforces it.
 
 ## What changed in the last two months?
 
@@ -2026,7 +2031,7 @@ Yes. I write them from the primary sources I measure client sites against, and a
 
 **How often are the guides checked?**
 
-Every guide is re-read against its primary sources once a month, and the fastest-moving ones get a second read at the start of each month. Each guide page shows the date of its last check.
+I start a re-read of every guide against its primary sources once a month, and nothing on the site enforces that rhythm. Each guide page shows the date of its last check.
 
 **What happens when a guide turns out to be wrong?**
 
@@ -2856,7 +2861,9 @@ Corrected 2026-10-31. The sentence on redirects named two of the four targets as
 
 One host is missing from the count. savannah.gnu.org did not answer on two attempts, once with a network error and once with a 502, and an unreachable site is not a zero.
 
-For scale, my own site reads Level 5 of 5 on the same scanner on the same day. That comparison is not a fair fight and I am not presenting it as one. turva.dev is a one-person advisory site with sixty canonical pages, and a code host carries multi-tenant load plus an access model that a site like mine never has to solve. It does show that the manifests in question are not expensive to publish.
+For scale, my own site reads Level 5 of 5 on the same scanner on the same day. That comparison is not a fair fight and I am not presenting it as one. turva.dev is a one-person advisory site with about sixty canonical pages on that day, and a code host carries multi-tenant load plus an access model that a site like mine never has to solve. It does show that the manifests in question are not expensive to publish.
+
+Corrected 2026-11-05. The sentence on my own site said sixty canonical pages as if that were the count today. It was about right on the day of the scan, and the sitemap lists more pages now.
 
 ## The numbers
 
@@ -3787,6 +3794,8 @@ The scanner was re-run after the fixes. isitagentready.com reads Level 5, the sa
 
 The lasting repair is anchoring. A guide claim about a moving specification now carries its date, as of July 2026, so when the specification moves again the sentence stays true as a dated statement instead of quietly turning false. The families that move fastest, agent commerce and MCP discovery, go back on a re-check schedule, because this pass showed the drift interval there is a matter of weeks.
 
+Corrected 2026-11-05. The re-check schedule this paragraph names is gone. I start the monthly read of the guides myself, and nothing on the site enforces it.
+
 For an audit that reads your agent-facing claims against the specifications they cite, contact info@turva.dev.
 
 ## Related
@@ -3801,11 +3810,13 @@ For an audit that reads your agent-facing claims against the specifications they
 
 A July measurement compared the token counts of the homepage's HTML and Markdown representations. The result describes that page and measurement date.
 
-In late June this site published [a post on what an agent pays to read a page](/blog/cheaper-pages-for-agents), and the measurement in it said the homepage as markdown cost roughly a third of the HTML form. The most recent scan, as of 4 July 2026, reports the same homepage at 10,320 tokens as HTML and 1,723 as markdown. That is a sixth of the cost, an 83% saving, and nothing in the meantime was done to improve the number. The post tracks what each form costs to read in tokens, not what any agent's operator actually paid.
+In late June this site published [a post on what an agent pays to read a page](/blog/cheaper-pages-for-agents), and the measurement in it said the homepage as markdown cost roughly a third of the HTML form. The most recent scan, as of 4 July 2026, reports the same homepage at 10 320 tokens as HTML and 1723 as markdown. That is a sixth of the cost, an 83% saving, and nothing in the meantime was done to improve the number. The post tracks what each form costs to read in tokens, not what any agent's operator actually paid.
 
 ## Where the weight came from
 
-Since that post went out the site has gained six blog posts before this one, two tool pages, a feed, a share image for every page and related links at the end of every post. None of that was content negotiation work. It was ordinary growth, and it landed where growth always lands, on the human-facing page. Between the 1 July and 4 July scans alone the HTML form of the homepage went from 9,560 tokens to 10,320, about 8% heavier in three days. The markdown form went from 1,750 to 1,723. It got slightly smaller.
+Since that post went out the site has gained six blog posts before this one, two tool pages, a feed, a share image for every page and related links at the end of every post. None of that was content negotiation work. It was ordinary growth, and it landed where growth always lands, on the human-facing page. Between the 1 July and 4 July scans alone the HTML form of the homepage went from 9 560 tokens to 10 320, about 8% heavier in three days. The markdown form went from 1750 to 1723. It got slightly smaller.
+
+Corrected 2026-11-05. Four token counts in this post used a comma as the thousands separator, which this site reads as a decimal comma. They now use a space or none.
 
 ## Two surfaces, two growth rates
 
@@ -4079,7 +4090,7 @@ Send a JSON request:
 
 The optional fields are markdownUrl and selector. The response is the report in the same JSON format as the command's --format json output. Its summary.exitCode carries the same 0, 1 or 2.
 
-HTTP 200 carries a pass or a fail. 400, 413 and 415 mean that the request was malformed. 403 means that the address is outside what this version checks, and 422 means that the comparison could not finish. 429 and 503 ask you to try again later. The Retry-After header says when. 500 means that the service itself failed.
+HTTP 200 carries a pass or a fail. 400, 413 and 415 mean that the request was malformed. 403 means that this version does not check the address, because it is one of turva.dev's two tool pages, it is not one of turva.dev's published pages, or it names another site. 422 means that the address was refused or that the comparison could not finish, for example because the host is not a public domain, the page redirects to another host or the Markdown URL is on another site. 429 and 503 ask you to try again later. The Retry-After header says when. 500 means that the service itself failed.
 
 In CI, run the package with --strict. Source and releases are on [GitHub](https://github.com/erekola/markdown-parity-check) and the package is on [npm](https://www.npmjs.com/package/markdown-parity-check).
 
@@ -5366,7 +5377,7 @@ Scanner: isitagentready.com, third party, Cloudflare.
 
 Verified 100/100, Level 5, Agent-Native.
 
-I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. I measured all three on 2026-10-21, Internet.nl again on 2026-10-29 and Hardenize again on 2026-10-30.
+I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. I measured all three on 2026-10-21, Internet.nl again on 2026-10-29 and Hardenize again on 2026-10-30. I measured the scanner reading above again on 2026-10-29.
 
 - Hardenize, measured 2026-10-30: all 24 categories passed. [hardenize.com/report/turva.dev](https://www.hardenize.com/report/turva.dev)
 - Internet.nl website test: 98/100. [internet.nl/site/turva.dev](https://internet.nl/site/turva.dev/)
@@ -5755,7 +5766,7 @@ On a hosted shop or site platform, some TLS, header and IPv6 settings and some r
 ## What the report contains
 
 - Limits. What cannot be seen from outside, what was not measured and which settings the platform or your email provider controls.
-- Agent-readiness. The score and level, or "no reading" with the reason, the measurement date, the list of checks run and up to three of the largest gaps.
+- Agent-readiness. The level and the result of each check, and the numeric score when the scanner returns one, or "no reading" with the reason, the measurement date, the list of checks run and up to three of the largest gaps.
 - Observations. A table of what I measured, what it means in one sentence and how much a fix matters for this site, marked high, medium or low, or "no reading". The mark compares the benefit of a fix with the work. It is not an estimate of how secure your company is.
 - Fixes. Up to three, in the order to make them, chosen from the readings and the observations together. Security findings are written as tasks you can give to whoever maintains your site now. If there is little or nothing important to fix, the report says so and does not invent more.
 - Next step. Either no further work is needed now, or one follow-up with the reason. The follow-up is the audit. If I propose one, the report says in one sentence what it does beyond this report and which finding it answers.
@@ -6279,7 +6290,7 @@ No. An llms.txt and a markdown surface make the pages in front of the site reada
 
 Understand what AI clients can discover, read and use on a website or API. Start with the buying decision, improve a technical surface or explore how AI visibility is measured.
 
-Every guide here is re-read against its primary sources at least once a month, and the two families that move fastest, agent commerce and MCP discovery, more often than that. Specifications move, and a sentence that was true the day it shipped can stop being true without anything on this site changing. A layout change is not a technical re-check, so each guide's own check date is the one that counts.
+I start an AI re-read of every guide here against its primary sources once a month, and nothing on the site enforces that rhythm. Specifications move, and a sentence that was true the day it shipped can stop being true without anything on this site changing. A layout change is not a technical re-check, so each guide's own check date is the one that counts.
 
 ## Start here
 
@@ -7764,7 +7775,9 @@ function buildLlmsFullTxt() {
 > Concatenated markdown of every page: the primary pages first, then
 > the guides, then the blog with the newest post first. For LLMs that
 > prefer a single document over per-page fetches. Sources are canonical
-> URLs on https://turva.dev/.
+> URLs on https://turva.dev/. The file is large and grows with every page,
+> so read https://turva.dev/llms.txt first and open this document only for
+> the full text.
 
 `;
   // Order, since 2026-09-03 (round 17, item I): the primary pages first, then the guides,
@@ -8286,8 +8299,8 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.223.2",
-    "description": "Read-only metadata + payable endpoints for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
+    "version": "3.223.3",
+    "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
   },
@@ -8383,7 +8396,7 @@ const OPENAPI_SPEC = JSON.stringify({
     "/.well-known/agent-skills/index.json": { "get": { "summary": "Agent Skills index", "operationId": "getSkillsIndex", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/api-catalog": { "get": { "summary": "API catalog", "operationId": "getApiCatalog", "responses": { "200": { "description": "ok", "content": { "application/linkset+json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/ard.json": { "get": { "summary": "ARD manifest (v0.91)", "operationId": "getArdManifest", "responses": { "200": { "description": "Agentic Resource Discovery manifest, the same four resources as ai-catalog.json, with representativeQueries on each entry and the MCP Server Card media type on the MCP entry", "content": { "application/json": {} } } } } },
-    "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD predecessor path)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with message.metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["message"], "properties": { "message": { "type": "object", "required": ["parts"], "properties": { "messageId": { "type": "string", "description": "A unique identifier for the message, typically a UUID, generated by the sender." }, "kind": { "type": "string", "enum": ["message"] }, "role": { "type": "string" }, "parts": { "type": "array", "maxItems": 32, "items": { "type": "object", "properties": { "kind": { "type": "string" }, "text": { "type": "string", "description": "Read for skill names when metadata.skillId is absent" } } } }, "metadata": { "type": "object", "properties": { "skillId": { "type": "string", "enum": ["services", "contact-info", "company-info"] } } } } } } }, "example": { "message": { "kind": "message", "messageId": "3f8c1a52-7e4b-4d19-9a6e-5c0b2d7f8e41", "role": "user", "parts": [{ "kind": "text", "text": "What does turva.dev sell?" }], "metadata": { "skillId": "services" } } } } } }, "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "invalid params, or more than 32 parts", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } }, "413": { "description": "body larger than 16384 bytes", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/agent-card.json": { "get": { "summary": "A2A Agent Card", "operationId": "getAgentCard", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/security.txt": { "get": { "summary": "Security", "operationId": "getSecurity", "responses": { "200": { "description": "ok", "content": { "text/plain": { "schema": { "type": "string" } } } } } } },
@@ -8418,7 +8431,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dbX_qt85wVERuasvlKKazFn7Da18XQ6h9-X_TfIyMTz6bFA8dCf4M7b_KPEgUr8U6du2m0Zny2Yurfw4j52lBA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dbX_qt85wVERuasvlKKazFn7Da18XQ6h9-X_TfIyMTz6bFA8dCf4M7b_KPEgUr8U6du2m0Zny2Yurfw4j52lBA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"xSSTbm9qQ23hWscmTDTXMW5btkWN0xVpL5Ej0dgHNxW1FKdHGY_zCCNVb0DdcZ6b2EQXHQyXty6yr_Ez3UOECQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"WvmzbMkp7yfFt4lW9VjhxuP9RRUvxK1fHoctz9U27pawE_jVZyq0TWFHLYVROaOlwU4BBOtLwsKz5hz5t3bXCQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dbX_qt85wVERuasvlKKazFn7Da18XQ6h9-X_TfIyMTz6bFA8dCf4M7b_KPEgUr8U6du2m0Zny2Yurfw4j52lBA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dbX_qt85wVERuasvlKKazFn7Da18XQ6h9-X_TfIyMTz6bFA8dCf4M7b_KPEgUr8U6du2m0Zny2Yurfw4j52lBA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"mGbToLJvRlyZUzLMgYHYTCOj_Rv9jXnJ0RtwNCRgab1m3KXi0ZAEo-l1Jw447I8VZMbbQTo9PcknpUYHX45MCA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"WvmzbMkp7yfFt4lW9VjhxuP9RRUvxK1fHoctz9U27pawE_jVZyq0TWFHLYVROaOlwU4BBOtLwsKz5hz5t3bXCQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8433,7 +8446,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -8442,7 +8455,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.7.3",
+    "version": "1.7.4",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (external domain check, audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -8578,7 +8591,7 @@ const ACP_MANIFEST = JSON.stringify({
 }, null, 2);
 
 // ============================================================
-// X402 - manifest with full accepts[] array
+// A2A - agent card (HTTP+JSON transport, protocol version 0.3.0)
 // ============================================================
 const A2A_AGENT_CARD = JSON.stringify({
   "protocolVersion": "0.3.0",
@@ -8586,7 +8599,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.223.2",
+  "version": "3.223.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8851,7 +8864,7 @@ const X402_INDEX_402 = JSON.stringify({
       "network": "eip155:8453",
       "amount": "1000",
       "resource": "https://turva.dev/x402",
-      "description": "turva.dev x402 discovery probe. The challenge is published so an agent can detect the payment surface; it is not settled, and paying it returns 402 again. The real payable services are /api/agent/audit, /api/agent/advisory and /api/agent/implementation.",
+      "description": "turva.dev x402 discovery probe. The challenge is published so an agent can detect the payment surface; it is not settled, and paying it returns 402 again. The priced services whose own challenges carry the same notice are /api/agent/audit, /api/agent/advisory and /api/agent/implementation.",
       "mimeType": "application/json",
       "payTo": X402_PAY_TO,
       "maxTimeoutSeconds": 300,
@@ -9269,7 +9282,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-04";
+const SITEMAP_LASTMOD = "2026-11-05";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9492,7 +9505,7 @@ const META_BY_PATH = {
     titleTag: "What Shopify changed for agent shopping · turva.dev",
     description: "Shopify moved store agent tools to /api/ucp/mcp and opened checkout to agents. What a merchant can check publicly and what stays hidden.",
     date: "2026-10-18",
-    modified: "2026-11-02",
+    modified: "2026-11-05",
     kind: "Protocol notes",
     image: "/og-what-shopify-changed-for-agent-shopping.jpg",
     imageAlt: "What Shopify changed for agent shopping since August, a turva.dev protocol note for merchants on the new agent tools, checkout and catalog data.",
@@ -9564,7 +9577,7 @@ const META_BY_PATH = {
     title: "Why I publish every guide for free · turva.dev",
     description: "I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.",
     date: "2026-09-29",
-    modified: "2026-10-02",
+    modified: "2026-11-05",
     kind: "Build notes",
     image: "/og-why-i-publish-every-guide.jpg",
     imageAlt: "turva.dev blog card: why I publish every guide for free, because the rules move monthly and the reading has to be done before a client needs it.",
@@ -9667,7 +9680,7 @@ const META_BY_PATH = {
     titleTag: "Agent discovery on thirteen code hosts · turva.dev",
     description: "Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.",
     date: "2026-08-22",
-    modified: "2026-11-01",
+    modified: "2026-11-05",
     kind: "Research",
     image: "/og-agent-readiness-code-hosts.jpg",
     imageAlt: "turva.dev blog card: Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
@@ -9785,7 +9798,7 @@ const META_BY_PATH = {
     description: "A dated review of the guides found that source specifications and local claims had moved. The article records corrections and the limits of automated checks.",
     date: "2026-07-04",
     kind: "Build notes",
-    modified: "2026-07-16",
+    modified: "2026-11-05",
     image: "/og-re-checking-the-guides.jpg",
     imageAlt: "turva.dev blog card: Four AI agents re-read the guides against the specifications behind them."
   },
@@ -9793,7 +9806,7 @@ const META_BY_PATH = {
     title: "The page grew, the agent token count did not · turva.dev",
     description: "A July measurement compared the token counts of the homepage's HTML and Markdown representations. The result describes that page and measurement date.",
     date: "2026-07-04",
-    modified: "2026-10-31",
+    modified: "2026-11-05",
     kind: "Build notes",
     image: "/og-cheaper-pages-revisited.jpg",
     imageAlt: "turva.dev blog card: The site kept growing after June's token-cost post. The 4 July scan reports an 83% token saving between the HTML and markdown forms."
@@ -11630,8 +11643,9 @@ function buildDomainCheckServiceJsonLd(canonicalUrl: string) {
 }
 
 function buildAuditServiceJsonLd(canonicalUrl: string) {
-  // The same audit as the OfferCatalog row in SCHEMA_SERVICE: one product, its own page URL,
-  // the price from facts.json through the same literal the catalog uses.
+  // A Service for the same audit as the OfferCatalog row in SCHEMA_SERVICE, written separately:
+  // its wording is kept in step by hand and it carries no add-on Offer. One product, its own page
+  // URL, the price from facts.json through the same literal the catalog uses.
   const url = canonicalUrl || "https://turva.dev/agent-readiness-audit";
   const svc = {
     "@context": "https://schema.org",

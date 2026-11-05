@@ -368,6 +368,35 @@ console.log('\nShare card manifest (tools/og-cards.json)');
   const incomplete = names.filter((n) => !fields.every((f) => typeof cards[n][f] === 'string' && cards[n][f].trim().length > 0));
   check(incomplete.length === 0,
     `every og-cards.json entry carries ${fields.join(', ')}${incomplete.length ? ' (incomplete: ' + incomplete.join(', ') + ')' : ''}`);
+  // Prices written on a card are text in the manifest, so they can be compared. Every euro
+  // amount (written as the symbol, as "N euros" or as a thousands figure like 4,300) must be a
+  // price facts.json owns. The services card lists all four.
+  {
+    const priceVals = Object.entries<any>(facts.prices).filter(([k]) => k !== 'currency').map(([, v]) => Number(v));
+    const bundledVals = (Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : []).map((x: { price: number }) => x.price);
+    const allowedAmounts = new Set<number>([...priceVals, ...bundledVals]);
+    const cardAmounts = (c: Record<string, string>) => {
+      const text = Object.values(c).filter((v) => typeof v === 'string').join(' \n ');
+      const toks = [...text.matchAll(/€\s?(\d{1,3}(?:,\d{3})*)|(\d{1,3}(?:,\d{3})*)\s?euros?\b|\b(\d,\d{3})\b/g)]
+        .map((m) => Number((m[1] || m[2] || m[3]).replace(/,/g, '')));
+      return [...new Set(toks)];
+    };
+    const priced = names.map((n) => [n, cardAmounts(cards[n])] as [string, number[]]).filter(([, a]) => a.length > 0);
+    const wrongAmounts = priced.filter(([, a]) => a.some((n) => !allowedAmounts.has(n)));
+    check(priced.length >= 4 && wrongAmounts.length === 0,
+      `every price on an og card is a facts.json price (${priced.length} cards carry a price, at least 4 expected)`
+      + (wrongAmounts.length ? ' :: wrong: ' + wrongAmounts.map(([n, a]) => n + ' ' + JSON.stringify(a)).join(', ') : ''));
+    const svcAmounts = names.includes('og-services.jpg') ? cardAmounts(cards['og-services.jpg']) : [];
+    check(priceVals.length >= 4 && priceVals.every((v) => svcAmounts.includes(v)),
+      `og-services.jpg lists all ${priceVals.length} facts.json prices (read ${JSON.stringify(svcAmounts)})`);
+    // The reverse direction: a card file in public/ with no manifest entry is a card whose text
+    // nothing can gate.
+    const jpgInPublic = readdirSync(publicDir).filter((f) => /^og-.*\.jpg$/.test(f));
+    const noEntry = jpgInPublic.filter((f) => !names.includes(f));
+    check(jpgInPublic.length >= 80 && noEntry.length === 0,
+      `every og-*.jpg in turva-worker/public has a manifest entry (${jpgInPublic.length} files)`
+      + (noEntry.length ? ' :: without an entry: ' + noEntry.join(', ') : ''));
+  }
   console.log(`  note  og card text coverage: ${names.length} cards carry their text in the manifest (forward only, see the comment above)`);
 }
 
@@ -1416,6 +1445,18 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       `SITEMAP_LASTMOD ${lastmod} is not older than the newest dated page ${newest}`);
     const pvu = constOf('PRICE_VALID_UNTIL');
     check(days(today, pvu) > 30, `PRICE_VALID_UNTIL ${pvu} is more than 30 days away (Google reads a past one as a withdrawn offer)`);
+    // The same date is typed by hand in the prose of the price cards and the services page
+    // ("Price valid until 2026-12-31."), while the constant above feeds only the structured data.
+    // A bump that moves one and not the other leaves the served prose and the JSON-LD on two
+    // dates with every other gate green. Every prose date has to equal the constant, so the bump
+    // fails here until the constant and all the prose lines move together.
+    const proseDates = [...w.matchAll(/valid until (\d{4}-\d{2}-\d{2})/gi)].map((m) => m[1]);
+    const proseOtherForm = (w.match(/valid until (?!\d{4}-\d{2}-\d{2})\d/gi) || []).length;
+    const proseStray = proseDates.filter((d) => d !== pvu);
+    check(proseDates.length >= 7 && proseStray.length === 0 && proseOtherForm === 0,
+      `every "valid until <date>" in worker.ts equals PRICE_VALID_UNTIL ${pvu} (${proseDates.length} read, at least 7 expected)`
+      + (proseStray.length ? ` :: differing: ${[...new Set(proseStray)].join(', ')}; the constant and every prose date have to move together` : '')
+      + (proseOtherForm ? ` :: ${proseOtherForm} date(s) not written as YYYY-MM-DD` : ''));
     const exp = (w.match(/\nExpires: (\S+)/) || [])[1] || '';
     const expDay = exp.slice(0, 10);
     check(days(today, expDay) > 30 && days(today, expDay) <= 366,
@@ -1944,6 +1985,110 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       'handleRequest builds no redirect with the bare Response.redirect() (every redirect goes through redirectTo(), which carries the security headers)');
   }
 
+  console.log('\nPublished limits of the parity page and the validator, bound to the code');
+  // The parity page states its limits in prose (HTML and Markdown size, block pairs, checks per
+  // minute) and the validator page states its two size thresholds. Only the request size and the
+  // concurrency were bound to code above, so a changed constant left the published sentence wrong.
+  {
+    const intOf = (text: string, re: RegExp) => { const m = text.match(re); return m ? Number(m[1]) : null; };
+    const codeHtml = intOf(w, /const PARITY_MAX_HTML_BYTES = (\d+);/);
+    const codeMd = intOf(w, /const PARITY_MAX_MARKDOWN_BYTES = (\d+);/);
+    const codePairs = intOf(w, /const PARITY_LIMITS = \{ maxAlignmentPairs: (\d+),/);
+    let limiter: { limit?: number; period?: number } | null = null;
+    try {
+      const cfg = JSON.parse(jsoncToJson(readFileSync(join(ROOT, 'turva-worker/wrangler.jsonc'), 'utf8')));
+      const rl = (cfg.ratelimits || []).find((r: { name?: string }) => r.name === 'PARITY_LIMITER');
+      limiter = rl && rl.simple ? rl.simple : null;
+    } catch { limiter = null; }
+    const twinSize = [...w.matchAll(/- HTML up to (\d+) KiB and Markdown up to (\d+) KiB\./g)];
+    check(twinSize.length >= 1 && codeHtml !== null && codeMd !== null
+        && twinSize.every((m) => Number(m[1]) * 1024 === codeHtml && Number(m[2]) * 1024 === codeMd),
+      `the parity page states the HTML and Markdown size limits the code enforces (${twinSize.length} sentence(s); code ${codeHtml} and ${codeMd} bytes)`);
+    const twinPairs = [...w.matchAll(/- Up to (\d+(?: \d{3})*) block pairs\./g)];
+    check(twinPairs.length >= 1 && codePairs !== null && twinPairs.every((m) => Number(m[1].replace(/ /g, '')) === codePairs),
+      `the parity page states the block pair limit the code enforces (${twinPairs.length} sentence(s); code ${codePairs})`);
+    const twinRate = [...w.matchAll(/- About (\d+) checks per minute from one IP address/g)];
+    check(twinRate.length >= 1 && !!limiter && limiter.period === 60 && twinRate.every((m) => Number(m[1]) === limiter!.limit),
+      `the parity page states the checks per minute wrangler.jsonc PARITY_LIMITER enforces (${twinRate.length} sentence(s); limiter ${JSON.stringify(limiter)})`);
+    const valSentence = [...w.matchAll(/A file over (\d+) KiB gets a warning, and one over (\d+) KiB is read truncated/g)];
+    const valWarn = intOf(region('function validateLlmsTxt', '\nfunction '), /f\.bytes <= (\d+)\)/);
+    const valCap = intOf(region('async function fetchLlmsTxt', '\nfunction collectLinks'), /const cap = (\d+);/);
+    check(valSentence.length >= 1 && valWarn !== null && valCap !== null
+        && valSentence.every((m) => Number(m[1]) * 1024 === valWarn && Number(m[2]) * 1024 === valCap),
+      `the validator page states the 50 KiB warning and 256 KiB read cap the code applies (${valSentence.length} sentence(s); code ${valWarn} and ${valCap} bytes)`);
+  }
+
+  console.log('\nPrice surfaces compared to facts.json one by one');
+  // Four price-bearing surfaces were reached only by a file-wide substring match, which stays
+  // true while any one surface changes, because the same amount sits on many others.
+  {
+    check(PRICED.length >= 4, `facts.json names at least four priced services (${PRICED.length})`);
+    // llms.txt: the signed file's own pricing lines, one per service.
+    const llmsAll: string = region('const LLMS_TXT', '\nconst AUTH_MD').replace(/\r\n/g, '\n');
+    const pStart = llmsAll.indexOf('## Pricing');
+    const pEnd = llmsAll.indexOf('Final price is confirmed');
+    const pricingLines = (pStart >= 0 && pEnd > pStart ? llmsAll.slice(pStart, pEnd) : '').split('\n');
+    check(pricingLines.length > 4, `the llms.txt pricing section was read (${pricingLines.length} lines)`);
+    for (const s of PRICED) {
+      const line = pricingLines.find((l) => l.startsWith('- ' + s.name + ': ')) || '';
+      check(line.startsWith('- ' + s.name + ': ' + euroOf(s.priceKey)),
+        `llms.txt pricing line for ${s.name} starts with ${euroOf(s.priceKey)} (saw ${JSON.stringify(line.slice(0, 48))})`);
+    }
+    // OpenAPI: the amount of each payment operation is the price in cents. Values only; the
+    // shape and the operation set are not touched here.
+    const oas: string = region('const OPENAPI_SPEC', '\nconst MCP_SERVER_CARD');
+    const OAS_OPS: Record<string, string> = { orderAudit: 'audit', subscribeAdvisory: 'advisory', bookImplementationDay: 'implementation' };
+    const oasChunks = oas.split('"operationId": "').slice(1);
+    for (const [op, key] of Object.entries(OAS_OPS)) {
+      const chunk = oasChunks.find((c) => c.startsWith(op + '"')) || '';
+      const amount = (chunk.match(/"x-payment-info": \{[\s\S]*?"amount": "(\d+)"/) || [])[1];
+      check(chunk !== '' && Number(amount) === facts.prices[key] * 100,
+        `OpenAPI ${op} x-payment-info amount ${JSON.stringify(amount)} == ${facts.prices[key] * 100} (facts.json prices.${key} in cents)`);
+    }
+    // The audit Service node of its own page carries the price twice, as strings.
+    const auditLd = region('function buildAuditServiceJsonLd', '\n}');
+    const ldPrices = [...auditLd.matchAll(/"price": "(\d+)"/g)].map((m) => m[1]);
+    check(ldPrices.length >= 2 && ldPrices.every((p) => p === String(facts.prices.audit)),
+      `buildAuditServiceJsonLd carries the audit price ${facts.prices.audit} in both places (saw ${JSON.stringify(ldPrices)})`);
+    // META_BY_PATH: the price written in the title and share-card alt text of the pages that sell.
+    const metaSrc = region('const META_BY_PATH = {', '\nconst PRICE_VALID_UNTIL');
+    const metaField = (path: string, field: string) => {
+      const i = metaSrc.indexOf('\n  "' + path + '": {');
+      if (i < 0) return '';
+      const j = metaSrc.indexOf('\n  },', i);
+      const body = metaSrc.slice(i, j < 0 ? undefined : j);
+      return (body.match(new RegExp('\\n    ' + field + ': "((?:[^"\\\\]|\\\\.)*)"')) || [])[1] || '';
+    };
+    const euroTokens = (text: string) => [...text.matchAll(/€(\d{1,3}(?:,\d{3})*)|(\d{1,3}(?:,\d{3})*) euros?\b/g)].map((m) => Number((m[1] || m[2]).replace(/,/g, '')));
+    const allowedAmounts = new Set<number>([...PRICED.map((s) => facts.prices[s.priceKey] as number),
+      ...(Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : []).map((x: VerifyBundled) => x.price)]);
+    const sellPages: [string, string, string[]][] = [
+      ['/external-domain-check', 'title', ['domain-check']], ['/external-domain-check', 'imageAlt', ['domain-check']],
+      ['/agent-readiness-audit', 'title', ['audit']], ['/agent-readiness-audit', 'imageAlt', ['audit']],
+      ['/services', 'imageAlt', PRICED.map((s) => s.priceKey)],
+      ['/blog/cheating-to-keep-the-old-price', 'imageAlt', ['audit']],
+    ];
+    let metaTokenCount = 0;
+    for (const [path, field, keys] of sellPages) {
+      const text = metaField(path, field);
+      const toks = euroTokens(text);
+      metaTokenCount += toks.length;
+      check(text !== '' && toks.length >= keys.length && toks.every((n) => allowedAmounts.has(n)) && keys.every((k) => toks.includes(facts.prices[k])),
+        `META_BY_PATH ${path} ${field} states ${keys.map((k) => euroOf(k)).join(', ')} and no other amount (read ${JSON.stringify(toks)})`);
+    }
+    check(metaTokenCount >= 9, `META_BY_PATH price tokens read in the sell pages (${metaTokenCount}, at least 9 expected)`);
+    // The MCP server card is signed; its add-on entry must match facts.json.
+    const card = region('const MCP_SERVER_CARD = ', '\nconst OAUTH_DISCOVERY');
+    const cardBundled = (card.match(/"bundledImplementation": \[([\s\S]*?)\n\s*\]/) || [])[1] || '';
+    const wantBundled: VerifyBundled[] = Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : [];
+    check(wantBundled.length >= 1, `facts.json declares the bundled add-on (${wantBundled.length})`);
+    for (const x of wantBundled) {
+      check(cardBundled.includes(`"name": "${x.name}"`) && cardBundled.includes(`"price": ${x.price},`)
+          && cardBundled.includes(`"requires": "${x.requires}"`) && cardBundled.includes('"soldSeparately": false'),
+        `MCP server card bundledImplementation states ${x.name}, price ${x.price}, requires ${x.requires}, soldSeparately false`);
+    }
+  }
+
   check(anchorFails.length === 0,
     `every source anchor these gates read resolves${anchorFails.length ? ' :: ' + anchorFails.join(' | ') : ''}`);
 }
@@ -2381,7 +2526,7 @@ console.log('\nNo JavaScript files in the repository (Tek-663, phase W6)');
 // test/*.test.ts and tools/verify.mts. Tek-663 decided that the repository holds no .js, .mjs or
 // .cjs file at all. Nothing else would notice one coming back. This walk fails the run and names
 // every such file. It skips node_modules, .wrangler and .git at any depth, because they are
-// installed or generated, not source. The four scripts the Worker serves to browsers are strings
+// installed or generated, not source. The three scripts the Worker serves to browsers are strings
 // inside worker.ts, not files. They are outside this check by design.
 {
   const skipDirs = new Set(['node_modules', '.wrangler', '.git']);
@@ -2397,6 +2542,21 @@ console.log('\nNo JavaScript files in the repository (Tek-663, phase W6)');
   walk(ROOT, '');
   check(jsFiles.length === 0, 'the repository holds no .js, .mjs or .cjs file outside node_modules, .wrangler and .git'
     + (jsFiles.length ? ' (found: ' + jsFiles.join(', ') + ')' : ''));
+}
+
+console.log('\nMTA-STS policy hash, offline');
+// The live block reads the same hash only after two DNS lookups, and a lookup that times out
+// skips it. The hash needs no network, so it is also checked here, where every ship runs it.
+// The TXT id is a cache key that only DNS can show, and stays in the live block.
+{
+  const staticPolSrc = (src.worker.text.match(/const MTA_STS_POLICY = `([\s\S]*?)`;/) || [])[1] || '';
+  const staticPol = staticPolSrc.replace(/\r\n/g, '\n');
+  const staticSha = createHash('sha256').update(Buffer.from(staticPol, 'utf8')).digest('hex');
+  const staticMs = facts.mtaSts || {};
+  check(staticPol.length > 0 && /^version: STSv1$/m.test(staticPol) && /^mode: enforce$/m.test(staticPol) && /^mx:/m.test(staticPol),
+    `MTA_STS_POLICY was read from worker.ts (${staticPol.length} characters, STSv1, enforce, at least one mx)`);
+  check(staticPol.length > 0 && staticMs.policySha256 === staticSha,
+    `facts.json mtaSts.policySha256 == the policy in worker.ts, offline (facts ${String(staticMs.policySha256).slice(0, 16)}..., worker.ts ${staticSha.slice(0, 16)}...)`);
 }
 
 if (LIVE) {
@@ -3596,9 +3756,14 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
         else if (v && typeof v === 'object') Object.values(v).forEach(walkPri);
       };
       walkPri(pri);
-      const rises = priStrings.flatMap((s) => s.split(/(?<=[.!?])\s+/)).filter((s) => /reads higher/.test(s));
-      check(rises.every((s) => /or the report explains (?:why a|which) tradeoff was kept on purpose/.test(s)),
-        `get_principles does not promise a rise without the tradeoff clause the audit template carries (${rises.length} promise(s) read)`);
+      // Negative form since the sentence that promised a higher reading was removed: the tool
+      // may not promise one in any wording, and it must have returned the rule strings at all.
+      // The old form (each such sentence carries the tradeoff clause) passed on an empty list
+      // and on any other wording.
+      const sentences = priStrings.flatMap((s) => s.split(/(?<=[.!?])\s+/));
+      const promises = sentences.filter((s) => /\b(?:reads?|scores?|scored)\s+higher\b|\b(?:score|reading|level)\s+(?:rises|goes up|improves|increases)\b/i.test(s));
+      check(priStrings.length >= 12 && promises.length === 0,
+        `get_principles promises no higher reading in any wording (${promises.length} promise(s) in ${sentences.length} sentence(s) from ${priStrings.length} strings, at least 12 strings expected)`);
     }
 
     // get_contact carries the channels facts.json owns, so the gate compares them there

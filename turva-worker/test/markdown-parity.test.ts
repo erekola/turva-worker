@@ -608,3 +608,115 @@ test("parity check: a PARITY report of the wrong shape takes the remote failure 
   assert.notEqual(errPage.status, 503, "the error report renders in the form");
   assert.ok(!(await errPage.text()).includes("an answer this page cannot read"), "the error report is not read as a malformed answer");
 });
+
+// ---- The hosted limits the README and the page state ----
+// The constants are read out of the Worker source and the real functions are evaluated from it, so a
+// changed limit or a changed refusal fails here. The page bodies cannot be made large enough through the
+// route itself (the largest published page is far below 128 KiB as Markdown), so the size, redirect and
+// pair limits are exercised on the functions that enforce them.
+
+const parityWorkerSrc = stripTypes(readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8"));
+function paritySlice(from: string, to: string) {
+  const a = parityWorkerSrc.indexOf(from);
+  assert.notEqual(a, -1, "anchor missing in worker.ts: " + from);
+  const b = parityWorkerSrc.indexOf(to, a + from.length);
+  assert.notEqual(b, -1, "end anchor missing in worker.ts: " + to);
+  return parityWorkerSrc.slice(a, b);
+}
+function parityParts(handleRequest: (r: Request, e: unknown) => Promise<Response> = async () => new Response("")) {
+  const code = [
+    paritySlice("const PARITY_LIMITS = ", "\nconst PARITY_MAX_REQUEST_BYTES"),
+    paritySlice("const PARITY_MAX_REDIRECTS = ", "\nconst PARITY_MAX_CONCURRENT"),
+    paritySlice("class ParityError ", "\nfunction parityIsSelf("),
+    paritySlice("function parityIsSelf(", "\n// A published page: the home page"),
+    paritySlice("async function parityReadCapped(", "\nfunction parityDecode("),
+    paritySlice("function parityDecode(", "\n// The request: JSON from an agent"),
+    paritySlice("async function paritySource(", "\n// One of turva.dev's own pages, rendered"),
+    paritySlice("async function parityFetchSelf(", "\n// Phase 2: the remote transport"),
+    "return { PARITY_LIMITS, PARITY_MAX_HTML_BYTES, PARITY_MAX_MARKDOWN_BYTES, PARITY_MAX_REDIRECTS, paritySource, parityFetchSelf };"
+  ].join("\n");
+  const make = new Function("mpcMaskUrl", "handleRequest", "paritySelfPathAllowed", "parityToolPage", code);
+  return make((u: string) => u, handleRequest, () => true, () => false) as {
+    PARITY_LIMITS: { maxAlignmentPairs: number }; PARITY_MAX_HTML_BYTES: number; PARITY_MAX_MARKDOWN_BYTES: number; PARITY_MAX_REDIRECTS: number;
+    paritySource: (requested: string, final: string, res: Response, accept: string, redirects: number) => Promise<{ meta: { bytes: number } }>;
+    parityFetchSelf: (start: URL, accept: string, env: unknown) => Promise<{ meta: { redirects: number } }>;
+  };
+}
+// A body of n bytes in 64 KiB chunks, so the cap is crossed mid-stream as it is on the network.
+function parityBody(n: number) {
+  let left = n;
+  return new Response(new ReadableStream<Uint8Array>({
+    pull(c) { if (left <= 0) { c.close(); return; } const k = Math.min(left, 65536); left -= k; c.enqueue(new Uint8Array(k).fill(120)); }
+  }), { headers: { "content-type": "text/plain; charset=utf-8" } });
+}
+
+test("parity limits: the README states the numbers the code enforces", () => {
+  const p = parityParts();
+  const readme = readFileSync(new URL("../../README.md", import.meta.url), "utf8");
+  const stated = /HTML up to (\d+) KiB, Markdown up to (\d+) KiB and at most (\d+(?: \d{3})*) block pairs/.exec(readme);
+  assert.ok(stated, "the README sentence with the three limits is there");
+  assert.equal(Number(stated![1]) * 1024, p.PARITY_MAX_HTML_BYTES);
+  assert.equal(Number(stated![2]) * 1024, p.PARITY_MAX_MARKDOWN_BYTES);
+  assert.equal(Number(stated![3].replace(/ /g, "")), p.PARITY_LIMITS.maxAlignmentPairs);
+  assert.equal(p.PARITY_MAX_HTML_BYTES, 524288);
+  assert.equal(p.PARITY_MAX_MARKDOWN_BYTES, 131072);
+  assert.equal(p.PARITY_LIMITS.maxAlignmentPairs, 250000);
+  assert.equal(p.PARITY_MAX_REDIRECTS, 5);
+});
+
+test("parity limits: an HTML response over 524288 bytes and a Markdown response over 131072 bytes are refused with 422 too_large", async () => {
+  const p = parityParts();
+  for (const [accept, label, cap] of [["text/html", "HTML", 524288], ["text/markdown", "Markdown", 131072]] as [string, string, number][]) {
+    const over = await p.paritySource("https://turva.dev/x", "https://turva.dev/x", parityBody(cap + 1), accept, 0).then(() => null, (e: { kind: string; status: number; message: string }) => e);
+    assert.ok(over, label + " one byte over the cap is refused");
+    assert.equal(over!.kind, "too_large");
+    assert.equal(over!.status, 422);
+    assert.ok(over!.message.includes("The " + label + " response is larger than " + cap + " bytes"), over!.message);
+    const at = await p.paritySource("https://turva.dev/x", "https://turva.dev/x", parityBody(cap), accept, 0);
+    assert.equal(at.meta.bytes, cap, label + " exactly at the cap is accepted");
+  }
+});
+
+test("parity limits: more than 250000 block pairs ends in the limit error, and fewer is compared", () => {
+  const limits = new Function(paritySlice("const PARITY_LIMITS = ", "\nconst PARITY_MAX_HTML_BYTES") + "\nreturn PARITY_LIMITS;")() as { maxAlignmentPairs: number; maxSimilarityCandidates: number; maxSimilarityWork: number; maxNestingDepth: number };
+  const pages = (n: number) => {
+    const paras = Array.from({ length: n }, (_, i) => "Paragraph number " + i + " with words alpha" + i + " beta" + (i * 7) + " gamma" + (i * 13));
+    const src = (body: string, accept: string): SourceInput => ({ meta: { kind: "url", url: "https://turva.dev/x", requestedUrl: "https://turva.dev/x", status: 200, contentType: accept === "text/html" ? "text/html" : "text/markdown", accept, redirects: 0, bytes: body.length, baseUrl: "https://turva.dev/x" }, body, base: "https://turva.dev/x" });
+    return [src("<html><body><main>" + paras.map((x) => "<p>" + x + "</p>").join("") + "</main></body></html>", "text/html"), src(paras.join("\n\n") + "\n", "text/markdown")] as const;
+  };
+  const options = { strict: false, mode: "url" as const, frontMatter: "keep" as const, limits };
+  const [h490, m490] = pages(490);
+  assert.equal(run(h490, m490, options).summary.result, "pass", "490 by 490 is 240100 pairs, under the limit");
+  const [h600, m600] = pages(600);
+  assert.throws(() => run(h600, m600, options), /Comparison limit exceeded: 600 HTML blocks by 600 Markdown blocks is 360000 block pairs, above the limit of 250000/);
+});
+
+test("parity limits: five redirects are followed, a sixth is refused, and a loop is named", async () => {
+  const chain = (length: number, loop = false) => parityParts(async (req: Request) => {
+    const n = Number(new URL(req.url).pathname.slice(1));
+    if (loop) return new Response(null, { status: 301, headers: { location: "/" + ((n + 1) % 2) } });
+    if (n < length) return new Response(null, { status: 301, headers: { location: "/" + (n + 1) } });
+    return new Response("<p>ok</p>", { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
+  });
+  const refused = (p: ReturnType<typeof chain>) => p.parityFetchSelf(new URL("https://turva.dev/0"), "text/html", {}).then(() => null, (e: { kind: string; status: number; message: string }) => e);
+  const five = await chain(5).parityFetchSelf(new URL("https://turva.dev/0"), "text/html", {});
+  assert.equal(five.meta.redirects, 5, "a chain of five redirects is followed");
+  const six = await refused(chain(6));
+  assert.ok(six, "a chain of six redirects is refused");
+  assert.equal(six!.kind, "too_many_redirects");
+  assert.equal(six!.status, 422);
+  assert.equal(six!.message, "More than 5 redirects.");
+  const loop = await refused(chain(0, true));
+  assert.ok(loop, "a redirect loop is refused");
+  assert.equal(loop!.kind, "redirect_loop");
+  assert.equal(loop!.status, 422);
+});
+
+test("parity limits: a result with more than 200 findings shows the first 200 and says so", async () => {
+  const json = JSON.parse(await (await post({ url: "https://turva.dev/samples/audit-report", markdownUrl: "https://turva.dev/services.md" })).text());
+  const total = json.findings.length;
+  assert.ok(total > 200, "the two unrelated pages produce more than 200 findings (saw " + total + ")");
+  const html = await (await form({ url: "https://turva.dev/samples/audit-report", markdown_url: "https://turva.dev/services.md" })).text();
+  assert.ok(html.includes("Showing the first 200 of " + total + " findings."), "the page names the cap and the total");
+  assert.equal((html.match(/<div class="chk /g) || []).length, 200, "exactly 200 findings are listed");
+});

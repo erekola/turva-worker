@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-The site is a Cloudflare Worker, continuously deployed from `main`. Only the
+The site is a Cloudflare Worker, deployed by hand with Wrangler from `main` after each release. Only the
 currently deployed version is supported. There are no released version branches.
 
 | Version | Supported |
@@ -46,7 +46,7 @@ advisories in `undici` 7.29.0, cleared when wrangler 4.145.0 brought in the
 patched `undici` 7.29.1. Three later advisories against that `undici` 7.29.1,
 GHSA-4qv8-2p9j-2685, GHSA-f72v-6w45-q472 and GHSA-xjj6-f33q-929c, all fixed in
 7.30.1, cleared on 2026-10-26, when wrangler 4.153.0 brought in `miniflare`
-5.20261023.0-beta, which pins `undici` at exactly 7.30.1. Checked 2026-11-02.
+5.20261023.0-beta, which pins `undici` at exactly 7.30.1. Checked 2026-11-05.
 
 `esbuild` is in the toolchain only as a dependency of wrangler. Wrangler
 4.149.0 declares it at exactly `0.28.2`. The fix for GHSA-g7r4-m6w7-qqqr, an
