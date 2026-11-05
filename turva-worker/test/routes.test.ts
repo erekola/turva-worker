@@ -401,8 +401,10 @@ test("findLinkRelations does not count what a page did not publish", () => {
     "/found");
   // title and textarea are RCDATA: a link tag written in a title is TEXT, not markup,
   // and a page whose title mentions HTML syntax is exactly what this validator reads.
-  assert.equal(findLinkRelations('<head><title>How to use <link rel=describedby> for llms.txt</title></head>', "").describedby, null);
-  assert.equal(findLinkRelations('<head><title>How to use <link rel=describedby></title><link rel="describedby" href="/real"></head>', "").describedby, "/real");
+  // The link tag inside the title carries an href: a relation without a target is no relation, so without
+  // one these passed whether or not the title content was set aside (LV-31, round S3, Tek-546).
+  assert.equal(findLinkRelations('<head><title>How to use <link rel=describedby href=/fake> for llms.txt</title></head>', "").describedby, null);
+  assert.equal(findLinkRelations('<head><title>How to use <link rel=describedby href=/fake></title><link rel="describedby" href="/real"></head>', "").describedby, "/real");
   // A tag that never closes is not a tag, and the scan must not slow down over it.
   // The regex this replaced was quadratic: 16 000 unclosed "<link" measured 196 ms and
   // 256 KB of them would have taken minutes. Generous bound so the test is not flaky.

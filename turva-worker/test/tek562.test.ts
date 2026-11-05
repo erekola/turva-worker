@@ -130,10 +130,11 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
 // 2026-11-02: the card moved to MCP 1.7.2; only the two version fields changed, the length stays 4213.
 // 2026-11-03: the card moved to MCP 1.7.3 and get_principles says each fix is checked with a scanner or a direct test, so the length is 4223.
 // 2026-11-05: the card moved to MCP 1.7.4; only the two version fields changed, the length stays 4223.
+// 2026-11-05: the card moved to MCP 1.8.0; only the two version fields changed, the length stays 4223.
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
   assert.equal(b.length, 4223);
-  assert.equal(await sha256Hex(b), "d94256d0ea456ce7da5819eb400c2f4b488622730cde8939c73f216d802a7896");
+  assert.equal(await sha256Hex(b), "ee40018bbaf9f219256a52e53e85347909ddb39ad8ff7e8e79e6e3816b24584f");
 });
 
 // ---------------------------------------------------------------- PGP v6 key
