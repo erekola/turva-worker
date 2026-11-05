@@ -9,6 +9,15 @@ import { readFileSync } from "node:fs";
 const env = {};
 const get = (path: string, headers: Record<string, string> = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { headers }), env);
+// Strip tags until nothing changes, so a tag split around an inner one cannot survive a single pass (CodeQL js/incomplete-multi-character-sanitization).
+const stripTags = (html: string) => {
+  let prev: string;
+  do {
+    prev = html;
+    html = html.replace(/<[^>]+>/g, "");
+  } while (html !== prev);
+  return html;
+};
 
 // Source check for the blog-only scoping: every line of serveGuideHtml that writes the tabindex replacement
 // also carries the pathname.startsWith("/blog/") condition, and there is at least one such line.
@@ -215,7 +224,7 @@ test("A11Y tables: a rendered table keeps explicit ARIA roles, scope and data-la
   let end = first;
   while (end < mdLines.length && mdLines[end].trim().startsWith("|")) end++;
   const mdHead = mdLines[first].trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => c.trim());
-  const ths = [...tables[0].matchAll(/<th role="columnheader" scope="col">([\s\S]*?)<\/th>/g)].map((m) => m[1].replace(/<[^>]+>/g, "").trim());
+  const ths = [...tables[0].matchAll(/<th role="columnheader" scope="col">([\s\S]*?)<\/th>/g)].map((m) => stripTags(m[1]).trim());
   assert.deepEqual(ths, mdHead.map((c) => c.replace(/`/g, "")), "header text equals the Markdown header row");
   assert.equal((tables[0].match(/<tr /g) || []).length, end - first - 1, "row count equals the Markdown table's rows");
 });

@@ -7,6 +7,15 @@ import worker from "../src/worker.ts";
 // inputs and expectations in test/sol-s3b.test.ts. Each test name starts with the audit item it covers.
 
 const env = {};
+// Strip tags until nothing changes, so a tag split around an inner one cannot survive a single pass (CodeQL js/incomplete-multi-character-sanitization).
+const stripTags = (html: string) => {
+  let prev: string;
+  do {
+    prev = html;
+    html = html.replace(/<[^>]*>/g, "");
+  } while (html !== prev);
+  return html;
+};
 type Check = { id: string; status: string; label: string; detail: string; value?: string };
 
 async function runVia(typed: string, fetcher: (url: string, init?: RequestInit) => Response | Promise<Response>): Promise<{ error: string | null; target: string; summary: string; checks: Check[] }> {
@@ -354,7 +363,7 @@ test("LV-21 and U-3: the page and its markdown twin say how www.turva.dev is rea
   const page = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator"), env)).text();
   const twin = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator.md"), env)).text();
   for (const text of [page, twin]) {
-    assert.match(text.replace(/<[^>]*>/g, ""), /reads www\.turva\.dev the same way as turva\.dev, without a request, and reports https:\/\/turva\.dev\/llms\.txt as the target/);
+    assert.match(stripTags(text), /reads www\.turva\.dev the same way as turva\.dev, without a request, and reports https:\/\/turva\.dev\/llms\.txt as the target/);
     assert.match(text, /https:\/\/github\.com\/erekola\/llms-txt-validator#how-links-headings-and-list-items-are-read/);
   }
 });
