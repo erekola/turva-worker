@@ -1432,17 +1432,16 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   }
 
   console.log('\nHand-maintained dates (B1-16)');
-  // Three constants that turn into a false claim by the calendar passing rather than by
-  // anyone editing them. SITEMAP_LASTMOD was stuck at 2026-07-02 once already (v3.36.0).
+  // The sitemap date, and two dates that turn into a false claim by the calendar passing
+  // rather than by anyone editing them. SITEMAP_LASTMOD says when a non-blog page last changed,
+  // so a new post leaves it alone: /blog and /blog/<slug> read their own dates in sitemapLastmodOf.
+  // It is deliberately not compared with the newest post date, because that check moved the date
+  // of every non-blog page with each new post. No check here can tell that a page changed.
   {
     const lastmod = constOf('SITEMAP_LASTMOD');
     const released = (facts.released || {}).site;
     check(!!released && days(released, today) >= 0, `facts.json released.site ${released} is not in the future`);
     check(lastmod === released, `SITEMAP_LASTMOD == facts.json released.site ${released} (saw ${lastmod})`);
-    const metaDates = [...w.matchAll(/\n    date: "(\d{4}-\d{2}-\d{2})"/g)].map((m) => m[1]).sort();
-    const newest = metaDates[metaDates.length - 1];
-    check(!!newest && days(newest, lastmod) >= 0,
-      `SITEMAP_LASTMOD ${lastmod} is not older than the newest dated page ${newest}`);
     const pvu = constOf('PRICE_VALID_UNTIL');
     check(days(today, pvu) > 30, `PRICE_VALID_UNTIL ${pvu} is more than 30 days away (Google reads a past one as a withdrawn offer)`);
     // The same date is typed by hand in the prose of the price cards and the services page
