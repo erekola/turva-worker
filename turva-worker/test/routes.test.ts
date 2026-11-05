@@ -558,7 +558,7 @@ test("brief: HTML vastaa, kantaa noindexin eika mene valimuistiin", async () => 
   assert.match(html, /<h1>Testiyhtio ja kaksi puuttuvaa riviä<\/h1>/);
   assert.match(html, /<hr \/>/, "vaakaviiva ei saa latoutua kappaleeksi jossa lukee ---");
   assert.ok(!/<p>---<\/p>/.test(html), "--- ei saa jaada nakyviin");
-  assert.match(html, /<th>discoverability<\/th>/, "taulukko latoutuu taulukkona");
+  assert.match(html, /<th role="columnheader" scope="col">discoverability<\/th>/, "taulukko latoutuu taulukkona");
   assert.match(html, /<li>Ensimmainen kohta\.<\/li>/);
   assert.ok(!/1\\\./.test(html), "markdownin kenoviivasuojaus ei saa nakya sivulla");
   assert.match(html, /1\. Tama on lause/, "suojattu rivi latoutuu proosana");

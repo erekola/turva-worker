@@ -176,3 +176,73 @@ test("N1: no auto-fit grid track minimum exceeds the column and a lone page imag
   assert.equal(count(badge, "main p>img{max-width:100%;height:auto;}"), 1, "the shared page CSS caps a lone image once");
   assert.ok(/<p><img src="\/badge\.svg"[^>]*width="216" height="36"/.test(badge), "the badge preview is a lone image in a paragraph and keeps its drawn size");
 });
+
+// Accessibility batch 2026-11-05. Three fixes, each asserted on rendered output through the
+// worker's fetch: the current page in the shared nav is not shown by colour alone (WCAG 1.4.1),
+// the stacked tables keep their table structure for assistive technology, and the llms.txt
+// validator ties its error to the input.
+test("A11Y 1.4.1: every a[aria-current] nav rule that sets a colour also underlines, desktop and mobile", async () => {
+  for (const p of ["/", "/services", "/guides", "/guides/llms-txt", "/blog", "/blog/tla-plus-in-numbers", "/tools", "/contact"]) {
+    const html = await (await get(p, { Accept: "text/html" })).text();
+    assert.match(html, /<a href="[^"]*" aria-current="(page|true)"/, p + " marks a current page in the nav");
+    const rules = [...html.matchAll(/a\[aria-current\]\{([^}]*)\}/g)].map((m) => m[1]);
+    assert.ok(rules.length >= 2, p + " carries the desktop and the mobile current-page rule, got " + rules.length);
+    for (const r of rules) {
+      assert.ok(/text-decoration:underline;/.test(r), p + " rule without an underline: " + r);
+      assert.ok(/text-decoration-thickness:2px;/.test(r) && /text-underline-offset:6px;/.test(r), p + " underline is not shaped: " + r);
+    }
+  }
+});
+
+test("A11Y tables: a rendered table keeps explicit ARIA roles, scope and data-label, and the text is unchanged", async () => {
+  const p = "/samples/audit-report";
+  const html = await (await get(p, { Accept: "text/html" })).text();
+  const md = await (await get(p, { Accept: "text/markdown" })).text();
+  const tables = [...html.matchAll(/<table [^>]*>[\s\S]*?<\/table>/g)].map((m) => m[0]);
+  assert.ok(tables.length >= 2, p + " has tables");
+  for (const t of tables) {
+    assert.match(t, /^<table class="cols-\d+ stack" role="table"><thead role="rowgroup"><tr role="row">/, "table skeleton carries roles");
+    assert.ok(/<\/thead><tbody role="rowgroup">/.test(t), "tbody is a rowgroup");
+    assert.equal((t.match(/<tr[ >]/g) || []).length, (t.match(/<tr role="row">/g) || []).length, "every tr is a row");
+    assert.equal((t.match(/<th[ >]/g) || []).length, (t.match(/<th role="columnheader" scope="col">/g) || []).length, "every th is a column header with scope");
+    assert.equal((t.match(/<td[ >]/g) || []).length, (t.match(/<td data-label="[^"]*" role="cell">/g) || []).length, "every td is a cell and keeps its data-label");
+  }
+  // Text unchanged: the first table's header cells equal the first Markdown table's header row,
+  // and the number of rows matches the Markdown table's lines (header and separator included).
+  const mdLines = md.split("\n");
+  const first = mdLines.findIndex((l) => l.trim().startsWith("|"));
+  assert.ok(first >= 0, "the markdown twin has a table");
+  let end = first;
+  while (end < mdLines.length && mdLines[end].trim().startsWith("|")) end++;
+  const mdHead = mdLines[first].trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => c.trim());
+  const ths = [...tables[0].matchAll(/<th role="columnheader" scope="col">([\s\S]*?)<\/th>/g)].map((m) => m[1].replace(/<[^>]+>/g, "").trim());
+  assert.deepEqual(ths, mdHead.map((c) => c.replace(/`/g, "")), "header text equals the Markdown header row");
+  assert.equal((tables[0].match(/<tr /g) || []).length, end - first - 1, "row count equals the Markdown table's rows");
+});
+
+test("A11Y validator: an invalid value ties the error to the input; no error, no attributes", async () => {
+  const input = (html: string) => (html.match(/<input [^>]*id="vurl"[^>]*>/) || [""])[0];
+  const bad = await (await get("/llms-txt-validator?url=not%20a%20domain", { Accept: "text/html" })).text();
+  assert.match(input(bad), /aria-invalid="true"/, "invalid value is flagged");
+  assert.match(input(bad), /aria-describedby="vurl-err"/, "the input points at the error");
+  assert.match(bad, /<p class="verr" id="vurl-err">/, "the error paragraph has the id the input points at");
+  assert.match(input(bad), /aria-label="Domain or website address to check"/, "the existing aria-label stays");
+  const empty = await (await get("/llms-txt-validator", { Accept: "text/html" })).text();
+  assert.ok(input(empty).length > 0, "the input is found");
+  assert.ok(!/aria-invalid|aria-describedby/.test(input(empty)), "no error, no aria-invalid and no aria-describedby");
+  assert.ok(!empty.includes("vurl-err"), "no error paragraph id on a page without an error");
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    const u = String(url);
+    if (u === "https://example.com/llms.txt") return new Response("# Example\n\n> Summary.\n\n## Docs\n\n- [Guide](https://example.com/guide)\n", { status: 200, headers: { "content-type": "text/plain; charset=utf-8" } });
+    if (u === "https://example.com/") return new Response("", { status: 404, headers: { "content-type": "text/html" } });
+    throw new Error("unexpected fetch to " + u);
+  };
+  try {
+    const ok = await (await get("/llms-txt-validator?url=example.com", { Accept: "text/html" })).text();
+    assert.ok(!ok.includes('class="verr"'), "the valid result renders without an error paragraph");
+    assert.ok(input(ok).length > 0 && !/aria-invalid|aria-describedby/.test(input(ok)), "a valid result leaves the input without error attributes");
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});

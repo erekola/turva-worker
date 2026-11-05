@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.223.4 - accessibility fixes from the review of 2026-11-05: the current page in the navigation is underlined and no longer shown by colour alone, tables carry explicit ARIA roles and column scope so their structure survives the stacked layout at narrow widths, and the llms.txt validator ties its error message to the input.
 // turva.dev worker v3.223.3 - small corrections from the workspace audit of 2026-11-04 (decisions U1, U6, U14 and groups G-43, G-44, G-64, G-157, G-162, G-163, G-164, G-166, G-167, G-206): the guide review sentences say that I start the monthly AI read by hand and that nothing on the site enforces it, the external domain check page lists the level and the result of each check and the numeric score only when the scanner returns one, llms-full.txt tells a reader to read llms.txt first, the x402 probe and the OpenAPI description no longer call the three agent routes payable without the notice their own challenges carry, the Markdown parity twin defines 403 and 422 as the code returns them, the OpenAPI AI catalog summary calls ai-catalog.json the ARD predecessor path, the Shopify post notes that the check is no longer sold, four token counts in a dated post use a space as the thousands separator, the code hosts post dates its page count, the home page names the scanner among the re-measured readings, the A2A banner comment is correct, the audit Service JSON-LD comment says the two copies are kept in step by hand, and /auth.md no longer asks registrants for concurrency. The MCP server card carries MCP 1.7.4, the release that closes the listen stream after the acknowledgement frame. SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.223.2 - /guides/mcp-server-card says what an MCP server is, with its local and remote forms and its three core primitives, and /guides/x402-agent-payments says what the x402 documentation claims about micropayments and what that does not show. Each guide gains one FAQ pair and one source.
 // turva.dev worker v3.223.1 - /blog/why-i-back-up-every-night says that Macrium notifies on a failed backup and names the cause of the failed images of 18 and 19 October, with a dated update note.
@@ -8299,7 +8300,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.223.3",
+    "version": "3.223.4",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8599,7 +8600,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.223.3",
+  "version": "3.223.4",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -10978,9 +10979,9 @@ function markdownToHtml(md: string) {
       // the document never scrolls sideways.
       const headCells = cells(tl[0]);
       const labels = headCells.map((c: string) => stripTags(c).replace(/"/g, "&quot;"));
-      const head = headCells.map((c: string) => `<th>${c}</th>`).join("");
-      const rows = tl.slice(2).filter((l: string) => l.startsWith("|")).map((l: string) => `<tr>${cells(l).map((c: string, i: number) => `<td data-label="${labels[i] || ""}">${c}</td>`).join("")}</tr>`).join("");
-      const tableHtml = (cls: string) => `<table class="cols-${headCells.length}${cls}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
+      const head = headCells.map((c: string) => `<th role="columnheader" scope="col">${c}</th>`).join("");
+      const rows = tl.slice(2).filter((l: string) => l.startsWith("|")).map((l: string) => `<tr role="row">${cells(l).map((c: string, i: number) => `<td data-label="${labels[i] || ""}" role="cell">${c}</td>`).join("")}</tr>`).join("");
+      const tableHtml = (cls: string) => `<table class="cols-${headCells.length}${cls}" role="table"><thead role="rowgroup"><tr role="row">${head}</tr></thead><tbody role="rowgroup">${rows}</tbody></table>`;
       // A table wider than four columns used to be offered a second time inside <details> as
       // a list of the same cells (v3.134.0, Tek-360), so <main> carried its text twice while
       // the Markdown carries it once. The stacked cards replace that copy: do not bring it back.
@@ -12428,7 +12429,7 @@ ${footerHtml()}
 
 // Defined before CARDPAGE_CSS on purpose: that constant is built at module load and reads this one.
 const NAV_MOBILE_CSS = `.turva-nav .nv-mobile{display:none;}
-@media (max-width:760px){.turva-nav{flex-wrap:wrap;justify-content:space-between;position:relative;padding-block:10px;}.turva-nav > ul.nv-menu{display:none;}.turva-nav .nv-mobile{display:block;flex:0 0 auto;margin-left:auto;}.turva-nav .nv-mobile summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;color:#F2F4F3;font-weight:600;font-size:14px;user-select:none;}.turva-nav .nv-mobile summary::-webkit-details-marker{display:none;}.turva-nav .nv-mobile summary::after{content:"+";content:"+" / "";font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;line-height:1;}.turva-nav .nv-mobile[open] summary::after{content:"\\2212";content:"\\2212" / "";}.turva-nav .nv-mobile summary:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}.turva-nav .nv-mobile .nv-list{position:absolute;left:0;right:0;top:100%;z-index:10;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;background:#0A1316;border-bottom:0.5px solid rgba(255,255,255,0.14);padding:6px 0 10px;box-shadow:0 14px 30px rgba(0,0,0,0.35);}.turva-nav .nv-mobile .nv-list li{margin:0;}.turva-nav .nv-mobile .nv-list a{display:block;box-sizing:border-box;min-height:44px;padding:12px clamp(16px,4vw,24px);font-size:16px;color:#F2F4F3;}.turva-nav .nv-mobile .nv-list a[aria-current]{color:#5DF18F;}}`;
+@media (max-width:760px){.turva-nav{flex-wrap:wrap;justify-content:space-between;position:relative;padding-block:10px;}.turva-nav > ul.nv-menu{display:none;}.turva-nav .nv-mobile{display:block;flex:0 0 auto;margin-left:auto;}.turva-nav .nv-mobile summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;color:#F2F4F3;font-weight:600;font-size:14px;user-select:none;}.turva-nav .nv-mobile summary::-webkit-details-marker{display:none;}.turva-nav .nv-mobile summary::after{content:"+";content:"+" / "";font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;line-height:1;}.turva-nav .nv-mobile[open] summary::after{content:"\\2212";content:"\\2212" / "";}.turva-nav .nv-mobile summary:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}.turva-nav .nv-mobile .nv-list{position:absolute;left:0;right:0;top:100%;z-index:10;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;background:#0A1316;border-bottom:0.5px solid rgba(255,255,255,0.14);padding:6px 0 10px;box-shadow:0 14px 30px rgba(0,0,0,0.35);}.turva-nav .nv-mobile .nv-list li{margin:0;}.turva-nav .nv-mobile .nv-list a{display:block;box-sizing:border-box;min-height:44px;padding:12px clamp(16px,4vw,24px);font-size:16px;color:#F2F4F3;}.turva-nav .nv-mobile .nv-list a[aria-current]{color:#5DF18F;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:#5DF18F;}}`;
 // Hoisted 2026-09-25 (Tek-475, K5-P1, approved kierros 19): the .turva-nav skeleton
 // below was written three times, byte-identical, in serveGuideHtml, serveHomeHtml and
 // CARDPAGE_CSS. Defined here, right after NAV_MOBILE_CSS and before CARDPAGE_CSS, for
@@ -12447,7 +12448,7 @@ ${NAV_MOBILE_CSS}
 .turva-nav .nv-menu{display:flex;flex-wrap:wrap;min-width:0;align-items:center;gap:clamp(18px,2.4vw,38px);list-style:none;margin:0;padding:0;flex:1;}
 .turva-nav .nv-menu a{font-size:18px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
-.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;}`;
+.turva-nav .nv-menu a[aria-current]{color:#F2F4F3;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:#5DF18F;}`;
 // Hoisted 2026-09-25 (Tek-475, K5-P1, approved kierros 19), same round as NAV_CORE_CSS
 // above: two more sub-blocks that turned out byte-identical between the guide template
 // and CARDPAGE_CSS specifically (home carries no .toc or .tbl rules at all, so this pair
@@ -15238,7 +15239,7 @@ async function serveLlmsValidatorHtml(request: Request, canonicalUrl: string) {
   let resultHtml = "";
   if (error) {
     const invalid = error.startsWith("That does not look like");
-    resultHtml = `<section class="sec" id="result"><h2>Result</h2><p class="verr">${invalid ? "Enter a domain or a website URL." : "The check could not be completed. Review the reported error and try again."} ${escapeHtml(error)}</p></section>`;
+    resultHtml = `<section class="sec" id="result"><h2>Result</h2><p class="verr" id="vurl-err">${invalid ? "Enter a domain or a website URL." : "The check could not be completed. Review the reported error and try again."} ${escapeHtml(error)}</p></section>`;
   } else if (result) {
     const counts = ["pass", "warn", "fail", "info"].map((k) => `<span><b>${word[k]}</b> ${result.checks.filter((c) => c.status === k).length}</span>`).join("");
     const rows = result.checks.map((c) =>
@@ -15262,7 +15263,7 @@ ${cardPageNav("/llms-txt-validator")}
   ${mdPageStart("/llms-txt-validator")}
   <form class="vform" method="get" action="/llms-txt-validator#result">
     <label for="vurl">Domain or website address to check</label>
-    <input type="text" id="vurl" name="url" inputmode="url" autocapitalize="off" spellcheck="false" autocomplete="off" placeholder="example.com" value="${escapeHtml(validatorEcho(typed, raw))}" aria-label="Domain or website address to check" required>
+    <input type="text" id="vurl" name="url" inputmode="url" autocapitalize="off" spellcheck="false" autocomplete="off" placeholder="example.com" value="${escapeHtml(validatorEcho(typed, raw))}" aria-label="Domain or website address to check"${error ? (error.startsWith("That does not look like") ? ' aria-invalid="true"' : "") + ' aria-describedby="vurl-err"' : ""} required>
     <button type="submit">Check llms.txt</button>
   </form>
   <p class="fine"><a href="/llms-txt-validator?url=turva.dev">Try it with turva.dev</a></p>
