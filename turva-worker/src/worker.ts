@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.227.0 - new Build notes post /blog/my-agents-notes-were-already-a-graph (2026-11-06): My agent's notes were already a graph, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 49, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.226.1 - corrections after the audit round of 2026-11-06: the rebuilt-site post, its FAQ, alt text and card name one public sample report; six guides, the guides index and ten posts get sourced, dated or narrowed sentences; /legal names Masto.host for messages sent over Mastodon and the seven-day version rotation of the encrypted cloud backup; /services, /agent-readiness-audit and /samples/audit-report wording; new OG card text for /tools and the agent commerce discovery guide.
 // turva.dev worker v3.226.0 - the home page, /services and /contact show four service cards each (Tek-761): the audit, implementation, ongoing advisory and one shared card for agent operations and MCP server design, with one mailto draft per card on /contact; the offer row parser accepts a price per day or per month, a price agreed for the engagement and a row without a delivery sentence.
 // turva.dev worker v3.225.0 - the paid external domain check is withdrawn: its service page, sample report, routes, JSON-LD, catalog entries, ACP item and legal and privacy wording are removed, the old addresses redirect to the audit pages, and the MCP server card moves to 1.9.0.
@@ -384,6 +385,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [My agent's notes were already a graph](https://turva.dev/blog/my-agents-notes-were-already-a-graph.md)
 - [I can't start over, so I back up every night](https://turva.dev/blog/why-i-back-up-every-night.md)
 - [What a publisher owes someone else's agent](https://turva.dev/blog/what-a-publisher-owes-someone-elses-agent.md)
 - [Finnish MiCA crypto providers and AI agents](https://turva.dev/blog/finnish-crypto-providers-and-ai-agents.md)
@@ -608,6 +610,93 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 const PAGE_MARKDOWN = {
+  "/blog/my-agents-notes-were-already-a-graph": `# My agent's notes were already a graph
+
+2026-11-06
+
+My Claude Code sessions keep their working memory in plain files: a decision log, a trap log, a measurement log, a dated changelog and a memory folder with one fact per file. On 5 November I built a reference graph and a full-text search over those files. The next day I tuned it three times, twice against fixed query sets and once against real searches from earlier sessions, and ran two experiments with agents. I hoped it would become the way my sessions find things. It stays as a tool, and it replaced nothing. The measurements show that the agents' answers did not change, and my reading is that the documentation was already doing most of that work.
+
+## Where did the idea come from?
+
+I saw an example where a language model reads a long PDF and builds a knowledge graph of the people, companies, places and dates in it. I did not test that model, so this post says nothing about how well it works. My problem is a different one. My sessions ask which decision covers a rule and whether that decision still holds. Those links are already written into the files as decision numbers, dated log tags, links between memory facts, file paths and skill names.
+
+So the graph reads those references and uses no model. On 5 November it counted 810 decisions, 1 329 trap entries, 746 measurement entries, 1 918 changelog entries and 312 memory files, with about 29 200 references between them. Each one was written by a session or by me for the next reader. The search uses SQLite's full-text index with trigrams and folded diacritics, because older entries are written without the Finnish letters ä and ö and newer ones with them, and a Finnish compound word is found only as a substring. The index is never saved. A topic search builds it in memory on every run, because several sessions write to the same files at once and the folder is under constant sync, and a lookup by reference does not build it at all.
+
+## What did the first measurement promise?
+
+On a test set I derived from the rules, a lookup by reference found the right location 30 times out of 30 and the right status 16 times out of 16. Its output was smaller than an unbounded grep 28 times out of 30.
+
+Then I measured real searches from 124 earlier sessions, 20 lookups by reference and 20 searches by topic. A lookup was smaller than what the session had actually done only 9 times out of 20, because my sessions already narrow their own searches. After I shortened the default output, the lookup was smaller 15 times out of 20. That cost something: the target's own location appeared in the output 5 times out of 19 instead of 8. Two of those 19 cases later turned out to be picking errors in my measurement.
+
+The derived test promised more than the real searches gave. That was the first sign of what the rest of the work showed.
+
+## What did tuning change?
+
+Tuning 1 used 1 275 queries fixed before any change, of which 1 007 could be scored, with about 30 percent held out. A candidate stayed only if it did not lower how often the answer appeared in the first five results, and it either raised the first-place hits, raised the mean reciprocal rank or cut the output by at least 5 percent at the same hit level. Bug fixes were kept apart from that rule. Six candidates failed it. On the 300 held-out queries the right answer came first 263 times instead of 195, and appeared in the first five 275 times instead of 200. The main reason was one form. My rules cite a log entry as the file name followed by a date tag, and in the tuning part of the set the lookup resolved that form 0 times out of 147 before tuning and 147 times out of 147 after it.
+
+Search by topic stayed weak. Tuning 2 wrote a new set of 1 099 queries for 240 targets. A subagent read each target and wrote a scenario, and a different one wrote the queries from the scenario alone, without seeing the target or the graph. On the 362 held-out queries, the answer appeared in the first five 195 times instead of 36. By class the gap is plain:
+
+| Query class | In first five, held out |
+|---|---|
+| Keywords in Finnish | 67 of 80 |
+| Keywords in Finnish without diacritics | 35 of 42 |
+| Keywords in English | 29 of 80 |
+| Questions in Finnish | 58 of 80 |
+| Questions in English | 6 of 80 |
+
+A word search rarely matches an English question to Finnish text. When an agent first translated its own English query into Finnish, it closed 94 percent of the question gap and 69 percent of the keyword gap. Those two figures come from the part the tuning used, so they are optimistic. The search took about 1,8 seconds before and after.
+
+Tuning 3 started from what real sessions do after a search. I read the searches in 663 main session and 2 034 subagent transcripts from 7 October on, with a rule fixed in advance for which read follows which search. Sessions often needed the place where a thing is used and not its definition, so the lookup now also prints up to three such places. The output overlapped the lines the session went on to read in 46 of 98 tuning searches instead of 42, and in 5 of 15 held-out searches instead of 3. Fifteen searches show only a direction. The median output grew by 33 percent on the tuning searches and 74 percent on the held-out ones. Of the 18 tuning searches that ended in a memory fact, 15 still missed. In 7 of those the fact names a date as plain text and not as a reference, which is a job for grep.
+
+## Did the agents do better with it?
+
+No. Not in a way I could measure.
+
+The first experiment ran 8 tasks under three conditions: the brief named the graph, did not mention it, or forbade it. Two repeats made 48 Sonnet runs. Two graders scored the answers from 0 to 2 with the tool name masked, though some answers still hinted at the condition. Averaged, the scores were 1,97, 2,00 and 2,00, and every condition found the answers. The condition that did not mention the graph made 15 graph calls across its 16 runs anyway, because my instruction file names the graph, so only the forbidden condition was a clean comparison. Runs that named the graph were the slowest, with a median of 27,6 seconds against 25,6 for the forbidden condition. Both repeats ran as parallel batches, so machine load is in those times. In the runs that named the graph, 8 of the 25 graph calls ended in a usage error or an empty result, and tuning 2 fixed both causes.
+
+The second experiment used the graph as it stood after tuning 2, 12 tasks meant to separate right answers from wrong ones, two conditions and three repeats, 72 runs in all. Both conditions averaged 1,93, and 3 of 36 runs in each scored below 2. I had fixed in advance that the tasks separate the conditions only if at least 6 runs in one of them scored below 2, so they did not. Correctness sat near the ceiling, and a small difference would not have shown. With the graph the summed duration was 11,1 percent lower, the summed tokens 16,0 percent lower and the tool calls 20,7 percent lower. None of those differences held up task by task. The p values were 0,77 for duration and 0,39 for tokens, and 0,065 for tool calls. One more figure did separate: the context of the last API call was smaller with the graph in 10 of 12 tasks, with a p value of 0,039, but that is the size of the final context and not what a run consumed. I measured the durations while another experiment ran on the same machine. None of the 49 graph calls ended in an error or an empty result. Tuning 3 came after both experiments, so no agent experiment covers it.
+
+The searches found the right entry far more often, and in both experiments the answers stayed the same.
+
+## Why did it change so little?
+
+I did not measure how sessions follow references, so this is my reading. Many rules in my instruction file name the decision or the log entry they come from, and the instruction file names the home of each kind of record. A session that greps a cited tag lands on the entry, and a session that knows where decisions live opens that file. The graph does that in one call and adds the status and who cites the entry. The answers came out the same either way.
+
+A graph read from references finds only the links someone wrote down. Where nobody wrote them, a model that extracts entities is the obvious thing to try. I have tested neither that nor a messier knowledge base.
+
+## What did measuring it teach?
+
+The measurement was wrong first, three times. The baseline of tuning 1 had four errors in my own scoring. One looked for targets in headings only, so 41 of the 42 references it called missing were entries that have only an index line. In the first agent experiment, the token figure turned out to be the context of the last API call and not what the run consumed. The real searches of tuning 3 had two errors in how I picked them, and two cases in the first measurement of real searches were exactly those errors. The scoring errors surfaced only when I opened the misses and read the tool's actual output.
+
+Load distorts timing. A subagent measured a search at 2 553 milliseconds while other runs shared the machine. Run one after another, the same versions took about 1,8 seconds.
+
+A held-out set gets used up. The first one found a real gap, and once I fixed it, those queries no longer tested anything independently. Tuning 2 wrote a new held-out set before it started.
+
+## What stays?
+
+The graph stays as a read-only tool next to grep. My instruction file points sessions to it for a lookup by reference: where an entry lives, its status and who cites it, in one call. The lookup takes about 0,37 seconds and a topic search about 1,8. Grep and my other search scripts keep their jobs.
+
+The most lasting part may be a gate built on the same parser. It checks that every decision number, dated log tag, memory link and tools path in my instruction file and my procedure files resolves to a real entry. Its first run checked 1 469 references and found two that pointed nowhere, both of them examples in the text. After I fixed those, it checked 1 467 and found none.
+
+## Frequently asked
+
+**Does a reference graph make a coding agent faster?**
+
+Not in my two experiments. The tuned version had lower totals in the three measures I compared, but none of those differences held up across the 12 tasks of the second experiment.
+
+**Why not use a model to extract the graph?**
+
+The links my sessions need were already written into the files as decision numbers, dated tags and file paths. Reading those is deterministic and adds no third party code, but it finds only the links someone wrote down. I did not test an extraction model.
+
+**What does the graph still do well?**
+
+It answers where a cited entry lives, what its own status line says and who cites it, in one call of about 0,37 seconds. About a third of my decisions have no status line, and the graph marks those as unmarked instead of guessing. A gate built on it checks that the references in the instruction files resolve.
+
+## Related
+
+- [What agent memory in local files gets me](/blog/local-agent-memory)
+- [The checks that pass for the wrong reason](/blog/checks-that-pass-for-the-wrong-reason)
+- [TLA+ on my own tools, in numbers](/blog/tla-plus-in-numbers)`,
   "/blog/why-i-back-up-every-night": `# I can't start over, so I back up every night
 
 2026-11-04
@@ -4228,8 +4317,9 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 
 ## Browse all articles
 
-48 articles.
+49 articles.
 
+- [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph). 2026-11-06. Build notes. I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and in two agent tests the answers stayed the same.
 - [I can't start over, so I back up every night](/blog/why-i-back-up-every-night). 2026-11-04. Build notes. A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.
 - [What a publisher owes someone else's agent](/blog/what-a-publisher-owes-someone-elses-agent). 2026-11-02. Protocol notes. ASD's guide on agentic AI is written for operators. What an MCP server's publisher owes them, read from the MCP spec and from my own server.
 - [Finnish MiCA crypto providers and AI agents](/blog/finnish-crypto-providers-and-ai-agents). 2026-10-31. Research. All five Finnish crypto providers in the MiCA register sit at isitagentready Level 1 of 5, and none passes the scanner's nine agent protocol checks.
@@ -8074,7 +8164,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.226.1",
+    "version": "3.227.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8206,7 +8296,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"NbZgaU3UiiCH3HlmgHupF01oW2qxBzokZhLBD5gpu7EURLyRZUfWNrqYsP2PH9RLr74mmbkChWvzreHAOakmDg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"kBIDPNWzHB31WJPGi4u0cirN0zNieX6mc8FGtqr7tD3CntUwH-k1yx4JHGN-D-alpEiN5rFRp3c_1RRxN1TgCQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"NbZgaU3UiiCH3HlmgHupF01oW2qxBzokZhLBD5gpu7EURLyRZUfWNrqYsP2PH9RLr74mmbkChWvzreHAOakmDg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o5xhN909KnsQ4rnP2JQE_xQ5MdYRkLjwfMWi9n5eVuvn6U7BTsLNOYC58soxpGmyb7yNNxkMRhU5w_LEPGz-BQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8372,7 +8462,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.226.1",
+  "version": "3.227.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9092,6 +9182,7 @@ const SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/my-agents-notes-were-already-a-graph", "monthly", "0.6"],
   ["/blog/why-i-back-up-every-night", "monthly", "0.6"],
   ["/blog/what-a-publisher-owes-someone-elses-agent", "monthly", "0.6"],
   ["/blog/finnish-crypto-providers-and-ai-agents", "monthly", "0.6"],
@@ -9213,7 +9304,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/blog/my-agents-notes-were-already-a-graph", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -9223,6 +9314,14 @@ function getCanonicalForPath(pathname: string) {
 }
 
 const META_BY_PATH = {
+  "/blog/my-agents-notes-were-already-a-graph": {
+    title: "My agent's notes were already a graph · turva.dev",
+    description: "I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and in two agent tests the answers stayed the same.",
+    date: "2026-11-06",
+    kind: "Build notes",
+    image: "/og-my-agents-notes-were-already-a-graph.jpg",
+    imageAlt: "Blog card for the post My agent's notes were already a graph, on turva.dev.",
+  },
   "/blog/why-i-back-up-every-night": {
     title: "I can't start over, so I back up every night · turva.dev",
     description: "A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.",
@@ -11289,6 +11388,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 const GUIDE_PAGE_FAQ = {
+  "/blog/my-agents-notes-were-already-a-graph": mdFaqBlocks("/blog/my-agents-notes-were-already-a-graph", "Frequently asked").pairs,
   "/blog/why-i-back-up-every-night": mdFaqBlocks("/blog/why-i-back-up-every-night", "Frequently asked").pairs,
   "/blog/what-a-publisher-owes-someone-elses-agent": mdFaqBlocks("/blog/what-a-publisher-owes-someone-elses-agent", "Frequently asked").pairs,
   "/blog/finnish-crypto-providers-and-ai-agents": mdFaqBlocks("/blog/finnish-crypto-providers-and-ai-agents", "Frequently asked").pairs,
