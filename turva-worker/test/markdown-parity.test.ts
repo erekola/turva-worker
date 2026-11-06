@@ -514,8 +514,8 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
   const md = (await served("/services", "text/markdown")).body.replace(/\r\n/g, "\n");
   const html = (await served("/services", "text/html")).body;
   const sec = md.slice(md.indexOf("\n## Choose a starting point\n"), md.indexOf("\n## ", md.indexOf("\n## Choose a starting point\n") + 4));
-  const rows = [...sec.matchAll(/\n- \[([^\]]+)\]\(([^)]+)\)\. (\S+)\. /g)];
-  assert.equal(rows.length, 1, "one offer");
+  const rows = [...sec.matchAll(/\n- \[([^\]]+)\]\(([^)]+)\)\. ([^.]+)\. /g)];
+  assert.equal(rows.length, 4, "four offers: the audit, implementation, ongoing advisory and the shared agent operations and MCP server design card (Tek-761)");
   for (const [, name, href, price] of rows) {
     assert.ok(html.includes('<span class="name"><a href="' + href + '">' + esc(name) + '</a>.</span> <span class="price">' + esc(price) + ".</span></span>"), href);
   }
@@ -525,6 +525,50 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
   // instead of stopping after "Fixed scope."
   assert.ok(md.includes("Two weeks. Fixed scope. Price valid until 2026-12-31.**") && html.includes('<span class="terms">Two weeks. Fixed scope. Price valid until 2026-12-31.</span>'), "the price line is the twin's sentence");
   assert.ok(!html.includes("&middot; Fixed scope"), "no middle dot in place of the twin's period");
+});
+
+// Tek-761 (F1, F3): the four service cards on / and /services. The unit of each price is read from the
+// /services twin's own bold price line under the service's heading (the site's source for units; facts.json
+// carries amounts only), the audit card must keep its delivery sentence, and /services renders exactly four
+// cards, in the order of the twin's service sections.
+test("Tek-761: the service cards keep their delivery sentence, the price units of the /services twin and the card order", async () => {
+  const facts = JSON.parse(readFileSync(new URL("../../tools/facts.json", import.meta.url), "utf8"));
+  const svcMd = (await served("/services", "text/markdown")).body.replace(/\r\n/g, "\n");
+  const homeMd = (await served("/", "text/markdown")).body.replace(/\r\n/g, "\n");
+  const svcHtml = (await served("/services", "text/html")).body;
+  const homeHtml = (await served("/", "text/html")).body;
+  const section = (md: string, h: string) => { const i = md.indexOf("\n## " + h + "\n"); assert.ok(i >= 0, "section " + h); const j = md.indexOf("\n## ", i + 4); return md.slice(i, j < 0 ? md.length : j); };
+  const rowsOf = (md: string, h: string) => [...section(md, h).matchAll(/\n- \[([^\]]+)\]\(([^)]+)\)\. ([^.]+)\. (.+)/g)].map((m) => ({ name: m[1], price: m[3], rest: m[4] }));
+  const svcRows = rowsOf(svcMd, "Choose a starting point");
+  const homeRows = rowsOf(homeMd, "Start with the audit");
+  assert.equal(svcRows.length, 4, "four rows in the /services twin");
+  assert.deepEqual(homeRows.map((r) => r.name), svcRows.map((r) => r.name), "the home page lists the same four cards in the same order");
+  // The unit of a price is the one the /services twin states in the bold line of the service's own section.
+  let priced = 0;
+  for (const r of svcRows) {
+    const bold = (section(svcMd, r.name === "Agent operations and MCP server design" ? "Agent operations" : r.name).match(/\n\*\*([^\n]+)\*\*/) || [])[1] || "";
+    const m = bold.match(/^(€[\d,]+)\. (?:Per (day|month)\b)?/);
+    if (!m) { assert.equal(r.price, "Price agreed for the engagement", r.name); continue; }
+    priced++;
+    assert.equal(r.price, m[1] + (m[2] ? " per " + m[2] : ""), r.name + ": the card's price and unit are the twin section's");
+  }
+  assert.equal(priced, facts.services.filter((s: { priceKey: string | null }) => s.priceKey).length, "one priced card per priced service in facts.json");
+  for (const [md, rows] of [[svcMd, svcRows], [homeMd, homeRows]] as const) {
+    assert.deepEqual(rows.map((r) => r.price), svcRows.map((r) => r.price), "the same prices on both pages");
+    assert.ok(/ Delivered [^.]+\.$/.test(rows[0].rest), "the audit row keeps its Delivered sentence: " + rows[0].rest.slice(-60));
+    assert.ok(md.includes(rows[0].name), rows[0].name);
+  }
+  // The same in the rendered HTML: the delivery sentence is its own span, and /services holds exactly four cards, in order.
+  assert.ok(/<span class="offer-when">Delivered [^<]+<\/span>/.test(homeHtml), "home: the audit card renders its Delivered span");
+  assert.ok(/<span class="when">Delivered [^<]+<\/span>/.test(svcHtml), "/services: the audit card renders its Delivered span");
+  const grid = svcHtml.slice(svcHtml.indexOf('id="choose-a-starting-point"'), svcHtml.indexOf("</ul>", svcHtml.indexOf('id="choose-a-starting-point"')));
+  const cardNames = [...grid.matchAll(/<li class="card ocard"[^>]*><span class="card-top"><span class="name"><a href="[^"]+">([^<]+)<\/a>/g)].map((m) => m[1]);
+  assert.deepEqual(cardNames, svcRows.map((r) => esc(r.name)), "/services renders exactly the four cards of its twin, in order");
+  const svcOrder = [...svcMd.matchAll(/\n## ([^\n]+)\n/g)].map((m) => m[1]);
+  const idx = svcRows.map((r) => svcOrder.indexOf(r.name === "Agent operations and MCP server design" ? "Agent operations" : r.name));
+  assert.ok(idx.every((i, k) => i >= 0 && (k === 0 || i > idx[k - 1])), "the cards follow the order of the service sections: " + idx.join(","));
+  const homeSpans = [...homeHtml.matchAll(/<span class="offer-price">([^<]+)<\/span>/g)].map((m) => m[1]);
+  assert.deepEqual(homeSpans, svcRows.map((r) => esc(r.price) + "."), "the home price spans carry the twin's prices and units");
 });
 
 // ---- Tek-488: round 3, the home page ----

@@ -1528,17 +1528,18 @@ test("K6: #vurl asks for the URL keyboard and turns off capitalisation, spellche
   assert.ok(/id="vurl" name="url"[^>]*value="/.test(tag[0]), "the echo rule of the redirect tests still reads value= after name=");
 });
 
-// Mobile read 2026-10-30, K10: /contact shows one card, the website or API audit (Tek-758).
-test("K10: /contact lists the one card, Website or API audit, in the HTML and in the Markdown twin", async () => {
-  const names = ["Website or API audit"];
+// Mobile read 2026-10-30, K10: /contact shows four cards, one mailto draft each (Tek-758, Tek-761).
+test("K10: /contact lists the four cards, in this order, in the HTML and in the Markdown twin", async () => {
+  const names = ["Website or API audit", "Implementation", "Ongoing advisory", "Agent operations and MCP server design"];
   const html = await (await get("/contact", { headers: { Accept: "text/html" } })).text();
   const hi = names.map((n) => html.indexOf("<h2>" + n + "</h2>"));
-  assert.ok(hi.every((i) => i > 0), "the card is rendered: " + hi.join(","));
+  assert.ok(hi.every((i) => i > 0) && hi.every((i, k) => k === 0 || i > hi[k - 1]), "the cards are rendered in order: " + hi.join(","));
+  assert.equal((html.match(/class="btn" href="mailto:info@turva[.]dev[?]subject=/g) || []).length, 4, "one mailto draft per card");
   assert.ok(!html.includes("External domain check"), "no withdrawn domain check card");
   assert.ok(!html.includes("Shopify check"), "no Shopify card");
   const md = await (await get("/contact", { headers: { Accept: "text/markdown" } })).text();
   const mi = names.map((n) => md.indexOf("## " + n + "\n"));
-  assert.ok(mi.every((i) => i > 0), "the section is in the twin: " + mi.join(","));
+  assert.ok(mi.every((i) => i > 0) && mi.every((i, k) => k === 0 || i > mi[k - 1]), "the sections are in the twin, in order: " + mi.join(","));
   assert.ok(!md.includes("External domain check"), "no withdrawn domain check section");
 });
 

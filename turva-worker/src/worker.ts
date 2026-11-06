@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.226.0 - the home page, /services and /contact show four service cards each (Tek-761): the audit, implementation, ongoing advisory and one shared card for agent operations and MCP server design, with one mailto draft per card on /contact; the offer row parser accepts a price per day or per month, a price agreed for the engagement and a row without a delivery sentence.
 // turva.dev worker v3.225.0 - the paid external domain check is withdrawn: its service page, sample report, routes, JSON-LD, catalog entries, ACP item and legal and privacy wording are removed, the old addresses redirect to the audit pages, and the MCP server card moves to 1.9.0.
 // turva.dev worker v3.224.0 - repairs from an outside read of the public repositories (Tek-578, sessions S3 to S5). The hosted llms.txt validator reads Markdown closer to CommonMark: balanced parentheses in a target, empty targets as relative links, code spans inside labels, labels that stop at a block boundary, images, reference definitions by block, Unicode case folding, semicolon-only references in a target, Unicode white space, raw HTML blocks and indented code inside list items. It parses the whole typed address and cuts only the echo, follows a same-site redirect with one trailing dot, reads script, template and raw text end tags as the HTML tokenizer does, does not count white space outside the head against the head limit, and ignores a Link value anchored to another resource. The validator page links the package README list of read forms, and the parity page says a 429 or a 500 can arrive as plain text. The MCP server card names MCP 1.8.0. The hosted parity check moves to markdown-parity-check 0.2.34.
 // turva.dev worker v3.223.4 - accessibility fixes from the review of 2026-11-05: the current page in the navigation is underlined and no longer shown by colour alone, tables carry explicit ARIA roles and column scope so their structure survives the stacked layout at narrow widths, and the llms.txt validator ties its error message to the input.
@@ -5249,10 +5250,13 @@ This example uses an invented business and invented readings. The sample's scann
 ## Start with the audit
 
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
+- [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
+- [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
+- [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
 
-The price excludes VAT and is valid until 2026-12-31.
+Listed prices exclude VAT and are valid until 2026-12-31.
 
-Implementation, ongoing advisory, agent operations and MCP server design are scoped separately. [All services and prices](/services).
+[All services and prices](/services).
 
 ## See what the work looks like
 
@@ -5375,6 +5379,9 @@ You work directly with me, in writing. I reply within one business day. All pric
 ## Choose a starting point
 
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
+- [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
+- [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
+- [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
 
 See the [sample audit report](/samples/audit-report) before choosing a service.
 
@@ -5801,11 +5808,29 @@ Include the URL and what you want the audit to answer.
 
 [Ask about an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
+## Implementation
+
+Include the URL and what you want implemented.
+
+[Ask about implementation](mailto:info@turva.dev?subject=Implementation&body=Site%20or%20API%20URL%3A%20%0AWhat%20to%20implement%3A%20%0A)
+
+## Ongoing advisory
+
+Include the URL and what you want me to keep track of.
+
+[Ask about ongoing advisory](mailto:info@turva.dev?subject=Ongoing%20advisory&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20advisory%20should%20cover%3A%20%0A)
+
+## Agent operations and MCP server design
+
+Include the URL and what you want the work to cover.
+
+[Ask about agent operations or MCP server design](mailto:info@turva.dev?subject=Agent%20operations%20or%20MCP%20server%20design&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20work%20should%20cover%3A%20%0A)
+
 ## Or write your own message
 
 Email [info@turva.dev](mailto:info@turva.dev). Existing scanner results are welcome, but you do not need them to get started.
 
-The button above opens a draft in your email app. You can edit it before sending, or write the same details in a plain email.
+Each button above opens a draft in your email app. You can edit it before sending, or write the same details in a plain email.
 
 ## Other ways to reach me
 
@@ -8024,7 +8049,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.225.0",
+    "version": "3.226.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8322,7 +8347,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.225.0",
+  "version": "3.226.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -11094,6 +11119,9 @@ function mdKvsSec(path: string, heading: string, extra?: string) {
     ${grid}${extra || ""}
   </section>`;
 }
+// One offer row, shared by /services and the home page: "- [name](href). price. covers [Delivered ...] [One retest ...]".
+// The price is a euro amount, optionally per day or per month, or the twin's own "Price agreed for the engagement"; the delivery sentence is optional (Tek-761).
+const OFFER_ROW_RE = /^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+(?: per (?:day|month))?|Price agreed for the engagement)\. (.+?)(?: (Delivered [^.]+\.))?(?: (One retest [^.]+\.))?$/;
 function mdOfferCards(path: string, heading: string, idFor?: Record<string, string>) {
   // The same row shape as the home page offers: "- [name](href). €price. covers Delivered ... [One retest ...]".
   // idFor carries an old section anchor onto the card that replaced that section, so a link
@@ -11101,14 +11129,14 @@ function mdOfferCards(path: string, heading: string, idFor?: Record<string, stri
   const rows = mdSection(path, heading).split("\n").filter((l) => l.startsWith("- "));
   if (!rows.length) throw new Error("mdOfferCards: no offer rows under " + heading + " in " + path);
   return rows.map((line) => {
-    const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)(?: (One retest [^.]+\.))?$/);
+    const m = line.match(OFFER_ROW_RE);
     if (!m) throw new Error("offer line does not parse: " + line.slice(0, 60));
     const [, name, href, price, covers, when, retest] = m;
     const cardId = (idFor && idFor[href]) ? ` id="${idFor[href]}"` : "";
     // Tek-488: the card reads as the row, "Name. €999. Covers. Delivered ... One retest ...", with
     // the link on the name and a stretched link over the card, so the HTML list item and the
     // Markdown list item carry the same text and the same one link.
-    return `<li class="card ocard"${cardId}><span class="card-top"><span class="name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="price">${escapeHtml(price)}.</span></span> <span class="cov">${escapeHtml(covers)}</span> <span class="when">${escapeHtml(when)}</span>${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""}</li>`;
+    return `<li class="card ocard"${cardId}><span class="card-top"><span class="name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="price">${escapeHtml(price)}.</span></span> <span class="cov">${escapeHtml(covers)}</span>${when ? ` <span class="when">${escapeHtml(when)}</span>` : ""}${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""}</li>`;
   }).join("\n      ");
 }
 function mdActionCards(path: string, headings: string[]) {
@@ -11759,19 +11787,19 @@ function serveHomeHtml(canonicalUrl: string) {
   // "Title. Body." paragraphs become a titled card; the split is the first ". " and a paragraph
   // without one throws, so a twin edit that drops the title cannot render an empty card.
   const titled = (t: string, what: string) => { const k = t.indexOf(". "); if (k < 0) throw new Error("home " + what + " paragraph has no title: " + t.slice(0, 40)); return { t: t.slice(0, k), b: t.slice(k + 2) }; };
-  // The offer is read from the twin list, one card: name, price, what it covers and
+  // The offers are read from the twin list, four cards: name, price, what it covers and
   // when it is delivered, plus a retest line when the service has one. Fail closed: a list line that stops matching the shape throws here
   // instead of rendering a card with an empty price (Tek-355, Tek-357).
   const offerParas = mdParas("/", "Start with the audit", 2);
   const offerRaw = mdSection("/", "Start with the audit").split("\n").filter((l: string) => l.startsWith("- "));
-  if (offerRaw.length !== 1) throw new Error("home starting-point list does not carry exactly one offer: " + offerRaw.length);
+  if (offerRaw.length !== 4) throw new Error("home starting-point list does not carry exactly four offers: " + offerRaw.length);
   const offerCards = offerRaw.map((line: string) => {
-    const m = line.match(/^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+)\. (.+?) (Delivered [^.]+\.)(?: (One retest [^.]+\.))?$/);
+    const m = line.match(OFFER_ROW_RE);
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
     const [, name, href, price, covers, when, retest] = m;
     // Tek-488 round 3: the card reads as the row, with the link on the offer name and a
     // stretched link over the card, as on /services.
-    return `<li class="offer"><span class="offer-top"><span class="offer-name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="offer-price">${escapeHtml(price)}.</span></span> <span class="offer-covers">${escapeHtml(covers)}</span> <span class="offer-when">${escapeHtml(when)}</span>${retest ? ` <span class="offer-when">${escapeHtml(retest)}</span>` : ""}</li>`;
+    return `<li class="offer"><span class="offer-top"><span class="offer-name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="offer-price">${escapeHtml(price)}.</span></span> <span class="offer-covers">${escapeHtml(covers)}</span>${when ? ` <span class="offer-when">${escapeHtml(when)}</span>` : ""}${retest ? ` <span class="offer-when">${escapeHtml(retest)}</span>` : ""}</li>`;
   }).join("\n      ");
   // The hero card is one finding from the synthetic sample report (2026-09-08 brief, point 1).
   // Its text is the twin section "One product. Three different answers.": three "Source:
@@ -12642,7 +12670,7 @@ ${cardPageNav("/contact")}
 <main id="main">
   ${mdPageStart("/contact")}
   <div class="cards">
-      ${mdActionCards("/contact", ["Website or API audit"])}
+      ${mdActionCards("/contact", ["Website or API audit", "Implementation", "Ongoing advisory", "Agent operations and MCP server design"])}
   </div>
   ${mdOpenSec("/contact", "Or write your own message", "email")}
   ${mdOpenSec("/contact", "Other ways to reach me", "channels", contactSignalQr(), true)}

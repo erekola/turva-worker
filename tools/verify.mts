@@ -1745,10 +1745,12 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       // stated in EUR somewhere on the page. Neither side is cross-checked against
       // facts.json anywhere else, so a price edited in one place and forgotten in the
       // other would still render, and pass, with the wrong number.
-      const priceNum = (s: string) => Number(s.replace(/&#8364;|\u20ac/g, '').replace(/,/g, ''));
+      const priceNum = (s: string) => Number(((s.replace(/&#8364;/g, '€').match(/€([\d,]+)/) || [])[1] || 'NaN').replace(/,/g, ''));
       if (homePriceHtml) {
-        const homePrices = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => priceNum(m[1]));
-        setSame('home page offer-price spans vs facts.json (audit)', homePrices, ['audit'].map((k) => facts.prices[k]));
+        const homeSpans = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => m[1]);
+        // Tek-761: the home page shows four cards, three with a euro price (audit, implementation per day, advisory per month) and the shared card for agent operations and MCP server design, priced per engagement.
+        check(homeSpans.length === 4 && homeSpans[3] === 'Price agreed for the engagement.', `home page offer cards: four, the last one priced per engagement (${homeSpans.length})`);
+        setSame('home page offer-price spans vs facts.json (the priced services)', homeSpans.slice(0, 3).map(priceNum), facts.services.filter((s: { priceKey: string | null }) => s.priceKey).map((s: { priceKey: string }) => facts.prices[s.priceKey]));
       } else bad('K5-P3: the home page was not rendered, cannot check its prices');
       if (servicesPriceHtml) {
         const wantEuro = (n: number) => '\u20ac' + n.toLocaleString('en-US');
