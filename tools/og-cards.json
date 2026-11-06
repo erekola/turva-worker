@@ -107,12 +107,6 @@
     "subhead": "The fix, the measurement that proved nothing, and the draft archaeology behind the header.",
     "white": "Every response promised a rate limit."
   },
-  "og-external-domain-check.jpg": {
-    "green": "from outside",
-    "kicker": "Service",
-    "subhead": "One domain, read with two public tools and a published list of requests. Up to three fixes in order. €99.",
-    "white": "What your domain shows"
-  },
   "og-finishing-the-optional-commerce-checks.jpg": {
     "green": "commerce checks",
     "kicker": "Blog",
@@ -407,17 +401,11 @@
     "subhead": "Every scanner check, nine findings with evidence and acceptance tests. Synthetic.",
     "white": "What an audit report looks like,"
   },
-  "og-samples-external-domain-check.jpg": {
-    "green": "from turva.dev's own domain",
-    "kicker": "Sample report",
-    "subhead": "Agent-readiness and website and email tests of one real domain, each reading dated.",
-    "white": "What a domain check report looks like,"
-  },
   "og-services.jpg": {
-    "green": "prices in the open",
+    "green": "list prices in the open",
     "kicker": "Services",
-    "subhead": "Domain check 99 euros. Audit 4,300. Advisory 3,000 per month, implementation 1,500 per day. Two more on request.",
-    "white": "Fixed scope from 99 euros,"
+    "subhead": "Advisory 3,000 euros per month, implementation 1,500 euros per day. Two more services on request.",
+    "white": "Audit 4,300 euros,"
   },
   "og-the-twin-is-the-page.jpg": {
     "green": "Now the twin is the page.",

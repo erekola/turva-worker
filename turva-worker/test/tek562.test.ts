@@ -131,10 +131,11 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
 // 2026-11-03: the card moved to MCP 1.7.3 and get_principles says each fix is checked with a scanner or a direct test, so the length is 4223.
 // 2026-11-05: the card moved to MCP 1.7.4; only the two version fields changed, the length stays 4223.
 // 2026-11-05: the card moved to MCP 1.8.0; only the two version fields changed, the length stays 4223.
+// 2026-11-06 (Tek-758): the card moved to MCP 1.9.0 and no longer names the withdrawn external domain check, its price key or its sample, so the length is 4015.
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
-  assert.equal(b.length, 4223);
-  assert.equal(await sha256Hex(b), "ee40018bbaf9f219256a52e53e85347909ddb39ad8ff7e8e79e6e3816b24584f");
+  assert.equal(b.length, 4015);
+  assert.equal(await sha256Hex(b), "814fb96320642ecf39c5d08549b3bf123e91f9c5fe300d537c9080f04a82fe83");
 });
 
 // ---------------------------------------------------------------- PGP v6 key
@@ -250,7 +251,7 @@ test("page text: services reply promise, validator implementation sentence, lega
   assert.ok(validator.includes("If you want the findings fixed, [implementation](/services#implementation) is sold with the audit."));
   const legal = await (await get("/legal.md")).text();
   assert.ok(legal.includes("You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows."));
-  assert.ok(legal.includes("**Terms last updated:** 2026-10-31"));
+  assert.ok(legal.includes("**Terms last updated:** 2026-11-06"));
   const audit = await (await get("/samples/audit-report.md")).text();
   assert.ok(audit.includes("This page itself was last revised on 3 November 2026."));
   assert.ok(audit.includes("today each page weighs between 188 kB and 340 kB of markup"));

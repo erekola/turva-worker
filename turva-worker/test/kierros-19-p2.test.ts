@@ -457,7 +457,7 @@ test("K5-P5: mdOfferCards and mdToolCards wrap their href in escapeHtml() before
   // would change, so the rendered bytes are the same on both builds.
   const services = await (await get("/services")).text();
   // Since Tek-488 round 2 the offer card is a list item and its link sits on the offer name.
-  assert.match(services, /<li class="card ocard"[^>]*><span class="card-top"><span class="name"><a href="\/external-domain-check">/);
+  assert.match(services, /<li class="card ocard"[^>]*><span class="card-top"><span class="name"><a href="\/agent-readiness-audit">/);
   const tools = await (await get("/tools")).text();
   assert.match(tools, /<a class="go" href="\/llms-txt-validator">/);
 });

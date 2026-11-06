@@ -383,11 +383,11 @@ console.log('\nShare card manifest (tools/og-cards.json)');
     };
     const priced = names.map((n) => [n, cardAmounts(cards[n])] as [string, number[]]).filter(([, a]) => a.length > 0);
     const wrongAmounts = priced.filter(([, a]) => a.some((n) => !allowedAmounts.has(n)));
-    check(priced.length >= 4 && wrongAmounts.length === 0,
-      `every price on an og card is a facts.json price (${priced.length} cards carry a price, at least 4 expected)`
+    check(priced.length >= 3 && wrongAmounts.length === 0,
+      `every price on an og card is a facts.json price (${priced.length} cards carry a price, at least 3 expected)`
       + (wrongAmounts.length ? ' :: wrong: ' + wrongAmounts.map(([n, a]) => n + ' ' + JSON.stringify(a)).join(', ') : ''));
     const svcAmounts = names.includes('og-services.jpg') ? cardAmounts(cards['og-services.jpg']) : [];
-    check(priceVals.length >= 4 && priceVals.every((v) => svcAmounts.includes(v)),
+    check(priceVals.length >= 3 && priceVals.every((v) => svcAmounts.includes(v)),
       `og-services.jpg lists all ${priceVals.length} facts.json prices (read ${JSON.stringify(svcAmounts)})`);
     // The reverse direction: a card file in public/ with no manifest entry is a card whose text
     // nothing can gate.
@@ -1044,8 +1044,6 @@ const twConverted: Record<string, any> = {
   '/contact': { fn: 'serveContactHtml', mdOnly: [] },
   '/company': { fn: 'serveCompanyHtml', mdOnly: [] },
   '/legal':   { fn: 'serveLegalHtml',   mdOnly: [] },
-  // The entry check (Tek-716): the twin's sections render through mdOpenSec and the closing order block through mdParasCta.
-  '/external-domain-check': { fn: 'serveDomainCheckHtml', mdOnly: [] },
   // The audit product page: since the 2026-09-09 text round every rendered heading is the
   // twin's own, so no display alias is needed and the page carries no FAQ section.
   '/agent-readiness-audit': { fn: 'serveAuditHtml', mdOnly: [] },
@@ -1352,28 +1350,6 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       check(s.priceKey ? got.price === facts.prices[s.priceKey] : got.pricing === 'on request',
         `HOME_JSON ${s.name} ${s.priceKey ? 'priced ' + facts.prices[s.priceKey] : 'stays on request'} (saw ${JSON.stringify(s.priceKey ? got.price : got.pricing)})`);
     }
-    // Tek-716: the external domain check page publishes its own Service node, and the price in it is
-    // read against facts.json.
-    const domJson = region('function buildDomainCheckServiceJsonLd', '\nfunction ');
-    const domPrices = [...domJson.matchAll(/"price": "(\d+)"/g)].map((m) => m[1]);
-    check(domPrices.length === 2 && domPrices.every((p) => p === String(facts.prices['domain-check'])),
-      `buildDomainCheckServiceJsonLd states ${facts.prices['domain-check']} in both price fields (saw [${domPrices.join(', ')}])`);
-    // Tek-716: the order template's acceptance line names the terms by their date, and a date that
-    // is not the /legal page's own date accepts terms that no longer exist. The date appears in the
-    // service page twin three times (the body line and the two mailto bodies, where the spaces are
-    // %20) and once in the /contact mailto.
-    const acceptedDates = (text: string) => [...text.matchAll(/terms(?: |%20)dated(?: |%20)(\d{4}-\d{2}-\d{2})(?: |%20)at/g)].map((m) => m[1]);
-    check(acceptedDates('I accept the terms dated 2026-01-02 at x. terms%20dated%202026-03-04%20at').join() === '2026-01-02,2026-03-04'
-      && acceptedDates('terms dated TERMS_DATE at').length === 0,
-      'terms date self-test: both spellings are read and a placeholder is not');
-    const legalTwin = (twMdTwin('/legal') || '').replace(/\r\n/g, '\n');
-    const termsDate = (legalTwin.match(/\*\*Terms last updated:\*\* (\d{4}-\d{2}-\d{2})/) || [])[1];
-    const domDates = acceptedDates(twMdTwin('/external-domain-check') || '');
-    const conDates = acceptedDates(twMdTwin('/contact') || '');
-    check(!!termsDate && domDates.length === 3 && domDates.every((d) => d === termsDate),
-      `the terms date in the external domain check twin (body line and both mailto bodies) is /legal Terms last updated ${termsDate} (saw [${domDates.join(', ')}])`);
-    check(!!termsDate && conDates.length === 1 && conDates[0] === termsDate,
-      `the terms date in the /contact mailto is /legal Terms last updated ${termsDate} (saw [${conDates.join(', ')}])`);
   }
 
   console.log('\nNavigation menus (B1-15)');
@@ -1452,8 +1428,8 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const proseDates = [...w.matchAll(/valid until (\d{4}-\d{2}-\d{2})/gi)].map((m) => m[1]);
     const proseOtherForm = (w.match(/valid until (?!\d{4}-\d{2}-\d{2})\d/gi) || []).length;
     const proseStray = proseDates.filter((d) => d !== pvu);
-    check(proseDates.length >= 7 && proseStray.length === 0 && proseOtherForm === 0,
-      `every "valid until <date>" in worker.ts equals PRICE_VALID_UNTIL ${pvu} (${proseDates.length} read, at least 7 expected)`
+    check(proseDates.length >= 5 && proseStray.length === 0 && proseOtherForm === 0,
+      `every "valid until <date>" in worker.ts equals PRICE_VALID_UNTIL ${pvu} (${proseDates.length} read, at least 5 expected)`
       + (proseStray.length ? ` :: differing: ${[...new Set(proseStray)].join(', ')}; the constant and every prose date have to move together` : '')
       + (proseOtherForm ? ` :: ${proseOtherForm} date(s) not written as YYYY-MM-DD` : ''));
     const exp = (w.match(/\nExpires: (\S+)/) || [])[1] || '';
@@ -1772,7 +1748,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       const priceNum = (s: string) => Number(s.replace(/&#8364;|\u20ac/g, '').replace(/,/g, ''));
       if (homePriceHtml) {
         const homePrices = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => priceNum(m[1]));
-        setSame('home page offer-price spans vs facts.json (domain-check, audit)', homePrices, ['domain-check', 'audit'].map((k) => facts.prices[k]));
+        setSame('home page offer-price spans vs facts.json (audit)', homePrices, ['audit'].map((k) => facts.prices[k]));
       } else bad('K5-P3: the home page was not rendered, cannot check its prices');
       if (servicesPriceHtml) {
         const wantEuro = (n: number) => '\u20ac' + n.toLocaleString('en-US');
@@ -2021,7 +1997,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // Four price-bearing surfaces were reached only by a file-wide substring match, which stays
   // true while any one surface changes, because the same amount sits on many others.
   {
-    check(PRICED.length >= 4, `facts.json names at least four priced services (${PRICED.length})`);
+    check(PRICED.length >= 3, `facts.json names at least three priced services (${PRICED.length})`);
     // llms.txt: the signed file's own pricing lines, one per service.
     const llmsAll: string = region('const LLMS_TXT', '\nconst AUTH_MD').replace(/\r\n/g, '\n');
     const pStart = llmsAll.indexOf('## Pricing');
@@ -2062,7 +2038,6 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const allowedAmounts = new Set<number>([...PRICED.map((s) => facts.prices[s.priceKey] as number),
       ...(Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : []).map((x: VerifyBundled) => x.price)]);
     const sellPages: [string, string, string[]][] = [
-      ['/external-domain-check', 'title', ['domain-check']], ['/external-domain-check', 'imageAlt', ['domain-check']],
       ['/agent-readiness-audit', 'title', ['audit']], ['/agent-readiness-audit', 'imageAlt', ['audit']],
       ['/services', 'imageAlt', PRICED.map((s) => s.priceKey)],
       ['/blog/cheating-to-keep-the-old-price', 'imageAlt', ['audit']],
@@ -2075,7 +2050,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       check(text !== '' && toks.length >= keys.length && toks.every((n) => allowedAmounts.has(n)) && keys.every((k) => toks.includes(facts.prices[k])),
         `META_BY_PATH ${path} ${field} states ${keys.map((k) => euroOf(k)).join(', ')} and no other amount (read ${JSON.stringify(toks)})`);
     }
-    check(metaTokenCount >= 9, `META_BY_PATH price tokens read in the sell pages (${metaTokenCount}, at least 9 expected)`);
+    check(metaTokenCount >= 6, `META_BY_PATH price tokens read in the sell pages (${metaTokenCount}, at least 6 expected)`);
     // The MCP server card is signed; its add-on entry must match facts.json.
     const card = region('const MCP_SERVER_CARD = ', '\nconst OAUTH_DISCOVERY');
     const cardBundled = (card.match(/"bundledImplementation": \[([\s\S]*?)\n\s*\]/) || [])[1] || '';

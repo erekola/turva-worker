@@ -3,18 +3,17 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.224.0",
-    "mcp": "1.8.0"
+    "site": "3.225.0",
+    "mcp": "1.9.0"
   },
   "mtaSts": {
     "txtId": "20260910202321",
     "policySha256": "b056f5c25f57f294adb9e26a6b65f3734fa37ef965d3aa9b3095685f60e54199"
   },
   "released": {
-    "site": "2026-11-05"
+    "site": "2026-11-06"
   },
   "prices": {
-    "domain-check": 99,
     "audit": 4300,
     "advisory": 3000,
     "implementation": 1500,
@@ -36,11 +35,6 @@
     }
   ],
   "services": [
-    {
-      "id": "domain-check",
-      "name": "External domain check",
-      "priceKey": "domain-check"
-    },
     {
       "id": "audit",
       "name": "Audit",
