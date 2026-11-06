@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.226.1 - corrections after the audit round of 2026-11-06: the rebuilt-site post, its FAQ, alt text and card name one public sample report; six guides, the guides index and ten posts get sourced, dated or narrowed sentences; /legal names Masto.host for messages sent over Mastodon and the seven-day version rotation of the encrypted cloud backup; /services, /agent-readiness-audit and /samples/audit-report wording; new OG card text for /tools and the agent commerce discovery guide.
 // turva.dev worker v3.226.0 - the home page, /services and /contact show four service cards each (Tek-761): the audit, implementation, ongoing advisory and one shared card for agent operations and MCP server design, with one mailto draft per card on /contact; the offer row parser accepts a price per day or per month, a price agreed for the engagement and a row without a delivery sentence.
 // turva.dev worker v3.225.0 - the paid external domain check is withdrawn: its service page, sample report, routes, JSON-LD, catalog entries, ACP item and legal and privacy wording are removed, the old addresses redirect to the audit pages, and the MCP server card moves to 1.9.0.
 // turva.dev worker v3.224.0 - repairs from an outside read of the public repositories (Tek-578, sessions S3 to S5). The hosted llms.txt validator reads Markdown closer to CommonMark: balanced parentheses in a target, empty targets as relative links, code spans inside labels, labels that stop at a block boundary, images, reference definitions by block, Unicode case folding, semicolon-only references in a target, Unicode white space, raw HTML blocks and indented code inside list items. It parses the whole typed address and cuts only the echo, follows a same-site redirect with one trailing dot, reads script, template and raw text end tags as the HTML tokenizer does, does not count white space outside the head against the head limit, and ignores a Link value anchored to another resource. The validator page links the package README list of read forms, and the parity page says a 429 or a 500 can arrive as plain text. The MCP server card names MCP 1.8.0. The hosted parity check moves to markdown-parity-check 0.2.34.
@@ -664,7 +665,7 @@ From 16 October to 4 November the Macrium logs show a clone on each of the 20 da
 
 ## How do I know a restore works?
 
-I know part of it. I last tested a boot-from-image restore through Macrium's boot manager on 8 July, on the chain before the NAS, and it worked. In October I decrypted an encrypted image, hashed its whole content and compared it with the C: drive, and the hashes matched.
+I know part of it. I last tested a boot-from-image restore through Macrium's boot manager on 8 July, on the chain before the NAS, and it worked. In October I decrypted an encrypted image and compared the hashes of the files in it with the same files on the C: drive, and they matched.
 
 I have not restored a full disk from a NAS image. In my post on the clean install I wrote that I would test a restore once the first image was on the NAS. The hash comparison is what I have done so far, and a full disk restore is still open.
 
@@ -691,6 +692,8 @@ It keeps older generations at longer intervals. Mine makes a full image on the f
 The rule counts copies of your data, so off-site copies of my files meet it for my work. My machine image has no off-site copy, so a fire would mean rebuilding Windows and restoring the files.
 
 Updated 2026-11-04. The post now says that Macrium notifies me when a backup fails, and it names the cause of the failed images of 18 and 19 October.
+
+Updated 2026-11-06. The sentence on the October hash check now says that it compared the hashes of the files in the decrypted image with the same files on the C: drive.
 
 ## Related
 
@@ -844,7 +847,7 @@ No. On isitagentready.com the MCP row reads the fields of the server card, which
 
 I read the sites of the five Finnish entries in the EU register of crypto-asset service providers with an agent-readiness scanner and my own requests. All five sit at Level 1 of 5. None passes any of the scanner's nine checks for APIs and agent protocols, and three of the five have written an llms.txt.
 
-Binance put the impact of the theft from its hot wallets on 29 October at about 6.3 billion dollars, and Elliptic traced the withdrawals across 11 blockchains. Binance first linked the breach to a compromised DevOps engineer's laptop and has since said the attack had more points of entry, according to [Elliptic's analysis](https://www.elliptic.co/insights/binance-largest-hack-in-history/). The news sent me to look at the Finnish side of the market. From the outside I can measure whether these sites publish the files and formats an AI agent looks for. That says nothing about how a company protects funds.
+Binance put the impact of the theft from its hot wallets on 29 October at about 6,3 billion dollars, and Elliptic traced the withdrawals across 11 blockchains. Binance first linked the breach to a compromised DevOps engineer's laptop and has since said the attack had more points of entry, according to [Elliptic's analysis](https://www.elliptic.co/insights/binance-largest-hack-in-history/). The news sent me to look at the Finnish side of the market. From the outside I can measure whether these sites publish the files and formats an AI agent looks for. That says nothing about how a company protects funds.
 
 ## Key figures
 
@@ -940,7 +943,7 @@ My lab stays on the workstation, and so do the encrypted vault and everything th
 
 ## Why a hybrid and not a full move?
 
-I first planned to move all agent work into the virtual machine, and I ran a pilot before deciding. The pilot measured what a session loses there. In the Claude desktop app a session in the virtual machine runs over SSH, and it has no browser pane, no terminal panel and no command panel. The browser extension I use is not available there either. According to the app's documentation, scheduled tasks run only on the local machine or in the cloud, not on an SSH target. For the way I work, each missing panel is more manual work for me, every day.
+I first planned to move all agent work into the virtual machine, and I ran a pilot before deciding. The pilot measured what a session loses there. In the Claude desktop app a session in the virtual machine runs over SSH, and it has no browser pane, no terminal panel and no command panel. The browser extension I use is not available there either. The app's [documentation on scheduled tasks](https://code.claude.com/docs/en/desktop-scheduled-tasks) names two places where they run, the local machine and the cloud, and does not mention an SSH target. For the way I work, each missing panel is more manual work for me, every day.
 
 A full move would also have needed separate runs on the workstation for the key that signs my site's manifests, the key for the MCP registry and the mail credentials, with narrower tokens inside the virtual machine. With the hybrid, no token and no secret goes into the virtual machine. If something inside it goes wrong, there are no credentials to my site, my repositories or my publishing there to steal.
 
@@ -988,6 +991,8 @@ Yes, in three ways. Whatever the session reads goes to the model, the desktop ap
 **Does every agent session run in the virtual machine now?**
 
 No. Client work and risky work of my own run there. The rest of my work stays on my workstation, where the browser pane, the terminal panel, the command panel and the scheduled tasks are.
+
+Corrected 2026-11-06. A sentence said "According to the app's documentation, scheduled tasks run only on the local machine or in the cloud, not on an SSH target." The documentation names the local machine and the cloud and does not mention SSH at all, so the sentence now says only that and links the page.
 
 ## Related
 
@@ -1299,9 +1304,9 @@ Until 18 October my Shopify agent storefront check described Shopify's remote in
 
 Only the Policy and FAQs tool, which Shopify now marks deprecated for new integrations in favor of Ask MCP. Shopify removed the catalog and cart tools there, and the same capabilities are now at /api/ucp/mcp on the store's domain.
 
-**Do I need to change anything for the 2 November date?**
+**What did the 2 November date change?**
 
-The 2 November date concerns apps that call the Global Catalog REST API. If you run or pay for one, check that it has moved to Global Catalog MCP, which Shopify names as the replacement.
+It concerned apps that called the Global Catalog REST API, which Shopify said would stop serving traffic on that day. If you run or pay for one, check that it has moved to Global Catalog MCP, which Shopify names as the replacement.
 
 **Can I see from outside whether my products are in Shopify Catalog?**
 
@@ -1310,6 +1315,8 @@ Not from the storefront files. The UCP profile, agents.md and llms.txt show what
 Corrected 2026-10-30. The sentence before the list of files said three public files where the list names four.
 
 Updated 2026-11-05. Since 31 October 2026 I no longer sell the Shopify check, and its old addresses redirect to the audit page. The section on my own Shopify check is a record of what changed on 18 October.
+
+Updated 2026-11-06. The 2 November date has passed, and the answer now says what the date changed.
 
 ## Related
 
@@ -2019,7 +2026,7 @@ I had already approved the correction. On the day it was to go in, the measureme
 
 ## What happens when nothing has changed?
 
-Every guide still gets a full read. The run on 1 September re-read the seven fastest-moving guides, found no errors and changed two date stamps. I only know nothing had moved because the reading was done.
+Every guide still gets a full read. On 1 September, under the schedule I had then, a second read of the seven fastest-moving guides found no errors and changed two date stamps. I only know nothing had moved because the reading was done.
 
 ## What does this not show?
 
@@ -2044,6 +2051,8 @@ The guide is corrected, and the date of its last check moves. A blog post that w
 Corrected 2026-09-29. One sentence said the reading costs the same when nothing has changed. The review runs record no durations, so the sentence now says what they do record: every guide still gets a full read.
 
 Corrected 2026-10-02. One sentence called this revision the largest breaking set the protocol has had. The changelog lists the changes but does not compare their size with earlier revisions, so the sentence now lists them without the comparison. No technical statement changed.
+
+Updated 2026-11-06. The section on what happens when nothing has changed now says that the run of 1 September was a second read under the schedule I had then.
 
 ## Related
 
@@ -2400,13 +2409,15 @@ This is a narrower deliverable than the website and API audit. Its structure fol
 
 Updated 2026-10-31. I no longer offer the Shopify check, and its sample report has been withdrawn.
 
+Updated 2026-11-06. I have also withdrawn the External domain check, a smaller fixed-price check listed from 30 October, and its sample report, so one public sample report remains.
+
 ## What I can claim about the update
 
-The site now makes the report structure, service boundaries and next steps explicit. The two samples let a reader inspect the evidence format and correction instructions before contacting me.
+The site now makes the report structure, service boundaries and next steps explicit. The public sample report lets a reader inspect the evidence format and correction instructions before contacting me.
 
-I have not measured whether the redesign improves sales or AI citations. Those would need their own observations. Both sample reports remain synthetic, and neither is a certification of a real business.
+I have not measured whether the redesign improves sales or AI citations. Those would need their own observations. The sample report remains synthetic and is not a certification of a real business.
 
-For someone considering the work, the most useful place to start is the sample for their situation. It shows what I mean by an audit more precisely than a list of protocol names can.
+For someone considering the work, the most useful place to start is the sample report. It shows what I mean by an audit more precisely than a list of protocol names can.
 
 ## Frequently asked
 
@@ -2414,9 +2425,9 @@ For someone considering the work, the most useful place to start is the sample f
 
 The agreed scope, dated evidence, manual findings, priorities, correction owners and acceptance checks. If AI answers are included, the questions and measurement conditions should be documented separately from the technical scan.
 
-**Are the public sample reports real client work?**
+**Is the public sample report real client work?**
 
-No. Both use invented businesses and observations to demonstrate the deliverable. They do not show measured client outcomes.
+No. It uses an invented business and invented observations to demonstrate the deliverable. It does not show measured client outcomes.
 
 **Can a team use the report without buying implementation?**
 
@@ -2506,7 +2517,7 @@ Corrected 2026-11-04. One sentence said "Not one of the 19 publishes" five kinds
 
 Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.
 
-WorkOS shipped Agent Auth for AuthKit on 2 September, a way to give the agents you build into your own product short-lived scoped tokens instead of a long-lived API key. Next to it in the same product menu sits something else with a wider blast radius, and it is a month older: an open protocol called auth.md, shipped into AuthKit on 4 August, in which a service publishes a markdown file at its own root telling outside agents how to register on behalf of a user. This site has served a file at that same address since June. The two are not the same document. I read both on 4 September to find out how far apart they are.
+WorkOS released [Agent Auth for AuthKit](https://workos.com/changelog/agent-auth) in early access on 2 September, a way to give the agents you build into your own product short-lived scoped tokens instead of a long-lived API key. Next to it in the same product menu sits something else with a wider blast radius, and it is a month older: an open protocol called auth.md, [built into AuthKit on 4 August](https://workos.com/changelog/agent-registration), in which a service publishes a markdown file at its own root telling outside agents how to register on behalf of a user. This site has served a file at that same address since June. The two are not the same document. I read both on 4 September to find out how far apart they are.
 
 | Position in the agent_auth block | Scanner recipe field | WorkOS field |
 | --- | --- | --- |
@@ -2561,6 +2572,8 @@ Corrected 2026-09-06. The answer to the last question said this site issues no c
 Corrected 2026-11-02. The answer on field names said no third answer exists. Neither document I read rules out publishing both sets of names, so it now says I have not found a third answer.
 
 Corrected 2026-11-04. A sentence said "every resource is public and read only", and an answer below called the site "entirely public". A brief sent to one company sits at an unlisted address, so the sentence now says every resource the site lists and the answer says the site asks for no credential. No other claim changed.
+
+Corrected 2026-11-06. The first sentence said "WorkOS shipped Agent Auth for AuthKit on 2 September". WorkOS's changelog calls that release early access, so the sentence now says so and links both changelog entries.
 
 ## Related
 
@@ -3001,7 +3014,7 @@ The checklist has also not yet run against a client surface. It was built from 1
 
 ## What is unchanged
 
-Fixed scope, written before any payment. Async only, no calls and no calendar links. Read access is enough, production credentials are not requested, and write access is scoped per task only if implementation is bought separately. The report names 3 to 10 fixes in order of impact, and the follow-up checks each one with the next scan or a direct test: it either reads higher in the categories the report named, a direct test confirms the fix or the report explains which tradeoff was kept on purpose.
+Fixed scope, written before any payment. Async only, no calls and no calendar links. Read access is enough, production credentials are not requested, and write access is scoped per task only if implementation is bought separately. The report names its fixes in order of impact, and the follow-up checks each one with the next scan or a direct test: it either reads higher in the categories the report named, a direct test confirms the fix or the report explains which tradeoff was kept on purpose.
 
 The other prices did not move at the time. When this was published the Shopify agent storefront check was €1,900 within 48 hours of a written kickoff, advisory was €3,000 per month with a three month minimum, and implementation was €1,500 per day. All prices exclude VAT.
 
@@ -3011,7 +3024,7 @@ The scope is agreed in writing first. I reply by email within one business day.
 
 **Does a lower price mean a smaller audit?**
 
-No. The scanner is the same one, the manual checks over it are the same, and the report still names 3 to 10 fixes in order of impact, and the follow-up checks each one with the next scan or a direct test, or the report explains which tradeoff was kept on purpose. What got shorter is the part where I work out from scratch what a passing check looks like, which is now a written checklist of 42 rows.
+No. The scanner is the same one, the manual checks over it are the same, and the report still names its fixes in order of impact, and the follow-up checks each one with the next scan or a direct test, or the report explains which tradeoff was kept on purpose. What got shorter is the part where I work out from scratch what a passing check looks like, which is now a written checklist of 42 rows.
 
 **What does an agent-readiness audit cost?**
 
@@ -3034,6 +3047,8 @@ Corrected 2026-09-28. The either/or promise about the next scan did not name a d
 Corrected 2026-09-29. The answer on whether a lower price means a smaller audit still said a re-scan verifies the fixes. It now names the same three outcomes as the rest of the post: the next scan, a direct test or an explained tradeoff.
 
 Corrected 2026-09-29. The introduction still called the re-scan the only claim about the result. It now names the same three outcomes as the FAQ.
+
+Corrected 2026-11-06. The section on what is unchanged and the answer on whether a lower price means a smaller audit said the report "names 3 to 10 fixes in order of impact". No current page promises a number of fixes, so both now say that the report names its fixes in order of impact.
 
 ## Related
 
@@ -3308,7 +3323,7 @@ A dated implementation note separates discoverable payment declarations from set
 
 Corrected 2026-08-02. The section on the three card links used to present them as an invitation to pay before scope was agreed, which contradicted the terms and the description of the same three links in the OpenAPI spec. The measurements in this post are unchanged.
 
-Agent-native payments are moving from proposal to plumbing. This summer the x402 protocol became a Linux Foundation project, with Visa, Mastercard, Google and Stripe among its founding members. The chain being built runs from discovery to transaction, which means a site's payment surface has to be something an agent can find and read before any money moves.
+Agent-native payments are moving from proposal to plumbing. This summer the x402 Foundation [began operating under the Linux Foundation](https://www.linuxfoundation.org/press/linux-foundation-announces-operational-launch-of-x402-foundation-to-standardize-internet-native-payments-for-ai-agents-and-applications), with Visa, Mastercard, Google and Stripe among its premier members. The chain being built runs from discovery to transaction, which means a site's payment surface has to be something an agent can find and read before any money moves.
 
 isitagentready.com scores that surface in its Commerce category. The category is optional and does not change the overall score, so turva.dev already read 100/100 and Level 5 with three of the five commerce checks green. Two were still red, x402 and MPP. This is the log of taking them green and leaving settlement exactly where it was.
 
@@ -3341,6 +3356,8 @@ Scope is agreed in writing before any of the three is paid. That is what the ter
 A green check is worth something only when it reflects what an agent actually finds. Commerce is optional, so none of this moved the headline number. It moved whether the payment surface is real and discoverable for the moment agents start to pay, which is the part that will matter. The worker that produces these results is open source at [github.com/erekola/turva-worker](https://github.com/erekola/turva-worker), readable line by line.
 
 For an agent-readiness audit that reports measured results, contact info@turva.dev.
+
+Corrected 2026-11-06. The first paragraph said "with Visa, Mastercard, Google and Stripe among its founding members". The Linux Foundation's announcement of 14 July 2026 lists the four as premier members, so the paragraph now says so and links the announcement.
 
 ## Related
 
@@ -3641,7 +3658,7 @@ The vault only changes where a secret sits at rest. It does not by itself stop a
 
 ## Why this matters for buyers
 
-I build this into my own setup because I sell the audit that checks for it. A prospect who asks for an NDA is asking a real question about whether you treat access seriously or leave keys lying around while an agent works next to them. The honest answer shows in how you work, before it shows in any report.
+I build this into my own setup because the audit I sell asks how a product exposes data to agents, and I hold my own machine to the same question. A prospect who asks for an NDA is asking a real question about whether you treat access seriously or leave keys lying around while an agent works next to them. The honest answer shows in how you work, before it shows in any report.
 
 None of this is exotic. It is one habit applied everywhere. The operating system holds the secret, encrypted and scoped to you as far as its keyring backend provides it, and the code asks for it when it needs it. An agent can then do its work in your repo without a key sitting in a plaintext file it can read at rest, which is a narrower claim than saying it never sees a key in the clear.
 
@@ -3666,6 +3683,8 @@ Corrected 2026-10-23. The first caveat said such a vault cannot be decrypted aft
 Corrected 2026-10-30. A sentence said most people authenticate git with a personal access token pasted into a credentials file. Nothing in this post measures that, so the sentence now speaks only to a reader who does.
 
 Corrected 2026-11-04. One sentence said "every plaintext secret on your disk is readable by the agent, and by every backup or synced folder that copies your working directory", and the FAQ answer said such a copy also runs your build. A copy of the working directory holds only the files inside it, and both sentences now say that. No other claim changed.
+
+Corrected 2026-11-06. A sentence said "I build this into my own setup because I sell the audit that checks for it." The audit reads a product's public surfaces and does not check how a team stores its secrets, so the sentence now says what the audit asks.
 
 ## Related
 
@@ -4624,7 +4643,7 @@ Illustrative report date: 8 September 2026, which is the delivery date in the en
 - **Acceptance:** Compare the corrected page, structured data and API against the same product record across the catalog.
 - **Scanner effect:** This finding does not change the sample's scanner score.
 
-[Read the evidence](#f1-product-prices-and-availability-disagree-across-the-page-structured-data-and-api) [View audit scope and pricing](/agent-readiness-audit#scope)
+[Read the evidence](#f1-product-prices-and-availability-disagree-across-the-page-structured-data-and-api) [View audit scope and pricing](/agent-readiness-audit)
 
 ## The main findings
 
@@ -5427,7 +5446,7 @@ Cloudflare Workers is the default. Other supported edge runtimes can be agreed w
 
 A separately scoped day does not include DNS changes, tool declarations inside your application, agent payment flows or building the MCP server itself. These need their own scope. This day-rate boundary does not reduce the complete fix list covered by an agreed €499 add-on.
 
-Repository write access is limited to the task. There is no retainer.
+Repository write access is limited to the task. Implementation has no retainer.
 
 We check technical changes with the relevant scanner or a direct test. A scanner result is recorded with its check set and date. No particular readiness level is promised.
 
@@ -5707,7 +5726,7 @@ A synthetic [sample report](/samples/audit-report) shows the format: the per-che
 
 ## How the two weeks work
 
-We agree the work. Send the URLs of up to two targets and your question. I confirm the scope, price and start date in writing. The audit is invoiced when the report is delivered, and the card link pays that invoice.
+We agree the work. Send the URLs of up to two targets and your question. I confirm the scope, price and start date in writing. The audit is invoiced when the report is delivered, and a card payment link pays that invoice.
 
 I run the checks. I complete the scan, manual review and AI questions, recording the evidence and dates.
 
@@ -5942,7 +5961,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 **Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. A question sent by email, Signal or LinkedIn that does not lead to an engagement is deleted 24 months after the latest message.
 
-**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. For example, when the last deliverable arrives on 1 March and no retest is requested, the engagement closes on 30 May. The material is then deleted from the working systems by 29 June, about 120 days after delivery, and has left every backup by 19 October. An engagement canceled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Backups made during the engagement keep a copy until their rotation replaces them. The file backups keep at most ten copies. Disk images of the workstation, which include the virtual machine's disk file, are kept for up to 14 weeks, plus up to 14 days in the snapshots of the storage that holds them. Every backup, version history included, is removed within 16 weeks. A backup is never restored for any other purpose. Deleted client material has left every backup within 16 weeks of its deletion at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them. Credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
+**Client material.** Client material is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested, 90 days after the last deliverable was delivered, unless the law requires retention. For example, when the last deliverable arrives on 1 March and no retest is requested, the engagement closes on 30 May. The material is then deleted from the working systems by 29 June, about 120 days after delivery, and has left every backup by 19 October. An engagement canceled after kickoff and before any delivery closes 90 days after the cancellation. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI tool's provider keeps what it processed under its own terms, linked below. Backups made during the engagement keep a copy until their rotation replaces them. The file backups keep at most ten copies, and the encrypted cloud backup keeps earlier file versions for seven days. Disk images of the workstation, which include the virtual machine's disk file, are kept for up to 14 weeks, plus up to 14 days in the snapshots of the storage that holds them. Every backup, version history included, is removed within 16 weeks. A backup is never restored for any other purpose. Deleted client material has left every backup within 16 weeks of its deletion at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them. Credentials are held in an encrypted vault rather than in files, and backups are encrypted on the machine before they are uploaded anywhere.
 
 **Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
 
@@ -5954,7 +5973,7 @@ The site does not use analytics cookies, tracking pixels or third-party scripts.
 
 The AI tool's record of each working session is kept both in the virtual machine and on the workstation. Within thirty days of the engagement closing, as the Client material paragraph sets out, the client's folder and its session records are deleted from the virtual machine, and the tool's shared prompt history there, which can also name the client, is deleted by hand. On the workstation, the delivered copy and the session records are deleted, the client's sessions are removed from the AI tool's list of past sessions by hand, and the restore point taken at kickoff is removed. Engagements do not overlap in the virtual machine by default. If they do, the restore point taken for the later engagement also holds the earlier client's folder, so that copy is removed only when the later engagement closes, which can be more than thirty days after the earlier one closed. Backups follow the rotation in the Client material paragraph. Deletion removes the files. It does not overwrite the freed disk space. The virtual machine's disk file sits on the workstation's own disk, and the disk images described in the Client material paragraph include it.
 
-No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic Ireland, Limited is the contracting party for the AI tool, and data can be transferred to Anthropic, PBC in the United States. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. A card payment made through a payment link is processed by Stripe. The audit's scanner, isitagentready.com, receives only the public address under test. For an audit, internet.nl receives the domain under test, and turva.dev uses it as an ordinary user and not as a processor. The footer of isitagentready.com links [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/), and internet.nl has its own [privacy statement](https://internet.nl/privacy/). internet.nl stores the tested domain, shows the result at a permanent link and can list the domain in its Hall of Fame, and turva.dev cannot remove the stored result. Its email test checks secure connections to mail servers, which can be the email provider's servers. The Cloudflare 1.1.1.1 public DNS resolver receives the names that turva.dev queries, as its [privacy page](https://developers.cloudflare.com/1.1.1.1/privacy/public-dns-resolver/) describes. YTJ is the Finnish business information system run by the Finnish Patent and Registration Office and the Tax Administration. Looking up a Business ID there, a foreign register ID in that country's open register or a VAT ID in the EU's VIES service sends that ID to the public register or service. A new provider is added to this list before it receives client material.
+No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email and encrypted backup storage. Anthropic Ireland, Limited is the contracting party for the AI tool, and data can be transferred to Anthropic, PBC in the United States. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. Masto.host in Portugal hosts the Mastodon server social.turva.dev and carries messages sent over Mastodon. The server's data is stored in France. A card payment made through a payment link is processed by Stripe. The audit's scanner, isitagentready.com, receives only the public address under test. For an audit, internet.nl receives the domain under test, and turva.dev uses it as an ordinary user and not as a processor. The footer of isitagentready.com links [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/), and internet.nl has its own [privacy statement](https://internet.nl/privacy/). internet.nl stores the tested domain, shows the result at a permanent link and can list the domain in its Hall of Fame, and turva.dev cannot remove the stored result. Its email test checks secure connections to mail servers, which can be the email provider's servers. The Cloudflare 1.1.1.1 public DNS resolver receives the names that turva.dev queries, as its [privacy page](https://developers.cloudflare.com/1.1.1.1/privacy/public-dns-resolver/) describes. YTJ is the Finnish business information system run by the Finnish Patent and Registration Office and the Tax Administration. Looking up a Business ID there, a foreign register ID in that country's open register or a VAT ID in the EU's VIES service sends that ID to the public register or service. A new provider is added to this list before it receives client material.
 
 ## Data rights
 
@@ -6145,7 +6164,7 @@ Resource catalogs describe the agent-facing interfaces a site exposes.
 
 ### [Authentication and authorization for AI agents](https://turva.dev/guides/agent-authentication)
 
-Authentication identifies a client, authorization determines what it may access or do.
+Authentication identifies a client. Authorization determines what it may access or do.
 
 
 ## Commerce and agent operations
@@ -6185,7 +6204,7 @@ llms.txt gives a curated map of what matters to the clients that fetch it, and n
 
 **How do I get my site cited by AI assistants?**
 
-My working assumption, which no guide here measures, is that a model cites content it can read cleanly and confirm elsewhere. That means machine-readable surfaces such as llms.txt and structured data, a markdown form that does not exhaust the token budget and being indexed where the assistant searches. None of that guarantees a citation.
+My working assumption, which no guide here measures, is that a model cites content it can read cleanly and confirm elsewhere. That means machine-readable surfaces such as structured data, a markdown form that does not exhaust the token budget and being indexed where the assistant searches. None of that guarantees a citation.
 
 **What is an MCP server card?**
 
@@ -6367,7 +6386,9 @@ The file format did not change. v2 added two standard link relations so an agent
 
 A server card describes an MCP endpoint for clients that support the relevant discovery convention. The card, the live endpoint and the client's protocol support must agree.
 
-The server card lives in two places that have not converged. The isitagentready.com scanner asks for the card at /.well-known/mcp/server-card.json, and turva.dev serves its card there. The proposal behind the card, [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), now develops as an [experimental MCP extension](https://github.com/modelcontextprotocol/ext-server-card), and its text sets a different default, the MCP endpoint URL followed by /server-card. It does not recommend a /.well-known path for the card itself, and site-level discovery instead sits in a catalog: the experimental Server Card document keeps an AI Catalog at /.well-known/ai-catalog.json, while ARD v0.91 names /.well-known/ard.json. The convention is still moving, so a client that checks only one location may miss a card that exists at the other. On 2026-10-06 SEP-2127 was merged, and its text now reads Status: Final on the Extensions Track. It recommends the MCP endpoint URL followed by /server-card, lets a card be hosted at any unreserved URI, lets an AI Catalog at /.well-known/ai-catalog.json link to or embed cards and leaves tools, resources and prompts out of the card. The extension repository's README, which still describes the SEP as under review, labels itself Experimental and not an accepted or official MCP extension. The two locations have still not converged.
+The server card lives in two places that have not converged. The isitagentready.com scanner asks for the card at /.well-known/mcp/server-card.json, and turva.dev serves its card there. [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), the proposal behind the card, was merged on 2026-10-06 and reads Status: Final on the Extensions Track, so the protocol's proposal process has accepted it. It recommends the MCP endpoint URL followed by /server-card and lets a card be hosted at any unreserved URI. It does not recommend a /.well-known path for the card itself.
+
+Site-level discovery sits in a catalog instead. An AI Catalog at /.well-known/ai-catalog.json can link to or embed cards, and ARD v0.91 names /.well-known/ard.json. The card leaves tools, resources and prompts out. The README of the [extension repository](https://github.com/modelcontextprotocol/ext-server-card) still describes the SEP as under review and labels itself Experimental and not an accepted or official MCP extension. Until the two locations converge, a client that checks only one of them may miss a card that exists at the other.
 
 An MCP server card is a small JSON file that describes a site's Model Context Protocol server so a client can find it and learn what it offers. The Model Context Protocol itself is a standard way for agents to use external tools and data. A server implements the protocol and may expose tools, resources or prompts, and the card is how that server announces itself before any connection is made.
 
@@ -6504,7 +6525,7 @@ A 402 response with a PaymentRequired object is a declaration that a resource ca
 
 ## Why a declared payment surface matters
 
-Checkout is one of the places agent commerce stalls today. An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search once the site verifies and settles the payment, though checkout is one obstacle among several and not the whole of what agent commerce still needs. A site that publishes these signals tells agents it is open for automated business, and where an agent compares sellers, a site with machine-readable prices can be one of the options it weighs when it decides where to spend.
+An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search once the site verifies and settles the payment, though checkout is one obstacle among several and not the whole of what agent commerce still needs. A site that publishes these signals tells agents it is open for automated business, and where an agent compares sellers, a site with machine-readable prices can be one of the options it weighs when it decides where to spend.
 
 turva.dev's own x402 surface is a declaration only. Its manifest states that no facilitator is configured, that the payment header is not verified and that the resource answers 402 regardless of payment, so sending funds achieves nothing, and settlement happens out of band against a written scope after a quote. That is the boundary this guide recommends stating on any site whose x402 surface is not wired to a facilitator: say which of the three states the site actually implements.
 
@@ -6516,15 +6537,15 @@ x402 is a way for a site to ask an agent to pay before it returns a resource, us
 
 **Why does agent commerce need a payment surface like x402?**
 
-Checkout is one of the places agent commerce stalls today. An agent can find a product and compare options, then stall at a checkout flow built for a person. A payment surface that the site verifies and settles lets the agent complete the purchase the same way it completed the search. A declaration alone executes no payment and delivers nothing, so a site should say which of the three states it implements.
+An agent can find a product and compare options, then stall at a checkout flow built for a person. A payment surface that the site verifies and settles lets the agent complete the purchase the same way it completed the search. A declaration alone executes no payment and delivers nothing, so a site should say which of the three states it implements.
 
 **Does x402 support micropayments for AI services?**
 
 The x402 documentation lists built-in micropayment support for usage-based services, along with batch settlement on EVM for high-volume use. A site still has to verify and settle those payments itself or through a facilitator. turva.dev's own x402 surface is a declaration only and takes no payment.
 
-**What stops an agent from completing a purchase today?**
+**What can stop an agent from completing a purchase?**
 
-Checkout is one common stopping point. An agent can find a product and compare options, then stall at a flow built for a person entering card details. A payment surface that the site verifies and settles removes that particular stop, and other gaps in agent commerce stay separate problems with their own fixes.
+Checkout is one stopping point. An agent can find a product and compare options, then stall at a flow built for a person entering card details. A payment surface that the site verifies and settles removes that particular stop, and other gaps in agent commerce stay separate problems with their own fixes.
 
 ## Sources
 
@@ -7190,6 +7211,7 @@ Async only. No calls, no calendar links, no discovery meetings. Replies within o
 - [isitagentready.com](https://isitagentready.com/)
 - [internet.nl](https://internet.nl/)
 - [Hardenize](https://www.hardenize.com/)
+- [Google Search Central, optimizing your website for generative AI features on Google Search](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
 
 ## Related
 
@@ -7277,7 +7299,7 @@ UCP writes down the boundary between what an agent may finish alone and what a p
 
 ## Where sites fail the agent
 
-A catalog can lose the agent before checkout. A price that appears only after JavaScript runs in the browser stops an agent that does not run JavaScript, a CAPTCHA wall stops one with no way to solve it, a maintenance interstitial stops any agent mid-flow, and a discovery file that claims a capability the endpoint does not answer stops one that trusted the file. Each one ends the purchase silently for the agent it stops. The agent does not complain: it stops, or it moves on to a seller whose path resolves. The failure looks like no traffic rather than a broken page, which is why it goes unmeasured.
+A catalog can lose the agent before checkout. A price that appears only after JavaScript runs in the browser stops an agent that does not run JavaScript, a CAPTCHA wall stops one with no way to solve it, a maintenance interstitial stops any agent mid-flow, and a discovery file that claims a capability the endpoint does not answer stops one that trusted the file. Each one ends the purchase silently for the agent it stops. The agent does not complain: it stops, or it moves on to a seller whose path resolves. The failure looks like no traffic rather than a broken page, which is why it can go unmeasured.
 
 ## Readiness is testable
 
@@ -7305,6 +7327,9 @@ A price that appears only after JavaScript runs in the browser stops an agent th
 - [Agentic Commerce Protocol (ACP)](https://www.agenticcommerce.dev/)
 - [Agent Payments Protocol (AP2) repository](https://github.com/google-agentic-commerce/AP2)
 - [x402 protocol site](https://x402.org/)
+- [OpenAI Developers, Agentic Commerce Protocol](https://developers.openai.com/commerce)
+- [Google, New tech and tools for retailers to succeed in an agentic shopping era](https://blog.google/products/ads-commerce/agentic-commerce-ai-tools-protocol-retailers-platforms/)
+- [Shopify, The agentic commerce platform](https://www.shopify.com/news/ai-commerce-at-scale)
 
 ## Related
 
@@ -7465,7 +7490,7 @@ My working assumption, which this guide does not measure, is that an assistant i
 
 **What makes a claim easy for an assistant to confirm?**
 
-Facts stated as data rather than prose, and the same fact visible in more than one place. Open-source code, a public company record and genuine third-party mentions raise confidence, and consistency matters more than volume.
+Facts stated as data rather than prose, and the same fact visible in more than one place. My working assumption, which this guide does not measure, is that open-source code, a public company record and genuine third-party mentions raise confidence, and that consistency matters more than volume.
 
 ## Sources
 
@@ -8049,7 +8074,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.226.0",
+    "version": "3.226.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8347,7 +8372,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.226.0",
+  "version": "3.226.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9202,7 +9227,7 @@ const META_BY_PATH = {
     title: "I can't start over, so I back up every night · turva.dev",
     description: "A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.",
     date: "2026-11-04",
-    modified: "2026-11-04",
+    modified: "2026-11-06",
     kind: "Build notes",
     image: "/og-why-i-back-up-every-night.jpg",
     imageAlt: "Card with the headline I can't start over, so I back up every night, and the line A nightly clone, encrypted NAS images and what has failed so far.",
@@ -9229,7 +9254,7 @@ const META_BY_PATH = {
     title: "Keeping my lab and my client work apart · turva.dev",
     description: "Client work now runs in a Windows virtual machine apart from my own lab. How I tested it with two test clients, and what it does not isolate.",
     date: "2026-10-26",
-    modified: "2026-11-01",
+    modified: "2026-11-06",
     kind: "Build notes",
     image: "/og-keeping-my-lab-and-client-work-apart.jpg",
     imageAlt: "Keeping my lab and my client work apart, a turva.dev build note on client work in its own virtual machine and what it does not isolate.",
@@ -9248,7 +9273,7 @@ const META_BY_PATH = {
     titleTag: "What Shopify changed for agent shopping · turva.dev",
     description: "Shopify moved store agent tools to /api/ucp/mcp and opened checkout to agents. What a merchant can check publicly and what stays hidden.",
     date: "2026-10-18",
-    modified: "2026-11-05",
+    modified: "2026-11-06",
     kind: "Protocol notes",
     image: "/og-what-shopify-changed-for-agent-shopping.jpg",
     imageAlt: "What Shopify changed for agent shopping since August, a turva.dev protocol note for merchants on the new agent tools, checkout and catalog data.",
@@ -9320,7 +9345,7 @@ const META_BY_PATH = {
     title: "Why I publish every guide for free · turva.dev",
     description: "I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.",
     date: "2026-09-29",
-    modified: "2026-11-05",
+    modified: "2026-11-06",
     kind: "Build notes",
     image: "/og-why-i-publish-every-guide.jpg",
     imageAlt: "turva.dev blog card: why I publish every guide for free, because the rules move monthly and the reading has to be done before a client needs it.",
@@ -9356,10 +9381,10 @@ const META_BY_PATH = {
     title: "I rebuilt turva.dev around the report · turva.dev",
     description: "The updated site puts sample reports beside the services they describe, with evidence, correction owners and acceptance checks visible before purchase.",
     date: "2026-09-07",
-    modified: "2026-10-31",
+    modified: "2026-11-06",
     kind: "Build notes",
     image: "/og-i-rebuilt-turva-dev-around-the-report.jpg",
-    imageAlt: "turva.dev blog card: the site rebuilt around the report, with two public sample reports showing evidence, correction owners and acceptance checks.",
+    imageAlt: "turva.dev blog card: the site rebuilt around the report, with a public sample report showing evidence, correction owners and acceptance checks.",
   },
   "/blog/agent-readiness-identity-vendors": {
     title: "What 19 identity vendors publish for agents · turva.dev",
@@ -9375,7 +9400,7 @@ const META_BY_PATH = {
     titleTag: "Two auth.md formats compared · turva.dev",
     description: "Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.",
     date: "2026-09-04",
-    modified: "2026-11-04",
+    modified: "2026-11-06",
     kind: "Protocol notes",
     image: "/og-two-auth-md-dialects.jpg",
     imageAlt: "turva.dev blog card: WorkOS publishes an open auth.md protocol and the isitagentready scanner publishes another. Both live at the same path and name three fields differently.",
@@ -9433,7 +9458,7 @@ const META_BY_PATH = {
     description: "A dated account of pricing changes and the work behind them. Historical prices remain in the article, with the current service prices linked separately.",
     date: "2026-08-21",
     kind: "Build notes",
-    modified: "2026-11-01",
+    modified: "2026-11-06",
     image: "/og-cheating-to-keep-the-old-price.jpg",
     imageAlt: "turva.dev blog card: The audit drops to 4,300 euros and two weeks. The part the old price charged for twice is now a written checklist.",
   },
@@ -9477,7 +9502,7 @@ const META_BY_PATH = {
     description: "A dated implementation note separates discoverable payment declarations from settlement. The scanner checks changed, the settlement boundary did not.",
     date: "2026-07-20",
     kind: "Build notes",
-    modified: "2026-08-21",
+    modified: "2026-11-06",
     image: "/og-finishing-the-optional-commerce-checks.jpg",
     imageAlt: "turva.dev blog card: Taking the last two optional commerce checks, x402 and MPP, to green on isitagentready without faking settlement, and what the scanner actually probes."
   },
@@ -9514,7 +9539,7 @@ const META_BY_PATH = {
     title: "Reducing secret exposure in coding-agent workflows · turva.dev",
     description: "Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.",
     date: "2026-07-12",
-    modified: "2026-11-04",
+    modified: "2026-11-06",
     kind: "Build notes",
     image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
@@ -9577,13 +9602,13 @@ const META_BY_PATH = {
     title: "Free agent-readiness tools · turva.dev",
     description: "Check an llms.txt file, compare a page's HTML and Markdown, read the public MCP server or use the agent-ready badge. Free, no signup.",
     image: "/og-tools.jpg",
-    imageAlt: "turva.dev tools card: the free llms.txt validator, the agent-ready badge and the public MCP server, each usable by a person or by an agent."
+    imageAlt: "turva.dev tools card: the free llms.txt validator, the Markdown parity check, the public MCP server and the agent-ready badge. Two checks run in a browser, and the MCP server answers agents."
   },
   "/llms-txt-validator": {
     title: "Free llms.txt validator · turva.dev",
     description: "Check llms.txt structure and home-page discovery links. Free, no signup. Per-check results for browsers, agents and CI.",
     image: "/og-llms-txt-validator.jpg",
-    imageAlt: "llms.txt validator"
+    imageAlt: "turva.dev tool card: llms.txt validator, free and instant, which fetches a site's /llms.txt and checks the structure against the format, with JSON output for agents."
   },
   "/markdown-parity-check": {
     title: "Markdown parity check for HTML pages · turva.dev",
@@ -9644,7 +9669,7 @@ const META_BY_PATH = {
     checked: "2026-11-03",
     description: "Commerce discovery describes the interfaces and payment-related capabilities a service supports.",
     image: "/og-guide-agent-commerce-discovery.jpg",
-    imageAlt: "turva.dev guide card: A2A Agent Card, AP2 and ACP explained: what each agent commerce discovery surface is, where it lives, and backing a claim with a real endpoint."
+    imageAlt: "turva.dev guide card: A2A, AP2, ACP and UCP explained, with what each agent commerce discovery surface is and where it lives."
   },
   "/blog/verifiable-agent-identity": {
     title: "When an agent can prove it is Claude · turva.dev",
@@ -9800,7 +9825,7 @@ const META_BY_PATH = {
   "/guides/agent-authentication": {
     title: "Authentication and authorization for AI agents · turva.dev",
     checked: "2026-11-03",
-    description: "Authentication identifies a client, authorization determines what it may access or do.",
+    description: "Authentication identifies a client. Authorization determines what it may access or do.",
     image: "/og-guide-agent-authentication.jpg",
     imageAlt: "turva.dev guide card: Agent authentication lets an automated client gain scoped access without a human login."
   },

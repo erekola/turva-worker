@@ -132,7 +132,7 @@
     "white": "How agents"
   },
   "og-guide-agent-commerce-discovery.jpg": {
-    "green": "A2A, AP2, and ACP",
+    "green": "A2A, AP2, ACP and UCP",
     "kicker": "Guide",
     "subhead": "What each agent commerce discovery surface is and where it lives.",
     "white": "Agent commerce discovery:"
@@ -290,7 +290,7 @@
   "og-i-rebuilt-turva-dev-around-the-report.jpg": {
     "green": "around the report",
     "kicker": "Blog",
-    "subhead": "Two public sample reports show the evidence, the correction owners and the acceptance checks.",
+    "subhead": "A public sample report shows the evidence, the correction owners and the acceptance checks.",
     "white": "I rebuilt the site"
   },
   "og-i-thought-it-was-a-small-job.jpg": {
@@ -438,9 +438,9 @@
     "white": "TLA+ on my own tools,"
   },
   "og-tools.jpg": {
-    "green": "Validator, badge, MCP server.",
+    "green": "Validator, parity check, MCP server, badge.",
     "kicker": "Tools",
-    "subhead": "Each one works for a person in a browser and for an agent over HTTP.",
+    "subhead": "Two checks run in a browser, and the MCP server answers agents.",
     "white": "Free agent-readiness tools."
   },
   "og-trace-runtime-attestation.jpg": {
