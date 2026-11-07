@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.227.1 - the /legal engagement terms state for every engagement the waiting rule (dates move by the business days spent waiting for the client's approval or access), the free redo of a fix that fails the re-check and that payment does not depend on an outside scanner's result; /services and /agent-readiness-audit state the waiting rule beside the two-week delivery; the MCP server card moves to 1.9.1 with the operator's postal address in get_contact, a date on every get_security_evidence scan, the add-on's if_access_missing in get_services and the completion note scoped to MCP server design; the access and re-check sentences now name what they refer to on every surface (the account named in writing for that access, a fix that fails its re-check) and the WebMCP get_contact tool gives the postal address.
 // turva.dev worker v3.227.0 - new Build notes post /blog/my-agents-notes-were-already-a-graph (2026-11-06): My agent's notes were already a graph, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 49, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.226.1 - corrections after the audit round of 2026-11-06: the rebuilt-site post, its FAQ, alt text and card name one public sample report; six guides, the guides index and ten posts get sourced, dated or narrowed sentences; /legal names Masto.host for messages sent over Mastodon and the seven-day version rotation of the encrypted cloud backup; /services, /agent-readiness-audit and /samples/audit-report wording; new OG card text for /tools and the agent commerce discovery guide.
 // turva.dev worker v3.226.0 - the home page, /services and /contact show four service cards each (Tek-761): the audit, implementation, ongoing advisory and one shared card for agent operations and MCP server design, with one mailto draft per card on /contact; the offer row parser accepts a price per day or per month, a price agreed for the engagement and a row without a delivery sentence.
@@ -243,7 +244,7 @@ max_age: 604800
 
 const CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-1hUgFrFAc2ihzOIj3nRlH5bfQlGWlH9gx3nuSk1S/1c='",
+  "script-src 'self' 'sha256-tkv2EskZhY/Kej9gj+P/mDFLa8K0FpDwP9cLdqYXCJ8='",
   "style-src 'self' 'unsafe-inline' data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -5500,7 +5501,7 @@ See the [sample audit report](/samples/audit-report) before choosing a service.
 
 A technical scan, a manual review of your website and API surfaces, and a recorded question set put to selected AI assistants. The report keeps the technical findings and the observed AI answers apart.
 
-The audit is delivered within two weeks of the agreed written kickoff. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers. [Read the full scope and the deliverables](/agent-readiness-audit).
+The audit is delivered within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers. [Read the full scope and the deliverables](/agent-readiness-audit).
 
 ## Implementation
 
@@ -5508,7 +5509,7 @@ The audit is delivered within two weeks of the agreed written kickoff. You recei
 
 I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
 
-Your team can implement the report. If you want me to do it, the €499 correction add-on covers the complete fix list from the audit. It is sold only with the audit and can be bought together with it, with its report, or after the report and before implementation starts. It applies when the required access is arranged in advance. Access counts as arranged when the named account works.
+Your team can implement the report. If you want me to do it, the €499 correction add-on covers the complete fix list from the audit. It is sold only with the audit and can be bought together with it, with its report, or after the report and before implementation starts. It applies when the required access is arranged in advance. Access counts as arranged when the account named in writing for that access works.
 
 The fixed price covers the whole list, whatever the number of corrections. Work outside that list is agreed separately at the day rate. When the add-on is bought, the included retest or re-scan window starts on the day the corrections are delivered, so the check reads the finished work.
 
@@ -5558,7 +5559,7 @@ Before kickoff, I need your confirmed source facts, required business decisions,
 
 ### Checking and follow-up
 
-I run an acceptance check for every implemented correction, verify source changes separately from edge changes, and leave failed or unverified items open. A fix that fails the re-check is redone at no charge in the same follow-up round.
+I run an acceptance check for every implemented correction, verify source changes separately from edge changes, and leave failed or unverified items open. A fix that fails its re-check is redone at no charge in the follow-up round of that re-check.
 
 I include one round of implementation handover questions submitted within 14 calendar days of delivery and answer that round within five business days. The written scope agreed before kickoff sets how many questions that round covers.
 
@@ -5820,7 +5821,7 @@ We agree the work. Send the URLs of up to two targets and your question. I confi
 
 I run the checks. I complete the scan, manual review and AI questions, recording the evidence and dates.
 
-You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. One round of written follow-up questions is included. Submit it within 14 calendar days of the report and I answer it within five business days. The written scope agreed before kickoff sets how many questions that round covers.
+You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works. One round of written follow-up questions is included. Submit it within 14 calendar days of the report and I answer it within five business days. The written scope agreed before kickoff sets how many questions that round covers.
 
 After the corrections, you choose the day for the included re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again using the same question set. The follow-up shows both readings and any changes in the method.
 
@@ -6021,13 +6022,13 @@ These terms apply to audits, advisory, implementation, agent operations and MCP 
 
 **Business days.** A business day means Finland's business days, Monday to Friday, excluding Finnish public holidays, in Europe/Helsinki time.
 
-**Deliverables.** An audit produces a written report. Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it.
+**Deliverables.** An audit produces a written report. Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it. A fix that fails its re-check is redone at no charge in the follow-up round of that re-check.
 
-**Payment.** Payment is due within fourteen days of the invoice date unless agreed otherwise in writing. Late-payment interest follows Finnish law.
+**Payment.** Payment is due within fourteen days of the invoice date unless agreed otherwise in writing. Late-payment interest follows Finnish law. Payment does not depend on an outside scanner's result.
 
 **Cancellation and refunds.** An engagement canceled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or the correction add-on is charged by the share of listed parts or fixes delivered. A remedy under Delay or Continuity takes precedence over this share. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
 
-**Delay.** If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered. That part is not charged, and anything already paid for it is refunded in full. A late advisory review is still delivered in full, and the delay is stated with it.
+**Delay.** Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works. If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered. That part is not charged, and anything already paid for it is refunded in full. A late advisory review is still delivered in full, and the delay is stated with it.
 
 **Continuity.** turva.dev is run by one person. If Erik Rekola falls ill or is otherwise unable to work, delivery moves. You can then cancel the part not yet delivered, and anything already paid for that part is refunded in full.
 
@@ -6083,7 +6084,7 @@ This site sets no cookies of its own. A check of the home page, this page and th
 
 This page is updated when the terms change. The current version applies to engagements started on or after the date below.
 
-- **Terms last updated:** 2026-11-06
+- **Terms last updated:** 2026-11-07
 - **Privacy last updated:** 2026-11-06
 `,
 
@@ -8164,7 +8165,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.227.0",
+    "version": "3.227.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8296,7 +8297,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"NbZgaU3UiiCH3HlmgHupF01oW2qxBzokZhLBD5gpu7EURLyRZUfWNrqYsP2PH9RLr74mmbkChWvzreHAOakmDg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o5xhN909KnsQ4rnP2JQE_xQ5MdYRkLjwfMWi9n5eVuvn6U7BTsLNOYC58soxpGmyb7yNNxkMRhU5w_LEPGz-BQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"_87J543QTv1_10OrOgE6lJfw17l20OFvhP4aL5eaFd2-mIclKspMNM_pcMJhe18-9B8qbYd3RQoP6O12M0HHDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o5xhN909KnsQ4rnP2JQE_xQ5MdYRkLjwfMWi9n5eVuvn6U7BTsLNOYC58soxpGmyb7yNNxkMRhU5w_LEPGz-BQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8311,7 +8312,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -8320,7 +8321,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.9.0",
+    "version": "1.9.1",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -8462,7 +8463,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.227.0",
+  "version": "3.227.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9033,11 +9034,11 @@ const WEBMCP_SCRIPT = `<script>
  var TOOLS = [
  {
  name: 'get_contact',
- description: 'Return the official contact channels for turva.dev, including email, Signal and LinkedIn. Engagement is async only, so there is no phone number and no meeting booking.',
+ description: 'Return the official contact channels for turva.dev, including email, Signal, LinkedIn and the postal address. Engagement is async only, so there is no phone number and no meeting booking.',
  inputSchema: { type: 'object', properties: {} },
- outputSchema: { type: 'object', properties: { email: { type: 'string' }, signal: { type: 'string' }, signalUrl: { type: 'string' }, linkedin: { type: 'string' }, businessId: { type: 'string' }, language: { type: 'string' }, correspondenceLanguages: { type: 'array', items: { type: 'string' } }, engagement: { type: 'string' } }, required: ['email', 'signalUrl', 'linkedin', 'businessId', 'engagement'] },
+ outputSchema: { type: 'object', properties: { email: { type: 'string' }, signal: { type: 'string' }, signalUrl: { type: 'string' }, linkedin: { type: 'string' }, businessId: { type: 'string' }, postalAddress: { type: 'string' }, language: { type: 'string' }, correspondenceLanguages: { type: 'array', items: { type: 'string' } }, engagement: { type: 'string' } }, required: ['email', 'signalUrl', 'linkedin', 'businessId', 'postalAddress', 'engagement'] },
  execute: async function() {
- return { email: 'info@turva.dev', signal: '@turva.19', signalUrl: 'https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK', linkedin: 'https://www.linkedin.com/in/erikrekola/', businessId: '3600281-7', language: 'en', correspondenceLanguages: ['en', 'fi'], engagement: 'async-only' };
+ return { email: 'info@turva.dev', signal: '@turva.19', signalUrl: 'https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK', linkedin: 'https://www.linkedin.com/in/erikrekola/', businessId: '3600281-7', postalAddress: 'c/o turva.dev, P.O. Box 999, 42011 YRITYSLOKERO, Finland', language: 'en', correspondenceLanguages: ['en', 'fi'], engagement: 'async-only' };
  }
  },
  {
@@ -9142,7 +9143,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-06";
+const SITEMAP_LASTMOD = "2026-11-07";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
