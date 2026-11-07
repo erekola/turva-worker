@@ -2,6 +2,61 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker, { findLinkRelations } from "../src/worker.ts";
 
+// Growth check for the tests that say a scan "stays linear".
+// The package turva-llms-txt-validator keeps the same function in test/growth.ts; it is inline here
+// because this repo's test runner would treat a shared file in test/ as a test.
+//
+// Why a ratio and not a limit in milliseconds. A fixed limit fails on a slow CI runner and lets a
+// slow but quadratic scan through. Two inputs of one shape, the second about four times the first,
+// are timed instead. A linear scan takes about four times as long on the larger one, a quadratic
+// scan about sixteen times, and the limit sits between the two on the log scale: sizes ** 1.5, which
+// is 8 for 4x the input and about 22.6 for 8x. Each input is timed several times and the fastest
+// run counts, because load on the machine only ever adds time, never removes it. The small input is
+// repeated until one sample takes at least 1 ms, so the clock resolution does not decide the ratio and
+// the samples stay short: a short sample is likelier to fall between two interruptions of a busy machine.
+// The check passes as soon as nine rounds give a ratio under the limit. On a loaded machine the ratio
+// of the fastest runs can sit above the limit because the larger input was interrupted more often, so
+// more rounds are taken, at most 60 and at most four seconds, before the check fails. A scan that is
+// really quadratic stays above the limit through all of them (checked against a deliberately quadratic scan).
+async function timeIt(work: (input: string) => unknown, input: string, reps: number): Promise<number> {
+  const started = performance.now();
+  for (let i = 0; i < reps; i++) {
+    const out = work(input);
+    if (out instanceof Promise) await out;
+  }
+  return performance.now() - started;
+}
+
+// The limit for an input that is `sizes` times larger: the midpoint, on the log scale, between a
+// linear scan (sizes) and a quadratic one (sizes squared).
+const growthLimit = (sizes: number): number => sizes ** 1.5;
+
+async function growthRatio(work: (input: string) => unknown, small: string, large: string, limit: number = Infinity): Promise<{ ratio: number; rounds: number }> {
+  await timeIt(work, large, 1);
+  await timeIt(work, small, 1);
+  let reps = 1;
+  while (reps < 4096 && (await timeIt(work, small, reps)) < 1) reps *= 2;
+  const begun = performance.now();
+  let minSmall = Infinity;
+  let minLarge = Infinity;
+  let rounds = 0;
+  for (;;) {
+    minSmall = Math.min(minSmall, await timeIt(work, small, reps));
+    minLarge = Math.min(minLarge, await timeIt(work, large, reps));
+    rounds++;
+    const ratio = minLarge / minSmall;
+    if (rounds >= 9 && ratio < limit) return { ratio, rounds };
+    if (rounds >= 60 || (rounds >= 9 && performance.now() - begun > 4000)) return { ratio, rounds };
+  }
+}
+
+async function assertLinear(label: string, work: (input: string) => unknown, small: string, large: string): Promise<void> {
+  const sizes = large.length / small.length;
+  const limit = growthLimit(sizes);
+  const g = await growthRatio(work, small, large, limit);
+  assert.ok(g.ratio < limit, label + ": " + sizes.toFixed(1) + "x the input took " + g.ratio.toFixed(1) + "x as long after " + g.rounds + " rounds, limit " + limit.toFixed(1));
+}
+
 // Regression tests for Tek-560 (outside review 2026-10-02, items V01 to V04, V06, V07, V08 and
 // V10): the hosted llms.txt validator, the canonical copy. The package turva-llms-txt-validator
 // 0.3.16 carries the same cases in test/tek560.test.ts. Each case gave the opposite result
@@ -93,29 +148,22 @@ test("Tek-560 V07: a template marker inside a comment or a raw text element does
   assert.equal(findLinkRelations("<head><template><template></template>" + link.replace("live", "fake") + "</template>" + link + "</head>", "").describedby, "/live.txt");
 });
 
-test("Tek-560 V07: the template scan stays linear on hostile input", () => {
+test("Tek-560 V07: the template scan stays linear on hostile input", async () => {
   // Both sizes stay under the 65,536 character head read, so the larger one is not cut before the scan.
-  const time = (s: string) => { const t = performance.now(); findLinkRelations("<head><template>" + s, ""); return performance.now() - t; };
   for (const unit of ["</templateX", "<template>", "<style>", "<!--", "<template><style>"]) {
     const n = Math.floor(14000 / unit.length);
-    time(unit.repeat(n));
-    const small = time(unit.repeat(n));
-    const large = time(unit.repeat(n * 4));
-    assert.ok(large / Math.max(small, 1) < 20, unit + " scaled " + (large / Math.max(small, 1)).toFixed(1) + "x for 4x the input");
+    await assertLinear(JSON.stringify(unit), (s) => findLinkRelations("<head><template>" + s, ""), unit.repeat(n), unit.repeat(n * 4));
   }
 });
 
 test("Tek-560 V08: a discovery target with many query keys is masked in order and in linear time", async () => {
-  const keys = 6000;
-  const href = "https://example.com/d?" + Array.from({ length: keys }, (_, i) => "k" + i + "=v").join("&");
-  const home = '<html><head><link rel="describedby" href="' + href + '"></head><body></body></html>';
-  const t = performance.now();
-  const body = await check(base, { home });
-  const ms = performance.now() - t;
+  // Both sizes stay under the 65,536 character head read, so the larger one is read whole.
+  const homeWith = (keys: number) => '<html><head><link rel="describedby" href="https://example.com/d?' + Array.from({ length: keys }, (_, i) => "k" + i + "=v").join("&") + '"></head><body></body></html>';
+  const body = await check(base, { home: homeWith(6000) });
   const d = body.checks.find((c: { id: string }) => c.id === "v2-describedby");
   assert.equal(d.status, "pass");
   assert.match(d.detail, /https:\/\/example\.com\/d\?k0=\*\*\*&k1=\*\*\*&k2=\*\*\*/);
-  assert.ok(ms < 1500, keys + " keys took " + ms.toFixed(0) + " ms");
+  await assertLinear("1500 and 6000 query keys", (home) => check(base, { home }), homeWith(1500), homeWith(6000));
   const small = await check(base, { home: '<head><link rel="describedby" href="https://example.com/d?b=1&a=2&b=3&c#f"></head>' });
   assert.match(small.checks.find((c: { id: string }) => c.id === "v2-describedby").detail, /https:\/\/example\.com\/d\?b=\*\*\*&a=\*\*\*&c=\*\*\*$/);
 });
@@ -172,12 +220,8 @@ test("Tek-560 F3: the HTML check reads any non-space attribute name", async () =
   // A tag still open at the end of the file has no closing bracket and does not warn.
   assert.equal(await status(base + "\n<div class=\"x\"", "no-html"), "pass");
   // The scan stays linear on a long run of attributes with no closing bracket.
-  const time = async (s: string) => { const t = performance.now(); await status(base + "\n" + s, "no-html"); return performance.now() - t; };
   for (const unit of ["<a b ", "<a b=\"x\" c='y ", "<a @b=x\"y\" ", "<a +++ ", "<a b=\"<a b='"]) {
-    await time(unit.repeat(2000));
-    const small = await time(unit.repeat(10000));
-    const large = await time(unit.repeat(40000));
-    assert.ok(large / Math.max(small, 1) < 20, JSON.stringify(unit) + " scaled " + (large / Math.max(small, 1)).toFixed(1) + "x for 4x the input");
+    await assertLinear(JSON.stringify(unit), (s) => status(base + "\n" + s, "no-html"), unit.repeat(10000), unit.repeat(40000));
   }
 });
 
@@ -189,12 +233,8 @@ test("Tek-560 V-1: the HTML check reads a Unicode letter or digit in an attribut
   for (const t of ["a <b + c > d", "a <b ! ? > d", "a <é> b"]) {
     assert.equal(await status(add(t), "no-html"), "pass", t);
   }
-  const time = async (s: string) => { const t = performance.now(); await status(base + "\n" + s, "no-html"); return performance.now() - t; };
   for (const unit of ["<a ä ", "<a ä=\"x\" c='y ", "<a @ä=x\"y\" ", "<a ", "<a b=\"<a b='"]) {
-    await time(unit.repeat(2000));
-    const small = await time(unit.repeat(10000));
-    const large = await time(unit.repeat(40000));
-    assert.ok(large / Math.max(small, 1) < 20, JSON.stringify(unit) + " scaled " + (large / Math.max(small, 1)).toFixed(1) + "x for 4x the input");
+    await assertLinear(JSON.stringify(unit), (s) => status(base + "\n" + s, "no-html"), unit.repeat(10000), unit.repeat(40000));
   }
 });
 
@@ -245,5 +285,30 @@ test("Tek-680: the validator sets the client IP headers to the fixed address on 
     assert.equal(s.headers.get("cf-connecting-ip"), fixed, s.url);
     assert.equal(s.headers.get("x-real-ip"), fixed, s.url);
     for (const [name, value] of s.headers) assert.ok(!value.includes(visitor), s.url + " carries the visitor's address in " + name);
+  }
+});
+
+// Round 24, V1-2: the hosted form removes tab, CR and LF from the typed address before it reads it, so an
+// address with one inside its scheme is read as the address it spells. The package normalizeHostInput
+// does the same since 0.7.1 (test/validate.test.ts, "host normalization and public-host gate").
+test("Round 24 V1-2: a tab or a line break inside the typed scheme is removed before the address is read", async () => {
+  const realFetch = globalThis.fetch;
+  const asked: string[] = [];
+  globalThis.fetch = async (url) => {
+    const u = String(url);
+    asked.push(u);
+    if (u === "https://example.com/llms.txt") return new Response(base, { status: 200, headers: { "content-type": "text/plain; charset=utf-8" } });
+    if (u === "https://example.com/") return new Response("", { status: 404, headers: { "content-type": "text/html" } });
+    throw new Error("unexpected fetch to " + u);
+  };
+  try {
+    for (const typed of ["ht%09tps://example.com", "https:%0A//example.com", "https:%0D%0A//Exam%09ple.com/path"]) {
+      const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + typed, { headers: { accept: "application/json" } }), {});
+      assert.equal(res.status, 200, typed);
+      assert.equal(JSON.parse(await res.text()).target, "https://example.com/llms.txt", typed);
+    }
+    assert.ok(asked.every((u) => u.startsWith("https://example.com/")), asked.join(" "));
+  } finally {
+    globalThis.fetch = realFetch;
   }
 });

@@ -403,7 +403,7 @@ test("Tek-484: a block without a links-only paragraph fails the page build inste
 
 // ---- Tek-488: every checkable page passes for the right reason, round 1 ----
 
-test("Tek-488: the sample reports, the product pages and the commerce guide pass in full", async () => {
+test("Tek-488: the sample report and the commerce guide pass in full", async () => {
   for (const p of ["/samples/audit-report", "/guides/agent-commerce-discovery"]) {
     const r = JSON.parse(await (await post({ url: "https://turva.dev" + p })).text());
     assert.equal(r.summary.result, "pass", p + " " + JSON.stringify((r.findings || []).slice(0, 3).map((f: { code: string; before?: string }) => f.code + " " + (f.before || ""))));

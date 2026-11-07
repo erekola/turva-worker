@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.228.0 - round 24 fixes (Tek-777, 2026-11-07): the closed OAuth endpoints carry CORS on their error response, OpenAPI declares five more served routes (the llms.txt validator JSON form, the Markdown parity check, the ACP index and the two A2A task routes), the Hardenize reading moves to 2026-11-07, the hosted llms.txt validator says "1 link", the MCP server card lists English and Finnish, and comments and test names lose their Finnish and private-path wording. MCP 1.9.2: one sample report in the instructions, the Hardenize date, the server card languages.
 // turva.dev worker v3.227.1 - the /legal engagement terms state for every engagement the waiting rule (dates move by the business days spent waiting for the client's approval or access), the free redo of a fix that fails the re-check and that payment does not depend on an outside scanner's result; /services and /agent-readiness-audit state the waiting rule beside the two-week delivery; the MCP server card moves to 1.9.1 with the operator's postal address in get_contact, a date on every get_security_evidence scan, the add-on's if_access_missing in get_services and the completion note scoped to MCP server design; the access and re-check sentences now name what they refer to on every surface (the account named in writing for that access, a fix that fails its re-check) and the WebMCP get_contact tool gives the postal address.
 // turva.dev worker v3.227.0 - new Build notes post /blog/my-agents-notes-were-already-a-graph (2026-11-06): My agent's notes were already a graph, with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row and the article count 49, META_BY_PATH, CANONICAL_PATHS, SITEMAP_ENTRIES and GUIDE_PAGE_FAQ.
 // turva.dev worker v3.226.1 - corrections after the audit round of 2026-11-06: the rebuilt-site post, its FAQ, alt text and card name one public sample report; six guides, the guides index and ten posts get sourced, dated or narrowed sentences; /legal names Masto.host for messages sent over Mastodon and the seven-day version rotation of the encrypted cloud backup; /services, /agent-readiness-audit and /samples/audit-report wording; new OG card text for /tools and the agent commerce discovery guide.
@@ -155,7 +156,7 @@
 // turva.dev worker v3.155.0 - the blog post HTML and Markdown can disagree (2026-09-12): the post explains what markdown-parity-check compares, records the dated five-error result on /tools and states what a clean report does not establish; it joins /blog, META_BY_PATH, CANONICAL_PATHS, the sitemap and llms.txt (re-sign), and SITEMAP_LASTMOD moves to the day the page text changed.
 // turva.dev worker v3.154.0 - the hosted Markdown parity check (2026-09-11): /markdown-parity-check compares the main content of a turva.dev page's HTML and Markdown with run() from the markdown-parity-check package, the same code the CLI runs, rendering both versions in process so no request leaves the Worker; other hosts answer 403 until the remote transport has its own Worker, CPU limit and egress measurement; a JSON POST API returns the CLI's report, its own PARITY_LIMITER fails closed, and the page joins /tools, PRIMARY_PATHS, the sitemap, META_BY_PATH and llms.txt (re-sign).
 // turva.dev worker v3.153.0 - the Onsite-3 polish round (2026-09-11): the delivery terms on the home and /services offer cards read at body text size and the Shopify retest is its own line, the audit sample's What each party delivers section carries seven subheadings and three lists instead of labels inside long paragraphs, the home finding card quotes the sample's own F1 readings, /contact names info@turva.dev once in its email section, and SITEMAP_LASTMOD moves to the day the page text changed. Both offer parsers still fail closed and accept one optional last sentence that starts One retest.
-// turva.dev worker v3.152.0 - the MTA-STS policy names only the Proton hosts (2026-09-10): the mailbox.org move finished on 2026-09-08 when SPF dropped the include, the four mbo000X._domainkey CNAMEs left the zone and the holvi lost mailbox-smtp, so the four mxext lines guarded a rollback that no longer exists and every one of them was a policy line matching no MX. The two Proton hosts stay, mode stays enforce, max_age stays 604800, and the _mta-sts id is bumped after the deploy so senders refetch before the cached policy expires.
+// turva.dev worker v3.152.0 - the MTA-STS policy names only the Proton hosts (2026-09-10): the mailbox.org move finished on 2026-09-08 when SPF dropped the include, the four mbo000X._domainkey CNAMEs left the zone and the old SMTP credential was retired, so the four mxext lines guarded a rollback that no longer exists and every one of them was a policy line matching no MX. The two Proton hosts stay, mode stays enforce, max_age stays 604800, and the _mta-sts id is bumped after the deploy so senders refetch before the cached policy expires.
 // turva.dev worker v3.150.1 - hotfix to the text round (2026-09-09): /services carries a short priced summary of the Shopify check and the audit again, and the Implementation block leads with the day rate, because verify.mjs --live binds every priced service to the price that opens its OWN heading block in the markdown WebMCP get_services hands back, and deleting those two sections took that binding with them. The two anchors #shopify and #audit are back on the sections; the long repeating write-ups stay deleted.
 // turva.dev worker v3.150.0 - the clearer, more personal text round (2026-09-09, from the Fable page instruction): twelve pages outside the blog and the guides rewritten in the first person around what the reader gets, the two sample reports given plain section and finding headings with every old anchor kept as an alias, the audit and validator FAQ sections folded into the sections above them, and every measurement, price, deadline, scope and refund term left as it stood.
 // turva.dev worker v3.149.0 - the WebMCP surface grew from three tools to six: search_content reads the published llms.txt index, get_page returns any page of this site as markdown and refuses anything that would leave the origin, and open_page navigates the tab to one of ten named pages (an enum, never a caller-supplied URL, so the tool is not an open redirect); every tool now declares an outputSchema and get_company says which fields it returns.
@@ -627,7 +628,7 @@ So the graph reads those references and uses no model. On 5 November it counted 
 
 On a test set I derived from the rules, a lookup by reference found the right location 30 times out of 30 and the right status 16 times out of 16. Its output was smaller than an unbounded grep 28 times out of 30.
 
-Then I measured real searches from 124 earlier sessions, 20 lookups by reference and 20 searches by topic. A lookup was smaller than what the session had actually done only 9 times out of 20, because my sessions already narrow their own searches. After I shortened the default output, the lookup was smaller 15 times out of 20. That cost something: the target's own location appeared in the output 5 times out of 19 instead of 8. Two of those 19 cases later turned out to be picking errors in my measurement.
+Then I measured real searches from 124 earlier sessions, 20 lookups by reference and 20 searches by topic. A lookup was smaller than what the session had actually done only 9 times out of 20, because my sessions already narrow their own searches. After I shortened the default output, the lookup was smaller 15 times out of 20. That cost something: the target's own location appeared in the output 5 times out of the 19 of those 20 lookups that could be scored, instead of 8. Two of those 19 cases later turned out to be picking errors in my measurement.
 
 The derived test promised more than the real searches gave. That was the first sign of what the rest of the work showed.
 
@@ -5388,9 +5389,9 @@ Scanner: isitagentready.com, third party, Cloudflare.
 
 Verified 100/100, Level 5, Agent-Native.
 
-I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. I measured all three on 2026-10-21, Internet.nl again on 2026-10-29 and Hardenize again on 2026-10-30. I measured the scanner reading above again on 2026-10-29.
+I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. I measured all three on 2026-10-21, Internet.nl again on 2026-10-29 and Hardenize again on 2026-11-07. I measured the scanner reading above again on 2026-10-29.
 
-- Hardenize, measured 2026-10-30: all 24 categories passed. [hardenize.com/report/turva.dev](https://www.hardenize.com/report/turva.dev)
+- Hardenize, measured 2026-11-07: all 24 categories passed. [hardenize.com/report/turva.dev](https://www.hardenize.com/report/turva.dev)
 - Internet.nl website test: 98/100. [internet.nl/site/turva.dev](https://internet.nl/site/turva.dev/)
 - Internet.nl email test: 90/100. [internet.nl/mail/turva.dev](https://internet.nl/mail/turva.dev/)
 
@@ -7598,7 +7599,9 @@ Facts stated as data rather than prose, and the same fact visible in more than o
 `
 };
 
-// THE ONE SITE ORDER (2026-09-04, v3.119.0). Every list that enumerates pages follows it:
+// THE ONE SITE ORDER (2026-09-04, v3.119.0). Every list that enumerates pages follows it,
+// with one stated exception: llms-full.txt appends /auth.md after the blog, while the sitemap
+// places it among the auxiliary pages (a test locks that position):
 // the primary pages in PRIMARY_PATHS order (what, for whom, what it costs, then tools, then
 // company, contact and legal), the auxiliary pages, /guides and the guides in the order the
 // /guides twin lists them, then /blog and the posts newest first (META_BY_PATH.date, and the
@@ -7639,7 +7642,8 @@ function buildLlmsFullTxt() {
   const header = `# Full content (llms-full.txt)
 
 > Concatenated markdown of every page: the primary pages first, then
-> the guides, then the blog with the newest post first. For LLMs that
+> the auxiliary pages, the guides and the blog with the newest post
+> first, and /auth.md last. For LLMs that
 > prefer a single document over per-page fetches. Sources are canonical
 > URLs on https://turva.dev/. The file is large and grows with every page,
 > so read https://turva.dev/llms.txt first and open this document only for
@@ -7663,8 +7667,8 @@ function buildLlmsFullTxt() {
     // it, and PAGE_MARKDOWN, which both the twin and this bundle read, is left unchanged.
     // llms-full.txt is a separate bundle no parity check reads, so the same date and
     // author are added to its own copy of a checked guide's section, closing the gap
-    // named in V08-21 without moving the parity-tested boundary (mds/decisions.md
-    // Tek-499 F08 declined the twin-side fix for exactly that reason).
+    // named in V08-21 without moving the parity-tested boundary (Tek-499 F08
+    // declined the twin-side fix for exactly that reason).
     const checked = (META_BY_PATH as Record<string, Partial<PageMeta>>)[path] && (META_BY_PATH as Record<string, Partial<PageMeta>>)[path].checked;
     const body = checked ? content + "\n\nSources checked " + checked + ". Erik Rekola." : content;
     return `<!-- ============================================================
@@ -8165,8 +8169,8 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.227.1",
-    "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1.",
+    "version": "3.228.0",
+    "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
   },
@@ -8277,7 +8281,12 @@ const OPENAPI_SPEC = JSON.stringify({
     "/api/acp/checkout_sessions": { "post": { "summary": "Create an ACP checkout session", "operationId": "acpCreateCheckoutSession", "description": "Agentic Commerce Protocol, api-version 2026-01-16. Body: { items: [{ id, quantity }] } with id one of audit, advisory, implementation (omit id for the default service, but id must not be null) and quantity, if present, exactly 1. Sessions are stateless and the response status is not_ready_for_payment: the engagement is confirmed in writing before any payment.", "responses": { "201": { "description": "session", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "body is not a JSON object, items is not an array of item objects, more than one item, an item id is null, an item quantity is present and not exactly 1, or an unknown item id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } }, "413": { "description": "body larger than 16384 bytes", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/api/acp/checkout_sessions/{session_id}": { "get": { "summary": "Retrieve an ACP checkout session", "operationId": "acpGetCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "session", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "GET only", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Scope is agreed in writing before payment; no API completes it. The response is 422 intervention_required, never 200.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "422": { "description": "intervention_required: human confirmation in writing is required before this session can complete", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
-    "/api/acp/checkout_sessions/{session_id}/cancel": { "post": { "summary": "Cancel an ACP checkout session", "operationId": "acpCancelCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "canceled", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } } } } }
+    "/api/acp/checkout_sessions/{session_id}/cancel": { "post": { "summary": "Cancel an ACP checkout session", "operationId": "acpCancelCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "canceled", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/llms-txt-validator": { "get": { "summary": "llms.txt validator, JSON form", "operationId": "validateLlmsTxt", "description": "Send Accept: application/json to get the report as JSON; without that header the same address answers the HTML page. The validator always reads /llms.txt at the root of the host, and a path in the address is reported and not used.", "parameters": [{ "name": "url", "in": "query", "required": true, "description": "A public domain such as example.com.", "schema": { "type": "string" } }], "responses": { "200": { "description": "The report: target, summary and checks", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "No address, an address that is not a public domain, or a file that could not be fetched; the body is { error }", "content": { "application/json": { "schema": { "type": "object" } } } }, "429": { "description": "Rate limited by the site-wide limiter; plain text with Retry-After", "content": { "text/plain": { "schema": { "type": "string" } } } } } } },
+    "/markdown-parity-check": { "post": { "summary": "Compare the main content of a turva.dev page with its Markdown version", "operationId": "checkMarkdownParity", "description": "Checks the published pages of turva.dev only; any other address answers 403. The response is the report in the JSON format of the markdown-parity-check package, and summary.exitCode carries 0, 1 or 2.", "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string", "description": "Full https address of a published turva.dev page" }, "markdownUrl": { "type": "string", "description": "Optional separate Markdown address on the same site" }, "selector": { "type": "string", "description": "Optional CSS selector for the HTML content" }, "strict": { "type": "boolean", "description": "Count warnings as failures" }, "frontMatter": { "type": "string", "enum": ["keep", "strip"], "description": "Keep or strip front matter at the top of the Markdown" } } } } } }, "responses": { "200": { "description": "A pass or a fail report", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "Malformed request or invalid field", "content": { "application/json": { "schema": { "type": "object" } } } }, "403": { "description": "This version does not check that address", "content": { "application/json": { "schema": { "type": "object" } } } }, "413": { "description": "Request body larger than 8192 bytes", "content": { "application/json": { "schema": { "type": "object" } } } }, "415": { "description": "Send application/json. The answer is a JSON report when the request sends Accept: application/json, and the HTML page otherwise", "content": { "application/json": { "schema": { "type": "object" } }, "text/html": { "schema": { "type": "string" } } } }, "422": { "description": "The address was refused or the comparison could not finish", "content": { "application/json": { "schema": { "type": "object" } } } }, "429": { "description": "Too many checks; Retry-After says when to retry. The check's own limiter answers with a JSON report when the request sends Accept: application/json or a JSON body, and with the HTML page otherwise; the site-wide limiter answers with plain text", "content": { "application/json": { "schema": { "type": "object" } }, "text/html": { "schema": { "type": "string" } }, "text/plain": { "schema": { "type": "string" } } } }, "503": { "description": "Busy or unavailable; Retry-After says when to retry. A JSON report when the request sends Accept: application/json or a JSON body, the HTML page otherwise", "content": { "application/json": { "schema": { "type": "object" } }, "text/html": { "schema": { "type": "string" } } } } } } },
+    "/api/acp": { "get": { "summary": "ACP base: lists the checkout session routes and points at the discovery manifest", "operationId": "getAcpIndex", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/v1/tasks/{id}": { "get": { "summary": "A2A task lookup", "operationId": "getA2aTask", "description": "message:send answers at once with a message and never creates a task, so every task id is unknown and this answers the A2A error -32001 task not found.", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "404": { "description": "task not found (-32001)", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/v1/tasks/{id}:cancel": { "post": { "summary": "A2A task cancel", "operationId": "cancelA2aTask", "description": "No task is ever created, so a cancel on any task id answers the A2A error -32001 task not found.", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "404": { "description": "task not found (-32001)", "content": { "application/json": { "schema": { "type": "object" } } } } } } }
   }
 }, null, 2);
 
@@ -8297,7 +8306,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"_87J543QTv1_10OrOgE6lJfw17l20OFvhP4aL5eaFd2-mIclKspMNM_pcMJhe18-9B8qbYd3RQoP6O12M0HHDQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o5xhN909KnsQ4rnP2JQE_xQ5MdYRkLjwfMWi9n5eVuvn6U7BTsLNOYC58soxpGmyb7yNNxkMRhU5w_LEPGz-BQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"jwQU84uvN_TB2HcGcBSRiOE4GQCOh4ORgIg0LOOVQyDLK-wRpGBVmK1BYY0ZYVkJuRQTJzgcFieAD4qVMHQ_DQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o5xhN909KnsQ4rnP2JQE_xQ5MdYRkLjwfMWi9n5eVuvn6U7BTsLNOYC58soxpGmyb7yNNxkMRhU5w_LEPGz-BQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8305,14 +8314,13 @@ const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.jso
 // modelcontextprotocol.io does exactly that. Read the schema before moving anything here:
 // $schema has to be the /v1/ URL, name is reverse-DNS with one slash, and description is
 // capped at 100 characters. Measured against the schema and against the scanner 2026-08-29,
-// see mds/decisions.md Tek-298. Changing this file means re-signing it,
-// julkaisu/resign-server-card-local.mjs.
+// see Tek-298. Changing the card means re-signing it.
 const MCP_SERVER_CARD = JSON.stringify({
   "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -8321,7 +8329,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.9.1",
+    "version": "1.9.2",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -8333,7 +8341,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   // resources/templates/list correctly answer -32601 Method not found. Declaring
   // resources or prompts here would put a promise the code does not keep inside a
   // signed manifest. Do not add them back, and do not add empty implementations to
-  // match a declaration; see agent-memory/project-do-not-fix.md.
+  // match a declaration; this is a recorded decision.
   // listChanged is false, the value server/discover returns since turva-mcp 1.5.0: the tool
   // set changes only on deploy and the server sends no list_changed notification. The public
   // verify compares this object with the live one field by field, not only by its keys.
@@ -8357,7 +8365,7 @@ const MCP_SERVER_CARD = JSON.stringify({
     "llmsFullTxt": "https://turva.dev/llms-full.txt",
     "authMd": "https://turva.dev/auth.md",
     "contact": "info@turva.dev",
-    "languages": ["en"],
+    "languages": ["en", "fi"],
     "vatNote": "All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business customers in another EU member state with a valid VAT ID, no Finnish VAT for customers outside the EU, because the place of supply is outside Finland.",
     "pricing": {
       "currency": "EUR",
@@ -8463,7 +8471,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.227.1",
+  "version": "3.228.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -10165,7 +10173,8 @@ function caseNormalizedTarget(pathname: string, pathLower: string) {
 
 // An entity tag on every cacheable 200, so an agent or a crawler that already holds the bytes can
 // ask again with If-None-Match and get 304 without the body (round 19, P1-P1). The tag is the
-// SHA-256 of the exact body, so it moves when one byte moves, and it is weak, because Cloudflare
+// first 16 bytes of the SHA-256 of the exact body, so it moves when one byte moves, up to a
+// collision of that 128 bit prefix, and it is weak, because Cloudflare
 // compresses on the way out and a strong tag would not survive that. A response marked no-store
 // or private (the validator, the parity check, a brief, the OAuth errors) and a body that is not
 // text are left as they are.
@@ -10597,7 +10606,7 @@ const BIDI_CONTROLS = /[\u202A-\u202E\u2066-\u2069]/g;
 
 // The set of BIDI_CONTROLS as a function. A function declaration exists from the module's first
 // line, while that var is still undefined when a module-level constant renders markdown
-// (mds/gotchas.md 2026-09-06 (jatko 10)), so the new call sites use this one.
+// (a trap recorded on 2026-09-06), so the new call sites use this one.
 function stripBidi(s: string | undefined) {
   return String(s).replace(/[\u202A-\u202E\u2066-\u2069]/g, "");
 }
@@ -10618,14 +10627,11 @@ function jsonBidiEscape(json: string) {
 
 // A root-relative link target stays on this site only if it resolves to this origin. A list of
 // refused characters misses what the parser knows: "/\host" is "//host" to every WHATWG parser in
-// an http or https URL (round 19, K4-1; the trap of mds/gotchas.md 2026-09-09 (jatko 1)).
+// an http or https URL (round 19, K4-1; a trap recorded on 2026-09-09).
 function mdSameOrigin(path: string) {
   try { return new URL(path, "https://turva.dev/").origin === "https://turva.dev"; } catch { return false; }
 }
 
-// "</" inside a JSON-LD string would close the script element early, and JSON.stringify leaves it
-// as it is. Every builder writes it as "<\/", which JSON reads as the same two characters (round
-// 19, K4-4: SCHEMA_HOME's FAQ was the one without it).
 // A replacement that must happen: it throws when its anchor is missing or repeated, so a renamed
 // heading fails the build instead of shipping unchanged (round 19, K6-P4).
 function replaceExactlyOnce(s: string, from: string, to: string) {
@@ -10634,6 +10640,9 @@ function replaceExactlyOnce(s: string, from: string, to: string) {
   return s.replace(from, to);
 }
 
+// "</" inside a JSON-LD string would close the script element early, and JSON.stringify leaves it
+// as it is. Every builder writes it as "<\/", which JSON reads as the same two characters (round
+// 19, K4-4: SCHEMA_HOME's FAQ was the one without it).
 function jsonLdSafe(s: string) {
   return String(s).split("</").join("<" + String.fromCharCode(92) + "/");
 }
@@ -10685,7 +10694,7 @@ function renderInline(text: string) {
     return pre + '<a href="' + stripBidi(url) + '">' + stripBidi(url) + '</a>' + tail;
   }));
   out = outside(out, (t: string) => t.replace(/(^|[\s(])((?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/[^\s<)"]*)/gi, function(m: string, pre: string, url: string) {
-    // Kierros 18 (2026-09-06, S5-1): this branch used to link ANY "label.label/path"
+    // Round 18 (2026-09-06, S5-1): this branch used to link ANY "label.label/path"
     // string, and a reverse-DNS identifier has exactly that shape, so two MCP metadata
     // keys in a blog post rendered as links to a host that does not resolve. The last
     // label now has to be a top-level domain this file declares; anything else is left
@@ -10707,7 +10716,7 @@ function renderInline(text: string) {
 
 // Top-level domains the protocol-less autolinker in renderInline() accepts, and the
 // strings that look like a bare host but are not one. Both are read by
-// turva-worker/tools/verify.mts, so these are the only copies. Added kierros 18
+// turva-worker/tools/verify.mts, so these are the only copies. Added round 18
 // (2026-09-06) after two reverse-DNS metadata keys rendered as dead links.
 const AUTOLINK_TLDS = new Set(["com", "dev", "org", "net", "io", "fi", "nl", "eu", "se", "no", "dk", "de", "uk", "ai", "app", "me", "info"]);
 const AUTOLINK_NOT_HOSTS = new Set(["io.modelcontextprotocol/protocolVersion", "io.modelcontextprotocol/clientCapabilities"]);
@@ -10843,7 +10852,7 @@ function markdownToHtml(md: string) {
     } else if (/^-{3,}$/.test(trimmed)) {
       // Horizontal rule. Added 2026-08-24 (Tek-269). It came in for the brief page, but a
       // brief no longer writes a horizontal rule into its markdown: the style pass's R6 read
-      // it as a bare line in the body, so it left template.py's markdown the same day and is
+      // it as a bare line in the body, so it left the brief markdown the same day and is
       // now only a PDF decoration. The branch stays here, because it is the right way to read
       // a markdown horizontal rule and any page may use it. Measured the same day that no
       // PAGE_MARKDOWN block contains a line that is exactly ---, so this changes the output
@@ -10876,7 +10885,7 @@ function markdownToHtml(md: string) {
   return html.join("\n");
 }
 
-// ---- Prose from PAGE_MARKDOWN (T3, mds/decisions.md Tek-56) ----
+// ---- Prose from PAGE_MARKDOWN (T3, Tek-56) ----
 // Card pages render hand-built structure (nav, cards, key-value grids,
 // forms) around prose read from PAGE_MARKDOWN at request time, so every
 // sentence lives once and a page cannot drift from its markdown twin, with
@@ -11003,7 +11012,7 @@ function mdFaqBlocks(path: string, heading: string) {
     else tail.push(flat);
   }
   // An answerless question reached the FAQPage JSON-LD as an empty acceptedAnswer.text and
-  // nothing could see it. Failing here is the same shape as mdPcard above: the module-level
+  // nothing could see it. Failing here is the same shape as mdPcard below: the module-level
   // callers make it a build failure, and the static gate names the page before any deploy.
   for (const p of pairs) {
     if (!p.a) throw new Error("mdFaqBlocks: " + path + " " + heading + ": no answer follows the question " + JSON.stringify(p.q));
@@ -11138,7 +11147,7 @@ function mdSecBodyHtml(path: string, heading: string, listOnly?: boolean, dropRo
   // "Label:" block followed by "- items" becomes a labelled checklist, and everything
   // else is markdown. Continuation lines of a list item (indented) join the item.
   // listOnly: the paragraphs are rendered elsewhere in the same section (the /contact
-  // Signal block, kierros 4 E-01: the twin says it once, the HTML said it twice).
+  // Signal block, round 4 E-01: the twin says it once, the HTML said it twice).
   let blocks = mdSplitBlocks(mdSection(path, heading).split("\n"), false).map((b) => b.replace(/\s+$/, "")).filter(Boolean)
     .filter((b) => !listOnly || b.trim().startsWith("- "));
   // dropRow: the section's button row is rendered by mdOpenCtaSec, so it is not a paragraph here.
@@ -11249,8 +11258,9 @@ function mdKvsSec(path: string, heading: string, extra?: string) {
 const OFFER_ROW_RE = /^- \[([^\]]+)\]\(([^)]+)\)\. (€[\d,]+(?: per (?:day|month))?|Price agreed for the engagement)\. (.+?)(?: (Delivered [^.]+\.))?(?: (One retest [^.]+\.))?$/;
 function mdOfferCards(path: string, heading: string, idFor?: Record<string, string>) {
   // The same row shape as the home page offers: "- [name](href). €price. covers Delivered ... [One retest ...]".
-  // idFor carries an old section anchor onto the card that replaced that section, so a link
-  // written before the section became a card still lands on the same offer (for example the /services#shopify anchor, which left with the Shopify check in 3.218.0).
+  // idFor can carry an old section anchor onto the card that replaced that section, so a link
+  // written before the section became a card still lands on the same offer. No caller passes it now: the /services#shopify anchor it was
+  // written for left with the Shopify check in 3.218.0.
   const rows = mdSection(path, heading).split("\n").filter((l) => l.startsWith("- "));
   if (!rows.length) throw new Error("mdOfferCards: no offer rows under " + heading + " in " + path);
   return rows.map((line) => {
@@ -11258,7 +11268,7 @@ function mdOfferCards(path: string, heading: string, idFor?: Record<string, stri
     if (!m) throw new Error("offer line does not parse: " + line.slice(0, 60));
     const [, name, href, price, covers, when, retest] = m;
     const cardId = (idFor && idFor[href]) ? ` id="${idFor[href]}"` : "";
-    // Tek-488: the card reads as the row, "Name. €999. Covers. Delivered ... One retest ...", with
+    // Tek-488: the card reads as the row, "Name. €1,500 per day. Covers. Delivered ... One retest ...", with
     // the link on the name and a stretched link over the card, so the HTML list item and the
     // Markdown list item carry the same text and the same one link.
     return `<li class="card ocard"${cardId}><span class="card-top"><span class="name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="price">${escapeHtml(price)}.</span></span> <span class="cov">${escapeHtml(covers)}</span>${when ? ` <span class="when">${escapeHtml(when)}</span>` : ""}${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""}</li>`;
@@ -11571,8 +11581,9 @@ p,li{text-wrap:pretty;}
 
 // The card shell and the FAQ rows, one home each. The three .faq copies this
 // replaces were byte-identical and nothing compared them, and guide pages would
-// have made a fourth: the same shape B1-15 found in the nav menu. /services keeps
-// its own four .scard rules on purpose, they are a smaller set and not a copy.
+// have made a fourth: the same shape B1-15 found in the nav menu. The card pages,
+// /services included, take these rules through CARDPAGE_CSS, which includes SCARD_CSS, and a
+// guide page with a FAQ includes it directly.
 const SCARD_CSS = `.scard{border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.02);padding:1.4rem 1.5rem 1.2rem;margin:0 0 1rem;transition:border-color .15s ease;}
 .scard:hover{border-color:rgba(93,241,143,0.35);}
 .scard h2{color:#5DF18F;font-size:1.2rem;font-weight:700;letter-spacing:-0.01em;margin:0 0 .85rem;border-top:none;padding-top:0;}
@@ -11594,9 +11605,10 @@ const FAQ_CSS = `.faq .q{color:#F2F4F3;font-weight:700;font-size:1rem;margin:1.1
 // year computed while the module loads served "1970" live (2026-09-02). Read the clock per
 // request, where it is real.
 // E03 (Tek-496 audit round): the Mastodon icon path in the footer HTML below matches Boxicons
-// 2.0.8's bxl-mastodon.svg (three numeric differences). That version's own README states its
-// SVG license as CC BY 4.0 and also states that attribution is not required.
-function footerHtml(kieli?: string) { const fi = kieli === "fi"; return `<footer class="tv-foot">
+// 2.0.8's bxl-mastodon.svg (three numeric differences). The README of the npm package
+// boxicons@2.0.8 states that the icons are licensed under "CC 4.0" and that attribution is not
+// required but appreciated.
+function footerHtml(language?: string) { const fi = language === "fi"; return `<footer class="tv-foot">
   <div class="foot-brand">
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="16" cy="16" r="13" stroke="#5DF18F" stroke-width="2.4"></circle><path d="M10.5 16.4l3.6 3.6 7.2-7.6" stroke="#5DF18F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
     <span class="nv-word">turva<b>·</b>dev</span>
@@ -11612,13 +11624,10 @@ function footerHtml(kieli?: string) { const fi = kieli === "fi"; return `<footer
   <div class="foot-meta">${fi ? "Tampere, Suomi" : "Tampere, Finland"} · <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">${fi ? "Y-tunnus" : "Business ID"} 3600281-7</a> · © ${new Date().getUTCFullYear()} turva.dev</div>
 </footer>`; }
 
-// One restrained next step at the end of a guide (Tek-358). The default points at the
-// services page; a guide about a free tool points at that instead. Short
-// lines by design: the twin gate reads any paragraph over 80 characters as prose.
 const SAMPLE_HEAD: { [path: string]: { cta: string; date?: string } } = {
   "/samples/audit-report": { cta: "What to fix first" }
 };
-// Kierros 4 (2026-09-06, worker-02): Tek-362 renamed headings in three guides and the id is
+// Round 4 (2026-09-06, worker-02): Tek-362 renamed headings in three guides and the id is
 // derived from the heading, so ten fragment addresses that had been served stopped resolving.
 // The implementation guide keeps existing anchors, so each old id is rendered as an empty
 // span before the heading that now carries the content. The twin does not change.
@@ -11679,12 +11688,15 @@ function withAnchorAliases(pathname: string, html: string) {
   }
   return out;
 }
+// One restrained next step at the end of a guide (Tek-358). The default points at the
+// services page; a guide about a free tool points at that instead. Short
+// lines by design: the twin gate reads any paragraph over 80 characters as prose.
 const GUIDE_NEXT = {
   default: 'Need a broader review? <a class="btn-ghost" href="/services">See the services</a>',
   "/guides/agent-readiness-audit": 'Need the audit itself? <a class="btn-ghost" href="/agent-readiness-audit">See the website and API audit</a>',
   "/guides/choosing-an-agent-readiness-audit": 'Need the audit itself? <a class="btn-ghost" href="/agent-readiness-audit">See the website and API audit</a>',
   "/guides/llms-txt": 'Check your own file: <a class="btn-ghost" href="/llms-txt-validator">Open the validator</a>',
-  "/guides/mcp-server-card": 'Read this site\'s card: <a class="btn-ghost" href="/tools">See the free tools</a>'
+  "/guides/mcp-server-card": 'Find this site\'s card on the tools page: <a class="btn-ghost" href="/tools">See the free tools</a>'
 };
 
 function serveGuideHtml(pathname: string, canonicalUrl: string) {
@@ -11738,7 +11750,7 @@ function serveGuideHtml(pathname: string, canonicalUrl: string) {
   // the twin.
   // Since v3.171.0 (Tek-479 P14) the page frame sits outside the content markdown-parity-check
   // reads, which is <main>: before that the frame made every page of this site fail its own check
-  // (mds/gotchas.md 2026-09-25 (jatko 22)). A page head above <main> carries the back link and the
+  // (a trap recorded on 2026-09-25). A page head above <main> carries the back link and the
   // frame's own dates, the contents list is a second named <nav> (Erik 2026-09-25), and a guide's
   // next step follows <main>. A post keeps the twin's bare date line under the H1 as the twin has
   // it; the author and the update date, which the twin does not carry, are in the page head.
@@ -12247,7 +12259,7 @@ ${footerHtml()}
 // Defined before CARDPAGE_CSS on purpose: that constant is built at module load and reads this one.
 const NAV_MOBILE_CSS = `.turva-nav .nv-mobile{display:none;}
 @media (max-width:760px){.turva-nav{flex-wrap:wrap;justify-content:space-between;position:relative;padding-block:10px;}.turva-nav > ul.nv-menu{display:none;}.turva-nav .nv-mobile{display:block;flex:0 0 auto;margin-left:auto;}.turva-nav .nv-mobile summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,0.24);border-radius:7px;color:#F2F4F3;font-weight:600;font-size:14px;user-select:none;}.turva-nav .nv-mobile summary::-webkit-details-marker{display:none;}.turva-nav .nv-mobile summary::after{content:"+";content:"+" / "";font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;line-height:1;}.turva-nav .nv-mobile[open] summary::after{content:"\\2212";content:"\\2212" / "";}.turva-nav .nv-mobile summary:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}.turva-nav .nv-mobile .nv-list{position:absolute;left:0;right:0;top:100%;z-index:10;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;background:#0A1316;border-bottom:0.5px solid rgba(255,255,255,0.14);padding:6px 0 10px;box-shadow:0 14px 30px rgba(0,0,0,0.35);}.turva-nav .nv-mobile .nv-list li{margin:0;}.turva-nav .nv-mobile .nv-list a{display:block;box-sizing:border-box;min-height:44px;padding:12px clamp(16px,4vw,24px);font-size:16px;color:#F2F4F3;}.turva-nav .nv-mobile .nv-list a[aria-current]{color:#5DF18F;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:#5DF18F;}}`;
-// Hoisted 2026-09-25 (Tek-475, K5-P1, approved kierros 19): the .turva-nav skeleton
+// Hoisted 2026-09-25 (Tek-475, K5-P1, approved round 19): the .turva-nav skeleton
 // below was written three times, byte-identical, in serveGuideHtml, serveHomeHtml and
 // CARDPAGE_CSS. Defined here, right after NAV_MOBILE_CSS and before CARDPAGE_CSS, for
 // the same reason as NAV_MOBILE_CSS itself: this constant is built at module load, and
@@ -12266,7 +12278,7 @@ ${NAV_MOBILE_CSS}
 .turva-nav .nv-menu a{font-size:18px;font-weight:500;color:#9AA3A0;text-decoration:none;}
 .turva-nav .nv-menu a:hover{color:#F2F4F3;}
 .turva-nav .nv-menu a[aria-current]{color:#F2F4F3;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:#5DF18F;}`;
-// Hoisted 2026-09-25 (Tek-475, K5-P1, approved kierros 19), same round as NAV_CORE_CSS
+// Hoisted 2026-09-25 (Tek-475, K5-P1, approved round 19), same round as NAV_CORE_CSS
 // above: two more sub-blocks that turned out byte-identical between the guide template
 // and CARDPAGE_CSS specifically (home carries no .toc or .tbl rules at all, so this pair
 // is a two-way merge, not three). The base .toc{...} rule itself is NOT identical (the
@@ -12529,7 +12541,7 @@ function cardPageHeaders(canonicalUrl: string) {
 // therefore comes from KV and this file carries only the route.
 //
 // THE BRIEF'S CONTENT COMES FROM KV. KV holds finished markdown and finished JSON, which
-// docs/auditit/briefgen/template.py produces from the same block list as the PDF's. The
+// the private publishing pipeline produces from the same block list as the PDF's. The
 // HTML body is typeset here from that stored markdown, the Worker adds only the page
 // frame (navigation, the format links, the contact line and the footer), and .md and
 // .json go out as stored. Keeping the markdown and the JSON in agreement is the
@@ -12541,32 +12553,34 @@ function cardPageHeaders(canonicalUrl: string) {
 // changed: its content is part of the product's own measurable surface, and the effect of
 // a Disallow line on the scanner's bot-access-control checks has not been measured.
 //
-// AN UNKNOWN ID ANSWERS EXACTLY LIKE ANY OTHER UNKNOWN PATH, that is, with a 404.
-// A separate "no such brief" page would tell an outsider that the path exists.
+// AN UNKNOWN ID ANSWERS EXACTLY LIKE ANY OTHER UNKNOWN PATH, that is, with a 404, as far as the
+// lookup goes. A separate "no such brief" page would tell an outsider that the path exists. The one
+// difference is the trailing-punctuation redirect below: it checks the shape of the id and not KV,
+// so it shows that the /brief/ route exists but never whether an id does.
 const BRIEF_ID = /^[a-z0-9][a-z0-9-]{7,79}$/;
 
 function briefRoute(pathname: string) {
   if (!pathname.startsWith("/brief/")) return null;
   let rest = pathname.slice("/brief/".length);
-  let muoto = "html";
-  if (rest.endsWith(".md")) { muoto = "md"; rest = rest.slice(0, -3); }
-  else if (rest.endsWith(".json")) { muoto = "json"; rest = rest.slice(0, -5); }
+  let variant = "html";
+  if (rest.endsWith(".md")) { variant = "md"; rest = rest.slice(0, -3); }
+  else if (rest.endsWith(".json")) { variant = "json"; rest = rest.slice(0, -5); }
   if (!BRIEF_ID.test(rest)) return null;
-  return { id: rest, muoto: muoto };
+  return { id: rest, variant: variant };
 }
 
 // A TRAILING PUNCTUATION MARK AFTER THE ADDRESS, added 2026-08-31 (Tek-323). A brief
-// address travels in the TEXT PART of an email: tools/laheta.mjs builds the message as a
+// address travels in the TEXT PART of an email: the outreach sender builds the message as a
 // single `Content-Type: text/plain; charset=UTF-8` part and sends no HTML alternative at
 // all, so the recipient's own mail client is what turns the address into a link. Some of
 // them take the sentence-ending period into the link, and then the reader gets a 404 from
 // the very address the whole message was meant to deliver. Measured on 2026-08-31:
 // /brief/<id> answered 200 and the same address with a period answered 404 (the id here
-// is a placeholder: a live address does not belong in a public repo, kierros 16 S4-1)
+// is a placeholder: a live address does not belong in a public repo, round 16 S4-1)
 // in three runs out of three.
 //
 // THE CLEANUP CANNOT EAT A REAL ID, because it strips only the characters in
-// BRIEF_LOPPUVALIMERKIT and BRIEF_ID allows none of them. An id may end in a hyphen, and
+// BRIEF_TRAILING_PUNCTUATION and BRIEF_ID allows none of them. An id may end in a hyphen, and
 // the hyphen is not in the cleanup set, so it stays. The closing parenthesis is
 // included, because a markdown-style (https://...) is another way an address ends beside one.
 //
@@ -12575,17 +12589,17 @@ function briefRoute(pathname: string) {
 // The redirect carries noindex like every other response on this path, because the redirect's
 // TARGET is a private page and it must not be the line that reveals the path to a search engine.
 // A trailing slash joined the set in round 19 (K6-P1): /brief/<id>/ answered 404.
-const BRIEF_LOPPUVALIMERKIT = /[.,;:!?)\]\/]+$/;
+const BRIEF_TRAILING_PUNCTUATION = /[.,;:!?)\]\/]+$/;
 
-function briefSiivousKohde(pathname: string) {
+function briefCleanupTarget(pathname: string) {
   if (!pathname.startsWith("/brief/")) return null;
-  if (!BRIEF_LOPPUVALIMERKIT.test(pathname)) return null;
-  const siivottu = pathname.replace(BRIEF_LOPPUVALIMERKIT, "");
-  if (!briefRoute(siivottu)) return null;
-  return siivottu;
+  if (!BRIEF_TRAILING_PUNCTUATION.test(pathname)) return null;
+  const cleaned = pathname.replace(BRIEF_TRAILING_PUNCTUATION, "");
+  if (!briefRoute(cleaned)) return null;
+  return cleaned;
 }
 
-// template.py's _md_suoja() escapes line-leading characters with a backslash, so that a
+// The pipeline's markdown escaper escapes line-leading characters with a backslash, so that a
 // real markdown parser does not read prose as a list or a heading. markdownToHtml() does
 // not know about backslash escaping. Until 2026-09-12 the escapes were removed BEFORE it
 // classified the blocks, so "\# text" came out as an h1 and "\- text" as a list that
@@ -12612,13 +12626,13 @@ function briefReleaseEscapes(html: string) {
   });
 }
 
-function briefHeaders(kind: string, kieli: string | undefined) {
+function briefHeaders(kind: string, language: string | undefined) {
   const headers = new Headers();
   // A private page, not for the cache. A brief can gain a dated rescan block, and an old
   // copy at the edge would then say something different from KV.
   headers.set("cache-control", "private, no-store");
   headers.set("X-Robots-Tag", "noindex, nofollow");
-  headers.set("content-language", kieli === "fi" ? "fi" : "en");
+  headers.set("content-language", language === "fi" ? "fi" : "en");
   headers.set("vary", "Accept");
   applySecurityHeaders(headers, kind);
   return headers;
@@ -12647,49 +12661,49 @@ main pre{max-width:100%;}
 main a{overflow-wrap:anywhere;}`;
 
 function briefHtmlPage(rec: BriefRec, canonicalUrl: string) {
-  const kieli = rec.kieli === "fi" ? "fi" : "en";
-  const otsikko = (rec.otsikko || rec.yritys || "agent readiness brief") + " · turva.dev";
-  const kuvaus = kieli === "fi"
+  const language = rec.kieli === "fi" ? "fi" : "en";
+  const title = (rec.otsikko || rec.yritys || "agent readiness brief") + " · turva.dev";
+  const description = language === "fi"
     ? "Agent-readiness-briiffi, " + (rec.yritys || "") + ". Sama sisältö markdownina ja JSONina samasta osoitteesta."
     : "Agent readiness brief, " + (rec.yritys || "") + ". The same content as markdown and JSON at the same address.";
   // OG AND TWITTER, added 2026-09-01. Without og:description LinkedIn's scraper does not
   // fall back to the meta name="description" tag but scrapes the page's visible text from
   // the top, and the page's first visible text is the accessibility link "Skip to content".
   // Measured on one brief 2026-09-01: the preview read "Skip to content turva . dev".
-  // The description comes from the same kuvaus variable as the meta description, so that two
+  // The description comes from the same description variable as the meta description, so that two
   // strings meaning the same thing cannot drift apart.
-  const someOtsikko = rec.otsikko || rec.yritys || "agent readiness brief";
-  const vaihtoehdot = kieli === "fi"
+  const shareTitle = rec.otsikko || rec.yritys || "agent readiness brief";
+  const alternates = language === "fi"
     ? "Sama sisältö koneluettavana: <a href=\"" + canonicalUrl + ".md\">markdown</a> ja <a href=\"" + canonicalUrl + ".json\">JSON</a>."
     : "The same content, machine readable: <a href=\"" + canonicalUrl + ".md\">markdown</a> and <a href=\"" + canonicalUrl + ".json\">JSON</a>.";
-  // THE FRAME IN FINNISH, added 2026-09-03 (kierros 17, item A). The body of a Finnish brief
+  // THE FRAME IN FINNISH, added 2026-09-03 (round 17, item A). The body of a Finnish brief
   // was Finnish but the skip link, the footer and this line were English, and "sisalto" was
   // written without umlauts. The nav stays English, because it leads to English pages.
-  const yhteys = kieli === "fi"
+  const contactLine = language === "fi"
     ? "Kysymykset suomeksi tai englanniksi: <a href=\"mailto:info@turva.dev\">info@turva.dev</a>. Vastaan kirjallisesti yhden arkipäivän kuluessa."
     : "Questions in English or Finnish: <a href=\"mailto:info@turva.dev\">info@turva.dev</a>. I reply in writing within one business day.";
   return `<!doctype html>
-<html lang="${kieli}">
+<html lang="${language}">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#0A1316" />
 <meta name="robots" content="noindex, nofollow" />
-<title>${escapeHtml(otsikko)}</title>
-<meta name="description" content="${escapeHtml(kuvaus)}" />
+<title>${escapeHtml(title)}</title>
+<meta name="description" content="${escapeHtml(description)}" />
 <meta property="og:type" content="article" />
 <meta property="og:site_name" content="turva.dev" />
-<meta property="og:title" content="${escapeHtml(someOtsikko)}" />
-<meta property="og:description" content="${escapeHtml(kuvaus)}" />
+<meta property="og:title" content="${escapeHtml(shareTitle)}" />
+<meta property="og:description" content="${escapeHtml(description)}" />
 <meta property="og:url" content="${canonicalUrl}" />
-<meta property="og:locale" content="${kieli === "fi" ? "fi_FI" : "en_US"}" />
+<meta property="og:locale" content="${language === "fi" ? "fi_FI" : "en_US"}" />
 <meta property="og:image" content="https://turva.dev/og.jpg" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content="turva.dev" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="${escapeHtml(someOtsikko)}" />
-<meta name="twitter:description" content="${escapeHtml(kuvaus)}" />
+<meta name="twitter:title" content="${escapeHtml(shareTitle)}" />
+<meta name="twitter:description" content="${escapeHtml(description)}" />
 <meta name="twitter:image" content="https://turva.dev/og.jpg" />
 <meta name="twitter:image:alt" content="turva.dev" />
 <link rel="icon" type="image/png" sizes="512x512" href="https://turva.dev/logo.png" />
@@ -12705,19 +12719,19 @@ ${BRIEF_CSS}
 </style>
 </head>
 <body>
-<a class="skip" href="#main">${kieli === "fi" ? "Siirry sisältöön" : "Skip to content"}</a>
+<a class="skip" href="#main">${language === "fi" ? "Siirry sisältöön" : "Skip to content"}</a>
 ${cardPageNav("")}
 <main id="main">
 ${briefReleaseEscapes(markdownToHtml(briefHoldEscapes(rec.md)))}
-<p class="date">${vaihtoehdot}</p>
-<p class="date">${yhteys}</p>
+<p class="date">${alternates}</p>
+<p class="date">${contactLine}</p>
 </main>
-${footerHtml(kieli)}
+${footerHtml(language)}
 </body>
 </html>`;
 }
 type BriefRec = { md: string; json?: unknown; kieli?: string; otsikko?: string; yritys?: string };
-async function serveBrief(route: { id: string; muoto: string }, pathname: string, env: Env, request: Request) {
+async function serveBrief(route: { id: string; variant: string }, pathname: string, env: Env, request: Request) {
   const kv = env && env.BRIEFIT;
   // Without the binding the route does not exist. This way the tests and the pre-deploy
   // state answer as they would for an unknown path, and a missing binding is not a 500.
@@ -12736,11 +12750,11 @@ async function serveBrief(route: { id: string; muoto: string }, pathname: string
   // The whole site otherwise answers Accept, and markdown negotiation is one of the checks
   // the scanner reads as passed, so the new route was the only surface that did not keep
   // the house's own promise. The page already carries `vary: Accept`.
-  if (route.muoto === "html") {
-    if (wantsJson(request)) route = { id: route.id, muoto: "json" };
-    else if (wantsMarkdown(request)) route = { id: route.id, muoto: "md" };
+  if (route.variant === "html") {
+    if (wantsJson(request)) route = { id: route.id, variant: "json" };
+    else if (wantsMarkdown(request)) route = { id: route.id, variant: "md" };
   }
-  if (route.muoto === "md") {
+  if (route.variant === "md") {
     // Same-origin since round 19 (K6-P3): a brief is private, so no other site may load it as a
     // resource; an agent fetching it server-side is not affected.
     const mh = briefHeaders("default", rec.kieli);
@@ -12750,7 +12764,7 @@ async function serveBrief(route: { id: string; muoto: string }, pathname: string
     mh.set("x-markdown-words", String(rec.md.split(/\s+/).filter(Boolean).length));
     return new Response(rec.md, { status: 200, headers: mh });
   }
-  if (route.muoto === "json") {
+  if (route.variant === "json") {
     const jh = briefHeaders("default", rec.kieli);
     jh.set("content-type", "application/json; charset=utf-8");
     jh.set("content-location", canonicalUrl);
@@ -12786,11 +12800,11 @@ ${footerHtml()}
 function serveContactHtml(canonicalUrl: string) {
   const head = cardPageHead(buildMetaBlock("/contact", canonicalUrl), buildGuideJsonLd("/contact", canonicalUrl), canonicalUrl);
   // The email address is the primary action and also stands as plain text, so it can be
-  // copied without opening a mail client; the two prefilled mailto links stay complete in
+  // copied without opening a mail client; the prefilled mailto links stay complete in
   // the twin and open a draft only. The QR code is an extra route for Signal, not a step.
-  // Since 2026-09-08 the two prepared messages open the page as cards, each with its own
+  // Since 2026-09-08 the prepared messages open the page as cards, each with its own
   // button, and the plain address follows for the reader who has not decided which fits.
-  // Since 3.218.0 the two cards use the default cards grid, two equal columns from 768px and one column below.
+  // The four cards use the default cards grid: two equal columns from 768px and one column below.
   const body = `${head}
 ${cardPageNav("/contact")}
 <main id="main">
@@ -12853,7 +12867,7 @@ function serveAuditHtml(canonicalUrl: string) {
   // Widened 2026-09-28 (Tek-542, third Codex retest round): the twin's lead paragraph gained
   // a third terms sentence, "Price valid until <date>." (S-20a), and the old two-sentence-only
   // regex threw and 500'd the whole page although every static gate stayed green, the same
-  // failure class as the three-line price block of 2026-08-31 (mds/gotchas.md, jatko 19). The
+  // failure class as the three-line price block of 2026-08-31. The
   // terms group now captures every sentence after "plus VAT. " verbatim instead of exactly two.
   const priceRe = /<p>(€[\d,]+) plus VAT\. ([\s\S]+?)<\/p>/;
   const pageStart = mdPageStart("/agent-readiness-audit", "cta", ["btn", "btn-ghost"]);
@@ -12956,7 +12970,7 @@ function inputNamesPort(raw: unknown): boolean {
 interface FetchRedirect { redirect: true; reason: "no-location" | "too-many" | "bad-location" | "unsafe-target" | "off-host"; status: number; location: string; contentType?: undefined; linkHeader?: undefined; text?: undefined; bytes?: undefined; truncated?: undefined; redirectedFrom?: undefined; finalUrl?: undefined }
 // The path of the address as typed, when it is neither the root nor /llms.txt. The fetch stays pinned
 // to https://<host>/llms.txt, because a fixed path is part of its guard against use as a fetch proxy
-// (THREAT_MODEL T10), so a typed /docs/llms.txt used to be dropped without a word while the report
+// (item T10 of the private threat model), so a typed /docs/llms.txt used to be dropped without a word while the report
 // described the root file (ChatGPT retest 2026-09-26, Tek-487). The report now names the unused path in
 // an information line. The case of the path is kept, and the query and fragment are never shown.
 function enteredPath(raw: unknown): string {
@@ -13063,10 +13077,11 @@ function validatorEcho(typed: string, shown: string): string {
 // fetch() subrequest must be a valid IP address. Both headers are therefore set to the address
 // that documentation names for a Worker's subrequest to another Cloudflare zone. Measured on
 // 2026-10-22 against one test site outside Cloudflare: both requests carried this address in
-// CF-Connecting-IP and neither carried x-real-ip or x-forwarded-for (mds/metrics.md, Tek-680).
+// CF-Connecting-IP and neither carried x-real-ip or x-forwarded-for (Tek-680).
 const VALIDATOR_CLIENT_IP = "2a06:98c0:3600::103";
-// The second argument was added for the v2 discovery checks, which need the site's
-// home page as well as its llms.txt. It is one parameter and nothing else moved:
+// The second and third arguments (path, accept) were added for the v2 discovery checks, which
+// need the site's home page as well as its llms.txt, read with an Accept header for HTML.
+// Nothing else moved:
 // the redirect budget, the same-host rule, the credential and port rejections and
 // the 256 KiB cap are the guards this function was measured against, and a rewrite
 // would have put them back in play for a feature that does not need them.
@@ -13704,9 +13719,8 @@ function fenceMask(lines: string[]): boolean[] {
 // A markdown list item that carries a link. A bullet or an ordered marker (1. or 1)) followed by
 // a space or a tab opens the item; an ordered list and a tab after the marker were not read as
 // list items until 2026-09-27 (Tek-496). The link is found by collectLinks, so code, escapes
-// and images count here exactly as they do in the links check. CR and CRLF are turned into LF
-// before the split (Tek-560); U+2028 and U+2029 stay inside a line, and a link behind one has never
-// counted, so the item is read up to the first of them.
+// and images count here exactly as they do in the links check. The caller has already turned CR
+// and CRLF into LF (Tek-560), and hasLink says whether collectLinks found a link on the line.
 function listItemHasLink(l: string, hasLink: boolean): boolean {
   return !!hasLink && /^ {0,3}(?:[-*+]|\d{1,9}[.)])[ \t]/.test(l);
 }
@@ -13919,7 +13933,8 @@ function laterSetextH1(lines: string[], fenced: boolean[]): { text: boolean[]; u
 // a tab. A setext H2 is one line of paragraph text, with the line before it blank or the start of
 // the file, underlined by a run of hyphens on the next line. The text line follows the setext H1
 // rule (isSetextText) and is also not a thematic break. The underline belongs to the heading, so
-// a list item followed by "---" or "---" after a blank line is not an H2. A line inside a fence,
+// a line that follows non-blank text, or a thematic break written with hyphens, asterisks
+// or underscores, is not an H2. A line inside a fence,
 // or an underline inside one, is never a heading, which the mask says.
 function isAtxH2(line: string): boolean {
   return /^ {0,3}##[ \t]/.test(line);
@@ -14285,7 +14300,7 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   } else {
     const relativeCount = named.filter((m) => !/^[a-z][a-z0-9+.-]*:/i.test(m.target)).length;
     const hostless = named.length - absolute - relativeCount;
-    add("links", "warn", "Markdown links an agent can follow", named.length + " links, " + relativeCount + " relative" + (hostless > 0 ? " and " + hostless + " that are not valid http or https URLs" : "") + ". Absolute URLs travel better when the file is read out of context");
+    add("links", "warn", "Markdown links an agent can follow", named.length + " link" + (named.length === 1 ? "" : "s") + ", " + relativeCount + " relative" + (hostless > 0 ? " and " + hostless + " that are not valid http or https URLs" : "") + ". Absolute URLs travel better when the file is read out of context");
   }
   // A list line that looks like a link entry but is not one (Tek-730) turns the links check to a warn.
   const lookalikes = unparsedLinkEntries(lines, fenced, new Set(proseLinks.map((m) => m.at)), codeSpanMask(linkText, linkBlocks), defAt, htmlLine);
@@ -14846,10 +14861,8 @@ const AFTER_HEAD_ELEMENTS = ["base", "basefont", "bgsound", "link", "meta", "nof
 // reads it as raw text) and noframes are raw text or RCDATA, and template content is inert.
 const HEAD_SKIPPED_CONTENT = ["script", "style", "title", "noscript", "noframes", "template"];
 
-// The end of a raw text or RCDATA element: the first </name that is followed by optional
-// whitespace, an optional "/" (a parser closes on </script/> too) and a ">". Returns the
-// index after it, or -1 when the element never closes, which means the rest of the
-// document is inside it.
+// Skips HTML whitespace from j. Nothing at module level calls it; collectLinks keeps its own
+// copy of this scan.
 function skipSpace(lower: string, j: number): number {
   while (j < lower.length && (lower[j] === " " || lower[j] === "\t" || lower[j] === "\n" || lower[j] === "\r" || lower[j] === "\f")) j++;
   return j;
@@ -14870,6 +14883,10 @@ function endTagAt(lower: string, name: string, at: number): number {
   return gt === -1 ? -2 : gt + 1;
 }
 
+// The end of a raw text or RCDATA element: the first </name that is followed by optional
+// whitespace, an optional "/" (a parser closes on </script/> too) and a ">". Returns the
+// index after it, or -1 when the element never closes, which means the rest of the
+// document is inside it.
 function rawTextEnd(lower: string, name: string, from: number): number {
   for (let at = lower.indexOf("</" + name, from); at !== -1; at = lower.indexOf("</" + name, at + name.length + 2)) {
     const end = endTagAt(lower, name, at);
@@ -15478,15 +15495,15 @@ ${footerHtml()}
 // check can never start another check. Every other host answers 403 until the remote transport runs in
 // its own Worker with its own CPU limit (env.PARITY, a service binding, and env.PARITY_REMOTE_FETCH
 // "on"). The reasons are measured, not assumed: Workers fetch() has no documented guarantee against
-// private or rebound destinations, and the Markdown parser is quadratic on hostile input (40 KB of
-// emphasis markers took 12.6 s of CPU in Node.js, 2026-09-11), and a synchronous parse cannot be
+// private or rebound destinations, and the Markdown parser is quadratic on hostile input (an author
+// measurement, not published: 40 KB of emphasis markers took 12.6 s of CPU in Node.js, 2026-09-11), and a synchronous parse cannot be
 // interrupted by a timer. Nothing here writes the target address or the report to a log, and every
 // response to a check is no-store.
 const PARITY_PATH = "/markdown-parity-check";
 const PARITY_SCRIPT_PATH = "/markdown-parity-check.js";
 // Lower than the CLI defaults (4 000 000 pairs, 1 000 000 candidates, unbounded work, depth 1 024):
-// measured 2026-09-11 in Node.js 24, a 490 by 490 paragraph pair at these limits took 63 ms and the
-// similarity search stopped at its candidate limit after 69 ms. Exceeding one is an error result.
+// measured by the author 2026-09-11 in Node.js 24 and not published, a 490 by 490 paragraph pair at these
+// limits took 63 ms and the similarity search stopped at its candidate limit after 69 ms. Exceeding one is an error result.
 const PARITY_LIMITS = { maxAlignmentPairs: 250000, maxSimilarityCandidates: 50000, maxSimilarityWork: 2000000, maxNestingDepth: 512 };
 const PARITY_MAX_HTML_BYTES = 524288;
 const PARITY_MAX_MARKDOWN_BYTES = 131072;
@@ -15499,7 +15516,8 @@ const PARITY_FINDINGS_SHOWN = 200;
 const PARITY_JSON_EMBED_MAX = 409600;
 const PARITY_EXAMPLE_URL = "https://turva.dev/tools";
 // Comparisons running in this isolate. The rate limiter is per client and per Cloudflare location;
-// this bounds how many synchronous comparisons one isolate holds at once, and a request over it gets
+// this bounds how many checks one isolate has in flight at once, each holding its pages in memory
+// while it waits for the page render, and a request over it gets
 // 503 with Retry-After instead of waiting.
 let parityActive = 0;
 type ParityReport = ReturnType<typeof mpcRun>; type ParityRunOptions = Parameters<typeof mpcRun>[2]; type ParityPage = Parameters<typeof mpcRun>[0] & { meta: { status: number } }; type ParityValues = { url?: string; markdownUrl?: string; selector?: string; strict?: boolean; frontMatter?: string }; type ParityInput = { url?: string; markdownUrl?: string; selector?: string; strict: boolean; frontMatter: "keep" | "strip" }; type ParityState = { values?: ParityValues; field?: string | null; report?: ParityReport; status?: number };
@@ -15815,8 +15833,8 @@ async function handleParityPost(request: Request, env: Env): Promise<Response> {
     return refuse(503, "The check is unavailable because its rate limiter did not answer. Try again later.", 60);
   }
   if (!allowed) return refuse(429, "Too many checks from your IP address. Wait a minute and try again.", 60);
-  // The body is read before a slot is taken (round 19, K8-1). The four slots bound comparisons,
-  // which run on this isolate; reading a body only waits. Until v3.164.0 the slot came first, so
+  // The body is read before a slot is taken (round 19, K8-1). The four slots bound the checks in flight,
+  // which hold their pages in this isolate's memory while they wait; reading a body only waits. Until v3.164.0 the slot came first, so
   // four request bodies that never finished held every slot and every other check got 503.
   let parsed;
   try {
@@ -16472,7 +16490,11 @@ function serveOauthClosed(kind: string) {
   }, null, 2);
   const headers = new Headers({
     "content-type": "application/json; charset=utf-8",
-    "cache-control": "no-store"
+    "cache-control": "no-store",
+    // The preflight in handleRequest answers these two paths with access-control-allow-origin *,
+    // so the error carries it too: a browser agent that passed the preflight reads the 400 body
+    // instead of a CORS failure (round 24, W6-1). The endpoints stay closed; only the header moved.
+    "access-control-allow-origin": "*"
   });
   appendAgentLinks(headers);
   applySecurityHeaders(headers, "agent-api");
@@ -16531,8 +16553,9 @@ const worker_default: SatisfiesExportedHandler<{ fetch(request: Request, env: En
       // states the configured quota and not an exact ceiling. Cloudflare's
       // rate-limiting binding keeps a separate, approximate count in each
       // location, so it slows a burst down instead of cutting it at request 101:
-      // on 2026-09-23, 140 sequential requests to /robots.txt in 21 seconds all
-      // passed. /blog/enforcing-the-rate-limit-i-advertised records two July bursts.
+      // a burst of 130 requests in about six
+      // seconds passed with no 429. /blog/enforcing-the-rate-limit-i-advertised records the runs,
+      // including two bursts of 300 that split 279 to 21 and 281 to 19.
       // The 429 body below states the limit the same way (round 20, TJ-2).
       // Fail open: if the binding is missing or errors, the request is served
       // normally.
@@ -16582,7 +16605,7 @@ const worker_default: SatisfiesExportedHandler<{ fetch(request: Request, env: En
   async scheduled(event, env, ctx) {
     try {
       // Only the pages whose sitemap lastmod falls in the last eight days go out (round 19,
-      // K1-P5). IndexNow is a change notice, and tools/indexnow.mjs already submits every
+      // K1-P5). IndexNow is a change notice, and the ship step already submits every
       // canonical URL on each ship, so resubmitting unchanged pages every week told the engines
       // nothing new.
       const cutoff = new Date((event && event.scheduledTime ? event.scheduledTime : Date.now()) - 8 * 86400000).toISOString().slice(0, 10);
@@ -16657,7 +16680,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
       return moved;
     }
     // A markdown twin keeps its agent policy on this redirect too (WL-21). Live, the first www hop
-    // comes from a Cloudflare zone rule before the Worker (project-do-not-fix, Tek-526 decision 10),
+    // comes from a Cloudflare zone rule before the Worker (Tek-526 decision 10),
     // so this keeps the branch's own answer consistent without removing it.
     const wwwTwin = isMarkdownTwinPath(pathLower);
     const wwwMoved = redirectTo("https://turva.dev" + pathname + url.search, 301, pathLower, wwwTwin ? "agent-api" : null);
@@ -16686,8 +16709,8 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   // METHOD GATE, round 16 (S1-1 to S1-4, C1-2, C5-20, C7-2, measured 2026-09-03). GET and
   // OPTIONS are allowed everywhere; HEAD arrives here as GET (worker_default). POST is
   // allowed only where a handler or the OpenAPI document knows it: the A2A transport, the
-  // x402 challenge roots and payable routes, the agent-auth instruction documents and the
-  // two OAuth endpoints. The ACP checkout family keeps its own per-path 405 logic. Every
+  // x402 challenge roots and payable routes, the agent-auth instruction documents, the
+  // two OAuth endpoints and the parity check. The ACP checkout family keeps its own per-path 405 logic. Every
   // other method on every other path answers 405 with an Allow header instead of the GET
   // body, and the preflight advertises the same set it will honour.
   const acpFamily = pathLower === "/api/acp/checkout_sessions" || pathLower.startsWith("/api/acp/checkout_sessions/");
@@ -16824,14 +16847,14 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   // the PAGE_MARKDOWN logic. briefRoute returns null for every other path.
   // The trailing-punctuation cleanup runs BEFORE briefRoute, because briefRoute returns
   // null for a path with a period and the path would otherwise fall to a 404. See Tek-323.
-  const briefSiivous = briefSiivousKohde(pathname);
-  if (briefSiivous) {
-    const briefSiivousHeaders = new Headers({ Location: "https://turva.dev" + briefSiivous + url.search, "X-Robots-Tag": "noindex, nofollow" });
-    applySecurityHeaders(briefSiivousHeaders, "default");
+  const briefCleanup = briefCleanupTarget(pathname);
+  if (briefCleanup) {
+    const briefCleanupHeaders = new Headers({ Location: "https://turva.dev" + briefCleanup + url.search, "X-Robots-Tag": "noindex, nofollow" });
+    applySecurityHeaders(briefCleanupHeaders, "default");
     // 18-F03 (Tek-496 audit round): a brief's access token can travel in this path, so this
     // redirect must never be cached, matching the actual brief's own Cache-Control below.
-    briefSiivousHeaders.set("Cache-Control", "private, no-store");
-    return new Response(null, { status: 301, headers: briefSiivousHeaders });
+    briefCleanupHeaders.set("Cache-Control", "private, no-store");
+    return new Response(null, { status: 301, headers: briefCleanupHeaders });
   }
 
   const briefR = briefRoute(pathname);

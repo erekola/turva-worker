@@ -1,6 +1,6 @@
 # Endpoints
 
-The public routes this Worker serves, copied from the repository README so the README can stay short. Left out on purpose: the per-recipient brief addresses under `/brief/`, which are unlisted and carry a noindex header, the old paths of the previous site, which redirect to their current pages through `LEGACY_REDIRECTS` in `src/worker.ts`, and the static images in `public/`, such as the OG cards. The Worker is the single source of truth: if a path is listed here it resolves in `src/worker.ts`, and `node tools/verify.mts --live` fetches a fixed list of public discovery surfaces. Adding `--twins` also fetches every canonical page and its Markdown twin (two paced requests per page). Routes outside that list, such as the PGP key and the MCP registry authentication files, are not fetched by `--live`.
+The public routes this Worker serves, copied from the repository README so the README can stay short. Left out on purpose: the per-recipient brief addresses under `/brief/`, which are unlisted and carry a noindex header, the old paths of the previous site and of retired pages of this one, which redirect to their current pages through `LEGACY_REDIRECTS` in `src/worker.ts`, and the static images in `public/`, such as the OG cards. The Worker is the single source of truth: if a path is listed here it resolves in `src/worker.ts`, and `node tools/verify.mts --live` fetches a fixed list of public discovery surfaces. Adding `--twins` also fetches every canonical page and its Markdown twin, which takes two paced requests per page. Routes outside that list, such as the PGP key and the MCP registry authentication files, are not fetched by `--live`.
 
 | Path | Purpose |
 |---|---|
@@ -10,7 +10,7 @@ The public routes this Worker serves, copied from the repository README so the R
 | `/llms-full.txt` | The whole site as one text file |
 | `/<page>.md` | The markdown twin of any page at its own address, `/index.md` for the home page (llms.txt v2) |
 | `/.well-known/agent.json` | ai-plugin / agent manifest |
-| `/.well-known/ai-plugin.json` | ai-plugin manifest, byte-identical to `agent.json` and signed with it (round 15 P3-1 added the row; the route existed and was verified all along) |
+| `/.well-known/ai-plugin.json` | ai-plugin manifest, byte-identical to `agent.json` and signed with it |
 | `/.well-known/mcp/server-card.json` | MCP server card |
 | `/.well-known/agent-card.json` | A2A agent card |
 | `/.well-known/ard.json` | Agentic Resource Discovery manifest, ARD v0.91 path (same entries as ai-catalog.json) |
@@ -44,14 +44,14 @@ The public routes this Worker serves, copied from the repository README so the R
 | `/.well-known/openpgpkey/policy` | WKD direct method policy for turva.dev |
 | `/.well-known/openpgpkey/hu/<hash>` | WKD direct method key lookup for turva.dev |
 | `/.well-known/mcp-registry-auth` | Public key that proves this domain to the MCP registry for `dev.turva/turva-mcp` (HTTP domain authentication) |
-| `openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/policy`, `openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/hu/<hash>` | WKD advanced method on its own subdomain, required for the DNS record to resolve (Tek-288) |
+| `openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/policy`, `openpgpkey.turva.dev/.well-known/openpgpkey/turva.dev/hu/<hash>` | WKD advanced method on its own subdomain, required for the DNS record to resolve |
 | `mta-sts.turva.dev/.well-known/mta-sts.txt` | MTA-STS policy for mail sent to turva.dev, served on its own subdomain |
 | `/x402` | HTTP 402 payment-required endpoint |
 | `/robots.txt` | Crawler directives |
 | `/sitemap.xml` | URL index |
 | `/blog/feed.xml` | Blog RSS feed |
 | `/<indexnow-key>.txt` | IndexNow key file. A weekly cron resubmits the canonical pages whose sitemap date falls in the last eight days |
-| Aliases | `/ai.txt`, `/security.txt`, `/.well-known/mcp.json`, `/.well-known/openid-configuration`, `/.well-known/openapi.json`, `/api-catalog`, `/.well-known/ap2.json`, `/.well-known/acp.json`, `/.well-known/acp/config.json`, `/.well-known/acp/manifest.json`, `/.well-known/a2a/agent-card.json`, `/agent/auth/revocation`, favicons and fediverse redirects (`host-meta`, `webfinger`, `nodeinfo`) |
+| Aliases | `/ai.txt`, `/security.txt`, `/.well-known/mcp.json`, `/.well-known/openid-configuration`, `/.well-known/openapi.json`, `/api-catalog`, `/.well-known/ap2.json`, `/.well-known/acp.json`, `/.well-known/acp/config.json`, `/.well-known/acp/manifest.json`, `/.well-known/a2a/agent-card.json`, `/.well-known/ai-catalog`, `/.well-known/x402.json`, `/.well-known/mpp.json`, `/.well-known/ucp.json`, `/index.html.md`, `/agent/auth/revocation`, favicons and fediverse redirects (`host-meta`, `webfinger`, `nodeinfo`) |
 | `/llms-txt-validator` | llms.txt structure checker (HTML form, JSON for agents) |
 | `/markdown-parity-check` | Main-content comparison of this site's pages with the markdown-parity-check package (HTML form, JSON POST for agents); `/markdown-parity-check.js` adds the busy state and the JSON copy and save, and the form works without it |
 | `/badge` and `/badge.svg` | Agent-ready badge criteria and embeddable SVG |

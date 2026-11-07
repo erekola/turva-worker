@@ -508,5 +508,11 @@
     "kicker": "Blog",
     "subhead": "The rules move monthly, so I read them before a client needs them.",
     "white": "Why I publish every guide"
+  },
+  "og.jpg": {
+    "green": "AI assistants",
+    "kicker": "Independent agent-readiness audits",
+    "subhead": "A written report on where your facts disagree and what to fix first.",
+    "white": "Know what AI assistants can find out about your product"
   }
 }

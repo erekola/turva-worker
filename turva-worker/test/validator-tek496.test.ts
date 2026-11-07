@@ -2,10 +2,68 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
 
+// Growth check for the tests that say a scan "stays linear".
+// The package turva-llms-txt-validator keeps the same function in test/growth.ts; it is inline here
+// because this repo's test runner would treat a shared file in test/ as a test.
+//
+// Why a ratio and not a limit in milliseconds. A fixed limit fails on a slow CI runner and lets a
+// slow but quadratic scan through. Two inputs of one shape, the second about four times the first,
+// are timed instead. A linear scan takes about four times as long on the larger one, a quadratic
+// scan about sixteen times, and the limit sits between the two on the log scale: sizes ** 1.5, which
+// is 8 for 4x the input and about 22.6 for 8x. Each input is timed several times and the fastest
+// run counts, because load on the machine only ever adds time, never removes it. The small input is
+// repeated until one sample takes at least 1 ms, so the clock resolution does not decide the ratio and
+// the samples stay short: a short sample is likelier to fall between two interruptions of a busy machine.
+// The check passes as soon as nine rounds give a ratio under the limit. On a loaded machine the ratio
+// of the fastest runs can sit above the limit because the larger input was interrupted more often, so
+// more rounds are taken, at most 60 and at most four seconds, before the check fails. A scan that is
+// really quadratic stays above the limit through all of them (checked against a deliberately quadratic scan).
+async function timeIt(work: (input: string) => unknown, input: string, reps: number): Promise<number> {
+  const started = performance.now();
+  for (let i = 0; i < reps; i++) {
+    const out = work(input);
+    if (out instanceof Promise) await out;
+  }
+  return performance.now() - started;
+}
+
+// The limit for an input that is `sizes` times larger: the midpoint, on the log scale, between a
+// linear scan (sizes) and a quadratic one (sizes squared).
+const growthLimit = (sizes: number): number => sizes ** 1.5;
+
+async function growthRatio(work: (input: string) => unknown, small: string, large: string, limit: number = Infinity): Promise<{ ratio: number; rounds: number }> {
+  await timeIt(work, large, 1);
+  await timeIt(work, small, 1);
+  let reps = 1;
+  while (reps < 4096 && (await timeIt(work, small, reps)) < 1) reps *= 2;
+  const begun = performance.now();
+  let minSmall = Infinity;
+  let minLarge = Infinity;
+  let rounds = 0;
+  for (;;) {
+    minSmall = Math.min(minSmall, await timeIt(work, small, reps));
+    minLarge = Math.min(minLarge, await timeIt(work, large, reps));
+    rounds++;
+    const ratio = minLarge / minSmall;
+    if (rounds >= 9 && ratio < limit) return { ratio, rounds };
+    if (rounds >= 60 || (rounds >= 9 && performance.now() - begun > 4000)) return { ratio, rounds };
+  }
+}
+
+async function assertLinear(label: string, work: (input: string) => unknown, small: string, large: string): Promise<void> {
+  const sizes = large.length / small.length;
+  const limit = growthLimit(sizes);
+  const g = await growthRatio(work, small, large, limit);
+  assert.ok(g.ratio < limit, label + ": " + sizes.toFixed(1) + "x the input took " + g.ratio.toFixed(1) + "x as long after " + g.rounds + " rounds, limit " + limit.toFixed(1));
+}
+
 // Regression tests for Tek-496 (outside audit 2026-09-26): the hosted llms.txt validator reads the
 // H1, the links, the order of headings, the link targets and the media type the way the format and
 // CommonMark do, refuses localhost.localdomain, masks the discovery targets it shows and says when
-// it read only part of a long head. Each case below gave the opposite result before the change.
+// it read only part of a long head. The first cases gave the opposite result before the change. The file
+// has grown since: the guards (the base file stays valid, turva.dev's own llms.txt stays valid) pin results
+// that were right before the change and still are, and the Tek-564, Tek-565 and Tek-745 (K10b) cases were
+// added later with their own changes.
 
 const BS = String.fromCharCode(92);
 const ESC = String.fromCharCode(27);
@@ -180,25 +238,11 @@ test("Tek-496: turva.dev's own llms.txt stays valid", async () => {
 
 // The scan is measured by its growth, not by a wall clock: four times the input takes about four
 // times as long when the scan is linear and sixteen times when it is quadratic. A fixed time limit
-// passed on this machine and failed on a slower CI runner once (mds/gotchas.md 2026-09-27 (jatko 3)).
+// passed on this machine and failed on a slower CI runner once.
 test("Tek-496: the link scan stays linear on hostile input", async () => {
   const hostile = (k: number) => "# T\n\n## S\n\n- " + "[a](x \"".repeat(Math.round(4000 * k)) + "\n" + " ``".repeat(Math.round(3000 * k)) + "`\n" + BS.repeat(Math.round(10000 * k)) + "[a](b)\n" + "[a](<".repeat(Math.round(4000 * k)) + "\n" + "[a](".repeat(Math.round(8000 * k)) + "\n# " + " #".repeat(Math.round(5000 * k)) + "x";
-  const best = async (k: number) => {
-    const text = hostile(k);
-    let min = Infinity;
-    for (let r = 0; r < 5; r++) {
-      const started = process.hrtime.bigint();
-      await check(text);
-      min = Math.min(min, Number(process.hrtime.bigint() - started) / 1e6);
-    }
-    return min;
-  };
   // Both sizes stay under the 256 KB body cap, or the larger one would be cut before the scan.
-  await best(1);
-  const small = await best(0.5);
-  const large = await best(2);
-  const ratio = large / small;
-  assert.ok(ratio < 10, "4x the input took " + ratio.toFixed(1) + "x as long (" + small.toFixed(1) + " ms to " + large.toFixed(1) + " ms)");
+  await assertLinear("hostile link text", (text) => check(text), hostile(0.5), hostile(2));
 });
 
 // Tek-564 (outside re-check W36 to W44, V1): a second H1 written as a setext heading, one text

@@ -5,11 +5,11 @@ import { createHash } from "node:crypto";
 import { stripTypes } from "../test-support/strip-types.ts";
 import worker from "../src/worker.ts";
 
-// Regression tests for audit round 19, patch 2 (docs/auditit/kierros-19/jatko-briiffi.md).
-// Each test names the item id from that brief so a failure maps back to one row of it.
-// Every fix test below was checked against the pre-patch-2 worker.js (the v3.164.0 release,
-// scratchpad/k19b/v164/worker.js) and fails there; the mutation run that proves this is
-// recorded in the session report, not in this file.
+// Regression tests for audit round 19, patch 2.
+// Each test names the item id from the patch brief of that round so a failure maps back to
+// one row of it. Every fix test below was checked against the pre-patch-2 worker.js (the
+// v3.164.0 release) and fails there, except the tests that call themselves a safety net;
+// the mutation run that proves this is recorded in the session report, not in this file.
 
 const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
 
@@ -53,7 +53,7 @@ function extractFunction(src: string, name: string) {
 }
 
 // One fetch per canonical page, cached for reuse across the sweeps below (K1-P6, K4-P4), so a
-// ~73 page site is rendered once per test run and not once per test.
+// whole site is rendered once per test run and not once per test.
 let _pagesCache: { path: string; status: number; html: string }[] | null = null;
 async function allPagesHtml() {
   if (_pagesCache) return _pagesCache;
@@ -90,7 +90,7 @@ test("P1: another letter case of a served page or its .md twin answers 301 to th
 // HTTP-02 (Tek-496 audit round): www plus mixed case used to redirect to the apex with the
 // original case, and only the apex's own case-normalization branch then redirected a second
 // time to the lower-case path. Both hops now land on the same final page, but in one redirect.
-test("HTTP-02: www plus mixed case redirects straight to the final lower-case path in one hop", async () => {
+test("HTTP-02: www plus mixed case on a known page redirects straight to the final lower-case path in one hop, and an unknown path keeps its case", async () => {
   const wwwCase = await worker.fetch(new Request("https://www.turva.dev/Services?ref=x", { method: "GET" }), env);
   assert.equal(wwwCase.status, 301);
   assert.equal(wwwCase.headers.get("location"), "https://turva.dev/services?ref=x", "one hop straight to the lower-case apex path, query string kept");
@@ -254,7 +254,7 @@ test("P1-P1: GET /services carries a weak ETag of the body's own SHA-256, and an
   const starMatch = await get("/services", { headers: { "if-none-match": "*" } });
   assert.equal(starMatch.status, 304, "\"*\" must match any current representation");
 
-  const otherTag = await get("/services", { headers: { "if-none-match": '"0000000000000000000000000000000"' } });
+  const otherTag = await get("/services", { headers: { "if-none-match": '"00000000000000000000000000000000"' } });
   assert.equal(otherTag.status, 200, "a different tag must not match");
 
   const headMatch = await get("/services", { method: "HEAD", headers: { "if-none-match": etag } });
@@ -353,11 +353,27 @@ test("K1-P6: the CSP's style-src and font-src carry no https:, and Permissions-P
 // Passes on both builds, safety net: today's served pages never loaded a cross-origin
 // stylesheet or font either way, so this proves the CSP tightening above is safe to ship
 // rather than guarding a behaviour patch 2 changed.
+// A link tag loads a stylesheet or a font from another origin when its href is absolute and it is a
+// stylesheet link or declares as=font, in whatever order its attributes come.
+function externalStyleOrFontLinks(html: string): string[] {
+  return (html.match(/<link\b[^>]*>/gi) || []).filter((tag) =>
+    /\bhref=["']?https?:/i.test(tag) && (/\brel=["']?(?:[a-z-]+\s+)*stylesheet\b/i.test(tag) || /\bas=["']?font\b/i.test(tag)));
+}
+
+test("K1-P6: the external-link matcher sees a stylesheet and a font preload in either attribute order", () => {
+  assert.equal(externalStyleOrFontLinks('<link rel="stylesheet" href="https://x.example/a.css">').length, 1);
+  assert.equal(externalStyleOrFontLinks('<link href="https://x.example/a.css" rel="stylesheet">').length, 1);
+  assert.equal(externalStyleOrFontLinks('<link rel="preload" href="https://x.example/f.woff2" as="font">').length, 1);
+  assert.equal(externalStyleOrFontLinks('<link as="font" rel="preload" href="https://x.example/f.woff2">').length, 1);
+  assert.equal(externalStyleOrFontLinks('<link rel="canonical" href="https://turva.dev/">').length, 0, "a canonical link is not a load");
+  assert.equal(externalStyleOrFontLinks('<link rel="stylesheet" href="/local.css">').length, 0, "a same-origin stylesheet is allowed");
+});
+
 test("K1-P6: no HTML page loads a stylesheet or a font from another origin (safety net: the served pages never did, before or after)", async () => {
   const pages = await allPagesHtml();
   for (const { path, status, html } of pages) {
     assert.equal(status, 200, path);
-    assert.ok(!/<link[^>]+rel=["']?stylesheet["']?[^>]*href=["']https?:/i.test(html), path + " links an external stylesheet");
+    assert.deepEqual(externalStyleOrFontLinks(html), [], path + " links an external stylesheet or font");
     const styleBlocks = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]);
     for (const css of styleBlocks) {
       assert.ok(!/@import\s+["']?https?:/i.test(css), path + " has an external @import");
@@ -396,7 +412,7 @@ test("K4-P4: every application/ld+json block on every canonical page parses and 
       assert.ok(!body.includes("</"), path + " JSON-LD block must not carry a literal \"</\"");
     }
   }
-  assert.ok(blockCount > 50, "expected JSON-LD blocks across most of the 73 pages, got " + blockCount);
+  assert.ok(blockCount > 50, "expected JSON-LD blocks across most of the canonical pages, got " + blockCount);
   // Source assertion, identical behaviour on both builds for today's content (no page's JSON-LD
   // text contains "</" today, so nothing here actually renders differently): every builder now
   // goes through jsonLdSafe() and the old inline "<\/script" replace pattern is gone from source.
@@ -508,9 +524,9 @@ test("K6-P4: replaceExactlyOnce replaces a single occurrence and throws on zero 
   assert.ok(workerSrc.includes("replaceExactlyOnce(withSample, `<p>${renderInline(cut.row)}</p>`"), "the sample button row must go through replaceExactlyOnce");
 });
 
-// ---- K6-P5: the two prefilled mailto links no longer hand-type &amp; ----
+// ---- K6-P5: the prefilled mailto links no longer hand-type &amp; ----
 
-test("K6-P5: the two prefilled mailto links carry a plain & in the twin rows the buttons are read from (Tek-484)", () => {
+test("K6-P5: the three prefilled mailto links on /agent-readiness-audit carry a plain & in the twin rows the buttons are read from (Tek-484)", () => {
   // The constants moved into the twins in v3.174.0: every button row is a links-only paragraph
   // of its page's Markdown, and escapeHtml turns the & into &amp; when the row is rendered.
   for (const [path, subject, rows] of [["/agent-readiness-audit", "Agent-readiness", 3]] as [string, string, number][]) {

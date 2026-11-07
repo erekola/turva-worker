@@ -2,6 +2,61 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
 
+// Growth check for the tests that say a scan "stays linear".
+// The package turva-llms-txt-validator keeps the same function in test/growth.ts; it is inline here
+// because this repo's test runner would treat a shared file in test/ as a test.
+//
+// Why a ratio and not a limit in milliseconds. A fixed limit fails on a slow CI runner and lets a
+// slow but quadratic scan through. Two inputs of one shape, the second about four times the first,
+// are timed instead. A linear scan takes about four times as long on the larger one, a quadratic
+// scan about sixteen times, and the limit sits between the two on the log scale: sizes ** 1.5, which
+// is 8 for 4x the input and about 22.6 for 8x. Each input is timed several times and the fastest
+// run counts, because load on the machine only ever adds time, never removes it. The small input is
+// repeated until one sample takes at least 1 ms, so the clock resolution does not decide the ratio and
+// the samples stay short: a short sample is likelier to fall between two interruptions of a busy machine.
+// The check passes as soon as nine rounds give a ratio under the limit. On a loaded machine the ratio
+// of the fastest runs can sit above the limit because the larger input was interrupted more often, so
+// more rounds are taken, at most 60 and at most four seconds, before the check fails. A scan that is
+// really quadratic stays above the limit through all of them (checked against a deliberately quadratic scan).
+async function timeIt(work: (input: string) => unknown, input: string, reps: number): Promise<number> {
+  const started = performance.now();
+  for (let i = 0; i < reps; i++) {
+    const out = work(input);
+    if (out instanceof Promise) await out;
+  }
+  return performance.now() - started;
+}
+
+// The limit for an input that is `sizes` times larger: the midpoint, on the log scale, between a
+// linear scan (sizes) and a quadratic one (sizes squared).
+const growthLimit = (sizes: number): number => sizes ** 1.5;
+
+async function growthRatio(work: (input: string) => unknown, small: string, large: string, limit: number = Infinity): Promise<{ ratio: number; rounds: number }> {
+  await timeIt(work, large, 1);
+  await timeIt(work, small, 1);
+  let reps = 1;
+  while (reps < 4096 && (await timeIt(work, small, reps)) < 1) reps *= 2;
+  const begun = performance.now();
+  let minSmall = Infinity;
+  let minLarge = Infinity;
+  let rounds = 0;
+  for (;;) {
+    minSmall = Math.min(minSmall, await timeIt(work, small, reps));
+    minLarge = Math.min(minLarge, await timeIt(work, large, reps));
+    rounds++;
+    const ratio = minLarge / minSmall;
+    if (rounds >= 9 && ratio < limit) return { ratio, rounds };
+    if (rounds >= 60 || (rounds >= 9 && performance.now() - begun > 4000)) return { ratio, rounds };
+  }
+}
+
+async function assertLinear(label: string, work: (input: string) => unknown, small: string, large: string, explicitLimit?: number): Promise<void> {
+  const sizes = large.length / small.length;
+  const limit = explicitLimit ?? growthLimit(sizes);
+  const g = await growthRatio(work, small, large, limit);
+  assert.ok(g.ratio < limit, label + ": " + sizes.toFixed(1) + "x the input took " + g.ratio.toFixed(1) + "x as long after " + g.rounds + " rounds, limit " + limit.toFixed(1));
+}
+
 // Mirrors llms-txt-validator/test/round3.test.ts (Tek-542, batch Fv) against the hosted
 // validator route instead of the package's own exports: worker.ts exports only
 // { default, escapeHtml, renderInline, markdownToHtml, findLinkRelations }, so maskLocation,
@@ -100,7 +155,7 @@ test("VREG2: a heading between two backtick runs still breaks a code span", asyn
 // --- V03-VREG3/VN3: the link-to-line mapping must not restart its line scan for every link. A
 // smaller n than the package test's own timing comparison, because this is a correctness check
 // run over HTTP, not a timed one.
-test("VREG3/VN3: a many-link document maps every link to a line without restarting the scan", async () => {
+test("VREG3/VN3: a many-link document is still read in full (links pass, one section carries a file list)", async () => {
   const n = 500;
   const text = "# Example\n\n> Summary\n\n## Docs\n" + "\n".repeat(n * 8) + "- [a](https://a.com/)\n".repeat(n);
   const { body } = await validate(text);
@@ -108,7 +163,7 @@ test("VREG3/VN3: a many-link document maps every link to a line without restarti
   assert.match(byId(body.checks, "sections").detail, /1 carrying a file list/);
 });
 
-test("VREG3/VN3: the mapped line index still matches the real position for a small document", async () => {
+test("VREG3/VN3: a small document with links is still read in full (its section carries a file list)", async () => {
   const text = prefix + "- [First](https://example.com/a)\n- [Second](https://example.com/b)\n";
   const { body } = await validate(text);
   assert.equal(byId(body.checks, "sections").status, "pass");
@@ -213,7 +268,7 @@ test('Tek-668 NULL-2: a redirect with no finalUrl names the address it was redir
 // a stray backtick in one block moved the mask by one run, a link inside the next real span counted as
 // a link (C-01, a false pass) and a real link after a lone backtick in a list item could be read as
 // code (N3, a false warn). The measured fixtures are the two outside-read cases; the CommonMark
-// comparison is in työt/chatgpt-syvaajot-2026-11-04/korjaukset/aalto2/.
+// comparison of the cases was made outside this repository.
 const BSL = String.fromCharCode(92);
 const p745 = "# T\n\n> Summary\n\n## Docs\n\n";
 const linksCheck = async (text: string) => { const c = byId((await validate(text)).body.checks, "links"); return c.status + " | " + c.detail; };
@@ -327,13 +382,12 @@ test("Tek-747: the block number on each run decides every pair as a plain scan d
   assert.ok(withSpans > 100 && crossing > 300, withSpans + " texts with a span, " + crossing + " with a backtick pair over a line break");
 });
 
-// A fixed time limit once passed here and failed on a slower CI runner (mds/gotchas.md 2026-09-27
-// (jatko 3)), so growth is compared: lengths 1..K are opened in order, a blank line follows and they are
+// A fixed time limit once passed here and failed on a slower CI runner, so growth is compared: lengths 1..K are opened in order, a blank line follows and they are
 // closed in reverse, so every one of the K pairs spans most of the document and crosses a block
 // boundary. The mask with block counters grows with the input; calling the old function for each pair
 // grew about three to four times faster than the input (measured 2026-11-04 in a temp copy of the scan:
 // the larger input is 24 times the smaller, the counters took 20 times as long, the old function 83).
-test("Tek-745: the mask stays linear when many nested pairs all cross a block boundary", () => {
+test("Tek-745: the mask stays linear when many nested pairs all cross a block boundary", async () => {
   const { codeSpanMask } = loadValidatorInternals();
   const nested = (K: number) => {
     let s = "# T\n\n> s\n\n## Docs\n\n";
@@ -342,23 +396,14 @@ test("Tek-745: the mask stays linear when many nested pairs all cross a block bo
     for (let L = K; L >= 1; L--) s += "`".repeat(L) + " ";
     return s + "\n";
   };
-  const best = (text: string) => {
-    let min = Infinity;
-    for (let r = 0; r < 15; r++) {
-      const started = process.hrtime.bigint();
-      for (let i = 0; i < 10; i++) codeSpanMask(text);
-      min = Math.min(min, Number(process.hrtime.bigint() - started) / 1e6);
-    }
-    return min;
-  };
   const small = nested(96), large = nested(480);
   assert.ok(large.length > 200 * 1024 && large.length < 256 * 1024, "the large input is 256 KiB class: " + large.length);
   // every pair crosses, so nothing is masked and nothing is consumed
   assert.equal((codeSpanMask(large) as Uint8Array).some((v) => v === 1), false);
-  best(large);
-  const ratio = best(large) / best(small);
-  const sizes = large.length / small.length;
-  assert.ok(ratio < sizes * 1.5, sizes.toFixed(1) + "x the input took " + ratio.toFixed(1) + "x as long");
+  // This test passes its own limit, sizes * 2 (about 48.7 for 24.3x the characters), because its input is quadratic in K:
+  // 5x the pairs is 24.3x the characters, so the shared limit sizes ** 1.5 (about 120) would also let a rescan per
+  // pair, which grows as sizes ** 1.5 (measured ratio about 78), pass. The current mask measures about 15 to 18.
+  await assertLinear("nested pairs", (text) => codeSpanMask(text), small, large, 2 * (large.length / small.length));
 });
 
 // --- Tek-747: the block reading of codeSpanMask against commonmark.js 0.31.2, the CommonMark reference implementation.
@@ -476,7 +521,7 @@ test("Tek-747: the mask itself on the three differences", () => {
   assert.equal(shown("- a `b\n  2. c` d"), "----`b\n  2. c`--");
 });
 
-test("Tek-747: the block reader stays linear on nested markers and a deep item stack", () => {
+test("Tek-747: the block reader stays linear on nested markers and a deep item stack", async () => {
   const { codeSpanMask } = loadValidatorInternals();
   const fill = (s: string, n: number) => s.repeat(Math.ceil(n / s.length)).slice(0, n);
   const shapes: [string, (n: number) => string][] = [
@@ -485,25 +530,12 @@ test("Tek-747: the block reader stays linear on nested markers and a deep item s
     ["a deep item stack and indented lines", (n) => { let s = fill("- ", n / 2) + "x\n"; while (s.length < n) s += " ".repeat(200) + "y `\n"; return s; }],
     ["marker-shaped lines in one paragraph", (n) => "x\n" + fill("14) a ` b\n", n)],
   ];
-  const best = (text: string) => {
-    let min = Infinity;
-    for (let r = 0; r < 5; r++) {
-      const started = process.hrtime.bigint();
-      for (let i = 0; i < 5; i++) codeSpanMask(text);
-      min = Math.min(min, Number(process.hrtime.bigint() - started) / 1e6);
-    }
-    return min;
-  };
   for (const [name, make] of shapes) {
-    const small = make(16 * 1024), large = make(128 * 1024);
-    best(large);
-    const ratio = best(large) / best(small);
-    const sizes = large.length / small.length;
-    assert.ok(ratio < sizes * 2, name + ": " + sizes.toFixed(1) + "x the input took " + ratio.toFixed(1) + "x as long");
+    await assertLinear(name, (text) => codeSpanMask(text), make(16 * 1024), make(128 * 1024));
   }
 });
 
-test("Tek-747: the report's sentences end in a period and carry no semicolon", () => {
+test("Tek-747: the report's sentences are separated by periods and carry no semicolon", () => {
   const { validateLlmsTxt } = loadValidatorInternals();
   const report = (f: unknown, id: string): string => validateLlmsTxt(f).find((c: { id: string }) => c.id === id).detail;
   const head = "# T\n\n> s\n\n## Docs\n\n";

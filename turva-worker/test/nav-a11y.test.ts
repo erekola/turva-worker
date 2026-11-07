@@ -44,21 +44,27 @@ test("/nav.js serves 200 as text/javascript with no template residue", async () 
   new Function(js); // parses as a plain script
 });
 
-test("every sitemap HTML page that renders the nav includes the nav script exactly once", async () => {
+// Sitemap pages that render no nav on purpose. None today: every HTML page in the sitemap carries it, so a page
+// that loses its nav fails the test below instead of being absorbed by a tolerance. Name a page here with the reason.
+const NAV_EXEMPT = new Set<string>();
+
+test("every sitemap HTML page includes the nav script exactly once, except the pages named in NAV_EXEMPT", async () => {
   const xml = await (await get("/sitemap.xml")).text();
   const paths = [...xml.matchAll(/<loc>https:\/\/turva\.dev([^<]*)<\/loc>/g)].map((m) => m[1] || "/");
   assert.ok(paths.length > 10, "sitemap lists pages (saw " + paths.length + ")");
   let withNav = 0;
+  const withoutNav: string[] = [];
   for (const p of paths) {
     const r = await get(p, { Accept: "text/html" });
     if (!/text\/html/.test(r.headers.get("content-type") || "")) continue;
     const html = await r.text();
-    if (!html.includes('class="turva-nav"')) continue;
+    if (!html.includes('class="turva-nav"')) { withoutNav.push(p); continue; }
     withNav++;
     assert.equal(count(html, NAV_TAG), 1, p + " carries the nav script once");
     assert.equal(count(html, 'class="nv-mobile"'), 1, p + " has one mobile menu");
   }
-  assert.ok(withNav >= paths.length - 3, "nearly every sitemap page renders the nav (saw " + withNav + " of " + paths.length + ")");
+  assert.deepEqual(withoutNav.filter((p) => !NAV_EXEMPT.has(p)), [], "HTML sitemap pages that render no nav");
+  assert.ok(withNav > 10, "the sitemap pages render the nav (saw " + withNav + " of " + paths.length + ")");
 });
 
 test("the blog index carries both scripts, and the 404 page carries the nav script once", async () => {

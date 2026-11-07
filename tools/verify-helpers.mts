@@ -1,6 +1,6 @@
 // tools/verify-helpers.mts - the small pure comparison functions of tools/verify.mts.
 // They live here, with no side effects and no top-level code, so the tests under test/ can
-// import them without running the whole checker. verify.mts imports eight of the nine exports;
+// import them without running the whole checker. verify.mts imports nine of the ten exports;
 // parseScopeList is used inside scopeListsAgree and is exported for the tests.
 // MIT, same license as the repo.
 import { createPublicKey } from 'node:crypto';
@@ -82,4 +82,57 @@ export function isRealIsoDate(s: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
   const d = new Date(s + 'T00:00:00Z');
   return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+// Round 24 (D1-5). public/_headers is a second copy of the security header values that
+// applySecurityHeaders sets in worker.ts, and nothing compared the two copies. This reads the
+// `/*` block of the headers file and every headers.set("Name", value) call of the function,
+// resolves a value written as a constant (PERMISSIONS_POLICY is an array joined with ", "), and
+// reports every header both sides set whose values differ, plus every header the file sets that
+// the function never does. A header only the Worker sets (RateLimit-Policy, the CSP) is not a
+// difference. `compared` is returned so the caller can fail a read that found nothing.
+export function headersFileProblems(headersFile: string, workerSource: string): { compared: string[]; problems: string[] } {
+  const problems: string[] = [];
+  const shown = (v: string) => (v.length > 70 ? v.slice(0, 70) + '...' : v);
+  const lines = headersFile.split(/\r?\n/);
+  const start = lines.findIndex((l) => l.trim() === '/*');
+  const fileHeaders = new Map<string, { name: string; value: string }>();
+  if (start < 0) problems.push('public/_headers has no /* block');
+  else {
+    for (let i = start + 1; i < lines.length; i++) {
+      if (!/^\s+\S/.test(lines[i])) break;
+      const m = lines[i].trim().match(/^([A-Za-z0-9-]+):\s*(.*)$/);
+      if (m) fileHeaders.set(m[1].toLowerCase(), { name: m[1], value: m[2].trim() });
+    }
+  }
+  const fnAt = workerSource.indexOf('function applySecurityHeaders(');
+  const fnEnd = fnAt < 0 ? -1 : workerSource.indexOf('\n}', fnAt);
+  if (fnAt < 0 || fnEnd < 0) problems.push('applySecurityHeaders was not found in worker.ts');
+  const body = fnAt < 0 || fnEnd < 0 ? '' : workerSource.slice(fnAt, fnEnd);
+  const resolveConst = (id: string): string | null => {
+    const m = workerSource.match(new RegExp('const ' + id + ' = \\[([\\s\\S]*?)\\]\\.join\\(([^)]*)\\);'));
+    if (!m) return null;
+    const sep = (m[2].match(/^\s*"([^"]*)"\s*$/) || [])[1];
+    if (sep === undefined) return null;
+    return [...m[1].matchAll(/"([^"]*)"/g)].map((x) => x[1]).join(sep);
+  };
+  const workerValues = new Map<string, Set<string>>();
+  for (const m of body.matchAll(/headers\.set\(\s*"([^"]+)"\s*,\s*("[^"]*"|'[^']*'|[A-Z_][A-Z0-9_]*)\s*\);/g)) {
+    const expr = m[2].trim();
+    const lit = expr.match(/^"([^"]*)"$/) || expr.match(/^'([^']*)'$/);
+    const value = lit ? lit[1] : (/^[A-Z_][A-Z0-9_]*$/.test(expr) ? resolveConst(expr) : null);
+    if (value === null) continue;
+    const key = m[1].toLowerCase();
+    if (!workerValues.has(key)) workerValues.set(key, new Set());
+    workerValues.get(key)!.add(value);
+  }
+  if (fnAt >= 0 && workerValues.size === 0) problems.push('no header value could be read from applySecurityHeaders');
+  const compared: string[] = [];
+  for (const [key, { name, value }] of fileHeaders) {
+    const set = workerValues.get(key);
+    if (!set) { problems.push(`${name}: set in public/_headers but never by applySecurityHeaders`); continue; }
+    compared.push(name);
+    if (!set.has(value)) problems.push(`${name}: public/_headers says "${shown(value)}", worker.ts says ${[...set].map((v) => '"' + shown(v) + '"').join(' or ')}`);
+  }
+  return { compared, problems };
 }

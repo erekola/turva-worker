@@ -1,10 +1,10 @@
 {
-  "_comment": "Canonical source of truth for turva.dev volatile facts. Edit here, then mirror to the surfaces that state these facts (turva-worker/src/worker.ts, README.md, the turva-mcp worker and its README, and the erekola profile README), then run: node tools/verify.mts  (add --live on a networked machine to GET every declared URL and verify the manifest signatures).",
+  "_comment": "Canonical source of truth for turva.dev volatile facts. Edit here, then mirror to the surfaces that state these facts (turva-worker/src/worker.ts, README.md, the turva-mcp worker and its README, and the erekola profile README), then run: node tools/verify.mts  (add --live on a networked machine to GET the fixed list of declared surfaces in the live block of the script and verify the manifest signatures).",
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.227.1",
-    "mcp": "1.9.1"
+    "site": "3.228.0",
+    "mcp": "1.9.2"
   },
   "mtaSts": {
     "txtId": "20260910202321",
@@ -19,12 +19,12 @@
     "implementation": 1500,
     "currency": "EUR"
   },
-  "_eurUsdcComment": "Lisatty 2026-09-06 (kierros 18, S6-1). Kolmen x402-tarjouksen USDC-summa on johdettu euromaarasta talla kurssilla, ja kurssi oli tahan asti leivottu vain valmiiseen lukuun: mikaan servattu pinta eika koodikommentti nimennyt sita, ja paiva loytyi vain mds/decisions.md Tek-38:sta. Nyt se on tassa, ja verify.mts laskee jokaisen X402_MANIFEST-summan uudelleen naista kahdesta kentasta, joten kurssi on yksi kopio ja portti on sen lukija. measuredAt kertoo milloin kurssi mitattiin; se ei liiku itsestaan, ja sen ikaantyminen on nyt nakyvissa.",
+  "_eurUsdcComment": "Added 2026-09-06. The USDC amount of the three x402 offers is derived from the euro price at this rate. The rate used to be baked into the finished number only: no served surface and no code comment named it, and its date lived in a private decision log. It is here now, and verify.mts recomputes every X402_MANIFEST amount from these two fields, so the rate has one copy and the gate is its reader. measuredAt is the day the rate was read. It does not move by itself, and the offer's own price note states the rate and its date.",
   "eurUsdc": {
     "rate": 1.1404,
     "measuredAt": "2026-07-01"
   },
-  "_bundledComment": "Added 2026-08-31 (Tek-317). Implementation of exactly what a diagnosis lists, sold ONLY together with that diagnosis. These are deliberately NOT in prices/services: verify.mts binds a priced service to a price key one to one, and a service listed there is a thing an agent can buy on its own. These two cannot be bought on their own, so they are declared on the catalog surfaces (HOME_JSON, A2A services, WebMCP get_services, llms.txt, the services skill) with their requires field, and they are absent from the checkout surfaces (ACP_SERVICES, x402, AP2/MPP/UCP) on purpose. verify.mts reads this list, so it is the only copy.",
+  "_bundledComment": "Added 2026-08-31 (Tek-317). Implementation of exactly what a diagnosis lists, sold ONLY together with that diagnosis. These are deliberately NOT in prices/services: verify.mts binds a priced service to a price key one to one, and a service listed there is a thing an agent can buy on its own. These add-ons cannot be bought on their own, so they are declared on the catalog surfaces (HOME_JSON, A2A services, WebMCP get_services, llms.txt, the services skill) with their requires field, and they are absent from the checkout surfaces (ACP_SERVICES, x402, AP2/MPP/UCP) on purpose. verify.mts reads this list, so it is the only copy.",
   "bundledImplementation": [
     {
       "id": "audit-fixes",
@@ -81,7 +81,7 @@
     "isitagentready": {
       "level": "Level 5",
       "score": "100/100",
-      "_categoryScoreComment": "score lisattiin 2026-08-30. measuredAt NOUSI 2026-08-20:sta 2026-08-30:aan samana paivana omana muutoksenaan ja omana deploynaan, koska paiva on peilattu viidelle julkaistulle pinnalle (worker.js kolmessa kohdassa, HOME_JSON lastVerified, README.md, docs/agent-readiness.md). Paivan takana on kolme riippumatonta ajoa saman paivan aikana, kaksi koontisession ja yksi tata nostoa varten, ja kaikki kolme antoivat tasmalleen saman kuin 2026-08-20: Level 5/5 ja jokainen kategoria taysi. Luku ei siis muuttunut, vaan se mitattiin uudelleen, ja sivun oma teksti sanoo etta uusi ajo on uusi mittaus eika vanhan vahvistus; ks. työt/kategoriapiste/mittaukset-raw.txt. Ennen sita jokainen pinta toisti KOKONAISPISTEEN jokaisessa kategoriassa, ja verify.mjs vahti sita rivilla joka vaati cell.val === iar.score. Se on oikein vain niin kauan kuin kaikki menee lapi, ja se ansa on kirjattu jo 2026-08-01 (jatko 18) Ansa 4. ARVO ON PISTEMAARA SADASTA, EI TARKISTUKSIA TARKISTUKSISTA, ja se on pakotettu eika valittu: skanneri raportoi eri NIMITTAJAN julkisella sivullaan kuin MCP-rajapinnassaan (commerce 5/5 vastaan 4/4, api/auth 9 vastaan 8), mika oli Tek-296:n koko syy, mutta OSUUS on molemmilla sama koska 9/9 ja 8/8 ovat kumpikin 100. Muoto 100/100 valittiin siksi, etta etusivun taulu kayttaa jo sita eika sen tarvitse muuttua. Kentta checks EI palaa; se on tarkistusten lukumaara ja verify.mts kaataa ajon jos se ilmestyy.",
+      "_categoryScoreComment": "The score field was added 2026-08-30. measuredAt moved from 2026-08-20 to 2026-08-30 the same day as its own change and its own deploy, because the date is mirrored on five published surfaces (worker.ts in three places, the HOME_JSON lastVerified field, README.md and docs/agent-readiness.md). Behind the date are three independent runs on the same day, and all three gave exactly what 2026-08-20 gave: Level 5/5 and every category full. So the number did not change, it was measured again, and the page's own text says that a new run is a new measurement and not a confirmation of the old one. Before that, every surface repeated the TOTAL score in every category, and the gate checked it with a line that required cell.val === iar.score. That holds only while everything passes. THE VALUE IS A SCORE OUT OF A HUNDRED, NOT CHECKS OUT OF CHECKS, and that is forced and not chosen: the scanner reports a different DENOMINATOR on its public page than on its MCP interface (commerce 5/5 against 4/4, api/auth 9 against 8), but the SHARE is the same in both, since 9/9 and 8/8 are each 100. The form 100/100 was chosen because the home page table already uses it. The field checks does not return: it is the number of checks, and verify.mts fails the run if it appears.",
       "categories": [
         {
           "id": "discoverability",
@@ -120,7 +120,7 @@
           "prose": []
         }
       ],
-      "_surfaceWordingComment": "Added 2026-08-16 (Tek-225, round 8 section 2). On three surfaces the gate OWNED the wording: the sentence shape was hardcoded in tools/verify.mjs and read from nowhere, so verify.mjs was both the rule and the only record of the rule. Published wording belongs next to the published data, the same way category.label does. verify.mts now reads these fields and fails if one is missing, so this is not a second copy of a value: it is the only copy, and the gate is the reader.",
+      "_surfaceWordingComment": "Added 2026-08-16. On three surfaces the gate OWNED the wording: the sentence shape was hardcoded in tools/verify.mts and read from nowhere, so verify.mts was both the rule and the only record of the rule. Published wording belongs next to the published data, the same way category.label does. verify.mts now reads these fields and fails if one is missing, so this is not a second copy of a value: it is the only copy, and the gate is the reader.",
       "surfaceWording": {
         "evidenceTwin": {
           "spanFrom": "Scanner: isitagentready.com, third party, Cloudflare.",
@@ -146,19 +146,22 @@
     }
   },
   "security": {
+    "_measuredAtComment": "measuredAt is the date of the Internet.nl runs, the website test and the email test. It is not the latest date of all scanners: Hardenize has its own measuredAt below and may be newer. Each Internet.nl block repeats its own measuredAt, and verify.mts requires every date to be a real day and the top-level date to be the later of the two Internet.nl dates.",
     "measuredAt": "2026-10-29",
     "hardenize": {
       "result": "all 24 categories passed",
       "url": "https://www.hardenize.com/report/turva.dev",
-      "measuredAt": "2026-10-30"
+      "measuredAt": "2026-11-07"
     },
     "internetnl": {
       "score": "98/100",
-      "url": "https://internet.nl/site/turva.dev/"
+      "url": "https://internet.nl/site/turva.dev/",
+      "measuredAt": "2026-10-29"
     },
     "internetnlMail": {
       "score": "90/100",
-      "url": "https://internet.nl/mail/turva.dev/"
+      "url": "https://internet.nl/mail/turva.dev/",
+      "measuredAt": "2026-10-29"
     },
     "advisoriesCheckedAt": "2026-11-05"
   }

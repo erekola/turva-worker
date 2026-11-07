@@ -6,11 +6,16 @@
 //                                  the four signed surfaces offline, against worker.ts's OWN
 //                                  bytes and its own embedded JWKS/signatures, before any
 //                                  deploy (kitka-lokit-003)
-//   node tools/verify.mts --live   also GET every declared URL, verify the Ed25519
+//   node tools/verify.mts --live   also GET a fixed list of the declared surfaces (the
+//                                  discovery files and manifests named in the live block
+//                                  below, plus the Hardenize and Internet.nl website report
+//                                  links and isitagentready.com), verify the Ed25519
 //                                  signatures of the four signed manifests against the
 //                                  PUBLISHED JWKS of the already-deployed site, and speak MCP
 //                                  to mcp.turva.dev to prove the signed server card matches
-//                                  the running server
+//                                  the running server. Every canonical page is fetched only
+//                                  with --twins, and the Internet.nl email report URL is
+//                                  compared as text and never fetched.
 // existsSync added 2026-08-16: the og-cards.json check used it without an import, and it
 // had never run, because the manifest was empty. The first card in the manifest brought the
 // whole verify run down with a ReferenceError. A check that has never run is not green, it is unrun.
@@ -24,7 +29,7 @@ import * as nodeModule from 'node:module';
 import { dirname, join } from 'node:path';
 import {
   scopeListsAgree, readmeMeasurementDates, homeRequiresMatches, requiredServiceName, markdownTwinProblem,
-  htmlTwinProblem, jwkToEd25519Key, isRealIsoDate,
+  htmlTwinProblem, jwkToEd25519Key, isRealIsoDate, headersFileProblems,
 } from './verify-helpers.mts';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -119,12 +124,12 @@ type VerifyFactsCat = { id: string; label: string; score: string; prose?: string
 // outlast that signal. Every wait is printed: a run that changes its own timing silently
 // hides the change.
 const RATE_WAIT_MAX_S = 65;
-// mta-sts.turva.dev joined the set in round 19 (gotchas.md 2026-09-23 (jatko 10)): the
+// mta-sts.turva.dev joined the set in round 19 (2026-09-23): the
 // live MTA-STS check fetches it too, and it answers from the same site-wide limiter.
 const OWN_HOSTS = new Set(['turva.dev', 'mcp.turva.dev', 'mta-sts.turva.dev']);
 // F06 (Tek-496 audit round): the exact set of paths that must carry a valid signature.
 // A path missing from SIGNATURES_JSON, an extra path, or a query-string alias of a
-// signed path must all fail here, not just a changed count (mds/gotchas.md, portti-mittaa-vain-mita-mittaa).
+// signed path must all fail here, not just a changed count (a gate has to measure what it claims to measure).
 const REQUIRED_SIGNED_PATHS = new Set(['/llms.txt', '/.well-known/agent.json', '/.well-known/ai-plugin.json', '/.well-known/mcp/server-card.json']);
 let rateWaits = 0;
 const fetch = async (input: string | URL | Request, init: any = {}) => {
@@ -182,11 +187,13 @@ const bad = (m: string) => { fails++;  console.log('  FAIL  ' + m); };
 // step was red in three shipped runs and in a dry run with no deploy: the cause was a DNS
 // timeout on the operator's own machine, not the domain. The route into this is deliberately
 // narrow, see TRANSIENT below: a missing record, a wrong policy or a non-200 stays a FAIL,
-// because a gate that can call its own blindness a pass is worse than no gate (gotchas
-// 2026-08-10 (jatko 4)).
+// because a gate that can call its own blindness a pass is worse than no gate (finding of
+// 2026-08-10).
 const unmet = (m: string) => { unmeasured++; console.log('  SKIP  ' + m); };
 // Codes that mean "this machine could not ask", never "the answer was wrong". ENOTFOUND and
 // ENODATA are absent on purpose: they are answers, and a missing MTA-STS record is a finding.
+// EDOHSTATUS (the DoH resolver answered with an HTTP 4xx or 5xx) is absent too: today that ends as a
+// FAIL against the domain, unlike EDOHRCODE, which moves the read to the second resolver.
 const TRANSIENT = new Set<unknown>(['ETIMEOUT', 'ETIMEDOUT', 'ESERVFAIL', 'EAI_AGAIN', 'ECONNRESET',
   'ENETUNREACH', 'EHOSTUNREACH', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'EDOHRCODE',
   // EACCES and EPERM: the operator's own machine refused to open the socket. Added 2026-09-19
@@ -197,12 +204,12 @@ const TRANSIENT = new Set<unknown>(['ETIMEOUT', 'ETIMEDOUT', 'ESERVFAIL', 'EAI_A
 // This file's own timeouts (the fetch wrapper above and the 6 s DoH signal) reject with a
 // DOMException whose name is TimeoutError and whose code is the NUMBER 23, not a string, so
 // the set above never matched them and a timed-out read was booked as a FAIL against the domain.
-// Found by an outside read-only review 2026-09-05 (Astra, työt/astra-repokierros-2026-09-05);
+// Found by an outside read-only review 2026-09-05;
 // the name is the stable part of that exception, so it is what is matched.
 const timeoutName = (e: unknown) => (e && ((e as VerifyErrShape).name === 'TimeoutError' || ((e as VerifyErrShape).cause || {}).name === 'TimeoutError'))
   ? 'ETIMEDOUT' : null;
 // The reason to print for a failed call. fetch() hides its socket or TLS reason in e.cause, so
-// the old code-or-message form printed a bare "fetch failed" (186 such lines in ship-live.log, 2026-10-01).
+// the old code-or-message form printed a bare "fetch failed" (186 such lines in the live runs of 2026-10-01).
 const errWhy = (e: unknown) => {
   if (!e) return 'unknown error';
   if ((e as VerifyErrShape).code) return String((e as VerifyErrShape).code);
@@ -333,21 +340,21 @@ console.log('\nShare card manifest (tools/og-cards.json)');
 // B2-21 (round 12, batch E16, Erik's decision 2026-08-16). An og card's headline and subhead
 // are JPEG pixels, so no text gate could read them: not this file, not tools/kielletyt.mjs,
 // not the style pass. Three measured drifts (findings B2-22, B2-23 and B2-24) all happened the
-// same way, the text surface was corrected and the card was not. tools/make-og-card.py now
+// same way, the text surface was corrected and the card was not. The card generator now
 // records what it laid into each card, so the words exist as text somewhere and can be gated.
 //
 // The manifest is itself a claim surface in a public repo, and an unwatched claim surface in
-// this repo has drifted before (mds/gotchas.md 2026-07-25), so it is gated in the same change
+// this repo has drifted before (2026-07-25), so it is gated in the same change
 // that creates it rather than later.
 //
 // TWO LIMITS, both decisions rather than oversights, and neither is pretended away.
 // 1. The manifest states what was MEANT to be laid into the card, not what was laid. It is not
 //    a substitute for reading the pixels; it is the source of truth the pixels are built from.
-// 2. Cards generated before 2026-08-16 are NOT in it, because their texts were never stored
-//    anywhere. Coverage therefore starts at 0 and grows one card at a time, forward only.
-//    The count is PRINTED below rather than asserted, because asserting a floor that is zero
-//    today would be a check that cannot fail, and asserting tomorrow's number here would be the
-//    hardcoded value this whole file exists to remove.
+// 2. Coverage is complete and it is enforced: the reverse check below fails when an og.jpg or
+//    og-*.jpg in public/ has no manifest entry, so a card cannot be added without its text.
+//    The count is PRINTED below rather than asserted, because the entry-per-file check is the
+//    floor and a number asserted here would be the hardcoded value this whole file exists to
+//    remove.
 {
   const cardsRaw = readFileSync(join(ROOT, 'tools/og-cards.json'), 'utf8');
   let cards = null;
@@ -355,7 +362,7 @@ console.log('\nShare card manifest (tools/og-cards.json)');
   const isObj = !!cards && typeof cards === 'object' && !Array.isArray(cards);
   check(isObj, 'og-cards.json is a JSON object keyed by file name');
   const names = isObj ? Object.keys(cards) : [];
-  // Deterministic file: the generator writes sorted keys, so a diff shows only real changes.
+  // Deterministic file: the manifest is kept with sorted keys, so a diff shows only real changes.
   check(names.slice().sort().join(',') === names.join(','), `og-cards.json keys are sorted (${names.length} cards recorded)`);
   const publicDir = join(ROOT, 'turva-worker/public');
   const missingFile = names.filter((n) => !existsSync(join(publicDir, n)));
@@ -370,7 +377,7 @@ console.log('\nShare card manifest (tools/og-cards.json)');
     `every og-cards.json entry carries ${fields.join(', ')}${incomplete.length ? ' (incomplete: ' + incomplete.join(', ') + ')' : ''}`);
   // Prices written on a card are text in the manifest, so they can be compared. Every euro
   // amount (written as the symbol, as "N euros" or as a thousands figure like 4,300) must be a
-  // price facts.json owns. The services card lists all four.
+  // price facts.json owns. The services card lists every one of them.
   {
     const priceVals = Object.entries<any>(facts.prices).filter(([k]) => k !== 'currency').map(([, v]) => Number(v));
     const bundledVals = (Array.isArray(facts.bundledImplementation) ? facts.bundledImplementation : []).map((x: { price: number }) => x.price);
@@ -391,13 +398,13 @@ console.log('\nShare card manifest (tools/og-cards.json)');
       `og-services.jpg lists all ${priceVals.length} facts.json prices (read ${JSON.stringify(svcAmounts)})`);
     // The reverse direction: a card file in public/ with no manifest entry is a card whose text
     // nothing can gate.
-    const jpgInPublic = readdirSync(publicDir).filter((f) => /^og-.*\.jpg$/.test(f));
+    const jpgInPublic = readdirSync(publicDir).filter((f) => /^og(-.*)?\.jpg$/.test(f));
     const noEntry = jpgInPublic.filter((f) => !names.includes(f));
     check(jpgInPublic.length >= 80 && noEntry.length === 0,
-      `every og-*.jpg in turva-worker/public has a manifest entry (${jpgInPublic.length} files)`
+      `every og.jpg and og-*.jpg in turva-worker/public has a manifest entry (${jpgInPublic.length} files)`
       + (noEntry.length ? ' :: without an entry: ' + noEntry.join(', ') : ''));
   }
-  console.log(`  note  og card text coverage: ${names.length} cards carry their text in the manifest (forward only, see the comment above)`);
+  console.log(`  note  og card text coverage: ${names.length} cards carry their text in the manifest (every og.jpg and og-*.jpg in public/ has an entry, checked above)`);
 }
 
 console.log('\nMeasured dates');
@@ -407,7 +414,8 @@ const wm = [...src.worker.text.matchAll(/Measured (\d{4}-\d{2}-\d{2})/g)].map(m=
 check(wm.length>0 && wm.every(d=>allowed.has(d)), `worker.ts "Measured <date>" all current (saw ${[...new Set(wm)].join(', ')||'none'})`);
 // Attribute each Measured date to its claim by exact adjacency: every
 // agent-readiness claim ends "on isitagentready.com. Measured <date>" and the
-// security claim ends "asserted. Measured <date>". Added after two guide lines
+// security claim is the sentence "asserted. I measured all three on <date>" with an
+// optional ", Internet.nl again on <date>" tail. Added after two guide lines
 // sat on the wrong date and a set check could not see it (both dates are
 // individually allowed). A window-based version failed its own calibration by
 // attributing a date to the nearest anchor on the wrong side, so the anchors
@@ -418,8 +426,13 @@ const arNear = [...src.worker.text.matchAll(/isitagentready\.com\. Measured (\d{
 check(arNear.length>=3 && arNear.every(d=>d===ar), `worker.ts agent-readiness "Measured" all == ${ar} (saw ${[...new Set(arNear)].join(', ')||'none'}, n=${arNear.length})`);
 // Tek-725: the sentence may name a later Internet.nl run after the date of all three, and then that later date is
 // facts.security.measuredAt; without it the date of all three is.
-const secNear = [...src.worker.text.matchAll(/asserted\. I measured all three on (\d{4}-\d{2}-\d{2})(?:, Internet\.nl again on (\d{4}-\d{2}-\d{2}))?/g)].map(m=>m[2]||m[1]);
+const secMatches = [...src.worker.text.matchAll(/asserted\. I measured all three on (\d{4}-\d{2}-\d{2})(?:, Internet\.nl again on (\d{4}-\d{2}-\d{2}))?/g)];
+const secNear = secMatches.map(m=>m[2]||m[1]);
 check(secNear.length>=1 && secNear.every(d=>d===sec), `worker.ts security "Measured" all == ${sec} (saw ${[...new Set(secNear)].join(', ')||'none'}, n=${secNear.length})`);
+// T1-2 (round 24). Only the later date is bound to facts.json. The first date, the day all three were
+// measured together, has no home in facts.json, so it is held to what can be tested: a real calendar
+// day that is not after the date the sentence ends on.
+check(secMatches.length>=1 && secMatches.every(m=>isRealIsoDate(m[1]) && m[1] <= (m[2]||m[1])), `worker.ts security sentence: the first measurement date is a real day not after the last one (saw ${secMatches.map(m=>m[1]+' -> '+(m[2]||m[1])).join('; ')||'none'})`);
 const lvm = src.worker.text.match(/"lastVerified":\s*"(\d{4}-\d{2}-\d{2})"/);
 check(!!lvm && lvm[1]===ar, `worker.ts HOME_JSON lastVerified == ${ar}`);
 check(src.readme.text.includes(ar), `README.md carries ${ar}`);
@@ -507,7 +520,7 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   const resolve = (item: unknown) => CATS.find((c) => spellings(c).includes(String(item).trim().toLowerCase()));
   // The same lookup is needed on three other surfaces (the README table, the home table and the
   // MCP live response), and until 2026-08-30 all three compared their row with the TOTAL SCORE.
-  // That is gotchas 2026-08-01 (jatko 18) Ansa 4. Lifted to module level so that every
+  // That is the trap found on 2026-08-01. Lifted to module level so that every
   // surface reads the same field the same way instead of each inventing its own lookup.
   CAT_LOOKUP = resolve;
   check(CATS.length > 0, `facts.json records the category set (${CATS.length})`);
@@ -523,13 +536,13 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   // figure a buyer cannot reproduce on the surface he checks. The category set and the
   // per-category score stay, because those agree on both surfaces.
   check(CATS.length > 0 && CATS.every((c) => c.checks === undefined),
-    'no category carries a check count (dropped 2026-08-29, see decisions.md)');
+    'no category carries a check count (dropped 2026-08-29: the scanner\'s public page and its MCP tool count different denominators)');
   // The per-category SCORE, added 2026-08-30. It is not the count that Tek-296 dropped:
   // the count's DENOMINATOR differs between the scanner's public page and its MCP tool
   // (commerce 5 versus 4, api/auth 9 versus 8), which is why the count cannot be published,
   // but the score is the same on both surfaces because 9/9 and 8/8 are both 100. Until this
   // field existed every surface repeated the site-wide score in every category, and the
-  // board check below enforced exactly that. See gotchas 2026-08-01 (jatko 18) Ansa 4.
+  // board check below enforced exactly that. See the trap found on 2026-08-01.
   // CATS.length > 0 is part of the condition on purpose: an empty category list must not
   // make `every` vacuously true, the same reason the label check above carries it.
   check(CATS.length > 0 && CATS.every((c) => typeof c.score === 'string' && c.score.trim().length > 0),
@@ -752,7 +765,7 @@ console.log('\nSecurity evidence');
 const H = facts.security.hardenize, I = facts.security.internetnl;
 for (const k of Object.keys(src)) check(src[k].text.includes(H.url), `${src[k].rel} links canonical Hardenize URL`);
 // Tek-561: Hardenize has its own measurement date, separate from facts.security.measuredAt (Internet.nl).
-check(/^\d{4}-\d{2}-\d{2}$/.test(String(H.measuredAt)), `facts.security.hardenize.measuredAt is an ISO date (saw ${JSON.stringify(H.measuredAt)})`);
+check(isRealIsoDate(String(H.measuredAt)), `facts.security.hardenize.measuredAt is a real ISO date (saw ${JSON.stringify(H.measuredAt)})`);
 // When Hardenize shares the Internet.nl date the prose names one date for all three;
 // otherwise it names the later Hardenize run separately. Either way the date must match facts.json.
 const hSentence = H.measuredAt === facts.security.measuredAt ? `I measured all three on ${H.measuredAt}.` : `and Hardenize again on ${H.measuredAt}.`;
@@ -763,6 +776,17 @@ check(src.worker.text.includes(I.url), `Internet.nl URL in worker.ts`);
 const IM = facts.security.internetnlMail;
 for (const k of Object.keys(src)) check(containsAny(src[k].text, slashVariants(IM.score)), `${src[k].rel} shows the Internet.nl mail test ${IM.score}`);
 check(src.worker.text.includes(IM.url), `Internet.nl mail URL in worker.ts`);
+// Round 24 (T2-15). What facts.security.measuredAt MEANS: the date of the Internet.nl runs (the
+// website test and the email test), not the latest date of all scanners. Hardenize carries its own
+// measuredAt and may be newer, so the top-level date can be older than the Hardenize one without a
+// fault. The Internet.nl dates were not recorded anywhere else, so each Internet.nl block carries a
+// measuredAt of its own and the top-level date has to be the later of the two.
+const imDates = [String(I.measuredAt), String(IM.measuredAt)];
+check([sec, ...imDates].every((d) => isRealIsoDate(String(d))), `facts.security.measuredAt and both Internet.nl measuredAt are real ISO dates (saw ${sec}, ${imDates.join(', ')})`);
+check(sec === [...imDates].sort()[1], `facts.security.measuredAt is the date of the latest Internet.nl run (top-level ${sec}, website ${I.measuredAt}, email ${IM.measuredAt})`);
+// The README states one date for both Internet.nl tests, in the one sentence that names them.
+const rmInl = src.readme.text.match(/Measured on (\d{4}-\d{2}-\d{2}): \d+\/100 on the \[Internet\.nl website test\]\([^)]*\) and \d+\/100 on the \[Internet\.nl email test\]/);
+check(!!rmInl && rmInl[1] === I.measuredAt && rmInl[1] === IM.measuredAt, `README.md dates the two Internet.nl tests ${I.measuredAt} and ${IM.measuredAt} (saw ${JSON.stringify(rmInl ? rmInl[1] : null)})`);
 // Fixed 2026-08-16 (round 12, finding B4-19, surface B2-07). The number 13 was hardcoded into
 // this regex while its canonical home is facts.security.hardenize.result ("all 13 categories
 // passed"), and the Rot gates block lower in this same file already derives it correctly. A
@@ -777,6 +801,16 @@ const deadHz = /hardenize\.com\/report\/turva\.dev\/\S/;
 for (const f of Object.values(src)) check(!deadHz.test(f.text), `${f.rel}: no dead/timestamped Hardenize URL`);
 const deadIar = /isitagentready\.com\/[A-Za-z0-9]/;
 for (const f of Object.values(src)) check(!deadIar.test(f.text), `${f.rel}: no dead per-domain isitagentready URL`);
+
+console.log('\nSecurity headers copy (public/_headers)');
+// Round 24 (D1-5). public/_headers is a second copy of the header values applySecurityHeaders sets in
+// worker.ts. The Worker answers every route itself and the file only covers static assets, so the
+// two copies must say the same thing for every header both of them set.
+{
+  const hdr = headersFileProblems(readFileSync(join(ROOT, 'turva-worker/public/_headers'), 'utf8'), src.worker.text);
+  check(hdr.compared.length >= 8, `public/_headers and applySecurityHeaders share at least 8 headers to compare (${hdr.compared.length}: ${hdr.compared.join(', ')})`);
+  check(hdr.problems.length === 0, `public/_headers agrees with applySecurityHeaders in worker.ts on every header both set${hdr.problems.length ? ' :: ' + hdr.problems.join('; ') : ''}`);
+}
 
 console.log('\nPricing');
 // Fixed 2026-08-16 (round 12, finding B4-14, surface B2-07). Three keys were hardcoded here
@@ -815,7 +849,7 @@ for (const svc of PRICED_STATIC) {
 }
 
 console.log('\nBundled implementation add-ons (Tek-317)');
-// Added 2026-08-31. These two are priced but they are NOT services: they are sold only
+// Added 2026-08-31. The bundled add-ons are priced but they are NOT services: they are sold only
 // together with the diagnosis they follow, so putting them in facts.prices would have made
 // them standalone products to every gate above and to every checkout surface below. The
 // claim this block defends is exactly that split: the amounts are declared on the catalog
@@ -917,8 +951,8 @@ console.log('\nCSP script hash');
 // hash blocks that script on every page, and nothing else in this file could see
 // it (the drift shipped once, on 2026-08-01, and was caught by a reader). The
 // hash is over the served string, so CRLF is normalised to LF first: a template
-// literal normalises its line terminators per the ECMAScript spec, and the file
-// on disk is CRLF.
+// literal normalises its line terminators per the ECMAScript spec, and a working
+// copy on Windows is CRLF while the repo stores LF.
 {
   const w = src.worker.text;
   const at = w.indexOf('const WEBMCP_SCRIPT = `<script>');
@@ -938,7 +972,7 @@ console.log('\nCSP script hash');
     // is only the sole permission the inline script has if that is true, so it is a check.
     // Read from the same directive string as the hash, never from the file: the hash check
     // itself was once a file-wide search and went green on a mutation that moved the hash
-    // into style-src (agent-memory/project-do-not-fix.md, 2026-08-01).
+    // into style-src (2026-08-01).
     check(!dir.includes(`'unsafe-inline'`), `CSP script-src carries no 'unsafe-inline' (script-src is "${dir}")`);
     // A substitution or an escape in the body would make the source slice and
     // the served string differ, and the hash above would then be computed over
@@ -1021,9 +1055,8 @@ const twMdTwin = (path: string) => {
 // hand: sections deliberately hand-rendered per medium (form instructions,
 // the contact block); short lines only, the prose ban still applies.
 // prose: named literal-prose exceptions with a reason, each must be used or
-// the run fails:
-//   home agent box intro (the md twin carries its own Markdown views note)
-//   home contact intro (CTA block, per-medium wording).
+// the run fails. The home page has none left (see the comment inside the table);
+// the one exception in use is the /llms-txt-validator note.
 const twConverted: Record<string, any> = {
   // 'Independent agent-readiness scan of turva.dev' is hand-rendered as the scan board, not as prose.
   // It was previously 'covered' by a mdParas() call in serveHomeHtml whose result nothing interpolated,
@@ -1152,7 +1185,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   check(h > 0 && body.length > 0 && !/^\s*\/\//.test(body), `release-log header skipped before the wording test (${h} lines)`);
   const invites = [...body.matchAll(/payable now|paid up front/gi)].map((m) => m[0]);
   check(invites.length === 0,
-    `nothing the Worker serves invites payment before scope${invites.length ? ' :: ' + [...new Set(invites)].join(', ') : ''}`);
+    `the Worker's served text carries neither "payable now" nor "paid up front"${invites.length ? ' :: ' + [...new Set(invites)].join(', ') : ''}`);
 }
 
 // --- CHANNELS, added 2026-08-16 (Tek-238), the last of round 8 section 3's open items.
@@ -1172,30 +1205,30 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   const CH = facts.channels || {};
   const chKeys = Object.keys(CH);
   check(chKeys.length > 0, `facts.json declares the contact channels (${chKeys.length})`);
-  const puuttuu = chKeys.filter((k) => !src.worker.text.includes(CH[k]));
-  check(chKeys.length > 0 && puuttuu.length === 0,
-    `every declared channel appears in worker.ts${puuttuu.length ? ' :: missing ' + puuttuu.join(', ') : ''}`);
+  const missingChannels = chKeys.filter((k) => !src.worker.text.includes(CH[k]));
+  check(chKeys.length > 0 && missingChannels.length === 0,
+    `every declared channel appears in worker.ts${missingChannels.length ? ' :: missing ' + missingChannels.join(', ') : ''}`);
   // sameAs is the union of two declared lists, not one. The first version of this check assumed
   // every sameAs entry is a contact channel and failed on its first run against the business
   // registry and Wikidata entries, which are identity references rather than ways to reach a
   // person. That failure is the reason facts.json now carries both lists: the gate found the
   // missing distinction, and the distinction is what lets a future addition be classified.
   const ID = facts.identityRefs || {};
-  const sallitut = new Set([...Object.values(CH), ...Object.values(ID)].filter((v) => String(v).startsWith('https://')));
+  const allowedUrls = new Set([...Object.values(CH), ...Object.values(ID)].filter((v) => String(v).startsWith('https://')));
   check(Object.keys(ID).length > 0, `facts.json declares the identity references (${Object.keys(ID).length})`);
-  const idPuuttuu = Object.keys(ID).filter((k) => !src.worker.text.includes(ID[k]));
-  check(Object.keys(ID).length > 0 && idPuuttuu.length === 0,
-    `every declared identity reference appears in worker.ts${idPuuttuu.length ? ' :: missing ' + idPuuttuu.join(', ') : ''}`);
+  const idMissing = Object.keys(ID).filter((k) => !src.worker.text.includes(ID[k]));
+  check(Object.keys(ID).length > 0 && idMissing.length === 0,
+    `every declared identity reference appears in worker.ts${idMissing.length ? ' :: missing ' + idMissing.join(', ') : ''}`);
   // matchAll, not match. The first version used .match() and read only the FIRST of the five
   // sameAs blocks in worker.ts, so four fifths of the surface it claims to cover were invisible
   // to it, including the Person block on every article. An independent review found that on the
   // same day it was written, and it is the reason the count below is printed: a gate that says
   // "4 entries" when the file holds five blocks is telling you where it stopped looking.
-  const lohkot = [...src.worker.text.matchAll(/"sameAs":\s*\[([\s\S]*?)\]/g)];
-  const sameAs = [...new Set(lohkot.flatMap((m) => [...m[1].matchAll(/"(https:[^"]+)"/g)].map((x) => x[1])))];
-  const vieraat = sameAs.filter((u) => !sallitut.has(u));
-  check(sameAs.length > 0 && vieraat.length === 0,
-    `every sameAs entry is a declared channel or identity reference (${lohkot.length} blocks, ${sameAs.length} distinct entries${vieraat.length ? ', undeclared: ' + vieraat.join(', ') : ''})`);
+  const sameAsBlocks = [...src.worker.text.matchAll(/"sameAs":\s*\[([\s\S]*?)\]/g)];
+  const sameAs = [...new Set(sameAsBlocks.flatMap((m) => [...m[1].matchAll(/"(https:[^"]+)"/g)].map((x) => x[1])))];
+  const unlisted = sameAs.filter((u) => !allowedUrls.has(u));
+  check(sameAs.length > 0 && unlisted.length === 0,
+    `every sameAs entry is a declared channel or identity reference (${sameAsBlocks.length} blocks, ${sameAs.length} distinct entries${unlisted.length ? ', undeclared: ' + unlisted.join(', ') : ''})`);
 }
 
 // --- VAT ID. It lived only in the ProfessionalService JSON-LD until 2026-08-02, on no
@@ -1339,7 +1372,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       check(Number(m[4]) === facts.prices[m[1]] * 100,
         `ACP_SERVICES ${m[1]} amount == ${facts.prices[m[1]] * 100} cents (saw ${m[4]})`);
     }
-    // HOME_JSON is the surface project-do-not-fix.md points at when it says the catalogue
+    // HOME_JSON is the surface the list of intentional tradeoffs points at when it says the catalogue
     // is deliberately narrower than the service set. That sentence is only true while this
     // list holds every service, and it named the wrong count for a day (B1-21).
     const home = (w.match(/const HOME_JSON = JSON\.stringify\(([\s\S]*?), null, 2\);/) || [])[1] || '{}';
@@ -1396,12 +1429,12 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // always fine", because then a page that merely forgets its own path would pass. The
     // exception is named per function, and the separate condition below fails the run if the
     // named function disappears, so the exception cannot outlive a rename.
-    const NAV_ULKOPUOLELLA = new Set(['briefHtmlPage']);
-    for (const nimi of NAV_ULKOPUOLELLA) {
-      check(navCalls.some((c) => c.fn === nimi),
-        `cardPageNav exception ${nimi} still exists (a rename must not keep the exception alive)`);
+    const NAV_EXEMPT = new Set(['briefHtmlPage']);
+    for (const fnName of NAV_EXEMPT) {
+      check(navCalls.some((c) => c.fn === fnName),
+        `cardPageNav exception ${fnName} still exists (a rename must not keep the exception alive)`);
     }
-    const wrongNav = navCalls.filter((c) => (NAV_ULKOPUOLELLA.has(c.fn) ? c.arg !== '' : c.page !== c.arg));
+    const wrongNav = navCalls.filter((c) => (NAV_EXEMPT.has(c.fn) ? c.arg !== '' : c.page !== c.arg));
     check(navCalls.length > 0 && wrongNav.length === 0,
       `every cardPageNav call passes the path its own page serves (${navCalls.length} calls`
       + `${wrongNav.length ? ' :: ' + wrongNav.map((c) => `${c.fn} serves ${c.page} but passes ${c.arg}`).join(', ') : ''})`);
@@ -1764,7 +1797,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     }
   }
 
-  console.log('\nGuide source-check dates (koko sivuston tarkistus 2026-09-06, kohta 6)');
+  console.log('\nGuide source-check dates (site-wide review of 2026-09-06)');
   // /guides promises that each guide's own check date is the one that counts, so every guide's
   // META_BY_PATH entry carries `checked`, an ISO date of the last read against primary sources,
   // and serveGuideHtml renders it under the H1. A guide without one would make the promise false.
@@ -1992,7 +2025,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const valCap = intOf(region('async function fetchLlmsTxt', '\nfunction collectLinks'), /const cap = (\d+);/);
     check(valSentence.length >= 1 && valWarn !== null && valCap !== null
         && valSentence.every((m) => Number(m[1]) * 1024 === valWarn && Number(m[2]) * 1024 === valCap),
-      `the validator page states the 50 KiB warning and 256 KiB read cap the code applies (${valSentence.length} sentence(s); code ${valWarn} and ${valCap} bytes)`);
+      `the validator page states the same warning size and read cap, in KiB, as the code applies (${valSentence.length} sentence(s); code ${valWarn} and ${valCap} bytes)`);
   }
 
   console.log('\nPrice surfaces compared to facts.json one by one');
@@ -2073,14 +2106,14 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 // WHY THIS EXISTS. The board is hand-written HTML in worker.ts. Tek-303 bound each cell's
 // VALUE to its own category's score in facts.json, but the only gate that read the board
 // was the live one further down, which fetches the served page. That means a plain
-// `node tools/verify.mjs` could not see the deployed page and facts.json drifting apart,
+// `node tools/verify.mts` could not see the deployed page and facts.json drifting apart,
 // and the gap was noted as a side finding on 2026-08-01 (jatko 18) and left open until
 // 2026-08-30 (work queue B2).
 //
 // WHAT THIS CLAIM IS WORTH, said out loud because a green gate proves only what it
 // measures. Reading the source is a WEAKER claim than reading the served bytes: it proves
 // the string is in worker.ts, not that a buyer's browser receives it. That distinction is
-// the whole point of gotchas 2026-07-26 (jatko 2), and it is why this block does not
+// the whole point of the finding of 2026-07-26, and it is why this block does not
 // replace the live one. What it adds is the half the live gate cannot give: it runs
 // without the network, on every static run, before any deploy, so a source edit that
 // breaks the binding fails at the desk rather than after the fact. The two gates answer
@@ -2091,69 +2124,69 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 // drift in the data, and comparing an empty want against an empty got reads as agreement
 // (Ansa 2 in the same 2026-08-01 entry, measured in this very file). So a missing or
 // empty expected value is a FAIL here too, never a skip.
-const boardLoydot = (lahde: string, kategoriat: unknown, kokonaispiste: unknown, taso: unknown) => {
+const boardProblems = (source: string, categories: unknown, totalScore: unknown, level: unknown) => {
   // Since v3.171.0 (Tek-479 P14) a cell carries a space between its label and its value, so a text
   // reader gets "content 100/100" and not "content100/100". The separator is whitespace either way;
   // the label, the value, their order and the count are compared exactly as before.
-  const virheet = [];
+  const faults = [];
   // Since Tek-488 round 3 the board is a list whose cells read as the twin's rows, "Label: 100/100.",
   // so the colon and the period are part of the shape and the label and the value are read between them.
-  const gridM = lahde.match(/<ul class="board-grid">([\s\S]*?)<\/ul>\s*<p class="board-sum">([\s\S]*?)<\/p>/);
+  const gridM = source.match(/<ul class="board-grid">([\s\S]*?)<\/ul>\s*<p class="board-sum">([\s\S]*?)<\/p>/);
   if (!gridM) return ['board-grid / board-sum not found in worker.ts source'];
   const cells = [...gridM[1].matchAll(/<li class="cell"><span class="cat">([^<]*):<\/span>\s*<span class="val">([^<]*)\.<\/span><\/li>/g)]
     .map((m) => ({ cat: twDecode(m[1]).trim(), val: twDecode(m[2]).trim() }));
-  const want = (Array.isArray(kategoriat) ? kategoriat : []);
-  if (!want.length) virheet.push('facts.json declares no categories, so the board would be compared against nothing');
+  const want = (Array.isArray(categories) ? categories : []);
+  if (!want.length) faults.push('facts.json declares no categories, so the board would be compared against nothing');
   for (const c of want) {
-    if (typeof c.label !== 'string' || !c.label.trim()) virheet.push(`category ${c.id} has no board label in facts.json`);
-    if (typeof c.score !== 'string' || !c.score.trim()) virheet.push(`category ${c.id} has no score in facts.json`);
+    if (typeof c.label !== 'string' || !c.label.trim()) faults.push(`category ${c.id} has no board label in facts.json`);
+    if (typeof c.score !== 'string' || !c.score.trim()) faults.push(`category ${c.id} has no score in facts.json`);
   }
-  if (cells.length !== want.length) virheet.push(`board has ${cells.length} cells, facts.json declares ${want.length} categories`);
+  if (cells.length !== want.length) faults.push(`board has ${cells.length} cells, facts.json declares ${want.length} categories`);
   const gotLabels = cells.map((c) => c.cat).join(' | ');
   const wantLabels = want.map((c) => String(c.label)).join(' | ');
-  if (!cells.length || gotLabels !== wantLabels) virheet.push(`board labels/order [${gotLabels}] != facts.json [${wantLabels}]`);
+  if (!cells.length || gotLabels !== wantLabels) faults.push(`board labels/order [${gotLabels}] != facts.json [${wantLabels}]`);
   const byLabel = new Map(want.map((c) => [String(c.label), c]));
   for (const c of cells) {
     const w = (byLabel.get(c.cat) || {}).score;
-    if (typeof w !== 'string' || !w.trim() || c.val !== w) virheet.push(`cell "${c.cat}" reads ${JSON.stringify(c.val)}, facts.json says ${JSON.stringify(w)}`);
+    if (typeof w !== 'string' || !w.trim() || c.val !== w) faults.push(`cell "${c.cat}" reads ${JSON.stringify(c.val)}, facts.json says ${JSON.stringify(w)}`);
   }
   const sum = twSquash(twDecode(h1Strip(gridM[2])));
-  const wantSum = `Verified ${kokonaispiste}, ${taso}, Agent-Native.`;
-  if (sum !== wantSum) virheet.push(`board summary reads ${JSON.stringify(sum)}, want ${JSON.stringify(wantSum)}`);
-  return virheet;
+  const wantSum = `Verified ${totalScore}, ${level}, Agent-Native.`;
+  if (sum !== wantSum) faults.push(`board summary reads ${JSON.stringify(sum)}, want ${JSON.stringify(wantSum)}`);
+  return faults;
 };
 {
   // CONTROLS FIRST (Tek-118). A check that has never run is not green, it is unrun
-  // (gotchas 2026-08-16 (jatko 14)), and a negative test can be green for the wrong
+  // (finding of 2026-08-16), and a negative test can be green for the wrong
   // reason (2026-08-16 (jatko 9)). So both directions are exercised on synthetic input
   // whose result does not depend on what is on disk, and the control set is asymmetric
   // on purpose: the surface drifting from the data, and the data losing its value.
-  const kSarja = (rivit: string, summa: string) =>
-    `<ul class="board-grid">${rivit}</ul>\n<p class="board-sum">Verified <b>${summa}</b>, <span class="pill">Level 5</span>, <span class="pill">Agent-Native</span>.</p>`;
-  const kCell = (cat: string, val: string) => `<li class="cell"><span class="cat">${cat}:</span> <span class="val">${val}.</span></li>`;
-  const kCats = [{ id: 'a', label: 'alpha', score: '100/100' }, { id: 'b', label: 'beta', score: '90/100' }];
-  const kHyva = kSarja(kCell('alpha', '100/100') + kCell('beta', '90/100'), '100/100');
-  const kAjautunut = kSarja(kCell('alpha', '100/100') + kCell('beta', '80/100'), '100/100');   // pinta ajautui datasta
-  const kPuuttuva = kSarja(kCell('alpha', '100/100'), '100/100');                              // solu katosi pinnalta
-  const kJarjestys = kSarja(kCell('beta', '90/100') + kCell('alpha', '100/100'), '100/100');    // solut vaihtoivat paikkaa
-  const kSumma = kSarja(kCell('alpha', '100/100') + kCell('beta', '90/100'), '99/100');         // yhteenveto ajautui
-  const kTyhjaData = [{ id: 'a', label: 'alpha', score: '100/100' }, { id: 'b', label: 'beta', score: '' }];
-  const c1 = boardLoydot(kHyva, kCats, '100/100', 'Level 5').length === 0;
-  const c2 = boardLoydot(kAjautunut, kCats, '100/100', 'Level 5').length > 0;
-  const c3 = boardLoydot(kPuuttuva, kCats, '100/100', 'Level 5').length > 0;
-  const c4 = boardLoydot(kJarjestys, kCats, '100/100', 'Level 5').length > 0;
-  const c5 = boardLoydot(kSumma, kCats, '100/100', 'Level 5').length > 0;
-  const c6 = boardLoydot(kHyva, kTyhjaData, '100/100', 'Level 5').length > 0;   // data menetti arvon
-  const c7 = boardLoydot(kHyva, [], '100/100', 'Level 5').length > 0;           // tyhja ei ole sopu
-  const c8 = boardLoydot('<p>no board here</p>', kCats, '100/100', 'Level 5').length > 0;
-  const kaikki = c1 && c2 && c3 && c4 && c5 && c6 && c7 && c8;
-  if (!kaikki) {
+  const cBoard = (rows: string, total: string) =>
+    `<ul class="board-grid">${rows}</ul>\n<p class="board-sum">Verified <b>${total}</b>, <span class="pill">Level 5</span>, <span class="pill">Agent-Native</span>.</p>`;
+  const cCell = (cat: string, val: string) => `<li class="cell"><span class="cat">${cat}:</span> <span class="val">${val}.</span></li>`;
+  const cCats = [{ id: 'a', label: 'alpha', score: '100/100' }, { id: 'b', label: 'beta', score: '90/100' }];
+  const cGood = cBoard(cCell('alpha', '100/100') + cCell('beta', '90/100'), '100/100');
+  const cDrifted = cBoard(cCell('alpha', '100/100') + cCell('beta', '80/100'), '100/100');   // the surface drifted from the data
+  const cMissing = cBoard(cCell('alpha', '100/100'), '100/100');                              // a cell vanished from the surface
+  const cReordered = cBoard(cCell('beta', '90/100') + cCell('alpha', '100/100'), '100/100');    // the cells swapped places
+  const cSummary = cBoard(cCell('alpha', '100/100') + cCell('beta', '90/100'), '99/100');         // the summary drifted
+  const cEmptyData = [{ id: 'a', label: 'alpha', score: '100/100' }, { id: 'b', label: 'beta', score: '' }];
+  const c1 = boardProblems(cGood, cCats, '100/100', 'Level 5').length === 0;
+  const c2 = boardProblems(cDrifted, cCats, '100/100', 'Level 5').length > 0;
+  const c3 = boardProblems(cMissing, cCats, '100/100', 'Level 5').length > 0;
+  const c4 = boardProblems(cReordered, cCats, '100/100', 'Level 5').length > 0;
+  const c5 = boardProblems(cSummary, cCats, '100/100', 'Level 5').length > 0;
+  const c6 = boardProblems(cGood, cEmptyData, '100/100', 'Level 5').length > 0;   // the data lost its value
+  const c7 = boardProblems(cGood, [], '100/100', 'Level 5').length > 0;           // empty is not agreement
+  const c8 = boardProblems('<p>no board here</p>', cCats, '100/100', 'Level 5').length > 0;
+  const allCases = c1 && c2 && c3 && c4 && c5 && c6 && c7 && c8;
+  if (!allCases) {
     bad(`static board gate: OWN CONTROLS DO NOT HOLD (clean ${c1}, drifted cell ${c2}, missing cell ${c3}, `
       + `reordered ${c4}, drifted summary ${c5}, empty data ${c6}, no categories ${c7}, no board ${c8})`);
   } else {
-    const loydot = boardLoydot(src.worker.text, CATS, iar.score, lvl);
-    check(loydot.length === 0,
-      `static board gate: worker.ts source board == facts.json (${loydot.length ? loydot.join(' | ') : `${CATS.length} cells, labels, order, values and summary; 8 controls green; the SERVED page is proved by --live, not here`})`);
+    const boardFound = boardProblems(src.worker.text, CATS, iar.score, lvl);
+    check(boardFound.length === 0,
+      `static board gate: worker.ts source board == facts.json (${boardFound.length ? boardFound.join(' | ') : `${CATS.length} cells, labels, order, values and summary; 8 controls green; the SERVED page is proved by --live, not here`})`);
   }
 }
 
@@ -2277,9 +2310,10 @@ console.log('\nRate limiter: wrangler.jsonc vs worker.ts literals (round 14, R1g
     check(rlBlockFrom >= 0 && rlBlockTo > rlBlockFrom,
       `worker.ts: the rate limiter's own enforcement comment and its 429 Response() are both found`);
     const rlBlock = rlBlockTo > rlBlockFrom ? src.worker.text.slice(rlBlockFrom, rlBlockTo) : '';
-    const rlWordingCount = (rlBlock.match(new RegExp(rlWording.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+    const rlHedged = 'about ' + rlWording;
+    const rlWordingCount = (rlBlock.match(new RegExp(rlHedged.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
     check(rlWordingCount >= 2,
-      `worker.ts's rate limiter code states "${rlWording}" at least twice, in its own enforcement comment and its own 429 body (saw ${rlWordingCount})`);
+      `worker.ts's rate limiter code states "${rlHedged}" at least twice, in its own enforcement comment and its own 429 body (saw ${rlWordingCount})`);
   }
 }
 
@@ -2396,7 +2430,7 @@ console.log('\nx402 amounts derive from facts.json eurUsdc (kierros 18, S6-1)');
 {
   const eu = facts.eurUsdc;
   check(!!eu && typeof eu.rate === 'number' && eu.rate > 0, `facts.json eurUsdc.rate is a positive number (saw ${eu ? JSON.stringify(eu.rate) : 'absent'})`);
-  check(!!eu && /^\d{4}-\d{2}-\d{2}$/.test(String(eu.measuredAt)), `facts.json eurUsdc.measuredAt is an ISO date (saw ${eu ? JSON.stringify(eu.measuredAt) : 'absent'})`);
+  check(!!eu && isRealIsoDate(String(eu.measuredAt)), `facts.json eurUsdc.measuredAt is a real ISO date (saw ${eu ? JSON.stringify(eu.measuredAt) : 'absent'})`);
   // The key set is NOT named here. The three-key literal was fixed once already
   // (finding B4-19) and grew back into this block, so a fourth priced service or a
   // fourth paid route would have gone unchecked entirely. The set is read from the
@@ -2542,11 +2576,13 @@ if (LIVE) {
     '/.well-known/api-catalog','/.well-known/ard.json','/.well-known/ai-catalog.json','/.well-known/mcp/server-card.json',
     '/.well-known/agent-card.json','/.well-known/agent-skills/index.json',
     '/.well-known/oauth-authorization-server','/.well-known/oauth-protected-resource',
-    '/.well-known/ap2','/.well-known/acp','/.well-known/security.txt','/auth.md'];
+    '/.well-known/ap2','/.well-known/acp','/.well-known/security.txt','/auth.md','/.well-known/ai.txt','/blog/feed.xml'];
   for (const p of paths) {
     try { const r = await fetch(base+p, {redirect:'follow'}); check(r.ok, `GET ${p} -> ${r.status}`); }
     catch (e) { bad(`GET ${p} -> ${errWhy(e)}`); }
   }
+  // Third-party links: the Hardenize and Internet.nl website reports and the scanner's home page. The
+  // Internet.nl email report (facts.security.internetnlMail.url) is only compared as text, not fetched.
   for (const u of [H.url, I.url, 'https://isitagentready.com/']) {
     try { const r = await fetch(u, {redirect:'follow'}); check(r.ok, `GET ${u} -> ${r.status}`); }
     catch (e) { bad(`GET ${u} -> ${errWhy(e)}`); }
@@ -2555,7 +2591,8 @@ if (LIVE) {
   // Round 15 P4-2: a CORS preflight is part of the served contract of an agent-api surface.
   // Live, OPTIONS on /api, /openapi.json, /llms.txt and every /.well-known/ manifest fell
   // through to the GET handler and returned the body with no preflight headers, while
-  // /x402 and /api/v1 answered 204. Ask every agent-api surface the same question.
+  // /x402 and /api/v1 answered 204. Ask the agent-api surfaces in this list the same question. The list is fixed by hand and is not derived
+  // from the declared set, so a new surface is preflighted only once it is added here.
   for (const p of ['/api', '/api/v1', '/x402', '/openapi.json', '/llms.txt', '/auth.md',
     '/.well-known/ai-plugin.json', '/.well-known/mcp/server-card.json', '/.well-known/agent-card.json',
     '/.well-known/x402', '/.well-known/api-catalog']) {
@@ -2649,7 +2686,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
         `board labels == facts.json labels, in order (saw [${cells.map((c) => c.cat).join(', ')}])`);
       // Until 2026-08-30 this line read `c.val !== iar.score`, i.e. every cell had to equal
       // the SITE-WIDE score. That is right only while every category is full, and it is the
-      // trap recorded in gotchas 2026-08-01 (jatko 18) Ansa 4. The cell is now compared to
+      // trap found on 2026-08-01. The cell is now compared to
       // its own category's score in facts.json.
       // A missing or empty expected value is a FAIL, not a skip. Without that, a facts.json
       // that lost the field and a board that lost the number would compare undefined against
@@ -2699,11 +2736,13 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
     // Since Tek-488 round 3 the served twin is built from the same facts.json template as the static
     // one, so the two gates cannot drift into two sentence shapes.
     const ET = (iar.surfaceWording || {}).evidenceTwin || {};
+    // The category count the sentence is written for is read from the template's own placeholders.
+    const tplSlots = new Set([...String(ET.template || '').matchAll(/\{(\d)\}/g)].map((m) => m[1])).size;
     const want = String(ET.template || '').replace(/\{(\d)\}/g, (_, k) => (ET.spellingIndex || []).map((ix: number, n: number) => sp[n][ix])[Number(k)])
       .replace(/\{score\}/g, sc).replace(/\{level\}/g, lv) + 'agent-native.';
     const i = md.toLowerCase().replace(/\s+/g, ' ').indexOf(String(ET.spanFrom || '\u0000').toLowerCase());
     const gotMd = i < 0 ? '' : md.toLowerCase().replace(/\s+/g, ' ').slice(i, i + want.length);
-    check(CATS.length === 5 && gotMd === want,
+    check(tplSlots > 0 && CATS.length === tplSlots && gotMd === want,
       `served markdown twin states the set and both scores${gotMd === want ? '' : `\n        want: "${want}"\n        got:  "${gotMd}"`}`);
   } catch (e) { bad('served markdown twin: ' + (errWhy(e))); }
 
@@ -2726,8 +2765,8 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
   // This is the wide one. Saying which is which is the point: a wide check presented as a deep
   // one is how a gate passes for the wrong reason.
   //
-  // WHY IT IS OPT-IN, and this was measured before the check ever ran. Fifty-seven paths at two
-  // requests each is 114 requests, and this site applies its own advertised rate limit of about
+  // WHY IT IS OPT-IN, and this was measured before the check ever ran. The canonical set held 86 paths on
+  // 2026-11-07, so two requests each is 172 requests, and this site applies its own advertised rate limit of about
   // 100 requests per 60 s per IP, counted approximately in each Cloudflare location. The zone
   // rule with a 10 minute block (read 2026-09-23: action block, 600 s mitigation) covers only
   // /llms-txt-validator and the parity check's POST, so this sweep meets the Worker's 429 and
@@ -2740,16 +2779,16 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
     const cpM = src.worker.text.match(/const CANONICAL_PATHS = new Set\(\[([\s\S]*?)\]\)/);
     const paths = cpM ? [...cpM[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
     check(paths.length > 2, `CANONICAL_PATHS parsed from worker.ts (${paths.length} paths)`);
-    const rikki = [];
-    const rajoitettu = [];
-    // 1100 ms between requests: 114 requests spread over about 125 s, roughly 55 in any 60 s window.
+    const broken = [];
+    const rateLimited = [];
+    // 1100 ms between requests: 172 requests (86 paths on 2026-11-07) spread over about 190 s, roughly 55 in any 60 s window.
     // The first version used 700 ms and justified it with this block's own 114 requests alone. An
     // independent review pointed out the obvious omission: the same --live run makes 40 to 65 other
     // requests with no pacing at all, and they share the quota. 55 leaves room for those.
-    const odota = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
     for (const pth of paths) {
       try {
-        await odota(1100);
+        await sleep(1100);
         const r = await fetch(base + pth, { headers: { accept: 'text/markdown' } });
         const ct = (r.headers.get('content-type') || '').toLowerCase();
         const body = await r.text();
@@ -2758,29 +2797,29 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
         // 2026-08-16: the 700 ms pacing counted only this block's 114 requests, while the same
         // --live run makes 40 to 65 other unpaced requests, all of which count against the same
         // 100/60 s quota. The pacing went up to 1100 milliseconds and a 429 is reported as itself.
-        if (r.status === 429) { rajoitettu.push(pth); continue; }
+        if (r.status === 429) { rateLimited.push(pth); continue; }
         const mdProblem = markdownTwinProblem(pth, r.status); // WL-27: exactly 200, not any 2xx
-        if (mdProblem) { rikki.push(mdProblem); continue; }
-        if (!ct.includes('markdown')) { rikki.push(`${pth}: content-type ${ct || 'none'}`); continue; }
-        if (/<!DOCTYPE/i.test(body)) { rikki.push(`${pth}: body is an HTML document`); continue; }
-        if (!body.trim()) { rikki.push(`${pth}: empty body`); continue; }
+        if (mdProblem) { broken.push(mdProblem); continue; }
+        if (!ct.includes('markdown')) { broken.push(`${pth}: content-type ${ct || 'none'}`); continue; }
+        if (/<!DOCTYPE/i.test(body)) { broken.push(`${pth}: body is an HTML document`); continue; }
+        if (!body.trim()) { broken.push(`${pth}: empty body`); continue; }
         const mdH1 = (body.match(/^#\s+(.+)$/m) || [])[1];
-        await odota(1100);
+        await sleep(1100);
         const htmlRes = await fetch(base + pth);
         const html = await htmlRes.text();
         const htmlProblem = htmlTwinProblem(pth, htmlRes.status, htmlRes.headers.get('content-type')); // WL-27
-        if (htmlProblem) { rikki.push(htmlProblem); continue; }
+        if (htmlProblem) { broken.push(htmlProblem); continue; }
         const htmlH1raw = (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1];
-        if (!mdH1 || !htmlH1raw) { rikki.push(`${pth}: no h1 in ${!mdH1 ? 'markdown' : 'html'}`); continue; }
+        if (!mdH1 || !htmlH1raw) { broken.push(`${pth}: no h1 in ${!mdH1 ? 'markdown' : 'html'}`); continue; }
         const norm = (s: string) => h1Decode(h1Strip(s))
           .replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
-        if (norm(mdH1) !== norm(htmlH1raw)) rikki.push(`${pth}: h1 differs, md "${norm(mdH1)}" vs html "${norm(htmlH1raw)}"`);
-      } catch (e) { rikki.push(`${pth}: ${errWhy(e)}`); }
+        if (norm(mdH1) !== norm(htmlH1raw)) broken.push(`${pth}: h1 differs, md "${norm(mdH1)}" vs html "${norm(htmlH1raw)}"`);
+      } catch (e) { broken.push(`${pth}: ${errWhy(e)}`); }
     }
-    check(paths.length > 2 && rikki.length === 0 && rajoitettu.length === 0,
+    check(paths.length > 2 && broken.length === 0 && rateLimited.length === 0,
       `every canonical path serves a markdown twin whose h1 matches the HTML (${paths.length} paths`
-      + `${rikki.length ? ', broken: ' + rikki.slice(0, 6).join('; ') + (rikki.length > 6 ? ` and ${rikki.length - 6} more` : '') : ''}`
-      + `${rajoitettu.length ? `; RATE LIMITED on ${rajoitettu.length} paths, this run measured the limiter and not the twins, raise the pacing and re-run` : ''})`);
+      + `${broken.length ? ', broken: ' + broken.slice(0, 6).join('; ') + (broken.length > 6 ? ` and ${broken.length - 6} more` : '') : ''}`
+      + `${rateLimited.length ? `; RATE LIMITED on ${rateLimited.length} paths, this run measured the limiter and not the twins, raise the pacing and re-run` : ''})`);
   } catch (e) { bad('canonical markdown twins: ' + (errWhy(e))); }
   else if (LIVE) console.log('  skip  canonical markdown twins (add --twins; two paced requests per canonical page, see the note above)');
 
@@ -3175,9 +3214,8 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
   // alone passes a list with one name twice and another absent. See /blog/my-gate-could-not-see-a-sixth.
   //
   // These are catalogues and not payable-rail lists, which is why all five belong here. The
-  // surfaces deliberately left at three are /openapi.json, /.well-known/x402 and the x402 challenge:
-  // those enumerate what an agent can actually pay for, and the Shopify check has no card link and
-  // no on-chain resource by decision (mds/decisions.md Tek-176).
+  // payable-rail lists, /openapi.json, /.well-known/x402 and the x402 challenge, enumerate what an
+  // agent can actually pay for and are read by their own blocks, so they are not listed here.
   const priceList = (label: string, found: string[]) => {
     const want = PRICED.map((s) => s.name);
     const seen = new Set(), dupes = [];
@@ -3577,7 +3615,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
           'get_services does not promise that each scanner cycle reads higher than the last');
       }
       // Prices were watched here and the deliverables were not, and they are the same
-      // promises /services makes in prose, written by hand in two repos. Astra measured the
+      // promises /services makes in prose, written by hand in two repos. An outside reader measured the
       // drift 2026-09-10: the audit deliverable had lost the re-scan within 30 days of the
       // report that seven places on the site promise, the advisory deliverable had lost the
       // monthly written summary, and the Shopify retest gave 14 days without naming the day
@@ -3637,7 +3675,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
         `get_agent_readiness measured_at == facts.json ${facts.agentReadiness.measuredAt} (saw ${rdy.measured_at})`);
       scansSane(rdy.scans, 'get_agent_readiness');
       const scan = (rdy.scans || []).find((s: { provider?: string }) => s.provider === 'isitagentready.com') || {};
-      check(String(scan.result || '').includes(scanner.score) && String(scanner.level) && String(scan.result || '').includes(scanner.level),
+      check(((m) => !!m && m[1] === scanner.score && m[2] === scanner.level)(String(scan.result || '').match(/^(\d+\/\d+), (Level \d+)(?: \([^)]*\))?$/)),
         `get_agent_readiness states ${scanner.score} and ${scanner.level} (saw ${JSON.stringify(scan.result)})`);
       // Read the category set defensively: if facts.json ever loses it, the failure
       // should name that and let the other checks still run, not throw out of the
@@ -3656,7 +3694,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
         // gate held its own copy of a published number: if the number moves, the gate would
         // watch the old value. It is now read from facts.json's per-category field.
         // The form is still checked, because picking out bare integers once accepted a word
-        // that reverses the meaning (gotchas 2026-08-01 (jatko 18) Ansa 3):
+        // that reverses the meaning (trap found on 2026-08-01):
         // the comparison is against the whole string and not against numbers found inside it.
         const want = typeof c.score === 'string' ? c.score.trim() : '';
         if (!want) { check(false, `facts.json category ${c.id} carries a score for the MCP comparison`); continue; }
@@ -3670,13 +3708,13 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
       check(secEv.measured_at === facts.security.measuredAt,
         `get_security_evidence measured_at == facts.json ${facts.security.measuredAt} (saw ${secEv.measured_at})`);
       // The two records state the same measurement in different words on purpose
-      // ("all 13 categories passed" against "13/13 categories passed", "98/100" against
+      // ("all N categories passed" against "N/N categories passed", "98/100" against
       // a score beside a scale), so the numbers are compared and the prose is not.
       scansSane(secEv.scans, 'get_security_evidence');
       const hz = (secEv.scans || []).find((s: { provider?: string }) => s.provider === 'Hardenize') || {};
       const wantHz = ints(facts.security.hardenize.result)[0];
       // The word carries as much of the claim as the number does: reading loose integers
-      // passed "13/13 categories failed" without complaint.
+      // passed "N/N categories failed" without complaint.
       const hzM = String(hz.result).match(/^(\d+)\/(\d+) categories passed$/);
       check(Number.isFinite(wantHz) && !!hzM && Number(hzM[1]) === wantHz && Number(hzM[2]) === wantHz,
         `get_security_evidence Hardenize reads ${wantHz}/${wantHz} categories passed (saw ${JSON.stringify(hz.result)})`);
@@ -3861,7 +3899,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
     // to a person and NOT a check: whoever updates the hash can still leave the id alone, and
     // all four checks here would be green with a changed policy behind an unchanged cache key.
     // Measured 2026-08-10. Deriving the id from the policy would make it a check, and that is a
-    // DNS format change and Erik's decision (mds/decisions.md Tek-188).
+    // DNS format change and the site owner's decision.
     const ms = facts.mtaSts || {};
     const polSha = createHash('sha256').update(Buffer.from(pol, 'utf8')).digest('hex');
     check(ms.policySha256 === polSha,
@@ -3877,7 +3915,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
         ? 'A resolver answered with an error code instead of the record, and the retries did not change that, '
         : 'The DNS or HTTPS call timed out after three attempts, ')
       + 'which says nothing about the record. Run this again on a network that '
-      + 'resolves, and read mds/decisions.md Tek-299 before treating it as a finding.');
+      + 'resolves, and treat it as a finding only if it fails again there.');
     // fetch() keeps its reason in e.cause (a socket or TLS code), so a failed read printed only
     // "fetch failed" and a red run could not tell this machine's network from the domain.
     else {
@@ -3887,7 +3925,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
     }
   }
 } else {
-  console.log('\n(static run - add --live on a networked machine to GET every declared URL and verify signatures)');
+  console.log('\n(static run - add --live on a networked machine to GET the fixed list of declared surfaces in the live block and verify signatures; --twins adds every canonical page)');
 }
 
 // The unmeasured count rides on the same line so it cannot be read past, and the exit code

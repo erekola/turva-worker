@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { generateKeyPairSync } from "node:crypto";
 import {
   scopeListsAgree, parseScopeList, readmeMeasurementDates, homeRequiresMatches, markdownTwinProblem,
-  htmlTwinProblem, jwkToEd25519Key, isRealIsoDate,
+  htmlTwinProblem, jwkToEd25519Key, isRealIsoDate, headersFileProblems,
 } from "../../tools/verify-helpers.mts";
 
 // Regression tests for the Sol repo-read items WL-24 to WL-29 (Tek-578, session S2): the
@@ -128,4 +128,42 @@ test("WL-24 to WL-29: tools/verify.mts imports and calls every helper at the pla
   assert.equal((v.match(/jwkToEd25519Key\(k\)/g) || []).length, 2);
   assert.doesNotMatch(v, /302a300506032b6570032100/);
   assert.match(v, /isRealIsoDate\(cm\[1\]\)/);
+  assert.match(v, /headersFileProblems\(readFileSync\(join\(ROOT, 'turva-worker\/public\/_headers'\)/);
+});
+
+// ---------------------------------------------------------------- round 24, D1-5
+
+const WORKER_FIXTURE = `
+const PP = ["a=()", "b=(self)"].join(", ");
+function applySecurityHeaders(headers: Headers, kind: string) {
+  headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  headers.set("X-Frame-Options", "DENY");
+  headers.set("Permissions-Policy", PP);
+  headers.set("RateLimit-Policy", '"default";q=100;w=60');
+  if (kind === "html") {
+    headers.set("Cross-Origin-Resource-Policy", "same-origin");
+  } else {
+    headers.set("Cross-Origin-Resource-Policy", "cross-origin");
+  }
+}
+`;
+const HEADERS_FIXTURE = "/*\n  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload\n  X-Frame-Options: DENY\n  Permissions-Policy: a=(), b=(self)\n  Cross-Origin-Resource-Policy: same-origin\n\n/*.png\n  Cache-Control: public, max-age=86400\n";
+
+test("D1-5: matching headers file and applySecurityHeaders give four compared headers and no problem", () => {
+  const r = headersFileProblems(HEADERS_FIXTURE, WORKER_FIXTURE);
+  assert.deepEqual(r.problems, []);
+  assert.equal(r.compared.length, 4);
+});
+
+test("D1-5: a differing value, a header the function never sets and a missing function are each reported by name", () => {
+  const hsts = headersFileProblems(HEADERS_FIXTURE.replace("max-age=31536000", "max-age=1"), WORKER_FIXTURE);
+  assert.equal(hsts.problems.length, 1);
+  assert.match(hsts.problems[0], /^Strict-Transport-Security: /);
+  const pp = headersFileProblems(HEADERS_FIXTURE.replace("b=(self)", "b=()"), WORKER_FIXTURE);
+  assert.match(pp.problems.join(" "), /Permissions-Policy/);
+  const extra = headersFileProblems(HEADERS_FIXTURE.replace("X-Frame-Options: DENY", "X-Frame-Options: DENY\n  X-Extra: 1"), WORKER_FIXTURE);
+  assert.match(extra.problems.join(" "), /X-Extra: set in public\/_headers but never/);
+  const gone = headersFileProblems(HEADERS_FIXTURE, "const nothing = 1;");
+  assert.match(gone.problems.join(" "), /applySecurityHeaders was not found/);
+  assert.equal(headersFileProblems("# nothing\n", WORKER_FIXTURE).problems[0], "public/_headers has no /* block");
 });

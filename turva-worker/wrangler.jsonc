@@ -30,10 +30,10 @@
   "vars": { "PARITY_REMOTE_FETCH": "off" },
   "kv_namespaces": [
     {
-      // Tek-269 (2026-08-24). Asiakaskohtaiset briefit, yksi avain per brief, arvona
-      // valmis markdown ja valmis JSON. Sisalto EI ole tassa repossa, koska repo on
-      // julkinen ja brief nimeaa asiakkaan yrityksen ja sen puutteet. Kirjoitus tapahtuu
-      // erikseen komennolla, ei deployn yhteydessa, joten uusi brief ei ole koodimuutos.
+      // Tek-269 (2026-08-24). Per-client briefs, one key per brief, the value a finished
+      // markdown and a finished JSON. The content is NOT in this repo, because the repo is
+      // public and a brief names the client's company and its gaps. Writing happens
+      // separately by command, not at deploy, so a new brief is not a code change.
       "binding": "BRIEFIT",
       "id": "457b974771c6471885cb0ba1ae64804d"
     }

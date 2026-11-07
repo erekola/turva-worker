@@ -57,7 +57,7 @@ turva.dev is the reference build maintained alongside this repository. Measured 
 
 - isitagentready.com (Cloudflare’s agent-readiness scanner): 100 / 100, Level 5 Agent-Native.
 
-isitagentready.com groups its checks into five categories: Discoverability, Content Accessibility, Bot Access Control, API/Auth/MCP & A2A Discovery, and Commerce. turva.dev passes every check in all five, Commerce included since 2026-07-20. The commerce surface declares a real x402 challenge and real card payment links, so the discovery checks read what the site actually accepts. Settlement is still quote-on-request rather than automatic, which the checks do not test.
+isitagentready.com groups its checks into five categories: Discoverability, Content Accessibility, Bot Access Control, API, Auth, MCP & A2A Discovery, and Commerce. turva.dev passes every check in all five, Commerce included since 2026-07-20. The commerce surface declares a real x402 challenge and real card payment links, so the discovery checks read what the site actually accepts. Settlement is still quote-on-request rather than automatic, which the checks do not test.
 
 These figures describe one site. They are a worked example rather than a target every site needs to match.
 
@@ -75,4 +75,4 @@ The site also signs several of its machine-readable manifests. An Ed25519 public
 
 ## Source and contact
 
-Maintained by Erik Rekola, turva.dev. Agent-readiness audits, advisory, and implementation, async only. Email info@turva.dev, web https://turva.dev, LinkedIn https://www.linkedin.com/in/erikrekola. Licensed for reuse under the repository's MIT license.
+Maintained by Erik Rekola, turva.dev. Agent-readiness audits, advisory, and implementation, async only. Email info@turva.dev, web https://turva.dev, LinkedIn https://www.linkedin.com/in/erikrekola/. Licensed for reuse under the repository's MIT license.

@@ -176,7 +176,7 @@ test("LV-07: an empty destination is a relative link, also in a paragraph", asyn
     [H + G + "- [Bad](<>)\n", { lnk: "warn", lnkRe: /^2 links, 1 relative/, lnkNot: /not a Markdown link/ }],
     [H + G + "\nSee [Bad]() for more.\n", { lnk: "warn", lnkRe: /^2 links, 1 relative/ }],
     [H + G + "\nSee [Bad](<>) for more.\n", { lnk: "warn", lnkRe: /^2 links, 1 relative/ }],
-    [H + "- [Bad]()\n", { lnk: "warn", lnkRe: /^1 links, 1 relative/, lnkNot: /not a Markdown link/ }],
+    [H + "- [Bad]()\n", { lnk: "warn", lnkRe: /^1 link, 1 relative/, lnkNot: /not a Markdown link/ }],
   ]);
 });
 test("LV-07 control: a fragment link is relative as before", async () => {
@@ -311,7 +311,7 @@ test("LV-17 control: ASCII case and different labels", async () => {
 });
 
 test("LV-18: a destination is not decoded like an HTML attribute", async () => {
-  const rel = { lnk: "warn", lnkRe: /^1 links, 1 relative/ };
+  const rel = { lnk: "warn", lnkRe: /^1 link, 1 relative/ };
   await expectAll([
     [H + "- [Guide](https&#58//example.com/a)\n", rel],
     [H + "- [Guide](https&#x3a//example.com/a)\n", rel],

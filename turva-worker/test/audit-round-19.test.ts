@@ -3,11 +3,12 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import worker, { markdownToHtml, renderInline } from "../src/worker.ts";
 
-// Regression tests for audit round 19 (docs/auditit/kierros-19/korjaussuunnitelma.md).
+// Regression tests for audit round 19.
 // Each test names the finding id it guards (F1, K6-1, ... G1-5) so a failure maps back
-// to one row of the fix plan. Every fix test below was checked against the pre-fix
-// worker.js (worker.orig.js, sha256 ca0f4b2a...8baa28) and fails there; every G1 test
-// checks a surface round 19 did not touch and passes on both versions.
+// to one row of that round's fix plan. Every fix test below was checked against the
+// pre-fix worker.js and fails there, except K4-4, which says for itself that it is a
+// safety net and passes on both versions; every G1 test checks a surface round 19 did
+// not touch and passes on both versions.
 
 const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
 
@@ -103,8 +104,9 @@ test("K4-2: a bidi override character does not reach the label or the angle-brac
 });
 
 // ---- K4-4: every JSON-LD block on the home page parses ----
-// This may pass against the pre-fix worker.js too: today's home page FAQ has no "</"
-// sequence to close early, so jsonLdSafe's fix changes no existing page's output.
+// A safety net, not a fix test: it passes against the pre-fix worker.js too, because today's
+// home page FAQ has no "</" sequence to close early, so jsonLdSafe's fix changes no existing
+// page's output. The test that compares the source with the fix is in the patch 2 file.
 
 test("K4-4: every application/ld+json block on the home page parses", async () => {
   const res = await get("/");
@@ -120,8 +122,10 @@ test("K4-4: every application/ld+json block on the home page parses", async () =
 
 test("K7-2: an accepted llms.txt redirect is masked in the JSON and HTML output alike", async () => {
   const realFetch = globalThis.fetch;
+  const fetched: string[] = [];
   globalThis.fetch = async (url) => {
     const u = String(url);
+    fetched.push(u);
     if (u === "https://probe-target.example/llms.txt") {
       return new Response(null, { status: 301, headers: { location: "/llms.txt?session=TOKEN123#frag" } });
     }
@@ -139,16 +143,22 @@ test("K7-2: an accepted llms.txt redirect is masked in the JSON and HTML output 
       env
     );
     const jsonText = await jsonRes.text();
+    // Positive side first: the redirect was followed and the file was read, so the masking checks below
+    // are not passing on an empty answer.
+    assert.ok(fetched.includes("https://probe-target.example/llms.txt?session=TOKEN123#frag"), "the accepted redirect target must have been fetched");
+    const parsed = JSON.parse(jsonText);
+    assert.ok(Array.isArray(parsed.checks) && parsed.checks.length > 0, "the JSON answer must carry the check results");
     assert.ok(!jsonText.includes("TOKEN123"), "the JSON answer must not carry the query value");
-    assert.ok(!jsonText.toLowerCase().includes("frag"), "the JSON answer must not carry the fragment");
+    assert.ok(!jsonText.includes("#frag"), "the JSON answer must not carry the fragment");
 
     const htmlRes = await worker.fetch(
       new Request("https://turva.dev/llms-txt-validator?url=probe-target.example", { headers: { accept: "text/html" } }),
       env
     );
     const htmlText = await htmlRes.text();
+    assert.ok(htmlText.includes("llms.txt"), "the HTML answer must be the validator page with a result");
     assert.ok(!htmlText.includes("TOKEN123"), "the HTML answer must not carry the query value");
-    assert.ok(!htmlText.toLowerCase().includes("frag"), "the HTML answer must not carry the fragment");
+    assert.ok(!htmlText.includes("#frag"), "the HTML answer must not carry the fragment");
   } finally {
     globalThis.fetch = realFetch;
   }
@@ -160,8 +170,10 @@ test("V6-U1: a bidi override in the fetched llms.txt does not reach the JSON or 
   const rtl = String.fromCharCode(0x202e);
   const body = "# Site" + rtl + " name\n\n> A summary" + rtl + " line.\n";
   const realFetch = globalThis.fetch;
+  const fetched: string[] = [];
   globalThis.fetch = async (url) => {
     const u = String(url);
+    fetched.push(u);
     if (u === "https://probe-target2.example/llms.txt") {
       return new Response(body, { status: 200, headers: { "content-type": "text/plain; charset=utf-8" } });
     }
@@ -176,6 +188,9 @@ test("V6-U1: a bidi override in the fetched llms.txt does not reach the JSON or 
       env
     );
     const jsonText = await jsonRes.text();
+    assert.ok(fetched.includes("https://probe-target2.example/llms.txt"), "the file with the override character must have been fetched");
+    const parsed = JSON.parse(jsonText);
+    assert.ok(Array.isArray(parsed.checks) && parsed.checks.length > 0, "the JSON answer must carry the check results");
     assert.ok(!jsonText.includes(rtl), "the JSON answer must not carry the override character");
 
     const htmlRes = await worker.fetch(
@@ -298,13 +313,15 @@ test("V4-U1: ownPath in the served WebMCP script refuses a path that starts with
 
 // ---- K5-1: reduced motion turns off the hover transform on cell, step and svc cards ----
 
-test("K5-1: a prefers-reduced-motion rule names .cell:hover on the home page", async () => {
+test("K5-1: a prefers-reduced-motion rule names .cell:hover, .step:hover and .svc:hover on the home page", async () => {
   const res = await get("/");
   const html = await res.text();
   const idx = html.indexOf("@media (prefers-reduced-motion:reduce)");
   assert.notEqual(idx, -1, "the page must carry a prefers-reduced-motion rule");
   const chunk = html.slice(idx, idx + 300);
-  assert.ok(chunk.includes(".cell:hover"), "the reduced-motion rule must name .cell:hover: " + chunk);
+  for (const sel of [".cell:hover", ".step:hover", ".svc:hover"]) {
+    assert.ok(chunk.includes(sel), "the reduced-motion rule must name " + sel + ": " + chunk);
+  }
 });
 
 // ---- C4-1: the Codeberg post's meta date and its own correction note both read 2026-09-06 ----

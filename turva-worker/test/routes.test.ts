@@ -1,8 +1,63 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker, { findLinkRelations, markdownToHtml } from "../src/worker.ts";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
+
+// Growth check for the tests that say a scan "stays linear".
+// The package turva-llms-txt-validator keeps the same function in test/growth.ts; it is inline here
+// because this repo's test runner would treat a shared file in test/ as a test.
+//
+// Why a ratio and not a limit in milliseconds. A fixed limit fails on a slow CI runner and lets a
+// slow but quadratic scan through. Two inputs of one shape, the second about four times the first,
+// are timed instead. A linear scan takes about four times as long on the larger one, a quadratic
+// scan about sixteen times, and the limit sits between the two on the log scale: sizes ** 1.5, which
+// is 8 for 4x the input and about 22.6 for 8x. Each input is timed several times and the fastest
+// run counts, because load on the machine only ever adds time, never removes it. The small input is
+// repeated until one sample takes at least 1 ms, so the clock resolution does not decide the ratio and
+// the samples stay short: a short sample is likelier to fall between two interruptions of a busy machine.
+// The check passes as soon as nine rounds give a ratio under the limit. On a loaded machine the ratio
+// of the fastest runs can sit above the limit because the larger input was interrupted more often, so
+// more rounds are taken, at most 60 and at most four seconds, before the check fails. A scan that is
+// really quadratic stays above the limit through all of them (checked against a deliberately quadratic scan).
+async function timeIt(work: (input: string) => unknown, input: string, reps: number): Promise<number> {
+  const started = performance.now();
+  for (let i = 0; i < reps; i++) {
+    const out = work(input);
+    if (out instanceof Promise) await out;
+  }
+  return performance.now() - started;
+}
+
+// The limit for an input that is `sizes` times larger: the midpoint, on the log scale, between a
+// linear scan (sizes) and a quadratic one (sizes squared).
+const growthLimit = (sizes: number): number => sizes ** 1.5;
+
+async function growthRatio(work: (input: string) => unknown, small: string, large: string, limit: number = Infinity): Promise<{ ratio: number; rounds: number }> {
+  await timeIt(work, large, 1);
+  await timeIt(work, small, 1);
+  let reps = 1;
+  while (reps < 4096 && (await timeIt(work, small, reps)) < 1) reps *= 2;
+  const begun = performance.now();
+  let minSmall = Infinity;
+  let minLarge = Infinity;
+  let rounds = 0;
+  for (;;) {
+    minSmall = Math.min(minSmall, await timeIt(work, small, reps));
+    minLarge = Math.min(minLarge, await timeIt(work, large, reps));
+    rounds++;
+    const ratio = minLarge / minSmall;
+    if (rounds >= 9 && ratio < limit) return { ratio, rounds };
+    if (rounds >= 60 || (rounds >= 9 && performance.now() - begun > 4000)) return { ratio, rounds };
+  }
+}
+
+async function assertLinear(label: string, work: (input: string) => unknown, small: string, large: string): Promise<void> {
+  const sizes = large.length / small.length;
+  const limit = growthLimit(sizes);
+  const g = await growthRatio(work, small, large, limit);
+  assert.ok(g.ratio < limit, label + ": " + sizes.toFixed(1) + "x the input took " + g.ratio.toFixed(1) + "x as long after " + g.rounds + " rounds, limit " + limit.toFixed(1));
+}
 
 // facts.json owns which services exist. The service count used to be written into this
 // file by hand, as `>= 5` with a message saying "all five offerings", so it was wrong by
@@ -156,7 +211,7 @@ test("every path listed in the API index resolves", async () => {
   }
 });
 
-test("the site version is the same in every manifest that carries one", async () => {
+test("the OpenAPI document and the A2A agent card carry the same site version", async () => {
   const openapi = await json(await get("/openapi.json"));
   const a2a = await json(await get("/.well-known/agent-card.json"));
   assert.equal(openapi.info.version, a2a.version);
@@ -373,7 +428,7 @@ test("the first declaration of an attribute wins, as in the HTML tokenizer", () 
   assert.equal(findLinkRelations('<head><link rel="alternate" type="text/markdown" href="/first.md" href="/second.md">', "").markdown, "/first.md");
 });
 
-test("findLinkRelations does not count what a page did not publish", () => {
+test("findLinkRelations does not count what a page did not publish", async () => {
   assert.deepEqual(
     findLinkRelations('<head><!-- <link rel="alternate" type="text/markdown" href="/commented.md"> --></head>', ""),
     { describedby: null, markdown: null });
@@ -407,12 +462,12 @@ test("findLinkRelations does not count what a page did not publish", () => {
   assert.equal(findLinkRelations('<head><title>How to use <link rel=describedby href=/fake></title><link rel="describedby" href="/real"></head>', "").describedby, "/real");
   // A tag that never closes is not a tag, and the scan must not slow down over it.
   // The regex this replaced was quadratic: 16 000 unclosed "<link" measured 196 ms and
-  // 256 KB of them would have taken minutes. Generous bound so the test is not flaky.
+  // 256 KB of them would have taken minutes. The growth between two sizes is compared, not a time.
   const pathological = "<link".repeat(52428);
-  const t0 = Date.now();
   assert.deepEqual(findLinkRelations(pathological, ""), { describedby: null, markdown: null });
   assert.deepEqual(findLinkRelations("", "<".repeat(65536)), { describedby: null, markdown: null });
-  assert.ok(Date.now() - t0 < 2000, "256 KB of unclosed tags must not take seconds");
+  await assertLinear("<link", (s) => findLinkRelations(s, ""), "<link".repeat(13107), pathological);
+  await assertLinear("Link header", (s) => findLinkRelations("", s), "<".repeat(16384), "<".repeat(65536));
   // "<link<link<link rel=..." is ONE tag whose name is "link<link<link", not a link
   // element, so nothing is published. Measured against parse5.
   assert.equal(findLinkRelations('<head><link<link<link rel="describedby" href="/real">', "").describedby, null);
@@ -537,9 +592,9 @@ const BRIEF_REC = {
 
 const briefEnv = {
   BRIEFIT: {
-    get: async (avain: string, opts?: { type?: string }) => {
-      assert.equal(opts && opts.type, "json", "brief luetaan JSONina");
-      return avain === BRIEF_REC.id ? BRIEF_REC : null;
+    get: async (key: string, opts?: { type?: string }) => {
+      assert.equal(opts && opts.type, "json", "the brief is read as JSON");
+      return key === BRIEF_REC.id ? BRIEF_REC : null;
     }
   }
 };
@@ -547,7 +602,7 @@ const briefEnv = {
 const getBrief = (path: string) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: "GET" }), briefEnv);
 
-test("brief: HTML vastaa, kantaa noindexin eika mene valimuistiin", async () => {
+test("brief: the HTML answers, carries noindex and is not cached", async () => {
   const r = await getBrief("/brief/" + BRIEF_REC.id);
   assert.equal(r.status, 200);
   assert.match(r.headers.get("content-type")!, /text\/html/);
@@ -555,34 +610,34 @@ test("brief: HTML vastaa, kantaa noindexin eika mene valimuistiin", async () => 
   assert.equal(r.headers.get("cache-control"), "private, no-store");
   assert.equal(r.headers.get("content-language"), "fi");
   const html = await r.text();
-  assert.match(html, /<html lang="fi">/, "suomenkielinen brief on suomenkielinen sivu");
+  assert.match(html, /<html lang="fi">/, "a Finnish brief is a Finnish page");
   assert.match(html, /<meta name="robots" content="noindex, nofollow" \/>/);
   assert.match(html, /<h1>Testiyhtio ja kaksi puuttuvaa riviä<\/h1>/);
-  assert.match(html, /<hr \/>/, "vaakaviiva ei saa latoutua kappaleeksi jossa lukee ---");
-  assert.ok(!/<p>---<\/p>/.test(html), "--- ei saa jaada nakyviin");
-  assert.match(html, /<th role="columnheader" scope="col">discoverability<\/th>/, "taulukko latoutuu taulukkona");
+  assert.match(html, /<hr \/>/, "the horizontal rule must not be laid out as a paragraph reading ---");
+  assert.ok(!/<p>---<\/p>/.test(html), "--- must not stay visible");
+  assert.match(html, /<th role="columnheader" scope="col">discoverability<\/th>/, "the table is laid out as a table");
   assert.match(html, /<li>Ensimmainen kohta\.<\/li>/);
-  assert.ok(!/1\\\./.test(html), "markdownin kenoviivasuojaus ei saa nakya sivulla");
-  assert.match(html, /1\. Tama on lause/, "suojattu rivi latoutuu proosana");
-  assert.match(html, /<p># Tama rivi on proosaa eika otsikko\.<\/p>/, "suojattu # latoutuu proosana");
-  assert.ok(!/<h1>Tama rivi/.test(html), "suojattu # ei saa tulla otsikoksi");
-  assert.match(html, /<p>- Tama rivi on proosaa eika lista\.\nToinen rivi samassa kappaleessa\.<\/p>/, "suojattu - latoutuu proosana ja kappaleen toinen rivi sailyy");
-  assert.ok(!/<li>Tama rivi/.test(html), "suojattu - ei saa tulla listaksi");
-  assert.match(html, /<p>&gt; Tama rivi on proosaa eika lainaus\.<\/p>/, "suojattu > latoutuu tekstina");
-  assert.match(html, /<p>Lahteen oma yksityisalueen merkki \uE003 sailyy\.<\/p>/, "lahteen oma yksityisalueen merkki ei muutu valimerkiksi");
-  assert.equal((html.match(/[\uE000-\uE007]/g) || []).length, 1, "paikanvaraaja ei saa jaada sivulle");
+  assert.ok(!/1\\\./.test(html), "the markdown backslash escape must not show on the page");
+  assert.match(html, /1\. Tama on lause/, "the escaped line is laid out as prose");
+  assert.match(html, /<p># Tama rivi on proosaa eika otsikko\.<\/p>/, "an escaped # is laid out as prose");
+  assert.ok(!/<h1>Tama rivi/.test(html), "an escaped # must not become a heading");
+  assert.match(html, /<p>- Tama rivi on proosaa eika lista\.\nToinen rivi samassa kappaleessa\.<\/p>/, "an escaped - is laid out as prose and the paragraph keeps its second line");
+  assert.ok(!/<li>Tama rivi/.test(html), "an escaped - must not become a list");
+  assert.match(html, /<p>&gt; Tama rivi on proosaa eika lainaus\.<\/p>/, "an escaped > is laid out as text");
+  assert.match(html, /<p>Lahteen oma yksityisalueen merkki  sailyy\.<\/p>/, "the source's own private-use character does not turn into a placeholder");
+  assert.equal((html.match(/[-]/g) || []).length, 1, "a placeholder must not be left on the page");
 });
 
-test("brief: .md vastaa tavulleen sen mita KV:ssa on", async () => {
+test("brief: .md answers byte for byte what the KV holds", async () => {
   const r = await getBrief("/brief/" + BRIEF_REC.id + ".md");
   assert.equal(r.status, 200);
   assert.match(r.headers.get("content-type")!, /text\/markdown/);
   assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow");
-  assert.equal(await r.text(), BRIEF_MD, "markdown menee ulos muuttumattomana");
+  assert.equal(await r.text(), BRIEF_MD, "the markdown goes out unchanged");
   assert.equal(r.headers.get("content-location"), "https://turva.dev/brief/" + BRIEF_REC.id);
 });
 
-test("brief: .json vastaa tallennetun rakenteen", async () => {
+test("brief: .json answers the stored structure", async () => {
   const r = await getBrief("/brief/" + BRIEF_REC.id + ".json");
   assert.equal(r.status, 200);
   assert.match(r.headers.get("content-type")!, /application\/json/);
@@ -592,7 +647,7 @@ test("brief: .json vastaa tallennetun rakenteen", async () => {
   assert.equal(j.kohde.yritys, "Testiyhtio Oy");
 });
 
-test("brief: kaikki kolme muotoa tulevat samasta tunnuksesta", async () => {
+test("brief: all three forms come from the same id", async () => {
   const [h, m, j] = await Promise.all([
     getBrief("/brief/" + BRIEF_REC.id),
     getBrief("/brief/" + BRIEF_REC.id + ".md"),
@@ -600,35 +655,35 @@ test("brief: kaikki kolme muotoa tulevat samasta tunnuksesta", async () => {
   ]);
   for (const r of [h, m, j]) assert.equal(r.status, 200);
   const html = await h.text();
-  const kanta = "https://turva.dev/brief/" + BRIEF_REC.id;
-  assert.ok(html.includes('href="' + kanta + '.md"'), "sivu linkittaa oman markdowninsa");
-  assert.ok(html.includes('href="' + kanta + '.json"'), "sivu linkittaa oman JSONinsa");
+  const base = "https://turva.dev/brief/" + BRIEF_REC.id;
+  assert.ok(html.includes('href="' + base + '.md"'), "the page links to its own markdown");
+  assert.ok(html.includes('href="' + base + '.json"'), "the page links to its own JSON");
 });
 
-test("brief: loppuvalimerkki ohjataan pois, ei 404, Tek-323", async () => {
+test("brief: trailing punctuation is redirected away, not a 404, Tek-323", async () => {
   // A mail client links the address in the text part itself, and some of them take
   // the sentence-ending period along. Without this route the reader gets a 404 from
   // the very address the message was meant to deliver. Measured live 2026-08-31.
-  const kanta = "/brief/" + BRIEF_REC.id;
-  for (const [polku, kohde] of [
-    [kanta + ".", kanta],
-    [kanta + ",", kanta],
-    [kanta + ")", kanta],
-    [kanta + ".).", kanta],
-    [kanta + ".md.", kanta + ".md"],
-    [kanta + ".json)", kanta + ".json"]
+  const base = "/brief/" + BRIEF_REC.id;
+  for (const [path, target] of [
+    [base + ".", base],
+    [base + ",", base],
+    [base + ")", base],
+    [base + ".).", base],
+    [base + ".md.", base + ".md"],
+    [base + ".json)", base + ".json"]
   ]) {
-    const r = await getBrief(polku);
-    assert.equal(r.status, 301, polku + " ohjataan");
-    assert.equal(r.headers.get("location"), "https://turva.dev" + kohde, polku + " ohjautuu oikeaan");
-    assert.match(r.headers.get("x-robots-tag") || "", /noindex/, polku + " ohjaus kantaa noindexin");
+    const r = await getBrief(path);
+    assert.equal(r.status, 301, path + " is redirected");
+    assert.equal(r.headers.get("location"), "https://turva.dev" + target, path + " redirects to the right target");
+    assert.match(r.headers.get("x-robots-tag") || "", /noindex/, path + " redirect carries noindex");
     // 18-F03 (Tek-496 audit round): an access token can travel in this path, so the cleanup
     // redirect must never be cached.
-    assert.equal(r.headers.get("cache-control"), "private, no-store", polku + " ohjaus ei mene valimuistiin");
+    assert.equal(r.headers.get("cache-control"), "private, no-store", path + " redirect is not cached");
   }
 });
 
-test("brief: siivous ei pelasta kelvotonta tunnusta eika koske muihin polkuihin, Tek-323", async () => {
+test("brief: the cleanup does not rescue an invalid id and does not touch other paths, Tek-323", async () => {
   // The gate may repair ONLY a trailing punctuation mark. If it rescued an id that is
   // too short or upper-case, it would open the path BRIEF_ID exists to close.
   // "/brief/.." is NOT in this list, and the reason is a measurement rather than an
@@ -636,45 +691,48 @@ test("brief: siivous ei pelasta kelvotonta tunnusta eika koske muihin polkuihin,
   // answers 200 as the home page and says nothing about this route. Invalidity is tested with an id.
   for (const p of ["/brief/lyhyt.", "/brief/ISOT.", "/brief/.", "/brief/", "/brief/aaaaaaa."]) {
     const r = await getBrief(p);
-    assert.equal(r.status, 404, p + " ei saa ohjautua");
+    assert.equal(r.status, 404, p + " must not be redirected");
   }
   // Other paths do not belong to this route at all.
-  const muu = await getBrief("/services.");
-  assert.notEqual(muu.status, 301, "siivous ei saa vuotaa /brief/-polun ulkopuolelle");
+  const other = await getBrief("/services.");
+  assert.notEqual(other.status, 301, "the cleanup must not leak outside the /brief/ path");
 });
 
-test("brief: tuntematon tunnus ja puuttuva binding vastaavat molemmat 404", async () => {
-  const tuntematon = await getBrief("/brief/eioleolemassa-000000");
-  assert.equal(tuntematon.status, 404);
-  const ilmanBindingia = await get("/brief/" + BRIEF_REC.id);
-  assert.equal(ilmanBindingia.status, 404, "ilman KV-bindingia reitti ei ole olemassa");
+test("brief: an unknown id and a missing binding both answer 404", async () => {
+  const unknown = await getBrief("/brief/eioleolemassa-000000");
+  assert.equal(unknown.status, 404);
+  const withoutBinding = await get("/brief/" + BRIEF_REC.id);
+  assert.equal(withoutBinding.status, 404, "without the KV binding the route does not exist");
 });
 
-test("brief: hakemistoa ei ole eika kelvoton tunnus paase lapi", async () => {
-  for (const p of ["/brief/", "/brief", "/brief/lyhyt", "/brief/ISOT-KIRJAIMET-EIVAT-KELPAA", "/brief/../etc"]) {
+test("brief: there is no directory listing and an invalid id does not get through", async () => {
+  // "/brief/../etc" is not in this list: the URL parser normalises it to "/etc" before the
+  // worker sees it, so it would only repeat the generic 404 and say nothing about this route
+  // (see the comment in the cleanup test above).
+  for (const p of ["/brief/lyhyt", "/brief/ISOT-KIRJAIMET-EIVAT-KELPAA", "/brief"]) {
     const r = await getBrief(p);
-    assert.equal(r.status, 404, p + " ei saa vastata");
+    assert.equal(r.status, 404, p + " must not answer");
   }
 });
 
-test("brief: Accept-neuvottelu vastaa samasta osoitteesta, kuten muuallakin sivustolla", async () => {
+test("brief: Accept negotiation answers from the same address, as elsewhere on the site", async () => {
   const U = "/brief/" + BRIEF_REC.id;
-  const tapaus: [Record<string, string>, RegExp][] = [
+  const cases: [Record<string, string>, RegExp][] = [
     [{}, /text\/html/],
     [{ Accept: "text/html" }, /text\/html/],
     [{ Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" }, /text\/html/],
     [{ Accept: "text/markdown" }, /text\/markdown/],
     [{ Accept: "application/json" }, /application\/json/]
   ];
-  for (const [headers, odotus] of tapaus) {
+  for (const [headers, expected] of cases) {
     const r = await worker.fetch(new Request("https://turva.dev" + U, { headers }), briefEnv);
     assert.equal(r.status, 200, JSON.stringify(headers));
-    assert.match(r.headers.get("content-type")!, odotus, JSON.stringify(headers));
-    assert.equal(r.headers.get("vary"), "Accept", "neuvoteltu vastaus kantaa vary: Accept");
-    assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow", "myos neuvoteltu vastaus on noindex");
+    assert.match(r.headers.get("content-type")!, expected, JSON.stringify(headers));
+    assert.equal(r.headers.get("vary"), "Accept", "a negotiated answer carries vary: Accept");
+    assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow", "a negotiated answer is noindex too");
   }
   const md = await worker.fetch(new Request("https://turva.dev" + U, { headers: { Accept: "text/markdown" } }), briefEnv);
-  assert.equal(await md.text(), BRIEF_MD, "neuvoteltu markdown on sama kuin paate-osoitteen");
+  assert.equal(await md.text(), BRIEF_MD, "the negotiated markdown equals the one at the .md address");
 });
 
 // OpenPGP surfaces, added 2026-08-26. These test what the site PROMISES, not what
@@ -708,10 +766,12 @@ function dearmor(text: string) {
 // of the public-key packet body, and the body itself.
 // The SHA-1 is the specification and not a choice: a v4 fingerprint IS this digest,
 // so SHA-256 here would compute a number no OpenPGP implementation accepts. CodeQL
-// read both SHA-1 calls in this file as password hashing (js/insufficient-password-hash,
+// read the two SHA-1 calls that were alerted, v4Fingerprint below and the WKD address
+// check in the contact-page test, as password hashing (js/insufficient-password-hash,
 // alerts 8 and 9, then 17 and 18 after the rename to .ts) while they used createHash.
-// Both now use WebCrypto, which CodeQL's JavaScript crypto model does not cover. The
-// inputs are a public key and a public local part. Keep SHA-1 in both places.
+// Those two now use WebCrypto, which CodeQL's JavaScript crypto model does not cover.
+// Two later tests compute the same WKD hash with createHash("sha1") and did not alert.
+// The inputs are a public key and a public local part. Keep SHA-1 in every place.
 async function v4Fingerprint(keyBytes: Buffer) {
   const first = keyBytes[0];
   assert.equal(first & 0x80, 0x80, "not an OpenPGP packet header");
@@ -830,18 +890,19 @@ test("every page in the sitemap renders as HTML and as markdown", async () => {
   }
 });
 // ---------------------------------------------------------------------------
-// R3b-1 (round 14, kierros 14 batch T). docs/endpoints.md declares 39 routes
-// plus an Aliases row, and every one of them is supposed to resolve because
-// the file's own first line says "if a path is listed here it resolves in
-// src/worker.ts". A large group of them had never been exercised by
-// worker.fetch in this file: this table closes that gap route by route, so a
-// path that stops resolving fails here before a deploy rather than only
-// during the next audit's live curl pass. Every expected status and
-// content-type below was read out of src/worker.ts, not guessed: the 200s
-// are serveStatic() calls, and /oauth/authorize and /oauth/token both go
-// through serveOauthClosed(), which answers 400 with a spec-valid OAuth
-// error body rather than a 404, because the discovery documents advertise
-// these paths and must never point at something that does not respond.
+// R3b-1 (audit round 14, batch T). docs/endpoints.md lists the public routes, and
+// every one of them is supposed to resolve because the file's own first line says
+// "if a path is listed here it resolves in src/worker.ts". A large group of them
+// had never been exercised by worker.fetch in this file: this table closes that gap
+// route by route, so a path that stops resolving fails here before a deploy rather
+// than only during the next audit's live curl pass. The table below is a hand-kept
+// copy with the expected status and content type of each path; the P8 test further
+// down reads docs/endpoints.md itself, so the document cannot drift unseen. Every
+// expected status and content-type below was read out of src/worker.ts, not guessed:
+// the 200s are serveStatic() calls, and /oauth/authorize and /oauth/token both go
+// through serveOauthClosed(), which answers 400 with a spec-valid OAuth error body
+// rather than a 404, because the discovery documents advertise these paths and must
+// never point at something that does not respond.
 const DOCUMENTED_ROUTES: [string, number, RegExp][] = [
   ["/llms.txt", 200, /text\/plain/],
   ["/llms-full.txt", 200, /text\/plain/],
@@ -893,12 +954,69 @@ const DOCUMENTED_ROUTES: [string, number, RegExp][] = [
   ["/.well-known/mcp-registry-auth", 200, /text\/plain/]
 ];
 
-test("R3b-1: every documented path without a prior test resolves as endpoints.md promises", async () => {
+test("R3b-1: every path in the hand-kept route table answers with its expected status and content type", async () => {
   for (const [path, status, contentType] of DOCUMENTED_ROUTES) {
     const r = await get(path);
     assert.equal(r.status, status, path + " -> " + r.status);
     assert.match(r.headers.get("content-type") || "", contentType, path + " content-type");
   }
+});
+
+// Tek-777 P8 (round 24, WT1-2): docs/endpoints.md is the public list of routes, and until now no test read it, so a row
+// the Worker stopped serving, or a row added by mistake, went unseen. This test reads the file itself. Every code span
+// in the table that is a path (optionally with a method or a turva.dev host in front) is requested through worker.fetch,
+// with the placeholders of the table filled in, and must not come back as the Worker's own HTML 404 or as a 5xx. A 404
+// with a JSON body is a documented answer (the A2A task routes say -32001 task not found with status 404). A path the
+// Worker does not serve but public/ holds as a static asset (the badge image) passes because the file exists there.
+// This covers the direction doc -> Worker; the Worker has no exported route table, so a route served but not listed is
+// not detected here.
+async function unresolvedEndpointsDocRoutes(doc: string): Promise<{ checked: number; broken: string[] }> {
+  const wkdHash = zbase32(Buffer.from(await crypto.subtle.digest("SHA-1", Buffer.from("erik"))));
+  const fill = (s: string) => s
+    .replace("<page>", "services")
+    .replace("<name>", "services")
+    .replace("<hash>", wkdHash)
+    .replace("<indexnow-key>", "9b7e4c21a8f3d65e0c1b9a4d7f2e8c63")
+    .replace("{id}", "abc");
+  const broken: string[] = [];
+  let checked = 0;
+  for (const line of doc.split("\n")) {
+    if (!line.startsWith("| ") || line.startsWith("| Path ") || line.startsWith("|---")) continue;
+    for (const m of line.matchAll(/`([^`]+)`/g)) {
+      let token = m[1];
+      let method = "GET";
+      const withMethod = /^(GET|POST) /.exec(token);
+      if (withMethod) { method = withMethod[1]; token = token.slice(withMethod[0].length); }
+      let host = "turva.dev";
+      const withHost = /^([a-z0-9-]+\.turva\.dev)(\/.*)$/.exec(token);
+      if (withHost) { host = withHost[1]; token = withHost[2]; }
+      if (!token.startsWith("/")) continue;
+      const path = fill(token);
+      const init: RequestInit = { method };
+      if (method === "POST") { init.headers = { "content-type": "application/json" }; init.body = "{}"; }
+      const r = await worker.fetch(new Request("https://" + host + path, init), env, {});
+      checked++;
+      const isHtml404 = r.status === 404 && /text\/html/.test(r.headers.get("content-type") || "");
+      const isStaticAsset = isHtml404 && existsSync(new URL("../public" + path.split("?")[0], import.meta.url));
+      if (r.status >= 500 || (isHtml404 && !isStaticAsset)) broken.push(method + " " + host + path + " -> " + r.status);
+    }
+  }
+  return { checked, broken };
+}
+
+test("P8: every route that docs/endpoints.md lists resolves in the Worker", async () => {
+  const doc = readFileSync(new URL("../../docs/endpoints.md", import.meta.url), "utf8");
+  const { checked, broken } = await unresolvedEndpointsDocRoutes(doc);
+  assert.ok(checked >= 50, "the table parser must find the table's routes (saw " + checked + ")");
+  assert.deepEqual(broken, [], "listed in docs/endpoints.md but not served");
+});
+
+test("P8: the endpoints.md check fails on a copy of the file with an invented route", async () => {
+  const doc = readFileSync(new URL("../../docs/endpoints.md", import.meta.url), "utf8");
+  const mutated = doc.replace("| `/robots.txt` |", "| `/invented-route-for-the-mutation-check` | Not served |\n| `/robots.txt` |");
+  assert.notEqual(mutated, doc, "the mutation must change the copy");
+  const { broken } = await unresolvedEndpointsDocRoutes(mutated);
+  assert.deepEqual(broken, ["GET turva.dev/invented-route-for-the-mutation-check -> 404"]);
 });
 
 test("R3b-1: the fediverse well-known paths redirect to social.turva.dev, not this Worker", async () => {
@@ -1324,12 +1442,10 @@ test("a CR in the head reads as LF, as it does after a parser's input preprocess
   assert.equal(findLinkRelations('<head>\r\n<link rel="describedby" href="/llms.txt">\r</head>', "").describedby, "/llms.txt");
 });
 
-test("many comments in the head are scanned in linear time", () => {
-  const html = "<head>" + "<!--x-->".repeat(32000) + '<link rel="describedby" href="/llms.txt"></head>';
-  const started = Date.now();
-  assert.equal(findLinkRelations(html, "").describedby, "/llms.txt");
-  const took = Date.now() - started;
-  assert.ok(took < 2000, "took " + took + " ms");
+test("many comments in the head are scanned in linear time", async () => {
+  const head = (k: number) => "<head>" + "<!--x-->".repeat(k) + '<link rel="describedby" href="/llms.txt"></head>';
+  assert.equal(findLinkRelations(head(32000), "").describedby, "/llms.txt");
+  await assertLinear("8000 and 32000 comments", (s) => findLinkRelations(s, ""), head(8000), head(32000));
 });
 
 // Outside review of the public repos, 2026-09-22 (F05). Both anonymous JSON routes read the whole
@@ -1350,7 +1466,7 @@ const postBody = (path: string, body: string | ReadableStream, extraEnv?: object
   ? { method: "POST", headers: { "content-type": "application/json" }, body }
   : { method: "POST", headers: { "content-type": "application/json" }, body, duplex: "half" } as RequestInit), extraEnv || env, {});
 // F13 (Tek-496 audit round): postBody above never sets Content-Length itself, so a test that
-// claims to cover "with and without Content-Length" was really covering "without" twice. This
+// claimed to cover "with and without Content-Length" was really covering "without" twice. This
 // variant sets the header explicitly, either to the real byte length or to a deliberately too
 // small one, so the byte-cap enforcement is proven against a header instead of only against a
 // bodyless Request object.
@@ -1358,7 +1474,7 @@ const postBodyWithLength = (path: string, body: string, contentLength: number, e
   method: "POST", headers: { "content-type": "application/json", "content-length": String(contentLength) }, body
 }), extraEnv || env, {});
 
-test("F05: A2A and ACP answer 413 to a body over 16 KB, with and without Content-Length", async () => {
+test("F05: A2A and ACP answer 413 to a body over 16 KB, sent as a string and as a stream without Content-Length", async () => {
   const bodies = {
     "/v1/message:send": (n: number) => JSON.stringify({ message: { parts: [{ kind: "text", text: "x".repeat(n) }] } }),
     "/api/acp/checkout_sessions": (n: number) => JSON.stringify({ items: [{ id: "audit" }], padding: "x".repeat(n) })
@@ -1367,7 +1483,7 @@ test("F05: A2A and ACP answer 413 to a body over 16 KB, with and without Content
     const huge = make(1024 * 1024);
     for (const body of [huge, streamOf(huge)]) {
       const r = await postBody(path, body);
-      assert.equal(r.status, 413, path + (typeof body === "string" ? " with a length" : " as a stream"));
+      assert.equal(r.status, 413, path + (typeof body === "string" ? " as a string body" : " as a stream"));
       assert.match(r.headers.get("content-type")!, /application\/json/);
       const j = await json(r);
       assert.ok(JSON.stringify(j).includes("16384"), path + " names the limit");
