@@ -192,10 +192,13 @@ const bad = (m: string) => { fails++;  console.log('  FAIL  ' + m); };
 const unmet = (m: string) => { unmeasured++; console.log('  SKIP  ' + m); };
 // Codes that mean "this machine could not ask", never "the answer was wrong". ENOTFOUND and
 // ENODATA are absent on purpose: they are answers, and a missing MTA-STS record is a finding.
-// EDOHSTATUS (the DoH resolver answered with an HTTP 4xx or 5xx) is absent too: today that ends as a
-// FAIL against the domain, unlike EDOHRCODE, which moves the read to the second resolver.
+// A DoH resolver's HTTP 5xx or 429 is in the set (EDOHHTTP): the resolver failed or throttled us,
+// which says nothing about the domain, so the read moves to the next resolver and ends as SKIP when
+// every resolver fails, as EDOHRCODE does. A DoH HTTP 4xx other than 429 is absent on purpose
+// (EDOHSTATUS): it means our own query was malformed or refused, and a gate that books a broken
+// query as a pass would be blind.
 const TRANSIENT = new Set<unknown>(['ETIMEOUT', 'ETIMEDOUT', 'ESERVFAIL', 'EAI_AGAIN', 'ECONNRESET',
-  'ENETUNREACH', 'EHOSTUNREACH', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'EDOHRCODE',
+  'ENETUNREACH', 'EHOSTUNREACH', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'EDOHRCODE', 'EDOHHTTP',
   // EACCES and EPERM: the operator's own machine refused to open the socket. Added 2026-09-19
   // after a local firewall began refusing DNS-over-HTTPS and the MTA-STS check read that as
   // "fetch failed" against the domain. ECONNREFUSED stays out: a server can refuse, and that is
@@ -244,7 +247,11 @@ let dohUsed = false;
 const dohQuery = async (name: string, type: string) => {
   const r = await fetch(`${DOH}?name=${encodeURIComponent(name)}&type=${type}`,
     { headers: { accept: 'application/dns-json' }, signal: AbortSignal.timeout(6000) });
-  if (!r.ok) { const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> ${r.status}`); e.code = 'EDOHSTATUS'; throw e; }
+  if (!r.ok) {
+    const e: Error & { code?: string } = new Error(`DoH ${type} ${name} -> ${r.status}`);
+    e.code = r.status >= 500 || r.status === 429 ? 'EDOHHTTP' : 'EDOHSTATUS';
+    throw e;
+  }
   const j: any = await r.json();
   // NXDOMAIN and NODATA are ANSWERS. They keep their own error codes so the caller treats them
   // as findings, exactly as the system resolver's ENOTFOUND and ENODATA are treated.
@@ -3911,7 +3918,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
   } catch (e) {
     const t = transientCode(e);
     if (t) unmet('MTA-STS not measured from this machine: ' + t + '. '
-      + (t === 'ESERVFAIL' || t === 'EDOHRCODE'
+      + (t === 'ESERVFAIL' || t === 'EDOHRCODE' || t === 'EDOHHTTP'
         ? 'A resolver answered with an error code instead of the record, and the retries did not change that, '
         : 'The DNS or HTTPS call timed out after three attempts, ')
       + 'which says nothing about the record. Run this again on a network that '

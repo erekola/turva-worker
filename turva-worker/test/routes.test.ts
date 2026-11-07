@@ -1690,3 +1690,217 @@ test("Tek-758: the withdrawn External domain check addresses answer 301 and no s
   assert.ok(!xml.includes("external-domain-check"), "sitemap.xml");
   assert.ok(!(await (await get("/llms-full.txt")).text()).includes("external-domain-check"), "llms-full.txt");
 });
+
+// ---------------------------------------------------------------------------
+// Audit round 24 (Tek-777): five surfaces whose text or lists were never compared with anything.
+// Each test reads the served surface through worker.fetch and measures the claim the surface makes
+// about itself, so it fails when the text and the behaviour part, not only when a route disappears.
+// ---------------------------------------------------------------------------
+const k24Unescape = (s: string): string =>
+  s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&amp;/g, "&");
+
+// W2-1: every URL ai.txt lists resolves, and its Disallow user-agents are the robots.txt ones.
+test("K24 W2-1: every URL in ai.txt resolves and its Disallow agents equal the robots.txt Disallow agents", async () => {
+  const ai = await (await get("/.well-known/ai.txt")).text();
+  const urls = [...ai.matchAll(/^[A-Za-z0-9-]+: (https:\/\/\S+)$/gm)].map((m) => m[1]!);
+  assert.ok(urls.length >= 15, "ai.txt must list its URLs (saw " + urls.length + ")");
+  for (const u of urls) {
+    const url = new URL(u);
+    if (url.hostname === "mcp.turva.dev") {
+      // The MCP endpoint is the other Worker (turva-mcp); this one can only check that the address is the declared one.
+      assert.equal(url.pathname, "/mcp", u);
+      continue;
+    }
+    assert.equal(url.hostname, "turva.dev", u + " must be on turva.dev or the MCP host");
+    const r = await get(url.pathname + url.search);
+    assert.ok(r.status !== 404 && r.status < 500, u + " must resolve to a non-404, non-5xx answer (saw " + r.status + ")");
+  }
+  // ai.txt groups are separated by blank lines; a group that carries "Disallow: /" names the blocked robots.
+  const aiAgents: string[] = [];
+  for (const group of ai.split(/\r?\n\s*\r?\n/)) {
+    if (!/^Disallow: \/\s*$/m.test(group)) continue;
+    for (const m of group.matchAll(/^User-agent: (\S+)$/gm)) aiAgents.push(m[1]!);
+  }
+  // robots.txt: a group is a run of User-agent lines followed by its rules.
+  const robots = await (await get("/robots.txt")).text();
+  const robotsAgents: string[] = [];
+  let current: string[] = [];
+  let seenRule = false;
+  for (const line of robots.split(/\r?\n/)) {
+    const ua = line.match(/^User-agent: (\S+)$/i);
+    if (ua) {
+      if (seenRule) { current = []; seenRule = false; }
+      current.push(ua[1]!);
+    } else if (/^Disallow: \/\s*$/i.test(line)) {
+      robotsAgents.push(...current);
+      seenRule = true;
+    } else if (/^(Allow|Disallow):/i.test(line)) {
+      seenRule = true;
+    }
+  }
+  assert.ok(aiAgents.length > 0, "ai.txt must block at least one robot");
+  assert.deepEqual(aiAgents.slice().sort(), robotsAgents.slice().sort(),
+    "ai.txt and robots.txt must block the same user-agents");
+});
+
+// W2-2: the RSS feed is the blog list, post by post.
+test("K24 W2-2: /blog/feed.xml carries the blog posts in the served /blog order, with their titles, links and dates", async () => {
+  const blog = await (await get("/blog", { headers: { Accept: "text/markdown" } })).text();
+  const posts = [...blog.matchAll(/^- \[(.+?)\]\((\/blog\/[^)\s]+)\)\.? (\d{4}-\d{2}-\d{2})\./gm)]
+    .map((m) => ({ title: m[1]!, link: "https://turva.dev" + m[2], date: m[3]! }));
+  assert.ok(posts.length >= 40, "the blog list must be readable (saw " + posts.length + " posts)");
+  const feed = await (await get("/blog/feed.xml")).text();
+  const items = [...feed.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((m) => {
+    const body = m[1]!;
+    const pick = (tag: string) => k24Unescape((body.match(new RegExp("<" + tag + ">([\\s\\S]*?)</" + tag + ">")) || [])[1] || "");
+    return { title: pick("title"), link: pick("link"), pubDate: pick("pubDate") };
+  });
+  assert.equal(items.length, posts.length, "the feed must carry every post the blog page lists");
+  posts.forEach((p, i) => {
+    assert.equal(items[i]!.link, p.link, "item " + i + " link");
+    assert.equal(items[i]!.title, k24Unescape(p.title), "item " + i + " title");
+    assert.equal(items[i]!.pubDate, new Date(p.date + "T00:00:00Z").toUTCString(), "item " + i + " pubDate");
+  });
+  const newest = posts.map((p) => p.date).sort().pop()!;
+  const built = (feed.match(/<lastBuildDate>([^<]*)<\/lastBuildDate>/) || [])[1];
+  assert.equal(built, new Date(newest + "T00:00:00Z").toUTCString(), "lastBuildDate must be the newest post date");
+});
+
+// W2-3: the "Endpoint responses" section of /auth.md is a set of statements about status codes; measure each one.
+test("K24 W2-3: each status statement in the auth.md Endpoint responses section holds against the Worker", async () => {
+  const auth = await (await get("/auth.md", { headers: { Accept: "text/markdown" } })).text();
+  const section = (auth.match(/^## Endpoint responses\r?\n([\s\S]*?)(?=^## )/m) || [])[1] || "";
+  assert.ok(section.length > 100, "auth.md must carry an Endpoint responses section");
+  const flat = section.replace(/\s+/g, " ");
+  const read = (re: RegExp, what: string): RegExpMatchArray => {
+    const m = flat.match(re);
+    assert.ok(m, "the section no longer states: " + what);
+    return m!;
+  };
+  const meta = await json(await get("/.well-known/oauth-authorization-server"));
+  const agentPaths = [meta.agent_auth.register_uri, meta.agent_auth.claim_uri, meta.agent_auth.revocation_uri]
+    .map((u: string) => new URL(u).pathname);
+  assert.equal(agentPaths.length, 3);
+
+  // "GET and POST to the registration, claim and revocation endpoints answer 200 with application/json"
+  const okStated = read(/GET and POST to the registration, claim and revocation endpoints answer (\d{3}) with (application\/json)/, "GET and POST answer 200 JSON");
+  for (const p of agentPaths) for (const method of ["GET", "POST"]) {
+    const r = await get(p, { method, headers: method === "POST" ? { "content-type": "application/json" } : {} });
+    assert.equal(r.status, Number(okStated[1]), method + " " + p);
+    assert.match(r.headers.get("content-type") || "", new RegExp(okStated[2]!.replace("/", "\\/")), method + " " + p);
+  }
+  // "HEAD answers as GET does, without a body."
+  read(/HEAD answers as GET does, without a body/, "HEAD answers as GET");
+  for (const p of agentPaths) {
+    const r = await get(p, { method: "HEAD" });
+    assert.equal(r.status, Number(okStated[1]), "HEAD " + p);
+    assert.equal((await r.text()).length, 0, "HEAD " + p + " must have no body");
+  }
+  // "OPTIONS answers 204."
+  const optStated = read(/OPTIONS answers (\d{3})/, "OPTIONS answers 204");
+  for (const p of agentPaths) assert.equal((await get(p, { method: "OPTIONS" })).status, Number(optStated[1]), "OPTIONS " + p);
+  // "Any other method answers 405 with the header Allow: GET, HEAD, POST, OPTIONS."
+  const otherStated = read(/Any other method answers (\d{3}) with the header Allow: ([A-Z, ]+?)\.(?: |$)/, "any other method answers 405 with Allow");
+  for (const p of agentPaths) for (const method of ["PUT", "DELETE", "PATCH"]) {
+    const r = await get(p, { method });
+    assert.equal(r.status, Number(otherStated[1]), method + " " + p);
+    assert.equal(r.headers.get("allow"), otherStated[2], method + " " + p + " Allow header");
+  }
+  // "https://turva.dev/oauth/authorize and https://turva.dev/oauth/token answer 400, never 401."
+  const oauthStated = read(/(https:\/\/turva\.dev\/oauth\/\w+) and (https:\/\/turva\.dev\/oauth\/\w+) answer (\d{3}), never (\d{3})/, "the oauth endpoints answer 400, never 401");
+  for (const u of [oauthStated[1]!, oauthStated[2]!]) {
+    const r = await get(new URL(u).pathname);
+    assert.equal(r.status, Number(oauthStated[3]), u);
+    assert.notEqual(r.status, Number(oauthStated[4]), u + " must never answer " + oauthStated[4]);
+  }
+});
+
+// W3-8: the Offer descriptions in the /services JSON-LD are the third copy of the terms; the twin is the second.
+test("K24 W3-8: the terms in the /services JSON-LD Offer descriptions are all in the /services twin", async () => {
+  const html = await (await get("/services")).text();
+  const scripts = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1]!);
+  const graphScript = scripts.find((s) => s.includes('"@graph"'));
+  assert.ok(graphScript, "/services must carry its Service JSON-LD graph");
+  const descriptions: string[] = [];
+  const walk = (node: unknown): void => {
+    if (Array.isArray(node)) { node.forEach(walk); return; }
+    if (node && typeof node === "object") {
+      for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
+        if (k === "description" && typeof v === "string") descriptions.push(v);
+        else walk(v);
+      }
+    }
+  };
+  walk(JSON.parse(graphScript!));
+  const ld = descriptions.join(" ");
+  const twin = (await (await get("/services", { headers: { Accept: "text/markdown" } })).text()).replace(/\s+/g, " ").toLowerCase();
+  assert.ok(descriptions.length >= 4, "the JSON-LD must carry the offer descriptions (saw " + descriptions.length + ")");
+
+  // Every duration, review count and price the JSON-LD states, extracted rather than listed.
+  const generic = new Set<string>([
+    ...(ld.match(/\b(?:\d+|one|two|three|four|five)\s+(?:calendar |business )?(?:days?|weeks?|months?|reviews?)\b/gi) || []),
+    ...(ld.match(/€[\d,]+/g) || []),
+  ].map((t) => t.toLowerCase()));
+  assert.ok(generic.size >= 8, "the term extraction must find the offer terms (saw " + generic.size + ")");
+  for (const term of generic) assert.ok(twin.includes(term), "JSON-LD term \"" + term + "\" is missing from the /services twin");
+
+  // The named terms, each pair: what the JSON-LD says, and the twin's wording of it.
+  const named: [string, RegExp, RegExp][] = [
+    ["delivery time", /delivered within two weeks of the agreed written kickoff/i, /delivered within two weeks of the agreed written kickoff/i],
+    ["question window", /submitted within 14 calendar days of the report/i, /within 14 calendar days of the report/i],
+    ["answer time", /answered within five business days/i, /within five business days/i],
+    ["re-scan", /one re-scan within 30 days of the report, or within 30 days of the delivered corrections/i, /re-scan within 30 days of the report, or within 30 days of the delivered corrections/i],
+    ["reviews", /within one business day up to four reviews a month/i, /within one business day, up to four reviews per service month/i],
+    ["monthly summary", /monthly written summary within five business days after the month ends/i, /five business days after the month ends/i],
+    ["quarterly summary", /quarterly summary of measured changes within five business days after every third service month/i, /quarterly summary follows within five business days after every third one/i],
+    ["minimum term", /minimum three months/i, /minimum three months/i],
+    ["first-month exit", /only the first month is charged/i, /the second and third months are not charged/i],
+    ["month to month", /runs month to month/i, /runs month to month/i],
+  ];
+  for (const [name, inLd, inTwin] of named) {
+    assert.match(ld, inLd, name + ": the JSON-LD no longer states this term");
+    assert.match(twin, inTwin, name + ": the twin no longer states what the JSON-LD says");
+  }
+});
+
+// W4-12: a #fragment link must point at an id that exists on the page it names.
+test("K24 W4-12: every same-page or site-internal #anchor link on every sitemap page points at an id that exists", async () => {
+  const xml = await (await get("/sitemap.xml")).text();
+  const paths = [...xml.matchAll(/<loc>https:\/\/turva\.dev([^<]*)<\/loc>/g)].map((m) => m[1] || "/");
+  assert.ok(paths.length > 10, "the sitemap must list the pages (saw " + paths.length + ")");
+  const idCache = new Map<string, Set<string>>();
+  const idsOf = async (path: string): Promise<Set<string> | null> => {
+    if (idCache.has(path)) return idCache.get(path) || null;
+    let r = await get(path, { headers: { Accept: "text/html" } });
+    if (r.status >= 300 && r.status < 400 && r.headers.get("location")) {
+      const loc = new URL(r.headers.get("location")!, "https://turva.dev");
+      if (loc.hostname === "turva.dev") r = await get(loc.pathname + loc.search, { headers: { Accept: "text/html" } });
+    }
+    if (r.status !== 200) { idCache.set(path, new Set()); return null; }
+    const body = await r.text();
+    const ids = new Set<string>([...body.matchAll(/\sid="([^"]+)"/g)].map((m) => k24Unescape(m[1]!)));
+    idCache.set(path, ids);
+    return ids;
+  };
+  let checked = 0;
+  const broken: string[] = [];
+  for (const page of paths) {
+    const body = await (await get(page, { headers: { Accept: "text/html" } })).text();
+    for (const m of body.matchAll(/<a\s[^>]*?href="([^"]*#[^"]+)"/g)) {
+      const href = k24Unescape(m[1]!);
+      let target: string, fragment: string;
+      if (href.startsWith("#")) { target = page; fragment = href.slice(1); }
+      else {
+        const u = new URL(href, "https://turva.dev" + page);
+        if (u.hostname !== "turva.dev") continue;
+        target = u.pathname; fragment = u.hash.slice(1);
+      }
+      fragment = decodeURIComponent(fragment);
+      checked++;
+      const ids = await idsOf(target);
+      if (!ids || !ids.has(fragment)) broken.push(page + " -> " + href);
+    }
+  }
+  assert.ok(checked > 20, "the test must see the anchor links (saw " + checked + ")");
+  assert.deepEqual(broken, [], "anchor links with no matching id");
+});
