@@ -179,6 +179,7 @@ for (const [k, rel] of Object.entries(DOCS)) {
   doc[k] = { rel, buf: readFileSync(p), text: readFileSync(p, 'utf8') };
 }
 type VerifyFactsService = { id: string; name: string; priceKey: string | null }; type VerifyBundled = { id: string; name: string; price: number; requires: string; scope: string };
+type VerifyQuoted = { id: string; name: string; price: unknown; requires: string; url: string; scope: string };
 let fails = 0, passes = 0, unmeasured = 0;
 const ok  = (m: string) => { passes++; console.log('  pass  ' + m); };
 const bad = (m: string) => { fails++;  console.log('  FAIL  ' + m); };
@@ -309,7 +310,7 @@ const readRecord = async <T,>(label: string, doh: () => Promise<unknown>, system
 const check = (cond: unknown, m: string) => (cond ? ok(m) : bad(m));
 const slashVariants = (s: string) => s.includes('/') ? [s, s.replace('/', ' / ')] : [s];
 const containsAny = (t: string, arr: string[]) => arr.some((s) => t.includes(s));
-type VerifyHomeEntry = { name?: string; price?: unknown; pricing?: unknown; soldSeparately?: unknown; requires?: unknown; scope?: unknown };
+type VerifyHomeEntry = { name?: string; price?: unknown; pricing?: unknown; soldSeparately?: unknown; requires?: unknown; scope?: unknown; url?: unknown };
 console.log('turva.dev verify  (source of truth: tools/facts.json)\n');
 
 console.log('Integrity');
@@ -939,6 +940,105 @@ console.log('\nBundled implementation add-ons (Tek-317)');
     // compared to what HOME_JSON actually states, so the two could read differently
     // with no red check anywhere.
     check(got.scope === x.scope, `HOME_JSON ${x.name} scope matches facts.json (facts: ${JSON.stringify(x.scope)}, saw ${JSON.stringify(got.scope)})`);
+  }
+
+  console.log('');
+  console.log('Quoted add-ons (Tek-784)');
+  // Added 2026-11-08. A quoted add-on is priced by quote, so its machine price is the string on
+  // request. It is declared on the catalog surfaces an agent reads, like the bundled add-on, and
+  // it is absent from every surface an agent buys from and from the two price lists, because a
+  // surface that lists it next to the priced services would present a quote as a price. The
+  // checkout and price-list surfaces are read per region, never file-wide: the add-on is named
+  // in page prose all over worker.ts, so a file-wide search could only ever pass or fail for the
+  // wrong reason.
+  {
+    const Q: VerifyQuoted[] = Array.isArray(facts.quotedAddOns) ? facts.quotedAddOns : [];
+    const svcIds: string[] = (facts.services || []).map((s: VerifyFactsService) => s.id);
+    const lc = (s: string) => s.toLowerCase();
+    check(Q.length > 0, `facts.json declares the quoted add-ons (${Q.length})`);
+    check(Q.length > 0 && Q.every((x) => typeof x.id === 'string' && /^[a-z0-9-]+$/.test(x.id)), 'every quoted add-on carries a lowercase id');
+    check(new Set(Q.map((x) => x.id)).size === Q.length, 'quoted add-on ids are unique');
+    check(new Set(Q.map((x) => x.name)).size === Q.length, 'quoted add-on names are unique');
+    check(Q.length > 0 && Q.every((x) => x.price === 'on request'), 'no quoted add-on carries a numeric price (every price is the string on request)');
+    check(Q.length > 0 && Q.every((x) => typeof x.scope === 'string' && x.scope.trim()), 'every quoted add-on carries a scope sentence');
+    check(Q.length > 0 && Q.every((x) => typeof x.url === 'string' && x.url.startsWith('https://turva.dev/services#')), 'every quoted add-on names its section on /services');
+    check(Q.length > 0 && Q.every((x) => svcIds.includes(x.requires)), `every quoted add-on requires a service that exists (${Q.map((x) => x.requires).join(', ')})`);
+    check(Q.every((x) => !Object.keys(facts.prices).includes(x.id) && !svcIds.includes(x.id) && !B.some((b) => b.id === x.id)),
+      'no quoted add-on id doubles as a facts.prices key, a service id or a bundled add-on id');
+
+    // HOME_JSON, which A2A services and the JSON twin hand an agent.
+    let hq: VerifyHomeEntry[] = [];
+    try { hq = JSON.parse(homeSrc).quotedAddOns || []; } catch { hq = []; }
+    check(hq.length === Q.length, `HOME_JSON lists all ${Q.length} quoted add-ons (saw ${hq.length})`);
+    for (const x of Q) {
+      const got: VerifyHomeEntry = hq.find((h) => h.name === x.name) || {};
+      check(got.pricing === 'on request' && got.price === undefined,
+        `HOME_JSON ${x.name} is on request and carries no numeric price (saw pricing ${JSON.stringify(got.pricing)}, price ${JSON.stringify(got.price)})`);
+      check(got.soldSeparately === false, `HOME_JSON ${x.name} says it is not sold separately (saw ${JSON.stringify(got.soldSeparately)})`);
+      check(homeRequiresMatches(facts.services || [], x.requires, got.requires),
+        `HOME_JSON ${x.name} requires exactly ${JSON.stringify(requiredServiceName(facts.services || [], x.requires))} (saw ${JSON.stringify(got.requires)})`);
+      check(got.scope === x.scope, `HOME_JSON ${x.name} scope matches facts.json (facts: ${JSON.stringify(x.scope)}, saw ${JSON.stringify(got.scope)})`);
+      check(got.url === x.url, `HOME_JSON ${x.name} url matches facts.json (facts: ${JSON.stringify(x.url)}, saw ${JSON.stringify(got.url)})`);
+    }
+
+    const regionQ = (label: string, start: string, end: string) => {
+      const i = w.indexOf(start);
+      if (i < 0) { bad(`quoted add-ons: ${label} start anchor missing (${start.slice(0, 40)})`); return null; }
+      const j = w.indexOf(end, i + start.length);
+      if (j < 0) { bad(`quoted add-ons: ${label} end anchor missing (${end.slice(0, 40)})`); return null; }
+      return w.slice(i, j);
+    };
+
+    // Declared: the A2A hand-through, the A2A card skill text, the MCP server card, the WebMCP get_services tool.
+    check(w.includes('quotedAddOns: home.quotedAddOns'), 'a2aSkillData("services") hands the quoted add-ons to A2A');
+    const a2aCard = regionQ('A2A agent card', 'const A2A_AGENT_CARD = ', 'const X402_MANIFEST');
+    if (a2aCard !== null) {
+      const si = a2aCard.indexOf('"id": "services"');
+      const skill = si < 0 ? '' : a2aCard.slice(si, a2aCard.indexOf('"tags"', si));
+      for (const x of Q) check(lc(skill).includes(lc(x.name)), `A2A agent card services skill names ${x.name}`);
+    }
+    const card = regionQ('MCP server card', 'const MCP_SERVER_CARD = ', '\nconst OAUTH_DISCOVERY');
+    if (card !== null) {
+      const qi = card.indexOf('"quotedAddOns": [');
+      const cq = qi < 0 ? '' : card.slice(qi, card.indexOf(']', qi) + 1);
+      for (const x of Q) {
+        check(cq.includes(`"name": "${x.name}"`) && cq.includes('"price": "on request"') && !/"price": \d/.test(cq)
+            && cq.includes(`"requires": "${x.requires}"`) && cq.includes(`"url": "${x.url}"`) && cq.includes('"soldSeparately": false'),
+          `MCP server card quotedAddOns states ${x.name}, price on request, requires ${x.requires}, url, soldSeparately false`);
+      }
+    }
+    const web = regionQ('WebMCP get_services', "name: 'get_services'", "name: 'get_company'");
+    if (web !== null) {
+      const qi = web.indexOf('var quoted = [');
+      const wq = qi < 0 ? '' : web.slice(qi, web.indexOf('];', qi) + 2);
+      for (const x of Q) {
+        check(wq.includes(`name: '${x.name}'`) && wq.includes("price: 'on request'") && !/price: \d/.test(wq)
+            && wq.includes(`requires: '${x.requires}'`) && wq.includes(`url: '${x.url}'`) && wq.includes('soldSeparately: false'),
+          `WebMCP get_services states ${x.name}, price on request, requires ${x.requires}, url, soldSeparately false`);
+      }
+      check(web.includes('quotedAddOns: quoted'), 'WebMCP get_services returns the quoted add-ons');
+    }
+
+    // Absent: the checkout surfaces, the OfferCatalog and the llms.txt price list.
+    const ABSENT: [string, string, string][] = [
+      ['ACP_SERVICES',          'const ACP_SERVICES',          '\nfunction buildAcpCheckoutSession'],
+      ['ACP_INDEX_JSON',        'const ACP_INDEX_JSON',        '\nfunction serveAcpIndex'],
+      ['x402 manifest',         'const X402_MANIFEST',         'const MPP_MANIFEST'],
+      ['MPP manifest',          'const MPP_MANIFEST',          'const UCP_PROFILE'],
+      ['UCP profile',           'const UCP_PROFILE',           'function buildAgentAuthInstruction'],
+      ['AP2 manifest',          'const AP2_MANIFEST',          'const A2A_AGENT_CARD'],
+      ['openapi spec',          'const OPENAPI_SPEC',          'const AGENT_JSON'],
+      ['schema.org OfferCatalog', 'const SCHEMA_SERVICE',      '\nconst SCHEMA_HOME'],
+      ['llms.txt price list',   '## Pricing (EUR, VAT not included)', 'Final price is confirmed'],
+    ];
+    for (const [label, a, z] of ABSENT) {
+      const r = regionQ(label, a, z);
+      if (r === null) continue;
+      for (const x of Q) {
+        const hit = lc(r).includes(lc(x.name)) || r.includes(x.id) || r.includes(x.url);
+        check(!hit, `${label} does not list ${x.name}, a quote and not something to buy or a price`);
+      }
+    }
   }
 }
 
@@ -3661,6 +3761,22 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
           `get_services bundled ${x.id} requires ${x.requires} (saw ${JSON.stringify(got && got.requires)})`);
         check(!!got && got.sold_separately === false,
           `get_services bundled ${x.id} is not sold separately (saw ${JSON.stringify(got && got.sold_separately)})`);
+      }
+      // Tek-784: the quoted add-ons travel in their own list, with the string on request and never a number.
+      const QUO = Array.isArray(facts.quotedAddOns) ? facts.quotedAddOns : [];
+      const mq = Array.isArray(svc.quoted_add_ons) ? svc.quoted_add_ons : [];
+      check(QUO.length > 0 && mq.length === QUO.length,
+        `get_services lists all ${QUO.length} quoted add-ons (saw ${mq.length})`);
+      for (const x of QUO) {
+        const got = mq.find((m: { id: string }) => m.id === x.id);
+        check(!!got && got.name === x.name && got.price === 'on request',
+          `get_services quoted ${x.id} named ${x.name}, price on request (saw ${JSON.stringify(got && got.name)}, ${JSON.stringify(got && got.price)})`);
+        check(!!got && got.requires === x.requires,
+          `get_services quoted ${x.id} requires ${x.requires} (saw ${JSON.stringify(got && got.requires)})`);
+        check(!!got && got.sold_separately === false,
+          `get_services quoted ${x.id} is not sold separately (saw ${JSON.stringify(got && got.sold_separately)})`);
+        check(!!got && got.url === x.url,
+          `get_services quoted ${x.id} url ${x.url} (saw ${JSON.stringify(got && got.url)})`);
       }
     }
 

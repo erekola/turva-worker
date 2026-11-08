@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.234.0 - quoted add-ons on the machine-readable catalogs (Tek-784, 2026-11-08): active security testing is declared as a quoted add-on to the audit, price on request, requires the audit, not sold separately, on HOME_JSON and so the A2A services skill, on the A2A agent card skill text, in the MCP server card (MCP 1.10.0) and in the WebMCP get_services tool, whose script hash in the CSP moves with it; llms.txt, AGENT_JSON, the OfferCatalog and every checkout surface stay as they were.
 // turva.dev worker v3.233.0 - active security testing page read 2026-11-08 fixes (Tek-782 follow-up): /legal privacy date 2026-11-08, test-credential copy in disk images, Mastodon footer link is a profile and not an offered contact way; services FAQ names the test-credential exception; the authorization names the source addresses; the add-on paragraph on /services and /agent-readiness-audit gives the retest day rule; home FAQ names test accounts for active security testing.
 // turva.dev worker v3.232.1 - the /services share card is a new file, og-services-v2.jpg, so platforms that cached the old card by its address fetch the new one; its headline names active security testing as a quoted add-on (Tek-782 follow-up, 2026-11-08). The old og-services.jpg is removed.
 // turva.dev worker v3.232.0 - the active security testing heading on /services (Tek-782 follow-up, 2026-11-08) says why the test is an add-on (it builds on the audit and is planned on the assumption that the audit findings have been dealt with) and lists what can be tested in each of the three scopes, what the client receives (authorization, ownership and provider policy check, immediate notice of a critical issue, the written report, one retest and the stop address) and what is not included; the add-on paragraph itself is unchanged.
@@ -253,7 +254,7 @@ max_age: 604800
 
 const CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-tkv2EskZhY/Kej9gj+P/mDFLa8K0FpDwP9cLdqYXCJ8='",
+  "script-src 'self' 'sha256-HvaxLv4kPmRRuCadYV9bJj+sVDnr5IoFpsvRPAJuixc='",
   "style-src 'self' 'unsafe-inline' data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -8213,7 +8214,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.233.0",
+    "version": "3.234.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8350,7 +8351,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"jwQU84uvN_TB2HcGcBSRiOE4GQCOh4ORgIg0LOOVQyDLK-wRpGBVmK1BYY0ZYVkJuRQTJzgcFieAD4qVMHQ_DQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o5xhN909KnsQ4rnP2JQE_xQ5MdYRkLjwfMWi9n5eVuvn6U7BTsLNOYC58soxpGmyb7yNNxkMRhU5w_LEPGz-BQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"2sUTA-SiASiup4d_XYympRXqFV0fFu76-n3372_1NewKXKIPjzsaiMYaxRrd_sna6fHaaIaSKThLYdw3R8u_Ag\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"o5xhN909KnsQ4rnP2JQE_xQ5MdYRkLjwfMWi9n5eVuvn6U7BTsLNOYC58soxpGmyb7yNNxkMRhU5w_LEPGz-BQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8364,7 +8365,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.9.2",
+  "version": "1.10.0",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -8373,8 +8374,8 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.9.2",
-    "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
+    "version": "1.10.0",
+    "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, the active security testing add-on to the audit quoted on request, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
     "type": "streamable-http",
@@ -8393,7 +8394,7 @@ const MCP_SERVER_CARD = JSON.stringify({
     "tools": { "listChanged": false }
   },
   "tools": [
-    { "name": "get_services", "description": "Service catalog (audit, advisory, implementation, agent operations, MCP server design), the engagement model, and pricing." },
+    { "name": "get_services", "description": "Service catalog (audit, advisory, implementation, agent operations, MCP server design), the active security testing add-on to the audit quoted on request, the engagement model, and pricing." },
     { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, measurement date, and a link to the scanner start page." },
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl site and mail), each with its scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, each fix checked with a scanner or a direct test, open and verifiable." },
@@ -8420,6 +8421,9 @@ const MCP_SERVER_CARD = JSON.stringify({
     },
     "bundledImplementation": [
       { "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "requires": "audit", "soldSeparately": false, "access": "An edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, arranged in advance.", "ifAccessMissing": "The add-on is not sold and the report still carries the correction instructions." }
+    ],
+    "quotedAddOns": [
+      { "name": "Active security testing", "price": "on request", "requires": "audit", "soldSeparately": false, "url": "https://turva.dev/services#active-security-testing", "scope": "Tests the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so, and starts only after you sign a written authorization." }
     ]
   }
 }, null, 2);
@@ -8515,7 +8519,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.233.0",
+  "version": "3.234.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8563,7 +8567,7 @@ const A2A_AGENT_CARD = JSON.stringify({
     {
       "id": "services",
       "name": "Service catalog",
-      "description": "List the service offerings of turva.dev (audit, advisory, implementation, agent operations, MCP server design). Fixed prices in EUR for the audit, advisory and implementation.",
+      "description": "List the service offerings of turva.dev (audit, advisory, implementation, agent operations, MCP server design) and the active security testing add-on to the audit, quoted on request. Fixed prices in EUR for the audit, advisory and implementation.",
       "tags": [
         "services",
         "pricing",
@@ -9097,15 +9101,16 @@ const WEBMCP_SCRIPT = `<script>
  },
  {
  name: 'get_services',
- description: 'Return the services offered by turva.dev (audit, advisory, implementation, agent operations, MCP server design) as the full services page in markdown, together with fixed prices in EUR for the three priced services.',
+ description: 'Return the services offered by turva.dev (audit, advisory, implementation, agent operations, MCP server design) as the full services page in markdown, together with fixed prices in EUR for the three priced services and the active security testing add-on to the audit, quoted on request.',
  inputSchema: { type: 'object', properties: {} },
- outputSchema: { type: 'object', properties: { markdown: { type: 'string' }, pricing: { type: 'object', properties: { currency: { type: 'string' }, vatIncluded: { type: 'boolean' }, audit: { type: 'object' }, advisory: { type: 'object' }, implementation: { type: 'object' } }, required: ['currency', 'vatIncluded', 'audit', 'advisory', 'implementation'] }, bundledImplementation: { type: 'array', items: { type: 'object' } }, error: { type: 'string' }, status: { type: 'number' } }, required: ['pricing'] },
+ outputSchema: { type: 'object', properties: { markdown: { type: 'string' }, pricing: { type: 'object', properties: { currency: { type: 'string' }, vatIncluded: { type: 'boolean' }, audit: { type: 'object' }, advisory: { type: 'object' }, implementation: { type: 'object' } }, required: ['currency', 'vatIncluded', 'audit', 'advisory', 'implementation'] }, bundledImplementation: { type: 'array', items: { type: 'object' } }, quotedAddOns: { type: 'array', items: { type: 'object' } }, error: { type: 'string' }, status: { type: 'number' } }, required: ['pricing'] },
  execute: async function() {
  var pricing = { currency: 'EUR', vatIncluded: false, audit: { price: 4300, unit: 'fixed' }, advisory: { price: 3000, unit: 'month', minimumCommitmentMonths: 3 }, implementation: { price: 1500, unit: 'day' } };
  var bundled = [{ name: 'Audit fix implementation', price: 499, currency: 'EUR', unit: 'fixed', requires: 'audit', soldSeparately: false }];
+ var quoted = [{ name: 'Active security testing', price: 'on request', requires: 'audit', soldSeparately: false, url: 'https://turva.dev/services#active-security-testing' }];
  var got = await readOwn('/services', 'text/markdown');
- if (got.error) return { error: got.error, status: got.status, pricing: pricing, bundledImplementation: bundled };
- return { markdown: got.text, pricing: pricing, bundledImplementation: bundled };
+ if (got.error) return { error: got.error, status: got.status, pricing: pricing, bundledImplementation: bundled, quotedAddOns: quoted };
+ return { markdown: got.text, pricing: pricing, bundledImplementation: bundled, quotedAddOns: quoted };
  }
  },
  {
@@ -10354,9 +10359,9 @@ function stripBody(response: Response) {
 // a conformant client reads response.message and a bare Message hands it undefined.
 const A2A_SKILL_IDS = ["services", "contact-info", "company-info"];
 
-function a2aSkillData(home: { services: unknown; bundledImplementation: unknown; engagement: unknown; email: unknown; signal: unknown; sameAs?: string[]; businessId: unknown; name: unknown; description: unknown; founder: unknown; location: unknown }, skillId: string) {
+function a2aSkillData(home: { services: unknown; bundledImplementation: unknown; quotedAddOns: unknown; engagement: unknown; email: unknown; signal: unknown; sameAs?: string[]; businessId: unknown; name: unknown; description: unknown; founder: unknown; location: unknown }, skillId: string) {
   if (skillId === "services") {
-    return { skill: "services", services: home.services, bundledImplementation: home.bundledImplementation, engagement: home.engagement };
+    return { skill: "services", services: home.services, bundledImplementation: home.bundledImplementation, quotedAddOns: home.quotedAddOns, engagement: home.engagement };
   }
   if (skillId === "contact-info") {
     // The card promises email, Signal, LinkedIn and the business ID. Every one of them is
@@ -10525,7 +10530,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-10-29" }, null, 2);
+const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }], "quotedAddOns": [{ "name": "Active security testing", "pricing": "on request", "requires": "Audit", "scope": "Tests the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so, and starts only after you sign a written authorization.", "soldSeparately": false, "url": "https://turva.dev/services#active-security-testing" }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-10-29" }, null, 2);
 const API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"

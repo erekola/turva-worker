@@ -75,4 +75,4 @@ The site also signs several of its machine-readable manifests. An Ed25519 public
 
 ## Source and contact
 
-Maintained by Erik Rekola, turva.dev. Agent-readiness audits, advisory, and implementation, async only. Email info@turva.dev, web https://turva.dev, LinkedIn https://www.linkedin.com/in/erikrekola/. Licensed for reuse under the repository's MIT license.
+Maintained by Erik Rekola, turva.dev. Agent-readiness audits, advisory, and implementation, async only. Active security testing is an add-on to the audit, priced by quote. Email info@turva.dev, web https://turva.dev, LinkedIn https://www.linkedin.com/in/erikrekola/. Licensed for reuse under the repository's MIT license.

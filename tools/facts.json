@@ -3,8 +3,8 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.233.0",
-    "mcp": "1.9.2"
+    "site": "3.234.0",
+    "mcp": "1.10.0"
   },
   "mtaSts": {
     "txtId": "20260910202321",
@@ -32,6 +32,17 @@
       "price": 499,
       "requires": "audit",
       "scope": "Exactly the fixes the audit report lists."
+    }
+  ],
+  "_quotedAddOnsComment": "Added 2026-11-08 (Tek-784). Add-ons to the audit that carry no list price: the price is quoted for each written scope, so the machine value is the string on request and never a number. They are deliberately NOT in services and NOT in bundledImplementation: services lists what an agent can buy on its own, and bundledImplementation lists fixed-price add-ons whose amounts verify.mts compares with the checkout surfaces. A quoted add-on cannot be bought on its own, so it is declared on the catalog surfaces (HOME_JSON, A2A services, the MCP server card, the get_services answers of turva-mcp and WebMCP) with its requires field, and it is absent from the checkout surfaces (ACP_SERVICES, x402, AP2/MPP/UCP, the openapi purchase paths), from the schema.org OfferCatalog and from the llms.txt Pricing list on purpose. verify.mts reads this list, so it is the only copy.",
+  "quotedAddOns": [
+    {
+      "id": "active-security-testing",
+      "name": "Active security testing",
+      "price": "on request",
+      "requires": "audit",
+      "url": "https://turva.dev/services#active-security-testing",
+      "scope": "Tests the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so, and starts only after you sign a written authorization."
     }
   ],
   "services": [
