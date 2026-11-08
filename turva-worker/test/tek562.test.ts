@@ -253,7 +253,7 @@ test("page text: services reply promise, validator implementation sentence, lega
   assert.ok(validator.includes("If you want the findings fixed, [implementation](/services#implementation) is sold with the audit."));
   const legal = await (await get("/legal.md")).text();
   assert.ok(legal.includes("You can report a deviation in an earlier deliverable within 14 calendar days of the included re-scan or retest in which it first shows."));
-  assert.ok(legal.includes("**Terms last updated:** 2026-11-07"));
+  assert.ok(legal.includes("**Terms last updated:** 2026-11-08"));
   const audit = await (await get("/samples/audit-report.md")).text();
   assert.ok(audit.includes("This page itself was last revised on 3 November 2026."));
   assert.ok(audit.includes("today each page weighs between 188 kB and 340 kB of markup"));
