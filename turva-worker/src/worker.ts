@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.232.1 - the /services share card is a new file, og-services-v2.jpg, so platforms that cached the old card by its address fetch the new one; its headline names active security testing as a quoted add-on (Tek-782 follow-up, 2026-11-08). The old og-services.jpg is removed.
 // turva.dev worker v3.232.0 - the active security testing heading on /services (Tek-782 follow-up, 2026-11-08) says why the test is an add-on (it builds on the audit and is planned on the assumption that the audit findings have been dealt with) and lists what can be tested in each of the three scopes, what the client receives (authorization, ownership and provider policy check, immediate notice of a critical issue, the written report, one retest and the stop address) and what is not included; the add-on paragraph itself is unchanged.
 // turva.dev worker v3.231.0 - active security testing round 3 (Tek-782, 2026-11-08): the home page lists the add-on in place of the Implementation card, linking a new heading Active security testing on /services, which keeps Implementation in its own list; /legal gives an engagement canceled before its agreed written kickoff a closing date, and the 14 days for reporting a deviation in an earlier deliverable start at the delivery of the re-scan or retest result.
 // turva.dev worker v3.230.2 - active security testing round 2 wording (Tek-781, 2026-11-08): the add-on paragraph on /services and /agent-readiness-audit says test records must not change data that does not belong to the test accounts, and the legal Client material paragraph closes an engagement 90 days after the last deliverable when a requested retest lapses or is not carried out, and after a partial delivery followed by a cancellation no earlier than the cancellation day. The services FAQ, the legal AI tools paragraph and the company and audit pages say an audit reads what the site and API serve publicly and uses a test account only when the client names it in writing and the written scope states what it allows.
@@ -8211,7 +8212,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.232.0",
+    "version": "3.232.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8513,7 +8514,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.232.0",
+  "version": "3.232.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9872,8 +9873,8 @@ const META_BY_PATH = {
   "/services": {
     title: "Agent-readiness services and pricing · turva.dev",
     description: "Fixed-scope website and API audits. Compare prices, deliverables, follow-up checks and optional implementation.",
-    image: "/og-services.jpg",
-    imageAlt: "turva.dev services card: Audit 4,300 euros, list prices in the open. Advisory 3,000 euros per month, implementation 1,500 euros per day. Two more services on request."
+    image: "/og-services-v2.jpg",
+    imageAlt: "turva.dev services card: Audit 4,300 euros, security testing as a quoted add-on. Advisory 3,000 euros per month, implementation 1,500 euros per day. Two more services on request."
   },
   "/agent-readiness-audit": {
     title: "Website and API agent-readiness audit, €4,300 · turva.dev",

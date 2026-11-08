@@ -400,9 +400,12 @@ console.log('\nShare card manifest (tools/og-cards.json)');
     check(priced.length >= 3 && wrongAmounts.length === 0,
       `every price on an og card is a facts.json price (${priced.length} cards carry a price, at least 3 expected)`
       + (wrongAmounts.length ? ' :: wrong: ' + wrongAmounts.map(([n, a]) => n + ' ' + JSON.stringify(a)).join(', ') : ''));
-    const svcAmounts = names.includes('og-services.jpg') ? cardAmounts(cards['og-services.jpg']) : [];
+    // The services card is the image META_BY_PATH gives /services, not a fixed file name: the file is
+    // renamed when a social platform's cache of the old card must be broken (Tek-782 follow-up, 2026-11-08).
+    const svcCard = (src.worker.text.match(/\n  "\/services": \{[^}]*?image: "\/(og-[a-z0-9-]+\.jpg)"/) || [])[1] || '';
+    const svcAmounts = svcCard && names.includes(svcCard) ? cardAmounts(cards[svcCard]) : [];
     check(priceVals.length >= 3 && priceVals.every((v) => svcAmounts.includes(v)),
-      `og-services.jpg lists all ${priceVals.length} facts.json prices (read ${JSON.stringify(svcAmounts)})`);
+      `${svcCard || 'the /services card (not found in META_BY_PATH)'} lists all ${priceVals.length} facts.json prices (read ${JSON.stringify(svcAmounts)})`);
     // The reverse direction: a card file in public/ with no manifest entry is a card whose text
     // nothing can gate.
     const jpgInPublic = readdirSync(publicDir).filter((f) => /^og(-.*)?\.jpg$/.test(f));
