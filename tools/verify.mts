@@ -1788,9 +1788,11 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       const priceNum = (s: string) => Number(((s.replace(/&#8364;/g, '€').match(/€([\d,]+)/) || [])[1] || 'NaN').replace(/,/g, ''));
       if (homePriceHtml) {
         const homeSpans = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => m[1]);
-        // Tek-761: the home page shows four cards, three with a euro price (audit, implementation per day, advisory per month) and the shared card for agent operations and MCP server design, priced per engagement.
-        check(homeSpans.length === 4 && homeSpans[3] === 'Price agreed for the engagement.', `home page offer cards: four, the last one priced per engagement (${homeSpans.length})`);
-        setSame('home page offer-price spans vs facts.json (the priced services)', homeSpans.slice(0, 3).map(priceNum), facts.services.filter((s: { priceKey: string | null }) => s.priceKey).map((s: { priceKey: string }) => facts.prices[s.priceKey]));
+        // Tek-761, changed by Tek-782 (P28, 2026-11-08): the home page shows four cards. Cards 1 and 3 carry a euro price (audit, advisory per month);
+        // card 2 is the active security testing add-on, which took the place of the Implementation card on the home page only, and card 4 is the
+        // shared card for agent operations and MCP server design; both are priced per engagement. /services keeps every priced service.
+        check(homeSpans.length === 4 && homeSpans[1] === 'Price agreed for the engagement.' && homeSpans[3] === 'Price agreed for the engagement.', `home page offer cards: four, cards 2 and 4 priced per engagement (${homeSpans.length})`);
+        setSame('home page offer-price spans vs facts.json (audit and advisory)', [homeSpans[0], homeSpans[2]].map(priceNum), facts.services.filter((s: { id: string; priceKey: string | null }) => s.priceKey && s.id !== 'implementation').map((s: { priceKey: string }) => facts.prices[s.priceKey]));
       } else bad('K5-P3: the home page was not rendered, cannot check its prices');
       if (servicesPriceHtml) {
         const wantEuro = (n: number) => '\u20ac' + n.toLocaleString('en-US');

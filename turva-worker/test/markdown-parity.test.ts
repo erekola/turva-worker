@@ -531,6 +531,10 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
 // /services twin's own bold price line under the service's heading (the site's source for units; facts.json
 // carries amounts only), the audit card must keep its delivery sentence, and /services renders exactly four
 // cards, in the order of the twin's service sections.
+// Tek-782 (P28, 2026-11-08): the home list is no longer a copy of the /services list. Erik's decision puts the active
+// security testing add-on in place of the Implementation card on the home page only, so the home rows are the /services
+// rows with row 2 replaced by the add-on row, and /services keeps Implementation in its own list. The prices are
+// checked row by row against that expected list.
 test("Tek-761: the service cards keep their delivery sentence, the price units of the /services twin and the card order", async () => {
   const facts = JSON.parse(readFileSync(new URL("../../tools/facts.json", import.meta.url), "utf8"));
   const svcMd = (await served("/services", "text/markdown")).body.replace(/\r\n/g, "\n");
@@ -542,7 +546,9 @@ test("Tek-761: the service cards keep their delivery sentence, the price units o
   const svcRows = rowsOf(svcMd, "Choose a starting point");
   const homeRows = rowsOf(homeMd, "Start with the audit");
   assert.equal(svcRows.length, 4, "four rows in the /services twin");
-  assert.deepEqual(homeRows.map((r) => r.name), svcRows.map((r) => r.name), "the home page lists the same four cards in the same order");
+  assert.equal(svcRows[1].name, "Implementation", "/services keeps Implementation as its second card");
+  const homeWant = svcRows.map((r, k) => (k === 1 ? { name: "Active security testing", price: "Price agreed for the engagement" } : { name: r.name, price: r.price }));
+  assert.deepEqual(homeRows.map((r) => r.name), homeWant.map((r) => r.name), "the home page lists the /services cards in the same order, with the add-on in place of Implementation");
   // The unit of a price is the one the /services twin states in the bold line of the service's own section.
   let priced = 0;
   for (const r of svcRows) {
@@ -553,8 +559,8 @@ test("Tek-761: the service cards keep their delivery sentence, the price units o
     assert.equal(r.price, m[1] + (m[2] ? " per " + m[2] : ""), r.name + ": the card's price and unit are the twin section's");
   }
   assert.equal(priced, facts.services.filter((s: { priceKey: string | null }) => s.priceKey).length, "one priced card per priced service in facts.json");
-  for (const [md, rows] of [[svcMd, svcRows], [homeMd, homeRows]] as const) {
-    assert.deepEqual(rows.map((r) => r.price), svcRows.map((r) => r.price), "the same prices on both pages");
+  for (const [md, rows, want] of [[svcMd, svcRows, svcRows], [homeMd, homeRows, homeWant]] as const) {
+    assert.deepEqual(rows.map((r) => r.price), want.map((r) => r.price), "the prices row by row");
     assert.ok(/ Delivered [^.]+\.$/.test(rows[0].rest), "the audit row keeps its Delivered sentence: " + rows[0].rest.slice(-60));
     assert.ok(md.includes(rows[0].name), rows[0].name);
   }
@@ -568,7 +574,14 @@ test("Tek-761: the service cards keep their delivery sentence, the price units o
   const idx = svcRows.map((r) => svcOrder.indexOf(r.name === "Agent operations and MCP server design" ? "Agent operations" : r.name));
   assert.ok(idx.every((i, k) => i >= 0 && (k === 0 || i > idx[k - 1])), "the cards follow the order of the service sections: " + idx.join(","));
   const homeSpans = [...homeHtml.matchAll(/<span class="offer-price">([^<]+)<\/span>/g)].map((m) => m[1]);
-  assert.deepEqual(homeSpans, svcRows.map((r) => esc(r.price) + "."), "the home price spans carry the twin's prices and units");
+  assert.deepEqual(homeSpans, homeWant.map((r) => esc(r.price) + "."), "the home price spans carry the expected prices and units");
+  // Tek-782 (P28): the add-on card links its own heading on /services, which renders as an h3 with that id and stays
+  // a heading in the Markdown twin, inside the audit section and right above the add-on paragraph.
+  assert.ok(homeMd.includes("\n- [Active security testing](/services#active-security-testing). Price agreed for the engagement. "), "home twin: the add-on row links the /services anchor");
+  assert.ok(homeHtml.includes('<a href="/services#active-security-testing">Active security testing</a>'), "home: the add-on card links the /services anchor");
+  assert.ok(svcHtml.includes('<h3 id="active-security-testing">Active security testing</h3>'), "/services: the add-on heading carries the anchor");
+  assert.equal((svcHtml.match(/id="active-security-testing"/g) || []).length, 1, "/services: the anchor is unique");
+  assert.ok(section(svcMd, "Website and API agent-readiness audit").includes("\n### Active security testing\n\nActive security testing is an add-on to an audit, priced by quote"), "/services twin: the heading sits in the audit section over the add-on paragraph");
 });
 
 // ---- Tek-488: round 3, the home page ----
