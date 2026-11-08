@@ -582,6 +582,14 @@ test("Tek-761: the service cards keep their delivery sentence, the price units o
   assert.ok(svcHtml.includes('<h3 id="active-security-testing">Active security testing</h3>'), "/services: the add-on heading carries the anchor");
   assert.equal((svcHtml.match(/id="active-security-testing"/g) || []).length, 1, "/services: the anchor is unique");
   assert.ok(section(svcMd, "Website and API agent-readiness audit").includes("\n### Active security testing\n\nActive security testing is an add-on to an audit, priced by quote"), "/services twin: the heading sits in the audit section over the add-on paragraph");
+  // Tek-782 follow-up (3.232.0, 2026-11-08): under that heading /services lists what can be tested, what the client receives
+  // and what is not included, each as a labelled checklist; the exclusion list renders with the "nope" style.
+  const aud = section(svcMd, "Website and API agent-readiness audit");
+  const ast = aud.indexOf("\n### Active security testing\n");
+  for (const lbl of ["What can be tested", "What you receive", "What is not included"]) {
+    assert.ok(aud.indexOf("\n### " + lbl + "\n- ", ast) > ast, "/services twin: " + lbl + " list under the add-on heading");
+  }
+  assert.ok(/<h3 class="lbl">What is not included<\/h3>\s*<ul class="nope">/.test(svcHtml), "/services: the exclusions render as a not-included list");
 });
 
 // ---- Tek-488: round 3, the home page ----

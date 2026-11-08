@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.232.0 - the active security testing heading on /services (Tek-782 follow-up, 2026-11-08) says why the test is an add-on (it builds on the audit and is planned on the assumption that the audit findings have been dealt with) and lists what can be tested in each of the three scopes, what the client receives (authorization, ownership and provider policy check, immediate notice of a critical issue, the written report, one retest and the stop address) and what is not included; the add-on paragraph itself is unchanged.
 // turva.dev worker v3.231.0 - active security testing round 3 (Tek-782, 2026-11-08): the home page lists the add-on in place of the Implementation card, linking a new heading Active security testing on /services, which keeps Implementation in its own list; /legal gives an engagement canceled before its agreed written kickoff a closing date, and the 14 days for reporting a deviation in an earlier deliverable start at the delivery of the re-scan or retest result.
 // turva.dev worker v3.230.2 - active security testing round 2 wording (Tek-781, 2026-11-08): the add-on paragraph on /services and /agent-readiness-audit says test records must not change data that does not belong to the test accounts, and the legal Client material paragraph closes an engagement 90 days after the last deliverable when a requested retest lapses or is not carried out, and after a partial delivery followed by a cancellation no earlier than the cancellation day. The services FAQ, the legal AI tools paragraph and the company and audit pages say an audit reads what the site and API serve publicly and uses a test account only when the client names it in writing and the written scope states what it allows.
 // turva.dev worker v3.230.1 - active security testing wording (Tek-780, 2026-11-07): the services FAQ answer on AI tools says the audit tools have no access to client systems and work in the client's own folder inside the virtual machine that also sends the test traffic, matching the legal page, and the legal AI tools and Client material paragraphs name the client's test credentials in the virtual machine during the test or retest window as the one exception to the vault rule.
@@ -5513,6 +5514,32 @@ The audit is delivered within two weeks of the agreed written kickoff. Dates in 
 
 Active security testing is an add-on to an audit, priced by quote for each written scope. It starts only after you sign a written authorization that names the targets, accounts, allowed actions and exclusions, and I have checked that you control every target, for example through a DNS TXT record or a token file. Where a target runs on a provider's infrastructure, such as a cloud host or a CDN, the provider's own testing policy must allow the test, or the provider must give written permission. The scope can be the agent surfaces the audit reads, such as MCP endpoints and APIs. It can also be your own AI agent, tested for prompt injection and tool misuse, or a web application, tested to the depth and roles the written scope states. Denial of service and social engineering are excluded. Changes to production data are excluded too, apart from test records created through the test accounts you provide, which must not trigger payments, messages to real people or changes to data that does not belong to the test accounts. The test window is agreed in writing, and you receive a written report with one retest of the reported findings within 30 days of the report. A test does not certify that a system is safe.
 
+It is an add-on rather than a separate service because it builds on the audit. The audit maps your agent surfaces and measures them from the outside. I plan the test on the assumption that the audit's findings have been dealt with, which leaves the test window for what an outside read cannot show.
+
+### What can be tested
+- Agent surfaces the audit reads, such as MCP endpoints, APIs, OAuth flows, agent.json, llms.txt and ai-plugin.json, for example whether a tool or endpoint answers without the authorization it requires.
+- Your own AI agent, red-teamed for prompt injection, tool misuse and attempts to get past its action limits, using only the tools and connected systems the written scope lists.
+- A full web application, tested to the depth and roles the written scope states, for example whether one test account can read data that belongs to another test account.
+
+The written scope names which of these you buy. For your own AI agent, tools that move money, send messages to real people or change production records are tested only against a test environment or test accounts, and a tool that could reach a real recipient or payment is exercised only with that effect disabled.
+
+### What you receive
+- A written authorization to sign before any test traffic, naming the targets, accounts, allowed actions, exclusions, test window and rate limits.
+- A check that you control every target, normally through a DNS TXT record or a token file.
+- For each provider that runs a target, a reading of its published testing policy, or of the provider's written permission if you supply one, before the window opens.
+- Written notice without waiting for the report when I find a critical issue, such as exposed credentials or a way to read other users' data, and a stop of testing on that path.
+- A written report listing each finding with its severity, the evidence needed to reproduce it, the affected target and a recommended fix, and recording what was tested, what was not and the times test traffic ran.
+- One retest of the reported findings within 30 days of the report, on a day you choose in writing in advance, with its result delivered in writing. If you choose no day, the retest lapses.
+- An email stop address for the window, which I check when the window opens and at least at the interval the authorization states.
+- The right to block the test traffic's source addresses at your own perimeter, for instant control.
+
+### What is not included
+- Denial of service, load or stress testing.
+- Social engineering, phishing or physical access.
+- Changes to production data, apart from test records created through your test accounts.
+- A hosting provider's own infrastructure, its other customers and anything else outside the written scope.
+- Use of credentials, tokens or keys found during the test, which appear in the evidence you receive only in redacted form.
+
 ## Implementation
 
 **€1,500. Per day, scoped separately. €499 for the complete fix list from an audit. Prices valid until 2026-12-31.**
@@ -8184,7 +8211,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.231.0",
+    "version": "3.232.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8486,7 +8513,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.231.0",
+  "version": "3.232.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
