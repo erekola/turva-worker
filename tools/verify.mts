@@ -1892,8 +1892,9 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       if (homePriceHtml) {
         const homeSpans = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => m[1]);
         // Tek-761, changed by Tek-782 (P28, 2026-11-08): the home page shows four cards. Cards 1 and 3 carry a euro price (audit, advisory per month);
-        // card 2 is the active security testing add-on, which took the place of the Implementation card on the home page only, and card 4 is the
-        // shared card for agent operations and MCP server design; both are priced per engagement. /services keeps every priced service.
+        // card 2 is the active security testing add-on, which took the place of the Implementation card on the home page and, from v3.235.0
+        // (Erik 2026-11-08), on /services too, and card 4 is the shared card for agent operations and MCP server design; both are priced per
+        // engagement. /services still states every priced service in its sections, Implementation included.
         check(homeSpans.length === 4 && homeSpans[1] === 'Price agreed for the engagement.' && homeSpans[3] === 'Price agreed for the engagement.', `home page offer cards: four, cards 2 and 4 priced per engagement (${homeSpans.length})`);
         setSame('home page offer-price spans vs facts.json (audit and advisory)', [homeSpans[0], homeSpans[2]].map(priceNum), facts.services.filter((s: { id: string; priceKey: string | null }) => s.priceKey && s.id !== 'implementation').map((s: { priceKey: string }) => facts.prices[s.priceKey]));
       } else bad('K5-P3: the home page was not rendered, cannot check its prices');

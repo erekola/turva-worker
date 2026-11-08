@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.235.0 - /services lists the active security testing add-on in place of the Implementation card in Choose a starting point, the same four cards as the home page (Erik 2026-11-08, reverses the /services half of Tek-782 P28); the Implementation section, its price and its anchor stay on the page.
 // turva.dev worker v3.234.0 - quoted add-ons on the machine-readable catalogs (Tek-784, 2026-11-08): active security testing is declared as a quoted add-on to the audit, price on request, requires the audit, not sold separately, on HOME_JSON and so the A2A services skill, on the A2A agent card skill text, in the MCP server card (MCP 1.10.0) and in the WebMCP get_services tool, whose script hash in the CSP moves with it; llms.txt, AGENT_JSON, the OfferCatalog and every checkout surface stay as they were.
 // turva.dev worker v3.233.0 - active security testing page read 2026-11-08 fixes (Tek-782 follow-up): /legal privacy date 2026-11-08, test-credential copy in disk images, Mastodon footer link is a profile and not an offered contact way; services FAQ names the test-credential exception; the authorization names the source addresses; the add-on paragraph on /services and /agent-readiness-audit gives the retest day rule; home FAQ names test accounts for active security testing.
 // turva.dev worker v3.232.1 - the /services share card is a new file, og-services-v2.jpg, so platforms that cached the old card by its address fetch the new one; its headline names active security testing as a quoted add-on (Tek-782 follow-up, 2026-11-08). The old og-services.jpg is removed.
@@ -5499,7 +5500,7 @@ You work directly with me, in writing. I reply within one business day. All pric
 ## Choose a starting point
 
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
-- [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
+- [Active security testing](/services#active-security-testing). Price agreed for the engagement. An add-on to the audit: I test the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so. A test starts only after you sign a written authorization.
 - [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
 - [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
 
@@ -8214,7 +8215,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.234.0",
+    "version": "3.235.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8519,7 +8520,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.234.0",
+  "version": "3.235.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"

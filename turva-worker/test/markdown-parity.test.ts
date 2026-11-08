@@ -531,7 +531,10 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
 // /services twin's own bold price line under the service's heading (the site's source for units; facts.json
 // carries amounts only), the audit card must keep its delivery sentence, and /services renders exactly four
 // cards, in the order of the twin's service sections.
-// Tek-782 (P28, 2026-11-08): the home list is no longer a copy of the /services list. Erik's decision puts the active
+// Tek-782 (P28, 2026-11-08) put the active security testing add-on in place of the Implementation card on the home page,
+// and Erik's decision of 2026-11-08 (v3.235.0) did the same on /services, so the two lists are again the same four rows:
+// audit, the add-on, advisory, agent operations. The Implementation section and its price stay on /services.
+// Previously: the home list is no longer a copy of the /services list. Erik's decision puts the active
 // security testing add-on in place of the Implementation card on the home page only, so the home rows are the /services
 // rows with row 2 replaced by the add-on row, and /services keeps Implementation in its own list. The prices are
 // checked row by row against that expected list.
@@ -546,19 +549,22 @@ test("Tek-761: the service cards keep their delivery sentence, the price units o
   const svcRows = rowsOf(svcMd, "Choose a starting point");
   const homeRows = rowsOf(homeMd, "Start with the audit");
   assert.equal(svcRows.length, 4, "four rows in the /services twin");
-  assert.equal(svcRows[1].name, "Implementation", "/services keeps Implementation as its second card");
-  const homeWant = svcRows.map((r, k) => (k === 1 ? { name: "Active security testing", price: "Price agreed for the engagement" } : { name: r.name, price: r.price }));
-  assert.deepEqual(homeRows.map((r) => r.name), homeWant.map((r) => r.name), "the home page lists the /services cards in the same order, with the add-on in place of Implementation");
+  assert.equal(svcRows[1].name, "Active security testing", "/services shows the add-on as its second card, as the home page does");
+  const homeWant = svcRows.map((r) => ({ name: r.name, price: r.price }));
+  assert.deepEqual(homeRows.map((r) => r.name), homeWant.map((r) => r.name), "the home page lists the /services cards in the same order");
+  // The add-on has no ## section of its own: its heading is an h3 inside the audit section.
+  const secName = (n: string) => (n === "Agent operations and MCP server design" ? "Agent operations" : n === "Active security testing" ? "Website and API agent-readiness audit" : n);
   // The unit of a price is the one the /services twin states in the bold line of the service's own section.
   let priced = 0;
   for (const r of svcRows) {
-    const bold = (section(svcMd, r.name === "Agent operations and MCP server design" ? "Agent operations" : r.name).match(/\n\*\*([^\n]+)\*\*/) || [])[1] || "";
+    if (r.name === "Active security testing") { assert.equal(r.price, "Price agreed for the engagement", r.name); continue; }
+    const bold = (section(svcMd, secName(r.name)).match(/\n\*\*([^\n]+)\*\*/) || [])[1] || "";
     const m = bold.match(/^(€[\d,]+)\. (?:Per (day|month)\b)?/);
     if (!m) { assert.equal(r.price, "Price agreed for the engagement", r.name); continue; }
     priced++;
     assert.equal(r.price, m[1] + (m[2] ? " per " + m[2] : ""), r.name + ": the card's price and unit are the twin section's");
   }
-  assert.equal(priced, facts.services.filter((s: { priceKey: string | null }) => s.priceKey).length, "one priced card per priced service in facts.json");
+  assert.equal(priced, facts.services.filter((s: { id: string; priceKey: string | null }) => s.priceKey && s.id !== "implementation").length, "one priced card per priced service in facts.json except implementation, which keeps its own section");
   for (const [md, rows, want] of [[svcMd, svcRows, svcRows], [homeMd, homeRows, homeWant]] as const) {
     assert.deepEqual(rows.map((r) => r.price), want.map((r) => r.price), "the prices row by row");
     assert.ok(/ Delivered [^.]+\.$/.test(rows[0].rest), "the audit row keeps its Delivered sentence: " + rows[0].rest.slice(-60));
@@ -571,8 +577,8 @@ test("Tek-761: the service cards keep their delivery sentence, the price units o
   const cardNames = [...grid.matchAll(/<li class="card ocard"[^>]*><span class="card-top"><span class="name"><a href="[^"]+">([^<]+)<\/a>/g)].map((m) => m[1]);
   assert.deepEqual(cardNames, svcRows.map((r) => esc(r.name)), "/services renders exactly the four cards of its twin, in order");
   const svcOrder = [...svcMd.matchAll(/\n## ([^\n]+)\n/g)].map((m) => m[1]);
-  const idx = svcRows.map((r) => svcOrder.indexOf(r.name === "Agent operations and MCP server design" ? "Agent operations" : r.name));
-  assert.ok(idx.every((i, k) => i >= 0 && (k === 0 || i > idx[k - 1])), "the cards follow the order of the service sections: " + idx.join(","));
+  const idx = svcRows.map((r) => svcOrder.indexOf(secName(r.name)));
+  assert.ok(idx.every((i, k) => i >= 0 && (k === 0 || i > idx[k - 1] || (svcRows[k].name === "Active security testing" && i === idx[k - 1]))), "the cards follow the order of the service sections: " + idx.join(","));
   const homeSpans = [...homeHtml.matchAll(/<span class="offer-price">([^<]+)<\/span>/g)].map((m) => m[1]);
   assert.deepEqual(homeSpans, homeWant.map((r) => esc(r.price) + "."), "the home price spans carry the expected prices and units");
   // Tek-782 (P28): the add-on card links its own heading on /services, which renders as an h3 with that id and stays
