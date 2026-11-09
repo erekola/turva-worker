@@ -146,7 +146,7 @@
   "og-guide-agent-readiness-audit.jpg": {
     "green": "audit is",
     "kicker": "Guide",
-    "subhead": "How well AI agents can discover, read, and act on a website or API, scored by an independent scanner.",
+    "subhead": "How well AI agents can find and read a website or API, and what it declares they can do.",
     "white": "What an agent-readiness"
   },
   "og-guide-agent-readiness-gaps.jpg": {
