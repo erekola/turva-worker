@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.241.0 - Agent operations opens with the buyer's situation (2026-11-10): the Agent operations section of /services and its summary card on the home page and on /services start with the sentence Get written limits for the agent that your company already runs. No other text, no price and no signed surface changed.
 // turva.dev worker v3.240.0 - the legal page names who holds editorial responsibility (2026-11-10): the Operator section of /legal says that Erik Rekola holds editorial responsibility for every text published on turva.dev and reads and checks the content of each one before publishing it, as point 138 of the European Commission guidelines C(2026) 7702 on Article 50 of the AI Act recommends; no other page and no signed surface changed.
 // turva.dev worker v3.239.0 - the backup chain after the cloud sync was removed (2026-11-10): /legal names the file backups on turva.dev's own network storage (earlier file versions up to 30 days, snapshots up to 11 weeks), the encrypted cloud backup of that storage (versions up to 11 weeks, encrypted on the storage before upload) and one off-site disk that holds only turva.dev's own keys and passwords and stays outside the rotation; Synology Inc. joins the provider list and the International transfers paragraph, and Proton AG is listed for email only; Privacy last updated 2026-11-10. /blog/why-i-back-up-every-night names the workspace copy on the NAS and the backup at Synology C2 Storage in its lead, table, limits and one answer, and /blog/local-agent-memory says an encrypted cloud backup in two sentences, each with an Updated line.
 // turva.dev worker v3.238.1 - the backup post says what the off-site disk leaves out (2026-11-10): in /blog/why-i-back-up-every-night the table row for the 1 TB encrypted disk kept off site now reads that it holds no machine image and no client material, and the post carries an Updated line and the modified date 2026-11-10. No other page changes.
@@ -5386,7 +5387,7 @@ This example uses an invented business and invented readings. The sample's scann
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 - [Active security testing](/services#active-security-testing). Price agreed for the engagement. An add-on to the audit: I test the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so. A test starts only after you sign a written authorization.
 - [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
-- [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
+- [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. Get written limits for the agent that your company already runs. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
 
 Listed prices exclude VAT and are valid until 2026-12-31.
 
@@ -5517,7 +5518,7 @@ You work directly with me, in writing. I reply within one business day. All pric
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 - [Active security testing](/services#active-security-testing). Price agreed for the engagement. An add-on to the audit: I test the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so. A test starts only after you sign a written authorization.
 - [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
-- [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
+- [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. Get written limits for the agent that your company already runs. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
 
 See the [sample audit report](/samples/audit-report) before choosing a service.
 
@@ -5665,7 +5666,7 @@ When the engagement ends, I deliver the final paid month's summary on its normal
 
 **Price agreed for the engagement.**
 
-I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over.
+Get written limits for the agent that your company already runs. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over.
 
 ### The work can cover
 - Where data can be lost, delayed or misread.
@@ -8234,7 +8235,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.240.0",
+    "version": "3.241.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8543,7 +8544,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.240.0",
+  "version": "3.241.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
