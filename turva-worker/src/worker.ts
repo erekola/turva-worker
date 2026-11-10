@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.238.1 - the backup post says what the off-site disk leaves out (2026-11-10): in /blog/why-i-back-up-every-night the table row for the 1 TB encrypted disk kept off site now reads that it holds no machine image and no client material, and the post carries an Updated line and the modified date 2026-11-10. No other page changes.
 // turva.dev worker v3.238.0 - audit round 25 fixes (2026-11-10): the sample report states the day it was last revised, the audit guide no longer names Claude among the assistants the audit questions are put to, the commerce discovery guide describes the rejected AP2 URI form the same way in its body and its answers, the llms.txt guide writes three counts with a space as the thousands separator, and the validator post card no longer says nothing is stored; machine surfaces: the contact-info agent skill names both correspondence languages, the advisory 402 description carries the first-month ending condition, ai.txt lists the A2A agent card, the OpenAPI document declares agent.json, ai-plugin.json, jwks.json and signatures.json and gives ard.json a schema, and the WebMCP search example is a word that matches a title (new CSP script hash); three comments lose private file names.
 // turva.dev worker v3.237.0 - buyer credibility read fixes (Tek-791, 2026-11-09): the home page, the audit guide and the measurement guide link the unedited raw output of a new isitagentready.com run of 2026-11-09 as a separate measurement, and the home page and the audit guide say that Cloudflare runs the scanner and hosts the site; the audit page and /legal say the internet.nl tests run on a client domain only with written permission; the active security testing add-on says testing stops and the window moves when the operator cannot work; the sample report retest no longer promises why an error went away, and the acceptance checks gain their missing elements (lead time coding, residual owner, duplicate rows, edge removal, security.txt Contact, full linkset, DNSSEC rollback); two guides narrow what discovery metadata proves; the home Markdown sentence cites its dated token reading; /services names the server card path difference; the proof-of-work post corrects two sentences with a dated note.
 // turva.dev worker v3.236.0 - active security testing pages (Tek-790, 2026-11-09): the add-on, the authorization summary and /legal name Burp Suite Professional and the GLM 5.3 fallback through Melious AI GmbH for checks the model provider's safeguards stop, say that a check both models stop is reported as not tested, limit tier 2 to the limits the client set for its own agent, stop a path on a usable credential, token or key, and source the Anthropic retention sentence from Anthropic's privacy center; /legal privacy date 2026-11-09.
@@ -738,7 +739,7 @@ The rule asks for three copies, on two kinds of media, with one of them off site
 | Synology NAS, two 8 TB drives mirrored | Encrypted Macrium images on a Grandfather, Father, Son schedule, every night | Going back to an earlier day |
 | Snapshots on the NAS | Immutable snapshots of the image folder, the latest 14 | An image deleted by mistake |
 | Proton Drive | An encrypted cloud copy of my workspace | The off-site copy of my work |
-| 1 TB encrypted disk kept off site | My important files, without a machine image | A second off-site copy |
+| 1 TB encrypted disk kept off site | My important files, with no machine image and no client material | A second off-site copy |
 | Private GitHub repo | The version history of my knowledge base | A record of every committed change to it |
 
 The clone runs first, the image an hour later and the snapshot an hour after that, so that each snapshot can hold that day's image.
@@ -798,6 +799,8 @@ The rule counts copies of your data, so off-site copies of my files meet it for 
 Updated 2026-11-04. The post now says that Macrium notifies me when a backup fails, and it names the cause of the failed images of 18 and 19 October.
 
 Updated 2026-11-06. The sentence on the October hash check now says that it compared the hashes of the files in the decrypted image with the same files on the C: drive.
+
+Updated 2026-11-10. The table row for the off-site disk now says that the disk holds no client material.
 
 ## Related
 
@@ -8224,7 +8227,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.238.0",
+    "version": "3.238.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8533,7 +8536,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.238.0",
+  "version": "3.238.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9400,7 +9403,7 @@ const META_BY_PATH = {
     title: "I can't start over, so I back up every night · turva.dev",
     description: "A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.",
     date: "2026-11-04",
-    modified: "2026-11-06",
+    modified: "2026-11-10",
     kind: "Build notes",
     image: "/og-why-i-back-up-every-night.jpg",
     imageAlt: "Card with the headline I can't start over, so I back up every night, and the line A nightly clone, encrypted NAS images and what has failed so far.",
