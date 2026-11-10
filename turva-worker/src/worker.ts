@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.240.0 - the legal page names who holds editorial responsibility (2026-11-10): the Operator section of /legal says that Erik Rekola holds editorial responsibility for every text published on turva.dev and reads and checks the content of each one before publishing it, as point 138 of the European Commission guidelines C(2026) 7702 on Article 50 of the AI Act recommends; no other page and no signed surface changed.
 // turva.dev worker v3.239.0 - the backup chain after the cloud sync was removed (2026-11-10): /legal names the file backups on turva.dev's own network storage (earlier file versions up to 30 days, snapshots up to 11 weeks), the encrypted cloud backup of that storage (versions up to 11 weeks, encrypted on the storage before upload) and one off-site disk that holds only turva.dev's own keys and passwords and stays outside the rotation; Synology Inc. joins the provider list and the International transfers paragraph, and Proton AG is listed for email only; Privacy last updated 2026-11-10. /blog/why-i-back-up-every-night names the workspace copy on the NAS and the backup at Synology C2 Storage in its lead, table, limits and one answer, and /blog/local-agent-memory says an encrypted cloud backup in two sentences, each with an Updated line.
 // turva.dev worker v3.238.1 - the backup post says what the off-site disk leaves out (2026-11-10): in /blog/why-i-back-up-every-night the table row for the 1 TB encrypted disk kept off site now reads that it holds no machine image and no client material, and the post carries an Updated line and the modified date 2026-11-10. No other page changes.
 // turva.dev worker v3.238.0 - audit round 25 fixes (2026-11-10): the sample report states the day it was last revised, the audit guide no longer names Claude among the assistants the audit questions are put to, the commerce discovery guide describes the rejected AP2 URI form the same way in its body and its answers, the llms.txt guide writes three counts with a space as the thousands separator, and the validator post card no longer says nothing is stored; machine surfaces: the contact-info agent skill names both correspondence languages, the advisory 402 description carries the first-month ending condition, ai.txt lists the A2A agent card, the OpenAPI document declares agent.json, ai-plugin.json, jwks.json and signatures.json and gives ard.json a schema, and the WebMCP search example is a word that matches a title (new CSP script hash); three comments lose private file names.
@@ -6072,6 +6073,8 @@ Business ID: 3600281-7.
 
 The business operates from Tampere, Finland. Postal address: c/o turva.dev, P.O. Box 999, 42011 YRITYSLOKERO, Finland. There are no public premises, because the work is done remotely and in writing.
 
+Erik Rekola holds editorial responsibility for every text published on turva.dev and reads and checks the content of each one before publishing it.
+
 Contact: [info@turva.dev](mailto:info@turva.dev)
 
 ## Engagement terms
@@ -8231,7 +8234,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.239.0",
+    "version": "3.240.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8540,7 +8543,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.239.0",
+  "version": "3.240.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
