@@ -5,7 +5,7 @@
 //   node tools/verify.mts          static, offline-safe; since Tek-475 this also verifies
 //                                  the four signed surfaces offline, against worker.ts's OWN
 //                                  bytes and its own embedded JWKS/signatures, before any
-//                                  deploy (kitka-lokit-003)
+//                                  deploy
 //   node tools/verify.mts --live   also GET a fixed list of the declared surfaces (the
 //                                  discovery files and manifests named in the live block
 //                                  below, plus the Hardenize and Internet.nl website report
@@ -43,7 +43,7 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 // lines and CRLF stay put, and plain JavaScript comes back byte-identical (measured on
 // worker.js 2026-10-20). `node --check x.ts` is no gate: on Node 24.20 it passed a broken .ts
 // that has an import or export and failed a valid one that has neither (measured 2026-10-20).
-// The workspace has the same two steps in tools/workerlahde.mjs; this public repo stands alone.
+// The author's private workspace repeats the same two steps in a script of its own; this public repo stands alone.
 function jsoncToJson(t: string) {
   let out = '';
   for (let i = 0; i < t.length;) {
@@ -346,7 +346,7 @@ console.log('\nSecret files stay out of the public repo');
 
 console.log('\nShare card manifest (tools/og-cards.json)');
 // B2-21 (round 12, batch E16, Erik's decision 2026-08-16). An og card's headline and subhead
-// are JPEG pixels, so no text gate could read them: not this file, not tools/kielletyt.mjs,
+// are JPEG pixels, so no text gate could read them: not this file, not the banned-claims scan,
 // not the style pass. Three measured drifts (findings B2-22, B2-23 and B2-24) all happened the
 // same way, the text surface was corrected and the card was not. The card generator now
 // records what it laid into each card, so the words exist as text somewhere and can be gated.
@@ -449,7 +449,7 @@ check(!!lvm && lvm[1]===ar, `worker.ts HOME_JSON lastVerified == ${ar}`);
 check(src.readme.text.includes(ar), `README.md carries ${ar}`);
 // WL-25: on top of the includes() above, which passes on a date found anywhere in the README,
 // each date is read from its own sentence, so the scanner claim cannot borrow the security
-// date or the other way round. The includes() lines stay: tools/e16portti.mjs E1 reads them.
+// date or the other way round. The includes() lines stay: a negative control in the author's private workspace reads them.
 const rmDates = readmeMeasurementDates(src.readme.text);
 check(rmDates.scannerDate === ar, `README.md scanner sentence carries ${ar} (saw ${JSON.stringify(rmDates.scannerDate)})`);
 // B2-06 (round 12, batch E16). Only the agent-readiness date was anchored in README.md,
@@ -487,6 +487,55 @@ check(doc.readiness.text.includes(ar), `${doc.readiness.rel} carries ${ar}`);
   check(typeof checkedAt === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(checkedAt),
     `facts.json records when the advisories were last checked (${checkedAt})`);
   check(doc.security.text.includes(`Checked ${checkedAt}`), `${doc.security.rel} carries Checked ${checkedAt}`);
+}
+
+// SECURITY.md states more moving numbers than its Checked date: the wrangler version, the esbuild version, the undici and
+// sharp versions that wrangler's miniflare pins, and the size of the runtime tree. Only the date was read, so the wrangler
+// sentence went stale twice. Each of them is read out of the text here and compared with package-lock.json, the file that
+// decides what wrangler bundles. The narrative keeps the older undici and sharp versions in it, so for those two the LAST
+// "`name` at exactly X" in the text is the current one: keep the newest statement last. The runtime tree is every lockfile
+// package except the root entry and the ones marked dev.
+const lockPackages: Record<string, any> = JSON.parse(readFileSync(join(ROOT, 'turva-worker/package-lock.json'), 'utf8')).packages;
+const securityDocDrift = (text: string, packages: Record<string, any>): string[] => {
+  const flat = text.replace(/\s+/g, ' ');
+  const lockVersion = (name: string): string | undefined => packages['node_modules/' + name]?.version;
+  const problems: string[] = [];
+  const same = (what: string, stated: string | undefined, want: string | undefined) => {
+    if (stated === undefined) problems.push(`${what}: SECURITY.md does not state it where this gate reads it`);
+    else if (want === undefined) problems.push(`${what}: not found in package-lock.json`);
+    else if (stated !== want) problems.push(`${what}: SECURITY.md says ${stated}, package-lock.json has ${want}`);
+  };
+  const lastOf = (re: RegExp) => { const all = [...flat.matchAll(re)]; return all.length ? all[all.length - 1][1] : undefined; };
+  same('wrangler', /Wrangler (\d+\.\d+\.\d+) declares/.exec(flat)?.[1], lockVersion('wrangler'));
+  same('esbuild declared by wrangler', /declares it at exactly `(\d+\.\d+\.\d+)`/.exec(flat)?.[1], packages['node_modules/wrangler']?.dependencies?.esbuild);
+  same('esbuild resolved', /package-lock\.json` resolves `(\d+\.\d+\.\d+)`/.exec(flat)?.[1], lockVersion('esbuild'));
+  same('undici', lastOf(/`undici` at exactly (\d+\.\d+\.\d+)/g), lockVersion('undici'));
+  same('sharp', lastOf(/`sharp` at exactly (\d+\.\d+\.\d+)/g), lockVersion('sharp'));
+  same('runtime package count', /resolves the runtime tree to (\d+) packages/.exec(flat)?.[1],
+    String(Object.entries(packages).filter(([k, v]) => k !== '' && !v.dev).length));
+  return problems;
+};
+{
+  const drift = securityDocDrift(doc.security.text, lockPackages);
+  check(drift.length === 0,
+    `${doc.security.rel} wrangler, esbuild, undici and sharp versions and the runtime package count match package-lock.json`
+    + (drift.length ? ' :: ' + drift.join(' | ') : ''));
+  // Negative controls: each reading must fail on a changed copy, so a pattern that stopped matching cannot pass silently.
+  const t = doc.security.text;
+  const changed = (from: RegExp, to: (m: RegExpExecArray) => string): string => {
+    const m = from.exec(t);
+    return m ? t.slice(0, m.index) + to(m) + t.slice(m.index + m[0].length) : t;
+  };
+  const drifts = (text: string, word: string, packages: Record<string, any> = lockPackages) =>
+    text !== t || packages !== lockPackages ? securityDocDrift(text, packages).some((x) => x.startsWith(word)) : false;
+  check(drifts(changed(/Wrangler\s+\d+\.\d+\.\d+/, () => 'Wrangler 4.0.0'), 'wrangler'), 'SECURITY.md gate self-test: a wrong wrangler version is caught');
+  check(drifts(changed(/declares it at exactly `\d+\.\d+\.\d+`/, () => 'declares it at exactly `0.0.1`'), 'esbuild declared'), 'SECURITY.md gate self-test: a wrong esbuild version declared by wrangler is caught');
+  check(drifts(changed(/resolves `\d+\.\d+\.\d+`/, () => 'resolves `0.0.1`'), 'esbuild resolved'), 'SECURITY.md gate self-test: a wrong resolved esbuild version is caught');
+  check(drifts(changed(/`undici` at exactly 7\.30\.1/, () => '`undici` at exactly 7.0.0'), 'undici'), 'SECURITY.md gate self-test: a wrong undici version is caught');
+  check(drifts(changed(/`sharp` at exactly 0\.35\.5/, () => '`sharp` at exactly 0.0.1'), 'sharp'), 'SECURITY.md gate self-test: a wrong sharp version is caught');
+  check(drifts(changed(/runtime tree to \d+ packages/, () => 'runtime tree to 1 packages'), 'runtime package count'), 'SECURITY.md gate self-test: a wrong runtime package count is caught');
+  check(drifts(t, 'runtime package count', { ...lockPackages, 'node_modules/self-test-extra': { version: '1.0.0' } }), 'SECURITY.md gate self-test: a lockfile with one more runtime package is caught');
+  check(!drifts(t, 'runtime package count', { ...lockPackages, 'node_modules/self-test-extra': { version: '1.0.0', dev: true } }), 'SECURITY.md gate self-test: a dev-only package does not change the runtime count');
 }
 
 let CAT_LOOKUP: (item?: any) => any = () => undefined;
@@ -625,7 +674,7 @@ console.log('\nCategory set (facts.json owns which categories exist)');
     // than when it is compared. Wording corrected 2026-09-07: this said "the line below
     // indexes sp[4] directly", which was true until Tek-225 moved the positions into
     // facts.json (surfaceWording.evidenceTwin.spellingIndex) and the literal index became
-    // `sp[i][ix]`. The gate that watches this guard, tools/e16portti.mjs E4, had been
+    // `sp[i][ix]`. The control that watches this guard, in the private workspace, had been
     // anchored to the same literal and stopped seeing the static side altogether.
     if (CATS.length !== 5) bad(`evidence twin: facts.json names ${CATS.length} categories, the twin sentence is written for 5`);
     else if (A) {
@@ -697,7 +746,7 @@ console.log('\nCategory set (facts.json owns which categories exist)');
       // Fixed 2026-08-30 together with the home table: the row used to be compared with the
       // total score, which is correct only as long as every category is full.
       // A missing expected value is a FAIL and not a skip, so that two vanishing values cannot
-      // be compared with each other (same section, Ansa 2).
+      // be compared with each other (same section).
       const wrong = rows.filter((r) => {
         const want = (CAT_LOOKUP(r.cat) || {}).score;
         return typeof want !== 'string' || want.trim().length === 0 || r.val !== want;
@@ -707,7 +756,7 @@ console.log('\nCategory set (facts.json owns which categories exist)');
     }
   }
 
-  // E. The sample reports' technical-scan tables (C2-P4, round 19, C2-2 follow-up). SAMPLE_PATHS
+  // E. The sample report's technical-scan tables (C2-P4, round 19, C2-2 follow-up). SAMPLE_PATHS
   // below lists the pages read, and the loop reads each one it lists; today that is one page.
   // A sample exists to show a buyer what a real report reads, so its own category column
   // is read against the same canonical list a real report's cells are checked against
@@ -1054,6 +1103,40 @@ check(src.worker.text.includes(`worker v${facts.versions.site}`), `worker.ts hea
 // cannot drift silently.
 const pkgSite = JSON.parse(readFileSync(join(ROOT, 'turva-worker/package.json'), 'utf8'));
 check(pkgSite.version === facts.versions.site, `turva-worker package.json version == ${facts.versions.site} (saw ${pkgSite.version})`);
+// facts.json versions.mcp was read only by the live half further down, so the static run and CI compared it with nothing,
+// although the signed MCP server card carries the version twice. The card literal is EXECUTED here from the stripped
+// source, the way the robots.txt block is, and both "version" values are read from the resulting JSON.
+const mcpCardVersions = (js: string): { card?: string; serverInfo?: string; error?: string } => {
+  const start = 'const MCP_SERVER_CARD = JSON.stringify(';
+  const i = js.indexOf(start);
+  const j = i < 0 ? -1 : js.indexOf('\nconst OAUTH_DISCOVERY', i);
+  if (i < 0 || j < 0) return { error: 'the MCP_SERVER_CARD literal was not found in worker.ts' };
+  try {
+    const card = JSON.parse(new Function(js.slice(i, j) + '\nreturn MCP_SERVER_CARD;')());
+    return { card: card.version, serverInfo: card.serverInfo?.version };
+  } catch (e) { return { error: 'could not evaluate the MCP_SERVER_CARD literal: ' + (e as Error).message }; }
+};
+{
+  const seen = mcpCardVersions(workerJs);
+  check(seen.error === undefined && seen.card === facts.versions.mcp && seen.serverInfo === facts.versions.mcp,
+    `worker.ts MCP server card "version" and serverInfo "version" == facts.json versions.mcp ${facts.versions.mcp}`
+    + ` (saw ${seen.error ?? `${seen.card} and ${seen.serverInfo}`})`);
+  // Negative controls on an in-memory copy of the source: change the first, then the second "version" value inside the card.
+  const cardAt = workerJs.indexOf('const MCP_SERVER_CARD = JSON.stringify(');
+  const wanted = `"version": "${facts.versions.mcp}"`;
+  const firstAt = workerJs.indexOf(wanted, cardAt);
+  const secondAt = firstAt < 0 ? -1 : workerJs.indexOf(wanted, firstAt + wanted.length);
+  const withValueAt = (at: number) => workerJs.slice(0, at) + '"version": "0.0.1"' + workerJs.slice(at + wanted.length);
+  check(firstAt > cardAt && secondAt > firstAt, 'MCP server card gate self-test: both version values are located in the card');
+  if (firstAt > cardAt && secondAt > firstAt) {
+    check(mcpCardVersions(withValueAt(firstAt)).card === '0.0.1' && mcpCardVersions(withValueAt(firstAt)).serverInfo === facts.versions.mcp,
+      'MCP server card gate self-test: a changed card "version" is read as changed');
+    check(mcpCardVersions(withValueAt(secondAt)).serverInfo === '0.0.1' && mcpCardVersions(withValueAt(secondAt)).card === facts.versions.mcp,
+      'MCP server card gate self-test: a changed serverInfo "version" is read as changed');
+  }
+  check(mcpCardVersions(workerJs.replace('const MCP_SERVER_CARD = JSON.stringify(', 'const MCP_SERVER_CARD_X = JSON.stringify(')).error !== undefined,
+    'MCP server card gate self-test: a missing literal is an error and not a pass');
+}
 
 console.log('\nCSP script hash');
 // script-src carries no 'unsafe-inline', so the sha256 in the CSP is the only
@@ -1382,7 +1465,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
   // The calendar day in Helsinki, where every date in this repo is written. The UTC day made a
   // release dated today read as "in the future" between midnight and 03.00 Helsinki time, and
   // the checked dates below had the same window. Intl with a named zone gives the same answer
-  // on a UTC CI runner as on the workspace machine. VERIFY_NOW (an ISO instant) pins the clock,
+  // on a UTC CI runner as on the author's machine. VERIFY_NOW (an ISO instant) pins the clock,
   // so the static mutation run can prove that 00.30 Helsinki time passes and the UTC day fails.
   const nowPin = process.env.VERIFY_NOW;
   const now = nowPin ? new Date(nowPin) : new Date();
@@ -1842,7 +1925,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       check(seen.length > 0 && bad3 === -1,
         `${path}: HTML section order follows the twin (${seen.length} sections)${bad3 === -1 ? '' : ' :: ' + seen[bad3] + ' is rendered before ' + seen[bad3 - 1] + ' should be'}`);
     }
-    // 5b. the same order read from the RENDERED page (kierros 4, 2026-09-06, worker-01). The
+    // 5b. the same order read from the RENDERED page (round 4, 2026-09-06, worker-01). The
     // call-site regex above knows renderers by name, so a heading list passed as an array
     // (mdToolCards on /tools) or a local helper (terms() on /legal) was outside it: two
     // wrong-order mutants passed 298/298. This block renders each converted page with the
@@ -2220,7 +2303,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 // VALUE to its own category's score in facts.json, but the only gate that read the board
 // was the live one further down, which fetches the served page. That means a plain
 // `node tools/verify.mts` could not see the deployed page and facts.json drifting apart,
-// and the gap was noted as a side finding on 2026-08-01 (jatko 18) and left open until
+// and the gap was noted as a side finding on 2026-08-01 and left open until
 // 2026-08-30 (work queue B2).
 //
 // WHAT THIS CLAIM IS WORTH, said out loud because a green gate proves only what it
@@ -2235,7 +2318,7 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
 // BOTH DIRECTIONS ARE FAULTS, and that is deliberate. A cell that no longer matches its
 // category is drift in the surface. A category that has lost its score or its label is
 // drift in the data, and comparing an empty want against an empty got reads as agreement
-// (Ansa 2 in the same 2026-08-01 entry, measured in this very file). So a missing or
+// (a second case of the same 2026-08-01 finding, measured in this very file). So a missing or
 // empty expected value is a FAIL here too, never a skip.
 const boardProblems = (source: string, categories: unknown, totalScore: unknown, level: unknown) => {
   // Since v3.171.0 (Tek-479 P14) a cell carries a space between its label and its value, so a text
@@ -2271,7 +2354,7 @@ const boardProblems = (source: string, categories: unknown, totalScore: unknown,
 {
   // CONTROLS FIRST (Tek-118). A check that has never run is not green, it is unrun
   // (finding of 2026-08-16), and a negative test can be green for the wrong
-  // reason (2026-08-16 (jatko 9)). So both directions are exercised on synthetic input
+  // reason (a trap recorded on 2026-08-16). So both directions are exercised on synthetic input
   // whose result does not depend on what is on disk, and the control set is asymmetric
   // on purpose: the surface drifting from the data, and the data losing its value.
   const cBoard = (rows: string, total: string) =>
@@ -2410,7 +2493,7 @@ console.log('\nRate limiter: wrangler.jsonc vs worker.ts literals (round 14, R1g
     check(src.worker.text.includes(`'"default";q=${rlLimit};w=${rlPeriod}'`),
       `worker.ts RateLimit-Policy header literal matches wrangler.jsonc (q=${rlLimit};w=${rlPeriod})`);
     const rlWording = `${rlLimit} requests per ${rlPeriod} seconds`;
-    // avoimet-muisti-011 / Tek-475: this used to count the whole file, so it stayed green
+    // Tek-475: this used to count the whole file, so it stayed green
     // on two incidental hits (the release-header comment, an old blog post) even if the
     // 429 body itself lost the number. Narrowed to the limiter's own response code: the
     // enforcement comment above env.RATE_LIMITER.limit() through the 429 Response() call
@@ -2460,7 +2543,7 @@ console.log('\nCurrency symbol matches facts.prices.currency (round 14, R2a-3)')
   }
 }
 
-console.log('\nAutolink: bare hosts in the served markdown (kierros 18, S5-1)');
+console.log('\nAutolink: bare hosts in the served markdown (round 18, S5-1)');
 // renderInline() links protocol-less "label.label/path" strings. A reverse-DNS
 // identifier has that exact shape, and two MCP metadata keys in a blog post rendered
 // as links to a host that does not resolve. worker.ts now requires the last label to
@@ -2535,7 +2618,7 @@ console.log('\nRetest window: the correction add-on exception (Tek-481, Tek-482)
     + (missing.length ? ' :: ' + missing.slice(0, 3).join(' | ') : ''));
 }
 
-console.log('\nx402 amounts derive from facts.json eurUsdc (kierros 18, S6-1)');
+console.log('\nx402 amounts derive from facts.json eurUsdc (round 18, S6-1)');
 // The three x402 offers carry a USDC amount that is the euro price times a rate. The
 // rate was baked into the number and named on no served surface, so it aged invisibly.
 // facts.json now owns it and this is its reader: each amount is recomputed here, so a
@@ -2580,7 +2663,7 @@ console.log('\nx402 amounts derive from facts.json eurUsdc (kierros 18, S6-1)');
   }
 }
 
-console.log('\nSigning material is declared where an agent looks (kierros 18, S6-3)');
+console.log('\nSigning material is declared where an agent looks (round 18, S6-3)');
 // /.well-known/jwks.json and /.well-known/signatures.json are what a reader needs to
 // check the four signed manifests, they are live, and /api/v1 names them, but the API
 // catalog listed neither. A surface that nothing enumerates is a surface that can be
@@ -2592,8 +2675,8 @@ console.log('\nSigning material is declared where an agent looks (kierros 18, S6
   }
 }
 
-console.log('\nSigned surfaces match their stored signature, offline before deploy (kitka-lokit-003, Tek-475)');
-// Everything above this line, including the declaration check just above, is what ship.ps1's
+console.log('\nSigned surfaces match their stored signature, offline before deploy (Tek-475)');
+// Everything above this line, including the declaration check just above, is what the ship script's
 // static gate runs before every deploy, and it Die()s on a nonzero exit. Everything from
 // if (LIVE) below, including the live signature check further down, only runs AFTER a
 // deploy, and on failure it only prints a warning, never Die()s. So the static gate never
@@ -2603,7 +2686,7 @@ console.log('\nSigned surfaces match their stored signature, offline before depl
 // and calls its own fetch() handler locally for the four signed paths to get the exact bytes
 // this ship would serve, then verifies each against the Ed25519 signature and JWKS that
 // worker.ts itself already declares. A worker.ts edit not yet followed by a fresh resign now
-// fails HERE, before any ship, not only after one (Tek-475, kitka-lokit-003).
+// fails HERE, before any ship, not only after one (Tek-475).
 try {
   const jwksM = src.worker.text.match(/const JWKS_JSON = "((?:[^"\\]|\\.)*)";/);
   const sigsM = src.worker.text.match(/const SIGNATURES_JSON = "((?:[^"\\]|\\.)*)";/);
@@ -2623,9 +2706,9 @@ try {
     check(missing.length === 0 && extra.length === 0,
       `pre-deploy: SIGNATURES_JSON carries exactly the required signed-path set (missing: ${missing.join(', ') || 'none'}; extra: ${extra.join(', ') || 'none'})`);
   }
-  // Same technique as 5b above, not a plain file:// import of worker.ts. e16portti.mjs runs
+  // Same technique as 5b above, not a plain file:// import of worker.ts. A private mutation gate runs
   // this file inside a sandbox copy that deliberately excludes node_modules, with NODE_PATH
-  // pointed at the real one instead (ebportti.mjs copies turva-worker the same way, but its
+  // pointed at the real one instead (a second private gate copies turva-worker the same way, but its
   // own cases never invoke this file). NODE_PATH is not consulted for ESM import resolution,
   // only for CommonJS require(), so a direct import(file://...worker.js) threw
   // ERR_MODULE_NOT_FOUND on worker.js's own "markdown-parity-check" import inside that sandbox
@@ -2803,7 +2886,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
       // its own category's score in facts.json.
       // A missing or empty expected value is a FAIL, not a skip. Without that, a facts.json
       // that lost the field and a board that lost the number would compare undefined against
-      // undefined and print `pass ... saw undefined`, which is Ansa 2 in the same entry and
+      // undefined and print `pass ... saw undefined`, which is the second case of the 2026-08-01 finding and
       // was measured in this very file.
       const catByLabel = new Map<string, any>(CATS.map((c: { label: string }) => [String(c.label), c]));
       const wrongVal = cells.filter((c) => {

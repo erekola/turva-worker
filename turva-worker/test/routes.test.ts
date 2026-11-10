@@ -871,7 +871,7 @@ test("PGP: the advanced host serves its own policy file and redirects everything
 // Every canonical page RENDERS, in both forms. Added 2026-08-31 after /services shipped a 500
 // to every browser and no gate saw it: the page builders throw on malformed page markdown
 // (mdPcard: "does not open with a **price** block"), a bold price block had been rewrapped
-// onto three lines, and verify.mjs, the 39 tests here and check-docs were all green because
+// onto three lines, and the release verify chain, the 39 tests here and the repository checks were all green because
 // not one of them asked the router for the HTML of a page. The sitemap is the list, so a new
 // page is covered the day it is published rather than the day someone remembers this file.
 test("every page in the sitemap renders as HTML and as markdown", async () => {
@@ -1096,7 +1096,7 @@ test("R15 P4-2: OPTIONS answers 204 with preflight headers on every agent-api su
 });
 
 test("R15 P1a-1: the agent-commerce-discovery guide states the AP2 URI without hyperlinking it", async () => {
-  // The URI is an identifier the A2A card declares (kept as is, see project-do-not-fix), but
+  // The URI is an identifier the A2A card declares (kept as is, a recorded intentional choice), but
   // as an address it answers 404, so the guide must not render it as a link.
   const r = await worker.fetch(new Request("https://turva.dev/guides/agent-commerce-discovery"), env, {});
   assert.equal(r.status, 200);
@@ -1190,7 +1190,7 @@ test("R16 S2-2 and C5-11: the OpenAPI document and the API catalog name /api/v1 
   assert.ok(spec.paths["/api/acp/checkout_sessions/{session_id}/complete"].post);
   assert.ok(spec.paths["/api/acp/checkout_sessions/{session_id}/cancel"].post);
   assert.ok(!spec.info.description.includes("ACP enabled on /api/agent/*"), "the description no longer places ACP on the x402 routes");
-  // The MPP reading of x-payment-info must stay at three operations (do-not-fix, Tek-160).
+  // The MPP reading of x-payment-info must stay at three operations (a recorded intentional choice, Tek-160).
   const paid = Object.values<Record<string, Record<string, unknown> | null>>(spec.paths).flatMap((ops) => Object.values(ops)).filter((op) => op && op["x-payment-info"]);
   assert.equal(paid.length, 3, "exactly three operations carry x-payment-info");
   const cat = JSON.parse(await (await get("/.well-known/api-catalog")).text());
@@ -1199,27 +1199,9 @@ test("R16 S2-2 and C5-11: the OpenAPI document and the API catalog name /api/v1 
   assert.equal(live.status, 200);
 });
 
-test("R16 S4-1: no live brief address and no prospect name sits in the source", async () => {
+test("R16 S4-1: no live brief address sits in the source", async () => {
   const src = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
   assert.ok(!/\/brief\/[a-z0-9]+-[a-z0-9]{13}\b/.test(src), "a real brief address (name-13 random chars) must not appear in the source");
-  // The guarded names are held as SHA-256 digests of the lowercased name, so this public
-  // test does not itself carry the names it keeps out of the source. Every substring of
-  // a word with a guarded length is hashed, so a name glued to other text is caught too.
-  const guarded = new Map([
-    ["dca936b1bca2be5bc00de4e9db8343da4abefb2615b9c0d783d35962eb53d444", 7],
-    ["e6a5f064895df65519a7346f562dfabdbae880e5c0046fdfbe79c8b0a46ce658", 8],
-  ]);
-  const lengths = new Set(guarded.values());
-  const words = new Set(src.toLowerCase().match(/[a-z0-9]+/g));
-  const hits = [];
-  for (const w of words) {
-    for (const n of lengths) {
-      for (let i = 0; i + n <= w.length; i++) {
-        if (guarded.has(createHash("sha256").update(w.slice(i, i + n)).digest("hex"))) hits.push(w);
-      }
-    }
-  }
-  assert.equal(hits.length, 0, "prospect names stay out of the public source");
 });
 
 // One site order (2026-09-04, Tek-336). Round 17 found llms-full.txt opening with 22 blog

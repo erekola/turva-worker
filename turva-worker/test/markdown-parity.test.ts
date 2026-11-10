@@ -515,7 +515,7 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
   const html = (await served("/services", "text/html")).body;
   const sec = md.slice(md.indexOf("\n## Choose a starting point\n"), md.indexOf("\n## ", md.indexOf("\n## Choose a starting point\n") + 4));
   const rows = [...sec.matchAll(/\n- \[([^\]]+)\]\(([^)]+)\)\. ([^.]+)\. /g)];
-  assert.equal(rows.length, 4, "four offers: the audit, implementation, ongoing advisory and the shared agent operations and MCP server design card (Tek-761)");
+  assert.equal(rows.length, 4, "four offers: the audit, the active security testing add-on, ongoing advisory and the shared agent operations and MCP server design card (Tek-761)");
   for (const [, name, href, price] of rows) {
     assert.ok(html.includes('<span class="name"><a href="' + href + '">' + esc(name) + '</a>.</span> <span class="price">' + esc(price) + ".</span></span>"), href);
   }

@@ -9,8 +9,8 @@ jobs:
     # The repo had no workflow at all until 2026-09-10 (Tek-384): the tests and the verify
     # chain existed and nothing ran them on a change. What runs here is what this REPO can
     # check on its own, which is not the whole release gate: the ship script runs a wider
-    # verify from the private workspace, and this one is a subset of it (mds/gotchas.md
-    # 2026-09-09 (jatko 2), where the repo's own verify was green while the ship failed).
+    # verify from the private workspace, and this one is a subset of it (a trap recorded on
+    # 2026-09-09, when the repo's own verify was green while the ship failed).
     # The --live half is deliberately absent: it measures the deployed site, so it is a
     # report after a ship and cannot be a gate before one.
     runs-on: ubuntu-latest

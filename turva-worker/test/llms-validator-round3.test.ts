@@ -535,7 +535,7 @@ test("Tek-747: the block reader stays linear on nested markers and a deep item s
   }
 });
 
-test("Tek-747: the report's sentences are separated by periods and carry no semicolon", () => {
+test("Tek-747: the report's sentences are separated by a period, checked as the exact wording of each row", () => {
   const { validateLlmsTxt } = loadValidatorInternals();
   const report = (f: unknown, id: string): string => validateLlmsTxt(f).find((c: { id: string }) => c.id === id).detail;
   const head = "# T\n\n> s\n\n## Docs\n\n";

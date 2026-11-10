@@ -1,6 +1,6 @@
 # Endpoints
 
-The public routes this Worker serves, copied from the repository README so the README can stay short. Left out on purpose: the per-recipient brief addresses under `/brief/`, which are unlisted and carry a noindex header, the old paths of the previous site and of retired pages of this one, which redirect to their current pages through `LEGACY_REDIRECTS` in `src/worker.ts`, and the static images in `public/`, such as the OG cards. The Worker is the single source of truth: if a path is listed here it resolves in `src/worker.ts`, and `node tools/verify.mts --live` fetches a fixed list of public discovery surfaces. Adding `--twins` also fetches every canonical page and its Markdown twin, which takes two paced requests per page. Routes outside that list, such as the PGP key and the MCP registry authentication files, are not fetched by `--live`.
+The public routes this Worker serves, copied from the repository README so the README can stay short. Left out on purpose: the per-recipient brief addresses under `/brief/`, which are unlisted and carry a noindex header, the old paths of the previous site and of retired pages of this one, which redirect to their current pages through `LEGACY_REDIRECTS` in `src/worker.ts`, and the static files in `public/`, such as the OG cards and the dated raw scanner output under `/evidence/`. The Worker is the single source of truth: if a path is listed here it resolves in `src/worker.ts`, and `node tools/verify.mts --live` fetches a fixed list of public discovery surfaces. Adding `--twins` also fetches every canonical page and its Markdown twin, which takes two paced requests per page. Routes outside that list, such as the PGP key and the MCP registry authentication files, are not fetched by `--live`.
 
 | Path | Purpose |
 |---|---|
@@ -8,7 +8,7 @@ The public routes this Worker serves, copied from the repository README so the R
 | `/.well-known/ai.txt` | AI agent disclosure |
 | `/llms.txt` | LLM consumption guide |
 | `/llms-full.txt` | The whole site as one text file |
-| `/<page>.md` | The markdown twin of any page at its own address, `/index.md` for the home page (llms.txt v2) |
+| `/<page>.md` | The markdown twin of any page at its own address, `/index.md` for the home page (llms.txt v2). Each page that has a twin also answers at `/<page>.html.md`, the second address form llms.txt v2 names |
 | `/.well-known/agent.json` | ai-plugin / agent manifest |
 | `/.well-known/ai-plugin.json` | ai-plugin manifest, byte-identical to `agent.json` and signed with it |
 | `/.well-known/mcp/server-card.json` | MCP server card |

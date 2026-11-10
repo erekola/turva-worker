@@ -246,6 +246,25 @@ test("hosted validator: #Project with === is still not an H1, and a setext H2 en
 
 // ---------------------------------------------------------------- text
 
+// The sample audit report states the day it was last revised. A hand-pinned sentence only proves the sentence is
+// there, so the day could go stale while the body changed under it. This pins the pair instead: the sha256 of the
+// served markdown twin with the date masked out, and the date string. A body change moves the digest and the test
+// fails until the date in the page is set to the release day and both pinned values are updated together.
+const REVISED_RE = /(This page itself was last revised on )([^.]+)(\.)/g;
+const SAMPLE_REPORT_PIN = { digest: "2d9bcb544bb6405506ded2dd479ac68d727600319cac1405b0474eb59d672858", revised: "10 November 2026" };
+async function assertRevisionDateBoundToContent(page: string, pin: { digest: string; revised: string } = SAMPLE_REPORT_PIN) {
+  const found = [...page.matchAll(REVISED_RE)];
+  assert.equal(found.length, 1, "the sentence 'This page itself was last revised on <date>.' must occur exactly once in /samples/audit-report.md");
+  const date = found[0][2];
+  const parsed = new Date(date + " 00:00:00 UTC");
+  assert.ok(!Number.isNaN(parsed.getTime()), "the revision date must parse: " + date);
+  assert.ok(parsed.getTime() <= Date.now(), "the revision date must not be in the future: " + date);
+  const digest = await sha256Hex(new TextEncoder().encode(page.replace(REVISED_RE, "$1<DATE>$3")));
+  assert.deepEqual({ digest, revised: date }, pin,
+    "the text of /samples/audit-report changed, or its date did: update the 'last revised' date in the page to the release day, then update both pinned values (digest and date) in SAMPLE_REPORT_PIN together");
+}
+
+
 test("page text: services reply promise, validator implementation sentence, legal re-scan window and sample dates", async () => {
   const services = await (await get("/services.md")).text();
   assert.ok(services.includes("I reply within one business day. All prices exclude VAT."));
@@ -257,7 +276,7 @@ test("page text: services reply promise, validator implementation sentence, lega
   assert.ok(legal.includes("You can report a deviation in an earlier deliverable within 14 calendar days of delivery of the written result of the included re-scan or retest in which it first shows."));
   assert.ok(legal.includes("**Terms last updated:** 2026-11-08"));
   const audit = await (await get("/samples/audit-report.md")).text();
-  assert.ok(audit.includes("This page itself was last revised on 3 November 2026."));
+  await assertRevisionDateBoundToContent(audit);
   assert.ok(audit.includes("today each page weighs between 188 kB and 340 kB of markup"));
   assert.ok(!audit.includes("more than 200 kB"));
   const parity = await (await get("/markdown-parity-check.md")).text();

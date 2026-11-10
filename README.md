@@ -46,7 +46,7 @@ node tools/verify.mts
 
 `tools/verify.mts`, the Worker's tests and the Worker itself import markdown-parity-check. If you only run the tests and `verify.mts`, `npm --prefix turva-worker ci --omit=dev --ignore-scripts` installs enough.
 
-The live variant contacts a fixed list of declared public endpoints and the separate MCP server. It also verifies the four signed manifests against the published JWKS. Adding `--twins` fetches every canonical page and its Markdown twin. The live checks do not deploy changes:
+The live variant contacts a fixed list of declared public endpoints and the separate MCP server. It also fetches three third-party pages (the Hardenize and Internet.nl website reports and the isitagentready.com home page), asks the DNS-over-HTTPS resolver at 1.1.1.2 for the site's mail domain records (with the machine's own resolver as a fallback), and sends POST requests to the Worker's A2A message route and to the MCP server. It also verifies the four signed manifests against the published JWKS. Adding `--twins` fetches every canonical page and its Markdown twin. The live checks do not deploy changes:
 
 ```sh
 node tools/verify.mts --live
@@ -85,7 +85,7 @@ Page prose lives in `PAGE_MARKDOWN` in [the Worker source](turva-worker/src/work
 
 The public site runs without a separate CMS or origin server. Static assets are served through Cloudflare Workers Assets. Sharing content sources reduces drift between HTML and Markdown, while the repository's checks test for inconsistencies.
 
-The Worker also serves the hosted llms.txt validator, the hosted Markdown parity check and public sample reports. It publishes an Ed25519 public key and signatures for four discovery resources so readers can verify their response bytes.
+The Worker also serves the hosted llms.txt validator, the hosted Markdown parity check and a public sample report. It publishes an Ed25519 public key and signatures for four discovery resources so readers can verify their response bytes.
 
 The [MCP server](https://github.com/erekola/turva-mcp#connect) runs separately. This repository publishes its discovery card and links to it. The [standalone validator](https://github.com/erekola/llms-txt-validator) provides a CLI and Node package.
 

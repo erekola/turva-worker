@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.238.0 - audit round 25 fixes (2026-11-10): the sample report states the day it was last revised, the audit guide no longer names Claude among the assistants the audit questions are put to, the commerce discovery guide describes the rejected AP2 URI form the same way in its body and its answers, the llms.txt guide writes three counts with a space as the thousands separator, and the validator post card no longer says nothing is stored; machine surfaces: the contact-info agent skill names both correspondence languages, the advisory 402 description carries the first-month ending condition, ai.txt lists the A2A agent card, the OpenAPI document declares agent.json, ai-plugin.json, jwks.json and signatures.json and gives ard.json a schema, and the WebMCP search example is a word that matches a title (new CSP script hash); three comments lose private file names.
 // turva.dev worker v3.237.0 - buyer credibility read fixes (Tek-791, 2026-11-09): the home page, the audit guide and the measurement guide link the unedited raw output of a new isitagentready.com run of 2026-11-09 as a separate measurement, and the home page and the audit guide say that Cloudflare runs the scanner and hosts the site; the audit page and /legal say the internet.nl tests run on a client domain only with written permission; the active security testing add-on says testing stops and the window moves when the operator cannot work; the sample report retest no longer promises why an error went away, and the acceptance checks gain their missing elements (lead time coding, residual owner, duplicate rows, edge removal, security.txt Contact, full linkset, DNSSEC rollback); two guides narrow what discovery metadata proves; the home Markdown sentence cites its dated token reading; /services names the server card path difference; the proof-of-work post corrects two sentences with a dated note.
 // turva.dev worker v3.236.0 - active security testing pages (Tek-790, 2026-11-09): the add-on, the authorization summary and /legal name Burp Suite Professional and the GLM 5.3 fallback through Melious AI GmbH for checks the model provider's safeguards stop, say that a check both models stop is reported as not tested, limit tier 2 to the limits the client set for its own agent, stop a path on a usable credential, token or key, and source the Anthropic retention sentence from Anthropic's privacy center; /legal privacy date 2026-11-09.
 // turva.dev worker v3.235.0 - /services lists the active security testing add-on in place of the Implementation card in Choose a starting point, the same four cards as the home page (Erik 2026-11-08, reverses the /services half of Tek-782 P28); the Implementation section, its price and its anchor stay on the page.
@@ -190,7 +191,7 @@
 // v3.135.0 was: navigation and footer sized to the page (2026-09-06, Erik): the nav and the footer follow the 68rem frame instead of the old 46rem column (--col-half 34rem by default), the brand mark, the word and the menu links grow to the body's scale (32 px mark, 19 px word, 17 px links, 20 px vertical padding), and the footer gets the same brand word style, 1.05rem links and a .95rem meta line.
 // v3.134.0 was: the two sample reports on the report reading template (2026-09-06, Tek-360): a Synthetic sample report eyebrow above a new H1, the page instruction's introduction with the illustrative report date as text rather than a date line, two actions after the introduction (SAMPLE_HEAD), Summary and Decision moved ahead of the contents list and the engagement record, F1 to F9 and C1 to C3 as h3 under their sections with the same anchor ids, Shopify status labels in the instruction's form (Present, Restricted, Unavailable, Not tested, Aligned, Mismatch), and every table wider than four columns offered a second time as a list of named cards from the same cells under a details element beside its scroll box.
 // v3.133.0 was: one page template for the site (2026-09-06, Tek-358): every card page and article shares the home page frame (68rem, 24 px edge, 20 px at 320), prose reads in a 65ch column while headings, dividers, card groups and tables keep the frame, H1 is white and green is reserved for links and actions; sections are open (h2 plus body) and cards are used only for offers, tools and results; markdown tables carry data-label cells inside a bounded scroll box and stack into named cards below 640 px when they have up to four columns; ### headings render; articles get a byline from META_BY_PATH, a generated contents list above four sections and one next step; /services, /shopify-agent-storefront-check, /company, /contact, /legal, /tools, /badge, /llms-txt-validator, /guides and /blog rewritten to the 2026-09-06 page instruction with their twins, titles and descriptions; blog index cards carry kind and description.
-// v3.132.1 was: hotfix (2026-09-06, Tek-357): the FAQ answer on implementation no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer text raw and the live gate read the link syntax as a difference between the published answer and the page (mds/gotchas.md 2026-09-03 (jatko 9)); the link stands after the FAQ as its own line.
+// v3.132.1 was: hotfix (2026-09-06, Tek-357): the FAQ answer on implementation no longer carries a markdown link, because the FAQPage JSON-LD publishes the answer text raw and the live gate read the link syntax as a difference between the published answer and the page (a trap recorded on 2026-09-03); the link stands after the FAQ as its own line.
 // v3.132.0 was: home content rewritten to Erik's brief (2026-09-06, Tek-357): eleven sections in the twin and the same order in HTML, two starting points as cards read from the twin list, what the client gets, the process in writing, work you can inspect with the scan board and the dated security scans, support beyond the first report, who does the work, a five-question FAQ and the contact section; the curl demo, the x402 prose and every "higher on the next scan" promise left the home page; title, meta description and the ProfessionalService description say the same thing as the page. Prices, scope and promises unchanged, llms.txt unchanged (no re-sign).
 // v3.131.0 was: one outer frame for every home section (2026-09-06, Tek-356): .page now shares the hero and offer width, so headings, dividers, card grids, the scan board and the process steps align on the same edges, and the text runs the same width, which Erik chose over a narrower reading column. Prices and promises unchanged, llms.txt unchanged (no re-sign).
 
@@ -257,7 +258,7 @@ max_age: 604800
 
 const CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-HvaxLv4kPmRRuCadYV9bJj+sVDnr5IoFpsvRPAJuixc='",
+  "script-src 'self' 'sha256-NyoAAslzarv0/yZIRdcsrte3WIUdYpX3Vnjy/FMFe14='",
   "style-src 'self' 'unsafe-inline' data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -4738,7 +4739,7 @@ Corrected 2026-09-28. Two more sentences overstated what the domain protects. Th
 
 Northwind Fasteners Oy and all readings in this report are invented. The example shows what a client receives: the finding, its evidence, who makes the correction and how the result is checked.
 
-Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 3 November 2026.
+Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 10 November 2026.
 
 ## What to fix first
 
@@ -5317,11 +5318,11 @@ An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that 
 
 **What is the correct AP2 extension URI?**
 
-For the AP2 v0.1 Agent Card extension, the URI is \`https://github.com/google-agentic-commerce/ap2/tree/v0.1\` (lowercase, version v0.1), exactly as that version specifies. This is a compatibility declaration for clients and scanners that implement v0.1, not a requirement of the current AP2 v0.2, which has no Agent Card extension. The isitagentready scanner reads the v0.1 form as of 2026-09-05. Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject.
+For the AP2 v0.1 Agent Card extension, the URI is \`https://github.com/google-agentic-commerce/ap2/tree/v0.1\` (lowercase, version v0.1), exactly as that version specifies. This is a compatibility declaration for clients and scanners that implement v0.1, not a requirement of the current AP2 v0.2, which has no Agent Card extension. The isitagentready scanner reads the v0.1 form as of 2026-09-05. Some fix texts show an uppercase AP2 in the path and a three-part version, which validators reject.
 
 **Why does an AP2 declaration fail validation?**
 
-Usually the case of the extension URI is the cause. Some fix texts show a V0.1.0 form with a capital V and an extra .0, which validators reject. The accepted form for the v0.1 extension is lowercase and v0.1. A validator built for AP2 v0.2 looks for checkout and payment mandates instead and does not read the Agent Card extension at all, so name the version the validator implements before reading its result.
+Usually the case of the extension URI is the cause. Some fix texts show an uppercase AP2 in the path and a three-part version, which validators reject. The accepted form for the v0.1 extension is lowercase and v0.1. A validator built for AP2 v0.2 looks for checkout and payment mandates instead and does not read the Agent Card extension at all, so name the version the validator implements before reading its result.
 
 **What does a UCP profile declare?**
 
@@ -6403,7 +6404,7 @@ A technical scan reads what a page serves. It does not read what a person notice
 
 ## AI-answer observations
 
-A separate question from both of the above is what an AI assistant actually says when a buyer asks it something. Observed AI answers means asking ChatGPT, Perplexity, Claude, and similar assistants the questions a buyer would ask, and recording which sources they name and what they get wrong. This does not test the site directly. It records what selected assistants answer on the test date and which sources they cite. It does not establish which site changes caused the answer, and it can surface an assistant repeating outdated information that a scan of the current site would not catch.
+A separate question from both of the above is what an AI assistant actually says when a buyer asks it something. Observed AI answers means asking ChatGPT, Perplexity and similar assistants the questions a buyer would ask, and recording which sources they name and what they get wrong. This does not test the site directly. It records what selected assistants answer on the test date and which sources they cite. It does not establish which site changes caused the answer, and it can surface an assistant repeating outdated information that a scan of the current site would not catch.
 
 ## Findings and verification
 
@@ -6478,7 +6479,7 @@ llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt.
 
 It works as a map for a client that fetches it, but in one large log study 97% of files received no request in a month. It has not been shown to earn AI citations, so publish it for coding agents rather than as a route to visibility.
 
-Ahrefs measured requests across 137,210 domains in May 2026. About 38,000 of them had a valid file, and 97% of those files received no request that month. GPTBot and Claude Code were among the most frequent AI requesters in that data, and Ahrefs notes that a request shows a file was fetched and does not show that anything acted on it. SE Ranking modelled nearly 300,000 domains and found no link between having the file and how often a domain is cited. Both are vendor studies of their own samples, and neither measures every client.
+Ahrefs measured requests across 137 210 domains in May 2026. About 38 000 of them had a valid file, and 97% of those files received no request that month. GPTBot and Claude Code were among the most frequent AI requesters in that data, and Ahrefs notes that a request shows a file was fetched and does not show that anything acted on it. SE Ranking modelled nearly 300 000 domains and found no link between having the file and how often a domain is cited. Both are vendor studies of their own samples, and neither measures every client.
 
 The strongest case in this evidence is documentation read by coding agents. As of November 2026, Google's Gemini API docs publish an llms.txt index and recommend a project rule that tells coding agents to consult its docs MCP server or that index, so an agent without the server can start from the index. A site whose readers work through coding agents has a stronger reason to publish the file than a site that hopes to be cited.
 
@@ -6516,7 +6517,7 @@ The file format did not change. v2 added two standard link relations so an agent
 - [Google Search Central, guidance on AI features](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
 - [Web linking, RFC 8288](https://www.rfc-editor.org/rfc/rfc8288.html)
 - [HTTP semantics, RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)
-- [Ahrefs, study of llms.txt requests across 137,210 domains](https://ahrefs.com/blog/llmstxt-study/)
+- [Ahrefs, study of llms.txt requests across 137 210 domains](https://ahrefs.com/blog/llmstxt-study/)
 - [SE Ranking, study of llms.txt and AI citations](https://seranking.com/blog/llms-txt/)
 - [Google, Gemini API docs for coding agents](https://aistudio.google.com/docs/coding-agents)
 
@@ -7714,7 +7715,7 @@ function buildLlmsFullTxt() {
     .sort(compareSiteRank);
   const sections = ordered.map(({ path, content }) => {
     const canonical = "https://turva.dev" + path;
-    // V08-21 (korjausohje-3, 2026-09-28): a guide's HTML page head carries a Sources
+    // V08-21 (2026-09-28): a guide's HTML page head carries a Sources
     // checked date and Erik Rekola as author, outside <main> on purpose (Tek-479 P14), so
     // the twin markdown-parity-check compares (the page's own .md address) stays free of
     // it, and PAGE_MARKDOWN, which both the twin and this bundle read, is left unchanged.
@@ -7768,6 +7769,7 @@ Ai-catalog: https://turva.dev/.well-known/ai-catalog.json
 Mcp-server-card: https://turva.dev/.well-known/mcp/server-card.json
 Mcp-endpoint: https://mcp.turva.dev/mcp
 Agent-skills: https://turva.dev/.well-known/agent-skills/index.json
+Agent-card: https://turva.dev/.well-known/agent-card.json
 Oauth-discovery: https://turva.dev/.well-known/oauth-authorization-server
 Oauth-protected-resource: https://turva.dev/.well-known/oauth-protected-resource
 Ap2: https://turva.dev/.well-known/ap2
@@ -8222,7 +8224,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.237.0",
+    "version": "3.238.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8318,10 +8320,14 @@ const OPENAPI_SPEC = JSON.stringify({
     "/.well-known/mcp/server-card.json": { "get": { "summary": "MCP Server Card", "operationId": "getMcpCard", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/agent-skills/index.json": { "get": { "summary": "Agent Skills index", "operationId": "getSkillsIndex", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/api-catalog": { "get": { "summary": "API catalog", "operationId": "getApiCatalog", "responses": { "200": { "description": "ok", "content": { "application/linkset+json": { "schema": { "type": "object" } } } } } } },
-    "/.well-known/ard.json": { "get": { "summary": "ARD manifest (v0.91)", "operationId": "getArdManifest", "responses": { "200": { "description": "Agentic Resource Discovery manifest, the same four resources as ai-catalog.json, with representativeQueries on each entry and the MCP Server Card media type on the MCP entry", "content": { "application/json": {} } } } } },
+    "/.well-known/ard.json": { "get": { "summary": "ARD manifest (v0.91)", "operationId": "getArdManifest", "responses": { "200": { "description": "Agentic Resource Discovery manifest, the same four resources as ai-catalog.json, with representativeQueries on each entry and the MCP Server Card media type on the MCP entry", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/ai-catalog.json": { "get": { "summary": "AI catalog (ARD predecessor path)", "operationId": "getAiCatalog", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/v1/message:send": { "post": { "summary": "A2A message:send (HTTP+JSON transport, revision 0.3.0)", "operationId": "a2aMessageSend", "description": "Send an A2A message. Name one of the agent card skills with message.metadata.skillId (services, contact-info, company-info), or leave it out and the skills named in the message text are returned, falling back to all three. Responds with { message } carrying data parts. No authentication.", "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["message"], "properties": { "message": { "type": "object", "required": ["parts"], "properties": { "messageId": { "type": "string", "description": "A unique identifier for the message, typically a UUID, generated by the sender." }, "kind": { "type": "string", "enum": ["message"] }, "role": { "type": "string" }, "parts": { "type": "array", "maxItems": 32, "items": { "type": "object", "properties": { "kind": { "type": "string" }, "text": { "type": "string", "description": "Read for skill names when metadata.skillId is absent" } } } }, "metadata": { "type": "object", "properties": { "skillId": { "type": "string", "enum": ["services", "contact-info", "company-info"] } } } } } } }, "example": { "message": { "kind": "message", "messageId": "3f8c1a52-7e4b-4d19-9a6e-5c0b2d7f8e41", "role": "user", "parts": [{ "kind": "text", "text": "What does turva.dev sell?" }], "metadata": { "skillId": "services" } } } } } }, "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "invalid params, or more than 32 parts", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } }, "413": { "description": "body larger than 16384 bytes", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/agent-card.json": { "get": { "summary": "A2A Agent Card", "operationId": "getAgentCard", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/agent.json": { "get": { "summary": "Agent manifest (signed, the same document as ai-plugin.json)", "operationId": "getAgentJson", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/ai-plugin.json": { "get": { "summary": "Agent manifest (signed, the same document as agent.json)", "operationId": "getAiPluginJson", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/jwks.json": { "get": { "summary": "Signing keys (JWKS, Ed25519 public key)", "operationId": "getJwks", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/signatures.json": { "get": { "summary": "Manifest signatures (detached Ed25519 signatures of the signed paths)", "operationId": "getSignatures", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/security.txt": { "get": { "summary": "Security", "operationId": "getSecurity", "responses": { "200": { "description": "ok", "content": { "text/plain": { "schema": { "type": "string" } } } } } } },
     "/.well-known/oauth-authorization-server": { "get": { "summary": "OAuth Authorization Server Metadata", "operationId": "getOauthDiscovery", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/oauth-protected-resource": { "get": { "summary": "OAuth Protected Resource Metadata", "operationId": "getOauthProtectedResource", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
@@ -8527,7 +8533,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.237.0",
+  "version": "3.238.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -8957,7 +8963,7 @@ Use this skill to retrieve official contact methods for turva.dev.
 - **Signal:** [@turva.19](https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK)
 - **LinkedIn:** https://www.linkedin.com/in/erikrekola/
 - **Business ID (Finland):** 3600281-7
-- **Language:** English
+- **Correspondence language:** English or Finnish
 - **Engagement:** Async-only. No calls, no calendar links.
 - **Response time:** First reply in writing within one business day by email or Signal. LinkedIn messages have no set reply time.
 
@@ -9133,7 +9139,7 @@ const WEBMCP_SCRIPT = `<script>
  {
  name: 'search_content',
  description: 'Search the turva.dev page index for guides, blog posts and pages whose title matches a query, and return each match as a title with the page URL and the markdown URL of the same page. Read-only, and it reads the published llms.txt index rather than a separate search service.',
- inputSchema: { type: 'object', properties: { query: { type: 'string', description: 'Words to look for, for example llms.txt, Shopify or pricing.' }, limit: { type: 'integer', description: 'Maximum number of results, 1 to 50. Defaults to 20.' } }, required: ['query'] },
+ inputSchema: { type: 'object', properties: { query: { type: 'string', description: 'Words to look for, for example llms.txt, Shopify or audit.' }, limit: { type: 'integer', description: 'Maximum number of results, 1 to 50. Defaults to 20.' } }, required: ['query'] },
  outputSchema: { type: 'object', properties: { query: { type: 'string' }, count: { type: 'number' }, results: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, url: { type: 'string' }, markdownUrl: { type: 'string' } }, required: ['title', 'url', 'markdownUrl'] } }, error: { type: 'string' } }, required: ['query', 'count', 'results'] },
  execute: async function(args) {
  var raw = args && args.query ? String(args.query) : '';
@@ -9210,7 +9216,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-09";
+const SITEMAP_LASTMOD = "2026-11-10";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9763,7 +9769,7 @@ const META_BY_PATH = {
     modified: "2026-10-02",
     kind: "Build notes",
     image: "/og-free-llms-txt-validator.jpg",
-    imageAlt: "turva.dev blog card: turva.dev now has a free llms.txt validator: structure checks against the format, JSON output for agents, nothing stored."
+    imageAlt: "turva.dev blog card: turva.dev now has a free llms.txt validator: structure checks against the format and JSON output for agents."
   },
   "/tools": {
     title: "Free agent-readiness tools · turva.dev",
@@ -11775,7 +11781,7 @@ function serveGuideHtml(pathname: string, canonicalUrl: string) {
     mdFaqTailHtml(pathname, "Frequently asked"),
     faqEnd === -1 ? "" : markdownToHtml(md.slice(faqEnd))
   ].filter(Boolean).join("\n");
-  // V08-25 (korjausohje-3, 2026-09-28): the sample audit report's question appendix quotes
+  // V08-25 (2026-09-28): the sample audit report's question appendix quotes
   // Finnish buyer questions among English ones. The rendered list items carried no lang
   // attribute, so a screen reader read them in the page's English voice. Tagged here, after
   // the generic Markdown render, because renderInline() escapes raw HTML found in Markdown
@@ -15612,8 +15618,8 @@ async function parityReadCapped(body: ReadableStream<Uint8Array> | null, cap: nu
   return { buf, bytes, over: false };
 }
 
-// Same decoding as the CLI's decodeBody: the charset from Content-Type, UTF-8 when it is missing or
-// the runtime does not know it.
+// Decodes with the charset from Content-Type, UTF-8 when it is missing or the runtime does not know it.
+// The CLI's decodeBody also reads a byte order mark and an HTML meta declaration; this one does not.
 function parityDecode(buf: Uint8Array, contentType: string | null) {
   const m = /charset=([^;]+)/i.exec(contentType || "");
   const charset = (m ? m[1] : "utf-8").trim().replace(/^"|"$/g, "").toLowerCase();
@@ -16311,7 +16317,7 @@ const X402_ROUTES = {
   },
   "/api/agent/advisory": {
     label: "Advisory",
-    description: "turva.dev: Continuous advisory (monthly, min 3 months)",
+    description: "turva.dev: Continuous advisory (monthly, min 3 months, can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged)",
     amountUsdcMicro: "3421000000",
     amountEurCents: 300000
   },

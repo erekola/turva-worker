@@ -17,8 +17,8 @@ updates:
     commit-message:
       prefix: deps
     ignore:
-      # @cloudflare/workers-types is held on the same ^4 line as in turva-mcp (mds/decisions.md
-      # Tek-73, Tek-387), so both Workers are type-checked against the same platform types. The
+      # @cloudflare/workers-types is held on the same ^4 line as in turva-mcp (Tek-73,
+      # Tek-387), so both Workers are type-checked against the same platform types. The
       # `overrides` entry in package.json answers wrangler's optional ^5 peer; without it npm
       # install fails with ERESOLVE. The two repositories move to ^5 together, by hand.
       - dependency-name: "@cloudflare/workers-types"
