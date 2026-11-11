@@ -172,7 +172,10 @@ test("the article frame sits outside <main>: back link, frame dates and next ste
   const pm = mainOf(post);
   for (const frame of ['class="crumb"', "Erik Rekola"]) assert.ok(!pm.includes(frame), "not inside the post's main: " + frame);
   assert.match(pm, /<h1>HTML and Markdown can disagree<\/h1>\n<p class="date">2026-09-12<\/p>/, "the twin's bare date line stays under the H1 as the twin has it");
-  assert.match(post, /<header class="pagehead">\n<p class="crumb"><a href="\/blog">&#8249; all posts<\/a><\/p>\n<p class="date">Erik Rekola(?: &middot; updated \d{4}-\d{2}-\d{2})?<\/p>\n<\/header>\n<main id="main">/, "the author is in the page head");
+  assert.match(post, /<header class="pagehead">\n<p class="crumb"><a href="\/blog">&#8249; all posts<\/a><\/p>\n<p class="date">Erik Rekola(?: &middot; updated \d{4}-\d{2}-\d{2})?<\/p>\n<\/header>\n<main id="main" class="has-next">/, "the author is in the page head");
+  // Tek-805 (2026-11-11): a post closes with one next step outside main, as a guide does.
+  assert.ok(!pm.includes('class="next"'), "not inside the post's main: the next step");
+  assert.match(post, /<\/main>\n<div class="pagefoot"><aside class="next"><p>Need this checked on your own site\? <a class="btn-ghost" href="\/agent-readiness-audit">/, "the next step follows the post's main");
   const sample = await (await get("/samples/audit-report")).text();
   assert.ok(!sample.includes('class="pagehead"'), "a page without a frame gets no empty page head");
 });

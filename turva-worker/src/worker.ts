@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.244.0 - round 26 improvements (2026-11-11, Tek-805): a blog post closes with one next step outside main, the home and /services FAQ state that the audit reads the website and its APIs, /services sections end with a contact link, the audit page gains Terms in brief and says what the order is and keeps a summary of active security testing, llms.txt names agent operations, MCP server design and the VAT ID, two guides link the audit page and the sample, the blog kind Lab notes splits from Build notes, and four research descriptions lead with the finding
 // turva.dev worker v3.243.0 - security work follow-up (2026-11-11, Tek-802): the active security testing card on / and /services and the quotedAddOns scope in HOME_JSON and the MCP server card name GLM 5.3 and Burp Suite Professional; the add-on paragraph adds the test environment option, the coverage limit and how the report is checked and approved; the /services stop line describes the stop; the audit page names the GLM and Claude split; /legal defines security headers, makes the report section part of security work, adds Anthropic API retention and inference geography, the GLM-5.3 License, the German text of Melious's terms, Melious's OVH hardware and its storage-function exception, tightens the provider list and fixes the supervisory authority address and the Updates rule; the dated lab post gets two Corrected lines; llms.txt Engagement model and the services agent skill name the add-on and the model split (llms.txt and server card re-signed, MCP 1.10.1).
 // turva.dev worker v3.242.0 - security work runs with GLM 5.3 (2026-11-11, Tek-799): the active security testing add-on on /services and /agent-readiness-audit, the /services AI tools answer and /legal say that active security testing and an audit's internet.nl tests and published security scans run with GLM 5.3 through Melious AI GmbH on its own hardware in Finland, with Claude Code as the agent program and its other traffic to Anthropic switched off; /legal names the zero data retention clause, the account and key limited to Melious's own route and the provider line; the Anthropic API workspace for testing and the second-model fallback are gone; /legal privacy date 2026-11-11
 // turva.dev worker v3.241.0 - Agent operations opens with the buyer's situation (2026-11-10): the Agent operations section of /services and its summary card on the home page and on /services start with the sentence Get written limits for the agent that your company already runs. No other text, no price and no signed surface changed.
@@ -351,6 +352,8 @@ const LLMS_TXT = `# turva.dev
 - Advisory: €3,000 / month (monthly retainer, three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged)
 - Implementation: €1,500 / day (scoped per task)
 - Audit fix implementation: €499 (fixed, sold only with the audit, bought together with it, with its report, or after the report and before implementation starts, only when the required access is arranged in advance)
+- Agent operations: price agreed for the engagement (written limits for an agent a company already runs)
+- MCP server design: price agreed for the engagement (an MCP interface to product data, read-only by default)
 
 Final price is confirmed in writing after scope is agreed.
 
@@ -360,6 +363,7 @@ Final price is confirmed in writing after scope is agreed.
 ## Business details
 - Name: turva.dev
 - Business ID (Finland): 3600281-7
+- VAT ID: FI36002817
 - Location: Tampere, Finland
 - YTJ: https://tietopalvelu.ytj.fi/yritys/3600281-7
 - LinkedIn: https://www.linkedin.com/in/erikrekola/
@@ -2566,7 +2570,7 @@ Yes. The correction instructions and acceptance checks are part of the report. I
 
 2026-09-05
 
-A dated scan of 19 identity vendors examines what their public sites expose for agents, and what the results cannot say about the products behind them.
+All 19 identity vendors scored zero of nine on the API, auth, MCP and A2A discovery checks. None read above Level 2. The scan read public sites only.
 
 I measured 19 companies that build digital identity and trust products, wallets and verifiable credential infrastructure, the parts of the stack meant to let one machine prove something to another machine. Then I asked the simplest question I could think of about them. Can an agent find out anything at all about these companies without a human in the loop?
 
@@ -2776,7 +2780,7 @@ Corrected 2026-09-28. A sentence stated as fact that one unsolicited email rarel
 
 2026-09-03
 
-Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organizational AI adoption.
+Of 41 answers to the bare term agent readiness, 18 described an organization's readiness and 13 a website's. Four assistants answered on one day.
 
 On 3 September 2026 fifty buyer questions were put to ChatGPT, Gemini, Perplexity and Google AI Mode from an anonymous browser session, one run per question, 193 answers in all. Seven of the 200 runs returned no answer: Google AI Mode was stopped by a reCAPTCHA four times, ChatGPT gave nothing twice and Gemini once, and those runs are counted as missing rather than as answers. The questions are the ones a buyer types: what an agent readiness audit is, what it costs, who does it in Finland, how it differs from SEO. Claude was not measured, because its answers sit behind a login and the instrument runs logged out.
 
@@ -2799,6 +2803,8 @@ For a buyer, one question settles it: ask the provider what the report reads. If
 For this site, the same finding turned into one sentence. The FAQ on the services page and the home page now says that the audit reads the website and its APIs and not the organization's readiness to adopt agents, and llms.txt says the same in its summary, so an assistant that reads either gets the distinction in the first lines. Whether that moves the answers is what the next run of the same fifty questions will show, and it will be reported the same way.
 
 Corrected 2026-10-31. The paragraph above says the FAQ on the services page and the home page carries that sentence. Neither carries it in those words now, and llms.txt still does. A sentence earlier in this post now says that the counts of five, three and one are within the 41 answers.
+
+Updated 2026-11-11. The FAQs on the home page and on the services page state again that the audit reads the website and its APIs, not an organization's readiness to adopt agents.
 
 ## Frequently asked
 
@@ -2828,7 +2834,7 @@ Corrected 2026-09-04. The version served for the first seven hours said Perplexi
 
 2026-09-03
 
-One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.
+Of 567 selected company websites, 485 read Level 1 of 5, 85,5 percent. The sample is a prospecting list, and the scanner's check set changed during the study.
 
 In July I wrote up sixteen Finnish B2B sites. Since then the same measurement has run over every company I have written to, and the sample is now 567 company sites, measured between 28 June and 3 September 2026. The scanner is the same one, isitagentready.com, which grades a site from Level 0 to Level 5. The sample is still my own prospecting list and not a random draw, so read it as a large snapshot rather than a census.
 
@@ -3817,7 +3823,7 @@ Corrected 2026-11-06. A sentence said "I build this into my own setup because I 
 
 2026-07-07
 
-A scan of sixteen selected Finnish B2B sites records gaps in agent-readiness. This historical sample leads into the later study of 567 sites.
+Almost all of sixteen selected Finnish B2B sites read Level 1 of 5, and none read above Level 2. A historical sample, followed by the 567-site study.
 
 Over the past weeks I ran an independent agent-readiness scanner over sixteen Finnish company websites, mostly industrial and B2B, a few in healthcare. The scanner was isitagentready.com, which grades on a Level 0 to 5 scale. This is a small, non-random sample. The sites came from my own prospecting, not a statistical draw, so read it as a snapshot, not a census. The pattern was consistent enough to be worth writing down.
 
@@ -4338,44 +4344,44 @@ All free tools on this site are collected on [the tools page](/tools).
 
   "/blog": `# Research and field notes
 
-Dated studies, technical investigations and build notes from turva.dev. Each article explains what was observed, how it was checked and what the result does not establish.
+Dated studies, technical investigations, build notes and lab notes from turva.dev. Each article explains what was observed, how it was checked and what the result does not establish.
 
 [RSS feed](/blog/feed.xml)
 
 ## Start with the research
 
-- [Website agent-readiness across 567 company sites](/blog/website-agent-readiness-567-sites): one scanner over a selected prospecting sample of 567 company sites in ten weeks, with the changing check set recorded as a limitation.
-- [What four AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit): fifty buyer questions, 193 answers, one day's conditions.
+- [Website agent-readiness across 567 company sites](/blog/website-agent-readiness-567-sites): 485 of 567 selected company sites read Level 1 of 5 on one scanner. The sample is a prospecting list, and the changing check set is recorded as a limit.
+- [What four AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit): of 41 answers to the bare term, 18 described an organization's readiness and 13 a website's, under one day's conditions.
 - [Thirty-day follow-up: 201 comparable site readings](/blog/thirty-days-after-the-brief): a 210-site cohort, 201 comparable readings, four changed level, and no effect from the briefs established.
 
 ## Browse all articles
 
 49 articles.
 
-- [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph). 2026-11-06. Build notes. I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and in two agent tests the answers stayed the same.
-- [I can't start over, so I back up every night](/blog/why-i-back-up-every-night). 2026-11-04. Build notes. A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.
+- [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph). 2026-11-06. Lab notes. I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and in two agent tests the answers stayed the same.
+- [I can't start over, so I back up every night](/blog/why-i-back-up-every-night). 2026-11-04. Lab notes. A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.
 - [What a publisher owes someone else's agent](/blog/what-a-publisher-owes-someone-elses-agent). 2026-11-02. Protocol notes. ASD's guide on agentic AI is written for operators. What an MCP server's publisher owes them, read from the MCP spec and from my own server.
 - [Finnish MiCA crypto providers and AI agents](/blog/finnish-crypto-providers-and-ai-agents). 2026-10-31. Research. All five Finnish crypto providers in the MiCA register sit at isitagentready Level 1 of 5, and none passes the scanner's nine agent protocol checks.
 - [Keeping my lab and my client work apart](/blog/keeping-my-lab-and-client-work-apart). 2026-10-26. Build notes. Client work now runs in a Windows virtual machine apart from my own lab. How I tested it with two test clients, and what it does not isolate.
-- [TLA+ on my own tools, in numbers](/blog/tla-plus-in-numbers). 2026-10-22. Build notes. Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.
+- [TLA+ on my own tools, in numbers](/blog/tla-plus-in-numbers). 2026-10-22. Lab notes. Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.
 - [What Shopify changed for agent shopping since August](/blog/what-shopify-changed-for-agent-shopping). 2026-10-18. Protocol notes. Shopify moved store agent tools to /api/ucp/mcp and opened checkout to agents. What a merchant can check publicly and what stays hidden.
-- [Three outside reviews of my TLA+ models](/blog/three-outside-reviews-of-my-tla-plus-models). 2026-10-17. Build notes. Three outside reviews read my TLA+ models, none of their claims was refuted, and the third left no high rated finding.
+- [Three outside reviews of my TLA+ models](/blog/three-outside-reviews-of-my-tla-plus-models). 2026-10-17. Lab notes. Three outside reviews read my TLA+ models, none of their claims was refuted, and the third left no high rated finding.
 - [Microsoft's own CVE count is up nearly eightfold in a year](/blog/microsofts-own-cve-count). 2026-10-14. Research. Microsoft-assigned CVEs rose from 180 to 1417 a month in a year, and the monthly release keeps growing after Patch Tuesday.
-- [Thirteen review rounds and one rollback](/blog/thirteen-review-rounds-and-one-rollback). 2026-10-12. Build notes. Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.
-- [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus). 2026-10-09. Build notes. What TLA+ found in my own tools in twelve days, what outside reviews confirmed and the 21 fix rounds so far.
-- [What 497 cloud agents asked of my desktop](/blog/cloud-agents-on-my-desktop). 2026-10-08. Build notes. 497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. By my estimate a local model would have taken days.
-- [The browser my agent and I both run](/blog/browser-my-agent-and-i-run). 2026-10-06. Build notes. Why my agent and I both ran Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.
-- [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work). 2026-10-05. Build notes. How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.
+- [Thirteen review rounds and one rollback](/blog/thirteen-review-rounds-and-one-rollback). 2026-10-12. Lab notes. Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.
+- [Twelve days of TLA+ on my own tools](/blog/twelve-days-of-tla-plus). 2026-10-09. Lab notes. What TLA+ found in my own tools in twelve days, what outside reviews confirmed and the 21 fix rounds so far.
+- [What 497 cloud agents asked of my desktop](/blog/cloud-agents-on-my-desktop). 2026-10-08. Lab notes. 497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. By my estimate a local model would have taken days.
+- [The browser my agent and I both run](/blog/browser-my-agent-and-i-run). 2026-10-06. Lab notes. Why my agent and I both ran Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.
+- [A clean Windows install for agent work](/blog/clean-windows-install-for-agent-work). 2026-10-05. Lab notes. How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.
 - [Why I publish every guide for free](/blog/why-i-publish-every-guide). 2026-09-29. Build notes. I answer for client work under my own name. The rules I measure sites against move monthly. What moved from July to September, and one finding that was wrong.
 - [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work). 2026-09-26. Build notes. Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.
-- [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25. Build notes. Plain local files let each Claude Code session look up what the earlier sessions recorded. A count of that memory, and why it now reads like a private language.
+- [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25. Lab notes. Plain local files let each Claude Code session look up what the earlier sessions recorded. A count of that memory, and why it now reads like a private language.
 - [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree). 2026-09-12. Build notes. A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.
 - [I rebuilt turva.dev around the report](/blog/i-rebuilt-turva-dev-around-the-report). 2026-09-07. Build notes. The updated site puts sample reports beside the services they describe, with evidence, correction owners and acceptance checks visible before purchase.
-- [What 19 identity vendors publish for agents](/blog/agent-readiness-identity-vendors). 2026-09-05. Research. A dated scan of 19 identity vendors examines what their public sites expose for agents, and what the results cannot say about the products behind them.
+- [What 19 identity vendors publish for agents](/blog/agent-readiness-identity-vendors). 2026-09-05. Research. All 19 identity vendors scored zero of nine on the API, auth, MCP and A2A discovery checks. None read above Level 2. The scan read public sites only.
 - [Two files called auth.md, and they disagree on the field names](/blog/two-auth-md-dialects). 2026-09-04. Protocol notes. Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.
 - [Thirty-day follow-up: 201 comparable readings from 210 sites](/blog/thirty-days-after-the-brief). 2026-09-03. Research. A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.
-- [What four AI assistants call an agent readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit). 2026-09-03. Research. Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organizational AI adoption.
-- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites). 2026-09-03. Research. One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.
+- [What four AI assistants call an agent readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit). 2026-09-03. Research. Of 41 answers to the bare term agent readiness, 18 described an organization's readiness and 13 a website's. Four assistants answered on one day.
+- [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites). 2026-09-03. Research. Of 567 selected company websites, 485 read Level 1 of 5, 85,5 percent. The sample is a prospecting list, and the scanner's check set changed during the study.
 - [TRACE signs how an agent ran, not what it was allowed to reach](/blog/trace-runtime-attestation). 2026-08-30. Protocol notes. This article examines what a TRACE Trust Record attests to, and why runtime evidence does not itself establish the right permissions or correct decisions.
 - [I scanned thirteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts) 2026-08-22. Research. Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.
 - [It would be cheating to keep the old price](/blog/cheating-to-keep-the-old-price). 2026-08-21. Build notes. A dated account of pricing changes and the work behind them. Historical prices remain in the article, with the current service prices linked separately.
@@ -4387,8 +4393,8 @@ Dated studies, technical investigations and build notes from turva.dev. Each art
 - [The twin is the page](/blog/the-twin-is-the-page). 2026-07-19. Build notes. Two separately maintained versions of the same content drifted apart. This build note explains the move to shared content and the limits of the checks on it.
 - [Every response promised a rate limit. Nothing enforced it.](/blog/enforcing-the-rate-limit-i-advertised) 2026-07-18. Build notes. A response header advertised a request limit that no code enforced. The investigation separates a published policy, the code and what a probe can show.
 - [Microsoft said the patches would get bigger. I measured how much bigger.](/blog/measuring-the-ai-patch-surge) 2026-07-15. Research. A comparison of selected Microsoft security-update datasets examines changes in reported vulnerability counts and severity, with the comparison limits stated.
-- [Reducing secret exposure in coding-agent workflows](/blog/agent-secret-hygiene). 2026-07-12. Build notes. Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.
-- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b). 2026-07-07. Research. A scan of sixteen selected Finnish B2B sites records gaps in agent-readiness. This historical sample leads into the later study of 567 sites.
+- [Reducing secret exposure in coding-agent workflows](/blog/agent-secret-hygiene). 2026-07-12. Lab notes. Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.
+- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b). 2026-07-07. Research. Almost all of sixteen selected Finnish B2B sites read Level 1 of 5, and none read above Level 2. A historical sample, followed by the 567-site study.
 - [When honesty and the checker disagree](/blog/honesty-and-the-checker). 2026-07-06. Build notes. An optional credential was both declared and denied in the same metadata. The repair made the description consistent without claiming access it did not grant.
 - [Four AI agents re-checked the guides](/blog/re-checking-the-guides). 2026-07-04. Build notes. A dated review of the guides found that source specifications and local claims had moved. The article records corrections and the limits of automated checks.
 - [The page grew, the agent token count did not](/blog/cheaper-pages-revisited). 2026-07-04. Build notes. A July measurement compared the token counts of the homepage's HTML and Markdown representations. The result describes that page and measurement date.
@@ -4433,11 +4439,13 @@ The Monetization Gateway waitlist points the same direction: charge for any page
 - Re-scan after any edge change. The public agent-readiness scanners read a site from outside, so a network-level block that catches the scanner shows up as a dropped score before a buyer sees the gap.
 - If your content earns citations, look at the Pay Per Use programs. The reporting alone, which queries put your pages into AI answers, is visibility data Cloudflare describes for participants in its Ceramic program.
 
-For an agent-readiness audit that reads the edge configuration next to the content, contact info@turva.dev.
+For an agent-readiness audit that reads what your edge serves to automated clients next to the content, contact info@turva.dev.
 
 Corrected 2026-10-02. A sentence said the Pay Per Use reporting is visibility data you cannot get anywhere else. That exclusivity was not checked, so it now says the reporting is visibility data the Pay Per Use programs offer. Cloudflare describes that reporting for the Cloudflare/Ceramic program only, so the article and the list item now attribute it to that program.
 
 Corrected 2026-11-02. A sentence said any network-level block shows up as a dropped score. A block aimed at another kind of bot need not touch the scanner, so it now says a block that catches the scanner.
+
+Corrected 2026-11-11. The closing line offered an audit that reads the edge configuration. The audit reads what a site serves from the outside. The settings of a CDN or a firewall are the site team's own to read, as the post says, so the line now says what the edge serves to automated clients.
 
 ## Related
 
@@ -5440,7 +5448,7 @@ You work directly with me. I'm an independent consultant based in Tampere, Finla
 
 **What does agent-readiness mean?**
 
-It means how well an AI agent can find and use the information your website or API publishes. This work examines your product's public information and interfaces.
+It means how well an AI agent can find and use the information your website or API publishes. This work examines your product's public information and interfaces. An agent-readiness audit reads the website and its APIs, not an organization's readiness to adopt agents.
 
 **Is that the same as AI visibility?**
 
@@ -5537,6 +5545,8 @@ A technical scan, a manual review of your website and API surfaces, and a record
 
 The audit is delivered within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers. [Read the full scope and the deliverables](/agent-readiness-audit).
 
+[Ask about an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
+
 ### Active security testing
 
 Active security testing is an add-on to an audit, priced by quote for each written scope. It starts only after you sign a written authorization that names the targets, accounts, allowed actions and exclusions, and I have checked that you control every target, for example through a DNS TXT record or a token file. Where a target runs on a provider's infrastructure, such as a cloud host or a CDN, the provider's own testing policy must allow the test, or the provider must give written permission. The scope can be the agent surfaces the audit reads, such as MCP endpoints and APIs. It can also be your own AI agent, tested for prompt injection and tool misuse, or a web application, tested to the depth and roles the written scope states. For your own AI agent or a web application, the written scope names the environment the test runs in, which can be a test environment with synthetic data that you provide. The testing runs with GLM 5.3, an open-weight model, through Melious AI GmbH, as the legal page describes. A check the model declines or does not complete during the window is reported as not tested. A check the model runs can still miss a fault, so the report lists the checks that ran and does not claim that no other faults exist. The report is written and checked against the test's own records with GLM 5.3, and I read the finished report and approve it before it is sent. I do not reproduce each finding by hand. Denial of service and social engineering are excluded. Changes to production data are excluded too, apart from test records created through the test accounts you provide, which must not trigger payments, messages to real people or changes to data that does not belong to the test accounts. The test window is agreed in writing. If I am unable to work during the window, testing stops and the window moves to a new date you approve in writing. You receive a written report and one retest of the reported findings within 30 days of the report, on a day you choose in writing in advance. If you choose no day, the retest lapses. A test does not certify that a system is safe.
@@ -5628,6 +5638,8 @@ I run an acceptance check for every implemented correction, verify source change
 
 I include one round of implementation handover questions submitted within 14 calendar days of delivery and answer that round within five business days. The written scope agreed before kickoff sets how many questions that round covers.
 
+[Ask about implementation](mailto:info@turva.dev?subject=Implementation&body=Site%20or%20API%20URL%3A%20%0AWhat%20to%20implement%3A%20%0A)
+
 ## Ongoing advisory
 
 **€3,000. Per month. Minimum three months. Price valid until 2026-12-31.**
@@ -5668,6 +5680,8 @@ I need the agreed audit baseline, your priority questions, a named written conta
 If a source or assistant cannot be checked, I record the missing result and obtain written agreement before replacing it in the comparison.
 
 When the engagement ends, I deliver the final paid month's summary on its normal deadline and hand over the measurement history and open recommendations with it.
+
+[Ask about ongoing advisory](mailto:info@turva.dev?subject=Ongoing%20advisory&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20advisory%20should%20cover%3A%20%0A)
 
 ## Agent operations
 
@@ -5724,6 +5738,8 @@ I include one round of written questions submitted within 14 calendar days of th
 
 Before kickoff, I confirm the amount, currency, VAT treatment, payment milestones and any third-party costs in the written quote.
 
+[Ask about agent operations or MCP server design](mailto:info@turva.dev?subject=Agent%20operations%20or%20MCP%20server%20design&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20work%20should%20cover%3A%20%0A)
+
 ## MCP server design
 
 **Price agreed for the engagement.**
@@ -5772,6 +5788,8 @@ I include one round of written handover questions submitted within 14 calendar d
 
 Before kickoff, I confirm the amount, currency, VAT treatment, payment milestones and third-party costs in the written quote.
 
+[Ask about agent operations or MCP server design](mailto:info@turva.dev?subject=Agent%20operations%20or%20MCP%20server%20design&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20work%20should%20cover%3A%20%0A)
+
 ## Work you can inspect
 
 My published research includes a scan of [567 selected company websites](/blog/website-agent-readiness-567-sites), [193 answers to fifty buyer questions across four AI assistants](/blog/what-ai-assistants-call-an-agent-readiness-audit), and a thirty-day follow-up with [201 comparable site readings from a 210-site cohort](/blog/thirty-days-after-the-brief).
@@ -5793,6 +5811,10 @@ Client material is kept only on systems needed for the work and deleted within t
 **Do you use AI tools?**
 
 Yes. Files needed for a task are processed by the provider of the AI tool in use. In an audit the tools read what your site and API serve publicly, and a test account is used only when you name it in writing and the written scope states what it allows. The tools work in a folder of your own inside a virtual machine that is kept apart from the rest of my workstation. In active security testing the tools send test traffic from that virtual machine only to the targets named in your signed authorization. Security work, meaning that testing and the audit's internet.nl tests, published security scans and security headers, runs with GLM 5.3 through Melious AI GmbH, a German company, and so does the report on that work. Melious states that it runs the model on its own hardware in Finland, and turva.dev's account is limited to that route. For that hardware, Melious's data processing agreement states that what the model reads, such as responses and tool output, is processed only in memory and is not stored, logged or used for training, apart from operational metadata such as token counts and processing the law requires. Anything stored with Melious's own storage functions is excepted too, and this work does not use them. Claude is the AI tool for the rest of the audit. Web test traffic is sent through Burp Suite Professional, and I switch off its own AI features. Material you want excluded is named in the NDA and kept out. If the excluded material is needed for the test, the affected part is tested by hand or left out of scope. Vault storage and a tool's runtime permissions are separate controls.
+
+**Does the audit assess our organization's readiness for AI?**
+
+No. An agent-readiness audit reads the website and its APIs, not an organization's readiness to adopt agents.
 
 Full detail is in the [terms and data handling](/legal).
 
@@ -5882,13 +5904,23 @@ A synthetic [sample report](/samples/audit-report) shows the format: the per-che
 
 ## How the two weeks work
 
-We agree the work. Send the URLs of up to two targets and your question. I confirm the scope, price and start date in writing. The audit is invoiced when the report is delivered, and a card payment link pays that invoice.
+We agree the work. Send the URLs of up to two targets and your question. I confirm the scope, price and start date in writing. Your email reply that confirms the written scope is the order. The audit is invoiced when the report is delivered, and a card payment link pays that invoice.
 
 I run the checks. I complete the scan, manual review and AI questions, recording the evidence and dates.
 
 You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works. One round of written follow-up questions is included. Submit it within 14 calendar days of the report and I answer it within five business days. The written scope agreed before kickoff sets how many questions that round covers.
 
 After the corrections, you choose the day for the included re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again using the same question set. The follow-up shows both readings and any changes in the method.
+
+## Terms in brief
+
+- Payment. The invoice comes with the report, and payment is due within fourteen days of the invoice date unless agreed otherwise in writing.
+- Cancellation. An engagement canceled before its agreed written kickoff is not charged. After kickoff, a canceled audit is charged by the agreed share of the parts already delivered.
+- Delay. If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered, and that part is not charged.
+- Continuity. turva.dev is run by one person. If I fall ill or am otherwise unable to work, delivery moves, and you can cancel the part not yet delivered.
+- Confidentiality. I sign your own NDA as it stands, at no charge, before material is shared.
+
+The [engagement terms](/legal#engagement-terms) carry the full wording.
 
 ## If you want help with the fixes
 
@@ -5906,7 +5938,7 @@ Corrected 2026-09-28. Named the monthly cadence and the continuous-monitoring ex
 
 ## Active security testing
 
-Active security testing is an add-on to an audit, priced by quote for each written scope. It starts only after you sign a written authorization that names the targets, accounts, allowed actions and exclusions, and I have checked that you control every target, for example through a DNS TXT record or a token file. Where a target runs on a provider's infrastructure, such as a cloud host or a CDN, the provider's own testing policy must allow the test, or the provider must give written permission. The scope can be the agent surfaces the audit reads, such as MCP endpoints and APIs. It can also be your own AI agent, tested for prompt injection and tool misuse, or a web application, tested to the depth and roles the written scope states. For your own AI agent or a web application, the written scope names the environment the test runs in, which can be a test environment with synthetic data that you provide. The testing runs with GLM 5.3, an open-weight model, through Melious AI GmbH, as the legal page describes. A check the model declines or does not complete during the window is reported as not tested. A check the model runs can still miss a fault, so the report lists the checks that ran and does not claim that no other faults exist. The report is written and checked against the test's own records with GLM 5.3, and I read the finished report and approve it before it is sent. I do not reproduce each finding by hand. Denial of service and social engineering are excluded. Changes to production data are excluded too, apart from test records created through the test accounts you provide, which must not trigger payments, messages to real people or changes to data that does not belong to the test accounts. The test window is agreed in writing. If I am unable to work during the window, testing stops and the window moves to a new date you approve in writing. You receive a written report and one retest of the reported findings within 30 days of the report, on a day you choose in writing in advance. If you choose no day, the retest lapses. A test does not certify that a system is safe.
+Active security testing is an add-on to an audit, priced by quote for each written scope. It starts only after you sign a written authorization and I have checked that you control every target. The testing and its report run with GLM 5.3 through Melious AI GmbH, as the legal page describes, and I read and approve the report before it is sent. A test does not certify that a system is safe. The [services page](/services#active-security-testing) states the full conditions: what can be tested, what you receive, what is not included and how the retest works.
 
 ## Tell me what you want to understand
 
@@ -6440,7 +6472,7 @@ Run an independent scanner, request the surfaces directly, including the ones it
 - Put the same written questions to each assistant and record the sources it names and what it gets wrong. An answer on one date is an observation and does not show what caused it.
 - Fix what failed, then run the scanner again for the scored checks and repeat the direct requests for the rest.
 
-A team can run these steps itself. What it cannot give itself is a reader who did not build the site. That is what an outside audit provides, and [How to choose an agent-readiness audit](/guides/choosing-an-agent-readiness-audit) covers what to ask for.
+A team can run these steps itself. What it cannot give itself is a reader who did not build the site. That is what an outside audit provides, and [How to choose an agent-readiness audit](/guides/choosing-an-agent-readiness-audit) covers what to ask for. The [website and API audit](/agent-readiness-audit) page states the scope and the fixed price of turva.dev's own audit, and the [sample audit report](/samples/audit-report) shows a finished report for an invented business.
 
 ## Frequently asked
 
@@ -7338,7 +7370,7 @@ Every finding in the report rests on one of three kinds of evidence. A technical
 
 A written report that lists each check, what was found, and a concrete fix for each gap it asks you to close, ordered by priority, and the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan after a fix shows whether a scored fix passed, and a manual-review fix is verified by a direct test.
 
-The fixed-scope audit on the [services page](/services) is the website and API audit at €4,300 within two weeks of the agreed written kickoff. Implementing the audit's own complete fix list is a €499 correction add-on when it is bought with the audit, with its report, or after the report and before implementation starts, and the required access is arranged in advance: an edge runtime, deployment access and any other access the listed fixes need. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions.
+The fixed-scope audit on the [services page](/services) is the website and API audit at €4,300 within two weeks of the agreed written kickoff. Implementing the audit's own complete fix list is a €499 correction add-on when it is bought with the audit, with its report, or after the report and before implementation starts, and the required access is arranged in advance: an edge runtime, deployment access and any other access the listed fixes need. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions. The [sample audit report](/samples/audit-report) shows the deliverable for an invented business.
 
 ## Follow-up checks
 
@@ -8242,7 +8274,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.243.0",
+    "version": "3.244.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8383,7 +8415,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LWdUvGs8dP4N72XRHPTfG8e6ZDhiw9mEpLprbOcgTG8bmNjhCRs9Y9z9Pi20psl4n_ikCZCAc4IyJppUcSsWCQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"dUQzvzHmm8ZZ6AcGPZI5xKN7c1pg8t4R6V-YQhTFSoeRKdrhnQxzHzi2aexJd9FoSMhlYSywHi30c5fhLPncAQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LWdUvGs8dP4N72XRHPTfG8e6ZDhiw9mEpLprbOcgTG8bmNjhCRs9Y9z9Pi20psl4n_ikCZCAc4IyJppUcSsWCQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Q1up79HXFRSjEJSlcCnKc4QQefukowX5tTUGszDVffaSZGh3NONmOiHlx5-DxJL4j0X9HsHHKNCNrokGS9JgCQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8551,7 +8583,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.243.0",
+  "version": "3.244.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9410,7 +9442,7 @@ const META_BY_PATH = {
     title: "My agent's notes were already a graph · turva.dev",
     description: "I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and in two agent tests the answers stayed the same.",
     date: "2026-11-06",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-my-agents-notes-were-already-a-graph.jpg",
     imageAlt: "Blog card for the post My agent's notes were already a graph, on turva.dev.",
   },
@@ -9419,7 +9451,7 @@ const META_BY_PATH = {
     description: "A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.",
     date: "2026-11-04",
     modified: "2026-11-10",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-why-i-back-up-every-night.jpg",
     imageAlt: "Card with the headline I can't start over, so I back up every night, and the line A nightly clone, encrypted NAS images and what has failed so far.",
   },
@@ -9455,7 +9487,7 @@ const META_BY_PATH = {
     description: "Four outside reviews raised 189 claims and none was refuted, which says little, and a full mutation run caught 1 002 of 1 002 in 64 minutes.",
     date: "2026-10-22",
     modified: "2026-11-02",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-tla-plus-in-numbers.jpg",
     imageAlt: "TLA+ on my own tools, in numbers, a turva.dev build note that closes the series with timeline, reviews, mutation runs and cost.",
   },
@@ -9474,7 +9506,7 @@ const META_BY_PATH = {
     description: "Three outside reviews read my TLA+ models, none of their claims was refuted, and the third left no high rated finding.",
     date: "2026-10-17",
     modified: "2026-10-28",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-three-outside-reviews-of-my-tla-plus-models.jpg",
     imageAlt: "Three outside reviews of my TLA+ models, a turva.dev build note on review rounds, fix sessions and what is still open.",
   },
@@ -9493,7 +9525,7 @@ const META_BY_PATH = {
     description: "Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.",
     date: "2026-10-12",
     modified: "2026-11-02",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-thirteen-review-rounds-and-one-rollback.jpg",
     imageAlt: "Thirteen review rounds and one rollback, a turva.dev build note on a gate fix that was undone and on mutation runs.",
   },
@@ -9501,7 +9533,7 @@ const META_BY_PATH = {
     title: "Twelve days of TLA+ on my own tools · turva.dev",
     description: "What TLA+ found in my own tools in twelve days, what outside reviews confirmed and the 21 fix rounds so far.",
     date: "2026-10-09",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-twelve-days-of-tla-plus.jpg",
     imageAlt: "turva.dev card: Twelve days of TLA+ on my own tools",
   },
@@ -9510,7 +9542,7 @@ const META_BY_PATH = {
     description: "497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. By my estimate a local model would have taken days.",
     date: "2026-10-08",
     modified: "2026-11-02",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-cloud-agents-on-my-desktop.jpg",
     imageAlt: "turva.dev card: What 497 cloud agents asked of my desktop",
   },
@@ -9519,7 +9551,7 @@ const META_BY_PATH = {
     description: "Why my agent and I both ran Brave with the V8 optimizer off, Forgetful Browsing and passkeys, with the sources and the limits.",
     date: "2026-10-06",
     modified: "2026-11-02",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-browser-my-agent-and-i-run.jpg",
     imageAlt: "turva.dev card: The browser my agent and I both run",
   },
@@ -9528,7 +9560,7 @@ const META_BY_PATH = {
     description: "How I set up a reinstalled Windows 11 machine for parallel Claude Code sessions, and what each protection layer covers that the others leave open.",
     date: "2026-10-05",
     modified: "2026-11-04",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-clean-windows-install-for-agent-work.jpg",
     imageAlt: "turva.dev card: A clean Windows install for agent work",
   },
@@ -9555,7 +9587,7 @@ const META_BY_PATH = {
     description: "Plain local files let each Claude Code session look up what the earlier sessions recorded. A count of that memory, and why it now reads like a private language.",
     date: "2026-09-25",
     modified: "2026-11-10",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-local-agent-memory.jpg",
     imageAlt: "turva.dev blog card: what agent memory in local files gets me. Plain local files let each Claude Code session look up what the earlier sessions recorded.",
   },
@@ -9579,7 +9611,7 @@ const META_BY_PATH = {
   },
   "/blog/agent-readiness-identity-vendors": {
     title: "What 19 identity vendors publish for agents · turva.dev",
-    description: "A dated scan of 19 identity vendors examines what their public sites expose for agents, and what the results cannot say about the products behind them.",
+    description: "All 19 identity vendors scored zero of nine on the API, auth, MCP and A2A discovery checks. None read above Level 2. The scan read public sites only.",
     date: "2026-09-05",
     modified: "2026-11-04",
     kind: "Research",
@@ -9608,16 +9640,16 @@ const META_BY_PATH = {
   },
   "/blog/what-ai-assistants-call-an-agent-readiness-audit": {
     title: "What four AI assistants call an agent readiness audit · turva.dev",
-    description: "Fifty buyer questions produced 193 answers across four assistants. The study shows how the same audit term can refer to websites or organizational AI adoption.",
+    description: "Of 41 answers to the bare term agent readiness, 18 described an organization's readiness and 13 a website's. Four assistants answered on one day.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-10-31",
+    modified: "2026-11-11",
     image: "/og-what-ai-assistants-call-an-agent-readiness-audit.jpg",
     imageAlt: "turva.dev blog card: Fifty buyer questions to four AI assistants: 18 of 41 open answers describe an organization's readiness and 13 the website. Two services share one name.",
   },
   "/blog/website-agent-readiness-567-sites": {
     title: "Website agent readiness, measured on 567 company sites · turva.dev",
-    description: "One scanner measured 567 selected company websites over ten weeks. The results describe that prospecting sample, and the changing check set is a stated limit.",
+    description: "Of 567 selected company websites, 485 read Level 1 of 5, 85,5 percent. The sample is a prospecting list, and the scanner's check set changed during the study.",
     date: "2026-09-03",
     kind: "Research",
     modified: "2026-10-16",
@@ -9731,13 +9763,13 @@ const META_BY_PATH = {
     description: "Ways to reduce secret exposure when coding agents work with a repository, including credential storage and the permissions around runtime access.",
     date: "2026-07-12",
     modified: "2026-11-06",
-    kind: "Build notes",
+    kind: "Lab notes",
     image: "/og-agent-secret-hygiene.jpg",
     imageAlt: "turva.dev blog card: Coding agents run with your shell, so plaintext secrets on disk are exposed to them."
   },
   "/blog/agent-readiness-finnish-b2b": {
     title: "How agent-ready are Finnish B2B sites? I scanned sixteen · turva.dev",
-    description: "A scan of sixteen selected Finnish B2B sites records gaps in agent-readiness. This historical sample leads into the later study of 567 sites.",
+    description: "Almost all of sixteen selected Finnish B2B sites read Level 1 of 5, and none read above Level 2. A historical sample, followed by the 567-site study.",
     date: "2026-07-07",
     kind: "Research",
     modified: "2026-11-01",
@@ -9823,7 +9855,7 @@ const META_BY_PATH = {
     title: "Agent access is now a setting · turva.dev",
     description: "A July product update illustrates how crawler access, discovery and payment controls can sit at the network edge, before the site's content is reached.",
     date: "2026-07-02",
-    modified: "2026-11-02",
+    modified: "2026-11-11",
     kind: "Protocol notes",
     image: "/og-agent-access-is-now-a-setting.jpg",
     imageAlt: "turva.dev blog card: Cloudflare moves crawler access, citation payment and x402 rails into CDN configuration."
@@ -11774,6 +11806,9 @@ function withAnchorAliases(pathname: string, html: string) {
 // One restrained next step at the end of a guide (Tek-358). The default points at the
 // services page; a guide about a free tool points at that instead. Short
 // lines by design: the twin gate reads any paragraph over 80 characters as prose.
+// A blog post gets one closing next step too (Tek-805, round 26: 0 of 49 posts linked the audit page or /contact).
+// Lab notes are about the workstation, not a reader's site, so they get none.
+const BLOG_NEXT = 'Need this checked on your own site? <a class="btn-ghost" href="/agent-readiness-audit">See the website and API audit</a> <a class="btn-ghost" href="/samples/audit-report">Read the sample report</a>';
 const GUIDE_NEXT = {
   default: 'Need a broader review? <a class="btn-ghost" href="/services">See the services</a>',
   "/guides/agent-readiness-audit": 'Need the audit itself? <a class="btn-ghost" href="/agent-readiness-audit">See the website and API audit</a>',
@@ -11880,7 +11915,7 @@ function serveGuideHtml(pathname: string, canonicalUrl: string) {
   }
   const next = navSection === "/guides"
     ? `<aside class="next"><p>${GUIDE_NEXT[pathname as keyof typeof GUIDE_NEXT] || GUIDE_NEXT.default}</p></aside>`
-    : "";
+    : (navSection === "/blog" && meta.kind !== "Lab notes" ? `<aside class="next"><p>${BLOG_NEXT}</p></aside>` : "");
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -12965,6 +13000,7 @@ ${cardPageNav("/agent-readiness-audit")}
   ${mdOpenSec("/agent-readiness-audit", "What I check", "scope")}
   ${mdOpenCtaSec("/agent-readiness-audit", "What you receive", "deliverables", "cta-row", ["cta-btn"])}
   ${mdOpenSec("/agent-readiness-audit", "How the two weeks work")}
+${mdOpenSec("/agent-readiness-audit", "Terms in brief")}
   ${mdOpenSec("/agent-readiness-audit", "If you want help with the fixes", "implementation")}
   ${mdOpenSec("/agent-readiness-audit", "Active security testing", "active-security-testing")}
   <div class="start" id="how-to-start">
@@ -16208,8 +16244,9 @@ function blogPostLinks() {
   }).join("\n");
 }
 // The four filters of the blog index, in display order. Every post's kind has to be one of
-// the three named kinds, or the filter would silently hide a post from every filtered view.
-const BLOG_KINDS = ["Research", "Protocol notes", "Build notes"];
+// the four named kinds, or the filter would silently hide a post from every filtered view.
+// Build notes are about this site and client work, Lab notes about the workstation and its tools (Tek-805).
+const BLOG_KINDS = ["Research", "Protocol notes", "Build notes", "Lab notes"];
 function blogFilterHtml() {
   const posts = Object.keys(PAGE_MARKDOWN).filter((k) => k.startsWith("/blog/")).map((k): Partial<PageMeta> => META_BY_PATH[k as keyof typeof META_BY_PATH] || {}).filter((m) => m.date);
   for (const m of posts) {
