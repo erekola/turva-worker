@@ -1889,3 +1889,38 @@ test("K24 W4-12: every same-page or site-internal #anchor link on every sitemap 
   assert.ok(checked > 20, "the test must see the anchor links (saw " + checked + ")");
   assert.deepEqual(broken, [], "anchor links with no matching id");
 });
+
+// Tek-806 (2026-11-11): three checks the 3.244.0 release shipped without a test for.
+test("/blog lists exactly four kinds, every post carries one of them, and only a Lab notes post closes without the next step (Tek-806)", async () => {
+  const blog = await (await get("/blog")).text();
+  const buttons = [...blog.matchAll(/<button type="button" class="bkind" data-kind="([^"]*)"/g)].map((m) => m[1]);
+  assert.deepEqual(buttons, ["", "Research", "Protocol notes", "Build notes", "Lab notes"], "the filter row is All plus the four kinds");
+  const kinds = buttons.slice(1);
+  const posts = [...blog.matchAll(/<li class="post" data-kind="([^"]*)" data-search="[^"]*"><span class="pt"><a href="(\/blog\/[a-z0-9-]+)"/g)].map((m) => ({ kind: m[1], path: m[2] }));
+  assert.equal(posts.length, (blog.match(/<li class="post"/g) || []).length, "every card was read");
+  assert.ok(posts.length >= 49, "the index lists the posts: " + posts.length);
+  for (const post of posts) assert.ok(kinds.includes(post.kind), "the post's kind is one of the four: " + post.path + " has " + JSON.stringify(post.kind));
+  for (const kind of kinds) assert.ok(posts.some((post) => post.kind === kind), "no kind is empty: " + kind);
+  for (const post of posts) {
+    const html = await (await get(post.path)).text();
+    const hasNext = html.includes('<div class="pagefoot">') || html.includes('class="next"') || html.includes('<main id="main" class="has-next">');
+    if (post.kind === "Lab notes") assert.ok(!hasNext, "a Lab notes post has no next step: " + post.path);
+    else assert.match(html, /<main id="main" class="has-next">[\s\S]*<\/main>\n<div class="pagefoot"><aside class="next"><p>/, "the next step follows the post's main: " + post.path);
+  }
+});
+
+test("/services: each of the five contact links carries the href of the matching /contact button (Tek-806)", async () => {
+  const drafts = (html: string): Record<string, string[]> => {
+    const out: Record<string, string[]> = {};
+    for (const m of html.matchAll(/<a(?: class="btn")? href="(mailto:info@turva\.dev\?subject=[^"]*)">(Ask about [^<]*)<\/a>/g)) (out[m[2]] ||= []).push(m[1]);
+    return out;
+  };
+  const contact = drafts(await (await get("/contact")).text());
+  const services = drafts(await (await get("/services")).text());
+  assert.deepEqual(Object.keys(contact).sort(), ["Ask about agent operations or MCP server design", "Ask about an audit", "Ask about implementation", "Ask about ongoing advisory"], "/contact has its four buttons");
+  for (const hrefs of Object.values(contact)) assert.equal(hrefs.length, 1, "one button per label on /contact");
+  assert.deepEqual(Object.keys(services).sort(), Object.keys(contact).sort(), "/services uses the labels of /contact");
+  assert.equal(Object.values(services).flat().length, 5, "five contact links, one per service section");
+  assert.equal(services["Ask about agent operations or MCP server design"].length, 2, "agent operations and MCP server design share one draft");
+  for (const [label, hrefs] of Object.entries(services)) for (const href of hrefs) assert.equal(href, contact[label][0], "same draft as /contact: " + label);
+});

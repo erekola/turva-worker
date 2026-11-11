@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.245.0 - round 26 open items (2026-11-11, Tek-806): the /blog card and its alt text no longer list three kinds, seven posts get a closing offer that says only what the audit page says, each with a dated correction line, the legal page says that the email reply confirming the written scope is the order, and the blog introduction and description limit the method and limits promise to the studies
 // turva.dev worker v3.244.0 - round 26 improvements (2026-11-11, Tek-805): a blog post closes with one next step outside main, the home and /services FAQ state that the audit reads the website and its APIs, /services sections end with a contact link, the audit page gains Terms in brief and says what the order is and keeps a summary of active security testing, llms.txt names agent operations, MCP server design and the VAT ID, two guides link the audit page and the sample, the blog kind Lab notes splits from Build notes, and four research descriptions lead with the finding
 // turva.dev worker v3.243.0 - security work follow-up (2026-11-11, Tek-802): the active security testing card on / and /services and the quotedAddOns scope in HOME_JSON and the MCP server card name GLM 5.3 and Burp Suite Professional; the add-on paragraph adds the test environment option, the coverage limit and how the report is checked and approved; the /services stop line describes the stop; the audit page names the GLM and Claude split; /legal defines security headers, makes the report section part of security work, adds Anthropic API retention and inference geography, the GLM-5.3 License, the German text of Melious's terms, Melious's OVH hardware and its storage-function exception, tightens the provider list and fixes the supervisory authority address and the Updates rule; the dated lab post gets two Corrected lines; llms.txt Engagement model and the services agent skill name the add-on and the model split (llms.txt and server card re-signed, MCP 1.10.1).
 // turva.dev worker v3.242.0 - security work runs with GLM 5.3 (2026-11-11, Tek-799): the active security testing add-on on /services and /agent-readiness-audit, the /services AI tools answer and /legal say that active security testing and an audit's internet.nl tests and published security scans run with GLM 5.3 through Melious AI GmbH on its own hardware in Finland, with Claude Code as the agent program and its other traffic to Anthropic switched off; /legal names the zero data retention clause, the account and key limited to Melious's own route and the provider line; the Anthropic API workspace for testing and the second-model fallback are gone; /legal privacy date 2026-11-11
@@ -3595,7 +3596,7 @@ The fix shipped yesterday: RateLimit-Limit is gone and RateLimit-Policy stays. T
 
 A declared limit is a claim about behavior, and claims about behavior rot silently, because nothing breaks when they do. The check that catches this class of defect is reading the code. A probe smaller than the burst sizes measured here did not catch it in these runs, because on an eventually consistent platform it returns the same comfortable 200s for a working guard, for a missing one and for one that has failed open. A large parallel burst can draw refusals, as the runs above did, and it still does not show which line of code refused. If a header on your site promises something, the interesting question is not whether the value looks sensible. It is which line of code makes it true.
 
-If you want your own agent-facing claims read the way a skeptic would read them, an audit is what I do. Email info@turva.dev.
+My audit reads what your site publishes for automated clients and reports where two places disagree. It does not read your code. Email info@turva.dev.
 
 Corrected 2026-09-27. A sentence said probing the endpoint cannot catch this defect. The larger bursts in this post did draw refusals, so it now says a small probe cannot, and that a burst still does not show which code refused. No number changed.
 
@@ -3610,6 +3611,8 @@ Corrected 2026-09-29. The test section stated the all-200 result for a slow loop
 Corrected 2026-09-29. A sentence said that from the outside a guard that has failed open is indistinguishable from a guard doing its job. It now says that under a probe that stays below the refusal threshold both return 200, so they look the same from the outside, and that the logs or the code tell them apart. No number changed.
 
 Corrected 2026-11-02. A sentence said RateLimit-Policy alone is the correct form for a static limit. The draft also lets a server send both fields, so it now says a correct form, and the only one this Worker can send without inventing a number.
+
+Corrected 2026-11-11. The closing line offered an audit that reads agent-facing claims the way a skeptic would. The audit reads what a site publishes and does not read its code. This post says reading the code is the check that catches the defect, so the line now says that.
 
 ## Related
 
@@ -3909,7 +3912,9 @@ That is the line between a hollow signal and a modest true one, and a scanner ca
 
 [auth.md](/auth.md) now says one thing instead of two. The key it names is the key you get if you email and ask, and it labels the message and grants nothing. The fields that described things the service does not do are gone. The check reads green because the declaration is finally true. Nothing was padded to please it.
 
-For an agent-readiness audit that reads your agent-facing claims the way a skeptic would, contact info@turva.dev.
+For an agent-readiness audit that checks whether the facts and files your site publishes agree with each other, contact info@turva.dev.
+
+Corrected 2026-11-11. The closing line offered an audit that reads agent-facing claims the way a skeptic would. It now names what the audit checks, which is whether the published facts and files agree.
 
 ## Related
 
@@ -3947,7 +3952,9 @@ The lasting repair is anchoring. A guide claim about a moving specification now 
 
 Corrected 2026-11-05. The re-check schedule this paragraph names is gone. I start the monthly read of the guides myself, and nothing on the site enforces it.
 
-For an audit that reads your agent-facing claims against the specifications they cite, contact info@turva.dev.
+For an agent-readiness audit that checks whether the facts and files your site publishes agree with each other, contact info@turva.dev.
+
+Corrected 2026-11-11. The closing line offered an audit that reads agent-facing claims against the specifications they cite. The audit checks whether the published facts and files agree, so the line now says that.
 
 ## Related
 
@@ -3979,7 +3986,7 @@ The token split is measured, not typed in by hand. It comes from scanning both f
 
 Corrected 2026-10-31. The sentence above said this site logs the pair after every deploy. The pair came from a scanner the site stopped using on 21 July 2026, and nothing has logged it since.
 
-For an audit that measures what agents pay to read your site, contact info@turva.dev.
+For an agent-readiness audit that checks whether automated clients can find and read your information, contact info@turva.dev.
 
 Corrected 2026-09-28. The heading called the token count an agent bill. The post measures what each form costs to read in tokens, not a paid invoice, and the body now says so.
 
@@ -3988,6 +3995,8 @@ Corrected 2026-09-28. The heading, and the same words used elsewhere on the site
 Corrected 2026-09-29. The opening still explained the word bill in the title after the title had dropped it. That explanation is gone, and the sentence says what the post measures.
 
 Corrected 2026-10-02. One sentence said the site had gained seven blog posts since the earlier post. The blog index lists six, so it now says: "Since that post went out the site has gained six blog posts before this one."
+
+Corrected 2026-11-11. The closing line offered an audit that measures what agents pay to read a site. The audit page names no token cost measurement, so the line now offers what the audit checks.
 
 ## Related
 
@@ -4344,7 +4353,7 @@ All free tools on this site are collected on [the tools page](/tools).
 
   "/blog": `# Research and field notes
 
-Dated studies, technical investigations, build notes and lab notes from turva.dev. Each article explains what was observed, how it was checked and what the result does not establish.
+Dated studies, technical investigations, build notes and lab notes from turva.dev. Each study explains what was observed, how it was checked and what the result does not establish.
 
 [RSS feed](/blog/feed.xml)
 
@@ -4523,9 +4532,11 @@ An agent-readiness audit asks whether an agent can read your public site. OKF is
 
 For now OKF is worth understanding and worth watching. It is early to rebuild a knowledge catalog around it. If you already serve clean text to agents, you are most of the way there already.
 
-For an audit of how legibly AI agents read your site and the data behind it, contact info@turva.dev.
+For an agent-readiness audit of whether AI agents can find and read what your site and API publish, contact info@turva.dev.
 
 Corrected 2026-10-23. A sentence said version 0.1 does not fix what any field means. Section 4.1 of the spec defines the required type field and five recommended fields, so the sentence now says: "It requires a type field and gives a short definition for each of five recommended fields, but it registers no type values and does not say how two teams should agree on the same names."
+
+Corrected 2026-11-11. The closing line offered an audit of how legibly AI agents read a site and the data behind it. The audit reads what the site and its API publish and not the data behind them, so the line now says that.
 
 ## Related
 
@@ -4565,7 +4576,7 @@ Updated 2026-11-01. The scanner checks markdown content negotiation. It does not
 
 None of this is a rebuild. It is a small piece of code at the edge that picks the response format from the request header, and it keeps working as the site grows. The Worker that does it on turva.dev is public, so you can read exactly what it does before deciding whether it belongs on your own site.
 
-For an audit of how cheaply agents can read your site, contact info@turva.dev.
+For an agent-readiness audit that checks whether automated clients can find and read your information, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -4588,6 +4599,8 @@ Corrected 2026-09-28. The opening sentence said a cheaper page decides whether a
 Corrected 2026-09-28. A sentence said assistants read better from clean text and are therefore more likely to use a page in full and represent it accurately. It now ties that to the lower cost of reading the page rather than claiming reading quality itself improves.
 
 Corrected 2026-10-30. The opening and the first FAQ answer said that navigation, styling, scripts and structured data all arrive whether the agent needs them or not. That holds for an agent that reads the raw markup, and both now say so.
+
+Corrected 2026-11-11. The closing line offered an audit of how cheaply agents can read a site. The audit page names no token cost measurement, so the line now offers what the audit checks.
 
 ## Related
 
@@ -4629,7 +4642,7 @@ The concrete uses are easy to name. Validate Web Bot Auth signatures at the edge
 
 None of this is live for Claude on the day I publish this, and I will not write as though it were. The directory is public for a reason. Check it, and admit what it actually says rather than what a vendor page claims. When the entry appears, the work on the receiving side is already done, and the audit has a new line that can be measured rather than asserted.
 
-For an agent-readiness audit that covers how your site recognizes and admits AI agents, contact info@turva.dev.
+For an agent-readiness audit that reads the access rules and files your site publishes for automated clients, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -4646,6 +4659,8 @@ It is just text, and anything can send it. An IP range drifts as providers move 
 Yes. A site that switches on a rule that blocks AI bots can block a request that a person asked an agent to make, and operators have had to add a manual exception by hand to let it through.
 
 Corrected 2026-10-02. The post said copying the header does not reproduce a signature, which can be read as replay resistance. It now says: "Copying the header does not let anyone sign a new request, though a captured one can be replayed until it expires." A sentence also claimed a verification time of one millisecond that nobody measured. It now says a site can verify the request at the edge.
+
+Corrected 2026-11-11. The closing line offered an audit that covers how a site recognizes and admits AI agents. The audit reads the access rules and files a site publishes, so the line now says that.
 
 ## Related
 
@@ -6121,7 +6136,7 @@ Contact: [info@turva.dev](mailto:info@turva.dev)
 
 These terms apply to audits, advisory, implementation, agent operations and MCP server design, including the active security testing add-on, unless a written agreement replaces them. The services are sold only to businesses and other organizations acting in their trade or profession, not to consumers.
 
-**Scope.** We agree the scope in writing before work starts. Changes need a new written agreement and may affect the price and schedule.
+**Scope.** We agree the scope in writing before work starts. Your email reply that confirms the written scope is the order. Changes need a new written agreement and may affect the price and schedule.
 
 **Business days.** A business day means Finland's business days, Monday to Friday, excluding Finnish public holidays, in Europe/Helsinki time.
 
@@ -8274,7 +8289,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.244.0",
+    "version": "3.245.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8583,7 +8598,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.244.0",
+  "version": "3.245.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9743,7 +9758,7 @@ const META_BY_PATH = {
     titleTag: "Every response promised a rate limit · turva.dev",
     description: "A response header advertised a request limit that no code enforced. The investigation separates a published policy, the code and what a probe can show.",
     date: "2026-07-18",
-    modified: "2026-11-02",
+    modified: "2026-11-11",
     kind: "Build notes",
     image: "/og-enforcing-the-rate-limit-i-advertised.jpg",
     imageAlt: "Every response promised a rate limit. Nothing enforced it."
@@ -9780,6 +9795,7 @@ const META_BY_PATH = {
     title: "When honesty and the checker disagree · turva.dev",
     description: "An optional credential was both declared and denied in the same metadata. The repair made the description consistent without claiming access it did not grant.",
     date: "2026-07-06",
+    modified: "2026-11-11",
     kind: "Build notes",
     image: "/og-honesty-and-the-checker.jpg",
     imageAlt: "turva.dev blog card: Making this site's auth.md cleaner made the scanner fail. The honest form was the precise one, neither gutted nor padded to please the check."
@@ -9789,7 +9805,7 @@ const META_BY_PATH = {
     description: "A dated review of the guides found that source specifications and local claims had moved. The article records corrections and the limits of automated checks.",
     date: "2026-07-04",
     kind: "Build notes",
-    modified: "2026-11-05",
+    modified: "2026-11-11",
     image: "/og-re-checking-the-guides.jpg",
     imageAlt: "turva.dev blog card: Four AI agents re-read the guides against the specifications behind them."
   },
@@ -9797,7 +9813,7 @@ const META_BY_PATH = {
     title: "The page grew, the agent token count did not · turva.dev",
     description: "A July measurement compared the token counts of the homepage's HTML and Markdown representations. The result describes that page and measurement date.",
     date: "2026-07-04",
-    modified: "2026-11-05",
+    modified: "2026-11-11",
     kind: "Build notes",
     image: "/og-cheaper-pages-revisited.jpg",
     imageAlt: "turva.dev blog card: The site kept growing after June's token-cost post. The 4 July scan reports an 83% token saving between the HTML and markdown forms."
@@ -9847,9 +9863,9 @@ const META_BY_PATH = {
   },
   "/blog": {
     title: "Agent-readiness research and field notes · turva.dev",
-    description: "Dated studies and technical notes on website agent-readiness, AI answers and implementation. Read the methods, observations and limitations.",
+    description: "Dated studies and technical notes on website agent-readiness, AI answers and implementation. Each study states its method and its limits.",
     image: "/og-blog.jpg",
-    imageAlt: "turva.dev blog card: dated notes on AI agents and the work of letting them act, sorted into research, protocol notes and build notes."
+    imageAlt: "turva.dev blog card: notes on AI agents and the work of letting them act, dated studies and field notes sorted by kind."
   },
   "/blog/agent-access-is-now-a-setting": {
     title: "Agent access is now a setting · turva.dev",
@@ -9873,7 +9889,7 @@ const META_BY_PATH = {
     title: "What the Open Knowledge Format is, and what it is not · turva.dev",
     description: "An early reading of Open Knowledge Format version 0.1 separates the file structure it defines from the semantic promises it leaves open.",
     date: "2026-06-27",
-    modified: "2026-10-23",
+    modified: "2026-11-11",
     kind: "Protocol notes",
     image: "/og-open-knowledge-format.jpg",
     imageAlt: "turva.dev blog card: Google Cloud shipped the Open Knowledge Format. What it is, what it is not yet, and how it relates to an agent-readiness audit."
@@ -9882,7 +9898,7 @@ const META_BY_PATH = {
     title: "What an agent pays to read your site · turva.dev",
     description: "This article examines the publisher's influence on the content a text-based client receives, using a dated HTML-versus-Markdown comparison.",
     date: "2026-06-26",
-    modified: "2026-11-01",
+    modified: "2026-11-11",
     kind: "Build notes",
     image: "/og-cheaper-pages-for-agents.jpg",
     imageAlt: "turva.dev blog card: An agent pays to read your site in tokens, and an HTML-only page is expensive."
@@ -9898,7 +9914,7 @@ const META_BY_PATH = {
     title: "When an agent can prove it is Claude · turva.dev",
     description: "Signed requests can give evidence of a sender's identity. This dated article separates that evidence from trusting a user-agent string or granting an action.",
     date: "2026-06-25",
-    modified: "2026-10-31",
+    modified: "2026-11-11",
     kind: "Protocol notes",
     image: "/og-verifiable-agent-identity.jpg",
     imageAlt: "turva.dev blog card: Web Bot Auth gives an AI agent a verifiable, signed identity a site can check."
