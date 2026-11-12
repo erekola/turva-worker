@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.250.0 - the last eight guides read shorter (Tek-808, 2026-11-12): in the guides on agents.json, SEO and agent-readiness, the well-known directory, prerendering, sitemaps and robots.txt, Markdown for agents and letting agents act on data, sentences over 30 words are split and long paragraphs are broken into shorter ones; the guide on getting cited by AI assistants needed no change. No heading, link, figure, date, version or FAQ question changed, and no signed surface changed.
 // turva.dev worker v3.249.0 - eight more guides read shorter (Tek-808, 2026-11-12): in the guides on x402 payments, the Open Knowledge Format, response headers, common agent-readiness gaps, choosing an audit, measurement-led agent-readiness, AEO and GEO, and AI agent use cases, sentences over 30 words are split and long paragraphs are broken into shorter ones, and the six use cases list their input, action and limit as three list items each. No heading, link, figure, date, version, price, condition or FAQ question changed, nothing was removed, and no signed surface changed.
 // turva.dev worker v3.248.0 - eight guides read shorter (Tek-808, 2026-11-12): in the guides on agent commerce discovery, llms.txt, Agentic Resource Discovery, JSON-LD, the agent-readiness audit, the MCP server card, agentic commerce readiness and agent authentication, sentences over 30 words are split and long paragraphs are broken into shorter ones, two paragraphs of the commerce readiness guide are lists, and one pair of sentences the authentication guide said twice is removed. No heading, link, figure, date, version, condition or FAQ question changed, and no signed surface changed.
 // turva.dev worker v3.247.0 - the audit page, the two tool pages, /company, /contact and /tools read shorter (Tek-808, 2026-11-12): sentences over 30 words are split, the long paragraphs about the audit's deliverables, the validator's request headers and its 22 October 2026 measurement, the CLI's error shapes and the parity check's HTTP status codes are lists or shorter paragraphs, and one sentence the audit page said twice is said once. No price, deadline, limit, measured value or condition changed.
@@ -6779,13 +6780,13 @@ agents.json sits beside other declarations a client looks for. An MCP server car
 
 ## Limits
 
-Declaring an action in agents.json describes what exists. It does not grant a client permission to call it, and it does not perform the authorization or rate limiting that has to happen on the server when the call arrives. Those checks live at the endpoint, not in the declaration file, and a site still has to enforce them regardless of what agents.json says. Treat the file as documentation a client can parse, not as an access control mechanism. For an audit of whether a site's endpoints enforce what its declared actions promise, contact info@turva.dev.
+Declaring an action in agents.json describes what exists. It does not grant a client permission to call it. The declaration does not perform the authorization or rate limiting that has to happen on the server when the call arrives. Those checks live at the endpoint, not in the declaration file, and a site still has to enforce them regardless of what agents.json says. Treat the file as documentation a client can parse, not as an access control mechanism. For an audit of whether a site's endpoints enforce what its declared actions promise, contact info@turva.dev.
 
 ## Frequently asked
 
 **What is agents.json?**
 
-agents.json is a machine-readable file that declares what an AI agent can do on a site and how, describing the actions and endpoints a site offers to agents, each action pointing at an operation in an OpenAPI description that also carries the authentication a client needs. The specification has stayed at version 0.1.0 since early 2025.
+agents.json is a machine-readable file that declares what an AI agent can do on a site and how. The file describes the actions and endpoints a site offers to agents, each action pointing at an operation in an OpenAPI description that also carries the authentication a client needs. The specification has stayed at version 0.1.0 since early 2025.
 
 **How is agents.json different from llms.txt?**
 
@@ -6951,7 +6952,7 @@ The terms above blur together because people use one word, visibility, for four 
 
 ## Where Google's AI features fit
 
-Indexing and search match are the classic SEO pair, and they are the input Google's own AI search features build on. Google states that its generative features in Search are rooted in the same core ranking and quality systems, so indexing and ranking well is the starting point for AI Overviews and similar results inside Google Search. Google adds two conditions, a page that is eligible to show in Search with a snippet and a site that is included in Search generative AI features in Search Console, and it does not guarantee that a page is shown. That connection does not extend to source citation from an assistant that retrieves outside a search index, which, on my working assumption, depends on whether the model can read the content cleanly and confirm it elsewhere, and it does not extend to API action at all, which depends on machine-readable surfaces classic SEO never touched.
+Indexing and search match are the classic SEO pair, and they are the input Google's own AI search features build on. Google states that its generative features in Search are rooted in the same core ranking and quality systems, so indexing and ranking well is the starting point for AI Overviews and similar results inside Google Search. Google adds two conditions, a page that is eligible to show in Search with a snippet and a site that is included in Search generative AI features in Search Console, and it does not guarantee that a page is shown. That connection does not extend to source citation from an assistant that retrieves outside a search index, which, on my working assumption, depends on whether the model can read the content cleanly and confirm it elsewhere. Nor does it extend to API action at all, which depends on machine-readable surfaces classic SEO never touched.
 
 ## Where agent-readiness fits
 
@@ -7069,7 +7070,9 @@ An API catalog at a well-known path, defined by RFC 9727, lets a client enumerat
 
 ## Where MCP discovery still moves
 
-A server card describes an MCP server and how to reach it, but this one is not yet settled the way the three above are. The isitagentready.com scanner asks for the card at /.well-known/mcp/server-card.json, and turva.dev serves its card there. The Server Card extension specification, accepted in October 2026 as SEP-2127 although its repository is still labeled experimental, instead recommends the MCP endpoint URL followed by /server-card, and expects a client to follow the URL a site's own catalog gives rather than assume a fixed well-known path. Treat the MCP card path as a convention, not as a ratified standard on the same footing as RFC 9727 or OAuth discovery.
+A server card describes an MCP server and how to reach it, but this one is not yet settled the way the three above are. The isitagentready.com scanner asks for the card at /.well-known/mcp/server-card.json, and turva.dev serves its card there. The Server Card extension specification, accepted in October 2026 as SEP-2127 although its repository is still labeled experimental, instead recommends the MCP endpoint URL followed by /server-card. That specification expects a client to follow the URL a site's own catalog gives rather than assume a fixed well-known path.
+
+Treat the MCP card path as a convention, not as a ratified standard on the same footing as RFC 9727 or OAuth discovery.
 
 ## Why lookup beats crawling
 
@@ -7297,7 +7300,7 @@ Some clients read the initial HTTP response without running a browser. Compare t
 
 Many sites render their content with JavaScript in the browser. A person's browser waits a moment and the page fills in. A client that reads only the raw HTTP response sees the page before that script runs, so it reads a loading shell instead of the content.
 
-Client behavior varies. A client that runs a full browser executes JavaScript before reading a page, so it sees the same content a person sees. Google's JavaScript SEO guide notes that not all bots can run JavaScript, and a client that cannot run it reads only the response body. A site cannot assume which behavior applies without checking, and the practical fix is the same either way: make sure the finished content is present in the first response for clients that need it.
+Client behavior varies. A client that runs a full browser executes JavaScript before reading a page, so it sees the same content a person sees. Google's JavaScript SEO guide notes that not all bots can run JavaScript, and a client that cannot run it reads only the response body. A site cannot assume which behavior applies without checking. The practical fix is the same either way: make sure the finished content is present in the first response for clients that need it.
 
 ## What the first response contains
 
@@ -7305,7 +7308,9 @@ For a JavaScript-rendered page, the first HTTP response usually contains an HTML
 
 ## Options
 
-Prerendering renders the page on the server or at the edge and returns finished HTML in the first response, so any client reads the content immediately, without running scripts. A separate option is to serve a Markdown representation of the page on request, which skips the rendering question for clients that ask for it and costs a fraction of the tokens a full HTML page would, as the measurement in [Cheaper pages for agents](/blog/cheaper-pages-for-agents) shows. These options are not mutually exclusive. A site can keep its interactive build for people and serve prerendered or Markdown content by request, deciding on the incoming request rather than rebuilding the whole site. On turva.dev that decision lives in a Cloudflare Worker that reads the request's Accept header and returns the matching form.
+Prerendering renders the page on the server or at the edge and returns finished HTML in the first response, so any client reads the content immediately, without running scripts. A separate option is to serve a Markdown representation of the page on request, which skips the rendering question for clients that ask for it and costs a fraction of the tokens a full HTML page would, as the measurement in [Cheaper pages for agents](/blog/cheaper-pages-for-agents) shows. These options are not mutually exclusive.
+
+A site can keep its interactive build for people and serve prerendered or Markdown content by request, deciding on the incoming request rather than rebuilding the whole site. On turva.dev that decision lives in a Cloudflare Worker that reads the request's Accept header and returns the matching form.
 
 ## Content parity
 
@@ -7350,7 +7355,9 @@ robots.txt and the sitemap are the oldest machine-readable files on the web, and
 
 ## Crawl preferences
 
-robots.txt sets crawl rules, and it can name AI crawlers explicitly, so a site states whether it welcomes GPTBot and similar clients rather than leaving them to guess. A Content-Signal directive can go further and declare how content may be used, separating ordinary search from AI input and training, which states a granular preference instead of an all-or-nothing block. GPTBot and OAI-SearchBot serve different purposes for the same provider. OpenAI uses OAI-SearchBot for search and GPTBot for training, so blocking one does not block the other, and a page can still be named in an assistant's answer through a source other than the blocked crawler.
+robots.txt sets crawl rules, and it can name AI crawlers explicitly, so a site states whether it welcomes GPTBot and similar clients rather than leaving them to guess. A Content-Signal directive can go further and declare how content may be used, separating ordinary search from AI input and training, which states a granular preference instead of an all-or-nothing block.
+
+GPTBot and OAI-SearchBot serve different purposes for the same provider. OpenAI uses OAI-SearchBot for search and GPTBot for training, so blocking one does not block the other. A page can still be named in an assistant's answer through a source other than the blocked crawler.
 
 ## URL discovery
 
@@ -7362,7 +7369,9 @@ A Content-Signal directive is a stated preference and not an enforcement mechani
 
 ## Checks to run
 
-Getting these files wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident stops that crawler from fetching the pages and can keep the content out of what it feeds, though it does not by itself remove the site from an assistant's answers, since an answer can still name a page through another source. A stale sitemap hides new pages from an agent that relies on it alone; a page can still be found through an ordinary link even when the sitemap has not caught up. The files are small and the fix is fast, which is why they are the first thing a readiness review checks. In [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) finished in September 2026, robots.txt and the sitemap were the two most frequent first-fix subjects among the 74 sites that read Level 0, 45 and 38 of 68 notes, and 29 named both, usually a robots.txt the CMS shipped by default and a sitemap that was missing or never announced in it.
+Getting these files wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident stops that crawler from fetching the pages and can keep the content out of what it feeds. Such a block does not by itself remove the site from an assistant's answers, since an answer can still name a page through another source. A stale sitemap hides new pages from an agent that relies on it alone. A page can still be found through an ordinary link even when the sitemap has not caught up.
+
+robots.txt and the sitemap are small files and the fix is fast, which is why they are the first thing a readiness review checks. In [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) finished in September 2026, robots.txt and the sitemap were the two most frequent first-fix subjects among the 74 sites that read Level 0, 45 and 38 of 68 notes, and 29 named both, usually a robots.txt the CMS shipped by default and a sitemap that was missing or never announced in it.
 
 turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a complete sitemap. For an audit of a site's robots.txt, Content Signals and sitemap, contact info@turva.dev.
 
@@ -7406,7 +7415,9 @@ Content negotiation lets a client ask for the markdown form directly. A client s
 
 ## Direct markdown URLs
 
-The llms.txt proposal gives the markdown form its own address. Its first version appended .md to the full page URL, so page.html became page.html.md and a directory-style URL took an index form. Version 2, from August 2026, also allows replacing the .html suffix, as in page.md, and it names a link relation of type alternate for text/markdown that the page can carry, so a client that never sends an Accept header can still find the address by reading the page's own links. A site can also publish llms-full.txt, a single file that bundles the whole site as text, so a client can read everything in one request instead of fetching many pages.
+The llms.txt proposal gives the markdown form its own address. Its first version appended .md to the full page URL, so page.html became page.html.md and a directory-style URL took an index form. Version 2, from August 2026, also allows replacing the .html suffix, as in page.md. That version names a link relation of type alternate for text/markdown that the page can carry, so a client that never sends an Accept header can still find the address by reading the page's own links.
+
+A site can also publish llms-full.txt, a single file that bundles the whole site as text, so a client can read everything in one request instead of fetching many pages.
 
 ## Content parity
 
@@ -7414,7 +7425,9 @@ Markdown delivery is not a separate site. It is the same content offered in a se
 
 ## Verification
 
-The token saving can be large. On turva.dev the markdown form of a page has measured at a fraction of the tokens the HTML form costs for the same content, and that difference is what decides whether a client reads a page in full or runs out of budget partway through. That figure is tied to the page it was measured on and to how the receiving client counts tokens, so it is a measured example rather than a cost guarantee that holds for every client and every page. Checking a given page means counting the tokens of its own HTML and markdown forms with the tokenizer of the client that reads it, not assuming a figure measured elsewhere carries over. A byte count is a quick first check, not a token count.
+The token saving can be large. On turva.dev the markdown form of a page has measured at a fraction of the tokens the HTML form costs for the same content. That difference is what decides whether a client reads a page in full or runs out of budget partway through. That figure is tied to the page it was measured on and to how the receiving client counts tokens, so it is a measured example rather than a cost guarantee that holds for every client and every page.
+
+Checking a given page means counting the tokens of its own HTML and markdown forms with the tokenizer of the client that reads it, not assuming a figure measured elsewhere carries over. A byte count is a quick first check, not a token count.
 
 turva.dev serves markdown on request and publishes llms.txt and llms-full.txt. Every page also answers at its own .md address, and /guides/markdown-for-agents.md returns the same markdown byte for byte as /guides/markdown-for-agents requested with Accept: text/markdown. Without that header the bare address returns HTML. For an audit of whether a site's markdown and HTML agree, contact info@turva.dev.
 
@@ -7729,13 +7742,13 @@ An agent's decision is bounded by the data that reaches it. In a clean environme
 
 ## Allowed actions
 
-A correct decision is not an agent doing whatever it infers. It starts with an envelope defined for the agent, the permissions, the thresholds and the explicit list of what it may touch and what it may not. The judgment is front-loaded into that boundary by a person who knew the stakes. Staying inside it makes an action allowed, and an allowed action can still be wrong for the task, which is why the data the agent acts on matters as much as the boundary. Draw the boundary loosely and a capable agent still does something, just not what you wanted.
+A correct decision is not an agent doing whatever it infers. It starts with an envelope defined for the agent, the permissions, the thresholds and the explicit list of what it may touch and what it may not. The judgment is front-loaded into that boundary by a person who knew the stakes. Staying inside it makes an action allowed. An allowed action can still be wrong for the task, which is why the data the agent acts on matters as much as the boundary. Draw the boundary loosely and a capable agent still does something, just not what you wanted.
 
-Commerce protocols are one place where the boundary is written down in a specification. The Universal Commerce Protocol carries a checkout state called requires_escalation, which means the agent has reached the edge of what it may finish alone and a person has to complete the step. AP2 does the same on the payment side, where a mandate records the limits the user agreed to before the agent acted. Both encode a decision somebody made in advance. Decision envelope is the name this guide gives that pattern, and neither specification uses the term, so do not go looking for it in either document. Neither decides for you where the line sits, and that is a judgment about which actions are reversible and who carries the cost when one is not.
+Commerce protocols are one place where the boundary is written down in a specification. The Universal Commerce Protocol carries a checkout state called requires_escalation. The state means the agent has reached the edge of what it may finish alone and a person has to complete the step. AP2 does the same on the payment side, where a mandate records the limits the user agreed to before the agent acted. Both encode a decision somebody made in advance. Decision envelope is the name this guide gives that pattern, and neither specification uses the term, so do not go looking for it in either document. Neither decides for you where the line sits, and that is a judgment about which actions are reversible and who carries the cost when one is not.
 
 ## Human handoff
 
-Letting agents act is not removing people. The stronger pattern carries a human expert's judgment to where the work is and lets the agent handle the parts that have to be instant or exact, with a clear point where control passes back. The hardest version is where no person can step in fast enough, so the decision has to be made locally under rules agreed in advance.
+Letting agents act is not removing people. The stronger pattern carries a human expert's judgment to where the work is. That pattern also lets the agent handle the parts that have to be instant or exact, with a clear point where control passes back. The hardest version is where no person can step in fast enough, so the decision has to be made locally under rules agreed in advance.
 
 ## Verification
 
@@ -8469,7 +8482,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.249.0",
+    "version": "3.250.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8778,7 +8791,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.249.0",
+  "version": "3.250.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
