@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.253.0 - the legal page contents list shows its subsections (Tek-808, 2026-11-12): under each of the seven section links, /legal lists the 22 subsection headings it carries, each linking to that heading's own anchor, as a nested single-column list. The list is read from the rendered sections, so it cannot drift from the headings. No word on the page changed and the Markdown twin is unchanged.
 // turva.dev worker v3.252.0 - the legal page reads in shorter paragraphs (Tek-808, 2026-11-12): on /legal each engagement term and each privacy topic is a subsection with a heading and an anchor of its own, the long paragraphs are split at sentence boundaries (the longest was 555 words and is now 145), the eleven privacy topics fold as the service terms on /services do, and the provider list has the heading Providers. No term, figure, date or link changed. Nine cross-references that named a paragraph now name the section, because a topic is no longer one paragraph. The unused mdTermsHtml and mdTermsCard helpers are removed.
 // turva.dev worker v3.251.0 - FAQ pruning (Tek-808, 2026-11-12): six FAQ pairs whose answers the page body already states are removed from five pages (three guides, two posts); every page keeps at least three pairs and its FAQPage data follows the visible section.
 // turva.dev worker v3.250.0 - the last eight guides read shorter (Tek-808, 2026-11-12): in the guides on agents.json, SEO and agent-readiness, the well-known directory, prerendering, sitemaps and robots.txt, Markdown for agents and letting agents act on data, sentences over 30 words are split and long paragraphs are broken into shorter ones; the guide on getting cited by AI assistants needed no change. No heading, link, figure, date, version or FAQ question changed, and no signed surface changed.
@@ -8600,7 +8601,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.252.0",
+    "version": "3.253.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8909,7 +8910,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.252.0",
+  "version": "3.253.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -12753,6 +12754,9 @@ const TOC_SUB_CSS = `.toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Reg
 .toc li::before{content:none;}
 .toc a{color:#C9D1CE;}
 .toc a:hover{color:#5DF18F;}
+.toc li ul{columns:1;margin:.3rem 0 .55rem;padding:0 0 0 .9rem;}
+.toc li li{margin:0 0 .2rem;font-size:.85rem;}
+.toc li li a{color:#9AA3A0;}
 @media (max-width:560px){.toc ul{columns:1;}}`;
 const TBL_CSS = `.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
 .tbl table{margin:0;min-width:100%;}
@@ -13299,8 +13303,25 @@ ${footerHtml()}
 
 function serveLegalHtml(canonicalUrl: string) {
   const head = cardPageHead(buildMetaBlock("/legal", canonicalUrl), buildGuideJsonLd("/legal", canonicalUrl), canonicalUrl);
-  const secs = ["Operator", "Engagement terms", "Privacy", "Data rights", "Reporting a vulnerability", "Cookies", "Updates"];
-  const toc = `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${secs.map((h) => `<li><a href="#${mdSlug(h)}">${h}</a></li>`).join("")}</ul></nav>`;
+  // The sections are rendered first and the contents list is read from them: every h2 link and
+  // every h3 link below it takes its target and its text from the rendered heading, so the list
+  // cannot drift from the headings it points at (Tek-808 follow-up).
+  const sections = [
+    mdOpenSec("/legal", "Operator"),
+    mdOpenSec("/legal", "Engagement terms"),
+    mdFoldSec("/legal", "Privacy"),
+    mdOpenSec("/legal", "Data rights"),
+    mdOpenSec("/legal", "Reporting a vulnerability"),
+    mdOpenSec("/legal", "Cookies"),
+    mdOpenSec("/legal", "Updates"),
+  ];
+  const tocItems = sections.map((html) => {
+    const top = html.match(/^<section class="sec" id="([^"]+)"><h2>([^]*?)<\/h2>/);
+    if (!top) throw new Error("serveLegalHtml: unreadable section");
+    const subs = [...html.matchAll(/<h3 id="([^"]+)">([^]*?)<\/h3>/g)].map((m) => `<li><a href="#${m[1]}">${stripTags(m[2])}</a></li>`).join("");
+    return `<li><a href="#${top[1]}">${stripTags(top[2])}</a>${subs ? `<ul>${subs}</ul>` : ""}</li>`;
+  }).join("");
+  const toc = `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${tocItems}</ul></nav>`;
   // Tek-808: each term and each privacy topic is a "### " subsection of the twin with an anchor of
   // its own. The engagement terms stay open, because they are short and are the contract. The
   // privacy topics fold as the service terms on /services do: the heading stays visible, a link
@@ -13310,13 +13331,7 @@ ${cardPageNav("/legal")}
 <main id="main">
   ${mdPageStart("/legal")}
   ${toc}
-  ${mdOpenSec("/legal", "Operator")}
-  ${mdOpenSec("/legal", "Engagement terms")}
-  ${mdFoldSec("/legal", "Privacy")}
-  ${mdOpenSec("/legal", "Data rights")}
-  ${mdOpenSec("/legal", "Reporting a vulnerability")}
-  ${mdOpenSec("/legal", "Cookies")}
-  ${mdOpenSec("/legal", "Updates")}
+  ${sections.join("\n  ")}
 </main>
 ${footerHtml()}
 </body>

@@ -160,6 +160,31 @@ test("the primary navigation is a named landmark on every page, and a contents l
   }
 });
 
+test("the /legal contents list links every heading of the page once and every link resolves (Tek-808)", async () => {
+  // The contents list is read from the rendered sections, and this test holds it to that: each h2 and
+  // each h3 subsection of the page is the target of exactly one contents link, each link target is an id
+  // on the page, and the link text is the heading's own text.
+  const html = await (await get("/legal")).text();
+  const main = html.slice(html.indexOf('<main id="main"'), html.indexOf("</main>"));
+  const nav = main.match(/<nav class="toc"[^]*?<\/nav>/);
+  assert.ok(nav, "the page carries its contents list");
+  const rest = main.replace(nav![0], "");
+  // A section carries its id on the section element and a subsection on its h3.
+  const headings = [...rest.matchAll(/<section class="sec" id="([^"]+)"><h(2)>([^]*?)<\/h2>|<h(3) id="([^"]+)">([^]*?)<\/h3>/g)]
+    .map((m) => (m[1] ? { level: "2", id: m[1], text: m[3] } : { level: "3", id: m[5], text: m[6] }));
+  const links = [...nav![0].matchAll(/<a href="#([^"]+)">([^]*?)<\/a>/g)].map((m) => ({ id: m[1], text: m[2] }));
+  assert.equal(headings.filter((h) => h.level === "2").length, 7, "seven sections");
+  assert.ok(headings.filter((h) => h.level === "3").length > 0, "the page has subsections");
+  for (const h of headings) {
+    const hits = links.filter((l) => l.id === h.id);
+    assert.equal(hits.length, 1, "contents link for #" + h.id + " appears exactly once");
+    assert.equal(hits[0].text, h.text, "link text of #" + h.id + " is the heading text");
+  }
+  const ids = new Set([...rest.matchAll(/ id="([^"]+)"/g)].map((m) => m[1]));
+  for (const l of links) assert.ok(ids.has(l.id), "contents link target #" + l.id + " exists on the page");
+  assert.equal(links.length, headings.length, "the contents list holds no other link");
+});
+
 test("the article frame sits outside <main>: back link, frame dates and next step (Tek-479 P14)", async () => {
   const mainOf: (html: string) => string = (html) => html.slice(html.indexOf('<main id="main"'), html.indexOf("</main>") + 7);
   const guide = await (await get("/guides/llms-txt")).text();
