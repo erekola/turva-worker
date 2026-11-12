@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.249.0 - eight more guides read shorter (Tek-808, 2026-11-12): in the guides on x402 payments, the Open Knowledge Format, response headers, common agent-readiness gaps, choosing an audit, measurement-led agent-readiness, AEO and GEO, and AI agent use cases, sentences over 30 words are split and long paragraphs are broken into shorter ones, and the six use cases list their input, action and limit as three list items each. No heading, link, figure, date, version, price, condition or FAQ question changed, nothing was removed, and no signed surface changed.
 // turva.dev worker v3.248.0 - eight guides read shorter (Tek-808, 2026-11-12): in the guides on agent commerce discovery, llms.txt, Agentic Resource Discovery, JSON-LD, the agent-readiness audit, the MCP server card, agentic commerce readiness and agent authentication, sentences over 30 words are split and long paragraphs are broken into shorter ones, two paragraphs of the commerce readiness guide are lists, and one pair of sentences the authentication guide said twice is removed. No heading, link, figure, date, version, condition or FAQ question changed, and no signed surface changed.
 // turva.dev worker v3.247.0 - the audit page, the two tool pages, /company, /contact and /tools read shorter (Tek-808, 2026-11-12): sentences over 30 words are split, the long paragraphs about the audit's deliverables, the validator's request headers and its 22 October 2026 measurement, the CLI's error shapes and the parity check's HTTP status codes are lists or shorter paragraphs, and one sentence the audit page said twice is said once. No price, deadline, limit, measured value or condition changed.
 // turva.dev worker v3.246.0 - /services reads shorter (Tek-808, 2026-11-12): the five service sections show the price, the description, the contact link and the deliverables list of the audit and advisory sections, and each of the 18 subsections with delivery terms opens from its own heading as a details element whose summary is that heading, so every earlier anchor stays and the Markdown twin carries the same words as the page; the 381-word active security testing paragraph keeps only what its three lists do not say, long sentences are split, two long FAQ answers are four, and the audit's deliverables are a list. The page's one inline script opens a fold when a link points at its heading and opens every fold before printing, and the CSP hash follows it. No price, deadline, scope or term changed.
@@ -6278,19 +6279,21 @@ The Open Knowledge Format is an open specification from Google Cloud that repres
 
 ## What an OKF bundle contains
 
-A bundle is a folder of markdown files, and the unit inside it is a concept. A concept is anything worth capturing for an agent, such as a table, a dataset, a metric, a runbook or an API. Every concept is one UTF-8 markdown document with two parts, a YAML frontmatter block at the top fenced by a line of three dashes above and below, and a markdown body underneath.
+A bundle is a folder of markdown files, and the unit inside it is a concept. A concept is anything worth capturing for an agent, such as a table, a dataset, a metric, a runbook or an API. Every concept is one UTF-8 markdown document with two parts. The first is a YAML frontmatter block at the top, fenced by a line of three dashes above and below. The second is a markdown body underneath.
 
-The format asks for exactly one field, type. Everything else is optional, including title, description, resource, tags and a generated block that records who last changed the concept and when. What types exist and what fields most of them carry is left to whoever produces the bundle, though one OKF-defined type, Attested Computation, adds its own required field, runtime, on top of the one universal one. Concepts reference each other with ordinary markdown links, so the folder becomes a graph of related knowledge rather than a flat list of files.
+The format asks for exactly one field, type. Everything else is optional, including title, description, resource, tags and a generated block that records who last changed the concept and when. What types exist and what fields most of them carry is left to whoever produces the bundle. One OKF-defined type, Attested Computation, does add its own required field, runtime, on top of the one universal one. Concepts reference each other with ordinary markdown links, so the folder becomes a graph of related knowledge rather than a flat list of files.
 
 ## Structure versus meaning
 
-Version 0.2 fixes a small set of things and leaves the rest open. It fixes the shape of a bundle as a folder of markdown files, the YAML frontmatter, two reserved filenames and the single required field, all carried forward from version 0.1 unchanged. That is structural interoperability. Any tool can open a bundle and know where the pieces are. Version 0.2 also added optional provenance and trust keys, among them sources, generated, verified, status and stale_after, and it retired two version 0.1 surfaces, since the concept timestamp became generated.at and the body citations list became sources in the frontmatter.
+Version 0.2 fixes a small set of things and leaves the rest open. It fixes the shape of a bundle as a folder of markdown files, the YAML frontmatter, two reserved filenames and the single required field. All of these carried forward from version 0.1 unchanged. That is structural interoperability. Any tool can open a bundle and know where the pieces are.
+
+Version 0.2 also added optional provenance and trust keys, among them sources, generated, verified, status and stale_after. It retired two version 0.1 surfaces, since the concept timestamp became generated.at and the body citations list became sources in the frontmatter.
 
 What version 0.2 does not fix is meaning. The format does not say what a metric concept must contain, or how two producers should agree on the same field names. That is semantic interoperability, and version 0.2 leaves it to producers and to conventions that have not been written yet. This is the line to keep in mind when reading announcements about OKF. It standardizes the shape of the files, not yet what the files mean.
 
 ## Version and status
 
-Google Cloud published version 0.1 in June 2026 and version 0.2 in July 2026. This guide describes version 0.2 as published. A team evaluating OKF should check which version a given bundle or tool targets before comparing it against the description here, because the frontmatter keys have already changed once between 0.1 and 0.2, when the concept timestamp became generated.at and the body citations list became sources. The required field and the two reserved filenames carried forward unchanged.
+Google Cloud published version 0.1 in June 2026 and version 0.2 in July 2026. This guide describes version 0.2 as published. A team evaluating OKF should check which version a given bundle or tool targets before comparing it against the description here. The reason is that the frontmatter keys have already changed once between 0.1 and 0.2, when the concept timestamp became generated.at and the body citations list became sources. The required field and the two reserved filenames carried forward unchanged.
 
 ## Where OKF fits with agent-readiness
 
@@ -6816,19 +6819,21 @@ A micropayment is a very small charge, for example one per request to a paid API
 
 ## How the flow works
 
-When an agent requests a paid resource, the server responds with 402 and a PaymentRequired object, which x402 v2 carries in the PAYMENT-REQUIRED response header, stating what is being sold and how to pay. The agent reads the terms, signs a payment payload for a supported method, and retries the request with the payload attached. The server or its facilitator then settles the payment. The transaction happens in the protocol, not in a checkout page built for human eyes.
+When an agent requests a paid resource, the server responds with 402 and a PaymentRequired object, which x402 v2 carries in the PAYMENT-REQUIRED response header. The object states what is being sold and how to pay. The agent reads the terms, signs a payment payload for a supported method, and retries the request with the payload attached. The server or its facilitator then settles the payment. The transaction happens in the protocol, not in a checkout page built for human eyes.
 
 ## x402, AP2 and a2a-x402 are separate specifications
 
-x402 belongs to a small family of agent payment standards, and its relationship to AP2 is worth stating precisely. They are separate specifications. AP2 defines the mandates that authorize a payment and the receipts that record whether it was accepted, and x402 defines an HTTP 402 payment flow that a separate extension, a2a-x402, carries into agent-to-agent work. As of September 2026 the AP2 project ships x402 scenarios among its own [samples](https://github.com/google-agentic-commerce/AP2/tree/main/code/samples/python/scenarios/a2a/human-present/x402), and the [a2a-x402 extension](https://github.com/google-agentic-commerce/a2a-x402) carries its own specification, so a site treats them as protocols it may support side by side rather than as one finished stack.
+x402 belongs to a small family of agent payment standards, and its relationship to AP2 is worth stating precisely. They are separate specifications. AP2 defines the mandates that authorize a payment and the receipts that record whether it was accepted. x402 defines an HTTP 402 payment flow that a separate extension, a2a-x402, carries into agent-to-agent work. As of September 2026 the AP2 project ships x402 scenarios among its own [samples](https://github.com/google-agentic-commerce/AP2/tree/main/code/samples/python/scenarios/a2a/human-present/x402), and the [a2a-x402 extension](https://github.com/google-agentic-commerce/a2a-x402) carries its own specification, so a site treats them as protocols it may support side by side rather than as one finished stack.
 
 ## Declaration, acceptance and settlement are different states
 
-A 402 response with a PaymentRequired object is a declaration that a resource can be bought this way, and nothing more. An agent that signs a payload and retries has submitted a payment attempt, which is not yet an accepted payment. In the default authorization flow of x402 v2, a read-only verification decides acceptance before the resource runs, and settlement, where the server or its facilitator durably commits the payment, comes after the resource has completed. As of November 2026 the specification also defines an upfront flow, which settles before the resource runs, and an escrow flow, which settles a deposit before the resource runs and records the final charge in a second settlement after it. Both leave the facilitator's /verify step out, so acceptance and the first settlement happen together there. Treating a declaration as a completed sale hides the point where a purchase can still fail after the agent believes it has paid, so a site's own record keeps these states apart.
+A 402 response with a PaymentRequired object is a declaration that a resource can be bought this way, and nothing more. An agent that signs a payload and retries has submitted a payment attempt, which is not yet an accepted payment.
+
+In the default authorization flow of x402 v2, a read-only verification decides acceptance before the resource runs. In that flow, settlement, where the server or its facilitator durably commits the payment, comes after the resource has completed. As of November 2026 the specification also defines an upfront flow, which settles before the resource runs, and an escrow flow, which settles a deposit before the resource runs and records the final charge in a second settlement after it. Both leave the facilitator's /verify step out, so acceptance and the first settlement happen together there. Treating a declaration as a completed sale hides the point where a purchase can still fail after the agent believes it has paid. For that reason, a site's own record keeps these states apart.
 
 ## Why a declared payment surface matters
 
-An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search once the site verifies and settles the payment, though checkout is one obstacle among several and not the whole of what agent commerce still needs. A site that publishes these signals tells agents it is open for automated business, and where an agent compares sellers, a site with machine-readable prices can be one of the options it weighs when it decides where to spend.
+An agent can find a product and compare options, then stall at a checkout flow designed for a person with a browser. A payment surface such as x402, paired with structured pricing in the page data, lets the agent complete the purchase the same way it completed the search once the site verifies and settles the payment. Checkout is one obstacle among several, and not the whole of what agent commerce still needs. A site that publishes these signals tells agents it is open for automated business. Where an agent compares sellers, a site with machine-readable prices can be one of the options it weighs when it decides where to spend.
 
 turva.dev's own x402 surface is a declaration only. Its manifest states that no facilitator is configured, that the payment header is not verified and that the resource answers 402 regardless of payment, so sending funds achieves nothing, and settlement happens out of band against a written scope after a quote. That is the boundary this guide recommends stating on any site whose x402 surface is not wired to a facilitator: say which of the three states the site actually implements.
 
@@ -6869,29 +6874,39 @@ Checkout is one stopping point. An agent can find a product and compare options,
 
 Response headers describe formats, discovery links and request policy. Check both what a header declares and whether the server behaves accordingly.
 
-Response headers are the metadata a server sends with every page, and the right ones let an AI client work without parsing the full HTML. They are the cheapest place to make a site more legible to automated clients, because a client reads them before it reads the body. The reason headers matter is order. A client fetches the response, reads the status and headers first, and decides what to do next from them. If the headers already say where the structured data is and what formats are available, the client can skip the expensive step of parsing a page built for human display.
+Response headers are the metadata a server sends with every page, and the right ones let an AI client work without parsing the full HTML. They are the cheapest place to make a site more legible to automated clients, because a client reads them before it reads the body.
+
+The reason headers matter is order. A client fetches the response, reads the status and headers first, and decides what to do next from them. If the headers already say where the structured data is and what formats are available, the client can skip the expensive step of parsing a page built for human display.
 
 ## Content type
 
-Content-Language and a clean content type tell the client what it is reading. The content type names the media type, so the client knows how to parse the body. Content-Language names the language of the intended audience, which RFC 9110 keeps separate from every language the text may contain, so it is a hint rather than a guarantee. Neither header identifies which version of a page arrived. An ETag or a Last-Modified date supports comparison and revalidation, and a strong validator can confirm exact representation identity; a weak validator, marked with a W/ prefix, only supports semantic equivalence and does not by itself guarantee the client has the byte-for-byte same representation.
+Content-Language and a clean content type tell the client what it is reading. The content type names the media type, so the client knows how to parse the body. Content-Language names the language of the intended audience, which RFC 9110 keeps separate from every language the text may contain, so it is a hint rather than a guarantee. Neither header identifies which version of a page arrived.
+
+An ETag or a Last-Modified date supports comparison and revalidation. A strong validator can confirm exact representation identity. A weak validator, marked with a W/ prefix, only supports semantic equivalence and does not by itself guarantee the client has the byte-for-byte same representation.
 
 ## Link and Vary
 
-A Link header can point a client straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page, so the client finds them without crawling. A Vary header that includes Accept tells caches that the site can return different formats for the same URL, so a cached markdown response does not reach a client that asked for HTML, or the other way round. The server can still negotiate without it. Where a shared cache stores the response, a missing Vary: Accept can let that cache serve the wrong format to the next client that asks, so check the cache settings and Cache-Control alongside it. A Cache-Control immutable directive set on the wrong response can also stop a client from seeing an update.
+A Link header can point a client straight at a site's machine-readable resources, such as an API catalog or a markdown version of the page. The client then finds them without crawling.
+
+A Vary header that includes Accept tells caches that the site can return different formats for the same URL. With that header, a cached markdown response does not reach a client that asked for HTML, or the other way round. The server can still negotiate without it. Where a shared cache stores the response, a missing Vary: Accept can let that cache serve the wrong format to the next client that asks, so check the cache settings and Cache-Control alongside it. A Cache-Control immutable directive set on the wrong response can also stop a client from seeing an update.
 
 ## Rate limits
 
-RateLimit-Policy states the quota a server enforces, and RateLimit adds the remaining allowance per client where the server tracks one, so a well-behaved client can throttle itself instead of guessing. Sending a RateLimit-Policy header does not by itself prove the server enforces the stated quota. Checking enforcement means sending requests past the stated limit and confirming the server responds accordingly, not reading the header alone. This site sends the policy header on every response its Worker renders and applies it with Cloudflare's rate-limiting binding; a static asset served directly, such as an image, carries no RateLimit-Policy header. The binding keeps an approximate count per client IP in each Cloudflare location, so a burst can pass more requests than the policy states before the first 429. It answers only whether a request may pass and never how much of the quota remains, so the site sends no RateLimit header.
+RateLimit-Policy states the quota a server enforces, and RateLimit adds the remaining allowance per client where the server tracks one, so a well-behaved client can throttle itself instead of guessing. Sending a RateLimit-Policy header does not by itself prove the server enforces the stated quota. Checking enforcement means sending requests past the stated limit and confirming the server responds accordingly, not reading the header alone.
+
+This site sends the RateLimit-Policy header on every response its Worker renders and applies it with Cloudflare's rate-limiting binding. On this site, a static asset served directly, such as an image, carries no RateLimit-Policy header. The binding keeps an approximate count per client IP in each Cloudflare location, so a burst can pass more requests than the policy states before the first 429. It answers only whether a request may pass and never how much of the quota remains, so the site sends no RateLimit header.
 
 ## Verification
 
-As of 30 October 2026 the [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/) is at revision 11, dated 23 May 2026. Datatracker lists it as an active Internet-Draft that expires on 24 November 2026, and it has not become a standard. Checking a site's headers means requesting a page and reading the response headers directly, then confirming the behavior they describe, such as a different response for a different Accept value or a request that is actually throttled once a stated limit is passed. The fix for a missing or wrong header is usually small and lives at the edge, which on turva.dev is a Cloudflare Worker that sets these headers on every response it generates. For an audit of a site's response headers and the behavior behind them, contact info@turva.dev.
+As of 30 October 2026 the [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/) is at revision 11, dated 23 May 2026. Datatracker lists it as an active Internet-Draft that expires on 24 November 2026, and it has not become a standard.
+
+Checking a site's headers means requesting a page and reading the response headers directly. It then means confirming the behavior they describe, such as a different response for a different Accept value or a request that is actually throttled once a stated limit is passed. The fix for a missing or wrong header is usually small and lives at the edge. On turva.dev the edge is a Cloudflare Worker that sets these headers on every response it generates. For an audit of a site's response headers and the behavior behind them, contact info@turva.dev.
 
 ## Frequently asked
 
 **Which response headers help AI agents?**
 
-A Link header points an agent at machine-readable resources such as an API catalog or a markdown version of the page. A Vary header that includes Accept keeps a cache from serving the wrong format when the same URL answers in both markdown and HTML. A RateLimit-Policy header, and a RateLimit header where the server tracks a per-client allowance, let a well-behaved agent throttle itself, and Content-Language with a clean content type tells the client the intended audience language and the media type it received.
+A Link header points an agent at machine-readable resources such as an API catalog or a markdown version of the page. A Vary header that includes Accept keeps a cache from serving the wrong format when the same URL answers in both markdown and HTML. A RateLimit-Policy header, and a RateLimit header where the server tracks a per-client allowance, let a well-behaved agent throttle itself. Content-Language with a clean content type tells the client the intended audience language and the media type it received.
 
 **Why do response headers matter to agents?**
 
@@ -6899,7 +6914,7 @@ An agent reads the status and headers before the body and decides what to do fro
 
 **Which header keeps a cache from mixing up markdown and HTML?**
 
-A Vary header that includes Accept. It tells a cache that the same URL can return more than one representation of the page, so the cache does not hand a markdown response to a client that asked for HTML, or the other way round.
+A Vary header that includes Accept. It tells a cache that the same URL can return more than one representation of the page. The cache therefore does not hand a markdown response to a client that asked for HTML, or the other way round.
 
 ## Sources
 
@@ -7222,25 +7237,29 @@ Where to request access and what scopes exist. OAuth discovery at a well-known p
 
 A scan is one source of evidence. Combine it with direct technical checks and observed AI answers, and record the method and date behind every conclusion.
 
-Agent-readiness is a property you can measure, so it should be measured rather than claimed. Three kinds of evidence answer three different questions, and a credible conclusion names which one it rests on. A technical scan reads what a defined set of checks finds on the live site at a point in time. A manual review reads what the scan does not score, the parts that need a person to look, such as whether a page's markdown twin actually matches its HTML or whether a manifest is internally consistent. Observed AI answers read what a named assistant says today when asked a buyer's question, which depends on that assistant's own retrieval and can change between sessions.
+Agent-readiness is a property you can measure, so it should be measured rather than claimed. Three kinds of evidence answer three different questions, and a credible conclusion names which one it rests on.
+
+A technical scan reads what a defined set of checks finds on the live site at a point in time. A manual review reads what the scan does not score. These are the parts that need a person to look, such as whether a page's markdown twin actually matches its HTML or whether a manifest is internally consistent. Observed AI answers read what a named assistant says today when asked a buyer's question, which depends on that assistant's own retrieval and can change between sessions.
 
 The difference between a scan and a self-assessment shows up the moment something changes. A header gets dropped in a deploy, or a manifest starts returning the wrong content type. A checklist filled in by hand still reads as done, because nobody re-ticked the box. A scan reads the live site and the category drops, so the record changes when the site does. Neither replaces the other: a scan tells you what a defined check found, and a manual review catches what the check set does not cover.
 
 ## What a technical scan checks
 
-A scan runs a fixed set of checks against the live site, such as whether llms.txt resolves, whether a sitemap exists and parses, and whether a response carries the content type it declares. A scan checks that the sitemap file is present and well-formed; whether it actually lists every page the site should publish is a completeness question a manual review answers, not the automated check. Each check either passes or fails on the day it ran, against the version of the site live that day.
+A scan runs a fixed set of checks against the live site. These checks include whether llms.txt resolves, whether a sitemap exists and parses, and whether a response carries the content type it declares. A scan checks that the sitemap file is present and well-formed. Whether the file actually lists every page the site should publish is a completeness question a manual review answers, not the automated check. Each check either passes or fails on the day it ran, against the version of the site live that day.
 
 ## What a manual review adds
 
-A person reads the surfaces a scanner does not score: whether an example in a guide still matches the current API, whether a claim on one page contradicts a date or a number on another, whether a markdown twin has drifted from the HTML it is supposed to mirror. This is slower and it is where the reviewer's judgment does the work a fixed check cannot.
+A person reads the surfaces a scanner does not score. One is whether an example in a guide still matches the current API, and another is whether a claim on one page contradicts a date or a number on another. A third is whether a markdown twin has drifted from the HTML it is supposed to mirror. This is slower and it is where the reviewer's judgment does the work a fixed check cannot.
 
 ## What an observed AI answer shows
 
-Asking a named assistant a buyer's question and recording what it says is a third kind of evidence, distinct from both of the above. It shows what that assistant retrieved and how it answered on that date, not what the site's technical readiness is, and it can change on a later run without the site changing at all.
+Asking a named assistant a buyer's question and recording what it says is a third kind of evidence, distinct from both of the above. It shows what that assistant retrieved and how it answered on that date, not what the site's technical readiness is. The answer can change on a later run without the site changing at all.
 
 ## Recording the method and the date
 
-Each conclusion should say which of the three it rests on and when it was taken. This is the standard turva.dev applies to its own site. An audit reports the exact checks that pass or fail, each failure comes with a concrete fix or the reason the gap is left open, and the categories the report named are the ones a later scan is checked against. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-10-29. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. turva.dev publishes [the scanner's raw output](/evidence/isitagentready-turva-dev-2026-11-09.txt) from a newer run, on 2026-11-09, unedited. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
+Each conclusion should say which of the three it rests on and when it was taken. This is the standard turva.dev applies to its own site. An audit reports the exact checks that pass or fail. Each failure comes with a concrete fix or the reason the gap is left open. The categories the report named are the ones a later scan is checked against.
+
+Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-10-29. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. turva.dev publishes [the scanner's raw output](/evidence/isitagentready-turva-dev-2026-11-09.txt) from a newer run, on 2026-11-09, unedited. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
 
 For an audit that reports measured results, naming the method behind each one, contact info@turva.dev.
 
@@ -7248,7 +7267,7 @@ For an audit that reports measured results, naming the method behind each one, c
 
 **Why should agent-readiness be measured rather than asserted?**
 
-A checklist filled in by hand records intentions. A technical scan records what a defined set of checks finds on the live site, and the two often disagree, especially after a deploy drops a header or changes a content type.
+A checklist filled in by hand records intentions. A technical scan records what a defined set of checks finds on the live site. The two often disagree, especially after a deploy drops a header or changes a content type.
 
 **What is the difference between a technical scan and a manual review?**
 
@@ -7430,27 +7449,33 @@ The markup, scripts and layout it does not need. That cost is counted in tokens,
 
 A prospecting sample of 567 company sites revealed recurring technical gaps. This guide explains the patterns while keeping the sample and scanner limitations visible.
 
-Marketing sites are often strong for people and weak for agents, and the gaps are predictable. The evidence here is [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) with one independent scanner between 28 June and 3 September 2026, which grew out of [an earlier write-up of sixteen Finnish sites](/blog/agent-readiness-finnish-b2b). The sample is a prospecting list and not a random draw, so read it as what recurred in the sites reviewed rather than as a count of the whole web. Of the 567 sites, 485 read Level 1 of 5 and 74 read Level 0, below it. The write-up reads Level 1 as the floor a default CMS ships, but the study did not record which CMS each site runs.
+Marketing sites are often strong for people and weak for agents, and the gaps are predictable.
+
+The evidence here is [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) with one independent scanner between 28 June and 3 September 2026. The scan grew out of [an earlier write-up of sixteen Finnish sites](/blog/agent-readiness-finnish-b2b). The sample is a prospecting list and not a random draw, so read it as what recurred in the sites reviewed rather than as a count of the whole web. Of the 567 sites, 485 read Level 1 of 5 and 74 read Level 0, below it. The write-up reads Level 1 as the floor a default CMS ships, but the study did not record which CMS each site runs.
 
 ## Rendering
 
-A site that builds its content with client-side JavaScript, without server rendering or prerendering, returns an empty shell to any agent that does not run a browser, so for those clients the content never arrives in the first response. It is the gap to check first, because a site with no content in the first response has nothing else to fall back on.
+A site that builds its content with client-side JavaScript, without server rendering or prerendering, returns an empty shell to any agent that does not run a browser. For those clients, the content of such a site never arrives in the first response. It is the gap to check first, because a site with no content in the first response has nothing else to fall back on.
 
 ## Discovery
 
-No llms.txt and a thin or missing sitemap leave an agent to follow page links, unless the site points to a Markdown version another way, such as an [alternate link or an HTTP Link header](https://llmstxt.org/). Among the 74 Level 0 sites, 68 have a first-fix note, and robots.txt appears in 45 of those notes and the sitemap in 38, with 29 naming both: a robots.txt the CMS shipped by default and a sitemap that is missing or never announced in it. Among the 439 Level 1 sites with a note, the sitemap appears in 102 and llms.txt in 99.
+No llms.txt and a thin or missing sitemap leave an agent to follow page links, unless the site points to a Markdown version another way, such as an [alternate link or an HTTP Link header](https://llmstxt.org/).
+
+Among the 74 Level 0 sites, 68 have a first-fix note. Among those notes, robots.txt appears in 45 and the sitemap in 38, with 29 naming both: a robots.txt the CMS shipped by default and a sitemap that is missing or never announced in it. Among the 439 Level 1 sites with a note, the sitemap appears in 102 and llms.txt in 99.
 
 ## Content
 
-The site offers only HTML, with no markdown form, so an agent spends part of its budget on markup, and a long page can exceed the reading tool's content limit and arrive cut short. Whether that happens depends on the tool's text extraction, the page's size and the limit it applies. This is a cost problem rather than a discovery problem: the agent found the page, but reading it can take more of its budget than the content is worth.
+The site offers only HTML, with no markdown form. As a result, an agent spends part of its budget on markup, and a long page can exceed the reading tool's content limit and arrive cut short. Whether that happens depends on the tool's text extraction, the page's size and the limit it applies. This is a cost problem rather than a discovery problem: the agent found the page, but reading it can take more of its budget than the content is worth.
 
 ## Data correctness
 
-Capability is usually undeclared. The site may have an API or a useful action, but with no server card, OAuth discovery or a published API catalog such as the well-known endpoint RFC 9727 defines, an agent has nothing to find it from on its own. An integration configured by hand with the endpoint and its credentials can still work, so what the site loses is automatic discovery rather than the API itself. Among the 439 Level 1 sites with a note, robots.txt appears in 72, structured data in 49 and an MCP server in 35. Structured data is often missing too, so prices and facts are left for the agent to infer from layout instead of reading them from a declared source.
+Capability is usually undeclared. The site may have an API or a useful action. With no server card, OAuth discovery or a published API catalog such as the well-known endpoint RFC 9727 defines, an agent has nothing to find it from on its own. An integration configured by hand with the endpoint and its credentials can still work, so what the site loses is automatic discovery rather than the API itself.
+
+Among the 439 Level 1 sites with a note, robots.txt appears in 72, structured data in 49 and an MCP server in 35. Structured data is often missing too, so prices and facts are left for the agent to infer from layout instead of reading them from a declared source.
 
 ## Verification
 
-The discovery and content gaps rarely need a rebuild. That work is mostly at the edge and in a few small files, and the result shows up in a scanner on the next run against the version of the site that is live then. Rendering and data correctness can reach into the application or the system the data comes from, so their effort is estimated site by site. For discovery, a site does not have to change its structure. It has to publish what agents already look for and verify with a fresh scan that the fix landed.
+The discovery and content gaps rarely need a rebuild. That work is mostly at the edge and in a few small files. The result shows up in a scanner on the next run against the version of the site that is live then. Rendering and data correctness can reach into the application or the system the data comes from, so their effort is estimated site by site. For discovery, a site does not have to change its structure. It has to publish what agents already look for and verify with a fresh scan that the fix landed.
 
 turva.dev runs this exact review and reports each gap with a concrete fix. For an audit, contact info@turva.dev.
 
@@ -7466,7 +7491,7 @@ It depends on the gap. Discovery and content fixes are mostly at the edge and in
 
 **Which gap costs a marketing site the most?**
 
-In my reading, the costliest is client-side rendering that returns an empty shell to non-browser agents. The measured sample did not record rendering, but nothing else on the page can be read if the first response carries no content, and prices and facts are then left for the agent to infer.
+In my reading, the costliest is client-side rendering that returns an empty shell to non-browser agents. The measured sample did not record rendering. Even so, nothing else on the page can be read if the first response carries no content, and prices and facts are then left for the agent to infer.
 
 ## Sources
 
@@ -7493,13 +7518,17 @@ The website and API audit covers the five surface groups the independent scanner
 
 ## Evidence
 
-Every finding in the report rests on one of three kinds of evidence. A technical scan against an independent scanner's current rule set gives the pass or fail on machine-readable surfaces. Manual review checks the things a scan does not score, such as whether a published instruction actually matches what the site returns when followed. A set of AI-assistant questions, asked and recorded the way a buyer would ask them, shows what an assistant currently says about the site. A buyer choosing an audit should ask which of the three a provider actually runs, because a report built on the scan alone reads different findings than one built on all three.
+Every finding in the report rests on one of three kinds of evidence.
+
+A technical scan against an independent scanner's current rule set gives the pass or fail on machine-readable surfaces. Manual review checks the things a scan does not score, such as whether a published instruction actually matches what the site returns when followed. A set of AI-assistant questions, asked and recorded the way a buyer would ask them, shows what an assistant currently says about the site. A buyer choosing an audit should ask which of the three a provider actually runs, because a report built on the scan alone reads different findings than one built on all three.
 
 ## Deliverables
 
-A written report that lists each check, what was found, and a concrete fix for each gap it asks you to close, ordered by priority, and the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan after a fix shows whether a scored fix passed, and a manual-review fix is verified by a direct test.
+A written report that lists each check, what was found, and a concrete fix for each gap it asks you to close, ordered by priority. The report also lists the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan after a fix shows whether a scored fix passed, and a manual-review fix is verified by a direct test.
 
-The fixed-scope audit on the [services page](/services) is the website and API audit at €4,300 within two weeks of the agreed written kickoff. Implementing the audit's own complete fix list is a €499 correction add-on when it is bought with the audit, with its report, or after the report and before implementation starts, and the required access is arranged in advance: an edge runtime, deployment access and any other access the listed fixes need. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions. The [sample audit report](/samples/audit-report) shows the deliverable for an invented business.
+The fixed-scope audit on the [services page](/services) is the website and API audit at €4,300 within two weeks of the agreed written kickoff. Implementing the audit's own complete fix list is a €499 correction add-on when it is bought with the audit, with its report, or after the report and before implementation starts, and the required access is arranged in advance: an edge runtime, deployment access and any other access the listed fixes need. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions.
+
+The [sample audit report](/samples/audit-report) shows the deliverable for an invented business.
 
 ## Follow-up checks
 
@@ -7521,11 +7550,11 @@ A fixed-scope audit is delivered within two weeks of the agreed written kickoff.
 
 **What do you get from an agent-readiness audit?**
 
-A written report that lists each check, what the scanner found, and a concrete fix for each gap it asks you to close, ordered by priority, and the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan shows whether each scored fix passed, and a manual-review fix is verified by a direct test.
+A written report that lists each check, what the scanner found, and a concrete fix for each gap it asks you to close, ordered by priority. The report also lists the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan shows whether each scored fix passed, and a manual-review fix is verified by a direct test.
 
 **How do I make my site agent-ready?**
 
-Publish the surfaces agents read, then measure the result. That means llms.txt, a markdown form of each page, a complete robots.txt and sitemap, JSON-LD for the facts on a page, the /.well-known manifests an agent looks for, and a payment surface only if the site sells through agents. Google says its search features do not need llms.txt or markdown files, so those two serve the agents that fetch them. Each of these has its own guide in the index.
+Publish the surfaces agents read, then measure the result. That means llms.txt, a markdown form of each page, a complete robots.txt and sitemap, JSON-LD for the facts on a page, and the /.well-known manifests an agent looks for. A payment surface belongs on that list only if the site sells through agents. Google says its search features do not need llms.txt or markdown files, so those two serve the agents that fetch them. Each of these has its own guide in the index.
 
 **How does the engagement work?**
 
@@ -7549,7 +7578,9 @@ Async only. No calls, no calendar links, no discovery meetings. Replies within o
 
 These labels describe overlapping work around discovery, answers and automated use. Compare their practical aims without treating them as a single score or a universally agreed taxonomy.
 
-Answer engine optimization, AEO, is about the pages, so an AI engine can quote them as the answer to a question. Generative engine optimization, GEO, is about the signal around the pages, so an engine has something to weigh when it decides whether to cite the source. That split, page-level work for AEO and external signal for GEO, is the framing this guide uses. It is not a universally agreed taxonomy, and other sources draw the boundary between the two terms differently. Both are working labels rather than standardized disciplines, and neither one buys a citation. Agent-readiness is wider than both, because it also covers whether an agent can act on the site, not only read and cite it.
+Answer engine optimization, AEO, is about the pages, so an AI engine can quote them as the answer to a question. Generative engine optimization, GEO, is about the signal around the pages, so an engine has something to weigh when it decides whether to cite the source. That split, page-level work for AEO and external signal for GEO, is the framing this guide uses. It is not a universally agreed taxonomy, and other sources draw the boundary between the two terms differently. Both are working labels rather than standardized disciplines, and neither one buys a citation.
+
+Agent-readiness is wider than AEO and GEO, because it also covers whether an agent can act on the site, not only read and cite it.
 
 ## At a glance
 
@@ -7562,7 +7593,9 @@ Answer engine optimization, AEO, is about the pages, so an AI engine can quote t
 
 ## Answer engine optimization
 
-AEO engineers the page itself. Structure, schema, source density, and passages an engine can lift cleanly. The practical test is whether the first sentence under a heading stands alone as a quotable answer, and whether the facts on the page are stated as data rather than buried in prose. Most of what makes a page AEO-ready also makes it agent-readable, because both depend on a machine reading the content without guessing. Google says that for its own generative AI search this is still SEO, and that neither splitting content into small pieces nor special schema.org markup is needed there. The advice in this section is for other answer engines and for agents that read the page.
+AEO engineers the page itself. Structure, schema, source density, and passages an engine can lift cleanly. The practical test has two parts. One is whether the first sentence under a heading stands alone as a quotable answer. The other is whether the facts on the page are stated as data rather than buried in prose.
+
+Most of what makes a page AEO-ready also makes it agent-readable, because both depend on a machine reading the content without guessing. Google says that for its own generative AI search this is still SEO, and that neither splitting content into small pieces nor special schema.org markup is needed there. The advice in this section is for other answer engines and for agents that read the page.
 
 ## Generative engine optimization
 
@@ -7586,7 +7619,7 @@ AEO engineers the page so an engine can quote it, through structure, schema and 
 
 **How is agent-readiness wider than AEO and GEO?**
 
-AEO and GEO stop at being read and cited. Agent-readiness adds the surfaces an agent needs to act on, such as an MCP server it can call, an API catalog it can enumerate, authentication it can pass and commerce endpoints it can transact against.
+AEO and GEO stop at being read and cited. Agent-readiness adds the surfaces an agent needs to act on. These include an MCP server the agent can call, an API catalog it can enumerate, authentication it can pass and commerce endpoints it can transact against.
 
 **In which order should AEO, GEO and agent-readiness work be done?**
 
@@ -7745,31 +7778,43 @@ A log of what it decided and why, an envelope that is explicit rather than impli
 
 Explore examples of agents reading data and taking permitted actions. Each use case needs a clear input, an allowed action and a condition for stopping or handing back control.
 
-An AI agent is useful wherever data moves and a decision follows. It reads a machine-readable surface, decides inside the limits it was given, and acts on what it finds. The cases below are grouped by what the agent does, not by industry, because the same pattern repeats across all of them. Each one is described with the same three parts: the input it reads, the action it is allowed to take, and the limit that stops it or hands control back to a person.
+An AI agent is useful wherever data moves and a decision follows. It reads a machine-readable surface, decides inside the limits it was given, and acts on what it finds. The cases below are grouped by what the agent does, not by industry, because the same pattern repeats across all of them. Each one is described with the same three parts. These are the input the agent reads, the action it is allowed to take, and the limit that stops it or hands control back to a person.
 
 ## Commerce and transactions
 
-Input: a product catalog and a buyer's stated constraints, such as budget, size or delivery date. Action: the agent weighs the options and completes a checkout through a protocol rather than a form. Limit: the checkout stops and hands back to a person when the protocol marks the step as one the agent may not finish alone, for example a payment above a mandate's limit.
+- Input: a product catalog and a buyer's stated constraints, such as budget, size or delivery date.
+- Action: the agent weighs the options and completes a checkout through a protocol rather than a form.
+- Limit: the checkout stops and hands back to a person when the protocol marks the step as one the agent may not finish alone. One such step is a payment above a mandate's limit.
 
 ## Monitoring and response
 
-Input: an API, a feed or a system state read on a schedule or as events arrive. Action: the agent acts the moment a defined threshold is crossed, with no one having to be watching. Limit: the agent takes only the actions listed in its envelope, and anything outside that list goes to a person regardless of how confident the agent is.
+- Input: an API, a feed or a system state read on a schedule or as events arrive.
+- Action: the agent acts the moment a defined threshold is crossed, with no one having to be watching.
+- Limit: the agent takes only the actions listed in its envelope, and anything outside that list goes to a person regardless of how confident the agent is.
 
 ## Field and frontline support
 
-Input: the same data an expert would use, made available to the agent in the moment. Action: the agent guides a person doing physical work and answers questions from that data. Limit: the agent extends the expert's reach rather than replacing the person at the far end, and a case outside its data returns to a human.
+- Input: the same data an expert would use, made available to the agent in the moment.
+- Action: the agent guides a person doing physical work and answers questions from that data.
+- Limit: the agent extends the expert's reach rather than replacing the person at the far end, and a case outside its data returns to a human.
 
 ### Operations under bad connectivity
 
-Input: telemetry from a remote system over a link that drops intermittently. Action: the agent holds the last safe state and resumes operation when data returns. Limit: how long the agent may act on stale state before it must pause depends on the transport and on how the application treats data that has gone stale, and that limit has to be set by whoever builds the system, not inferred by the agent.
+- Input: telemetry from a remote system over a link that drops intermittently.
+- Action: the agent holds the last safe state and resumes operation when data returns.
+- Limit: how long the agent may act on stale state before it must pause depends on the transport and on how the application treats data that has gone stale. That limit has to be set by whoever builds the system, not inferred by the agent.
 
 ### Autonomy at the edge
 
-Input: a local sensor or system reading, with no round trip to a person available in time. Action: the agent makes a time-critical call using rules agreed in advance. Limit: the rules are fixed before the fact, not decided by the agent in the moment, because there is no one available to ask.
+- Input: a local sensor or system reading, with no round trip to a person available in time.
+- Action: the agent makes a time-critical call using rules agreed in advance.
+- Limit: the rules are fixed before the fact, not decided by the agent in the moment, because there is no one available to ask.
 
 ## Back-office and data work
 
-Input: records read across two or more systems that should match. Action: the agent reconciles the records, flags what does not match, and routes the rest for processing. Limit: the agent does not resolve a mismatch on its own. Every flagged case goes to a person with a trail of what was compared.
+- Input: records read across two or more systems that should match.
+- Action: the agent reconciles the records, flags what does not match, and routes the rest for processing.
+- Limit: the agent does not resolve a mismatch on its own. Every flagged case goes to a person with a trail of what was compared.
 
 ## The common thread
 
@@ -7789,7 +7834,7 @@ Rarely whether the agent could do the work. What decides the outcome is whether 
 
 **Which use case depends most on the data path?**
 
-Operations over a link that drops. The agent has to hold its last safe state and resume when data returns, and how long it may act on stale data before pausing depends on the transport and on the application, not on the agent itself.
+Operations over a link that drops. The agent has to hold its last safe state and resume when data returns. How long the agent may act on stale data before pausing depends on the transport and on the application, not on the agent itself.
 
 ## Related
 
@@ -8424,7 +8469,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.248.0",
+    "version": "3.249.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8733,7 +8778,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.248.0",
+  "version": "3.249.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
