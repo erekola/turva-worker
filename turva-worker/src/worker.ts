@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.251.0 - FAQ pruning (Tek-808, 2026-11-12): six FAQ pairs whose answers the page body already states are removed from five pages (three guides, two posts); every page keeps at least three pairs and its FAQPage data follows the visible section.
 // turva.dev worker v3.250.0 - the last eight guides read shorter (Tek-808, 2026-11-12): in the guides on agents.json, SEO and agent-readiness, the well-known directory, prerendering, sitemaps and robots.txt, Markdown for agents and letting agents act on data, sentences over 30 words are split and long paragraphs are broken into shorter ones; the guide on getting cited by AI assistants needed no change. No heading, link, figure, date, version or FAQ question changed, and no signed surface changed.
 // turva.dev worker v3.249.0 - eight more guides read shorter (Tek-808, 2026-11-12): in the guides on x402 payments, the Open Knowledge Format, response headers, common agent-readiness gaps, choosing an audit, measurement-led agent-readiness, AEO and GEO, and AI agent use cases, sentences over 30 words are split and long paragraphs are broken into shorter ones, and the six use cases list their input, action and limit as three list items each. No heading, link, figure, date, version, price, condition or FAQ question changed, nothing was removed, and no signed surface changed.
 // turva.dev worker v3.248.0 - eight guides read shorter (Tek-808, 2026-11-12): in the guides on agent commerce discovery, llms.txt, Agentic Resource Discovery, JSON-LD, the agent-readiness audit, the MCP server card, agentic commerce readiness and agent authentication, sentences over 30 words are split and long paragraphs are broken into shorter ones, two paragraphs of the commerce readiness guide are lists, and one pair of sentences the authentication guide said twice is removed. No heading, link, figure, date, version, condition or FAQ question changed, and no signed surface changed.
@@ -801,10 +802,6 @@ This is one person's machine, and the run counts cover 20 days. My records show 
 
 A clone is a second disk that is meant to boot as it stands, and each run replaces the last one, so it holds one moment. An image is a set of files that can hold many points in time, and a machine normally needs a restore before it can run from it.
 
-**Is a mirrored NAS a backup?**
-
-A mirror alone is not. It keeps working when one drive fails, and a deleted file leaves both drives at once. Mine holds backups, and snapshots on it protect those backups against deletion.
-
 **What does a Grandfather, Father, Son schedule keep?**
 
 It keeps older generations at longer intervals. Mine makes a full image on the first Monday of each month, a differential every Monday and an incremental every day. Full images stay 14 weeks, differentials 4 weeks and incrementals 7 days.
@@ -818,6 +815,8 @@ Updated 2026-11-04. The post now says that Macrium notifies me when a backup fai
 Updated 2026-11-06. The sentence on the October hash check now says that it compared the hashes of the files in the decrypted image with the same files on the C: drive.
 
 Updated 2026-11-10. I stopped syncing my workspace to Proton that day. The post now names what replaced it, a copy of my workspace on the NAS and an encrypted backup of that copy at Synology C2 Storage. The table row for the off-site disk now says that the disk holds my keys and passwords and no client material.
+
+Updated 2026-11-12. The question "Is a mirrored NAS a backup?" was removed from the Frequently asked list, because the section "Is a mirrored NAS already a backup?" answers it.
 
 ## Related
 
@@ -3232,10 +3231,6 @@ It also does not prove the week was worth it. That depends on whether the next a
 
 Three things no gate could see, because each value was plausible alone. One measurement written as 458 pixels in one document and 514 in another. An allow list pinned to an old package version, so an install script stayed blocked. A grid track that refused to shrink.
 
-**How long does a file by file audit of a workspace take?**
-
-Seven days, for 2 307 text files and 28 826 789 bytes, roughly 8 million tokens. It produced 367 findings across nine packages, 69 recorded decisions and 50 new entries in the trap log. It produced no invoice, no proposal and no sent message.
-
 **Do automated gates remove the need to read the code?**
 
 No. Seven gates run as editor hooks. Those that run before an action block it rather than warn, and the two that run after a write report what they found at once. 23 more run on demand or on ship, and three of those perform 314 mechanical checks offline, 567 with live URLs included. A green gate tells you only what it checked.
@@ -3244,13 +3239,11 @@ No. Seven gates run as editor hooks. Those that run before an action block it ra
 
 Block the action. The gates here stop the edit tool, git in the agent shell, generated files written to the workspace root, and repo edits made before the trap log has been read. A warning is something a tired person reads past.
 
-**Does a file by file audit prove the workspace is correct?**
-
-No. It proves that 367 specific things were read and classified, and that each was either fixed or written down as a decision with a reason. Whether the week was worth it depends on whether the next audit is better, and that is not known yet.
-
 Corrected 2026-09-27. Two passages said all seven editor gates block the action. Two of them run after a write and cannot undo it, so both passages now say they report what they found. No number changed.
 
 Corrected 2026-11-02. A sentence said the auto in a one-fraction track resolves to the width of the widest child that cannot be broken. The CSS Grid specification says that is often, but not always, the case, and the sentence now says often.
+
+Updated 2026-11-12. Two questions were removed from the Frequently asked list because the post answers both in its body: "How long does a file by file audit of a workspace take?" and "Does a file by file audit prove the workspace is correct?" No figure in the post changed.
 
 ## Related
 
@@ -5375,10 +5368,6 @@ turva.dev publishes an A2A Agent Card, an AP2 merchant declaration, an ACP disco
 
 ## Frequently asked
 
-**What is an A2A Agent Card?**
-
-An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that describes an agent interface, including its name, version, transport, and the skills it offers. That lets another agent discover it and know how to reach it.
-
 **What is the correct AP2 extension URI?**
 
 For the AP2 v0.1 Agent Card extension, the URI is \`https://github.com/google-agentic-commerce/ap2/tree/v0.1\` (lowercase, version v0.1), exactly as that version specifies. This is a compatibility declaration for clients and scanners that implement v0.1, not a requirement of the current AP2 v0.2, which has no Agent Card extension. The isitagentready scanner reads the v0.1 form as of 2026-09-05. Some fix texts show an uppercase AP2 in the path and a three-part version, which validators reject.
@@ -6575,10 +6564,6 @@ An agent-readiness audit measures how well an AI agent can find and read a websi
 
 It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, and each failure comes with a concrete fix or the reason the gap is left open. Fixes are verified by the scanner where the check is scored and by a direct test where it is not.
 
-**How do I audit my website for AI agent readiness?**
-
-Run an independent scanner and request the surfaces directly, including the ones it does not score. Check that what the site publishes matches what it returns, and ask assistants what your buyers would ask. Record the date and result of each step, fix the failures and measure again.
-
 **What does an agent-readiness audit produce?**
 
 A pass or fail on each check, and for every failure a concrete fix instruction or the reason the gap is left open. Where this site has a guide for that surface, each failure links to it. Your own team can do the work from the report. Scored checks are verified by the scanner before and after, manual-review fixes by a direct test, and the score comes from the scanner's published checks rather than opinion.
@@ -7561,10 +7546,6 @@ turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the
 
 A fixed-scope audit is delivered within two weeks of the agreed written kickoff. Advisory and implementation run on the cadence the engagement sets.
 
-**What do you get from an agent-readiness audit?**
-
-A written report that lists each check, what the scanner found, and a concrete fix for each gap it asks you to close, ordered by priority. The report also lists the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan shows whether each scored fix passed, and a manual-review fix is verified by a direct test.
-
 **How do I make my site agent-ready?**
 
 Publish the surfaces agents read, then measure the result. That means llms.txt, a markdown form of each page, a complete robots.txt and sitemap, JSON-LD for the facts on a page, and the /.well-known manifests an agent looks for. A payment surface belongs on that list only if the site sells through agents. Google says its search features do not need llms.txt or markdown files, so those two serve the agents that fetch them. Each of these has its own guide in the index.
@@ -8482,7 +8463,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.250.0",
+    "version": "3.251.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8791,7 +8772,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.250.0",
+  "version": "3.251.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9676,7 +9657,7 @@ const META_BY_PATH = {
     title: "I can't start over, so I back up every night · turva.dev",
     description: "A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.",
     date: "2026-11-04",
-    modified: "2026-11-10",
+    modified: "2026-11-12",
     kind: "Lab notes",
     image: "/og-why-i-back-up-every-night.jpg",
     imageAlt: "Card with the headline I can't start over, so I back up every night, and the line A nightly clone, encrypted NAS images and what has failed so far.",
@@ -9915,7 +9896,7 @@ const META_BY_PATH = {
     title: "I thought it was a small job · turva.dev",
     description: "A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that work.",
     date: "2026-08-16",
-    modified: "2026-11-02",
+    modified: "2026-11-12",
     kind: "Build notes",
     image: "/og-i-thought-it-was-a-small-job.jpg",
     imageAlt: "turva.dev blog card: I read my own workspace file by file. Seven days, 367 findings across 2 307 text files, and nothing billable shipped that week.",
