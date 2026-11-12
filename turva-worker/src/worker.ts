@@ -1,4 +1,6 @@
 // src/worker.ts
+// turva.dev worker v3.255.0 - link preview cards v9 (Tek-809, 2026-11-12): every per-page link preview card and og.jpg is rebuilt on the new base og-v9-pohja. The page texts run across the full width under the header, and the proof sits in three score cells along the bottom: 100/100 on isitagentready.com, Level 5 Agent-Native and 5/5 categories, all at 100. No card text, page text or image address changed, and no served text of the worker changed with it.
+// turva.dev worker v3.254.0 - the legal page contents list is laid out as an even grid (Tek-808, 2026-11-12): on /legal the seven section links sit in four equal columns, a section with subsections spans the full width and lists its subsection links in the same four columns, flush with them, and the sections without subsections share the last row. Two columns up to 1000 px, one column up to 560 px. The /legal list carries the classes toc-g and toc-s for it; the flat contents lists of guides and posts keep their two columns. No word on the page changed and the Markdown twin is unchanged.
 // turva.dev worker v3.253.0 - the legal page contents list shows its subsections (Tek-808, 2026-11-12): under each of the seven section links, /legal lists the 22 subsection headings it carries, each linking to that heading's own anchor, as a nested single-column list. The list is read from the rendered sections, so it cannot drift from the headings. No word on the page changed and the Markdown twin is unchanged.
 // turva.dev worker v3.252.0 - the legal page reads in shorter paragraphs (Tek-808, 2026-11-12): on /legal each engagement term and each privacy topic is a subsection with a heading and an anchor of its own, the long paragraphs are split at sentence boundaries (the longest was 555 words and is now 145), the eleven privacy topics fold as the service terms on /services do, and the provider list has the heading Providers. No term, figure, date or link changed. Nine cross-references that named a paragraph now name the section, because a topic is no longer one paragraph. The unused mdTermsHtml and mdTermsCard helpers are removed.
 // turva.dev worker v3.251.0 - FAQ pruning (Tek-808, 2026-11-12): six FAQ pairs whose answers the page body already states are removed from five pages (three guides, two posts); every page keeps at least three pairs and its FAQPage data follows the visible section.
@@ -8601,7 +8603,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.253.0",
+    "version": "3.255.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8910,7 +8912,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.253.0",
+  "version": "3.255.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -12754,10 +12756,16 @@ const TOC_SUB_CSS = `.toc p{margin:0 0 .4rem;font-family:ui-monospace,SFMono-Reg
 .toc li::before{content:none;}
 .toc a{color:#C9D1CE;}
 .toc a:hover{color:#5DF18F;}
-.toc li ul{columns:1;margin:.3rem 0 .55rem;padding:0 0 0 .9rem;}
-.toc li li{margin:0 0 .2rem;font-size:.85rem;}
+.toc li ul{columns:auto;margin:.4rem 0 0;padding:0;}
+.toc li li{margin:0;font-size:.85rem;}
 .toc li li a{color:#9AA3A0;}
-@media (max-width:560px){.toc ul{columns:1;}}`;
+.toc ul.toc-g,.toc ul.toc-g ul{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:1.5rem;}
+.toc ul.toc-g{columns:auto;row-gap:.75rem;}
+.toc ul.toc-g ul{row-gap:.3rem;}
+.toc ul.toc-g>li{margin:0;}
+.toc ul.toc-g>li.toc-s{grid-column:1/-1;}
+@media (max-width:1000px){.toc ul.toc-g,.toc ul.toc-g ul{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:560px){.toc ul{columns:1;}.toc ul.toc-g,.toc ul.toc-g ul{grid-template-columns:minmax(0,1fr);}}`;
 const TBL_CSS = `.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.1rem 0;}
 .tbl table{margin:0;min-width:100%;}
 .tbl:focus-visible{outline:2px solid #5DF18F;outline-offset:2px;}
@@ -13319,9 +13327,9 @@ function serveLegalHtml(canonicalUrl: string) {
     const top = html.match(/^<section class="sec" id="([^"]+)"><h2>([^]*?)<\/h2>/);
     if (!top) throw new Error("serveLegalHtml: unreadable section");
     const subs = [...html.matchAll(/<h3 id="([^"]+)">([^]*?)<\/h3>/g)].map((m) => `<li><a href="#${m[1]}">${stripTags(m[2])}</a></li>`).join("");
-    return `<li><a href="#${top[1]}">${stripTags(top[2])}</a>${subs ? `<ul>${subs}</ul>` : ""}</li>`;
+    return `<li${subs ? ' class="toc-s"' : ""}><a href="#${top[1]}">${stripTags(top[2])}</a>${subs ? `<ul>${subs}</ul>` : ""}</li>`;
   }).join("");
-  const toc = `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${tocItems}</ul></nav>`;
+  const toc = `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul class="toc-g">${tocItems}</ul></nav>`;
   // Tek-808: each term and each privacy topic is a "### " subsection of the twin with an anchor of
   // its own. The engagement terms stay open, because they are short and are the contract. The
   // privacy topics fold as the service terms on /services do: the heading stays visible, a link
