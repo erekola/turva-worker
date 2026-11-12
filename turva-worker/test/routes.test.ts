@@ -1951,3 +1951,27 @@ test("/services: 18 subsections fold into details with their own headings, the c
   assert.ok(src.includes('.sec details.fold>summary::before{content:"+";content:"+" / "";'), "the closed sign carries the empty alternative text");
   assert.ok(src.includes('.sec details.fold[open]>summary::before{content:"\\\\2212";content:"\\\\2212" / "";}'), "the open sign carries the empty alternative text");
 });
+
+test("/legal: the eleven privacy topics fold into details with their own headings, the engagement terms stay open (Tek-808)", async () => {
+  const html = await (await get("/legal", { headers: { Accept: "text/html" } })).text();
+  const ids = [...html.matchAll(/<details class="fold"><summary><h3 id="([^"]+)">/g)].map((m) => m[1]);
+  assert.deepEqual(ids, [
+    "roles", "server-logs", "international-transfers", "email", "client-material", "public-site-briefs", "outreach-records",
+    "ai-tools", "ai-tools-in-security-work", "where-the-work-runs", "providers",
+  ], "the folded heading ids and their order");
+  assert.equal((html.match(/<details/g) || []).length, ids.length + 1, "the eleven folds and the Menu are the only details elements");
+  assert.equal((html.match(/<\/details>/g) || []).length, (html.match(/<details/g) || []).length, "every details element is closed");
+  assert.equal([...html.matchAll(/<details class="fold"><summary><h3 id="[^"]+">[^]*?<\/h3><\/summary>/g)].length, ids.length, "each summary holds its h3 and nothing else");
+  assert.ok(!/<details[^>]*\sopen[\s>=]/.test(html), "no details element carries open");
+  const privacy = html.slice(html.indexOf('<section class="sec" id="privacy">'), html.indexOf('<section class="sec" id="data-rights">'));
+  assert.equal((privacy.match(/<details class="fold">/g) || []).length, ids.length, "every fold sits in the Privacy section");
+  assert.ok(privacy.indexOf("Cookies are described under Cookies below.") < privacy.indexOf("<details"), "the opening paragraph of Privacy stays visible");
+  const terms = html.slice(html.indexOf('<section class="sec" id="engagement-terms">'), html.indexOf('<section class="sec" id="privacy">'));
+  assert.deepEqual([...terms.matchAll(/<h3 id="([^"]+)">/g)].map((m) => m[1]), [
+    "scope", "business-days", "deliverables", "payment", "cancellation-and-refunds", "delay", "continuity", "confidentiality",
+    "liability", "intellectual-property", "governing-law",
+  ], "each engagement term has its own anchor, in the twin's order");
+  assert.ok(!terms.includes("<details"), "the engagement terms are not folded");
+  const allIds = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(new Set(allIds).size, allIds.length, "no id repeats on the page");
+});

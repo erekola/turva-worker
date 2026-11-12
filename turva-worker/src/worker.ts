@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.252.0 - the legal page reads in shorter paragraphs (Tek-808, 2026-11-12): on /legal each engagement term and each privacy topic is a subsection with a heading and an anchor of its own, the long paragraphs are split at sentence boundaries (the longest was 555 words and is now 145), the eleven privacy topics fold as the service terms on /services do, and the provider list has the heading Providers. No term, figure, date or link changed. Nine cross-references that named a paragraph now name the section, because a topic is no longer one paragraph. The unused mdTermsHtml and mdTermsCard helpers are removed.
 // turva.dev worker v3.251.0 - FAQ pruning (Tek-808, 2026-11-12): six FAQ pairs whose answers the page body already states are removed from five pages (three guides, two posts); every page keeps at least three pairs and its FAQPage data follows the visible section.
 // turva.dev worker v3.250.0 - the last eight guides read shorter (Tek-808, 2026-11-12): in the guides on agents.json, SEO and agent-readiness, the well-known directory, prerendering, sitemaps and robots.txt, Markdown for agents and letting agents act on data, sentences over 30 words are split and long paragraphs are broken into shorter ones; the guide on getting cited by AI assistants needed no change. No heading, link, figure, date, version or FAQ question changed, and no signed surface changed.
 // turva.dev worker v3.249.0 - eight more guides read shorter (Tek-808, 2026-11-12): in the guides on x402 payments, the Open Knowledge Format, response headers, common agent-readiness gaps, choosing an audit, measurement-led agent-readiness, AEO and GEO, and AI agent use cases, sentences over 30 words are split and long paragraphs are broken into shorter ones, and the six use cases list their input, action and limit as three list items each. No heading, link, figure, date, version, price, condition or FAQ question changed, nothing was removed, and no signed surface changed.
@@ -6189,55 +6190,189 @@ Contact: [info@turva.dev](mailto:info@turva.dev)
 
 These terms apply to audits, advisory, implementation, agent operations and MCP server design, including the active security testing add-on, unless a written agreement replaces them. The services are sold only to businesses and other organizations acting in their trade or profession, not to consumers.
 
-**Scope.** We agree the scope in writing before work starts. Your email reply that confirms the written scope is the order. Changes need a new written agreement and may affect the price and schedule.
+### Scope
 
-**Business days.** A business day means Finland's business days, Monday to Friday, excluding Finnish public holidays, in Europe/Helsinki time.
+We agree the scope in writing before work starts. Your email reply that confirms the written scope is the order. Changes need a new written agreement and may affect the price and schedule.
 
-**Deliverables.** An audit produces a written report. Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it. A fix that fails its re-check is redone at no charge in the follow-up round of that re-check.
+### Business days
 
-**Payment.** Payment is due within fourteen days of the invoice date unless agreed otherwise in writing. Late-payment interest follows Finnish law. Payment does not depend on an outside scanner's result.
+A business day means Finland's business days, Monday to Friday, excluding Finnish public holidays, in Europe/Helsinki time.
 
-**Cancellation and refunds.** An engagement canceled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory. For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month. Cancellation of a fixed-price service or the correction add-on is charged by the share of listed parts or fixes delivered. Cancellation of the active security testing add-on is charged by the share of its agreed written scope delivered. A remedy under Delay or Continuity takes precedence over this share. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase. A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it. A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. You can report a deviation in an earlier deliverable within 14 calendar days of delivery of the written result of the included re-scan or retest in which it first shows. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
+### Deliverables
 
-**Delay.** Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works. If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered. That part is not charged, and anything already paid for it is refunded in full. A late advisory review is still delivered in full, and the delay is stated with it.
+An audit produces a written report. Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it. A fix that fails its re-check is redone at no charge in the follow-up round of that re-check.
 
-**Continuity.** turva.dev is run by one person. If Erik Rekola falls ill or is otherwise unable to work, delivery moves. You can then cancel the part not yet delivered, and anything already paid for that part is refunded in full.
+### Payment
 
-**Confidentiality.** Information shared during the work is confidential. Your own non-disclosure agreement is signed as it stands, at no charge, before material is shared. If the work gives turva.dev access to personal data you control, turva.dev acts as your processor, and your data processing agreement is signed before that data is shared. As your processor, turva.dev notifies you without undue delay after becoming aware of a personal data breach affecting that data, as Article 33(2) of the GDPR requires. Sub-processor changes follow the terms of that agreement. The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work. Test accounts for active security testing are provided by the client and named in the signed authorization.
+Payment is due within fourteen days of the invoice date unless agreed otherwise in writing. Late-payment interest follows Finnish law. Payment does not depend on an outside scanner's result.
 
-**Liability.** Liability is limited to the fee for the engagement excluding VAT, including any add-on bought with it, as one aggregate limit for the whole engagement. For monthly advisory, that fee is the fees paid in the twelve months before the claim, excluding VAT. turva.dev is not liable for indirect or consequential damages. Neither limit applies when turva.dev causes damage intentionally or through gross negligence. Where a signed non-disclosure agreement sets its own remedies for a breach of confidentiality, those remedies apply to that breach. For data protection claims, the liability clause of a signed data processing agreement prevails where it differs from this paragraph.
+### Cancellation and refunds
 
-**Intellectual property.** You own the deliverables produced for you. turva.dev retains its generic methods, templates and reusable code. You get a perpetual right to use the delivered code, including any of turva.dev's own parts built into it.
+An engagement canceled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory.
 
-**Governing law.** Finnish law applies. Disputes are resolved in the District Court of Pirkanmaa, Finland.
+For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month.
+
+Cancellation of a fixed-price service or the correction add-on is charged by the share of listed parts or fixes delivered. Cancellation of the active security testing add-on is charged by the share of its agreed written scope delivered. A remedy under Delay or Continuity takes precedence over this share. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase.
+
+A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it.
+
+A deliverable that does not match its service page is corrected at no charge. Report the deviation in writing within 14 calendar days of delivery, and the correction is made within 10 business days of the report. You can report a deviation in an earlier deliverable within 14 calendar days of delivery of the written result of the included re-scan or retest in which it first shows. If the correction does not succeed, the share of the listed parts that still does not match is treated as not delivered, and you may cancel that share under the rules above.
+
+### Delay
+
+Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works. If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered. That part is not charged, and anything already paid for it is refunded in full. A late advisory review is still delivered in full, and the delay is stated with it.
+
+### Continuity
+
+turva.dev is run by one person. If Erik Rekola falls ill or is otherwise unable to work, delivery moves. You can then cancel the part not yet delivered, and anything already paid for that part is refunded in full.
+
+### Confidentiality
+
+Information shared during the work is confidential. Your own non-disclosure agreement is signed as it stands, at no charge, before material is shared.
+
+If the work gives turva.dev access to personal data you control, turva.dev acts as your processor, and your data processing agreement is signed before that data is shared. As your processor, turva.dev notifies you without undue delay after becoming aware of a personal data breach affecting that data, as Article 33(2) of the GDPR requires. Sub-processor changes follow the terms of that agreement.
+
+The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work. Test accounts for active security testing are provided by the client and named in the signed authorization.
+
+### Liability
+
+Liability is limited to the fee for the engagement excluding VAT, including any add-on bought with it, as one aggregate limit for the whole engagement. For monthly advisory, that fee is the fees paid in the twelve months before the claim, excluding VAT. turva.dev is not liable for indirect or consequential damages. Neither limit applies when turva.dev causes damage intentionally or through gross negligence. Where a signed non-disclosure agreement sets its own remedies for a breach of confidentiality, those remedies apply to that breach. For data protection claims, the liability clause of a signed data processing agreement prevails where it differs from this paragraph.
+
+### Intellectual property
+
+You own the deliverables produced for you. turva.dev retains its generic methods, templates and reusable code. You get a perpetual right to use the delivered code, including any of turva.dev's own parts built into it.
+
+### Governing law
+
+Finnish law applies. Disputes are resolved in the District Court of Pirkanmaa, Finland.
 
 ## Privacy
 
 The site does not use analytics cookies, tracking pixels or third-party scripts. Cookies are described under Cookies below.
 
-**Roles.** turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records. Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, the site's rate limit and processing a client's own contact persons rest on legitimate interest. So does operating the llms.txt validator, which means fetching and checking the documents the user names. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request. For personal data that reaches a report from public sources, Article 14 applies: the report masks names and personal contact details found in public results and shows only the role. Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed. When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
+### Roles
 
-**Server logs.** Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them. When turva.dev analyzes a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to 31 days of both security analytics and security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses. Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within 16 weeks at most. Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/). The llms.txt validator fetches two documents from the site you name, with new requests that do not pass on the headers of your request. Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when that site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers, and the validator sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. On 22 October 2026 turva.dev measured the two requests the validator made to one test site outside Cloudflare, one for /llms.txt and one for the home page, as the test site recorded them. Both carried the fixed address in CF-Connecting-IP. Neither carried X-Real-IP or X-Forwarded-For, although the validator sets X-Real-IP, and no header held the IP address of the person who ran the test. The connection came from a Cloudflare address.
+turva.dev is the controller of the personal data it collects for its own business: correspondence, invoicing and the outreach records described below. The lawful basis is the contract for engagement data and a legal obligation for accounting records.
 
-**International transfers.** Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses. For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. Anthropic's data processing addendum for the Anthropic API incorporates the EU Standard Contractual Clauses, Module Two or Module Three, where data protection law requires them, with the Anthropic entity that signed the agreement as data importer. Anthropic says that data is stored in the US. Anthropic's data residency documentation adds that by default inference can run in any available geography. For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States. Proton AG is in Switzerland, which the European Commission recognizes as providing adequate protection. Synology Inc. is in Taiwan, and the encrypted cloud backup is stored in its Frankfurt region in Germany. Synology's terms say that once a region is chosen it does not transfer the data unless the customer requests its C2 Express Box service, and its data processing agreement includes the EU standard contractual clauses for transfers to countries without adequate protection. Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer. When a user of the llms.txt validator names a site outside the EEA, the validator builds its requests to send the fixed address in place of the visitor's IP address, and the measurement described in the Server logs paragraph above found no visitor address in the two requests it covered.
+Outreach, the server logs that keep the site running and secure, the analysis of a traffic spike, the site's rate limit and processing a client's own contact persons rest on legitimate interest. So does operating the llms.txt validator, which means fetching and checking the documents the user names. Vulnerability reports and agent registration requests arrive by email and rest on legitimate interest as well, in keeping the site secure and in answering the sender. They are kept for 24 months from the latest message and removed sooner on request.
 
-**Email.** Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material paragraph below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material. A question sent by email, Signal or LinkedIn that does not lead to an engagement is deleted 24 months after the latest message. The Mastodon link in the site footer points to a public profile and is not an offered way to contact turva.dev.
+For personal data that reaches a report from public sources, Article 14 applies: the report masks names and personal contact details found in public results and shows only the role.
 
-**Client material.** Client material, including findings, evidence and test credentials, is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested or a requested retest lapses or is not carried out, 90 days after the last deliverable was delivered, unless the law requires retention. For example, when the last deliverable arrives on 1 March and no retest is requested, the engagement closes on 30 May. The material is then deleted from the working systems by 29 June, about 120 days after delivery, and has left every backup by 19 October. An engagement canceled before its agreed written kickoff, or after kickoff and before any delivery, closes 90 days after the cancellation. An engagement canceled after a partial delivery closes 90 days after the last deliverable was delivered, or on the day of the cancellation if that is later. Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email paragraph above. The AI model providers keep what they processed under their own terms, linked under AI tools. Backups made during the engagement keep a copy until their rotation replaces them. The file backups on turva.dev's own network storage keep earlier versions of a file for up to 30 days and snapshots for up to 11 weeks, and the encrypted cloud backup of that storage keeps its versions for up to 11 weeks. Disk images of the workstation, which include the virtual machine's disk file, are kept for up to 14 weeks, plus up to 14 days in the snapshots of the storage that holds them. One encrypted disk kept off site holds only turva.dev's own keys and passwords, never client material, and is not part of this rotation. Every other backup, version history included, is removed within 16 weeks. A backup is never restored for any other purpose. Deleted client material has left every backup within 16 weeks of its deletion at most. Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them. Credentials are held in an encrypted vault rather than in files, apart from the client test credentials described under AI tools. The cloud backup is encrypted on turva.dev's own network storage before it is uploaded.
+Contact and invoicing details are needed to agree and invoice an engagement, and without them the work cannot be agreed.
 
-**Public-site briefs.** When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
+When an engagement gives turva.dev access to personal data a client controls, turva.dev is the client's processor and handles that data only on the client's written instructions.
 
-**Outreach records.** When turva.dev writes to a company, it records the company, the business contact it wrote to, the public page where that contact was found and the date. Keeping it stops the same company from being contacted twice and lets the promised rescan be sent. The lawful basis is legitimate interest, and the record is shown or removed on request. The record is kept for 24 months from the latest contact. A company that asks not to be contacted stays on an exclusion list for as long as that request stands, so that the request can be honored. You can object to this processing at any time, and an objection stops further contact.
+### Server logs
 
-**AI tools.** The AI tool used in the work is Claude, apart from security work, which uses GLM 5.3 as the next paragraph describes. Security work means active security testing and, in an audit, the internet.nl tests, the published security scans and the security headers of the client's domain. Security headers are the response headers that set a browser security policy: Strict-Transport-Security, Content-Security-Policy, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Embedder-Policy and Cross-Origin-Resource-Policy, together with the report-only forms of those that have one. The other response headers are read in the rest of the audit. Writing and checking the report section on security work is security work too. In the rest of an audit, client material, including what is read from a client's public site, is processed only through the Anthropic API, unless the engagement agreement names another route for part of the work at the client's request, such as Claude through Amazon Bedrock. That exception does not apply to security work, whose model route the next paragraph covers. The recorded questions of an audit are put to the assistants named in the written scope in anonymous sessions and contain only the public product name and the question text, never client material. The API is used on Anthropic's [commercial terms](https://www.anthropic.com/legal/commercial-terms), with Anthropic Ireland, Limited as the contracting party. Anthropic's [data processing addendum](https://www.anthropic.com/legal/data-processing-addendum) and the standard contractual clauses named under International transfers apply, and data can be transferred to Anthropic, PBC in the United States. Anthropic's [retention article](https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data) says that for the Anthropic API it deletes inputs and outputs within 30 days of receipt or generation. The exceptions it names are a service with longer retention, a different agreement, enforcement of its Usage Policy and the law. The same article says that inputs and outputs its systems flag under its Usage Policy are kept for up to two years and their trust and safety classification scores for up to seven years, that feedback sent to it is kept for five years, and it names limited retention for the safety review of the models it calls covered models. For client work, the AI tool is instructed to work only in the client's own folder, which holds only the files the task needs, inside the virtual machine described under Where the work runs. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. The one exception is a client's test credentials for active security testing, which are made available to the test run in the virtual machine only during the test or retest window and are removed from it when that window ends. A copy can remain in the workstation's disk images, which include the virtual machine's disk file, until the rotation described under Client material replaces them. Vault storage and the permissions a tool has while running are separate controls, and each task has its own access limits. In an audit the tools read what the client's site and API serve publicly, and a test account is used only when the client names it in writing and the written scope states what it allows. In active security testing the tools send test traffic only to the targets named in the client's signed authorization. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
+Cloudflare, the hosting provider, records standard request logs, including IP address, user agent and requested path. The site's own Worker logs are kept for at most seven days, the longest retention Cloudflare offers for them.
 
-**AI tools in security work.** Security work runs with GLM 5.3, an open-weight model from Z.AI published under its own [GLM-5.3 License](https://huggingface.co/zai-org/GLM-5.3/blob/main/LICENSE), through Melious AI GmbH in Saarbrücken, Germany, under its [terms](https://melious.ai/legal/terms) and [data processing agreement](https://melious.ai/legal/dpa). Their English versions are translations, and the German text prevails. The agent program is Claude Code, which in this work is set to send its model calls only to Melious, with its other traffic to Anthropic, such as telemetry and error reports, switched off. Melious has stated in writing that it runs GLM 5.3 on its own hardware in the facilities of DataCrunch Oy in Finland. The agreement names that hardware and Melious's own hardware at OVH SAS in France as the hardware its zero retention clause covers. For processing on that hardware, the agreement states that inputs and outputs are processed only in volatile memory and are not stored, logged or used for training, apart from processing the law requires and operational metadata such as time stamps, the model used and token counts. The same exception covers anything stored with Melious's own storage functions, which this work does not use. The agreement allows Melious to forward data to other providers when its capacity is short. turva.dev's Melious account and the API key it uses are limited to Melious's own route, and Melious states that this stops the forwarding. The test requests themselves are sent from the virtual machine, and Melious does not send them. Web test requests go through Burp Suite Professional. turva.dev switches off Burp's own AI features, so no test data goes to PortSwigger's AI service. A check the model declines or does not complete is reported as not tested. The signed authorization repeats this, and material a client wants excluded from AI processing is named in the non-disclosure agreement. No other model route, such as Claude through the Anthropic API or Amazon Bedrock, is used for security work.
+When turva.dev analyzes a traffic spike, it reads the addresses behind it from Cloudflare's analytics. On the Pro plan this site uses, Cloudflare's [security analytics documentation](https://developers.cloudflare.com/waf/analytics/security-analytics/) gives up to 31 days of both security analytics and security events. The site's rate limits count requests per IP address inside Cloudflare, and turva.dev does not store those counts. The analysis it saves keeps the network operator and the request counts without the addresses.
 
-**Where the work runs.** Work agreed with a client runs in a virtual machine that is kept apart from the rest of turva.dev's workstation, in a folder of its own for each client. No credentials for turva.dev's site, repositories or publishing are stored in that virtual machine. The API key for the model used in security work is passed into it only for each run and held in the run's process environment, and the run's files are checked for it and cleaned when the run ends. The AI tool's connectors that could write to them are blocked there by rules in the tool's settings, and each client session is instructed to check at the start that they are still blocked. Anything delivered to the client, such as the report, is moved out of the virtual machine and sent from the workstation itself. The virtual machine isolates execution. Code that is run and packages that are installed stay inside it, and so do the working files, apart from the delivered copy and the session records described below. It does not isolate what the AI model reads, because the model runs at its provider under the terms in the AI tools paragraphs.
+Analyses saved before 25 September 2026 also held addresses. Those addresses were removed on 25 September 2026. A private version-history copy of those earlier versions lasts as long as the backups: it is removed when the backup rotation described below replaces the corresponding backup, within 16 weeks at most.
 
-The AI tool's record of each working session is kept both in the virtual machine and on the workstation. Within thirty days of the engagement closing, as the Client material paragraph sets out, the client's folder and its session records are deleted from the virtual machine, and the tool's shared prompt history there, which can also name the client, is deleted by hand. On the workstation, the delivered copy and the session records are deleted, the client's sessions are removed from the AI tool's list of past sessions by hand, and the restore point taken at kickoff is removed. Engagements do not overlap in the virtual machine by default. If they do, the restore point taken for the later engagement also holds the earlier client's folder, so that copy is removed only when the later engagement closes, which can be more than thirty days after the earlier one closed. Backups follow the rotation in the Client material paragraph. Deletion removes the files. It does not overwrite the freed disk space. The virtual machine's disk file sits on the workstation's own disk, and the disk images described in the Client material paragraph include it.
+Cloudflare's own processing follows its [privacy policy](https://www.cloudflare.com/privacypolicy/).
 
-No data is sold. Client material and correspondence reach only the providers needed for the work. Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email. Synology Inc. in Taiwan provides the encrypted cloud backup storage, in its Frankfurt region in Germany. Anthropic Ireland, Limited is the contracting party for Claude, and data can be transferred to Anthropic, PBC in the United States. Melious AI GmbH in Germany provides GLM 5.3, the model used in security work, and states that it runs the model on its own hardware in the facilities of DataCrunch Oy in Finland. Its agreement also names its own hardware at OVH SAS in France. Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. Masto.host in Portugal hosts the Mastodon server social.turva.dev and carries messages sent over Mastodon. The server's data is stored in France. A card payment made through a payment link is processed by Stripe. The audit's scanner, isitagentready.com, receives only the public address under test from turva.dev, reads the public site at that address itself and sees the connection data of the request. For an audit, internet.nl receives the domain under test, and turva.dev uses it as an ordinary user and not as a processor. The footer of isitagentready.com links [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/), and internet.nl has its own [privacy statement](https://internet.nl/privacy/). internet.nl stores the tested domain, shows the result at a permanent link and can list the domain in its Hall of Fame, and turva.dev cannot remove the stored result itself. internet.nl's privacy statement treats domain names as public data and takes requests about personal data. Its email test checks secure connections to mail servers, which can be the email provider's servers. turva.dev runs the internet.nl tests on a client's domain only with the client's written permission. The Cloudflare 1.1.1.1 public DNS resolver receives the names that turva.dev queries, as its [privacy page](https://developers.cloudflare.com/1.1.1.1/privacy/public-dns-resolver/) describes. The same page says that APNIC, Cloudflare's research partner for the resolver, can access query names and other metadata through a Cloudflare API. YTJ is the Finnish business information system run by the Finnish Patent and Registration Office and the Tax Administration. Looking up a Business ID there, a foreign register ID in that country's open register or a VAT ID in the EU's VIES service sends that ID to the public register or service. A new provider is added to this list before it receives client material.
+The llms.txt validator fetches two documents from the site you name, with new requests that do not pass on the headers of your request. Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when that site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers, and the validator sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. On 22 October 2026 turva.dev measured the two requests the validator made to one test site outside Cloudflare, one for /llms.txt and one for the home page, as the test site recorded them. Both carried the fixed address in CF-Connecting-IP. Neither carried X-Real-IP or X-Forwarded-For, although the validator sets X-Real-IP, and no header held the IP address of the person who ran the test. The connection came from a Cloudflare address.
+
+### International transfers
+
+Cloudflare, Inc. in the United States is certified under the EU-U.S. Data Privacy Framework, and its data processing addendum also includes the EU standard contractual clauses.
+
+For a customer in the EEA, Anthropic's commercial terms name Anthropic Ireland, Limited as the contracting party. Anthropic's data processing addendum for the Anthropic API incorporates the EU Standard Contractual Clauses, Module Two or Module Three, where data protection law requires them, with the Anthropic entity that signed the agreement as data importer. Anthropic says that data is stored in the US. Anthropic's data residency documentation adds that by default inference can run in any available geography.
+
+For a business in Finland, the Stripe contracting party is Stripe Payments Europe, Limited in Ireland, and Stripe relies on the EU-U.S. Data Privacy Framework for transfers to Stripe, LLC in the United States.
+
+Proton AG is in Switzerland, which the European Commission recognizes as providing adequate protection.
+
+Synology Inc. is in Taiwan, and the encrypted cloud backup is stored in its Frankfurt region in Germany. Synology's terms say that once a region is chosen it does not transfer the data unless the customer requests its C2 Express Box service, and its data processing agreement includes the EU standard contractual clauses for transfers to countries without adequate protection.
+
+Signal Messenger LLC in the United States carries a message only when the sender chooses Signal, and Signal's own terms say the data goes to the United States and other countries without naming a transfer mechanism. Email to info@turva.dev stays available for anyone who prefers to avoid that transfer.
+
+When a user of the llms.txt validator names a site outside the EEA, the validator builds its requests to send the fixed address in place of the visitor's IP address, and the measurement described in the Server logs section above found no visitor address in the two requests it covered.
+
+### Email
+
+Email related to an engagement, with its attachments, is deleted under the closing rule in the Client material section below. Only bookkeeping material is kept longer: accounting vouchers such as invoices and receipts, with their attachments, are kept for six years from the end of the year in which the financial year ended, the retention the Finnish Accounting Act sets for accounting material.
+
+A question sent by email, Signal or LinkedIn that does not lead to an engagement is deleted 24 months after the latest message. The Mastodon link in the site footer points to a public profile and is not an offered way to contact turva.dev.
+
+### Client material
+
+Client material, including findings, evidence and test credentials, is stored only on systems needed for the work. It is deleted from them within thirty days of the engagement closing, which is the day the last deliverable, any retest included, is delivered, or, when no retest is requested or a requested retest lapses or is not carried out, 90 days after the last deliverable was delivered, unless the law requires retention. For example, when the last deliverable arrives on 1 March and no retest is requested, the engagement closes on 30 May. The material is then deleted from the working systems by 29 June, about 120 days after delivery, and has left every backup by 19 October.
+
+An engagement canceled before its agreed written kickoff, or after kickoff and before any delivery, closes 90 days after the cancellation. An engagement canceled after a partial delivery closes 90 days after the last deliverable was delivered, or on the day of the cancellation if that is later.
+
+Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email section above. The AI model providers keep what they processed under their own terms, linked under AI tools. Backups made during the engagement keep a copy until their rotation replaces them.
+
+The file backups on turva.dev's own network storage keep earlier versions of a file for up to 30 days and snapshots for up to 11 weeks, and the encrypted cloud backup of that storage keeps its versions for up to 11 weeks. Disk images of the workstation, which include the virtual machine's disk file, are kept for up to 14 weeks, plus up to 14 days in the snapshots of the storage that holds them. One encrypted disk kept off site holds only turva.dev's own keys and passwords, never client material, and is not part of this rotation. Every other backup, version history included, is removed within 16 weeks. A backup is never restored for any other purpose. Deleted client material has left every backup within 16 weeks of its deletion at most.
+
+Client material is not committed to the private GitHub repository that keeps the version history of turva.dev's own notes. Earlier versions of client files, the fourth kind of copy, exist only inside the backups and leave with them when the rotation replaces them.
+
+Credentials are held in an encrypted vault rather than in files, apart from the client test credentials described under AI tools. The cloud backup is encrypted on turva.dev's own network storage before it is uploaded.
+
+### Public-site briefs
+
+When turva.dev measures a company's public website and sends a brief, the brief is published at an unlisted address on turva.dev. It contains public-site observations and the method used, not privately shared material. The address is not indexed or linked elsewhere. A brief is removed on request and expires no later than 400 days after its latest publication.
+
+### Outreach records
+
+When turva.dev writes to a company, it records the company, the business contact it wrote to, the public page where that contact was found and the date. Keeping it stops the same company from being contacted twice and lets the promised rescan be sent. The lawful basis is legitimate interest, and the record is shown or removed on request.
+
+The record is kept for 24 months from the latest contact. A company that asks not to be contacted stays on an exclusion list for as long as that request stands, so that the request can be honored. You can object to this processing at any time, and an objection stops further contact.
+
+### AI tools
+
+The AI tool used in the work is Claude, apart from security work, which uses GLM 5.3 as the section AI tools in security work describes. Security work means active security testing and, in an audit, the internet.nl tests, the published security scans and the security headers of the client's domain. Security headers are the response headers that set a browser security policy: Strict-Transport-Security, Content-Security-Policy, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Embedder-Policy and Cross-Origin-Resource-Policy, together with the report-only forms of those that have one. The other response headers are read in the rest of the audit. Writing and checking the report section on security work is security work too.
+
+In the rest of an audit, client material, including what is read from a client's public site, is processed only through the Anthropic API, unless the engagement agreement names another route for part of the work at the client's request, such as Claude through Amazon Bedrock. That exception does not apply to security work, whose model route the section AI tools in security work covers. The recorded questions of an audit are put to the assistants named in the written scope in anonymous sessions and contain only the public product name and the question text, never client material.
+
+The API is used on Anthropic's [commercial terms](https://www.anthropic.com/legal/commercial-terms), with Anthropic Ireland, Limited as the contracting party. Anthropic's [data processing addendum](https://www.anthropic.com/legal/data-processing-addendum) and the standard contractual clauses named under International transfers apply, and data can be transferred to Anthropic, PBC in the United States.
+
+Anthropic's [retention article](https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data) says that for the Anthropic API it deletes inputs and outputs within 30 days of receipt or generation. The exceptions it names are a service with longer retention, a different agreement, enforcement of its Usage Policy and the law. The same article says that inputs and outputs its systems flag under its Usage Policy are kept for up to two years and their trust and safety classification scores for up to seven years, that feedback sent to it is kept for five years, and it names limited retention for the safety review of the models it calls covered models.
+
+For client work, the AI tool is instructed to work only in the client's own folder, which holds only the files the task needs, inside the virtual machine described under Where the work runs. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. The one exception is a client's test credentials for active security testing, which are made available to the test run in the virtual machine only during the test or retest window and are removed from it when that window ends. A copy can remain in the workstation's disk images, which include the virtual machine's disk file, until the rotation described under Client material replaces them. Vault storage and the permissions a tool has while running are separate controls, and each task has its own access limits.
+
+In an audit the tools read what the client's site and API serve publicly, and a test account is used only when the client names it in writing and the written scope states what it allows. In active security testing the tools send test traffic only to the targets named in the client's signed authorization. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
+
+### AI tools in security work
+
+Security work runs with GLM 5.3, an open-weight model from Z.AI published under its own [GLM-5.3 License](https://huggingface.co/zai-org/GLM-5.3/blob/main/LICENSE), through Melious AI GmbH in Saarbrücken, Germany, under its [terms](https://melious.ai/legal/terms) and [data processing agreement](https://melious.ai/legal/dpa). Their English versions are translations, and the German text prevails. The agent program is Claude Code, which in this work is set to send its model calls only to Melious, with its other traffic to Anthropic, such as telemetry and error reports, switched off.
+
+Melious has stated in writing that it runs GLM 5.3 on its own hardware in the facilities of DataCrunch Oy in Finland. The agreement names that hardware and Melious's own hardware at OVH SAS in France as the hardware its zero retention clause covers. For processing on that hardware, the agreement states that inputs and outputs are processed only in volatile memory and are not stored, logged or used for training, apart from processing the law requires and operational metadata such as time stamps, the model used and token counts. The same exception covers anything stored with Melious's own storage functions, which this work does not use. The agreement allows Melious to forward data to other providers when its capacity is short. turva.dev's Melious account and the API key it uses are limited to Melious's own route, and Melious states that this stops the forwarding.
+
+The test requests themselves are sent from the virtual machine, and Melious does not send them. Web test requests go through Burp Suite Professional. turva.dev switches off Burp's own AI features, so no test data goes to PortSwigger's AI service.
+
+A check the model declines or does not complete is reported as not tested. The signed authorization repeats this, and material a client wants excluded from AI processing is named in the non-disclosure agreement. No other model route, such as Claude through the Anthropic API or Amazon Bedrock, is used for security work.
+
+### Where the work runs
+
+Work agreed with a client runs in a virtual machine that is kept apart from the rest of turva.dev's workstation, in a folder of its own for each client. No credentials for turva.dev's site, repositories or publishing are stored in that virtual machine. The API key for the model used in security work is passed into it only for each run and held in the run's process environment, and the run's files are checked for it and cleaned when the run ends. The AI tool's connectors that could write to them are blocked there by rules in the tool's settings, and each client session is instructed to check at the start that they are still blocked. Anything delivered to the client, such as the report, is moved out of the virtual machine and sent from the workstation itself.
+
+The virtual machine isolates execution. Code that is run and packages that are installed stay inside it, and so do the working files, apart from the delivered copy and the session records described below. It does not isolate what the AI model reads, because the model runs at its provider under the terms in the AI tools sections.
+
+The AI tool's record of each working session is kept both in the virtual machine and on the workstation. Within thirty days of the engagement closing, as the Client material section sets out, the client's folder and its session records are deleted from the virtual machine, and the tool's shared prompt history there, which can also name the client, is deleted by hand. On the workstation, the delivered copy and the session records are deleted, the client's sessions are removed from the AI tool's list of past sessions by hand, and the restore point taken at kickoff is removed.
+
+Engagements do not overlap in the virtual machine by default. If they do, the restore point taken for the later engagement also holds the earlier client's folder, so that copy is removed only when the later engagement closes, which can be more than thirty days after the earlier one closed.
+
+Backups follow the rotation in the Client material section. Deletion removes the files. It does not overwrite the freed disk space. The virtual machine's disk file sits on the workstation's own disk, and the disk images described in the Client material section include it.
+
+### Providers
+
+No data is sold. Client material and correspondence reach only the providers needed for the work.
+
+Cloudflare, Inc. in the United States hosts the site. Proton AG in Switzerland provides email. Synology Inc. in Taiwan provides the encrypted cloud backup storage, in its Frankfurt region in Germany.
+
+Anthropic Ireland, Limited is the contracting party for Claude, and data can be transferred to Anthropic, PBC in the United States. Melious AI GmbH in Germany provides GLM 5.3, the model used in security work, and states that it runs the model on its own hardware in the facilities of DataCrunch Oy in Finland. Its agreement also names its own hardware at OVH SAS in France.
+
+Signal Messenger LLC in the United States carries messages sent over Signal. LinkedIn Ireland Unlimited Company, part of Microsoft, carries messages sent over LinkedIn. Masto.host in Portugal hosts the Mastodon server social.turva.dev and carries messages sent over Mastodon. The server's data is stored in France. A card payment made through a payment link is processed by Stripe.
+
+The audit's scanner, isitagentready.com, receives only the public address under test from turva.dev, reads the public site at that address itself and sees the connection data of the request. For an audit, internet.nl receives the domain under test, and turva.dev uses it as an ordinary user and not as a processor. The footer of isitagentready.com links [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/), and internet.nl has its own [privacy statement](https://internet.nl/privacy/). internet.nl stores the tested domain, shows the result at a permanent link and can list the domain in its Hall of Fame, and turva.dev cannot remove the stored result itself. internet.nl's privacy statement treats domain names as public data and takes requests about personal data. Its email test checks secure connections to mail servers, which can be the email provider's servers. turva.dev runs the internet.nl tests on a client's domain only with the client's written permission.
+
+The Cloudflare 1.1.1.1 public DNS resolver receives the names that turva.dev queries, as its [privacy page](https://developers.cloudflare.com/1.1.1.1/privacy/public-dns-resolver/) describes. The same page says that APNIC, Cloudflare's research partner for the resolver, can access query names and other metadata through a Cloudflare API.
+
+YTJ is the Finnish business information system run by the Finnish Patent and Registration Office and the Tax Administration. Looking up a Business ID there, a foreign register ID in that country's open register or a VAT ID in the EU's VIES service sends that ID to the public register or service.
+
+A new provider is added to this list before it receives client material.
 
 ## Data rights
 
@@ -6251,7 +6386,9 @@ Report a security issue to [info@turva.dev](mailto:info@turva.dev). Encrypted re
 
 ## Cookies
 
-This site sets no cookies of its own. A check of the home page, this page and the contact page on 27 September 2026 received no cookie. If Cloudflare's bot protection is triggered, it can set one of its own security cookies, __cf_bm, which tells bot traffic apart from human visitors, or cf_clearance, which records that a challenge was passed, for that purpose only, as [Cloudflare's own cookie table](https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/) names them. Cloudflare describes __cf_bm as necessary for its bot protection to work and cf_clearance as required to reach the origin after a challenge. turva.dev treats both as strictly necessary for security and does not ask for consent for them.
+This site sets no cookies of its own. A check of the home page, this page and the contact page on 27 September 2026 received no cookie.
+
+If Cloudflare's bot protection is triggered, it can set one of its own security cookies, __cf_bm, which tells bot traffic apart from human visitors, or cf_clearance, which records that a challenge was passed, for that purpose only, as [Cloudflare's own cookie table](https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/) names them. Cloudflare describes __cf_bm as necessary for its bot protection to work and cf_clearance as required to reach the origin after a challenge. turva.dev treats both as strictly necessary for security and does not ask for consent for them.
 
 ## Updates
 
@@ -8463,7 +8600,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.251.0",
+    "version": "3.252.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8772,7 +8909,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.251.0",
+  "version": "3.252.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -11364,36 +11501,6 @@ function mdLinksCard(path: string, heading: string) {
   return `<div class="scard"><h2>${renderInline(heading)}</h2>${html}
   </div>`;
 }
-function mdTermsHtml(path: string, heading: string) {
-  const out: string[] = [];
-  let dl: string[] = [];
-  const flush = () => {
-    if (dl.length) {
-      out.push(`<div class="dl">
-      ${dl.join("\n      ")}
-    </div>`);
-      dl = [];
-    }
-  };
-  for (const block of mdSection(path, heading).split(/\n{2,}/)) {
-    const t = block.trim();
-    if (!t) continue;
-    const m = t.match(/^\*\*([^*]+)\*\*\s+([\s\S]+)$/);
-    if (m) {
-      dl.push(`<p><span class="term">${renderInline(m[1])}</span> ${renderInline(m[2])}</p>`);
-      continue;
-    }
-    flush();
-    out.push(markdownToHtml(t));
-  }
-  flush();
-  return out.join("\n    ");
-}
-function mdTermsCard(path: string, heading: string) {
-  return `<div class="scard"><h2>${renderInline(heading)}</h2>
-    ${mdTermsHtml(path, heading)}
-  </div>`;
-}
 function mdParas(path: string, heading: string, count?: number) {
   const paras = mdSection(path, heading).split(/\n{2,}/).map((b) => b.trim()).filter(Boolean).filter((b) => !/^[-|>]|^ {4}/.test(b)).map((b) => renderInline(b.replace(/\s*\n\s*/g, " ")));
   if (count && paras.length !== count) throw new Error("mdParas: " + path + " " + heading + " has " + paras.length + " blocks, expected " + count);
@@ -13194,17 +13301,18 @@ function serveLegalHtml(canonicalUrl: string) {
   const head = cardPageHead(buildMetaBlock("/legal", canonicalUrl), buildGuideJsonLd("/legal", canonicalUrl), canonicalUrl);
   const secs = ["Operator", "Engagement terms", "Privacy", "Data rights", "Reporting a vulnerability", "Cookies", "Updates"];
   const toc = `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${secs.map((h) => `<li><a href="#${mdSlug(h)}">${h}</a></li>`).join("")}</ul></nav>`;
-  const terms = (h: string) => `<section class="sec" id="${mdSlug(h)}"><h2>${h}</h2>
-    ${mdTermsHtml("/legal", h)}
-  </section>`;
+  // Tek-808: each term and each privacy topic is a "### " subsection of the twin with an anchor of
+  // its own. The engagement terms stay open, because they are short and are the contract. The
+  // privacy topics fold as the service terms on /services do: the heading stays visible, a link
+  // to it opens it, and printing opens them all.
   const body = `${head}
 ${cardPageNav("/legal")}
 <main id="main">
   ${mdPageStart("/legal")}
   ${toc}
   ${mdOpenSec("/legal", "Operator")}
-  ${terms("Engagement terms")}
-  ${terms("Privacy")}
+  ${mdOpenSec("/legal", "Engagement terms")}
+  ${mdFoldSec("/legal", "Privacy")}
   ${mdOpenSec("/legal", "Data rights")}
   ${mdOpenSec("/legal", "Reporting a vulnerability")}
   ${mdOpenSec("/legal", "Cookies")}
