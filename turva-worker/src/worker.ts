@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.248.0 - eight guides read shorter (Tek-808, 2026-11-12): in the guides on agent commerce discovery, llms.txt, Agentic Resource Discovery, JSON-LD, the agent-readiness audit, the MCP server card, agentic commerce readiness and agent authentication, sentences over 30 words are split and long paragraphs are broken into shorter ones, two paragraphs of the commerce readiness guide are lists, and one pair of sentences the authentication guide said twice is removed. No heading, link, figure, date, version, condition or FAQ question changed, and no signed surface changed.
 // turva.dev worker v3.247.0 - the audit page, the two tool pages, /company, /contact and /tools read shorter (Tek-808, 2026-11-12): sentences over 30 words are split, the long paragraphs about the audit's deliverables, the validator's request headers and its 22 October 2026 measurement, the CLI's error shapes and the parity check's HTTP status codes are lists or shorter paragraphs, and one sentence the audit page said twice is said once. No price, deadline, limit, measured value or condition changed.
 // turva.dev worker v3.246.0 - /services reads shorter (Tek-808, 2026-11-12): the five service sections show the price, the description, the contact link and the deliverables list of the audit and advisory sections, and each of the 18 subsections with delivery terms opens from its own heading as a details element whose summary is that heading, so every earlier anchor stays and the Markdown twin carries the same words as the page; the 381-word active security testing paragraph keeps only what its three lists do not say, long sentences are split, two long FAQ answers are four, and the audit's deliverables are a list. The page's one inline script opens a fold when a link points at its heading and opens every fold before printing, and the CSP hash follows it. No price, deadline, scope or term changed.
 // turva.dev worker v3.245.0 - round 26 open items (2026-11-11, Tek-806): the /blog card and its alt text no longer list three kinds, seven posts get a closing offer that says only what the audit page says, each with a dated correction line, the legal page says that the email reply confirming the written scope is the order, and the blog introduction and description limit the method and limits promise to the studies
@@ -5317,7 +5318,7 @@ The audit is described on the [services page](/services). To start one, email [i
 
 Commerce discovery describes the interfaces and payment-related capabilities a service supports. This guide separates the named protocols and the versions used in each example.
 
-Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Four machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration, an ACP discovery document, and a UCP profile. Each answers a different question. An agent reads the declaration for the protocol it uses, which may be one of the four rather than all of them, and some integrations reach the same information through a registry or direct configuration instead.
+Before an AI agent can transact with a site, it has to discover what the site supports and how to reach it. Four machine-readable surfaces carry that information: an A2A Agent Card, an AP2 declaration, an ACP discovery document, and a UCP profile. Each answers a different question. An agent reads the declaration for the protocol it uses, which may be one of the four rather than all of them. Some integrations reach the same information through a registry or direct configuration instead.
 
 | Protocol | Where it lives | What it declares | Question it answers |
 | --- | --- | --- | --- |
@@ -5334,11 +5335,13 @@ The card is most useful when its skills mirror surfaces an agent can already rea
 
 ## AP2 and the version that matters
 
-AP2 is the Agent Payments Protocol. Under the v0.1 specification, which is what deployed sites and scanners still validate against, a merchant declares support as an extension entry inside the A2A Agent Card rather than in a separate file. The entry carries the extension URI, a role such as merchant, and a flag saying whether an agent has to understand the extension.
+AP2 is the Agent Payments Protocol. Under the v0.1 specification, a merchant declares support as an extension entry inside the A2A Agent Card rather than in a separate file. Deployed sites and scanners still validate against that specification. The entry carries the extension URI, a role such as merchant, and a flag saying whether an agent has to understand the extension.
 
-The detail that trips people up is the URI. Some helper guides write it as "github.com/google-agentic-commerce/AP2/tree/v0.1.0", with an uppercase name and a three-part version. The v0.1 specification uses "github.com/google-agentic-commerce/ap2/tree/v0.1", lowercase, version v0.1. A scanner that validates against that specification rejects the uppercase form even when everything else is correct. Copy the URI from the spec, not from a fix message. The URI is an identifier, not an address: the repository is named AP2 and its tag is v0.1.0, so the lowercase form answers 404 in a browser, and a validator compares the string instead of fetching it. Do not correct the identifier to a working URL to silence the 404. That answer is expected and the validator does not fetch it.
+The detail that trips people up is the URI. Some helper guides write it as "github.com/google-agentic-commerce/AP2/tree/v0.1.0", with an uppercase name and a three-part version. The v0.1 specification uses "github.com/google-agentic-commerce/ap2/tree/v0.1", lowercase, version v0.1. A scanner that validates against that specification rejects the uppercase form even when everything else is correct. Copy the URI from the spec, not from a fix message.
 
-Note that the current AP2 specification, v0.2 from April 2026, restructures the protocol around checkout and payment mandates and drops the Agent Card extension entirely. The deployed discovery convention and the scanners still follow v0.1, so publish the v0.1 declaration for discoverability today and expect this surface to change as v0.2 adoption arrives. In April 2026 Google [contributed AP2 to the FIDO Alliance](https://fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/), where the standards work is carried out by the Agentic Authentication Technical Working Group and the Payments Technical Working Group.
+The URI is an identifier, not an address: the repository is named AP2 and its tag is v0.1.0, so the lowercase form answers 404 in a browser. A validator compares the string instead of fetching it. Do not correct the identifier to a working URL to silence the 404. That answer is expected.
+
+The current AP2 specification, v0.2 from April 2026, restructures the protocol around checkout and payment mandates and drops the Agent Card extension entirely. The deployed discovery convention and the scanners still follow v0.1, so publish the v0.1 declaration for discoverability today and expect this surface to change as v0.2 adoption arrives. In April 2026 Google [contributed AP2 to the FIDO Alliance](https://fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/), where the standards work is carried out by the Agentic Authentication Technical Working Group and the Payments Technical Working Group.
 
 ## ACP discovery and checkout
 
@@ -5354,9 +5357,11 @@ A checkout endpoint does not have to support instant payment to be real. The ACP
 
 ## UCP, the fourth surface
 
-The Universal Commerce Protocol adds a profile at /.well-known/ucp. The profile is a JSON object whose ucp member lists the services the business offers under namespaced keys, each with a version, a transport and an endpoint, and carries two more blocks, capabilities and payment_handlers, that state what an agent may do through the profile and how it may pay. The same rule holds as for the three surfaces above: a capability the profile declares has to answer at the endpoint behind it, and an empty block is more honest than a declared one nothing serves.
+The Universal Commerce Protocol adds a profile at /.well-known/ucp. The profile is a JSON object whose ucp member lists the services the business offers under namespaced keys, each with a version, a transport and an endpoint. It also carries two more blocks, capabilities and payment_handlers, that state what an agent may do through the profile and how it may pay. The same rule holds as for the three surfaces above: a capability the profile declares has to answer at the endpoint behind it. An empty block is more honest than a declared one nothing serves.
 
-A storefront that runs UCP over MCP carries a checkout state called requires_escalation. It means the agent has reached the edge of what it may finish alone, because the business needs buyer input its API cannot collect or buyer review that policy, regulatory or entitlement rules require. The UCP checkout specification then requires the business to return a continue_url and at least one message naming which of the two it needs, and requires the platform to use that continue_url, so a person completes the step in the business's own interface before the session continues. It is a handoff inside a checkout and not a substitute for one. Even without escalation, the same specification has the user finalize a UCP checkout manually in a trusted UI unless the AP2 Mandates extension is supported. A business that sells on a written quote can state that through the ACP session state above, and UCP checkout also lets the payment object be omitted for uses such as quote generation.
+A storefront that runs UCP over MCP carries a checkout state called requires_escalation. It means the agent has reached the edge of what it may finish alone, because the business needs buyer input its API cannot collect or buyer review that policy, regulatory or entitlement rules require. The UCP checkout specification then requires the business to return a continue_url and at least one message naming which of the two it needs. The specification also requires the platform to use that continue_url, so a person completes the step in the business's own interface before the session continues. It is a handoff inside a checkout and not a substitute for one.
+
+Even without escalation, the same specification has the user finalize a UCP checkout manually in a trusted UI unless the AP2 Mandates extension is supported. A business that sells on a written quote can state that through the ACP session state above. UCP checkout also lets the payment object be omitted for uses such as quote generation.
 
 turva.dev publishes a UCP profile with empty capabilities and payment_handlers blocks on purpose, because the code behind it settles nothing automatically.
 
@@ -5370,7 +5375,7 @@ turva.dev publishes an A2A Agent Card, an AP2 merchant declaration, an ACP disco
 
 **What is an A2A Agent Card?**
 
-An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that describes an agent interface, including its name, version, transport, and the skills it offers, so another agent can discover it and know how to reach it.
+An A2A Agent Card is a JSON file, usually at /.well-known/agent-card.json, that describes an agent interface, including its name, version, transport, and the skills it offers. That lets another agent discover it and know how to reach it.
 
 **What is the correct AP2 extension URI?**
 
@@ -5378,11 +5383,11 @@ For the AP2 v0.1 Agent Card extension, the URI is \`https://github.com/google-ag
 
 **Why does an AP2 declaration fail validation?**
 
-Usually the case of the extension URI is the cause. Some fix texts show an uppercase AP2 in the path and a three-part version, which validators reject. The accepted form for the v0.1 extension is lowercase and v0.1. A validator built for AP2 v0.2 looks for checkout and payment mandates instead and does not read the Agent Card extension at all, so name the version the validator implements before reading its result.
+Usually the case of the extension URI is the cause. Some fix texts show an uppercase AP2 in the path and a three-part version, which validators reject. The accepted form for the v0.1 extension is lowercase and v0.1. A validator built for AP2 v0.2 looks for checkout and payment mandates instead and does not read the Agent Card extension at all. Name the version the validator implements before reading its result.
 
 **What does a UCP profile declare?**
 
-A UCP profile at /.well-known/ucp lists the services the business offers, each with a transport and an endpoint. It also holds two blocks, one for capabilities and one for payment handlers. The specification requires the services and payment_handlers blocks to be present even when empty and lets the capabilities block be omitted, so an empty block declares nothing of its kind through UCP, which is the truthful state for a business that sells on a written quote. An empty block is not a standard statement about how the business takes payment, so the business says that in its own words, for example on its pages or in its ACP session messages.
+A UCP profile at /.well-known/ucp lists the services the business offers, each with a transport and an endpoint. It also holds two blocks, one for capabilities and one for payment handlers. The specification requires the services and payment_handlers blocks to be present even when empty and lets the capabilities block be omitted. An empty block therefore declares nothing of its kind through UCP, which is the truthful state for a business that sells on a written quote. An empty block is not a standard statement about how the business takes payment. The business therefore says that in its own words, for example on its pages or in its ACP session messages.
 
 ## Sources
 
@@ -6493,11 +6498,17 @@ For an audit, contact info@turva.dev.
 
 A technical scan, manual review and observed AI answers reveal different problems. This guide explains what an audit should record and how a team can use the findings.
 
-Most sites are built for human readers and search crawlers. Some AI agents read differently. They use machine-readable entry points such as llms.txt, a sitemap, response headers, structured data and well-known manifests. Which of them a client reads varies. When those are missing, an agent that cannot parse the page's rendered layout either guesses at the fact or gives up on the page, while an agent built with a fallback, such as a search result or a cached summary, may still complete the task another way.
+Most sites are built for human readers and search crawlers. Some AI agents read differently. They use machine-readable entry points such as llms.txt, a sitemap, response headers, structured data and well-known manifests. Which of them a client reads varies. When those are missing, an agent that cannot parse the page's rendered layout either guesses at the fact or gives up on the page. An agent built with a fallback, such as a search result or a cached summary, may still complete the task another way.
 
 ## Technical checks
 
-The audit checks the parts an agent reaches first. Discoverability covers robots.txt, the sitemap, the response headers, and the DNS records that let an agent find resources without parsing a full HTML page. Content accessibility covers llms.txt, markdown content negotiation, and whether the site can return a clean text version that saves an agent most of the tokens an HTML page would cost. Bot access control covers the AI-bot rules, the content signals, and the bot-authentication directory. The first two state the site's preferences, which a crawler follows or ignores, and the directory identifies a bot without granting it anything. API, auth, MCP and A2A discovery covers an MCP server card, an agent card, an OpenAPI description, an API catalog, and OAuth discovery, so an agent can find what the site offers and how it asks agents to authenticate. Commerce covers payment surfaces such as x402 and structured pricing, which matter only when the site sells through agents. A surface in any of these groups helps an agent find and read the site. It does not show that an agent can authenticate or complete a purchase.
+The audit checks the parts an agent reaches first. Discoverability covers robots.txt, the sitemap, the response headers, and the DNS records that let an agent find resources without parsing a full HTML page. Content accessibility covers llms.txt, markdown content negotiation, and whether the site can return a clean text version that saves an agent most of the tokens an HTML page would cost.
+
+Bot access control covers the AI-bot rules, the content signals, and the bot-authentication directory. The first two state the site's preferences, which a crawler follows or ignores, and the directory identifies a bot without granting it anything.
+
+API, auth, MCP and A2A discovery covers an MCP server card, an agent card, an OpenAPI description, an API catalog, and OAuth discovery. With these an agent can find what the site offers and how it asks agents to authenticate. Commerce covers payment surfaces such as x402 and structured pricing, which matter only when the site sells through agents.
+
+A surface in any of these groups helps an agent find and read the site. It does not show that an agent can authenticate or complete a purchase.
 
 The scanner's checks run against its current rule set, and what it does not score, such as llms.txt, is tested directly. That rule set moves, so a scan run today is a new measurement rather than a repeat of an earlier one.
 
@@ -6522,7 +6533,7 @@ The full citation behind each status lives in the [repository's reference file](
 
 ## Manual review
 
-A technical scan reads what a page serves. It does not read what a person notices when following the same path an agent would. Manual review checks whether the instructions a site publishes, such as an llms.txt entry or a registration step in auth.md, match what the site actually returns when followed. It checks whether structured data on a page agrees with the prose beside it, whether an error page reveals more than it should, and whether an edge case the scanner does not test, such as a redirect chain or a stale sitemap entry, breaks a path an agent would take. The finding here is usually a contradiction between two places, not a missing file.
+A technical scan reads what a page serves. It does not read what a person notices when following the same path an agent would. Manual review checks whether the instructions a site publishes, such as an llms.txt entry or a registration step in auth.md, match what the site actually returns when followed. It checks whether structured data on a page agrees with the prose beside it and whether an error page reveals more than it should. It also checks whether an edge case the scanner does not test, such as a redirect chain or a stale sitemap entry, breaks a path an agent would take. The finding here is usually a contradiction between two places, not a missing file.
 
 ## AI-answer observations
 
@@ -6530,16 +6541,20 @@ A separate question from both of the above is what an AI assistant actually says
 
 ## Findings and verification
 
-The result of an audit is a list. Each check passes or fails, and each failure comes with a concrete fix instruction or the reason the gap is left open, and with a link to the guide on this site for that surface where there is one. The report is written so your own team can do the work, which means implementation is something you buy if you want it rather than something the report forces on you.
+The result of an audit is a list. Each check passes or fails. Each failure comes with a concrete fix instruction or the reason the gap is left open. Where this site has a guide for that surface, the failure also links to it. The report is written so your own team can do the work. That means implementation is something you buy if you want it rather than something the report forces on you.
 
-turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-10-29. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. turva.dev publishes [the scanner's raw output](/evidence/isitagentready-turva-dev-2026-11-09.txt) from a newer run, on 2026-11-09, unedited, as a separate measurement. Cloudflare runs the scanner and also hosts turva.dev. The 2026-10-29 reading is one scan on one day against one named scanner, and it does not stand in for manual review or for how an assistant answers a buyer's question, so it counts as one input among the three above rather than a summary of all of them. A rescan after a fix shows whether that specific fix passed. The audit a client receives runs the same three kinds of check against their site.
+turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-10-29. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here.
+
+turva.dev publishes [the scanner's raw output](/evidence/isitagentready-turva-dev-2026-11-09.txt) from a newer run, on 2026-11-09, unedited, as a separate measurement. Cloudflare runs the scanner and also hosts turva.dev.
+
+The 2026-10-29 reading is one scan on one day against one named scanner. It does not stand in for manual review or for how an assistant answers a buyer's question. It therefore counts as one input among the three above rather than a summary of all of them. A rescan after a fix shows whether that specific fix passed. The audit a client receives runs the same three kinds of check against their site.
 
 ## How do I audit my website for AI agent readiness?
 
-Run an independent scanner, request the surfaces directly, including the ones it does not score, check that what the site publishes matches what it returns, and ask assistants what your buyers would ask. Record the date and result of each step, fix the failures and measure again.
+Run an independent scanner and request the surfaces directly, including the ones it does not score. Check that what the site publishes matches what it returns, and ask assistants what your buyers would ask. Record the date and result of each step, fix the failures and measure again.
 
 - Scan the site with [isitagentready.com](https://isitagentready.com/) and keep the result of each check with its date, because the rule set changes.
-- Request the surfaces yourself: robots.txt, the sitemap, a page with an Accept: text/markdown header and llms.txt, which the scanner does not score. The free [llms.txt validator](/llms-txt-validator) reads that file on any site, and the open package behind the [Markdown parity check](/markdown-parity-check) compares a page with its Markdown when you run it on your own machine.
+- Request the surfaces yourself: robots.txt, the sitemap, a page with an Accept: text/markdown header and llms.txt, which the scanner does not score. The free [llms.txt validator](/llms-txt-validator) reads that file on any site. The open package behind the [Markdown parity check](/markdown-parity-check) compares a page with its Markdown when you run it on your own machine.
 - Follow what the site publishes: open each link in llms.txt, try any published registration step and compare the structured data with the prose beside it.
 - Put the same written questions to each assistant and record the sources it names and what it gets wrong. An answer on one date is an observation and does not show what caused it.
 - Fix what failed, then run the scanner again for the scored checks and repeat the direct requests for the rest.
@@ -6558,11 +6573,11 @@ It checks the surfaces an agent reaches first, covering discoverability, content
 
 **How do I audit my website for AI agent readiness?**
 
-Run an independent scanner, request the surfaces directly, including the ones it does not score, check that what the site publishes matches what it returns, and ask assistants what your buyers would ask. Record the date and result of each step, fix the failures and measure again.
+Run an independent scanner and request the surfaces directly, including the ones it does not score. Check that what the site publishes matches what it returns, and ask assistants what your buyers would ask. Record the date and result of each step, fix the failures and measure again.
 
 **What does an agent-readiness audit produce?**
 
-A pass or fail on each check, and for every failure a concrete fix instruction or the reason the gap is left open, with a link to the guide on this site for that surface where there is one. Your own team can do the work from the report. Scored checks are verified by the scanner before and after, manual-review fixes by a direct test, and the score comes from the scanner's published checks rather than opinion.
+A pass or fail on each check, and for every failure a concrete fix instruction or the reason the gap is left open. Where this site has a guide for that surface, each failure links to it. Your own team can do the work from the report. Scored checks are verified by the scanner before and after, manual-review fixes by a direct test, and the score comes from the scanner's published checks rather than opinion.
 
 ## Sources
 
@@ -6581,27 +6596,37 @@ A pass or fail on each check, and for every failure a concrete fix instruction o
 
 An llms.txt file offers a curated map of a site for clients that choose to read it. Learn its structure, discovery links and limits.
 
-llms.txt is a plain text file that tells AI agents and language models what a site contains and where the important content lives. It sits at /llms.txt at the root of a site, or at any path inside it, in which case it covers the pages under that path and the most specific file applies. It works like a guide written for machines. A human reads the rendered page, an agent reads llms.txt and follows the links it lists.
+llms.txt is a plain text file that tells AI agents and language models what a site contains and where the important content lives. It sits at /llms.txt at the root of a site, or at any path inside it. A file at such a path covers the pages under that path, and the most specific file applies. It works like a guide written for machines. A human reads the rendered page, an agent reads llms.txt and follows the links it lists.
 
 ## File structure
 
-The file opens with the site name as an H1, then a short summary as a blockquote, then the key pages and resources as markdown links grouped under H2 headings. Only the H1 is required. Everything after it, the summary, the headings, and the grouped links, is recommended rather than mandatory, though the format expects each item in a file list to be a markdown hyperlink, and a minimal file with just the name is still a valid one. Some sites also publish llms-full.txt, a single file that bundles the full text of the site so an agent can read everything in one request instead of crawling many pages. The llms.txt of turva.dev departs from the file-list format on purpose and lists its agent endpoints as plain addresses rather than links, because two of them answer a plain GET with something other than 200 by design, the MCP endpoint with 405 and the x402 endpoint with 402, and the whole group keeps one plain format instead of mixing linked and unlinked lines within it. Its pricing, business details, engagement model and contact sections also carry plain values rather than page addresses, so those lines were never links to begin with.
+The file opens with the site name as an H1, then a short summary as a blockquote, then the key pages and resources as markdown links grouped under H2 headings. Only the H1 is required. Everything after it, the summary, the headings, and the grouped links, is recommended rather than mandatory. The format does expect each item in a file list to be a markdown hyperlink, and a minimal file with just the name is still a valid one. Some sites also publish llms-full.txt, a single file that bundles the full text of the site so an agent can read everything in one request instead of crawling many pages.
 
-The proposal reached v2 in August 2026 and the file format did not change. What changed is how an agent finds the machine-readable forms. A page now names them with two standard link relations, rel="alternate" type="text/markdown" for the markdown version of the page and rel="describedby" for the llms.txt that covers it, given either as HTML link elements or as an HTTP Link header. v2 also accepts both address forms for a markdown version, page.html.md and page.md, and it drops the context expansion tooling that v1 described, so the Optional section is a convention for secondary links and carries no mechanical meaning any more.
+The llms.txt of turva.dev departs from the file-list format on purpose. It lists its agent endpoints as plain addresses rather than links, for two reasons. First, two of them answer a plain GET with something other than 200 by design, the MCP endpoint with 405 and the x402 endpoint with 402. Second, the whole group keeps one plain format instead of mixing linked and unlinked lines within it. Its pricing, business details, engagement model and contact sections also carry plain values rather than page addresses, so those lines were never links to begin with.
+
+The proposal reached v2 in August 2026 and the file format did not change. What changed is how an agent finds the machine-readable forms. A page now names them with two standard link relations, given either as HTML link elements or as an HTTP Link header. The relation rel="alternate" type="text/markdown" is for the markdown version of the page, and rel="describedby" is for the llms.txt that covers it.
+
+v2 also accepts both address forms for a markdown version, page.html.md and page.md. It drops the context expansion tooling that v1 described, so the Optional section is a convention for secondary links and carries no mechanical meaning any more.
 
 ## How clients find it
 
-A client finds llms.txt at the root of the site, /llms.txt, or through the rel="describedby" link a page names, and it finds the markdown version of a page through rel="alternate" or by asking for text/markdown. The llms.txt proposal recommends the markdown address and the two link relations and does not require that negotiation, and HTTP lets a server that has no markdown version disregard the Accept header and send HTML, so a client that asks for text/markdown reads the Content-Type of the answer and falls back to the declared markdown address. For a client that does fetch it, the file saves cost and adds clarity. A normal HTML page wraps the content in navigation markup and scripts that an agent has to read past, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise. On turva.dev the markdown version of a page costs a fraction of the HTML, which lowers the chance that a long page runs past a reading tool's content limit and arrives cut short. turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. Whether a client fetches any of it depends on the client.
+A client finds llms.txt at the root of the site, /llms.txt, or through the rel="describedby" link a page names. It finds the markdown version of a page through rel="alternate" or by asking for text/markdown.
+
+The llms.txt proposal recommends the markdown address and the two link relations and does not require that negotiation. HTTP lets a server that has no markdown version disregard the Accept header and send HTML. A client that asks for text/markdown therefore reads the Content-Type of the answer and falls back to the declared markdown address.
+
+For a client that does fetch it, the file saves cost and adds clarity. A normal HTML page wraps the content in navigation markup and scripts that an agent has to read past, and that spends tokens and invites mistakes. An llms.txt file, paired with markdown content negotiation, lets an agent fetch a clean text version and skip the noise.
+
+On turva.dev the markdown version of a page costs a fraction of the HTML. That lowers the chance that a long page runs past a reading tool's content limit and arrives cut short. turva.dev publishes llms.txt and llms-full.txt, serves markdown on request, and publishes the markdown version of every page at its own .md address with both v2 link relations. Whether a client fetches any of it depends on the client.
 
 ## What it does not replace
 
-llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt. A sitemap lists the URLs a site wants crawlers to find, the canonical ones it prefers when the same content sits at more than one address, not necessarily every URL that exists. robots.txt sets crawl rules. llms.txt is a curated, human-written map of what matters, aimed at models. The three work together. Google states that Search, including its generative features, ignores the file, so publish it for the clients that fetch it rather than as a route into Google or into search rankings.
+llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt. A sitemap lists the URLs a site wants crawlers to find. These are the canonical ones it prefers when the same content sits at more than one address, not necessarily every URL that exists. robots.txt sets crawl rules. llms.txt is a curated, human-written map of what matters, aimed at models. The three work together. Google states that Search, including its generative features, ignores the file, so publish it for the clients that fetch it rather than as a route into Google or into search rankings.
 
 ## Does llms.txt really work?
 
 It works as a map for a client that fetches it, but in one large log study 97% of files received no request in a month. It has not been shown to earn AI citations, so publish it for coding agents rather than as a route to visibility.
 
-Ahrefs measured requests across 137 210 domains in May 2026. About 38 000 of them had a valid file, and 97% of those files received no request that month. GPTBot and Claude Code were among the most frequent AI requesters in that data, and Ahrefs notes that a request shows a file was fetched and does not show that anything acted on it. SE Ranking modelled nearly 300 000 domains and found no link between having the file and how often a domain is cited. Both are vendor studies of their own samples, and neither measures every client.
+Ahrefs measured requests across 137 210 domains in May 2026. About 38 000 of them had a valid file, and 97% of those files received no request that month. GPTBot and Claude Code were among the most frequent AI requesters in that data. Ahrefs notes that a request shows a file was fetched and does not show that anything acted on it. SE Ranking modelled nearly 300 000 domains and found no link between having the file and how often a domain is cited. Both are vendor studies of their own samples, and neither measures every client.
 
 The strongest case in this evidence is documentation read by coding agents. As of November 2026, Google's Gemini API docs publish an llms.txt index and recommend a project rule that tells coding agents to consult its docs MCP server or that index, so an agent without the server can start from the index. A site whose readers work through coding agents has a stronger reason to publish the file than a site that hopes to be cited.
 
@@ -6631,7 +6656,7 @@ The site name and a short summary, then the key pages and resources as markdown 
 
 **What changed in v2 of llms.txt?**
 
-The file format did not change. v2 added two standard link relations so an agent finds a page's markdown version and its llms.txt without guessing, accepted page.md alongside page.html.md as the address of a markdown version, defined what an llms.txt in a subpath covers, and dropped the context expansion tooling along with the mechanical meaning of the Optional section.
+The file format did not change. v2 added two standard link relations so an agent finds a page's markdown version and its llms.txt without guessing. It also accepted page.md alongside page.html.md as the address of a markdown version and defined what an llms.txt in a subpath covers. It dropped the context expansion tooling along with the mechanical meaning of the Optional section.
 
 ## Sources
 
@@ -6662,7 +6687,7 @@ An MCP server card is a small JSON file that describes a site's Model Context Pr
 
 ## What an MCP server is
 
-An MCP server is a program that provides context to MCP clients, in the words of the [MCP architecture overview](https://modelcontextprotocol.io/docs/learn/architecture). An AI application acts as the host and opens one client for each server it connects to. The server can run on the same machine, as the filesystem server does when Claude Desktop launches it over the STDIO transport, or remotely over Streamable HTTP, as the official Sentry MCP server does.
+An MCP server is a program that provides context to MCP clients, in the words of the [MCP architecture overview](https://modelcontextprotocol.io/docs/learn/architecture). An AI application acts as the host and opens one client for each server it connects to. The server can run on the same machine, as the filesystem server does when Claude Desktop launches it over the STDIO transport. It can also run remotely over Streamable HTTP, as the official Sentry MCP server does.
 
 What a server offers comes in three core primitives, and a client can ask for each kind with a list request such as tools/list:
 
@@ -6674,19 +6699,29 @@ The card only describes a server. It does none of that work itself.
 
 ## What the card states
 
-A useful card states the server name, the endpoint and the transport, in a shape a client can parse without guessing. The turva.dev card also lists the tools the server offers. The accepted proposal leaves that list to the live MCP connection instead, since a tools list answer from the running server does not depend on a separate static copy the way a list in a card does. A client may still cache that answer, and the protocol treats the cache lifetime as a freshness hint that does not guarantee the list is current.
+A useful card states the server name, the endpoint and the transport, in a shape a client can parse without guessing. The turva.dev card also lists the tools the server offers. The accepted proposal leaves that list to the live MCP connection instead. It does so because a tools list answer from the running server does not depend on a separate static copy the way a list in a card does. A client may still cache that answer, and the protocol treats the cache lifetime as a freshness hint that does not guarantee the list is current.
 
 ## Where discovery can fail
 
-Finding a card is not the same as confirming the server works. A card can exist at a stale path, point to an endpoint that has moved, or name a transport the client does not support, and a client that stops at the card being found has not checked any of that. The card, the live endpoint and the client's own protocol support all have to agree before a connection succeeds, and only the connection attempt itself confirms that they do. The extension specification adds that a client MUST NOT treat a card's contents as authoritative for security or access-control decisions, and SHOULD verify the card's claims against the live connection, preferring the runtime values where the two disagree.
+Finding a card is not the same as confirming the server works. A card can exist at a stale path, point to an endpoint that has moved, or name a transport the client does not support. A client that stops at the card being found has not checked any of that. The card, the live endpoint and the client's own protocol support all have to agree before a connection succeeds, and only the connection attempt itself confirms that they do.
+
+The extension specification adds that a client MUST NOT treat a card's contents as authoritative for security or access-control decisions. It also says that a client SHOULD verify the card's claims against the live connection, preferring the runtime values where the two disagree.
 
 ## How it fits with other discovery files
 
-A server card sits in the same family as other well-known manifests a client looks for, such as an API catalog, an OpenAPI description and OAuth discovery. Each one removes a guess. The card answers which MCP server a site runs and how to reach it, the API catalog answers what endpoints exist, and OAuth discovery answers how to authenticate. turva.dev publishes a server card that points to a read-only MCP server, which exposes the same agent-readiness data that the site shows to people, so a client can query the data directly rather than scraping a page.
+A server card sits in the same family as other well-known manifests a client looks for, such as an API catalog, an OpenAPI description and OAuth discovery. Each one removes a guess. The card answers which MCP server a site runs and how to reach it. The API catalog answers what endpoints exist, and OAuth discovery answers how to authenticate.
+
+turva.dev publishes a server card that points to a read-only MCP server. The server exposes the same agent-readiness data that the site shows to people, so a client can query the data directly rather than scraping a page.
 
 ## Practical steps
 
-Publish the card at the location your target clients actually check, and confirm it with a live connection attempt rather than a directory listing. The extension's discovery document requires HTTPS with TLS 1.2 or later in production, and CORS headers that let a browser-based client read the card, such as Access-Control-Allow-Origin: *. turva.dev's own card is served with those CORS headers. Where a client supports the location the proposal recommends, publish there too rather than choosing one over the other, since the two conventions have not converged. turva.dev itself does not yet serve its card at the MCP endpoint URL followed by /server-card. The card is a low-cost step for a site that wants to expose a capability to agents, and it only becomes useful once a client can reach and use the endpoint it names. For an audit of whether a site's MCP server card and its live endpoint agree, contact info@turva.dev.
+Publish the card at the location your target clients actually check, and confirm it with a live connection attempt rather than a directory listing.
+
+The extension's discovery document requires HTTPS with TLS 1.2 or later in production, and CORS headers that let a browser-based client read the card, such as Access-Control-Allow-Origin: *. turva.dev's own card is served with those CORS headers.
+
+Where a client supports the location the proposal recommends, publish there too rather than choosing one over the other, since the two conventions have not converged. turva.dev itself does not yet serve its card at the MCP endpoint URL followed by /server-card.
+
+The card is a low-cost step for a site that wants to expose a capability to agents. It only becomes useful once a client can reach and use the endpoint it names. For an audit of whether a site's MCP server card and its live endpoint agree, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -6696,7 +6731,7 @@ An MCP server is a program that provides context to MCP clients through the Mode
 
 **What is an MCP server card?**
 
-An MCP server card is a small JSON file that describes a site's Model Context Protocol server, its endpoint and its transport, so a client can attempt a connection without a human wiring it up first. The accepted proposal leaves the tool list to the live connection rather than to the card.
+An MCP server card is a small JSON file that describes a site's Model Context Protocol server, its endpoint and its transport. That lets a client attempt a connection without a human wiring it up first. The accepted proposal leaves the tool list to the live connection rather than to the card.
 
 **Why publish an MCP server card?**
 
@@ -6940,7 +6975,9 @@ Yes. Search match is scored on relevance to a query and on ranking signals, whil
 
 Structured data makes page facts explicit, but those facts must agree with the visible page and underlying source. Valid syntax can still carry a wrong price or availability.
 
-JSON-LD is a block of structured data in a page that states facts in a form a machine can read without interpreting prose. It tells an agent what the page is about, who runs it, what it sells, and at what price, as data rather than as sentences an agent has to parse and might misread. A human reads a price from a layout and a currency symbol. An agent reading raw HTML has to guess which number is the price and which is a shipping estimate, unless the page also carries that fact as Microdata or RDFa, two other structured-data formats embedded directly in HTML tags, and a JSON-LD Offer with a price and a currency removes the same guess without relying on either one.
+JSON-LD is a block of structured data in a page that states facts in a form a machine can read without interpreting prose. It tells an agent what the page is about, who runs it, what it sells, and at what price. It does so as data rather than as sentences an agent has to parse and might misread.
+
+A human reads a price from a layout and a currency symbol. An agent reading raw HTML has to guess which number is the price and which is a shipping estimate, unless the page also carries that fact as Microdata or RDFa. Those are two other structured-data formats embedded directly in HTML tags. A JSON-LD Offer with a price and a currency removes the same guess without relying on either one.
 
 ## Facts as data
 
@@ -6948,17 +6985,21 @@ Structured data connects a page to the wider graph an agent builds. Declared typ
 
 ## Agreement across surfaces
 
-The cost of getting it wrong is silent. An agent does not report that it failed to parse a price, it just acts on a worse guess. Clean JSON-LD is one of the cheapest ways to make a page legible, and it sits in the same family as the response headers and well-known manifests an agent reads first.
+The cost of getting it wrong is silent. An agent does not report that it failed to parse a price, it just acts on a worse guess. Clean JSON-LD is one of the cheapest ways to make a page legible. It sits in the same family as the response headers and well-known manifests an agent reads first.
 
-The opposite failure is data that parses and is wrong. A product page that publishes a price of 0 and an availability of InStock on every item is structurally valid, and an agent that trusts it will offer a customer a free product that is in stock. An Organization node whose email field holds a first name validates just as well. Wrong data is worse than missing data, because missing data makes an agent guess and wrong data makes it confident. The check is the one a buyer would make: read the JSON-LD next to the page and ask whether the two say the same thing, and where a source system feeds the page, whether the JSON-LD also agrees with that source.
+The opposite failure is data that parses and is wrong. A product page that publishes a price of 0 and an availability of InStock on every item is structurally valid. An agent that trusts it will offer a customer a free product that is in stock. An Organization node whose email field holds a first name validates just as well.
+
+Wrong data is worse than missing data, because missing data makes an agent guess and wrong data makes it confident. The check is the one a buyer would make: read the JSON-LD next to the page and ask whether the two say the same thing. Where a source system feeds the page, ask whether the JSON-LD also agrees with that source.
 
 ## Validation
 
-Four separate questions get asked here, and each has its own answer. Syntax validity asks only whether the JSON-LD parses and the declared type is well-formed, because JSON-LD itself makes no property mandatory and schema.org leaves that to each consumer. Whether the declared type also carries the fields a named consumer requires, such as Google's rich result rules, is a separate, consumer-specific check: it can fail even when the syntax itself is perfectly valid, because that requirement comes from the consumer and not from JSON-LD or schema.org. A validator answers that from the markup alone, and a report should name which rules it checked. Semantic correctness asks whether the values in that valid structure match the page a person sees and the system that feeds it, and a validator cannot answer that, a person has to compare the two. AI source selection asks whether an assistant picks this page as the source for an answer at all, which depends on the assistant, the query and the moment, and neither syntax nor semantic correctness settles it on its own. The fictional example in the [sample audit report, finding F1](/samples/audit-report#f1-every-product-publishes-a-price-of-0-and-an-availability-of-instock-on-all-three-surfaces) illustrates the gap: a price of 0 passes every syntax check, and an invented assistant answer then calls the whole catalog free. The example is made up for illustration and is not evidence of how any assistant behaves.
+Four separate questions get asked here, and each has its own answer. Syntax validity asks only whether the JSON-LD parses and the declared type is well-formed, because JSON-LD itself makes no property mandatory and schema.org leaves that to each consumer. Whether the declared type also carries the fields a named consumer requires, such as Google's rich result rules, is a separate, consumer-specific check. It can fail even when the syntax itself is perfectly valid, because that requirement comes from the consumer and not from JSON-LD or schema.org. A validator answers that from the markup alone, and a report should name which rules it checked. Semantic correctness asks whether the values in that valid structure match the page a person sees and the system that feeds it. A validator cannot answer that. A person has to compare the two. AI source selection asks whether an assistant picks this page as the source for an answer at all. That depends on the assistant, the query and the moment, and neither syntax nor semantic correctness settles it on its own.
+
+The fictional example in the [sample audit report, finding F1](/samples/audit-report#f1-every-product-publishes-a-price-of-0-and-an-availability-of-instock-on-all-three-surfaces) illustrates the gap. A price of 0 passes every syntax check, and an invented assistant answer then calls the whole catalog free. The example is made up for illustration and is not evidence of how any assistant behaves.
 
 ## Limits
 
-Clean, correct JSON-LD makes a page legible. It does not guarantee that an assistant reads it, cites it, or answers a question the way the site would want. Legibility removes the guess an agent would otherwise make about the page's own facts. What an assistant does with a legible page is a separate, observed question, and it is checked by putting real questions to real assistants rather than by reading the markup again.
+Clean, correct JSON-LD makes a page legible. It does not guarantee that an assistant reads it, cites it, or answers a question the way the site would want. Legibility removes the guess an agent would otherwise make about the page's own facts. What an assistant does with a legible page is a separate, observed question. It is checked by putting real questions to real assistants rather than by reading the markup again.
 
 turva.dev declares JSON-LD for its organization, the person behind it, its services and its guides. For an audit of a site's structured data, contact info@turva.dev.
 
@@ -6970,7 +7011,7 @@ JSON-LD is a block of structured data in a page that states facts in a form a ma
 
 **Why does structured data matter for agents?**
 
-An agent that parses raw HTML without a layout model has to guess which number is a price and which is a shipping estimate, unless the page carries that fact as Microdata or RDFa instead. A JSON-LD Offer with a price and a currency removes the same guess for an agent that reads structured data first, and declared types let an agent place a page in context. Trust and citation stay decisions of the system that reads the page.
+An agent that parses raw HTML without a layout model has to guess which number is a price and which is a shipping estimate, unless the page carries that fact as Microdata or RDFa instead. A JSON-LD Offer with a price and a currency removes the same guess for an agent that reads structured data first. Declared types let an agent place a page in context. Trust and citation stay decisions of the system that reads the page.
 
 **What should JSON-LD state on a page?**
 
@@ -6978,7 +7019,7 @@ What the page is about, who runs it, what it sells and at what price, as data ra
 
 **Can structured data be valid and still wrong?**
 
-Yes. A price of 0 with an availability of InStock on every product passes every syntax check and tells an agent the whole catalog is free, and a contact field holding the wrong kind of value validates the same way. A syntax validator reads the shape, so a person has to compare the data with the page it describes.
+Yes. A price of 0 with an availability of InStock on every product passes every syntax check and tells an agent the whole catalog is free. A contact field holding the wrong kind of value validates the same way. A syntax validator reads the shape, so a person has to compare the data with the page it describes.
 
 ## Sources
 
@@ -7060,15 +7101,21 @@ Agentic Resource Discovery, or ARD, is an open specification for telling AI agen
 
 ## What the manifest contains
 
-A site advertises its agentic resources by serving a static JSON manifest under /.well-known. ARD v0.91, published 26 August 2026, names the file /.well-known/ard.json and the link relation ard, and says a conformant client MUST read that path. The predecessor path /.well-known/ai-catalog.json and the relation ai-catalog are ones a client MAY also consult, so a site that serves only the old path may not be found by a client that follows the current revision.
+A site advertises its agentic resources by serving a static JSON manifest under /.well-known. ARD v0.91, published 26 August 2026, names the file /.well-known/ard.json and the link relation ard, and says a conformant client MUST read that path. The predecessor path /.well-known/ai-catalog.json and the relation ai-catalog are ones a client MAY also consult. A site that serves only the old path may therefore not be found by a client that follows the current revision.
 
-The current specification defines the manifest itself as a JSON document holding an entries array. Other top-level members, such as the specVersion and host fields the predecessor AI Catalog convention still carries, are transport-defined and ignored by ARD. Each entry describes one resource with a stable identifier, a display name, a type and a url or inline data. An ARD entry SHOULD also carry representativeQueries, two to five sample questions the resource can answer, because a registry builds its search index from them and an entry without them cannot be found by search. The schema still accepts an entry without them and the conformance tester only warns, so a manifest can validate and still stay out of a registry's search results. A resource can be an MCP server, an A2A agent, an API or a skill set. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
+The current specification defines the manifest itself as a JSON document holding an entries array. Other top-level members, such as the specVersion and host fields the predecessor AI Catalog convention still carries, are transport-defined and ignored by ARD. Each entry describes one resource with a stable identifier, a display name, a type and a url or inline data.
+
+An ARD entry SHOULD also carry representativeQueries, two to five sample questions the resource can answer. A registry builds its search index from them, so an entry without them cannot be found by search. The schema still accepts an entry without them and the conformance tester only warns, so a manifest can validate and still stay out of a registry's search results.
+
+A resource can be an MCP server, an A2A agent, an API or a skill set. A registry can crawl published catalogs and answer a capability query by pointing an agent at the right resource.
 
 ## Where it sits, and how it differs from llms.txt
 
-ARD is a discovery layer, not a transport. It helps an agent find the right resource, which the agent then calls through that resource's own protocol, whether MCP, A2A or a plain API. Discovery comes first and invocation second. The catalog does not replace the manifests it points to, it indexes them, so a site keeps its server card, its agent card and its OpenAPI description, and adds one file that ties them together.
+ARD is a discovery layer, not a transport. It helps an agent find the right resource, which the agent then calls through that resource's own protocol, whether MCP, A2A or a plain API. Discovery comes first and invocation second. The catalog does not replace the manifests it points to. It indexes them, so a site keeps its server card, its agent card and its OpenAPI description, and adds one file that ties them together.
 
-llms.txt tells an agent where a site's content lives. An ai-catalog or ard manifest tells an agent which agentic resources the site exposes and how to reach them. The two are complementary, and neither is a ranking file. Google [has said publicly](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) that llms.txt does not affect its search results, and the same holds for a resource catalog: neither changes ranking in Google Search. That is a statement about Google Search specifically. An ARD registry is a different kind of index: it crawls published catalogs and answers a capability query over them through its own required search API, so these files are read by agents that act and by the registries that index them for that purpose. A general web search engine may still crawl and index such a file, and Google says that does not mean it treats the file in a special way.
+llms.txt tells an agent where a site's content lives. An ai-catalog or ard manifest tells an agent which agentic resources the site exposes and how to reach them. The two are complementary, and neither is a ranking file. Google [has said publicly](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) that llms.txt does not affect its search results, and the same holds for a resource catalog: neither changes ranking in Google Search. That is a statement about Google Search specifically.
+
+An ARD registry is a different kind of index. It crawls published catalogs and answers a capability query over them through its own required search API. These files are therefore read by agents that act and by the registries that index them for that purpose. A general web search engine may still crawl and index such a file, and Google says that does not mean it treats the file in a special way.
 
 ## Draft status and how to validate a manifest
 
@@ -7078,15 +7125,19 @@ The specification is early. As of October 2026 the repository carries a versione
 
 A technical scan can check whether a manifest resolves at the declared path, parses as valid JSON and names entries with a url that answers. A manual review reads whether those entries point at resources that actually work, and whether the descriptions match what the resource does. Neither checks whether an agent has found the catalog through observed use, which is a separate question from whether the file exists and parses.
 
-Adoption has started. A June 2026 check against public well-known paths found no discoverable ai-catalog.json at any of the launch partners the [announcement](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/) shows. On 31 October 2026 two large hosts, github.com and huggingface.co, both served one at /.well-known/ai-catalog.json with the application/ai-catalog+json media type. The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
+Adoption has started. A June 2026 check against public well-known paths found no discoverable ai-catalog.json at any of the launch partners the [announcement](https://developers.googleblog.com/announcing-the-agentic-resource-discovery-specification/) shows. On 31 October 2026 two large hosts, github.com and huggingface.co, both served one at /.well-known/ai-catalog.json with the application/ai-catalog+json media type.
 
-turva.dev indexes the same four resources at both paths, /.well-known/ard.json with the MCP Server Card media type on its MCP entry and rel="ard" in every page head, and /.well-known/ai-catalog.json for clients and scanners that still read the predecessor. Only ard.json carries representativeQueries for each entry. Both index its MCP server, its A2A agent, its API and its agent skills, each of which already resolves on its own. The separate MCP Server Card discovery document, from the extension repository that is still labeled experimental, keeps its own convention, an AI Catalog at /.well-known/ai-catalog.json, so the two profiles are described apart and not merged. For an audit of a site's discovery surface, contact info@turva.dev.
+The value is the same as every other discovery surface. A capability an agent cannot find is a capability that does not exist for that agent, and one predictable file turns a set of separate manifests into a single answer.
+
+turva.dev indexes the same four resources at both paths. The first is /.well-known/ard.json, with the MCP Server Card media type on its MCP entry and rel="ard" in every page head. The second is /.well-known/ai-catalog.json, for clients and scanners that still read the predecessor. Only ard.json carries representativeQueries for each entry. Both index its MCP server, its A2A agent, its API and its agent skills, each of which already resolves on its own.
+
+The separate MCP Server Card discovery document, from the extension repository that is still labeled experimental, keeps its own convention, an AI Catalog at /.well-known/ai-catalog.json. The two profiles are therefore described apart and not merged. For an audit of a site's discovery surface, contact info@turva.dev.
 
 ## Frequently asked
 
 **What is an ai-catalog.json?**
 
-An ai-catalog.json is a static JSON manifest at /.well-known/ai-catalog.json that lists the agentic resources a site offers, such as its MCP server, A2A agent and API, each with an identifier, type, url and description, so agents and registries can discover them from one file. Since ARD v0.91 the same manifest shape is published as /.well-known/ard.json, and ai-catalog.json is the predecessor path that a client may still consult.
+An ai-catalog.json is a static JSON manifest at /.well-known/ai-catalog.json that lists the agentic resources a site offers, such as its MCP server, A2A agent and API. Each has an identifier, type, url and description. That lets agents and registries discover them from one file. Since ARD v0.91 the same manifest shape is published as /.well-known/ard.json, and ai-catalog.json is the predecessor path that a client may still consult.
 
 **Does Agentic Resource Discovery affect search ranking?**
 
@@ -7113,17 +7164,23 @@ Under ARD v0.91 at /.well-known/ard.json, announced with a link rel="ard" in the
 
 Authentication identifies a client. Authorization determines what it may access or do. Discovery metadata explains the available flow, while the service must enforce the permissions.
 
-Authentication tells a site who is asking. Authorization tells the site what that identity may do. A client can authenticate successfully and still be authorized for nothing beyond a read-only scope, and it is authorization, not authentication, that turns a read-only client into one that can act on a person's behalf.
+A client can authenticate successfully and still be authorized for nothing beyond a read-only scope. It is authorization, not authentication, that turns a read-only client into one that can act on a person's behalf.
 
-The pattern follows existing standards. OAuth discovery at a well-known path tells an agent where to request access and, when the metadata lists them, what scopes exist. An authorization server and a protected resource description let the agent ask for a token limited to a specific permission rather than a blanket login. When a site also advertises an agent registration flow, an agent can register and claim access on a user's behalf without someone provisioning credentials by hand. None of this removes the case for a person confirming a specific high-stakes action at the point it happens, and a service can require that confirmation on top of scoped auth without contradicting either.
+The pattern follows existing standards. OAuth discovery at a well-known path tells an agent where to request access and, when the metadata lists them, what scopes exist. An authorization server and a protected resource description let the agent ask for a token limited to a specific permission rather than a blanket login. When a site also advertises an agent registration flow, an agent can register and claim access on a user's behalf without someone provisioning credentials by hand. None of this removes the case for a person confirming a specific high-stakes action at the point it happens. A service can require that confirmation on top of scoped auth without contradicting either.
 
 ## What an agent must discover before it acts
 
-Discovery answers two questions: where to request access, and what scopes exist. OAuth discovery at a well-known path answers the first. It answers the second only when the metadata publishes a scopes_supported list, which RFC 8414 for the authorization server and RFC 9728 for the protected resource both mark RECOMMENDED rather than required. Where the list exists, an agent can request a token limited to one named permission instead of a blanket login. A protected resource description lists the scopes the resource supports, and that list can be incomplete, so it is not the same as what one operation needs. The scope a request requires comes from the service's own challenge, such as the scope value in a WWW-Authenticate response, or from its documentation, and the agent asks for that scope and nothing wider, except in a step-up or reauthorization flow, where the MCP authorization specification recommends keeping the scopes already granted for other operations rather than dropping them. When the challenge names no scope, the same specification has the client request the scopes in the scopes_supported list of the protected resource metadata, which it describes as the minimal set for basic functionality, and leave the scope parameter out when that list is undefined. The service still decides at request time whether to grant the scope, and discovery only describes the route and does not grant anything by itself.
+Discovery answers two questions: where to request access, and what scopes exist. OAuth discovery at a well-known path answers the first. It answers the second only when the metadata publishes a scopes_supported list. RFC 8414 for the authorization server and RFC 9728 for the protected resource both mark that list RECOMMENDED rather than required.
+
+Where the list exists, an agent can request a token limited to one named permission instead of a blanket login. A protected resource description lists the scopes the resource supports, and that list can be incomplete, so it is not the same as what one operation needs. The scope a request requires comes from the service's own challenge, such as the scope value in a WWW-Authenticate response, or from its documentation. The agent asks for that scope and nothing wider, except in a step-up or reauthorization flow. There the MCP authorization specification recommends keeping the scopes already granted for other operations rather than dropping them.
+
+When the challenge names no scope, the MCP authorization specification has the client request the scopes in the scopes_supported list of the protected resource metadata. It describes that list as the minimal set for basic functionality. It also has the client leave the scope parameter out when that list is undefined. The service still decides at request time whether to grant the scope, and discovery only describes the route and does not grant anything by itself.
 
 ## The written entry point, and its two dialects
 
-A short auth description, sometimes published as an auth.md, gives an agent a human-readable entry point to the same flow. It is a convention rather than a standard, and as of September 2026 it is two conventions: the recipe the isitagentready.com scanner publishes and the open protocol WorkOS publishes name three of the same fields differently, read in full in the [post linked below](/blog/two-auth-md-dialects). The OAuth metadata documents define the machine-readable discovery. They can point to a human-readable documentation page and, in RFC 8414, to an OAuth client registration endpoint, but they do not define the auth.md format or an account sign-up flow for the agent's user, so an agent follows only the endpoints a site advertises for itself.
+A short auth description, sometimes published as an auth.md, gives an agent a human-readable entry point to the same flow. It is a convention rather than a standard. As of September 2026 it is two conventions: the recipe the isitagentready.com scanner publishes and the open protocol WorkOS publishes name three of the same fields differently. The [post linked below](/blog/two-auth-md-dialects) reads both in full.
+
+The OAuth metadata documents define the machine-readable discovery. They can point to a human-readable documentation page and, in RFC 8414, to an OAuth client registration endpoint. They do not define the auth.md format or an account sign-up flow for the agent's user, so an agent follows only the endpoints a site advertises for itself.
 
 ## Why scoped, discoverable auth matters
 
@@ -7135,7 +7192,7 @@ turva.dev publishes OAuth discovery, a protected resource description and an age
 
 **How do AI agents authenticate?**
 
-An agent authenticates to the service, and discoverable standards such as OAuth discovery at a well-known path tell it where to request access and, when the metadata lists them, what scopes exist. It can then request a token limited to a specific permission rather than a blanket login. A bearer token shows what access was granted, not which program sends the request: OAuth 2.0 forbids using a client identifier alone for client authentication, and any party that holds a bearer token can use it.
+An agent authenticates to the service. Discoverable standards such as OAuth discovery at a well-known path tell an agent where to request access and, when the metadata lists them, what scopes exist. It can then request a token limited to a specific permission rather than a blanket login. A bearer token shows what access was granted, not which program sends the request: OAuth 2.0 forbids using a client identifier alone for client authentication, and any party that holds a bearer token can use it.
 
 **Why does scoped, discoverable auth matter?**
 
@@ -7143,7 +7200,7 @@ A site that lets an agent act for a user or read private data without scoped aut
 
 **What does an agent need to discover before it can authenticate?**
 
-Where to request access and what scopes exist. OAuth discovery at a well-known path tells an agent where to request access, and its scopes_supported list names the scopes when the metadata carries one, since both metadata standards recommend the list without requiring it. With a scope named, the agent can request a token limited to a specific permission rather than a blanket login.
+Where to request access and what scopes exist. OAuth discovery at a well-known path tells an agent where to request access. The scopes_supported list names the scopes when the metadata carries one, since both metadata standards recommend the list without requiring it. With a scope named, the agent can request a token limited to a specific permission rather than a blanket login.
 
 ## Sources
 
@@ -7555,23 +7612,44 @@ Automatic purchasing is one authorized path among several, not the default behav
 
 ## What an agent needs to buy
 
-An agent needs three things in machine-readable form. It needs to find the offer, with a price and currency it can parse rather than infer from a layout. An agent that works through an API needs a checkout it can drive through a protocol, since a page built for a mouse gives it nothing to call. A browser agent can fill in the same form a person uses, at the cost of reading a layout that can change under it. And it needs the purchase to behave predictably from the same starting state, so a repeated call with the same idempotency key returns the same result instead of creating a second order, and a price or balance that changes between the quote and the confirmation comes back as a fresh quote rather than a silent substitution. A catalog that looks perfect to a person can still be opaque to an agent on all three counts.
+An agent needs three things in machine-readable form.
+
+- It needs to find the offer, with a price and currency it can parse rather than infer from a layout.
+- An agent that works through an API needs a checkout it can drive through a protocol, since a page built for a mouse gives it nothing to call. A browser agent can fill in the same form a person uses, at the cost of reading a layout that can change under it.
+- It needs the purchase to behave predictably from the same starting state. That means a repeated call with the same idempotency key returns the same result instead of creating a second order. It also means a price or balance that changes between the quote and the confirmation comes back as a fresh quote rather than a silent substitution.
+
+A catalog that looks perfect to a person can still be opaque to an agent on all three counts.
 
 ## The protocols in play
 
-Checkout is becoming a protocol rather than a page. OpenAI documents the Agentic Commerce Protocol as the connective layer between merchants and shoppers in ChatGPT. Google and Shopify introduced the Universal Commerce Protocol in early 2026, and it now carries its own discovery manifest at /.well-known/ucp. The discovery layer is settling on a small set of standards. An A2A Agent Card describes the interface, AP2 authorizes agent payments, ACP carries the checkout, and x402 lets an agent meet a price with HTTP 402 and continue. A site does not need all of them. It needs the ones its buyers' agents speak, declared where an agent looks.
+Checkout is becoming a protocol rather than a page. OpenAI documents the Agentic Commerce Protocol as the connective layer between merchants and shoppers in ChatGPT. Google and Shopify introduced the Universal Commerce Protocol in early 2026, and it now carries its own discovery manifest at /.well-known/ucp.
+
+The discovery layer is settling on a small set of standards. An A2A Agent Card describes the interface, AP2 authorizes agent payments, ACP carries the checkout, and x402 lets an agent meet a price with HTTP 402 and continue. A site does not need all of them. It needs the ones its buyers' agents speak, declared where an agent looks.
 
 ## Where the protocol draws the line
 
-UCP writes down the boundary between what an agent may finish alone and what a person has to approve. Its checkout capability is a state machine, and one of its states, requires_escalation, means the business needs buyer input its API cannot collect or buyer review that policy, regulatory or entitlement rules require, so programmatic execution stops there. Escalation is not failure. The specification defines an Embedded Checkout Protocol, which is checkout's own use of the shared Embedded Protocol transport rather than a mechanism built for escalation alone. It can carry an embedded checkout through a whole session, including the steps where the buyer has to enter something or approve something. When the checkout state says requires_escalation, the platform can hand the buyer to a continue_url instead, so the session is not thrown away. The cart carries a signals object for abuse prevention, and the specification is explicit that its values must not be buyer-asserted claims. A site that treats escalation as a dead end loses the sale at the exact point where a human was willing to finish it.
+UCP writes down the boundary between what an agent may finish alone and what a person has to approve. Its checkout capability is a state machine. One of its states, requires_escalation, means the business needs buyer input its API cannot collect or buyer review that policy, regulatory or entitlement rules require, so programmatic execution stops there. Escalation is not failure.
+
+The UCP specification defines an Embedded Checkout Protocol, which is checkout's own use of the shared Embedded Protocol transport rather than a mechanism built for escalation alone. It can carry an embedded checkout through a whole session, including the steps where the buyer has to enter something or approve something. When the checkout state says requires_escalation, the platform can hand the buyer to a continue_url instead, so the session is not thrown away.
+
+The UCP cart carries a signals object for abuse prevention, and the specification is explicit that its values must not be buyer-asserted claims. A site that treats escalation as a dead end loses the sale at the exact point where a human was willing to finish it.
 
 ## Where sites fail the agent
 
-A catalog can lose the agent before checkout. A price that appears only after JavaScript runs in the browser stops an agent that does not run JavaScript, a CAPTCHA wall stops one with no way to solve it, a maintenance interstitial stops any agent mid-flow, and a discovery file that claims a capability the endpoint does not answer stops one that trusted the file. Each one ends the purchase silently for the agent it stops. The agent does not complain: it stops, or it moves on to a seller whose path resolves. The failure looks like no traffic rather than a broken page, which is why it can go unmeasured.
+A catalog can lose the agent before checkout.
+
+- A price that appears only after JavaScript runs in the browser stops an agent that does not run JavaScript.
+- A CAPTCHA wall stops an agent with no way to solve it.
+- A maintenance interstitial stops any agent mid-flow.
+- A discovery file that claims a capability the endpoint does not answer stops an agent that trusted the file.
+
+Each one ends the purchase silently for the agent it stops. The agent does not complain: it stops, or it moves on to a seller whose path resolves. The failure looks like no traffic rather than a broken page, which is why it can go unmeasured.
 
 ## Readiness is testable
 
-Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops. turva.dev built its own agent commerce surface this way, across A2A, AP2, ACP and x402, and an independent scanner checks its discovery files. The path stops on purpose before payment: the ACP checkout answers not_ready_for_payment and the x402 endpoint answers 402 whether or not a payment is sent, because turva.dev sells on a written quote. Tested 2026-09-28 by sending a POST to /api/acp/checkout_sessions and a GET to /x402: both answered exactly as described. The test shows where the path stops. It does not show a payment accepted or settled automatically.
+Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops.
+
+turva.dev built its own agent commerce surface this way, across A2A, AP2, ACP and x402, and an independent scanner checks its discovery files. The path stops on purpose before payment. The ACP checkout answers not_ready_for_payment and the x402 endpoint answers 402 whether or not a payment is sent, because turva.dev sells on a written quote. Tested 2026-09-28 by sending a POST to /api/acp/checkout_sessions and a GET to /x402: both answered exactly as described. The test shows where the path stops. It does not show a payment accepted or settled automatically.
 
 For a website or API, the [audit](/agent-readiness-audit) covers the commerce surfaces among the rest.
 
@@ -7579,7 +7657,7 @@ For a website or API, the [audit](/agent-readiness-audit) covers the commerce su
 
 **What does an AI shopping agent need in order to buy?**
 
-An offer with a price and currency it can parse rather than infer from a layout, a checkout it can drive, through a protocol for an API agent or through the page's own form for a browser agent, and a purchase that behaves predictably from the same starting state, so a repeated call with the same idempotency key does not create a second order and a changed price or balance comes back as a fresh quote.
+An offer with a price and currency it can parse rather than infer from a layout. A checkout it can drive, through a protocol for an API agent or through the page's own form for a browser agent. A purchase that behaves predictably from the same starting state. That means a repeated call with the same idempotency key does not create a second order, and a changed price or balance comes back as a fresh quote.
 
 **What does requires_escalation mean in UCP?**
 
@@ -7587,7 +7665,7 @@ That the business needs buyer input its API cannot collect or buyer review that 
 
 **Why does a failed agent purchase look like no traffic?**
 
-A price that appears only after JavaScript runs in the browser stops an agent that does not run JavaScript, a CAPTCHA wall stops one with no way to solve it, a maintenance interstitial stops any agent mid-flow, and a discovery file that claims a capability the endpoint does not answer stops one that trusted the file. The agent does not complain about any of them: it stops, or it moves on to a seller whose path resolves.
+A price that appears only after JavaScript runs in the browser stops an agent that does not run JavaScript. A CAPTCHA wall stops an agent with no way to solve it. A maintenance interstitial stops any agent mid-flow. A discovery file that claims a capability the endpoint does not answer stops an agent that trusted the file. The agent does not complain about any of them: it stops, or it moves on to a seller whose path resolves.
 
 ## Sources
 
@@ -8346,7 +8424,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.247.0",
+    "version": "3.248.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8655,7 +8733,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.247.0",
+  "version": "3.248.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
