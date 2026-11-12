@@ -25,7 +25,7 @@ There is no build step. Wrangler bundles `src/worker.ts` when you run or deploy 
 
 The repository root holds the docs, `tools/` and `SECURITY.md`. The Worker project is the nested folder `turva-worker/`, with `src/worker.ts`, `test/`, `wrangler.jsonc` and `public/`.
 
-The routes `/nav.js`, `/blog-filter.js` and `/markdown-parity-check.js` serve JavaScript on purpose. Those browser scripts are kept as strings inside `src/worker.ts` and served from the Worker under `script-src 'self'`, so they need no inline script and no change to the content security policy. The third one only adds the busy state, the example button and the copy and save of the JSON report to the hosted Markdown parity check, and the form works without it.
+The routes `/nav.js`, `/blog-filter.js` and `/markdown-parity-check.js` serve JavaScript on purpose. Those browser scripts are kept as strings inside `src/worker.ts` and served from the Worker under `script-src 'self'`. They therefore need no inline script and no change to the content security policy. The third one only adds the busy state, the example button and the copy and save of the JSON report to the hosted Markdown parity check. The form works without it.
 
 ## Develop
 
@@ -46,7 +46,9 @@ node tools/verify.mts
 
 `tools/verify.mts`, the Worker's tests and the Worker itself import markdown-parity-check. If you only run the tests and `verify.mts`, `npm --prefix turva-worker ci --omit=dev --ignore-scripts` installs enough.
 
-The live variant contacts a fixed list of declared public endpoints and the separate MCP server. It also fetches three third-party pages (the Hardenize and Internet.nl website reports and the isitagentready.com home page), asks the DNS-over-HTTPS resolver at 1.1.1.2 for the site's mail domain records (with the machine's own resolver as a fallback), and sends POST requests to the Worker's A2A message route and to the MCP server. It also verifies the four signed manifests against the published JWKS. Adding `--twins` fetches every canonical page and its Markdown twin. The live checks do not deploy changes:
+The live variant contacts a fixed list of declared public endpoints and the separate MCP server. It also fetches three third-party pages (the Hardenize and Internet.nl website reports and the isitagentready.com home page). For the site's mail domain records it asks the DNS-over-HTTPS resolver at 1.1.1.2 (with the machine's own resolver as a fallback). It sends POST requests to the Worker's A2A message route and to the MCP server, and it verifies the four signed manifests against the published JWKS.
+
+Adding `--twins` fetches every canonical page and its Markdown twin. The live checks do not deploy changes:
 
 ```sh
 node tools/verify.mts --live
@@ -92,7 +94,7 @@ The [MCP server](https://github.com/erekola/turva-mcp#connect) runs separately. 
 Three mechanisms let someone outside turva.dev check a claim against evidence instead of taking it on trust:
 
 - A signature lets a reader confirm that a fetched manifest still matches the bytes that were signed. The four signed paths are `/llms.txt`, `/.well-known/agent.json`, `/.well-known/ai-plugin.json` and `/.well-known/mcp/server-card.json`, and `/.well-known/signatures.json` carries their signatures.
-- A public-site brief stays at its unlisted address until it is removed on request or expires, no later than 400 days after its latest publication, so the company it named can reread what was sent. [The legal page](https://turva.dev/legal) states the rule.
+- A public-site brief stays at its unlisted address until it is removed on request or expires, no later than 400 days after its latest publication. It stays there so the company it named can reread what was sent. [The legal page](https://turva.dev/legal) states the rule.
 - An npm package's provenance attestation lets an installer trace a published version back to the repository and workflow run that built it. Each package's SECURITY.md states its publishing provenance: [turva-llms-txt-validator](https://github.com/erekola/llms-txt-validator/blob/main/SECURITY.md) and [markdown-parity-check](https://github.com/erekola/markdown-parity-check/blob/main/SECURITY.md).
 
 ## Hosted Markdown parity check
@@ -105,7 +107,9 @@ Three mechanisms let someone outside turva.dev check a claim against evidence in
 - The `PARITY_LIMITER` binding allows about 10 checks per minute per client IP at each Cloudflare location. Without the binding the route answers 503 and runs nothing.
 - Every response to a check carries `Cache-Control: no-store`, and the route does not write the target address or the report to its logs.
 
-The page states the turva.dev limit in its introduction and again in the address field's own hint, so a reader sees it before typing an address. The Fill in an example button writes turva.dev's tools page into the Page URL field and resets the other options, and the Check button is the separate step that runs the comparison. That example returned a fail on 2026-09-11, described in [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree): the Related heading and its four links were in the Markdown and not in the HTML, while the same four targets were links inside the HTML page's tool cards. That was fixed, and on 2026-09-29 the example returned a pass with markdown-parity-check 0.2.17. It matched 26 of 26 HTML and Markdown blocks, with 0 errors, 0 warnings and 0 infos. The current pin is in package.json.
+The page states the turva.dev limit in its introduction and again in the address field's own hint, so a reader sees it before typing an address. The Fill in an example button writes turva.dev's tools page into the Page URL field and resets the other options. The Check button is the separate step that runs the comparison.
+
+That example returned a fail on 2026-09-11, described in [HTML and Markdown can disagree](https://turva.dev/blog/html-and-markdown-can-disagree). In that run the Related heading and its four links were in the Markdown and not in the HTML. The same four targets were links inside the HTML page's tool cards. The mismatch was fixed, and on 2026-09-29 the example returned a pass with markdown-parity-check 0.2.17. It matched 26 of 26 HTML and Markdown blocks, with 0 errors, 0 warnings and 0 infos. The current pin is in package.json.
 
 The pinned release can be older than the latest npm release, and the report's `toolVersion` field names the one that ran. A newer package reaches the hosted page only through a site release.
 
