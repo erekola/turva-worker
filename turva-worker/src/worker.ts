@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.246.0 - /services reads shorter (Tek-808, 2026-11-12): the five service sections show the price, the description, the contact link and the deliverables list of the audit and advisory sections, and each of the 18 subsections with delivery terms opens from its own heading as a details element whose summary is that heading, so every earlier anchor stays and the Markdown twin carries the same words as the page; the 381-word active security testing paragraph keeps only what its three lists do not say, long sentences are split, two long FAQ answers are four, and the audit's deliverables are a list. The page's one inline script opens a fold when a link points at its heading and opens every fold before printing, and the CSP hash follows it. No price, deadline, scope or term changed.
 // turva.dev worker v3.245.0 - round 26 open items (2026-11-11, Tek-806): the /blog card and its alt text no longer list three kinds, seven posts get a closing offer that says only what the audit page says, each with a dated correction line, the legal page says that the email reply confirming the written scope is the order, and the blog introduction and description limit the method and limits promise to the studies
 // turva.dev worker v3.244.0 - round 26 improvements (2026-11-11, Tek-805): a blog post closes with one next step outside main, the home and /services FAQ state that the audit reads the website and its APIs, /services sections end with a contact link, the audit page gains Terms in brief and says what the order is and keeps a summary of active security testing, llms.txt names agent operations, MCP server design and the VAT ID, two guides link the audit page and the sample, the blog kind Lab notes splits from Build notes, and four research descriptions lead with the finding
 // turva.dev worker v3.243.0 - security work follow-up (2026-11-11, Tek-802): the active security testing card on / and /services and the quotedAddOns scope in HOME_JSON and the MCP server card name GLM 5.3 and Burp Suite Professional; the add-on paragraph adds the test environment option, the coverage limit and how the report is checked and approved; the /services stop line describes the stop; the audit page names the GLM and Claude split; /legal defines security headers, makes the report section part of security work, adds Anthropic API retention and inference geography, the GLM-5.3 License, the German text of Melious's terms, Melious's OVH hardware and its storage-function exception, tightens the provider list and fixes the supervisory authority address and the Updates rule; the dated lab post gets two Corrected lines; llms.txt Engagement model and the services agent skill name the add-on and the model split (llms.txt and server card re-signed, MCP 1.10.1).
@@ -266,7 +267,7 @@ max_age: 604800
 
 const CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-NyoAAslzarv0/yZIRdcsrte3WIUdYpX3Vnjy/FMFe14='",
+  "script-src 'self' 'sha256-9CZbgnXRVMovEMtIPdG5WPhCET9/0d8T+B2MZmxD3CU='",
   "style-src 'self' 'unsafe-inline' data:",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -5558,13 +5559,26 @@ See the [sample audit report](/samples/audit-report) before choosing a service.
 
 A technical scan, a manual review of your website and API surfaces, and a recorded question set put to selected AI assistants. The report keeps the technical findings and the observed AI answers apart.
 
-The audit is delivered within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works. You receive the findings, a correction plan with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers. [Read the full scope and the deliverables](/agent-readiness-audit).
+The audit is delivered within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works.
+
+### What the audit delivers
+- The findings and a correction plan with acceptance checks.
+- One round of written follow-up questions, submitted within 14 calendar days of the report and answered within five business days. The written scope agreed before kickoff sets how many questions that round covers.
+- One re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.
+
+[Read the full scope and the deliverables](/agent-readiness-audit).
 
 [Ask about an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
 ### Active security testing
 
-Active security testing is an add-on to an audit, priced by quote for each written scope. It starts only after you sign a written authorization that names the targets, accounts, allowed actions and exclusions, and I have checked that you control every target, for example through a DNS TXT record or a token file. Where a target runs on a provider's infrastructure, such as a cloud host or a CDN, the provider's own testing policy must allow the test, or the provider must give written permission. The scope can be the agent surfaces the audit reads, such as MCP endpoints and APIs. It can also be your own AI agent, tested for prompt injection and tool misuse, or a web application, tested to the depth and roles the written scope states. For your own AI agent or a web application, the written scope names the environment the test runs in, which can be a test environment with synthetic data that you provide. The testing runs with GLM 5.3, an open-weight model, through Melious AI GmbH, as the legal page describes. A check the model declines or does not complete during the window is reported as not tested. A check the model runs can still miss a fault, so the report lists the checks that ran and does not claim that no other faults exist. The report is written and checked against the test's own records with GLM 5.3, and I read the finished report and approve it before it is sent. I do not reproduce each finding by hand. Denial of service and social engineering are excluded. Changes to production data are excluded too, apart from test records created through the test accounts you provide, which must not trigger payments, messages to real people or changes to data that does not belong to the test accounts. The test window is agreed in writing. If I am unable to work during the window, testing stops and the window moves to a new date you approve in writing. You receive a written report and one retest of the reported findings within 30 days of the report, on a day you choose in writing in advance. If you choose no day, the retest lapses. A test does not certify that a system is safe.
+Active security testing is an add-on to an audit, priced by quote for each written scope. It starts only after you sign a written authorization and I have checked that you control every target. Where a target runs on a provider's infrastructure, such as a cloud host or a CDN, the provider's own testing policy must allow the test, or the provider must give written permission.
+
+For your own AI agent or a web application, the written scope names the environment the test runs in, which can be a test environment with synthetic data that you provide.
+
+The testing runs with GLM 5.3, an open-weight model, through Melious AI GmbH, as the legal page describes. A check the model declines or does not complete during the window is reported as not tested. A check the model runs can still miss a fault, so the report lists the checks that ran and does not claim that no other faults exist. The report is written and checked against the test's own records with GLM 5.3, and I read the finished report and approve it before it is sent. I do not reproduce each finding by hand.
+
+The test window is agreed in writing. If I am unable to work during the window, testing stops and the window moves to a new date you approve in writing. A test does not certify that a system is safe.
 
 It is an add-on rather than a separate service because it builds on the audit. The audit maps your agent surfaces and measures them from the outside. I plan the test on the assumption that the audit's findings have been dealt with, which leaves the test window for what an outside read cannot show.
 
@@ -5589,7 +5603,7 @@ The written scope names which of these you buy. For your own AI agent, tools tha
 ### What is not included
 - Denial of service, load or stress testing.
 - Social engineering, phishing or physical access.
-- Changes to production data, apart from test records created through your test accounts.
+- Changes to production data, apart from test records created through your test accounts. Those records must not trigger payments, messages to real people or changes to data that does not belong to the test accounts.
 - A hosting provider's own infrastructure, its other customers and anything else outside the written scope.
 - Use of credentials, tokens or keys found during the test, which appear in the evidence you receive only in redacted form.
 
@@ -5633,15 +5647,15 @@ We check technical changes with the relevant scanner or a direct test. A scanner
 
 ### Change plan, deadline and billable day
 
-For separately scoped implementation days, I deliver a written change plan before the work day starts, listing each correction, its target system, dependencies and acceptance check. For the €499 correction add-on, the audit report is the change plan, and I do not promise a separate one.
+For separately scoped implementation days, I deliver a written change plan before the work day starts. It lists each correction, its target system, dependencies and acceptance check. For the €499 correction add-on, the audit report is the change plan, and I do not promise a separate one.
 
-Before that kickoff, I agree the completion deadline as a stated number of business days from kickoff, covering the whole add-on list or the separately scoped work. I use a separate implementation kickoff after the report and required access are ready, and obtain written approval before deploying production changes.
+Implementation has its own kickoff, after the report and the required access are ready. Before that kickoff, I agree the completion deadline as a stated number of business days from kickoff, covering the whole add-on list or the separately scoped work. I obtain written approval before deploying production changes.
 
 At that deadline, I deliver the changes with test results, deployment instructions, rollback instructions and a list of any unresolved external dependencies.
 
-For separately scoped work, I count one billable day as seven and a half hours of work, including implementation, testing and handover.
+For separately scoped work, one billable day is seven and a half hours of work, including implementation, testing and handover.
 
-I do not include recurring hosting, ongoing monitoring or maintenance after handover in the implementation fee.
+The implementation fee does not include recurring hosting, ongoing monitoring or maintenance after handover.
 
 ### What implementation needs from you
 
@@ -5649,9 +5663,9 @@ Before kickoff, I need your confirmed source facts, required business decisions,
 
 ### Checking and follow-up
 
-I run an acceptance check for every implemented correction, verify source changes separately from edge changes, and leave failed or unverified items open. A fix that fails its re-check is redone at no charge in the follow-up round of that re-check.
+I run an acceptance check for every implemented correction and verify source changes separately from edge changes. Failed or unverified items stay open. A fix that fails its re-check is redone at no charge in the follow-up round of that re-check.
 
-I include one round of implementation handover questions submitted within 14 calendar days of delivery and answer that round within five business days. The written scope agreed before kickoff sets how many questions that round covers.
+One round of implementation handover questions is included. Submit them within 14 calendar days of delivery, and I answer within five business days. The written scope agreed before kickoff sets how many questions that round covers.
 
 [Ask about implementation](mailto:info@turva.dev?subject=Implementation&body=Site%20or%20API%20URL%3A%20%0AWhat%20to%20implement%3A%20%0A)
 
@@ -5659,7 +5673,9 @@ I include one round of implementation handover questions submitted within 14 cal
 
 **€3,000. Per month. Minimum three months. Price valid until 2026-12-31.**
 
-If you are not satisfied with the first month, you can end the retainer by email sent at any time during the first month, up to the day before the second month starts. The retainer then ends when the first month ends, and the second and third months are not charged. Notice given in the second or third month ends the retainer at the end of the three-month minimum, and the months up to that end are charged. After the three-month minimum the retainer runs month to month, and either party can end it by email before the next month starts.
+If you are not satisfied with the first month, you can end the retainer by email sent at any time during the first month, up to the day before the second month starts. The retainer then ends when the first month ends, and the second and third months are not charged.
+
+Notice given in the second or third month ends the retainer at the end of the three-month minimum, and the months up to that end are charged. After the three-month minimum the retainer runs month to month, and either party can end it by email before the next month starts.
 
 Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next.
 
@@ -5682,9 +5698,9 @@ I attach the dated per-check results and recorded AI questions and answers to ea
 
 Before kickoff, I record the included sites, APIs, markets, languages, scanner profile, assistants and question set in a written baseline. The service month starts on the agreed written kickoff anniversary, and the quarterly summary follows within five business days after every third one.
 
-I include up to four written change reviews per service month, each covering one named deployment within that baseline, with unused reviews expiring at month end. Each month's scan and AI run finish by its final business day, on dates recorded in the kickoff plan.
+I include up to four written change reviews per service month. Each covers one named deployment within that baseline, and unused reviews expire at month end. Each month's scan and AI run finish by its final business day, on dates recorded in the kickoff plan.
 
-I exclude implementation, continuous monitoring, incident response and operating your production systems from this retainer.
+This retainer excludes implementation, continuous monitoring, incident response and operating your production systems.
 
 ### Advisory kickoff
 
@@ -5739,17 +5755,21 @@ The review package excludes production changes, penetration testing, continuous 
 
 ### Review kickoff requirements
 
-I need the workflow description, permission configuration, representative redacted traces, intended action limits and a named owner who can approve those limits in writing. Where the written scope covers tool and memory review, I also need the tool definitions and memory configuration, and the record of how tools and connectors change. The review also needs an agreed test environment or replay dataset and written permission for the specific tests, with real money movement and real deletion excluded from the review tests.
+I need the workflow description, permission configuration, representative redacted traces, intended action limits and a named owner who can approve those limits in writing. Where the written scope covers tool and memory review, I also need the tool definitions and memory configuration, and the record of how tools and connectors change.
+
+The review also needs an agreed test environment or replay dataset and written permission for the specific tests. Real money movement and real deletion are excluded from the review tests.
 
 I ask your named owner to confirm the intended limits against the draft map before I finalize the control specification. Dates in the written scope move by the business days spent waiting for that approval.
 
 ### Review acceptance checks
 
-I distinguish controls verified in the system from proposed controls and simulations, and leave failed or untested acceptance checks open. Acceptance checks compare delivery with the agreed workflow, action list, documents and ten scenarios, without treating successful tests as a safety certification.
+I distinguish controls verified in the system from proposed controls and simulations. Failed or untested acceptance checks stay open.
+
+Acceptance checks compare delivery with the agreed workflow, action list, documents and ten scenarios. I do not treat successful tests as a safety certification.
 
 ### Review follow-up and price
 
-I include one round of written questions submitted within 14 calendar days of the review package and answer it within five business days. The written scope agreed before kickoff sets how many questions that round covers.
+One round of written questions is included. Submit them within 14 calendar days of the review package, and I answer within five business days. The written scope agreed before kickoff sets how many questions that round covers.
 
 Before kickoff, I confirm the amount, currency, VAT treatment, payment milestones and any third-party costs in the written quote.
 
@@ -5795,11 +5815,11 @@ Design approval in writing comes before deployment, and I record any resulting s
 
 For every tool, I record tests for a valid request, invalid input, missing data, an unavailable source and the agreed access and response limits.
 
-I check the returned data against the source API, confirm that the interface exposes no write capability, compare the server card with the running endpoint and deliver the two named clients' connection and tool-call results with their versions, leaving failed or untested acceptance checks open. The work is done when the checks named in the written plan pass. Payment does not depend on an outside scanner's result.
+I check the returned data against the source API, confirm that the interface exposes no write capability and compare the server card with the running endpoint. I deliver the two named clients' connection and tool-call results with their versions. Failed or untested acceptance checks stay open. The work is done when the checks named in the written plan pass. Payment does not depend on an outside scanner's result.
 
 ### Server follow-up and price
 
-I include one round of written handover questions submitted within 14 calendar days of delivery and answer it within five business days. The written scope agreed before kickoff sets how many questions that round covers.
+One round of written handover questions is included. Submit them within 14 calendar days of delivery, and I answer within five business days. The written scope agreed before kickoff sets how many questions that round covers.
 
 Before kickoff, I confirm the amount, currency, VAT treatment, payment milestones and third-party costs in the written quote.
 
@@ -5821,11 +5841,19 @@ Yes. I sign your own NDA as it stands, at no charge, before material is shared.
 
 **How is our material handled?**
 
-Client material is kept only on systems needed for the work and deleted within thirty days of closure, as the legal page defines closure, unless the law requires retention. If two engagements overlap in the virtual machine, which is not the default, the earlier client's folder also stays in the restore point taken for the later one until that engagement closes, which can be more than thirty days after the earlier one closed. Four kinds of copy follow their own rules: bookkeeping material, which is kept for six years, what the AI model providers keep under their own terms, a backup copy until its rotation replaces it, and earlier versions of files, which exist only inside those backups and leave with them. Deleted client material has left every backup within 16 weeks of its deletion at most. Engagement email and its attachments are deleted under the same closing rule. The legal page explains each. Credentials are stored in an encrypted vault, apart from the test credentials of active security testing, which sit in the virtual machine only during the test or retest window. Backups are encrypted before upload.
+Client material is kept only on systems needed for the work and deleted within thirty days of closure, as the legal page defines closure, unless the law requires retention. Some copies follow their own rules, and the answer on copies that outlast the thirty days lists them. Engagement email and its attachments are deleted under the same closing rule. Credentials are stored in an encrypted vault, apart from the test credentials of active security testing, which sit in the virtual machine only during the test or retest window. Backups are encrypted before upload.
+
+**Which copies can outlast the thirty days?**
+
+Four kinds of copy follow their own rules: bookkeeping material, which is kept for six years, what the AI model providers keep under their own terms, a backup copy until its rotation replaces it, and earlier versions of files, which exist only inside those backups and leave with them. Deleted client material has left every backup within 16 weeks of its deletion at most. If two engagements overlap in the virtual machine, which is not the default, the earlier client's folder also stays in the restore point taken for the later one until that engagement closes. That can be more than thirty days after the earlier one closed. The legal page explains each.
 
 **Do you use AI tools?**
 
-Yes. Files needed for a task are processed by the provider of the AI tool in use. In an audit the tools read what your site and API serve publicly, and a test account is used only when you name it in writing and the written scope states what it allows. The tools work in a folder of your own inside a virtual machine that is kept apart from the rest of my workstation. In active security testing the tools send test traffic from that virtual machine only to the targets named in your signed authorization. Security work, meaning that testing and the audit's internet.nl tests, published security scans and security headers, runs with GLM 5.3 through Melious AI GmbH, a German company, and so does the report on that work. Melious states that it runs the model on its own hardware in Finland, and turva.dev's account is limited to that route. For that hardware, Melious's data processing agreement states that what the model reads, such as responses and tool output, is processed only in memory and is not stored, logged or used for training, apart from operational metadata such as token counts and processing the law requires. Anything stored with Melious's own storage functions is excepted too, and this work does not use them. Claude is the AI tool for the rest of the audit. Web test traffic is sent through Burp Suite Professional, and I switch off its own AI features. Material you want excluded is named in the NDA and kept out. If the excluded material is needed for the test, the affected part is tested by hand or left out of scope. Vault storage and a tool's runtime permissions are separate controls.
+Yes. Files needed for a task are processed by the provider of the AI tool in use. In an audit the tools read what your site and API serve publicly, and a test account is used only when you name it in writing and the written scope states what it allows. The tools work in a folder of your own inside a virtual machine that is kept apart from the rest of my workstation. Security work runs with GLM 5.3, and Claude is the AI tool for the rest of the audit. Material you want excluded is named in the NDA and kept out. If the excluded material is needed for an active security test, the affected part is tested by hand or left out of scope. Vault storage and a tool's runtime permissions are separate controls.
+
+**Which AI model handles the security work?**
+
+GLM 5.3 through Melious AI GmbH. In active security testing the tools send test traffic from the virtual machine the work runs in only to the targets named in your signed authorization. Security work, meaning that testing and the audit's internet.nl tests, published security scans and security headers, runs with GLM 5.3 through Melious AI GmbH, a German company, and so does the report on that work. Melious states that it runs the model on its own hardware in Finland, and turva.dev's account is limited to that route. For that hardware, Melious's data processing agreement states that what the model reads, such as responses and tool output, is processed only in memory. For that hardware, the agreement states that this content is not stored, logged or used for training, apart from operational metadata such as token counts and processing the law requires. Anything stored with Melious's own storage functions is excepted too, and this work does not use them. Web test traffic is sent through Burp Suite Professional, and I switch off its own AI features.
 
 **Does the audit assess our organization's readiness for AI?**
 
@@ -8289,7 +8317,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.245.0",
+    "version": "3.246.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8598,7 +8626,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.245.0",
+  "version": "3.246.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9279,9 +9307,27 @@ const WEBMCP_SCRIPT = `<script>
  }
  } catch (e) {}
 })();
+(function(){
+ // A fold opens when a link points at its heading, and every fold opens before printing.
+ try {
+ var openTarget = function () {
+  var id = window.location.hash ? window.location.hash.slice(1) : '';
+  var el = id ? document.getElementById(id) : null;
+  var fold = el && el.closest ? el.closest('details.fold') : null;
+  if (fold) fold.open = true;
+ };
+ var openAll = function () {
+  var folds = document.querySelectorAll('details.fold');
+  for (var k = 0; k < folds.length; k++) { folds[k].open = true; }
+ };
+ if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', openTarget); } else { openTarget(); }
+ window.addEventListener('hashchange', openTarget);
+ window.addEventListener('beforeprint', openAll);
+ } catch (e) {}
+})();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-11";
+const SITEMAP_LASTMOD = "2026-11-12";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -11332,6 +11378,36 @@ function mdOpenSec(path: string, heading: string, id?: string, extra?: string, l
     ? html.replace(/<pre><code>/g, '<pre tabindex="0"><code>')
     : html;
 }
+// Tek-808: a service section whose "### " subsections fold. Every subsection that markdownToHtml
+// renders as an h3 with an id becomes a <details> whose <summary> is that same h3, so the page
+// shows the price, the description and the deliverables first and the delivery terms on request.
+// The words, the heading ids and the Markdown twin stay as they are: a link to a subsection lands
+// on its heading, which is visible while the fold is closed, and the page adds no text the twin
+// does not carry. A closing links-only paragraph, the section's contact link, stays outside the
+// last fold. A section without a subsection throws, so a fold cannot vanish unnoticed.
+function mdFoldSec(path: string, heading: string, id?: string) {
+  const parts = mdSecBodyHtml(path, heading).split(/(?=<h3 id=")/);
+  const lead = parts.shift() || "";
+  if (!parts.length) throw new Error("mdFoldSec: no subsection to fold in " + path + " " + heading);
+  let tail = "";
+  const folds = parts.map((part, i) => {
+    const m = part.match(/^(<h3 id="[^"]+">[^]*?<\/h3>)([^]*)$/);
+    if (!m) throw new Error("mdFoldSec: unreadable subsection in " + path + " " + heading);
+    let rest = m[2];
+    if (i === parts.length - 1) {
+      const t = rest.match(/\s*(<p><a href="[^"]+">[^<]+<\/a><\/p>)\s*$/);
+      if (t) {
+        tail = "\n    " + t[1];
+        rest = rest.slice(0, t.index);
+      }
+    }
+    return `<details class="fold"><summary>${m[1]}</summary>${rest.replace(/\s+$/, "")}\n    </details>`;
+  });
+  return `<section class="sec" id="${id || mdSlug(heading)}"><h2>${renderInline(heading)}</h2>
+    ${lead.replace(/\s+$/, "")}
+    ${folds.join("\n    ")}${tail}
+  </section>`;
+}
 // Button rows read from the twin (Tek-484). A row's links sit in the twin as one paragraph
 // made only of markdown links, in the order and with the texts the buttons show, so an agent
 // reading the Markdown finds every link a person can press on the HTML page. Only the builders
@@ -12369,11 +12445,11 @@ ${cardPageNav("/services")}
     </ul>
     <p>${offerParas[0]}</p>
   </section>
-  ${mdOpenSec("/services", "Website and API agent-readiness audit", "audit")}
-  ${mdOpenSec("/services", "Implementation")}
-  ${mdOpenSec("/services", "Ongoing advisory", "advisory")}
-  ${mdOpenSec("/services", "Agent operations")}
-  ${mdOpenSec("/services", "MCP server design")}
+  ${mdFoldSec("/services", "Website and API agent-readiness audit", "audit")}
+  ${mdFoldSec("/services", "Implementation")}
+  ${mdFoldSec("/services", "Ongoing advisory", "advisory")}
+  ${mdFoldSec("/services", "Agent operations")}
+  ${mdFoldSec("/services", "MCP server design")}
   ${mdOpenSec("/services", "Work you can inspect", "how-the-method-is-measured")}
   ${mdFaqSec("/services", "Frequently asked", "questions")}
   <div class="start" id="how-to-start">
@@ -12462,6 +12538,15 @@ ${NAV_CORE_CSS}
 .sec ul.nope li{color:#9AA3A0;}
 .sec ul.nope li::before{content:"\\00B7";left:.4rem;top:-.05rem;color:#6F7A77;}
 .sec .fine,.fine{font-size:.9rem;color:#9AA3A0;margin:0 0 .6rem;}
+.sec details.fold{border-top:0.5px solid rgba(255,255,255,0.08);}
+.sec details.fold>summary{cursor:pointer;list-style:none;position:relative;padding:.85rem 2.2rem .85rem 0;}
+.sec details.fold>summary::-webkit-details-marker{display:none;}
+.sec details.fold>summary::before{content:"+";content:"+" / "";position:absolute;right:.5rem;top:.75rem;color:#5DF18F;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.25rem;line-height:1.4;}
+.sec details.fold[open]>summary::before{content:"\\2212";content:"\\2212" / "";}
+.sec details.fold>summary h3{display:inline;margin:0;scroll-margin-top:1rem;}
+.sec details.fold>summary:hover h3{color:#5DF18F;}
+.sec details.fold>summary:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
+.sec details.fold[open]{padding-bottom:.4rem;}
 .price-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;margin:-.4rem 0 1.1rem;}
 .price-line .price{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.35rem;font-weight:700;color:#5DF18F;}
 .price-line .terms{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;color:#9AA3A0;}

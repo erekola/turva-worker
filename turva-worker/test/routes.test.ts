@@ -1924,3 +1924,30 @@ test("/services: each of the five contact links carries the href of the matching
   assert.equal(services["Ask about agent operations or MCP server design"].length, 2, "agent operations and MCP server design share one draft");
   for (const [label, hrefs] of Object.entries(services)) for (const href of hrefs) assert.equal(href, contact[label][0], "same draft as /contact: " + label);
 });
+
+// Tek-808 (2026-11-12): /services folds the 18 delivery-terms subsections of its five service sections.
+// Each fold is a details element whose summary is the subsection's own h3, so every anchor stays on a heading that is
+// visible while the fold is closed. The contact links stay outside the folds, nothing opens by default, and the +/-
+// sign is decoration with an empty alternative text, as for the Menu summary (K5 in nav-a11y.test.ts).
+test("/services: 18 subsections fold into details with their own headings, the contact links stay visible (Tek-808)", async () => {
+  const html = await (await get("/services", { headers: { Accept: "text/html" } })).text();
+  const starts = html.match(/<details class="fold"><summary><h3 id="/g) || [];
+  assert.equal(starts.length, 18, "18 folds");
+  assert.equal((html.match(/<\/details>/g) || []).length, (html.match(/<details/g) || []).length, "every details element is closed, the Menu one included");
+  assert.equal((html.match(/<details/g) || []).length, starts.length + 1, "the 18 folds and the Menu are the only details elements");
+  const ids = [...html.matchAll(/<details class="fold"><summary><h3 id="([^"]+)">/g)].map((m) => m[1]);
+  assert.deepEqual(ids, [
+    "active-security-testing", "separately-scoped-implementation-days", "change-plan-deadline-and-billable-day",
+    "what-implementation-needs-from-you", "checking-and-follow-up", "evidence-and-scope", "advisory-kickoff", "checking-and-ending",
+    "review-deliverables", "review-scope", "review-kickoff-requirements", "review-acceptance-checks", "review-follow-up-and-price",
+    "server-deliverables", "server-scope", "server-kickoff-requirements", "server-acceptance-checks", "server-follow-up-and-price",
+  ], "the heading ids and their order");
+  assert.equal([...html.matchAll(/<details class="fold"><summary><h3 id="[^"]+">[^]*?<\/h3><\/summary>/g)].length, 18, "each summary holds its h3 and nothing else");
+  const folded = html.replace(/<details class="fold">[^]*?<\/details>/g, "");
+  assert.equal((folded.match(/>Ask about [^<]*<\/a>/g) || []).length, 5, "all five contact links sit outside the folds");
+  assert.equal((html.match(/<details class="fold" open/g) || []).length, 0, "no fold opens by default");
+  assert.ok(!/<details[^>]*\sopen[\s>=]/.test(html), "no details element carries open");
+  const src = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");
+  assert.ok(src.includes('.sec details.fold>summary::before{content:"+";content:"+" / "";'), "the closed sign carries the empty alternative text");
+  assert.ok(src.includes('.sec details.fold[open]>summary::before{content:"\\\\2212";content:"\\\\2212" / "";}'), "the open sign carries the empty alternative text");
+});
