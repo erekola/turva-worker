@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.247.0 - the audit page, the two tool pages, /company, /contact and /tools read shorter (Tek-808, 2026-11-12): sentences over 30 words are split, the long paragraphs about the audit's deliverables, the validator's request headers and its 22 October 2026 measurement, the CLI's error shapes and the parity check's HTTP status codes are lists or shorter paragraphs, and one sentence the audit page said twice is said once. No price, deadline, limit, measured value or condition changed.
 // turva.dev worker v3.246.0 - /services reads shorter (Tek-808, 2026-11-12): the five service sections show the price, the description, the contact link and the deliverables list of the audit and advisory sections, and each of the 18 subsections with delivery terms opens from its own heading as a details element whose summary is that heading, so every earlier anchor stays and the Markdown twin carries the same words as the page; the 381-word active security testing paragraph keeps only what its three lists do not say, long sentences are split, two long FAQ answers are four, and the audit's deliverables are a list. The page's one inline script opens a fold when a link points at its heading and opens every fold before printing, and the CSP hash follows it. No price, deadline, scope or term changed.
 // turva.dev worker v3.245.0 - round 26 open items (2026-11-11, Tek-806): the /blog card and its alt text no longer list three kinds, seven posts get a closing offer that says only what the audit page says, each with a dated correction line, the legal page says that the email reply confirming the written scope is the order, and the blog introduction and description limit the method and limits promise to the studies
 // turva.dev worker v3.244.0 - round 26 improvements (2026-11-11, Tek-805): a blog post closes with one next step outside main, the home and /services FAQ state that the audit reads the website and its APIs, /services sections end with a contact link, the audit page gains Terms in brief and says what the order is and keeps a summary of active security testing, llms.txt names agent operations, MCP server design and the VAT ID, two guides link the audit page and the sample, the blog kind Lab notes splits from Build notes, and four research descriptions lead with the finding
@@ -4129,7 +4130,7 @@ Eight checks examine the file. The [package README](https://github.com/erekola/l
 - It starts with an H1 title.
 - It includes the recommended blockquote summary directly after the title. A blockquote that comes later but before the first H2 heading gets the same warning with its line number.
 - H2 headings group the content.
-- Markdown links parse and use absolute URLs. A list line under an H2 that starts like a link entry but is not a Markdown link, such as one with an unclosed destination, gets a warning, and so does one that opens with a dash or bullet that is not a Markdown list marker.
+- Markdown links parse and use absolute URLs. A list line under an H2 that starts like a link entry but is not a Markdown link, such as one with an unclosed destination, gets a warning. A list line under an H2 that opens with a dash or bullet that is not a Markdown list marker gets a warning too.
 - The file is small enough to read cheaply. A file over 50 KiB gets a warning, and one over 256 KiB is read truncated. With --strict, a warning fails the run.
 - It contains no inline HTML. HTML tags in prose produce a warning, and angle brackets inside inline code, code fences or after a backslash do not.
 
@@ -4156,7 +4157,11 @@ The validator requests two documents: /llms.txt and the home page. A path in the
 
 Fetched content is checked and discarded. The response uses a no-store header.
 
-The address you enter is part of the request URL, so it appears in the Worker logs, which are kept for at most seven days as the [legal page](/legal) describes. The validator's code sends the checked site new requests with its own user agent and accept headers and does not pass on the headers of your request. Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when the checked site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers, so the validator sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. The same documentation says Cloudflare adds a CF-Worker header carrying the name of the zone that runs the validator, turva.dev. On 22 October 2026 turva.dev measured the two requests the validator made to one test site outside Cloudflare, one for /llms.txt and one for the home page, as the test site recorded them. Both carried the fixed address in CF-Connecting-IP. Neither carried X-Real-IP or X-Forwarded-For, although the validator sets X-Real-IP, and no header held the IP address of the person who ran the test. The connection came from a Cloudflare address. That is one measurement of two requests to one site, and the code that sets the headers is public.
+The address you enter is part of the request URL, so it appears in the Worker logs, which are kept for at most seven days as the [legal page](/legal) describes. The validator's code sends the checked site new requests with its own user agent and accept headers and does not pass on the headers of your request.
+
+Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when the checked site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers. The validator therefore sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. The same documentation says Cloudflare adds a CF-Worker header carrying the name of the zone that runs the validator, turva.dev.
+
+On 22 October 2026 turva.dev measured the two requests the validator made to one test site outside Cloudflare, one for /llms.txt and one for the home page, as the test site recorded them. Both carried the fixed address in CF-Connecting-IP. Neither carried X-Real-IP or X-Forwarded-For, although the validator sets X-Real-IP, and no header held the IP address of the person who ran the test. The connection came from a Cloudflare address. That is one measurement of two requests to one site, and the code that sets the headers is public.
 
 ## Use it from an agent or CI
 
@@ -4167,7 +4172,11 @@ For JSON, request:
 
 The response contains the same checks and uses a no-store header.
 
-For CI, the open npm package turva-llms-txt-validator provides the llms-txt-validate command. For a completed validation its --json output has the same target, summary and checks as the web tool's JSON. Errors are shaped differently. For an invalid domain or a fetch failure, the command returns the error and the masked target, plus a code when there is one. For an unknown option or a missing or extra target it returns the error only. The hosted tool returns the error alone for an invalid domain or a fetch failure, and the error with a docs link when the url parameter is missing.
+For CI, the open npm package turva-llms-txt-validator provides the llms-txt-validate command. For a completed validation its --json output has the same target, summary and checks as the web tool's JSON. Errors are shaped differently:
+
+- For an invalid domain or a fetch failure, the command returns the error and the masked target, plus a code when there is one.
+- For an unknown option or a missing or extra target, the command returns the error only.
+- The hosted tool returns the error alone for an invalid domain or a fetch failure, and the error with a docs link when the url parameter is missing.
 
 Run:
 
@@ -4213,7 +4222,7 @@ The page and the command run the same comparison code from the open npm package.
 - The HTML content comes from main, article or role="main". Without any of them the page body is used and the report warns about it. A CSS selector overrides the choice.
 - Headings, paragraphs, list items, tables, code blocks and links are compared block by block.
 - Missing and added blocks are errors. So are differences in text, numbers, tables and links.
-- The cells of a table are not compared cell by cell when a cell spans rows or columns, meaning a rowspan or colspan value above 1, a rowspan of 0, or a value that is empty or does not begin with a number. The caption and the links in such a table are still compared. The numbering of a reversed list is not compared. Each skipped comparison is reported as an information finding, which never fails a check.
+- The cells of a table are not compared cell by cell when a cell spans rows or columns. That means the cell has a rowspan or colspan value above 1, a rowspan of 0, or a value that is empty or does not begin with a number. The caption and the links in such a table are still compared. The numbering of a reversed list is not compared. Each skipped comparison is reported as an information finding, which never fails a check.
 - A change of order, heading level, case or punctuation is a warning.
 - Front matter at the top of the Markdown is kept and compared by default. Choose strip to remove it first.
 - Strict mode counts warnings as failures.
@@ -4253,7 +4262,14 @@ Send a JSON request:
 
 The optional fields are markdownUrl and selector. The response is the report in the same JSON format as the command's --format json output. Its summary.exitCode carries the same 0, 1 or 2.
 
-HTTP 200 carries a pass or a fail. 400, 413 and 415 mean that the request was malformed. 403 means that this version does not check the address, because it is one of turva.dev's two tool pages, it is not one of turva.dev's published pages, or it names another site. 422 means that the address was refused or that the comparison could not finish, for example because the host is not a public domain, the page redirects to another host or the Markdown URL is on another site. 429 and 503 ask you to try again later. The Retry-After header says when. 500 means that the service itself failed. A 429 from the site-wide limiter and a 500 from an unhandled error can arrive as plain text with the content type text/plain, and not as a JSON report.
+- HTTP 200 carries a pass or a fail.
+- 400, 413 and 415 mean that the request was malformed.
+- 403 means that this version does not check the address. It answers 403 when the address is one of turva.dev's two tool pages, is not one of turva.dev's published pages or names another site.
+- 422 means that the address was refused or that the comparison could not finish. For example, the host is not a public domain, the page redirects to another host or the Markdown URL is on another site.
+- 429 and 503 ask you to try again later. The Retry-After header says when.
+- 500 means that the service itself failed.
+
+A 429 from the site-wide limiter and a 500 from an unhandled error can arrive as plain text with the content type text/plain, and not as a JSON report.
 
 In CI, run the package with --strict. Source and releases are on [GitHub](https://github.com/erekola/markdown-parity-check) and the package is on [npm](https://www.npmjs.com/package/markdown-parity-check).
 
@@ -4299,7 +4315,7 @@ Read the eligibility criteria and get the embed code. The badge is self-declared
 
 ## For developers
 
-- The validator returns the same checks as JSON when requested with Accept: application/json. Its eight structural checks use pass, warn or fail. The two v2 discovery checks use pass or information and do not change the structural result. The same checks are available in the open npm package [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator), with a CLI that returns the same JSON result shape for a completed validation, while error responses are shaped differently. Source on [GitHub](https://github.com/erekola/llms-txt-validator).
+- The validator returns the same checks as JSON when requested with Accept: application/json. Its eight structural checks use pass, warn or fail. The two v2 discovery checks use pass or information and do not change the structural result. The same checks are available in the open npm package [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator). Its CLI returns the same JSON result shape for a completed validation, while error responses are shaped differently. Source on [GitHub](https://github.com/erekola/llms-txt-validator).
 - The Markdown parity check takes a JSON POST and returns the report format of the open npm package [markdown-parity-check](https://www.npmjs.com/package/markdown-parity-check), which runs the same comparison on any public site. Source on [GitHub](https://github.com/erekola/markdown-parity-check).
 - The read-only MCP endpoint is https://mcp.turva.dev/mcp. It uses Streamable HTTP and requires no authentication. Connect with an MCP client rather than a browser. Its server card is published at https://turva.dev/.well-known/mcp/server-card.json.
 - The badge is an SVG served by turva.dev. Its link takes readers to the eligibility criteria.
@@ -5916,15 +5932,19 @@ I compare information across your pages, structured data and API. The report sho
 
 ### What do AI assistants say about your product?
 
-I ask 20 recorded questions across three assistants named in the written scope. The questions contain only the public product name and the question text, never client material. The synthetic sample report shows a different run with 15 questions across four assistants, because it only illustrates the format. You receive the answers, the date and the conditions of the test. Each question is asked once per assistant, and an assistant can answer differently from one day to the next, so a changed answer after the fixes is reported as an observation.
+I ask 20 recorded questions across three assistants named in the written scope. The questions contain only the public product name and the question text, never client material. The synthetic sample report shows a different run with 15 questions across four assistants, because it only illustrates the format. You receive the answers, the date and the conditions of the test. Each question is asked once per assistant. An assistant can answer differently from one day to the next, so a changed answer after the fixes is reported as an observation.
 
-On a large site, structured data, prices and availability are read on every page reachable from the sitemap and the API, as the sample report does for all 138 of its product pages. Head metadata and response headers are read on a sample of page templates, and the report lists every page it read. If a tool quota limits the checks, I raise the quota rather than reduce coverage. The written scope records the hostnames and the access I need before work starts.
+On a large site, structured data, prices and availability are read on every page reachable from the sitemap and the API. The sample report does this for all 138 of its product pages. Head metadata and response headers are read on a sample of page templates, and the report lists every page it read. If a tool quota limits the checks, I raise the quota rather than reduce coverage. The written scope records the hostnames and the access I need before work starts.
 
 ### Technical coverage
 
 The scan uses isitagentready.com on its default profile. I record each check and its result, together with the measurement date.
 
-The manual review covers /.well-known/ files, JSON-LD, head metadata, HTTP headers, robots.txt, sitemap.xml, ai.txt, llms.txt and the consistency of published facts. With your written permission I also run the internet.nl website and email tests on your domain. internet.nl keeps each result at a permanent public link, so without that permission I read only the security scans already published for your domain. The internet.nl tests, the published security scans and the security headers are security work. They and the report section that covers them run with GLM 5.3 through Melious AI GmbH, as the legal page describes, and Claude is the AI tool for the rest of the audit.
+The manual review covers /.well-known/ files, JSON-LD, head metadata, HTTP headers, robots.txt, sitemap.xml, ai.txt, llms.txt and the consistency of published facts.
+
+With your written permission I also run the internet.nl website and email tests on your domain. internet.nl keeps each result at a permanent public link, so without that permission I read only the security scans already published for your domain.
+
+The internet.nl tests, the published security scans and the security headers are security work. They and the report section that covers them run with GLM 5.3 through Melious AI GmbH, as the legal page describes. Claude is the AI tool for the rest of the audit.
 
 The AI questions test both what assistants say about your product by name and whether they mention it when asked about its category. Questions, assistants and test conditions are recorded separately from the technical checks.
 
@@ -5937,11 +5957,15 @@ A written report that answers four questions:
 - What should your team fix first?
 - How can the correction be checked?
 
-You also receive the recorded AI questions and answers, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers.
+You also receive:
+
+- The recorded AI questions and answers.
+- One round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days. The written scope agreed before kickoff sets how many questions that round covers.
+- One re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.
 
 Each finding includes correction instructions and, where available, a link to the relevant guide. The order reflects the effect on users and agent behavior, with effort and scanner effects recorded separately.
 
-A synthetic [sample report](/samples/audit-report) shows the format: the per-check scanner readings, the manual review, the AI visibility run, nine findings with their owners and acceptance tests, and the decisions the company makes. It is not a report on a real client.
+A synthetic [sample report](/samples/audit-report) shows the format. It contains the per-check scanner readings, the manual review, the AI visibility run, nine findings with their owners and acceptance tests, and the decisions the company makes. It is not a report on a real client.
 
 [Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
@@ -5951,7 +5975,7 @@ We agree the work. Send the URLs of up to two targets and your question. I confi
 
 I run the checks. I complete the scan, manual review and AI questions, recording the evidence and dates.
 
-You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works. One round of written follow-up questions is included. Submit it within 14 calendar days of the report and I answer it within five business days. The written scope agreed before kickoff sets how many questions that round covers.
+You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access. Access counts as arranged when the account named in writing for that access works. One round of written follow-up questions is included. Submit it within 14 calendar days of the report and I answer it within five business days.
 
 After the corrections, you choose the day for the included re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again using the same question set. The follow-up shows both readings and any changes in the method.
 
@@ -6002,7 +6026,12 @@ You work directly with me, from agreeing the scope to reading the findings and d
 
 ## My background
 
-From 2015 to 2021, I worked hands-on with industrial and laboratory equipment: paper machinery at UPM, medical washer-disinfectors at Franke, a clinical LC-MS/MS analyzer at Thermo Fisher Scientific and semiconductor production equipment at ASM International.
+From 2015 to 2021, I worked hands-on with industrial and laboratory equipment:
+
+- Paper machinery at UPM.
+- Medical washer-disinfectors at Franke.
+- A clinical LC-MS/MS analyzer at Thermo Fisher Scientific.
+- Semiconductor production equipment at ASM International.
 
 Those roles involved reliable machine data and working within defined limits.
 
@@ -6119,7 +6148,7 @@ The version 4 key is at https://turva.dev/pgp-key.asc. It is also published thro
 
 Two keys are published for the same address. The first is an OpenPGP version 4 key, Ed25519 for signatures with a Curve25519 encryption subkey. The second is an OpenPGP version 6 key, ML-DSA-65+Ed25519 for signatures with an ML-KEM-768+X25519 encryption subkey, the post-quantum pair that carries the encryption when a client uses this key. The version 6 key is for clients that read OpenPGP version 6.
 
-Whether a client can use either key depends on whether it reads that key version and those algorithms, not on OpenPGP support in general, and version 6 support alone does not settle the second one, because the post-quantum algorithms are a separate extension to the format. Clients also differ in whether they look a key up through WKD at all, and which of the two keys a client uses depends on that client.
+Whether a client can use either key depends on whether it reads that key version and those algorithms, not on OpenPGP support in general. Version 6 support alone does not settle whether a client can use the second key, because the post-quantum algorithms are a separate extension to the format. Clients also differ in whether they look a key up through WKD at all, and which of the two keys a client uses depends on that client.
 
 I have not tested any particular mail client against these keys.
 
@@ -8317,7 +8346,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.246.0",
+    "version": "3.247.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8626,7 +8655,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.246.0",
+  "version": "3.247.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
