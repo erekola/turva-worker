@@ -243,7 +243,10 @@ const transientCode = (e: unknown) => {
 // fallback. Erik 2026-08-29 asked for this path directly, and it is now the FIRST reader for these
 // two records, with the machine's own resolver as the second. On his machine the system path costs
 // six seconds of timeouts before it gives up, and it answers nothing that this does not.
-const DOH = 'https://1.1.1.2/dns-query';
+// In a Claude Code cloud session (CLAUDE_CODE_REMOTE=true) the sandbox proxy admits hosts by name only, and its
+// allowlist refuses an IP literal (measured 2026-11-13, Tek-816). There the same Cloudflare resolver is read by its
+// own name, security.cloudflare-dns.com, which the environment's allowlist carries. The host keeps the IP form.
+const DOH = process.env.CLAUDE_CODE_REMOTE === 'true' ? 'https://security.cloudflare-dns.com/dns-query' : 'https://1.1.1.2/dns-query';
 let dohUsed = false;
 const dohQuery = async (name: string, type: string) => {
   const r = await fetch(`${DOH}?name=${encodeURIComponent(name)}&type=${type}`,
