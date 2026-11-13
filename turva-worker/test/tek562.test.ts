@@ -252,7 +252,7 @@ test("hosted validator: #Project with === is still not an H1, and a setext H2 en
 // served markdown twin with the date masked out, and the date string. A body change moves the digest and the test
 // fails until the date in the page is set to the release day and both pinned values are updated together.
 const REVISED_RE = /(This page itself was last revised on )([^.]+)(\.)/g;
-const SAMPLE_REPORT_PIN = { digest: "2d9bcb544bb6405506ded2dd479ac68d727600319cac1405b0474eb59d672858", revised: "10 November 2026" };
+const SAMPLE_REPORT_PIN = { digest: "0b96a2bc2f50865ed00016cf3ae51140a2b58fab0f88ed8dcb182a226311578a", revised: "13 November 2026" };
 async function assertRevisionDateBoundToContent(page: string, pin: { digest: string; revised: string } = SAMPLE_REPORT_PIN) {
   const found = [...page.matchAll(REVISED_RE)];
   assert.equal(found.length, 1, "the sentence 'This page itself was last revised on <date>.' must occur exactly once in /samples/audit-report.md");

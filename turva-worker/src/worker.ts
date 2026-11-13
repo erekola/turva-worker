@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.256.0 - audit round 27 corrections (2026-11-13): wording fixes on pages, guides and posts, dated Corrected lines with a moved modified date on seven posts, a contents list placed before the first section of a guide whose old anchor span stood in front of it, the site-wide about value removed from the structured data of blog posts, and the card of one post rebuilt without the unsupported phrase. No price, claim, signed surface or route changed.
 // turva.dev worker v3.255.0 - link preview cards v9 (Tek-809, 2026-11-12): every per-page link preview card and og.jpg is rebuilt on the new base og-v9-pohja. The page texts run across the full width under the header, and the proof sits in three score cells along the bottom: 100/100 on isitagentready.com, Level 5 Agent-Native and 5/5 categories, all at 100. No card text, page text or image address changed, and no served text of the worker changed with it.
 // turva.dev worker v3.254.0 - the legal page contents list is laid out as an even grid (Tek-808, 2026-11-12): on /legal the seven section links sit in four equal columns, a section with subsections spans the full width and lists its subsection links in the same four columns, flush with them, and the sections without subsections share the last row. Two columns up to 1000 px, one column up to 560 px. The /legal list carries the classes toc-g and toc-s for it; the flat contents lists of guides and posts keep their two columns. No word on the page changed and the Markdown twin is unchanged.
 // turva.dev worker v3.253.0 - the legal page contents list shows its subsections (Tek-808, 2026-11-12): under each of the seven section links, /legal lists the 22 subsection headings it carries, each linking to that heading's own anchor, as a nested single-column list. The list is read from the rendered sections, so it cannot drift from the headings. No word on the page changed and the Markdown twin is unchanged.
@@ -1407,6 +1408,8 @@ Corrected 2026-10-31. The paragraph above says Google AI Mode and Gemini need a 
 
 Corrected 2026-11-02. The sentence on list_price said the Catalog API began returning it on 9 October 2026. That is the date of Shopify's changelog post, and the post lists 5 October 2026 as the effective date. The sentence now says Shopify announced the change on 9 October.
 
+Corrected 2026-11-13. The 31 October correction said Meta now lists the United States, Canada, Mexico, Brazil, Japan and Singapore. On 13 November 2026 [Shopify's Meta page](https://help.shopify.com/en/manual/online-sales-channels/agentic-storefronts/meta) lists eleven countries: Australia, Brazil, Canada, India, Japan, Mexico, New Zealand, Singapore, South Korea, the United Kingdom and the United States. I did not record when the list changed.
+
 Two limits hold whatever you choose. You cannot opt out of Shopify Catalog itself, and turning off Catalog access does not remove your products from it, because Shopify keeps using Catalog for other purposes, Shop among them. To hide a product from AI channels completely, [Shopify's instruction](https://help.shopify.com/en/manual/online-sales-channels/agentic-storefronts/products) is to set its status to Unlisted, which also removes it from sitemaps, from Google and from your online store search.
 
 ## What can you check on your own store?
@@ -2485,7 +2488,7 @@ Corrected 2026-10-31. The line above said every page in the sitemap. The hosted 
 
 2026-09-07
 
-The updated site puts sample reports beside the services they describe, with evidence, correction owners and acceptance checks visible before purchase.
+The updated site puts a sample report beside the service it describes, with evidence, correction owners and acceptance checks visible before purchase.
 
 I have rewritten turva.dev and rebuilt the pages around the work a buyer receives. The home page now leads into two services and their sample reports. Each report shows how an observation becomes a finding, a correction and a check that the correction worked.
 
@@ -2601,7 +2604,7 @@ Seven of the 19 have an llms.txt an agent can fetch, and one of those seven is a
 
 ## One site where 200 means nothing
 
-One company was different in a way worth describing. I asked for eight paths on that domain and all eight returned HTTP 200 with the same 3021 byte body and an identical sha256. The front page, a real subpage, a path I invented on the spot, llms.txt and four well-known addresses. So the agent addresses answer 200 with a page that is not what was asked for. I opened the site in a browser and the content renders fine, it just arrives after JavaScript has run. An agent that does not execute scripts cannot tell an existing page from one that does not exist. Among the other 18, the invented path got a 404 in every case, which is the correct answer for a path that does not exist; not every one of those 18 also serves all seven of the other addresses, since seven of the 19 companies in this set have a fetchable llms.txt, as noted above.
+One company was different in a way worth describing. I asked for eight paths on that domain and all eight returned HTTP 200 with the same 3021 byte body and an identical sha256. The front page, a real subpage, a path I invented on the spot, llms.txt and four well-known addresses. So the agent addresses answer 200 with a page that is not what was asked for. I opened the site in a browser and the content renders fine, it just arrives after JavaScript has run. An agent that does not execute scripts cannot tell an existing page from one that does not exist. Among the other 18, the invented path got a 404 in every case, which is the correct answer for a path that does not exist. Not every one of those 18 serves all seven of the other addresses, because llms.txt is one of them. Only seven of the 19 companies in this set have a fetchable llms.txt, as noted above.
 
 ## What this does not say
 
@@ -2910,6 +2913,8 @@ Corrected 2026-09-28. A sentence said the audit starts with an email that carrie
 Corrected 2026-09-28. Two more sentences needed the same care. The claim that the same scan always repeats now excepts the handful of readings this site's own later series found unstable and recorded as such, and the how to read your own site paragraph outside the FAQ now asks for the question you want answered as well as the domain, matching the FAQ.
 
 Corrected 2026-10-16. One sentence said Level 1 is the floor an ordinary CMS site reaches. That is my reading, and the study did not record which CMS each site runs, so the sentence now says so. No number changed.
+
+Corrected 2026-11-13. The paragraph on the Level 0 notes said the pattern in those 29 is "a robots.txt the CMS shipped by default". The study did not record which CMS each site runs, so that is my reading of the notes and not a measurement. No number changed.
 
 ## Related
 
@@ -3237,7 +3242,7 @@ Three things no gate could see, because each value was plausible alone. One meas
 
 **Do automated gates remove the need to read the code?**
 
-No. Seven gates run as editor hooks. Those that run before an action block it rather than warn, and the two that run after a write report what they found at once. 23 more run on demand or on ship, and three of those perform 314 mechanical checks offline, 567 with live URLs included. A green gate tells you only what it checked.
+No. As of 16 August 2026, seven gates run as editor hooks. Those that run before an action block it rather than warn, and the two that run after a write report what they found at once. As of that date, 23 more run on demand or on ship, and three of those perform 314 mechanical checks offline, 567 with live URLs included. A green gate tells you only what it checked.
 
 **What should a quality gate do when it finds a problem?**
 
@@ -3248,6 +3253,8 @@ Corrected 2026-09-27. Two passages said all seven editor gates block the action.
 Corrected 2026-11-02. A sentence said the auto in a one-fraction track resolves to the width of the widest child that cannot be broken. The CSS Grid specification says that is often, but not always, the case, and the sentence now says often.
 
 Updated 2026-11-12. Two questions were removed from the Frequently asked list because the post answers both in its body: "How long does a file by file audit of a workspace take?" and "Does a file by file audit prove the workspace is correct?" No figure in the post changed.
+
+Corrected 2026-11-13. The answer on gates in the Frequently asked list said "Seven gates run as editor hooks" and gave its other counts without a date. It now says they are as of 16 August 2026, the date of this post. No number changed.
 
 ## Related
 
@@ -3821,7 +3828,7 @@ Corrected 2026-11-06. A sentence said "I build this into my own setup because I 
 
 ## Related
 
-- [Letting agents act on your data](/guides/letting-agents-act-on-data)
+- [Define what an agent may do with your data](/guides/letting-agents-act-on-data)
 - [AI agent use cases and their operating limits](/guides/ai-agent-use-cases)
 `,
   "/blog/agent-readiness-finnish-b2b": `# How agent-ready are Finnish B2B sites? I scanned sixteen
@@ -4131,7 +4138,7 @@ Eight checks examine the file. The [package README](https://github.com/erekola/l
 - It includes the recommended blockquote summary directly after the title. A blockquote that comes later but before the first H2 heading gets the same warning with its line number.
 - H2 headings group the content.
 - Markdown links parse and use absolute URLs. A list line under an H2 that starts like a link entry but is not a Markdown link, such as one with an unclosed destination, gets a warning. A list line under an H2 that opens with a dash or bullet that is not a Markdown list marker gets a warning too.
-- The file is small enough to read cheaply. A file over 50 KiB gets a warning, and one over 256 KiB is read truncated. With --strict, a warning fails the run.
+- The file is small enough to read cheaply. A file over 50 KiB gets a warning, and one over 256 KiB is read truncated. In the package, --strict makes a warning fail the run.
 - It contains no inline HTML. HTML tags in prose produce a warning, and angle brackets inside inline code, code fences or after a backslash do not.
 
 Two more checks look at the home page:
@@ -4203,7 +4210,7 @@ The check compares what the two versions say. It does not score the page. A pass
 
 ## How to use it
 
-- In a browser: enter the page address in the field above and press Check.
+- In a browser: open https://turva.dev/markdown-parity-check, enter the page address and press Check.
 - More options: a separate Markdown address, a CSS selector for the HTML content, strict mode and front matter handling.
 - As an agent: send a JSON POST request, described below under Use it from an agent or CI.
 
@@ -4402,7 +4409,7 @@ Dated studies, technical investigations, build notes and lab notes from turva.de
 - [My own site is my proof of work](/blog/my-own-site-is-my-proof-of-work). 2026-09-26. Build notes. Why my site shipped 54 minor versions in three weeks, what gets fixed the same day, and what it cost when a change broke my own parity check.
 - [What agent memory in local files gets me](/blog/local-agent-memory). 2026-09-25. Lab notes. Plain local files let each Claude Code session look up what the earlier sessions recorded. A count of that memory, and why it now reads like a private language.
 - [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree). 2026-09-12. Build notes. A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.
-- [I rebuilt turva.dev around the report](/blog/i-rebuilt-turva-dev-around-the-report). 2026-09-07. Build notes. The updated site puts sample reports beside the services they describe, with evidence, correction owners and acceptance checks visible before purchase.
+- [I rebuilt turva.dev around the report](/blog/i-rebuilt-turva-dev-around-the-report). 2026-09-07. Build notes. The updated site puts a sample report beside the service it describes, with evidence, correction owners and acceptance checks visible before purchase.
 - [What 19 identity vendors publish for agents](/blog/agent-readiness-identity-vendors). 2026-09-05. Research. All 19 identity vendors scored zero of nine on the API, auth, MCP and A2A discovery checks. None read above Level 2. The scan read public sites only.
 - [Two files called auth.md, and they disagree on the field names](/blog/two-auth-md-dialects). 2026-09-04. Protocol notes. Two auth.md conventions use similar language and different field names. This comparison records the mismatch and the limited role of turva.dev's own file.
 - [Thirty-day follow-up: 201 comparable readings from 210 sites](/blog/thirty-days-after-the-brief). 2026-09-03. Research. A 210-site follow-up cohort produced 201 comparable readings. Four changed level. The observations do not establish an effect from the unsolicited briefs.
@@ -4635,7 +4642,7 @@ This is a snapshot from 25 June 2026, written while Claude has not yet joined th
 
 A site that wants to let an AI agent act has a problem it rarely says out loud. It cannot tell which agent is actually at the door. A user-agent string is just text, and anything can send it. An IP range drifts as providers move their infrastructure around. So the site guesses, and the guess collapses into one of two bad defaults. Block too much, and the helpful agent never reaches the page. Trust too much, and anything wearing the right header walks straight in.
 
-## What the tag actually is
+## What Web Bot Auth actually is
 
 Web Bot Auth is the piece that removes the guess. It comes from active work at the IETF and is already in production at Cloudflare, and it lets an agent prove who it is on every request. The agent generates a signing key and publishes the public half at a fixed location, /.well-known/http-message-signatures-directory. It then signs each request it sends. The receiving site, or Cloudflare at its edge, checks that signature against the published key. A match is a verifiable claim about the sender. Copying the header does not let anyone sign a new request, because only the holder of the private key can sign. A captured signed request can still be replayed until its expiry passes, and Cloudflare documents that it does not check nonces and relies on a short expires.
 
@@ -4678,6 +4685,8 @@ Yes. A site that switches on a rule that blocks AI bots can block a request that
 Corrected 2026-10-02. The post said copying the header does not reproduce a signature, which can be read as replay resistance. It now says: "Copying the header does not let anyone sign a new request, though a captured one can be replayed until it expires." A sentence also claimed a verification time of one millisecond that nobody measured. It now says a site can verify the request at the edge.
 
 Corrected 2026-11-11. The closing line offered an audit that covers how a site recognizes and admits AI agents. The audit reads the access rules and files a site publishes, so the line now says that.
+
+Corrected 2026-11-13. A heading asked what "the tag" actually is without saying which tag. It now names Web Bot Auth.
 
 ## Related
 
@@ -4743,9 +4752,11 @@ Corrected 2026-09-28. Two more sentences stated an unmeasured comparison as fact
 
 Corrected 2026-10-31. Two more comparisons, how wide the capability is next to the conversation about it and which fields worked this out first, now say they are my own reading.
 
+Corrected 2026-11-13. The opening said "In the audits I have run, including this site's own, one thing keeps surfacing". The audits read the files, metadata and access rules that affect discovery and access. So the examples of a dropped link, a satellite hop and a lost packet are my own reading and not audit findings.
+
 ## Related
 
-- [Letting agents act on data](/guides/letting-agents-act-on-data)
+- [Define what an agent may do with your data](/guides/letting-agents-act-on-data)
 - [AI agent use cases and their operating limits](/guides/ai-agent-use-cases)
 - [Agentic commerce readiness](/guides/agentic-commerce-readiness)
 `,
@@ -4759,7 +4770,7 @@ turva.dev runs on one rule: own the surfaces that carry your value, do not rent 
 
 ## Why the handle matters
 
-A platform handle is a dependency. If the server you joined changes its rules, slows down, or shuts off, your identity and your followers do not move with you automatically: getting them off needs Mastodon's own account move to a new account, not just a change of domain. The same logic that says frontier model access is not a moat says a platform username is not an identity. The address people use to find you should resolve to a domain you own.
+A platform handle is a dependency. If the server you joined changes its rules, slows down, or shuts off, your identity and your followers do not move with you automatically: getting them off needs Mastodon's own account move to a new account, not just a change of domain. A platform handle is not an identity. The address people use to find you should resolve to a domain you own.
 
 ## How the split works
 
@@ -4773,7 +4784,7 @@ The profile links to turva.dev, and turva.dev links back to the profile with a r
 
 ## The principle
 
-For me, identity is infrastructure. Because mine lives on a domain I own, I can move the same account to new infrastructure, a new machine or a self-hosted instance, without changing my address, the way Mastodon's own machine migration moves an installation and keeps its followers intact. Only a move to a genuinely different account needs Mastodon's separate account-move feature, which aliases the old account to the new one and carries followers across. Because I control the webfinger answers for turva.dev, that move can still resolve to the same address, though the account itself is new and its followers arrive through the alias, not through the domain alone. Renting the frontier is fine. Renting my name is not.
+For me, identity is infrastructure. Because mine lives on a domain I own, I can move the same account to new infrastructure, a new machine or a self-hosted instance, without changing my address, the way Mastodon's own machine migration moves an installation and keeps its followers intact. Only a move to a genuinely different account needs Mastodon's separate account-move feature, which aliases the old account to the new one and carries followers across. Because I control the webfinger answers for turva.dev, that move can still resolve to the same address, though the account itself is new and its followers arrive through the alias, not through the domain alone.
 
 Find me on the fediverse at [@erik@turva.dev](https://social.turva.dev/@erik). For an agent-readiness audit, contact info@turva.dev.
 
@@ -4782,6 +4793,8 @@ Corrected 2026-09-27. One sentence said the domain lets me change servers withou
 Corrected 2026-09-28. A sentence said owning the domain alone lets me change servers without losing followers. Moving the same account to new infrastructure keeps its followers automatically, but moving to a different account still needs Mastodon's own separate account move feature, and the sentence now separates the two cases.
 
 Corrected 2026-09-28. Two more sentences overstated what the domain protects. The opening said followers are stuck on a server that changes its rules. A move away is possible only through Mastodon's own account move, and the sentence now says that instead of calling them stuck. The closing sentence now says owning the domain keeps the address resolving to whichever account it points at, not that it saves the name on its own.
+
+Corrected 2026-11-13. Two sentences referred to an argument this post does not make: "The same logic that says frontier model access is not a moat" and "Renting the frontier is fine". The first now says only that a platform handle is not an identity. The second is removed together with the sentence after it, "Renting my name is not."
 
 ## Related
 
@@ -4795,7 +4808,7 @@ Corrected 2026-09-28. Two more sentences overstated what the domain protects. Th
 
 Northwind Fasteners Oy and all readings in this report are invented. The example shows what a client receives: the finding, its evidence, who makes the correction and how the result is checked.
 
-Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 10 November 2026.
+Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 13 November 2026.
 
 ## What to fix first
 
@@ -4847,7 +4860,7 @@ Estimated edge work is about eleven hours for F1 to F7, or eleven and a half hou
 | What the company asked | That a buyer's assistant quotes the right price and the right lead time, that the catalog is reachable through agents, and no agent checkout this year |
 | Kickoff, scope agreed in writing | 2026-08-25 |
 | Scanner run | 2026-09-03, isitagentready.com, default profile, three serial runs, all three identical |
-| Manual review | 2026-09-03 and 2026-09-04, whole catalog read through the API and the sitemap |
+| Manual review | 2026-09-03 and 2026-09-04, whole catalog read through the API |
 | AI visibility run | 2026-09-04, 15 questions to four assistants, one anonymous run per question, conditions in appendix B |
 | Report delivered | 2026-09-08, fourteen days after the kickoff |
 | Written follow-up round | Questions open until 2026-09-22, answered within five business days |
@@ -4957,7 +4970,7 @@ Four things stay outside it: the directory's own listing in F9, the five commerc
 What was measured, in this order.
 
 - The independent scanner. isitagentready.com was run three times in series against the origin with the default profile, and the three runs agreed. The denominator on the day was 22 checks, 21 scored and one informational, webBotAuth. Every check is recorded below individually rather than as one headline number.
-- A manual review of what the scanner does not score. JSON-LD on the home page, one category page and every product page, 138 in all, read from the sitemap and the API rather than from a sample. Head metadata and Open Graph on seven pages. HTTP response headers on the home page and one product page. The /.well-known/ directory. robots.txt, sitemap.xml, ai.txt and llms.txt against the current norms. The first response of each page fetched as a bot, to see whether the content arrives or a script shell does.
+- A manual review of what the scanner does not score. JSON-LD on the home page, one category page and every product page, 138 in all, read through the API rather than from a sample. Head metadata and Open Graph on seven pages. HTTP response headers on the home page and one product page. The /.well-known/ directory. robots.txt, sitemap.xml, ai.txt and llms.txt against the current norms. The first response of each page fetched as a bot, to see whether the content arrives or a script shell does.
 - AI visibility today. A fixed set of 15 questions, 12 that describe the category without naming the company and 3 that name it, put once to four AI assistants in anonymous sessions on 2026-09-04. Recorded per answer: whether the company is named, whether the answer is correct where it names it, and which sources the assistant cites. The questions and the conditions are in appendix B.
 - Public security scans. internet.nl website and mail tests and Hardenize, run on 2026-09-04. internet.nl ran with the company's written permission, because it keeps each result at a permanent public link. The report rests on measurements the client can re-run without turva.dev.
 
@@ -5869,7 +5882,7 @@ Yes. Files needed for a task are processed by the provider of the AI tool in use
 
 **Which AI model handles the security work?**
 
-GLM 5.3 through Melious AI GmbH. In active security testing the tools send test traffic from the virtual machine the work runs in only to the targets named in your signed authorization. Security work, meaning that testing and the audit's internet.nl tests, published security scans and security headers, runs with GLM 5.3 through Melious AI GmbH, a German company, and so does the report on that work. Melious states that it runs the model on its own hardware in Finland, and turva.dev's account is limited to that route. For that hardware, Melious's data processing agreement states that what the model reads, such as responses and tool output, is processed only in memory. For that hardware, the agreement states that this content is not stored, logged or used for training, apart from operational metadata such as token counts and processing the law requires. Anything stored with Melious's own storage functions is excepted too, and this work does not use them. Web test traffic is sent through Burp Suite Professional, and I switch off its own AI features.
+GLM 5.3 through Melious AI GmbH. In active security testing the tools send test traffic from the work's virtual machine only to the targets named in your signed authorization. Security work, meaning that testing and the audit's internet.nl tests, published security scans and security headers, runs with GLM 5.3 through Melious AI GmbH, a German company, and so does its report. Melious states that it runs the model on its own hardware in Finland, and its agreement also names its own hardware at OVH SAS in France. turva.dev's account is limited to Melious's own route. For that hardware, Melious's data processing agreement states that what the model reads, such as responses and tool output, is processed only in memory. The agreement states that this content is not stored, logged or used for training, apart from operational metadata such as token counts and processing the law requires. Anything stored with Melious's storage functions is excepted too, and this work does not use them. Web test traffic is sent through Burp Suite Professional, and I switch off its own AI features.
 
 **Does the audit assess our organization's readiness for AI?**
 
@@ -5934,7 +5947,7 @@ I compare information across your pages, structured data and API. The report sho
 
 I ask 20 recorded questions across three assistants named in the written scope. The questions contain only the public product name and the question text, never client material. The synthetic sample report shows a different run with 15 questions across four assistants, because it only illustrates the format. You receive the answers, the date and the conditions of the test. Each question is asked once per assistant. An assistant can answer differently from one day to the next, so a changed answer after the fixes is reported as an observation.
 
-On a large site, structured data, prices and availability are read on every page reachable from the sitemap and the API. The sample report does this for all 138 of its product pages. Head metadata and response headers are read on a sample of page templates, and the report lists every page it read. If a tool quota limits the checks, I raise the quota rather than reduce coverage. The written scope records the hostnames and the access I need before work starts.
+On a large site, structured data, prices and availability are read on every page reachable from the sitemap and the API. The sample report does this for all 138 of its product pages, found through the API. Head metadata and response headers are read on a sample of page templates, and the report lists every page it read. If a tool quota limits the checks, I raise the quota rather than reduce coverage. The written scope records the hostnames and the access I need before work starts.
 
 ### Technical coverage
 
@@ -6305,7 +6318,7 @@ Client material, including findings, evidence and test credentials, is stored on
 
 An engagement canceled before its agreed written kickoff, or after kickoff and before any delivery, closes 90 days after the cancellation. An engagement canceled after a partial delivery closes 90 days after the last deliverable was delivered, or on the day of the cancellation if that is later.
 
-Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email section above. The AI model providers keep what they processed under their own terms, linked under AI tools. Backups made during the engagement keep a copy until their rotation replaces them.
+Four kinds of copy follow their own rules. Bookkeeping material follows the six-year rule in the Email section above. The AI model providers keep what they processed under their own terms, linked under AI tools. Backups made during the engagement keep a copy until their rotation replaces them. The fourth kind, earlier versions of client files, is described below.
 
 The file backups on turva.dev's own network storage keep earlier versions of a file for up to 30 days and snapshots for up to 11 weeks, and the encrypted cloud backup of that storage keeps its versions for up to 11 weeks. Disk images of the workstation, which include the virtual machine's disk file, are kept for up to 14 weeks, plus up to 14 days in the snapshots of the storage that holds them. One encrypted disk kept off site holds only turva.dev's own keys and passwords, never client material, and is not part of this rotation. Every other backup, version history included, is removed within 16 weeks. A backup is never restored for any other purpose. Deleted client material has left every backup within 16 weeks of its deletion at most.
 
@@ -6385,7 +6398,7 @@ The supervisory authority in Finland is the Data Protection Ombudsman ([tietosuo
 
 ## Reporting a vulnerability
 
-Report a security issue to [info@turva.dev](mailto:info@turva.dev). Encrypted reports can go to [erik@turva.dev](mailto:erik@turva.dev), using the OpenPGP key published at [/pgp-key.asc](/pgp-key.asc). The PGP key and the security.txt file's own expiry date are at [/.well-known/security.txt](/.well-known/security.txt). A report is acknowledged within one business day.
+Report a security issue to [info@turva.dev](mailto:info@turva.dev). Encrypted reports can go to [erik@turva.dev](mailto:erik@turva.dev), using the OpenPGP key published at [/pgp-key.asc](/pgp-key.asc). The security.txt file at [/.well-known/security.txt](/.well-known/security.txt) points to that key and carries its own expiry date. A report is acknowledged within one business day.
 
 ## Cookies
 
@@ -6749,13 +6762,13 @@ On turva.dev the markdown version of a page costs a fraction of the HTML. That l
 
 ## What it does not replace
 
-llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt. A sitemap lists the URLs a site wants crawlers to find. These are the canonical ones it prefers when the same content sits at more than one address, not necessarily every URL that exists. robots.txt sets crawl rules. llms.txt is a curated, human-written map of what matters, aimed at models. The three work together. Google states that Search, including its generative features, ignores the file, so publish it for the clients that fetch it rather than as a route into Google or into search rankings.
+llms.txt is not a ranking trick and it does not replace a sitemap or robots.txt. A sitemap lists the URLs a site wants crawlers to find. Where the same content sits at more than one address, it lists the canonical one the site prefers, and not necessarily every URL that exists. robots.txt sets crawl rules. llms.txt is a curated, human-written map of what matters, aimed at models. The three work together. Google states that Search, including its generative features, ignores the file, so publish it for the clients that fetch it rather than as a route into Google or into search rankings.
 
 ## Does llms.txt really work?
 
 It works as a map for a client that fetches it, but in one large log study 97% of files received no request in a month. It has not been shown to earn AI citations, so publish it for coding agents rather than as a route to visibility.
 
-Ahrefs measured requests across 137 210 domains in May 2026. About 38 000 of them had a valid file, and 97% of those files received no request that month. GPTBot and Claude Code were among the most frequent AI requesters in that data. Ahrefs notes that a request shows a file was fetched and does not show that anything acted on it. SE Ranking modelled nearly 300 000 domains and found no link between having the file and how often a domain is cited. Both are vendor studies of their own samples, and neither measures every client.
+Ahrefs measured requests across 137 210 domains in May 2026. About 38 000 of them had a valid file, and 97% of those files received no request that month. GPTBot and Claude Code were among the most frequent AI requesters in that data. Ahrefs notes that a request shows a file was fetched and does not show that anything acted on it. SE Ranking modeled nearly 300 000 domains and found no link between having the file and how often a domain is cited. Both are vendor studies of their own samples, and neither measures every client.
 
 The strongest case in this evidence is documentation read by coding agents. As of November 2026, Google's Gemini API docs publish an llms.txt index and recommend a project rule that tells coding agents to consult its docs MCP server or that index, so an agent without the server can start from the index. A site whose readers work through coding agents has a stronger reason to publish the file than a site that hopes to be cited.
 
@@ -6887,7 +6900,7 @@ The isitagentready.com scanner asks for a card at /.well-known/mcp/server-card.j
 
   "/guides/agents-json": `# What agents.json describes
 
-agents.json is one pattern for describing actions and endpoints for automated clients. Treat it as a specific declaration format, not as a universal requirement for an agent usable site.
+agents.json is one pattern for describing actions and endpoints for automated clients. Treat it as a specific declaration format, not as a universal requirement for an agent-usable site.
 
 The specification has stayed at version 0.1.0 since early 2025, and my reading is that attention has since shifted toward MCP and newer discovery surfaces. A site can adopt agents.json, but it should not be treated as the settled or required way to declare an action surface. Where llms.txt tells an agent what a site contains, agents.json describes the actions and endpoints a site offers to agents, so an automated client can move from reading to doing without a human wiring it up first.
 
@@ -6971,7 +6984,7 @@ x402 is a way for a site to ask an agent to pay before it returns a resource, us
 
 **Why does agent commerce need a payment surface like x402?**
 
-An agent can find a product and compare options, then stall at a checkout flow built for a person. A payment surface that the site verifies and settles lets the agent complete the purchase the same way it completed the search. A declaration alone executes no payment and delivers nothing, so a site should say which of the three states it implements.
+An agent can find a product and compare options, then stall at a checkout flow built for a person. A payment surface that the site verifies and settles lets the agent complete the purchase the same way it completed the search. A declaration alone executes no payment and delivers nothing, so a site should say which of the three states it implements: declaration, acceptance or settlement.
 
 **Does x402 support micropayments for AI services?**
 
@@ -7284,7 +7297,7 @@ An ai-catalog.json is a static JSON manifest at /.well-known/ai-catalog.json tha
 
 **Does Agentic Resource Discovery affect search ranking?**
 
-No. ARD is a discovery layer for AI agents, not a web search ranking file, though an ARD registry does crawl and index published catalogs so an agent can query them. Google has said publicly that llms.txt does not affect its Google Search results, the guide above links the statement, and the same applies to a resource catalog's effect on Google Search ranking.
+No. ARD is a discovery layer for AI agents, not a web search ranking file, though an ARD registry does crawl and index published catalogs so an agent can query them. Google has said publicly that llms.txt does not affect its Google Search results, and the same applies to a resource catalog's effect on Google Search ranking.
 
 **Where does an ai-catalog.json live?**
 
@@ -7352,7 +7365,6 @@ Where to request access and what scopes exist. OAuth discovery at a well-known p
 - [The OAuth 2.0 authorization framework, RFC 6749](https://www.rfc-editor.org/rfc/rfc6749.html)
 - [OAuth 2.0 bearer token usage, RFC 6750](https://www.rfc-editor.org/rfc/rfc6750.html)
 - [MCP authorization specification, 2026-07-28 revision](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization)
-- [Web Bot Auth, Cloudflare reference](https://developers.cloudflare.com/bots/reference/bot-verification/web-bot-auth/)
 
 ## Related
 
@@ -7367,13 +7379,13 @@ A scan is one source of evidence. Combine it with direct technical checks and ob
 
 Agent-readiness is a property you can measure, so it should be measured rather than claimed. Three kinds of evidence answer three different questions, and a credible conclusion names which one it rests on.
 
-A technical scan reads what a defined set of checks finds on the live site at a point in time. A manual review reads what the scan does not score. These are the parts that need a person to look, such as whether a page's markdown twin actually matches its HTML or whether a manifest is internally consistent. Observed AI answers read what a named assistant says today when asked a buyer's question, which depends on that assistant's own retrieval and can change between sessions.
+A technical scan reads what a defined set of checks finds on the live site at a point in time. A manual review reads what the scan does not score. These are the parts that need a person to look, such as whether a page's markdown twin matches its HTML or whether a manifest is internally consistent. Observed AI answers read what a named assistant says today when asked a buyer's question, which depends on that assistant's retrieval and can change between sessions.
 
 The difference between a scan and a self-assessment shows up the moment something changes. A header gets dropped in a deploy, or a manifest starts returning the wrong content type. A checklist filled in by hand still reads as done, because nobody re-ticked the box. A scan reads the live site and the category drops, so the record changes when the site does. Neither replaces the other: a scan tells you what a defined check found, and a manual review catches what the check set does not cover.
 
 ## What a technical scan checks
 
-A scan runs a fixed set of checks against the live site. These checks include whether llms.txt resolves, whether a sitemap exists and parses, and whether a response carries the content type it declares. A scan checks that the sitemap file is present and well-formed. Whether the file actually lists every page the site should publish is a completeness question a manual review answers, not the automated check. Each check either passes or fails on the day it ran, against the version of the site live that day.
+A scan runs a fixed set of checks against the live site. These checks include whether a sitemap exists and parses, and whether a response carries the content type it declares. A scan checks that the sitemap file is present and well-formed. Whether the file lists every page the site should publish is a completeness question a manual review answers, not the automated check. Each check either passes or fails on the day it ran, against the site version live that day.
 
 ## What a manual review adds
 
@@ -7408,8 +7420,6 @@ Because a checklist filled in by hand records intentions and a scan records what
 ## Sources
 
 - [isitagentready.com](https://isitagentready.com/)
-- [internet.nl](https://internet.nl/)
-- [Hardenize](https://www.hardenize.com/)
 
 ## Related
 
@@ -7496,7 +7506,7 @@ A Content-Signal directive is a stated preference and not an enforcement mechani
 
 Getting these files wrong is quietly expensive. A robots.txt that blocks an AI crawler by accident stops that crawler from fetching the pages and can keep the content out of what it feeds. Such a block does not by itself remove the site from an assistant's answers, since an answer can still name a page through another source. A stale sitemap hides new pages from an agent that relies on it alone. A page can still be found through an ordinary link even when the sitemap has not caught up.
 
-robots.txt and the sitemap are small files and the fix is fast, which is why they are the first thing a readiness review checks. In [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) finished in September 2026, robots.txt and the sitemap were the two most frequent first-fix subjects among the 74 sites that read Level 0, 45 and 38 of 68 notes, and 29 named both, usually a robots.txt the CMS shipped by default and a sitemap that was missing or never announced in it.
+robots.txt and the sitemap are small files and the fix is fast, which is why they are the first thing a readiness review checks. In [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) finished in September 2026, robots.txt and the sitemap were the two most frequent first-fix subjects among the 74 sites that read Level 0, 45 and 38 of 68 notes, and 29 named both, usually what looked like a robots.txt the CMS shipped by default and a sitemap that was missing or never announced in it.
 
 turva.dev declares AI bot rules and Content Signals in robots.txt and keeps a complete sitemap. For an audit of a site's robots.txt, Content Signals and sitemap, contact info@turva.dev.
 
@@ -7589,7 +7599,7 @@ A prospecting sample of 567 company sites revealed recurring technical gaps. Thi
 
 Marketing sites are often strong for people and weak for agents, and the gaps are predictable.
 
-The evidence here is [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) with one independent scanner between 28 June and 3 September 2026. The scan grew out of [an earlier write-up of sixteen Finnish sites](/blog/agent-readiness-finnish-b2b). The sample is a prospecting list and not a random draw, so read it as what recurred in the sites reviewed rather than as a count of the whole web. Of the 567 sites, 485 read Level 1 of 5 and 74 read Level 0, below it. The write-up reads Level 1 as the floor a default CMS ships, but the study did not record which CMS each site runs.
+The evidence here is [a scan of 567 company sites](/blog/website-agent-readiness-567-sites) with one independent scanner between 28 June and 3 September 2026. The scan grew out of [an earlier write-up of sixteen Finnish sites](/blog/agent-readiness-finnish-b2b). The sample is a prospecting list and not a random draw, so read it as what recurred in the sites reviewed, not as a count of the whole web. Of the 567 sites, 485 read Level 1 of 5 and 74 read Level 0. Eight read above Level 1. The write-up reads Level 1 as the floor a default CMS ships, but the study did not record which CMS each site runs.
 
 ## Rendering
 
@@ -7599,7 +7609,7 @@ A site that builds its content with client-side JavaScript, without server rende
 
 No llms.txt and a thin or missing sitemap leave an agent to follow page links, unless the site points to a Markdown version another way, such as an [alternate link or an HTTP Link header](https://llmstxt.org/).
 
-Among the 74 Level 0 sites, 68 have a first-fix note. Among those notes, robots.txt appears in 45 and the sitemap in 38, with 29 naming both: a robots.txt the CMS shipped by default and a sitemap that is missing or never announced in it. Among the 439 Level 1 sites with a note, the sitemap appears in 102 and llms.txt in 99.
+Among the 74 Level 0 sites, 68 have a first-fix note. Among those notes, robots.txt appears in 45 and the sitemap in 38, with 29 naming both: what looked like a robots.txt the CMS shipped by default and a sitemap that is missing or never announced in it. Among the 439 Level 1 sites with a note, the sitemap appears in 102 and llms.txt in 99.
 
 ## Content
 
@@ -7607,7 +7617,7 @@ The site offers only HTML, with no markdown form. As a result, an agent spends p
 
 ## Data correctness
 
-Capability is usually undeclared. The site may have an API or a useful action. With no server card, OAuth discovery or a published API catalog such as the well-known endpoint RFC 9727 defines, an agent has nothing to find it from on its own. An integration configured by hand with the endpoint and its credentials can still work, so what the site loses is automatic discovery rather than the API itself.
+In my reading of the sample, capability is usually undeclared. The site may have an API or a useful action. With no server card, OAuth discovery or a published API catalog such as the well-known endpoint RFC 9727 defines, an agent has nothing to find it from on its own. An integration configured by hand with the endpoint and its credentials can still work, so what the site loses is automatic discovery rather than the API itself.
 
 Among the 439 Level 1 sites with a note, robots.txt appears in 72, structured data in 49 and an MCP server in 35. Structured data is often missing too, so prices and facts are left for the agent to infer from layout instead of reading them from a declared source.
 
@@ -7621,7 +7631,7 @@ turva.dev runs this exact review and reports each gap with a concrete fix. For a
 
 **What are the most common agent-readiness gaps on marketing sites?**
 
-In the first-fix notes of the measured sample, robots.txt and the sitemap lead among the Level 0 sites, and the sitemap and llms.txt among the Level 1 sites. HTML-only delivery with no markdown form is another gap to check, and so is client-side rendering that returns an empty shell to non-browser agents, which the sample did not record. Capability is usually undeclared and structured data is often missing, so prices and facts are left for the agent to infer.
+In the first-fix notes of the measured sample, robots.txt and the sitemap lead among the Level 0 sites, and the sitemap and llms.txt among the Level 1 sites. HTML-only delivery with no markdown form is another gap to check, and so is client-side rendering that returns an empty shell to non-browser agents, which the sample did not record. In my reading of the sample, capability is usually undeclared and structured data is often missing, so prices and facts are left for the agent to infer.
 
 **Are agent-readiness gaps hard to fix?**
 
@@ -7680,7 +7690,7 @@ turva.dev provides independent agent-readiness audits and advisory for product t
 
 **What does an agent-readiness audit cost?**
 
-turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged, and implementation is €1,500 per day, scoped per task. Prices exclude VAT, and the scope is written before any payment.
+turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged, and implementation is €1,500 per day, scoped per task. Prices exclude VAT and are valid until 2026-12-31, and the scope is written before any payment.
 
 **How long does an agent-readiness audit take?**
 
@@ -7782,7 +7792,7 @@ Automatic purchasing is one authorized path among several, not the default behav
 An agent needs three things in machine-readable form.
 
 - It needs to find the offer, with a price and currency it can parse rather than infer from a layout.
-- An agent that works through an API needs a checkout it can drive through a protocol, since a page built for a mouse gives it nothing to call. A browser agent can fill in the same form a person uses, at the cost of reading a layout that can change under it.
+- It needs a checkout it can drive through a protocol if it works through an API, since a page built for a mouse gives it nothing to call. A browser agent can fill in the same form a person uses, at the cost of reading a layout that can change under it.
 - It needs the purchase to behave predictably from the same starting state. That means a repeated call with the same idempotency key returns the same result instead of creating a second order. It also means a price or balance that changes between the quote and the confirmation comes back as a fresh quote rather than a silent substitution.
 
 A catalog that looks perfect to a person can still be opaque to an agent on all three counts.
@@ -8603,7 +8613,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.255.0",
+    "version": "3.256.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8912,7 +8922,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.255.0",
+  "version": "3.256.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9613,7 +9623,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-12";
+const SITEMAP_LASTMOD = "2026-11-13";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9791,7 +9801,7 @@ const META_BY_PATH = {
     date: "2026-11-06",
     kind: "Lab notes",
     image: "/og-my-agents-notes-were-already-a-graph.jpg",
-    imageAlt: "Blog card for the post My agent's notes were already a graph, on turva.dev.",
+    imageAlt: "turva.dev blog card: My agent's notes were already a graph. Tuning made the searches better. In two agent tests the answers stayed the same.",
   },
   "/blog/why-i-back-up-every-night": {
     title: "I can't start over, so I back up every night · turva.dev",
@@ -9836,14 +9846,14 @@ const META_BY_PATH = {
     modified: "2026-11-02",
     kind: "Lab notes",
     image: "/og-tla-plus-in-numbers.jpg",
-    imageAlt: "TLA+ on my own tools, in numbers, a turva.dev build note that closes the series with timeline, reviews, mutation runs and cost.",
+    imageAlt: "TLA+ on my own tools, in numbers, a turva.dev lab note that closes the series with timeline, reviews, mutation runs and cost.",
   },
   "/blog/what-shopify-changed-for-agent-shopping": {
     title: "What Shopify changed for agent shopping since August · turva.dev",
     titleTag: "What Shopify changed for agent shopping · turva.dev",
     description: "Shopify moved store agent tools to /api/ucp/mcp and opened checkout to agents. What a merchant can check publicly and what stays hidden.",
     date: "2026-10-18",
-    modified: "2026-11-06",
+    modified: "2026-11-13",
     kind: "Protocol notes",
     image: "/og-what-shopify-changed-for-agent-shopping.jpg",
     imageAlt: "What Shopify changed for agent shopping since August, a turva.dev protocol note for merchants on the new agent tools, checkout and catalog data.",
@@ -9855,7 +9865,7 @@ const META_BY_PATH = {
     modified: "2026-10-28",
     kind: "Lab notes",
     image: "/og-three-outside-reviews-of-my-tla-plus-models.jpg",
-    imageAlt: "Three outside reviews of my TLA+ models, a turva.dev build note on review rounds, fix sessions and what is still open.",
+    imageAlt: "Three outside reviews of my TLA+ models, a turva.dev lab note on review rounds, fix sessions and what is still open.",
   },
   "/blog/microsofts-own-cve-count": {
     title: "Microsoft's own CVE count is up nearly eightfold in a year · turva.dev",
@@ -9874,7 +9884,7 @@ const META_BY_PATH = {
     modified: "2026-11-02",
     kind: "Lab notes",
     image: "/og-thirteen-review-rounds-and-one-rollback.jpg",
-    imageAlt: "Thirteen review rounds and one rollback, a turva.dev build note on a gate fix that was undone and on mutation runs.",
+    imageAlt: "Thirteen review rounds and one rollback, a turva.dev lab note on a gate fix that was undone and on mutation runs.",
   },
   "/blog/twelve-days-of-tla-plus": {
     title: "Twelve days of TLA+ on my own tools · turva.dev",
@@ -9949,7 +9959,7 @@ const META_BY_PATH = {
   },
   "/blog/i-rebuilt-turva-dev-around-the-report": {
     title: "I rebuilt turva.dev around the report · turva.dev",
-    description: "The updated site puts sample reports beside the services they describe, with evidence, correction owners and acceptance checks visible before purchase.",
+    description: "The updated site puts a sample report beside the service it describes, with evidence, correction owners and acceptance checks visible before purchase.",
     date: "2026-09-07",
     modified: "2026-11-06",
     kind: "Build notes",
@@ -9999,7 +10009,7 @@ const META_BY_PATH = {
     description: "Of 567 selected company websites, 485 read Level 1 of 5, 85,5 percent. The sample is a prospecting list, and the scanner's check set changed during the study.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-10-16",
+    modified: "2026-11-13",
     image: "/og-website-agent-readiness-567-sites.jpg",
     imageAlt: "turva.dev blog card: 567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, Finnish and foreign sites alike.",
   },
@@ -10036,7 +10046,7 @@ const META_BY_PATH = {
     title: "I thought it was a small job · turva.dev",
     description: "A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that work.",
     date: "2026-08-16",
-    modified: "2026-11-12",
+    modified: "2026-11-13",
     kind: "Build notes",
     image: "/og-i-thought-it-was-a-small-job.jpg",
     imageAlt: "turva.dev blog card: I read my own workspace file by file. Seven days, 367 findings across 2 307 text files, and nothing billable shipped that week.",
@@ -10093,7 +10103,7 @@ const META_BY_PATH = {
     modified: "2026-11-11",
     kind: "Build notes",
     image: "/og-enforcing-the-rate-limit-i-advertised.jpg",
-    imageAlt: "Every response promised a rate limit. Nothing enforced it."
+    imageAlt: "turva.dev blog card: Every response promised a rate limit. Nothing enforced it."
   },
   "/blog/measuring-the-ai-patch-surge": {
     title: "Microsoft said the patches would get bigger. I measured how much bigger. · turva.dev",
@@ -10246,7 +10256,7 @@ const META_BY_PATH = {
     title: "When an agent can prove it is Claude · turva.dev",
     description: "Signed requests can give evidence of a sender's identity. This dated article separates that evidence from trusting a user-agent string or granting an action.",
     date: "2026-06-25",
-    modified: "2026-11-11",
+    modified: "2026-11-13",
     kind: "Protocol notes",
     image: "/og-verifiable-agent-identity.jpg",
     imageAlt: "turva.dev blog card: Web Bot Auth gives an AI agent a verifiable, signed identity a site can check."
@@ -10269,7 +10279,7 @@ const META_BY_PATH = {
     title: "What makes an AI agent's decisions reliable · turva.dev",
     description: "Usable inputs and explicit operating limits matter for agent decisions, alongside model uncertainty. The article asks where control and verification belong.",
     date: "2026-06-22",
-    modified: "2026-10-31",
+    modified: "2026-11-13",
     kind: "Protocol notes",
     image: "/og-reliable-agent-decisions.jpg",
     imageAlt: "turva.dev blog card: What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do."
@@ -10278,10 +10288,10 @@ const META_BY_PATH = {
     title: "Owning your fediverse identity · turva.dev",
     description: "A build note on separating a public identity domain from the server that hosts the account, and the dependencies that still remain.",
     date: "2026-06-21",
-    modified: "2026-09-28",
+    modified: "2026-11-13",
     kind: "Build notes",
     image: "/og-owning-your-fediverse-identity.jpg",
-    imageAlt: "turva.dev blog card: Why turva.dev put its fediverse handle on its own domain: a single-user instance, a domain split, and rel=me verification from the Worker."
+    imageAlt: "turva.dev blog card: Owning your fediverse identity. A domain split and rel=me verification on your own domain."
   },
   "/": {
     title: "Agent-readiness audits for websites and APIs · turva.dev",
@@ -10419,7 +10429,7 @@ const META_BY_PATH = {
     checked: "2026-11-03",
     description: "Sitemaps describe published URLs, while robots.txt communicates crawler rules. Neither file guarantees retrieval or replaces access control.",
     image: "/og-guide-sitemaps-and-robots-for-agents.jpg",
-    imageAlt: "turva.dev guide card: robots.txt and the sitemap decide whether an agent is allowed in and what it can find."
+    imageAlt: "turva.dev guide card: Sitemaps, robots.txt and agent access. Whether an agent is allowed in and what it can find."
   },
   "/guides/markdown-for-agents": {
     title: "Serving Markdown to AI clients · turva.dev",
@@ -11791,7 +11801,7 @@ function buildGuideJsonLd(pathname: string, canonicalUrl: string) {
     "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://gravatar.com/erekola"] },
     "publisher": { "@type": "Organization", "@id": "https://turva.dev/#business", "name": "turva.dev", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276251"] },
     "isPartOf": { "@type": "WebSite", "name": "turva.dev", "url": "https://turva.dev/" },
-    "about": "agent-readiness"
+    ...(isBlogPost ? {} : { "about": "agent-readiness" })
   };
   if (isBlogPost && m.date) {
     article.datePublished = m.date;
@@ -12241,7 +12251,7 @@ function serveGuideHtml(pathname: string, canonicalUrl: string) {
   const toc = h2s.length > 4 && !hasOwnContents
     ? `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${h2s.map((h) => `<li><a href="#${h.id}">${h.text}</a></li>`).join("")}</ul></nav>`
     : "";
-  const withToc = toc ? withChecked.replace(/(<\/p>\n)(?=<h2 )/, `$1${toc}\n`) : withChecked;
+  const withToc = toc ? withChecked.replace(/(<\/p>\n)(?=(?:<span id="[^"]*"><\/span>)*<h2 )/, `$1${toc}\n`) : withChecked;
   // Sample reports (Tek-360): the synthetic label stands above the H1, and two actions close the
   // section SAMPLE_HEAD.cta names, and the twin's "Illustrative report date" line renders as a
   // date line. Since Tek-488 the label is the twin's line above the H1 and the actions are the

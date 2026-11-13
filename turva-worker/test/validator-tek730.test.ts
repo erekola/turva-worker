@@ -230,6 +230,7 @@ test("Tek-730 C: a guide carries its checked date as lastReviewed on the WebPage
     assert.equal(page.lastReviewed, undefined, g + ": lastReviewed is not on the TechArticle");
     assert.equal(page.datePublished, undefined, g);
     assert.equal(page.dateModified, undefined, g);
+    assert.equal(page.about, "agent-readiness", g);
   }
 });
 
@@ -241,6 +242,7 @@ test("Tek-730 C: the guides hub and the blog posts get no lastReviewed", async (
   assert.equal(post["@type"], "BlogPosting");
   assert.equal(JSON.stringify(post).includes("lastReviewed"), false);
   assert.ok(post.datePublished, "a post keeps its datePublished");
+  assert.equal(post.about, undefined, "a post carries no site-wide about value");
   const blog = await mainPage("/blog");
   assert.equal(JSON.stringify(blog).includes("lastReviewed"), false);
 });

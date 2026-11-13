@@ -374,7 +374,7 @@
   "og-owning-your-fediverse-identity.jpg": {
     "green": "fediverse identity",
     "kicker": "Blog",
-    "subhead": "A single-user instance, a domain split, and rel=me verification on your own domain.",
+    "subhead": "A domain split and rel=me verification on your own domain.",
     "white": "Owning your"
   },
   "og-publishing-an-ai-catalog.jpg": {

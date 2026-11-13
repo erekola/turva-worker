@@ -145,7 +145,7 @@ test("the primary navigation is a named landmark on every page, and a contents l
   // labelled by its own visible heading, so markdown-parity-check and assistive technology both read
   // it as navigation. The primary navigation stays the first nav and the only one named Main.
   for (const p of ["/", "/services", "/agent-readiness-audit", "/contact", "/legal", "/company", "/blog", "/guides", "/tools", "/nonexistent-path",
-                   "/guides/llms-txt", "/blog/html-and-markdown-can-disagree"]) {
+                   "/guides/llms-txt", "/guides/letting-agents-act-on-data", "/guides/agentic-resource-discovery", "/blog/html-and-markdown-can-disagree"]) {
     const html = await (await get(p)).text();
     const navs = html.match(/<nav\b[^>]*>/g) || [];
     assert.ok(navs.length === 1 || navs.length === 2, p + " has the primary nav and at most a contents list, saw " + navs.length);
@@ -154,9 +154,36 @@ test("the primary navigation is a named landmark on every page, and a contents l
       assert.match(n, /^<nav class="toc" aria-labelledby="toc-h">$/, p + " the second nav is the named contents list");
     }
   }
-  for (const p of ["/legal", "/guides/llms-txt", "/blog/html-and-markdown-can-disagree"]) {
+  for (const p of ["/legal", "/guides/llms-txt", "/guides/letting-agents-act-on-data", "/guides/agentic-resource-discovery", "/blog/html-and-markdown-can-disagree"]) {
     const html = await (await get(p)).text();
     assert.ok(html.includes('<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p>'), p + " carries its contents list as the named nav");
+  }
+});
+
+test("a contents list stands before the first section of every guide with more than four sections, also when an old anchor span stands in front of it (kierros 27, S3-1)", async () => {
+  // The contents list is placed after the closing </p> that precedes the first <h2>. Until 3.256.0 an old
+  // anchor span between that </p> and the <h2> (a renamed heading keeps its old id as an empty span) made the
+  // pattern miss: /guides/letting-agents-act-on-data got no contents list at all, and the one on
+  // /guides/agentic-resource-discovery stood in the middle of the page. The expectation is read from the
+  // served pages: every guide with more than four sections in <main> and no contents section of its own carries one
+  // list. Where the list stands is asserted for the two guides the span affected, because a guide whose intro ends
+  // in a table keeps its list after the first section by an older rule.
+  const guidesMd = await (await get("/guides.md")).text();
+  const guides = [...guidesMd.matchAll(/\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g)].map((m) => m[1]);
+  assert.ok(guides.length >= 20, "the /guides twin lists the guides");
+  let checked = 0;
+  for (const g of guides) {
+    const html = await (await get(g)).text();
+    const main = html.slice(html.indexOf("<main"), html.indexOf("</main>"));
+    const sections = (main.match(/<h2 id="/g) || []).length;
+    if (sections <= 4 || main.includes('<h2 id="contents">')) continue;
+    checked++;
+    assert.equal((html.match(/<nav class="toc"/g) || []).length, 1, g + " carries one contents list");
+  }
+  assert.ok(checked >= 20, "the check read the guides, saw " + checked);
+  for (const g of ["/guides/letting-agents-act-on-data", "/guides/agentic-resource-discovery"]) {
+    const html = await (await get(g)).text();
+    assert.ok(html.indexOf('<nav class="toc"') > 0 && html.indexOf('<nav class="toc"') < html.indexOf('<h2 id="'), g + " is the page the span used to hide the list on");
   }
 });
 
