@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.256.1 - the price validity date moves from 2026-12-31 to 2027-06-30 in PRICE_VALID_UNTIL and in the six "valid until" prose lines (2026-11-14).
 // turva.dev worker v3.256.0 - audit round 27 corrections (2026-11-13): wording fixes on pages, guides and posts, dated Corrected lines with a moved modified date on seven posts, a contents list placed before the first section of a guide whose old anchor span stood in front of it, the site-wide about value removed from the structured data of blog posts, and the card of one post rebuilt without the unsupported phrase. No price, claim, signed surface or route changed.
 // turva.dev worker v3.255.0 - link preview cards v9 (Tek-809, 2026-11-12): every per-page link preview card and og.jpg is rebuilt on the new base og-v9-pohja. The page texts run across the full width under the header, and the proof sits in three score cells along the bottom: 100/100 on isitagentready.com, Level 5 Agent-Native and 5/5 categories, all at 100. No card text, page text or image address changed, and no served text of the worker changed with it.
 // turva.dev worker v3.254.0 - the legal page contents list is laid out as an even grid (Tek-808, 2026-11-12): on /legal the seven section links sit in four equal columns, a section with subsections spans the full width and lists its subsection links in the same four columns, flush with them, and the sections without subsections share the last row. Two columns up to 1000 px, one column up to 560 px. The /legal list carries the classes toc-g and toc-s for it; the flat contents lists of guides and posts keep their two columns. No word on the page changed and the Markdown twin is unchanged.
@@ -5449,7 +5450,7 @@ This example uses an invented business and invented readings. The sample's scann
 - [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
 - [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. Get written limits for the agent that your company already runs. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
 
-Listed prices exclude VAT and are valid until 2026-12-31.
+Listed prices exclude VAT and are valid until 2027-06-30.
 
 [All services and prices](/services).
 
@@ -5584,7 +5585,7 @@ See the [sample audit report](/samples/audit-report) before choosing a service.
 
 ## Website and API agent-readiness audit
 
-**€4,300. Two weeks. Fixed scope. Price valid until 2026-12-31.**
+**€4,300. Two weeks. Fixed scope. Price valid until 2027-06-30.**
 
 A technical scan, a manual review of your website and API surfaces, and a recorded question set put to selected AI assistants. The report keeps the technical findings and the observed AI answers apart.
 
@@ -5638,7 +5639,7 @@ The written scope names which of these you buy. For your own AI agent, tools tha
 
 ## Implementation
 
-**€1,500. Per day, scoped separately. €499 for the complete fix list from an audit. Prices valid until 2026-12-31.**
+**€1,500. Per day, scoped separately. €499 for the complete fix list from an audit. Prices valid until 2027-06-30.**
 
 I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
 
@@ -5700,7 +5701,7 @@ One round of implementation handover questions is included. Submit them within 1
 
 ## Ongoing advisory
 
-**€3,000. Per month. Minimum three months. Price valid until 2026-12-31.**
+**€3,000. Per month. Minimum three months. Price valid until 2027-06-30.**
 
 If you are not satisfied with the first month, you can end the retainer by email sent at any time during the first month, up to the day before the second month starts. The retainer then ends when the first month ends, and the second and third months are not charged.
 
@@ -5907,7 +5908,7 @@ Can an AI assistant find the right information about your product?
 
 I check what your website and API make available, whether the facts agree, and what selected AI assistants answer about your product. Then I explain what needs attention and how your team can fix it.
 
-€4,300 plus VAT. Delivered within two weeks of the agreed written kickoff. Fixed scope. Price valid until 2026-12-31.
+€4,300 plus VAT. Delivered within two weeks of the agreed written kickoff. Fixed scope. Price valid until 2027-06-30.
 
 We agree the work in writing before it starts. The audit uses public information by default and does not require production credentials. A test account is used only when you name it in writing and the written scope states what it allows.
 
@@ -7690,7 +7691,7 @@ turva.dev provides independent agent-readiness audits and advisory for product t
 
 **What does an agent-readiness audit cost?**
 
-turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged, and implementation is €1,500 per day, scoped per task. Prices exclude VAT and are valid until 2026-12-31, and the scope is written before any payment.
+turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged, and implementation is €1,500 per day, scoped per task. Prices exclude VAT and are valid until 2027-06-30, and the scope is written before any payment.
 
 **How long does an agent-readiness audit take?**
 
@@ -8613,7 +8614,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.256.0",
+    "version": "3.256.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8922,7 +8923,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.256.0",
+  "version": "3.256.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9623,7 +9624,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-13";
+const SITEMAP_LASTMOD = "2026-11-14";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -10530,7 +10531,7 @@ function buildMetaBlock(pathname: string, canonicalUrl: string) {
 <meta name="twitter:image:alt" content="${sa}" />${articleMeta}`;
 }
 
-const PRICE_VALID_UNTIL = "2026-12-31";
+const PRICE_VALID_UNTIL = "2027-06-30";
 
 // The Service node with its AggregateOffer and OfferCatalog is one constant because two
 // pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
