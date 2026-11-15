@@ -20,7 +20,7 @@
 // had never run, because the manifest was empty. The first card in the manifest brought the
 // whole verify run down with a ReferenceError. A check that has never run is not green, it is unrun.
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { execSync, execFileSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createPublicKey, verify as edVerify } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -2184,9 +2184,11 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     // V6-U1 (round 19): a validator check's detail can quote a third-party llms.txt
     // verbatim, so a bidirectional control character in that quoted text must not reach
     // the answer. Since v3.183.0 (Tek-496) the same map also removes C0 and C1 control
-    // characters, so the line carries stripControls around stripBidi.
-    check(w.includes('result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripControls(stripBidi(c.detail)) }) : c));'),
-      'every validator check detail is passed through stripBidi and stripControls before it reaches the JSON or HTML answer');
+    // characters, so the line carries stripControls around stripBidi. Since 2026-11-14 it also removes the
+    // invisible formatting characters (marks, zero-width characters, line separators, tag characters), through
+    // stripInvisible.
+    check(w.includes('result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripInvisible(stripControls(stripBidi(c.detail))) }) : c));'),
+      'every validator check detail is passed through stripBidi, stripControls and stripInvisible before it reaches the JSON or HTML answer');
 
     // K1-1 (round 19): the bare Response.redirect() carries only Location, so a redirect
     // built with it skips applySecurityHeaders; redirectTo() is the one replacement.

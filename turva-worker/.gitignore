@@ -39,6 +39,9 @@ jspm_packages/
 *.tgz
 
 # dotenv and secrets, never commit
+*.pem
+*.key
+credentials.json
 .env
 .env.*
 !.env.example

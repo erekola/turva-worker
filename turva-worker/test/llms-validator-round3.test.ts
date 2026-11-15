@@ -205,7 +205,7 @@ import { stripTypes } from "../test-support/strip-types.ts";
 
 function loadMaskLocation() {
   const src = stripTypes(readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8"));
-  const start = src.search(/function maskLocation\(href\s*,\s*base\s*\)\s*\{/);
+  const start = src.search(/function maskLocation\(href\s*,\s*base\s*(?:,\s*written\s*)?\)\s*\{/);
   assert.ok(start >= 0, "maskLocation is in worker.ts");
   const close = /\n\}\r?\n/.exec(src.slice(start));
   assert.ok(close, "maskLocation has a closing brace at column 0");

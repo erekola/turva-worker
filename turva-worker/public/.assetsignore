@@ -1,0 +1,14 @@
+# Files in this folder that wrangler does not upload as static assets, so a local file that
+# was never committed (a key, an environment file, a backup, a source map) cannot go out
+# with a deploy. wrangler never uploads this file itself.
+*.pem
+*.key
+*.map
+*.bak
+*.orig
+.env
+.env.*
+.dev.vars
+.dev.vars.*
+.DS_Store
+Thumbs.db

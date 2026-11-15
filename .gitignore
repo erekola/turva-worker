@@ -163,3 +163,8 @@ tools/verify.proxy.mts
 .dev.vars.*
 .env
 .env.*
+
+# Signing keys and credential files, never commit
+*.pem
+*.key
+credentials.json

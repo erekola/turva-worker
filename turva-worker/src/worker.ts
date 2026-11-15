@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.257.0 - security repairs from an outside read (2026-11-15): the hosted Markdown parity check refuses expensive CSS selectors before running them, the hosted llms.txt validator scans links in linear time, reads a backslash before a line ending and raw HTML blocks as CommonMark does, scans the head for script comments and svg templates correctly, strips format and default-ignorable characters from check details and masks user information in redirect locations more widely, the Content-Security-Policy img-src and connect-src directives are narrowed to the site itself, the x402 settlement note is reworded and the MCP server card moves to 1.10.2.
 // turva.dev worker v3.256.1 - the price validity date moves from 2026-12-31 to 2027-06-30 in PRICE_VALID_UNTIL and in the six "valid until" prose lines (2026-11-14).
 // turva.dev worker v3.256.0 - audit round 27 corrections (2026-11-13): wording fixes on pages, guides and posts, dated Corrected lines with a moved modified date on seven posts, a contents list placed before the first section of a guide whose old anchor span stood in front of it, the site-wide about value removed from the structured data of blog posts, and the card of one post rebuilt without the unsupported phrase. No price, claim, signed surface or route changed.
 // turva.dev worker v3.255.0 - link preview cards v9 (Tek-809, 2026-11-12): every per-page link preview card and og.jpg is rebuilt on the new base og-v9-pohja. The page texts run across the full width under the header, and the proof sits in three score cells along the bottom: 100/100 on isitagentready.com, Level 5 Agent-Native and 5/5 categories, all at 100. No card text, page text or image address changed, and no served text of the worker changed with it.
@@ -276,13 +277,16 @@ mx: mailsec.protonmail.ch
 max_age: 604800
 `;
 
+// Images and connections reach only the site itself: no page loads an external image and the page script reads only the
+// site's own pages (test/security-audit-2026-11-14.test.ts walks every sitemap page and the two scripts to prove it), so
+// an injected tag or script has no open destination to send anything to. media-src is not narrowed with them.
 const CSP_HTML = [
   "default-src 'self'",
   "script-src 'self' 'sha256-9CZbgnXRVMovEMtIPdG5WPhCET9/0d8T+B2MZmxD3CU='",
   "style-src 'self' 'unsafe-inline' data:",
-  "img-src 'self' data: blob: https:",
+  "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  "connect-src 'self' https: wss:",
+  "connect-src 'self'",
   "media-src 'self' https: data:",
   "object-src 'none'",
   "frame-ancestors 'none'",
@@ -8614,7 +8618,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.256.1",
+    "version": "3.257.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8755,7 +8759,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LWdUvGs8dP4N72XRHPTfG8e6ZDhiw9mEpLprbOcgTG8bmNjhCRs9Y9z9Pi20psl4n_ikCZCAc4IyJppUcSsWCQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Q1up79HXFRSjEJSlcCnKc4QQefukowX5tTUGszDVffaSZGh3NONmOiHlx5-DxJL4j0X9HsHHKNCNrokGS9JgCQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"iwKHuI8iUdxF3v1GqVcl5ij4qA5IDrdmNd7Z2_hMa02LSVdHvvSgDB6RM3uye-bdagxjVHpPzOhI8fSUUvA0AA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Q1up79HXFRSjEJSlcCnKc4QQefukowX5tTUGszDVffaSZGh3NONmOiHlx5-DxJL4j0X9HsHHKNCNrokGS9JgCQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8769,7 +8773,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -8778,7 +8782,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.10.1",
+    "version": "1.10.2",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, the active security testing add-on to the audit quoted on request, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -8923,7 +8927,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.256.1",
+  "version": "3.257.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9090,7 +9094,7 @@ const ARD_MANIFEST = JSON.stringify(Object.assign({}, JSON.parse(AI_CATALOG), {
 const X402_SETTLEMENT_NOTE = {
   "mode": "out-of-band",
   "verified": false,
-  "note": "No facilitator is configured. X-PAYMENT is not verified and this resource answers 402 regardless of payment, so sending funds achieves nothing. Ask for a quote and settle against the written scope.",
+  "note": "No facilitator is configured. X-PAYMENT is not verified and this resource answers 402 regardless of payment, so neither sending funds nor sending a signed payment authorization changes that answer. Ask for a quote and settle against the written scope.",
   "quote": "mailto:info@turva.dev?subject=Quote%20request"
 };
 
@@ -11090,6 +11094,23 @@ function stripBidi(s: string | undefined) {
 // sequence that clears the screen (Tek-496).
 function stripControls(s: string) {
   return String(s).replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
+}
+
+// Invisible characters leave a check's detail too, by Unicode class and not from a list kept by hand: every
+// format character (General_Category Cf: the zero-width characters, the left-to-right and right-to-left marks
+// and the Arabic letter mark, the bidi controls, the invisible math operators, the soft hyphen, the byte-order
+// mark, the tag characters U+E0000 to U+E007F), every Default_Ignorable_Code_Point (also the variation
+// selectors U+FE00 to U+FE0F and U+E0100 to U+E01EF, the combining grapheme joiner and the Hangul fillers),
+// and the line and paragraph separators U+2028 and U+2029 (Zl and Zp). They reorder or hide text that a
+// reader sees differently from a program. Ordinary spaces (U+00A0, U+2000 to U+200A, U+202F, U+205F,
+// U+3000) are not in the class and stay. Cost: an emoji sequence loses its zero-width joiners and its
+// variation selector, so a family emoji reads as its members side by side, a heart written with U+FE0F shows
+// in text style, and a tag flag shows as its black flag. The same class takes the zero-width non-joiner and
+// joiner out of words that need them to join or to stay apart, so a quoted Persian, Malayalam or Devanagari
+// word loses its joining mark and reads without it, and it takes the soft hyphen, the Arabic number signs
+// U+0600 to U+0605 and the end-of-ayah mark U+06DD, which show as glyphs.
+function stripInvisible(s: string) {
+  return String(s).replace(/[\p{Cf}\p{Default_Ignorable_Code_Point}\p{Zl}\p{Zp}]/gu, "");
 }
 
 // A JSON text with every bidirectional control written as an escape (round 19 review of V6-P1).
@@ -13512,9 +13533,63 @@ function isValidPublicHost(host: string): boolean {
 // first ? or # survives, and when the target has a scheme or starts with two slashes, everything up
 // to the last @ before them is shown as ***.
 // The package turva-llms-txt-validator mirrors this as maskLocation() from 0.3.5.
-function maskLocation(href: string, base?: string): string {
+// User information is also recognised from the text, not only from the parser: a ? or # inside it ends the
+// authority for the parser, which then reads "https://user:pa?ss@host/" as host "user", port "pa" and a query
+// (or refuses it), and a scheme the parser refuses ("my_app://", "1app://", "ht tps://") lets it resolve the text
+// as a relative path. In both cases the text before the last @ is still user information to a reader, so it is
+// masked from the text. The optional third argument is the text an address was written as, when href is its
+// parsed form: if that text hides user information the parser moved, it is masked instead of the parsed form.
+function maskLocation(href: string, base?: string, written?: string): string {
+  // The characters a URL parser drops before it reads anything.
+  const text = String(href).replace(/[\t\n\r]/g, "");
+  // Where an authority starts in a text, read from the text and not from the parser: after a scheme and two slashes, the
+  // scheme being whatever stands before "://" with no / \ ? or # in it. invalid is true when that "scheme" is not one.
+  const shapeOf = (t: string) => {
+    const m = /^[a-z][a-z0-9+.-]*:/i.exec(t);
+    let start = m ? m[0].length : 0;
+    let invalid = false;
+    const sep = t.indexOf("://");
+    if (sep >= 0 && !(m && m[0].length === sep + 1) && !/[\/\\?#]/.test(t.slice(0, sep))) { start = sep + 1; invalid = true; }
+    let from = start;
+    while (from < t.length && (t[from] === "/" || t[from] === "\\")) from++;
+    return { start, from, scheme: m !== null || invalid, invalid };
+  };
+  // Ambiguity is decided once, from the written text alone, before any branch below reads it. A text that holds an @ is
+  // read the same way by a URL parser and by a person only when it starts exactly as "<scheme>://" or "//" followed by a
+  // character that is no slash, and no backslash, ? or # stands between that start and the first slash or the last @. Any
+  // other start is read differently by each reader (three slashes, a backslash, a scheme colon with no or one slash, a
+  // later "://" after the @, an @ before the scheme colon), and so is a ? or # in front of the @ (the parser reads the host
+  // before it and a query after it, a person reads the text before the @ as user information). Such a text shows only its
+  // scheme, or nothing, and no host. A start with no scheme-like word and no leading // is a relative reference and is
+  // not decided here: "/a@b", "docs/@name", "?e=a@b.com" and "#x@y" keep the reading they have below.
+  const ambiguous = (t: string): boolean => {
+    if (!t.includes("@")) return false;
+    const m = /^[a-z][a-z0-9+.-]*:/i.exec(t);
+    const sep = t.indexOf("://");
+    const lead = m ? m[0] : sep >= 0 && !/[\/\\?#]/.test(t.slice(0, sep)) ? t.slice(0, t.indexOf(":") + 1) : "";
+    if (lead.includes("@")) return true;
+    if (lead === "" && !/^[\/\\]{2}/.test(t)) return false;
+    const p = lead.length;
+    if (t[p] !== "/" || t[p + 1] !== "/" || p + 2 >= t.length || t[p + 2] === "/" || t[p + 2] === "\\") return true;
+    const lastAt = t.lastIndexOf("@");
+    if (lastAt < p + 2) return false;
+    const slash = t.indexOf("/", p + 2);
+    return /[\\?#]/.test(t.slice(p + 2, slash >= 0 && slash < lastAt ? slash : lastAt));
+  };
+  if (written !== undefined) {
+    const w = String(written).replace(/[\t\n\r]/g, "");
+    if (ambiguous(w) || shapeOf(w).invalid) return maskLocation(written, base);
+  }
+  if (ambiguous(text)) {
+    // The scheme is shown when a slash follows its colon; with no slash the text before the colon may be a user name.
+    const scheme = /^([\w+.-]{1,32}):[\/\\]/.exec(text);
+    return (scheme ? scheme[1] + ":" : "") + "//***";
+  }
+  const shape = shapeOf(text);
   let u = null;
-  try { u = new URL(href, base); } catch { u = null; }
+  if (!shape.invalid) {
+    try { u = new URL(href, base); } catch { u = null; }
+  }
   // An opaque URL (no authority, e.g. "u:name@host/") parses without throwing but has no host,
   // so clearing u.username/u.password is a silent no-op: WHATWG has nowhere to put them and the
   // credential-shaped text stays in the opaque path untouched. Route it through the string
@@ -13536,13 +13611,25 @@ function maskLocation(href: string, base?: string): string {
     u.hash = "";
     return u.href;
   }
-  let s = String(href).replace(/[\t\n\r]/g, "");
+  let s = text;
   const stop = s.search(/[?#]/);
+  // A ? or # before the last @ can still belong to the user information of a text that has no scheme-like start
+  // ("user_name:pa?ss@host"). When a colon and no slash stands before that ?, everything up to the last @ is shown as ***,
+  // and the cut at the ? or # applies to what follows it. A scheme or an authority with a ? before the @ is ambiguous and
+  // has returned above.
+  if (stop >= 0 && stop >= shape.from) {
+    const lastAt = s.lastIndexOf("@");
+    if (lastAt > stop && shape.from === shape.start && s.slice(0, stop).includes(":") && !/[\/\\]/.test(s.slice(shape.from, stop))) {
+      const rest = s.slice(lastAt + 1);
+      const rs = rest.search(/[?#]/);
+      return s.slice(0, shape.from) + "***@" + (rs >= 0 ? rest.slice(0, rs) + (rest[rs] === "?" ? "?***" : "") : rest);
+    }
+  }
   if (stop >= 0) s = s.slice(0, stop) + (s[stop] === "?" ? "?***" : "");
-  const scheme = /^[a-z][a-z0-9+.-]*:/i.exec(s);
-  const start = scheme ? scheme[0].length : 0;
-  let from = start;
-  while (from < s.length && (s[from] === "/" || s[from] === "\\")) from++;
+  const after = shapeOf(s);
+  const hasScheme = after.scheme;
+  const start = after.start;
+  const from = after.from;
   // Without a scheme and two slashes there is normally no authority, and an @ is part of a
   // path ("path@2x.png" stays unmasked below). But when an @ still appears before the first
   // /, the text ahead of it reads as userinfo even when the parser here does not recognise it
@@ -13552,7 +13639,7 @@ function maskLocation(href: string, base?: string): string {
   // user:password and is masked, while "path@2x.png" has no ":" ahead of its @ and stays as
   // given (outside review V13, D5-1: the slashless shape used to return early and print the
   // password). The package turva-llms-txt-validator mirrors the VN1 fix from 0.3.11.
-  if (!scheme && from - start < 2) {
+  if (!hasScheme && from - start < 2) {
     const firstSlash = s.indexOf("/");
     const firstAt = s.indexOf("@");
     if (firstAt < 0) return s;
@@ -13631,8 +13718,8 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
       if (next.hostname.length > 1 && next.hostname.endsWith(".")) next.hostname = next.hostname.slice(0, -1);
       const safeTarget = next.protocol === "https:" && !next.port && !next.username && !next.password && isValidPublicHost(next.hostname);
       const twin = (next.hostname.startsWith("www.") ? next.hostname.slice(4) : next.hostname) === reqApex;
-      if (!safeTarget) return { redirect: true, reason: "unsafe-target", status: res.status, location: cut(maskLocation(next.href), 120) };
-      if (!twin) return { redirect: true, reason: "off-host", status: res.status, location: cut(maskLocation(next.href), 120) };
+      if (!safeTarget) return { redirect: true, reason: "unsafe-target", status: res.status, location: cut(maskLocation(next.href, undefined, loc), 120) };
+      if (!twin) return { redirect: true, reason: "off-host", status: res.status, location: cut(maskLocation(next.href, undefined, loc), 120) };
       if (!redirectedFrom) redirectedFrom = url;
       url = next.href;
       continue;
@@ -13989,19 +14076,27 @@ interface MdLink { name: string; target: string; at: number }
 // is read as plain brackets, and so is a shortcut reference "[text]" after an inline attempt that did not parse (S3, LV-11). A
 // resolved or inline target is decoded for backslash escapes and complete character references ("&#58;", "&amp;", ...), the
 // way CommonMark does and not like an HTML attribute (S3, LV-18). The scan carries no bound and no backtracking: the closing
-// ">", quote and line end are looked up through a cache that only moves forward, and the parenthesis pairs of a plain target
-// are built once, so a file that repeats "[a](" or "[a](x \"" stays linear.
+// ">", quote, "]" and line end are looked up in a list of every position of that character, built on its first use and
+// searched by bisection, so a look-up costs the same in whatever order the queries come, and the parenthesis pairs of a
+// plain target are built once, so a file that repeats "[a](", "![" or "[a](x \"" stays linear.
 function collectLinks(text: string, defs?: Map<string, string>, lineBlocks?: number[]): MdLink[] {
   const out: MdLink[] = [];
   const code = codeSpanMask(text, lineBlocks);
   const refs: Map<string, string> = defs || collectLinkDefinitions(text, lineBlocks);
-  const cache: Record<string, { from: number; at: number }> = Object.create(null);
+  // The index of the first c at or after from, or -1. A cache of the last answer only helped queries that move
+  // forward; a query that moves back made the next one scan from the start again, which is quadratic on a text of
+  // "![" openers whose labels and targets are looked up from the inside out.
+  const positions: Record<string, number[]> = Object.create(null);
   const nextIdx = (c: string, from: number): number => {
-    const h = cache[c];
-    if (h && h.from <= from && (h.at === -1 || h.at >= from)) return h.at;
-    const at = text.indexOf(c, from);
-    cache[c] = { from, at };
-    return at;
+    let p = positions[c];
+    if (!p) {
+      p = [];
+      for (let k = text.indexOf(c); k !== -1; k = text.indexOf(c, k + 1)) p.push(k);
+      positions[c] = p;
+    }
+    let lo = 0, hi = p.length;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (p[mid] < from) lo = mid + 1; else hi = mid; }
+    return lo < p.length ? p[lo] : -1;
   };
   const isBlank = (c: string | undefined): boolean => c === " " || c === "\t";
   // A blank line ends a paragraph, and a link label cannot reach across one (Tek-560); neither can it reach across a line that
@@ -14096,9 +14191,11 @@ function collectLinks(text: string, defs?: Map<string, string>, lineBlocks?: num
     return e < text.length ? afterTarget(text.slice(k, e), e) : null;
   };
   // The text of a link label from j on, up to the "]" or "[" that ends it or the line break that ends the paragraph. A bracket
-  // inside a code span is code and neither closes nor opens (S3, LV-05 and U-7).
+  // inside a code span is code and neither closes nor opens (S3, LV-05 and U-7). A backslash before a line break is a hard
+  // line break and escapes nothing, so the break still ends the paragraph it ends (CommonMark); the label scan and closeOf
+  // below used to step over it, and a link label then ran on into the next list item or heading.
   const scanLabel = (j: number): number => {
-    while (j < text.length && (code[j] || (text[j] !== "]" && text[j] !== "[" && !blankAt(j)))) j += !code[j] && text[j] === "\\" ? 2 : 1;
+    while (j < text.length && (code[j] || (text[j] !== "]" && text[j] !== "[" && !blankAt(j)))) j += !code[j] && text[j] === "\\" && text[j + 1] !== "\n" ? 2 : 1;
     return j;
   };
   // A definition is decoded once, however many references use it: a long destination used by many labels would otherwise be
@@ -14120,7 +14217,7 @@ function collectLinks(text: string, defs?: Map<string, string>, lineBlocks?: num
     for (let k = 0; k < text.length; k++) {
       if (code[k]) continue;
       const c = text[k];
-      if (c === "\\") k++;
+      if (c === "\\" && text[k + 1] !== "\n") k++;
       else if (c === "[") stack.push(k);
       else if (c === "]") { const o = stack.pop(); if (o !== undefined) pairs[o] = k; }
       else if (c === "\n" && blankAt(k)) stack.length = 0;
@@ -14132,6 +14229,16 @@ function collectLinks(text: string, defs?: Map<string, string>, lineBlocks?: num
   // unescaped "!". The alt text is read to the "]" that balances the "[" (S3, LV-08), so a link written inside it is image text
   // and no link. Returns the index after the image, or null for a malformed one (no closing "]", no target, a label without a
   // definition), which the callers treat as an ordinary bracket, the way CommonMark reads it.
+  // The text between an image's "[" at k and its "]" at m, as a reference label, or "" when it cannot be one. A
+  // definition label holds no "]" (collectLinkDefinitions reads it with a class that excludes the closing
+  // bracket), so a text that holds one names no definition and is not worth normalizing. With nested openers, as
+  // many "![" and then "]", every level would otherwise normalize everything inside it, which is quadratic. The
+  // first "]" after the opener comes from the position list, and the texts that are normalized end at
+  // that first "]", so no two of them overlap.
+  const imageLabelText = (k: number, m: number): string => {
+    const c = nextIdx("]", k + 1);
+    return c !== -1 && c < m ? "" : text.slice(k + 1, m);
+  };
   const skipImage = (k: number): number | null => {
     const m = closeOf()[k];
     if (m < 0) return null;
@@ -14144,10 +14251,10 @@ function collectLinks(text: string, defs?: Map<string, string>, lineBlocks?: num
       while (n < text.length && text[n] !== "]" && text[n] !== "[" && text[n] !== "\n") n += text[n] === "\\" ? 2 : 1;
       if (n >= text.length || text[n] !== "]") return null;
       const raw = text.slice(m + 2, n);
-      const label = normalizeLinkLabel(raw === "" ? text.slice(k + 1, m) : raw);
+      const label = normalizeLinkLabel(raw === "" ? imageLabelText(k, m) : raw);
       return label && refs.has(label) ? n + 1 : null;
     }
-    const own = normalizeLinkLabel(text.slice(k + 1, m));
+    const own = normalizeLinkLabel(imageLabelText(k, m));
     return own && refs.has(own) ? m + 1 : null;
   };
   // True when the "[" at i sits where a link reference definition would start its line: only quote markers and a list marker
@@ -14317,7 +14424,7 @@ function isSetextH1(line: string, next: string | undefined): boolean {
 const HTML_BLOCK_START = /^ {0,3}<(?:[A-Za-z][A-Za-z0-9-]*(?:[\s\/>]|$)|\/[A-Za-z][A-Za-z0-9-]*(?:[\s>]|$)|!--|\?|![A-Za-z]|!\[CDATA\[)/;
 const LINK_REF_DEF = /^ {0,3}\[[^\]]+\]:/;
 // HTML blocks of CommonMark types 1 to 5 end at a marker, not at a blank line. The end markers are plain substrings matched case-insensitively, as CommonMark defines them, and not a tag regexp (CodeQL js/bad-tag-filter): type 2 ends at "-->" only, never at "--!>".
-// Entry is [start, ends]: </pre>, </script>, </style>, </textarea> after <pre> and kin, "-->" after "<!--", "?>" after "<?", "]]>" after "<![CDATA[", ">" after "<!X"; the marker is looked for after the start on the same line.
+// Entry is [start, ends]: </pre>, </script>, </style>, </textarea> after <pre> and kin, "-->" after "<!--", "?>" after "<?", "]]>" after "<![CDATA[", ">" after "<!X"; the marker is looked for on the whole opener line, as CommonMark does, so "<!-->", "<!--->" and "<?>" open and close on that line.
 function hasRawEnd(s: string, ends: string[]): boolean { const t = s.toLowerCase(); return ends.some((e) => t.includes(e)); }
 const RAW_HTML_BLOCKS: [RegExp, string[]][] = [
   [/^ {0,3}<(?:pre|script|style|textarea)(?:[ \t>]|$)/i, ['</pre>', '</script>', '</style>', '</textarea>']],
@@ -14329,33 +14436,83 @@ const RAW_HTML_BLOCKS: [RegExp, string[]][] = [
 // The lines of raw HTML blocks, by the start conditions of CommonMark: types 1 to 5 end at their marker (RAW_HTML_BLOCKS), type
 // 6 (a block-level tag name) and type 7 (a complete tag alone on a line, which cannot interrupt a paragraph) end at a blank line.
 // The lines of a block hold no Markdown (S3, LV-19), so the links and definitions are read from a text where they are blank,
-// while the no-html check still reads them. A block inside a quote or a list item, or indented four columns, is not read.
+// while the no-html check still reads them. A block is read only where its start is certain (see htmlBlockLines).
 const HTML_BLOCK_NAMES = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul";
 const HTML_TYPE6 = new RegExp("^ {0,3}</?(?:" + HTML_BLOCK_NAMES + ")(?:[ \\t]|/?>|$)", "i");
-const HTML_TYPE7 = /^ {0,3}(?:<[A-Za-z][A-Za-z0-9-]*(?:[ \t]+[A-Za-z_:][A-Za-z0-9_.:-]*(?:[ \t]*=[ \t]*(?:[^ \t"'=<>`]+|'[^']*'|"[^"]*"))?)*[ \t]*\/?>|<\/[A-Za-z][A-Za-z0-9-]*[ \t]*>)[ \t]*$/;
+const HTML_TYPE7 = /^ {0,3}(?:<(?!(?:pre|script|style|textarea)(?![A-Za-z0-9-]))[A-Za-z][A-Za-z0-9-]*(?:[ \t]+[A-Za-z_:][A-Za-z0-9_.:-]*(?:[ \t]*=[ \t]*(?:[^ \t"'=<>`]+|'[^']*'|"[^"]*"))?)*[ \t]*\/?>|<\/(?!(?:pre|script|style|textarea)(?![A-Za-z0-9-]))[A-Za-z][A-Za-z0-9-]*[ \t]*>)[ \t]*$/i;
+// The columns a line is indented by, a tab going to the next multiple of four.
+function indentColumns(l: string): number {
+  let col = 0;
+  for (let p = 0; p < l.length; p++) {
+    if (l[p] === " ") col++;
+    else if (l[p] === "\t") col += 4 - (col % 4);
+    else break;
+  }
+  return col;
+}
+// The content offset (in columns) of the list item that a line opens, or 0 when it opens none: a bullet or an ordinary number
+// marker followed by a space, a tab or the end of the line, and not a thematic break. One to four spaces after the marker
+// belong to the offset, and five or more, or none, leave it at marker width plus one.
+function listItemOffset(l: string, col: number): number {
+  const m = /^[ \t]*([-*+]|\d{1,9}[.)])([ \t]*)/.exec(l);
+  if (!m) return 0;
+  const after = l.slice(m[0].length);
+  if (m[2] === "" && after !== "") return 0;
+  if (/^[ \t]*([-*_])(?:[ \t]*\1){2,}[ \t]*$/.test(l)) return 0;
+  const gap = m[2].replace(/\t/g, "    ").length;
+  return col + m[1].length + (after === "" || gap > 4 ? 1 : gap);
+}
+// A raw HTML block is read only where its start is certain. The opener line is the first line, or follows a blank line or an
+// ATX heading that itself stood at such a place, is indented at most three columns and is outside every open list item.
+// Directly under a paragraph line, a quote line, a list item line or another HTML line a CommonMark reader may take the line
+// as a lazy continuation, as part of an item or as the start of a block, and the answer depends on rules that are not followed
+// here, so nothing is masked there and the lines keep the reading they have without this function. An item counts as open from
+// its marker line until a line after a blank line is indented less than its content offset; a line that follows text and is
+// indented less may be a lazy continuation, so it drops nothing and the item stays on the list, which only ever hides less. A
+// block ends as CommonMark says for its type. An opener of type 1 to 5 in an uncertain place may still be a block that runs on
+// over blank lines up to its end marker, so no opener is read after it until that marker has been seen, or for good when it
+// never comes.
 function htmlBlockLines(lines: string[], blocks: number[]): boolean[] {
   const out = new Array<boolean>(lines.length).fill(false);
   let open = false, ends: string[] | null = null;
+  // The end markers of an opener that was left unread, while its end has not been seen.
+  let pending: string[] | null = null;
+  // The content offsets of the list items that may be open above the line.
+  const items: number[] = [];
+  // True when a block can start at the line for certain: at the start, after a blank line, after such a heading.
+  let clean: boolean = true;
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
+    const here: boolean = clean;
+    clean = false;
     if (open) {
-      if (ends === null) { if (isMdBlank(l)) open = false; else out[i] = true; continue; }
+      if (ends === null) { if (isMdBlank(l)) { open = false; clean = true; } else out[i] = true; continue; }
       out[i] = true;
       if (hasRawEnd(l, ends)) open = false;
       continue;
     }
-    if (blocks[i] < 0 || isMdBlank(l)) continue;
+    if (blocks[i] < 0) continue;
+    if (isMdBlank(l)) { clean = true; continue; }
+    const col = indentColumns(l);
+    if (here) while (items.length > 0 && col < items[items.length - 1]) items.pop();
+    const offset = listItemOffset(l, col);
+    if (offset > 0) items.push(offset);
+    if (pending !== null) { if (hasRawEnd(l, pending)) pending = null; continue; }
+    if (offset > 0) continue;
+    clean = here && /^ {0,3}#{1,6}(?:[ \t]|$)/.test(l);
+    const certain = here && items.length === 0;
     let matched = false;
     for (const [start, end] of RAW_HTML_BLOCKS) {
       const m = start.exec(l);
       if (!m) continue;
       matched = true;
-      out[i] = true;
-      if (!hasRawEnd(l.slice(m[0].length), end)) { open = true; ends = end; }
+      const closed = hasRawEnd(l, end);
+      if (certain) { out[i] = true; if (!closed) { open = true; ends = end; } }
+      else if (!closed) pending = end;
       break;
     }
     if (matched) continue;
-    if (HTML_TYPE6.test(l) || (HTML_TYPE7.test(l) && (i === 0 || blocks[i] !== blocks[i - 1]))) {
+    if (certain && (HTML_TYPE6.test(l) || HTML_TYPE7.test(l))) {
       out[i] = true;
       open = true;
       ends = null;
@@ -14427,7 +14584,7 @@ function laterSetextH1(lines: string[], fenced: boolean[]): { text: boolean[]; u
       if (HTML_BLOCK_START.test(l) || LINK_REF_DEF.test(l)) htmlCtx = true;
       for (const [start, end] of RAW_HTML_BLOCKS) {
         const m = start.exec(l);
-        if (m) { if (!hasRawEnd(l.slice(m[0].length), end)) rawEnd = end; break; }
+        if (m) { if (!hasRawEnd(l, end)) rawEnd = end; break; }
       }
     }
     if (!open && !listCtx && !quoteCtx && !htmlCtx && indented) continue;
@@ -14557,7 +14714,8 @@ function isAbsoluteHttpUrl(t: string): boolean {
 }
 type CheckStatus = "pass" | "warn" | "fail" | "info";
 function redirectFailDetail(f: LlmsTxtInput): string {
-  if (f.reason === "off-host") return "redirects to " + f.location + ", a different host. llms.txt is host-scoped, so validate that host directly";
+  // A location shown as only its scheme (maskLocation, ambiguous address) gives no host to validate.
+  if (f.reason === "off-host") return "redirects to " + f.location + (String(f.location).endsWith("//***") ? ", a different host that this report does not name. llms.txt is host-scoped, so find the host that this redirect points to and validate it directly" : ", a different host. llms.txt is host-scoped, so validate that host directly");
   if (f.reason === "unsafe-target") return "redirects to an unsupported target (" + f.location + "). Only https redirects to the same site are followed";
   if (f.reason === "too-many") return "too many redirects. The llms.txt is not served at a stable URL";
   return "got a " + f.status + " redirect without a usable Location header";
@@ -14697,7 +14855,10 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
       linkedLineIdx.add(idx);
     }
   }
-  const h2Count = lines.filter((l, i) => isH2At(lines, i, fenced)).length;
+  // A line inside a raw HTML block is no heading either: CommonMark reads "<?x", "## Docs", "?>" as one block of type 3
+  // and ends it at the "?>", not at the heading, so the lines of the blocks that htmlBlockLines finds are masked like fences.
+  const h2Mask = fenced.map((f, i) => f || htmlLine[i]);
+  const h2Count = lines.filter((l, i) => isH2At(lines, i, h2Mask)).length;
   const sx = laterSetextH1(lines, fenced);
   // A section counts when it carries a file list. An H2 followed by a paragraph satisfied
   // this check until 2026-08-29, and the format puts each section's links in a list.
@@ -14725,7 +14886,7 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
         continue;
       }
       if (sx.under[i]) continue;
-      if (isH2At(lines, i, fenced)) { inSection = true; counted = false; seenH2 = true; itemOpen = false; if (!isAtxH2(l)) i++; continue; }
+      if (isH2At(lines, i, h2Mask)) { inSection = true; counted = false; seenH2 = true; itemOpen = false; if (!isAtxH2(l)) i++; continue; }
       const h1 = /^ {0,3}#(?:[ \t]|$)/.test(l) || sx.text[i];
       if (misplaced === -1 && i > firstIdx && (h1 || (!seenH2 && /^ {0,3}#{3,6}(?:[ \t]|$)/.test(l)))) misplaced = i;
       if (h1) { inSection = false; itemOpen = false; continue; }
@@ -14807,7 +14968,15 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   } else if (absolute === named.length) {
     add("links", "pass", "Markdown links an agent can follow", named.length + " link" + (named.length === 1 ? "" : "s") + ", all absolute URLs");
   } else {
-    const relativeCount = named.filter((m) => !/^[a-z][a-z0-9+.-]*:/i.test(m.target)).length;
+    // The scheme test reads a target to its end, so it runs once per distinct target, as isAbs does: many
+    // references to one long definition would otherwise repeat it for each of them.
+    const schemeMemo = new Map<string, boolean>();
+    const hasScheme = (t: string): boolean => {
+      let r = schemeMemo.get(t);
+      if (r === undefined) { r = /^[a-z][a-z0-9+.-]*:/i.test(t); schemeMemo.set(t, r); }
+      return r;
+    };
+    const relativeCount = named.filter((m) => !hasScheme(m.target)).length;
     const hostless = named.length - absolute - relativeCount;
     add("links", "warn", "Markdown links an agent can follow", named.length + " link" + (named.length === 1 ? "" : "s") + ", " + relativeCount + " relative" + (hostless > 0 ? " and " + hostless + " that are not valid http or https URLs" : "") + ". Absolute URLs travel better when the file is read out of context");
   }
@@ -15419,7 +15588,14 @@ function rawTextEnd(lower: string, name: string, from: number): number {
 function scriptEnd(lower: string, from: number): number {
   let i = from, escaped = false, doubleEscaped = false, close = -2;
   while (i < lower.length) {
-    if (lower.startsWith("<!--", i)) { escaped = true; i += 4; continue; }
+    if (!escaped && lower.startsWith("<!--", i)) {
+      // "<!-->" and "<!--->" are over at once: the tokenizer reads the ">" that follows the two or three dashes as the end of
+      // the escape start, so the script is not in the escaped state. Already escaped, "<!--" means nothing, and the "-->" that
+      // overlaps it ends the escape through the search below.
+      if (lower.startsWith("<!-->", i)) { i += 5; continue; }
+      if (lower.startsWith("<!--->", i)) { i += 6; continue; }
+      escaped = true; i += 4; continue;
+    }
     if (escaped && lower.startsWith("-->", i)) { escaped = false; doubleEscaped = false; i += 3; continue; }
     if (escaped && !doubleEscaped && lower.startsWith("<script", i) && isTagBoundary(lower[i + 7])) { doubleEscaped = true; i += 7; continue; }
     if (lower.startsWith("</script", i) && isTagBoundary(lower[i + 8])) {
@@ -15481,7 +15657,10 @@ function templateEnd(lower: string, from: number): number {
     // Round S3 (Tek-546): every tag is read whole with the tokenizer's own states (tagEnd), so a "<"
     // or a ">" inside a quoted attribute value is part of the tag and not markup (LV-26, U-8,
     // WL-16), and the attributes of an end tag are read the same way (LV-25).
-    if (lower.startsWith("</template", lt)) {
+    // A template inside svg or math is an ordinary foreign element, not an HTML template: it opens no level of depth, and
+    // its end tag closes it (through the scope stack below) and not the HTML template this scan is looking for.
+    const foreign = scopes.length > 0 && !scopes[scopes.length - 1].html;
+    if (lower.startsWith("</template", lt) && !(foreign && open.get("template"))) {
       const gt = tagEnd(lower, lt);
       if (gt === -1) return -1;
       // </templateX ...> is an end tag of another name: for the tokenizer it is one tag, and it
@@ -15493,7 +15672,7 @@ function templateEnd(lower: string, from: number): number {
       i = gt + 1;
       continue;
     }
-    if (lower.startsWith("<template", lt) && isTagBoundary(lower[lt + 9])) {
+    if (lower.startsWith("<template", lt) && isTagBoundary(lower[lt + 9]) && !foreign) {
       const gt = tagEnd(lower, lt);
       if (gt === -1) return -1;
       depth++;
@@ -15921,9 +16100,11 @@ async function serveLlmsValidatorHtml(request: Request, canonicalUrl: string) {
   // same words for every address, so a JSON caller reads the raw value from one field instead
   // of parsing it back out of a message meant for people.
   if (unusedPath) result!.checks.unshift({ id: "input-path", status: "info", label: "Path in the address you entered", value: cut(unusedPath, 120), detail: "This path is not used, because the validator always reads /llms.txt at the root of the host." });
-  // Text quoted from the fetched file leaves without bidirectional controls (round 19, V6-U1): a
-  // site's own H1 or summary could otherwise read in another order here and in the JSON answer.
-  if (result) result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripControls(stripBidi(c.detail)) }) : c));
+  // Text quoted from the fetched file leaves without bidirectional controls (round 19, V6-U1), without C0 and
+  // C1 controls and without the invisible formatting characters of stripInvisible: a site's own
+  // H1 or summary could otherwise read in another order, or carry hidden text, here, in the page and in the JSON
+  // answer. The same detail feeds the page and the JSON, so both lose the characters.
+  if (result) result.checks = result.checks.map((c) => (typeof c.detail === "string" ? Object.assign({}, c, { detail: stripInvisible(stripControls(stripBidi(c.detail))) }) : c));
   if (wantsJson(request)) {
     const payload: ValidationResult | ValidationError = error
       ? { error }
@@ -16019,6 +16200,31 @@ const PARITY_MAX_MARKDOWN_BYTES = 131072;
 const PARITY_MAX_REQUEST_BYTES = 8192;
 const PARITY_MAX_URL_CHARS = 2048;
 const PARITY_MAX_SELECTOR_CHARS = 300;
+// The hosted route runs a selector with css-select on the page it fetches, and the time depends on the page and on the shape
+// of the selector, not on its length. Four counted limits refuse the shapes that cost the most, with a 422 before the comparison
+// starts: more than one general-sibling combinator (~), any :has(, a functional pseudo-class inside the argument of another
+// (parenthesis depth above 1), and any :nth-child(), :nth-last-child(), :nth-of-type() or :nth-last-of-type().
+// Readings of 2026-11-14 in Node.js 26 with css-select 7.0.0, css-select alone, on /samples/audit-report (1081 tags, longest
+// sibling run 204, the largest published page) and on the same page with every long run of siblings repeated four times
+// (5269 tags, longest run 816; the hosted size limit does not admit that page):
+// - nested :nth-child(n of ...) takes 2.3 ms at depth 1, 15 ms at depth 2, 631 ms at depth 3 and 26 s at depth 4 on the page,
+//   and 5.7 ms, 814 ms and more than 40 s at depth 1, 2 and 3 on the four times page. :is(), :where() and :not() nested 4 and 6 deep
+//   with nothing else inside took under 1.5 ms.
+// - one :nth-child(2) with one ~ and a descendant chain took 42 ms on the page and 2.9 s on the four times page, and the same
+//   shape with an "of" list 53 ms and 2.3 s.
+// - :has(+ .zz) took 9 ms and 109 ms, :has(~ * * * ... ) with 32 descendant steps 172 ms and 3.0 s, and a ~ inside a :has(
+//   that holds another one 442 ms and more than 30 s.
+// - the slowest readings of two sampled searches of allowed shapes (no :has(, no :nth-, one ~ at any position, repeated :is() and
+//   :not() with comma lists and descendant chains, :contains(), :first-child and kin, depth 1). A sample is not a bound. Of 7 580
+//   shapes of up to 300 characters the worst took 32 ms on the page and 545 ms on the four times page in css-select alone, and
+//   77 ms and 505 ms through the whole handler. Of 23 892 shapes drawn from a grammar, and from a hill-climbing search that
+//   scored the four times page, the worst through the whole handler took 86 ms on the page ("* * * * * * ~ * * * *") and
+//   1 396 ms on the four times page ("* > p + strong + *:parent *:parent *:parent *:not(:first-child) ~ *:parent * *").
+// Cost still grows with the square of the longest sibling run for the one ~ that is allowed.
+const PARITY_MAX_SIBLING_COMBINATORS = 1;
+const PARITY_MAX_HAS = 0;
+const PARITY_MAX_NEST = 1;
+const PARITY_MAX_NTH = 0;
 const PARITY_MAX_REDIRECTS = 5;
 const PARITY_MAX_CONCURRENT = 4;
 const PARITY_FINDINGS_SHOWN = 200;
@@ -16124,6 +16330,189 @@ async function parityParseInput(request: Request) {
   if (input.frontMatter !== "keep" && input.frontMatter !== "strip") throw fail("invalid_field", 400, "frontMatter must be keep or strip.", "frontMatter");
   if (!input.url) throw fail("invalid_field", 400, "Enter the page URL.", "url");
   return { input, values, form };
+}
+
+// The number of general-sibling combinators (~) in a selector, counted as combinators and not as
+// characters. A "~" is not one inside an attribute selector ("[a~=b]", "[a=b~c]", "[a='~']") or after a
+// backslash. The attribute section is read the way css-what reads it: a quote opens a string only
+// right after the "=", so an apostrophe inside an unquoted value does not hide the rest of the
+// selector. Every other "~" counts, also one inside the data of a pseudo-class such as :contains(),
+// so the count can be too high for an odd selector but never too low. The count covers the whole text,
+// so combinators inside :has(), :not() and :is() and across a comma list add up.
+function parityCountSiblingCombinators(selector: string): number {
+  let count = 0;
+  let i = 0;
+  while (i < selector.length) {
+    const c = selector[i];
+    if (c === "\\") { i += 2; continue; }
+    if (c === "[") {
+      i++;
+      while (i < selector.length && selector[i] !== "]") {
+        const d = selector[i];
+        if (d === "\\") { i += 2; continue; }
+        i++;
+        if (d !== "=") continue;
+        while (i < selector.length && " \t\n\f\r".includes(selector[i])) i++;
+        const q = selector[i];
+        if (q !== '"' && q !== "'") continue;
+        i++;
+        while (i < selector.length && selector[i] !== q) i += selector[i] === "\\" ? 2 : 1;
+        i++;
+      }
+      i++;
+      continue;
+    }
+    if (c === "~") count++;
+    i++;
+  }
+  return count;
+}
+
+// The number of :has( uses in a selector. A name is read the way css-what reads it, with its own two patterns
+// (css-what 8, parse.ts: the name pattern, and the escape pattern with its hex unescape), so "HAS", "H\as" and
+// ":\68 as(" count as :has( too; a plain text search for ":has(" would miss those. Every colon is tried, also
+// one inside an attribute value or the data of :contains(), so the count can be too high for an odd selector
+// but never too low. The count covers the whole text, so uses inside :not(), :is(), :nth-child(n of ...) and
+// across a comma list add up. A colon that stands inside the name just read is an escaped one (a bare colon can only be the
+// first character of a name, and that one is tried again), so the next try starts after the name and the count is linear.
+function parityCountHas(selector: string): number {
+  const name = /[^#\\]?(?:\\(?:[\da-f]{1,6}\s?|.)|[\w\u00B0-\uFFFF-])+/y;
+  const escape = /\\([\da-f]{1,6}\s?|(\s)|.)/gi;
+  const unescape = (_: string, escaped: string, whitespace?: string) => {
+    const high = Number.parseInt(escaped, 16) - 0x10000;
+    return Number.isNaN(high) || whitespace ? escaped : high < 0 ? String.fromCharCode(high + 0x10000) : String.fromCharCode((high >> 10) | 0xd800, (high & 0x3ff) | 0xdc00);
+  };
+  let count = 0;
+  for (let i = selector.indexOf(":"); i >= 0; ) {
+    name.lastIndex = i + 1;
+    const m = name.exec(selector);
+    if (m && m[0].replace(escape, unescape).toLowerCase() === "has") count++;
+    i = selector.indexOf(":", m && selector[i + 1] !== ":" ? i + 1 + m[0].length : i + 1);
+  }
+  return count;
+}
+
+// The number of :nth-child(), :nth-last-child(), :nth-of-type() and :nth-last-of-type() uses, counted by the name whether or not
+// an opening parenthesis follows it (css-what reads "nth-child/**/(2)" as the name with no argument). The name is read as in
+// parityCountHas, with the same linear walk, and every colon that can start a pseudo-class is tried, so the count can be too high
+// but never too low.
+function parityCountNth(selector: string): number {
+  const name = /[^#\\]?(?:\\(?:[\da-f]{1,6}\s?|.)|[\w°-￿-])+/y;
+  const escape = /\\([\da-f]{1,6}\s?|(\s)|.)/gi;
+  const unescape = (_: string, escaped: string, whitespace?: string) => {
+    const high = Number.parseInt(escaped, 16) - 0x10000;
+    return Number.isNaN(high) || whitespace ? escaped : high < 0 ? String.fromCharCode(high + 0x10000) : String.fromCharCode((high >> 10) | 0xd800, (high & 0x3ff) | 0xdc00);
+  };
+  let count = 0;
+  for (let i = selector.indexOf(":"); i >= 0; ) {
+    name.lastIndex = i + 1;
+    const m = name.exec(selector);
+    if (m && /^nth-(?:last-)?(?:child|of-type)$/.test(m[0].replace(escape, unescape).toLowerCase())) count++;
+    i = selector.indexOf(":", m && selector[i + 1] !== ":" ? i + 1 + m[0].length : i + 1);
+  }
+  return count;
+}
+
+// The deepest nesting of parentheses in a selector: 0 for none, 1 for ":is(a)", 2 for ":is(:not(a))" and for
+// ":nth-child(n of :is(a))". It follows css-what's grammar so that no real nesting is missed. After a colon a name is read
+// with the same pattern as parityCountHas. An argument of :has, :not, :is, :where, :matches, :host and :host-context is a
+// selector: comments are skipped, and so are attribute brackets with their quoted values (as in parityCountSiblingCombinators);
+// a ")" directly before a name character does not close it (see the end of the function).
+// The argument of any other pseudo-class or pseudo-element is raw data, ended by the matching parenthesis with only the
+// backslash escaped, so a "[" or a quote there hides nothing; the parentheses inside it are counted (so ":contains(a(b))" reads
+// as two levels, a count that is too high and never too low). The selector after " of " in an nth pseudo-class is not read
+// again: parityRefuseSelector refuses any nth pseudo-class before it asks for the depth. One pass over the text, no recursion.
+function parityNestDepth(selector: string): number {
+  const name = /[^#\\]?(?:\\(?:[\da-f]{1,6}\s?|.)|[\w°-￿-])+/y;
+  const escape = /\\([\da-f]{1,6}\s?|(\s)|.)/gi;
+  const unescape = (_: string, escaped: string, whitespace?: string) => {
+    const high = Number.parseInt(escaped, 16) - 0x10000;
+    return Number.isNaN(high) || whitespace ? escaped : high < 0 ? String.fromCharCode(high + 0x10000) : String.fromCharCode((high >> 10) | 0xd800, (high & 0x3ff) | 0xdc00);
+  };
+  const selectorArguments = new Set(["has", "not", "matches", "is", "where", "host", "host-context"]);
+  let open = 0;
+  let max = 0;
+  let i = 0;
+  while (i < selector.length) {
+    const c = selector[i];
+    if (c === "\\") { i += 2; continue; }
+    if (c === "/" && selector[i + 1] === "*") {
+      // A comment, as css-what skips it between selector parts; an unterminated one ends the selector.
+      const close = selector.indexOf("*/", i + 2);
+      i = close < 0 ? selector.length : close + 2;
+      continue;
+    }
+    if (c === "[") {
+      i++;
+      while (i < selector.length && selector[i] !== "]") {
+        const d = selector[i];
+        if (d === "\\") { i += 2; continue; }
+        i++;
+        if (d !== "=") continue;
+        while (i < selector.length && " \t\n\f\r".includes(selector[i])) i++;
+        const q = selector[i];
+        if (q !== '"' && q !== "'") continue;
+        i++;
+        while (i < selector.length && selector[i] !== q) i += selector[i] === "\\" ? 2 : 1;
+        i++;
+      }
+      i++;
+      continue;
+    }
+    if (c === ":") {
+      const offset = selector[i + 1] === ":" ? 2 : 1;
+      name.lastIndex = i + offset;
+      const m = name.exec(selector);
+      if (!m) { i++; continue; }
+      const end = i + offset + m[0].length;
+      if (selector[end] !== "(") { i = end; continue; }
+      const pseudo = m[0].replace(escape, unescape).toLowerCase();
+      if (offset === 1 && selectorArguments.has(pseudo)) {
+        open++;
+        if (open > max) max = open;
+        i = end + 1;
+        continue;
+      }
+      // Raw data up to the matching parenthesis.
+      let j = end + 1;
+      let level = 1;
+      let inner = 0;
+      while (j < selector.length) {
+        const ch = selector[j];
+        if (ch === "\\") { j += 2; continue; }
+        if (ch === "(") { level++; if (level - 1 > inner) inner = level - 1; }
+        else if (ch === ")" && --level === 0) break;
+        j++;
+      }
+      if (open + 1 + inner > max) max = open + 1 + inner;
+      i = j + 1;
+      continue;
+    }
+    if (c === "(") { open++; if (open > max) max = open; }
+    else if (c === ")") {
+      // css-what's name pattern may take any one character first, so a ")" that stands right before a name character is
+      // read as the start of a tag name and closes nothing (":where(a)b" does not parse, and ":is(a)b" keeps its argument open).
+      name.lastIndex = i;
+      const swallowed = name.exec(selector);
+      if (swallowed) { i += swallowed[0].length; continue; }
+      if (open > 0) open--;
+    }
+    i++;
+  }
+  return max;
+}
+
+// A selector the hosted check does not run: one answer with a fixed sentence, as the other two selector
+// refusals have, and the selector itself on summary.errorValue.
+function parityRefuseSelector(selector: string | undefined): ParityError | null {
+  if (typeof selector !== "string") return null;
+  // The cheap counters run first and the nesting depth last: it is also one linear pass, and an nth pseudo-class is refused
+  // before it, so it never has to read inside an " of " clause.
+  if (parityCountSiblingCombinators(selector) > PARITY_MAX_SIBLING_COMBINATORS) return new ParityError("selector_too_complex", 422, "The CSS selector has more than " + PARITY_MAX_SIBLING_COMBINATORS + (PARITY_MAX_SIBLING_COMBINATORS === 1 ? " general-sibling combinator (~)" : " general-sibling combinators (~)") + ". This hosted version runs at most " + PARITY_MAX_SIBLING_COMBINATORS + ". Use fewer.", "selector");
+  if (parityCountHas(selector) > PARITY_MAX_HAS) return new ParityError("selector_too_complex", 422, "The CSS selector uses the :has() pseudo-class, which this hosted version does not run.", "selector");
+  if (parityCountNth(selector) > PARITY_MAX_NTH) return new ParityError("selector_too_complex", 422, "The CSS selector uses an :nth-child(), :nth-last-child(), :nth-of-type() or :nth-last-of-type() pseudo-class, which this hosted version does not run.", "selector");
+  if (parityNestDepth(selector) > PARITY_MAX_NEST) return new ParityError("selector_too_complex", 422, "The CSS selector puts a functional pseudo-class inside the argument of another one, which this hosted version does not run.", "selector");
+  return null;
 }
 
 // https only, a public DNS name (the validator's isValidPublicHost: no IP literals, no local or
@@ -16271,9 +16660,13 @@ async function parityRunCheck(input: ParityInput, env: Env): Promise<{ status: n
     // URL it would compare Markdown with Markdown under an HTML label. It belongs in the Markdown field.
     if (parityIsSelf(page) && page.pathname.toLowerCase().endsWith(".md")) throw new ParityError("invalid_url", 400, "The page URL must be the HTML page. Put a .md address in the Markdown URL field.", "url");
     if (!parityIsSelf(page)) {
+      const refused = parityRefuseSelector(input.selector);
+      if (refused && env && env.PARITY_REMOTE_FETCH === "on" && env.PARITY) throw refused;
       if (env && env.PARITY_REMOTE_FETCH === "on" && env.PARITY) return await parityRemote(input, env);
       throw new ParityError("remote_disabled", 403, "This hosted version checks turva.dev pages only. For any other site, run npx --yes markdown-parity-check --url with the page address on your own machine.", "url");
     }
+    const tooComplex = parityRefuseSelector(input.selector);
+    if (tooComplex) throw tooComplex;
     html = await parityFetchSelf(page, "text/html", env);
     if (html.meta.status >= 400) throw new ParityError("no_page", 422, "The HTML request returned HTTP " + html.meta.status + ". There is no page to compare.", "url");
     markdown = await parityFetchSelf(mdTarget, "text/markdown", env);
@@ -16301,6 +16694,9 @@ async function parityRunCheck(input: ParityInput, env: Env): Promise<{ status: n
     // never the gap; the sentence was. The value moves to its own field and the sentence is one of
     // two fixed ones (Tek-561), chosen by the package's own error text and never built from the input.
     let selectorValue;
+    if (field === "selector" && err instanceof ParityError && err.kind === "selector_too_complex") {
+      selectorValue = typeof options.selector === "string" ? cut(options.selector, PARITY_MAX_SELECTOR_CHARS) : "";
+    }
     if (field === "selector" && err instanceof MpcRunError) {
       selectorValue = typeof options.selector === "string" ? cut(options.selector, PARITY_MAX_SELECTOR_CHARS) : "";
       message = /^Invalid selector/.test(err.message)
