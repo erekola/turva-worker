@@ -4019,6 +4019,9 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
         `get_contact operator carries business ID ${facts.businessId} and VAT ID ${facts.vatId} (saw ${JSON.stringify([op.business_id, op.vat_id])})`);
       check(op.company_page === 'https://turva.dev/company' && typeof op.run_by === 'string' && op.run_by.length > 0,
         `get_contact operator names who runs turva.dev and links https://turva.dev/company (saw ${JSON.stringify([op.run_by, op.company_page])})`);
+      // Since turva-mcp 1.11.0 (Tek-827) get_contact also links the legal page, the home of the imprint and the terms.
+      check(op.legal_page === 'https://turva.dev/legal',
+        `get_contact operator links https://turva.dev/legal (saw ${JSON.stringify(op.legal_page)})`);
     }
 
     // The name-agreement rule, proven rather than assumed. Without this a server that
