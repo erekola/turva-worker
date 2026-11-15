@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.257.1 - the hosted Markdown parity check moves from markdown-parity-check 0.2.34 to 0.2.39 (2026-11-15): a link target over 8192 characters now ends the comparison with a 422 that names its length, and the package masks credentials in more shapes, limits the IPv6 allowlist to 2000::/3 and caps the selector echo. The answer for every published page and selector is unchanged apart from the toolVersion field.
 // turva.dev worker v3.257.0 - security repairs from an outside read (2026-11-15): the hosted Markdown parity check refuses expensive CSS selectors before running them, the hosted llms.txt validator scans links in linear time, reads a backslash before a line ending and raw HTML blocks as CommonMark does, scans the head for script comments and svg templates correctly, strips format and default-ignorable characters from check details and masks user information in redirect locations more widely, the Content-Security-Policy img-src and connect-src directives are narrowed to the site itself, the x402 settlement note is reworded and the MCP server card moves to 1.10.2.
 // turva.dev worker v3.256.1 - the price validity date moves from 2026-12-31 to 2027-06-30 in PRICE_VALID_UNTIL and in the six "valid until" prose lines (2026-11-14).
 // turva.dev worker v3.256.0 - audit round 27 corrections (2026-11-13): wording fixes on pages, guides and posts, dated Corrected lines with a moved modified date on seven posts, a contents list placed before the first section of a guide whose old anchor span stood in front of it, the site-wide about value removed from the structured data of blog posts, and the card of one post rebuilt without the unsupported phrase. No price, claim, signed surface or route changed.
@@ -8618,7 +8619,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.257.0",
+    "version": "3.257.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8927,7 +8928,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.257.0",
+  "version": "3.257.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
