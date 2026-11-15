@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.257.3 - small design fixes from a design review (2026-11-15): the FAQ answers on guides and posts and the sample finding line on the home page are 1rem, the home page footer line is lighter for contrast, the closing call-to-action button on the home page takes the shape of the button on the other pages, and the llms.txt guide drops five contrast constructions in two paragraphs without changing a fact. The served text of llms.txt, the MCP server card and ai-plugin.json and agent.json is unchanged, so no re-sign is needed.
 // turva.dev worker v3.257.2 - the hosted Markdown parity check moves from markdown-parity-check 0.2.39 to 0.2.40 (2026-11-15): text of the shape name:secret@host.tld/path with no scheme is shown as name:***@host.tld/path in a report and the email link read out of it is shown as ***, and the Limits list of the page now names the link target limit of 8192 characters. The answer for every published page and selector is unchanged apart from the toolVersion field. The sitemap date of the non-blog pages moves to 2026-11-15 because the page text changed.
 // turva.dev worker v3.257.1 - the hosted Markdown parity check moves from markdown-parity-check 0.2.34 to 0.2.39 (2026-11-15): a link target over 8192 characters now ends the comparison with a 422 that names its length, and the package masks credentials in more shapes, limits the IPv6 allowlist to 2000::/3 and caps the selector echo. The answer for every published page and selector is unchanged apart from the toolVersion field.
 // turva.dev worker v3.257.0 - security repairs from an outside read (2026-11-15): the hosted Markdown parity check refuses expensive CSS selectors before running them, the hosted llms.txt validator scans links in linear time, reads a backslash before a line ending and raw HTML blocks as CommonMark does, scans the head for script comments and svg templates correctly, strips format and default-ignorable characters from check details and masks user information in redirect locations more widely, the Content-Security-Policy img-src and connect-src directives are narrowed to the site itself, the x402 settlement note is reworded and the MCP server card moves to 1.10.2.
@@ -6750,9 +6751,9 @@ llms.txt is a plain text file that tells AI agents and language models what a si
 
 ## File structure
 
-The file opens with the site name as an H1, then a short summary as a blockquote, then the key pages and resources as markdown links grouped under H2 headings. Only the H1 is required. Everything after it, the summary, the headings, and the grouped links, is recommended rather than mandatory. The format does expect each item in a file list to be a markdown hyperlink, and a minimal file with just the name is still a valid one. Some sites also publish llms-full.txt, a single file that bundles the full text of the site so an agent can read everything in one request instead of crawling many pages.
+The file opens with the site name as an H1, then a short summary as a blockquote, then the key pages and resources as markdown links grouped under H2 headings. Only the H1 is required. Everything after it, the summary, the headings, and the grouped links, is optional but recommended. The format does expect each item in a file list to be a markdown hyperlink, and a minimal file with just the name is still a valid one. Some sites also publish llms-full.txt, a single file that bundles the full text of the site so an agent can read everything in one request.
 
-The llms.txt of turva.dev departs from the file-list format on purpose. It lists its agent endpoints as plain addresses rather than links, for two reasons. First, two of them answer a plain GET with something other than 200 by design, the MCP endpoint with 405 and the x402 endpoint with 402. Second, the whole group keeps one plain format instead of mixing linked and unlinked lines within it. Its pricing, business details, engagement model and contact sections also carry plain values rather than page addresses, so those lines were never links to begin with.
+The llms.txt of turva.dev departs from the file-list format on purpose. It lists its agent endpoints as plain addresses, for two reasons. First, two of them answer a plain GET with something other than 200 by design, the MCP endpoint with 405 and the x402 endpoint with 402. Second, the whole group keeps one plain format, with no mix of linked and unlinked lines within it. Its pricing, business details, engagement model and contact sections also carry plain values, so those lines were never links to begin with.
 
 The proposal reached v2 in August 2026 and the file format did not change. What changed is how an agent finds the machine-readable forms. A page now names them with two standard link relations, given either as HTML link elements or as an HTTP Link header. The relation rel="alternate" type="text/markdown" is for the markdown version of the page, and rel="describedby" is for the llms.txt that covers it.
 
@@ -8621,7 +8622,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.257.2",
+    "version": "3.257.3",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8930,7 +8931,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.257.2",
+  "version": "3.257.3",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -12097,7 +12098,7 @@ const SCARD_CSS = `.scard{border:0.5px solid rgba(255,255,255,0.12);border-radiu
 .scard pre+p,.scard ul+p,.scard .dl+p{margin-top:.85rem;}`;
 const FAQ_CSS = `.faq .q{color:#F2F4F3;font-weight:700;font-size:1rem;margin:1.15rem 0 .4rem;}
 .faq .q:first-child{margin-top:0;}
-.faq p{color:#C9D1CE;margin:0 0 .2rem;font-size:.95rem;}`;
+.faq p{color:#C9D1CE;margin:0 0 .2rem;font-size:1rem;}`;
 
 // A function, not a constant: on Workers the clock in global scope reads the epoch, so a
 // year computed while the module loads served "1970" live (2026-09-02). Read the clock per
@@ -12535,9 +12536,9 @@ main{max-width:none;margin:0;padding:0;}
 .rc-bad .rc-v{color:#F2F4F3;}
 .rc-flag{display:inline-block;margin-left:8px;vertical-align:baseline;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:#F1B27F;border:1px solid rgba(241,178,127,0.45);border-radius:999px;padding:.05rem .5rem;}
 .rc-impact{margin:0 0 10px;font-size:.98rem;line-height:1.45;color:#F2F4F3;font-weight:600;}
-.rc-fix{margin:0 0 8px;font-size:.88rem;line-height:1.5;color:#C9D1CE;}
+.rc-fix{margin:0 0 8px;font-size:1rem;line-height:1.5;color:#C9D1CE;}
 .rc-fix b{color:#5DF18F;font-weight:700;}
-.rc-foot{margin:12px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;letter-spacing:.03em;line-height:1.5;color:#9AA3A0;}
+.rc-foot{margin:12px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;letter-spacing:.03em;line-height:1.5;color:#C9D1CE;}
 .rc-more{display:inline-block;margin:16px 0 0;font-size:.9rem;font-weight:600;color:#5DF18F;border-bottom:1px solid rgba(93,241,143,0.4);padding:.1rem 0;}
 .rc-more:hover{border-color:#5DF18F;text-decoration:none;}
 .offers{max-width:68rem;margin:0 auto;padding:2.2rem clamp(24px,5vw,72px) 2rem;border-top:0;box-sizing:content-box;}
@@ -12588,7 +12589,7 @@ ${FAQ_CSS}
 .svc p{font-size:.86rem;margin:0;color:#9AA3A0;line-height:1.55;}
 .contact{border-top:1px solid rgba(93,241,143,0.2);}
 .cta-row{margin:1.25rem 0 0;}
-.cta-btn{display:inline-block;background:#5DF18F;color:#06100F;font-weight:700;border-radius:8px;padding:.7rem 1.2rem;font-size:.95rem;transition:background-color .15s ease;}
+.cta-btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;background:#5DF18F;color:#06100F;font-weight:700;border-radius:7px;padding:.75rem 1.35rem;font-size:15px;transition:background-color .15s ease;}
 .cta-btn:hover{background:#7df7a6;text-decoration:none;}
 @media (max-width:700px){.hero-grid{grid-template-columns:minmax(0,1fr);gap:32px;}.hero{padding-top:44px;}.hero h1{font-size:clamp(34px,9vw,38px);line-height:1.1;}.lede{font-size:clamp(16px,4.4vw,18px);}}
 @media (max-width:640px){.board-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
