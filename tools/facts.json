@@ -3,8 +3,8 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.257.3",
-    "mcp": "1.10.2"
+    "site": "3.257.4",
+    "mcp": "1.10.3"
   },
   "mtaSts": {
     "txtId": "20260910202321",
@@ -88,7 +88,7 @@
     "wikidataPerson": "https://www.wikidata.org/wiki/Q140276321"
   },
   "agentReadiness": {
-    "measuredAt": "2026-10-29",
+    "measuredAt": "2026-11-15",
     "isitagentready": {
       "level": "Level 5",
       "score": "100/100",
@@ -158,22 +158,22 @@
   },
   "security": {
     "_measuredAtComment": "measuredAt is the date of the Internet.nl runs, the website test and the email test. It is not the latest date of all scanners: Hardenize has its own measuredAt below and may be newer. Each Internet.nl block repeats its own measuredAt, and verify.mts requires every date to be a real day and the top-level date to be the later of the two Internet.nl dates.",
-    "measuredAt": "2026-10-29",
+    "measuredAt": "2026-11-15",
     "hardenize": {
       "result": "all 24 categories passed",
       "url": "https://www.hardenize.com/report/turva.dev",
-      "measuredAt": "2026-11-07"
+      "measuredAt": "2026-11-15"
     },
     "internetnl": {
       "score": "98/100",
       "url": "https://internet.nl/site/turva.dev/",
-      "measuredAt": "2026-10-29"
+      "measuredAt": "2026-11-15"
     },
     "internetnlMail": {
       "score": "90/100",
       "url": "https://internet.nl/mail/turva.dev/",
-      "measuredAt": "2026-10-29"
+      "measuredAt": "2026-11-15"
     },
-    "advisoriesCheckedAt": "2026-11-13"
+    "advisoriesCheckedAt": "2026-11-15"
   }
 }

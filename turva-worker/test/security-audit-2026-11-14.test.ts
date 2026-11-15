@@ -855,7 +855,18 @@ const NETWORK_API = /\b(XMLHttpRequest|WebSocket|EventSource|sendBeacon|importSc
 // script of the page. Returns what is not on the site's own origin.
 function externalLoads(html: string, page: string): string[] {
   const bad: string[] = [];
-  const noScripts = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, (s) => (/\bsrc\s*=/i.test(s.slice(0, s.indexOf(">"))) ? s.slice(0, s.indexOf(">") + 1) : ""));
+  // Drop every inline script and the body of every script with a src, keeping only that script's opening tag. The result
+  // is built by slicing between matches, not by a replace, and the end tag allows white space and attributes the way an
+  // HTML parser does (CodeQL js/incomplete-multi-character-sanitization and js/bad-tag-filter, 2026-11-15).
+  let noScripts = "";
+  let at = 0;
+  for (const s of html.matchAll(/<script\b[^>]*>[\s\S]*?<\/script\b[^>]*>/gi)) {
+    const start = s.index ?? 0;
+    const open = s[0].slice(0, s[0].indexOf(">") + 1);
+    noScripts += html.slice(at, start) + (/\bsrc\s*=/i.test(open) ? open : "");
+    at = start + s[0].length;
+  }
+  noScripts += html.slice(at);
   for (const m of noScripts.matchAll(/<(img|source|video|audio|track|embed|iframe|object|input|picture|image|use|a|area|link|script)\b[^>]*>/gi)) {
     const tag = m[0], name = m[1].toLowerCase(), a = attrsOf(tag);
     const refs: string[] = [];
@@ -886,7 +897,7 @@ function externalLoads(html: string, page: string): string[] {
 
 async function inlineScriptProblems(html: string, page: string): Promise<string[]> {
   const bad: string[] = [];
-  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)) {
     const a = attrsOf("<script" + m[1] + ">");
     if (a.src) {
       if (!ownOrigin(a.src, page)) { bad.push("script src " + a.src); continue; }
