@@ -832,7 +832,8 @@ check(isRealIsoDate(String(H.measuredAt)), `facts.security.hardenize.measuredAt 
 // When Hardenize shares the Internet.nl date the prose names one date for all three;
 // otherwise it names the later Hardenize run separately. Either way the date must match facts.json.
 const hSentence = H.measuredAt === facts.security.measuredAt ? `I measured all three on ${H.measuredAt}.` : `and Hardenize again on ${H.measuredAt}.`;
-check(src.worker.text.includes(hSentence) && src.worker.text.includes(`Hardenize, measured ${H.measuredAt}: `), `worker.ts Hardenize bullet carries the Hardenize date ${H.measuredAt}`);
+// The home page bullet itself names no date (Erik 2026-11-16): the paragraph above it carries the one date.
+check(src.worker.text.includes(hSentence) && src.worker.text.includes('- Hardenize: all ') && !src.worker.text.includes('- Hardenize, measured '), `worker.ts security prose carries the Hardenize date ${H.measuredAt} and the bullet repeats none`);
 check(src.readme.text.includes(`Measured on ${H.measuredAt}: all `), `README.md carries the Hardenize date ${H.measuredAt}`);
 for (const k of Object.keys(src)) check(containsAny(src[k].text, slashVariants(I.score)), `${src[k].rel} shows Internet.nl ${I.score}`);
 check(src.worker.text.includes(I.url), `Internet.nl URL in worker.ts`);

@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.257.6 - the audit page and the audit guide name three hand checks over agent-facing files (Tek-832, 2026-11-16): machine-readable files parse in full and arrive complete, MCP and WebMCP tool descriptions are measured in bytes and read for sentences addressed to the model, and tools that change data are read for their read-only and destructive annotations, all without calling a tool; the guide cites the MCP tools page. The home page Hardenize bullet no longer repeats the measurement date, which the paragraph above it already names
 // turva.dev worker v3.257.5 - MCP server card version 1.11.0 (Tek-827, 2026-11-15): get_contact now links the legal page and the card's get_contact description names the business details and legal page; turva-mcp's get_services, get_principles and get_contact descriptions separate the engagement terms from the standing principles.
 // turva.dev worker v3.257.4 - the no-references sentence comes off two pages and the 2026-11-15 measurement day (2026-11-15): the sample report line of the home page and the background paragraph of /company no longer say that there are no named client references yet, and both still say that the sample report describes a fictional business. The isitagentready.com, Internet.nl and Hardenize readings move to 2026-11-15 with every number unchanged, the home page, the audit guide and the measurement guide link the unedited raw output of that day's scan, the MCP server card moves to MCP 1.10.3 and HOME_JSON lastVerified to 2026-11-15.
 // turva.dev worker v3.257.3 - small design fixes from a design review (2026-11-15): the FAQ answers on guides and posts and the sample finding line on the home page are 1rem, the home page footer line is lighter for contrast, the closing call-to-action button on the home page takes the shape of the button on the other pages, and the llms.txt guide drops five contrast constructions in two paragraphs without changing a fact. The served text of llms.txt, the MCP server card and ai-plugin.json and agent.json is unchanged, so no re-sign is needed.
@@ -5486,7 +5487,7 @@ Verified 100/100, Level 5, Agent-Native.
 
 I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. I measured all three on 2026-11-15. The scanner reading above is from the same day.
 
-- Hardenize, measured 2026-11-15: all 24 categories passed. [hardenize.com/report/turva.dev](https://www.hardenize.com/report/turva.dev)
+- Hardenize: all 24 categories passed. [hardenize.com/report/turva.dev](https://www.hardenize.com/report/turva.dev)
 - Internet.nl website test: 98/100. [internet.nl/site/turva.dev](https://internet.nl/site/turva.dev/)
 - Internet.nl email test: 90/100. [internet.nl/mail/turva.dev](https://internet.nl/mail/turva.dev/)
 
@@ -5965,6 +5966,8 @@ On a large site, structured data, prices and availability are read on every page
 The scan uses isitagentready.com on its default profile. I record each check and its result, together with the measurement date.
 
 The manual review covers /.well-known/ files, JSON-LD, head metadata, HTTP headers, robots.txt, sitemap.xml, ai.txt, llms.txt and the consistency of published facts.
+
+I also check that each JSON file your site publishes for agents and each JSON-LD block on the pages I read parses in full and arrives complete, and that llms.txt starts with an H1 heading and ends cleanly. Where your site publishes an MCP server card or WebMCP tools, I record the size of each tool description in bytes and quote every sentence in it that tells the AI model more than what the tool does and when to use it. I also record which tools change data and how each one is annotated, for example as read-only or destructive. Annotations are hints that a client is told not to trust from a server it does not trust, so the report states what each tool declares and makes no claim about what it does. These checks read published files, including a server card's tool list, without calling a tool, and the scanner does not score them as checks of their own.
 
 With your written permission I also run the internet.nl website and email tests on your domain. internet.nl keeps each result at a permanent public link, so without that permission I read only the security scans already published for your domain.
 
@@ -6692,6 +6695,8 @@ The full citation behind each status lives in the [repository's reference file](
 
 A technical scan reads what a page serves. It does not read what a person notices when following the same path an agent would. Manual review checks whether the instructions a site publishes, such as an llms.txt entry or a registration step in auth.md, match what the site actually returns when followed. It checks whether structured data on a page agrees with the prose beside it and whether an error page reveals more than it should. It also checks whether an edge case the scanner does not test, such as a redirect chain or a stale sitemap entry, breaks a path an agent would take. The finding here is usually a contradiction between two places, not a missing file.
 
+Manual review also reads the agent-facing files themselves. A JSON file or a JSON-LD block can be served and still fail to parse, or arrive cut short. An MCP server card or a WebMCP tool carries descriptions that an agent's model may read, so the review records their size and quotes any sentence that tells the model more than what the tool does and when to use it. It also records which tools change data and how each one is annotated. The MCP specification tells clients to treat tool annotations as untrusted unless they come from trusted servers, so the review reports what a tool declares and makes no claim about what it does. None of this calls a tool.
+
 ## AI-answer observations
 
 A separate question from both of the above is what an AI assistant actually says when a buyer asks it something. Observed AI answers means asking ChatGPT, Perplexity and similar assistants the questions a buyer would ask, and recording which sources they name and what they get wrong. This does not test the site directly. It records what selected assistants answer on the test date and which sources they cite. It does not establish which site changes caused the answer, and it can surface an assistant repeating outdated information that a scan of the current site would not catch.
@@ -6737,6 +6742,7 @@ A pass or fail on each check, and for every failure a concrete fix instruction o
 - [isitagentready.com, the scanner the audit reads](https://isitagentready.com/)
 - [Well-known URIs, RFC 8615](https://www.rfc-editor.org/rfc/rfc8615.html)
 - [API catalog, RFC 9727](https://www.rfc-editor.org/rfc/rfc9727.html)
+- [MCP specification, tools, revision 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)
 
 ## Related
 
@@ -8624,7 +8630,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.257.5",
+    "version": "3.257.6",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8933,7 +8939,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.257.5",
+  "version": "3.257.6",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9634,7 +9640,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-15";
+const SITEMAP_LASTMOD = "2026-11-16";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
