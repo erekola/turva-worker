@@ -3570,6 +3570,9 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
   // server implements. That is exactly what happened: until 2026-07-24 the card
   // declared resources and prompts capabilities while the live server declared only
   // tools and answered -32601 to both, for weeks, invisibly. So: speak the protocol.
+  // The two headings around this block (Tek-845) let tools/vihreys.mjs tell the MCP lane's pass/FAIL
+  // lines from the site's other live lines; it reads the lane from this heading to the next one.
+  console.log('\nMCP parity (mcp.turva.dev)');
   try {
     const MCP = 'https://mcp.turva.dev/mcp';
     // Revision 2026-07-28 is stateless: no initialize, no Mcp-Session-Id, no GET stream.
@@ -4032,6 +4035,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
     check(nameMismatch.res.status === 400 && nameMismatch.body.error && nameMismatch.body.error.code === -32020,
       `Mcp-Name/body mismatch refused with 400 and -32020 (saw ${nameMismatch.res.status} / ${nameMismatch.body.error && nameMismatch.body.error.code})`);
   } catch (e) { bad('MCP parity: ' + (errWhy(e))); }
+  console.log('\nMTA-STS and mail DNS, live');
 
   // --- MTA-STS. The policy is mode: enforce, so a wrong MX list here does not produce an
   // error message, it stops inbound mail: a sender that cannot match the receiving MX against

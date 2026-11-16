@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.257.7 - the audit page and the audit guide add two readings to the tool-description check (Tek-845, 2026-11-16): tools and parameters without a description are counted, and whether the tool definitions carry a version, a hash or a signature is recorded; no request is added.
 // turva.dev worker v3.257.6 - the audit page and the audit guide name three hand checks over agent-facing files (Tek-832, 2026-11-16): machine-readable files parse in full and arrive complete, MCP and WebMCP tool descriptions are measured in bytes and read for sentences addressed to the model, and tools that change data are read for their read-only and destructive annotations, all without calling a tool; the guide cites the MCP tools page. The home page Hardenize bullet no longer repeats the measurement date, which the paragraph above it already names
 // turva.dev worker v3.257.5 - MCP server card version 1.11.0 (Tek-827, 2026-11-15): get_contact now links the legal page and the card's get_contact description names the business details and legal page; turva-mcp's get_services, get_principles and get_contact descriptions separate the engagement terms from the standing principles.
 // turva.dev worker v3.257.4 - the no-references sentence comes off two pages and the 2026-11-15 measurement day (2026-11-15): the sample report line of the home page and the background paragraph of /company no longer say that there are no named client references yet, and both still say that the sample report describes a fictional business. The isitagentready.com, Internet.nl and Hardenize readings move to 2026-11-15 with every number unchanged, the home page, the audit guide and the measurement guide link the unedited raw output of that day's scan, the MCP server card moves to MCP 1.10.3 and HOME_JSON lastVerified to 2026-11-15.
@@ -5967,7 +5968,7 @@ The scan uses isitagentready.com on its default profile. I record each check and
 
 The manual review covers /.well-known/ files, JSON-LD, head metadata, HTTP headers, robots.txt, sitemap.xml, ai.txt, llms.txt and the consistency of published facts.
 
-I also check that each JSON file your site publishes for agents and each JSON-LD block on the pages I read parses in full and arrives complete, and that llms.txt starts with an H1 heading and ends cleanly. Where your site publishes an MCP server card or WebMCP tools, I record the size of each tool description in bytes and quote every sentence in it that tells the AI model more than what the tool does and when to use it. I also record which tools change data and how each one is annotated, for example as read-only or destructive. Annotations are hints that a client is told not to trust from a server it does not trust, so the report states what each tool declares and makes no claim about what it does. These checks read published files, including a server card's tool list, without calling a tool, and the scanner does not score them as checks of their own.
+I also check that each JSON file your site publishes for agents and each JSON-LD block on the pages I read parses in full and arrives complete, and that llms.txt starts with an H1 heading and ends cleanly. Where your site publishes an MCP server card or WebMCP tools, I record the size of each tool description in bytes and quote every sentence in it that tells the AI model more than what the tool does and when to use it. I count the tools and parameters that have no description, because the model has to guess what an undescribed field means, and I record whether the tool definitions carry a version, a hash or a signature from which an agent could see that they changed. I also record which tools change data and how each one is annotated, for example as read-only or destructive. Annotations are hints that a client is told not to trust from a server it does not trust, so the report states what each tool declares and makes no claim about what it does. These checks read published files, including a server card's tool list, without calling a tool, and the scanner does not score them as checks of their own.
 
 With your written permission I also run the internet.nl website and email tests on your domain. internet.nl keeps each result at a permanent public link, so without that permission I read only the security scans already published for your domain.
 
@@ -6695,7 +6696,7 @@ The full citation behind each status lives in the [repository's reference file](
 
 A technical scan reads what a page serves. It does not read what a person notices when following the same path an agent would. Manual review checks whether the instructions a site publishes, such as an llms.txt entry or a registration step in auth.md, match what the site actually returns when followed. It checks whether structured data on a page agrees with the prose beside it and whether an error page reveals more than it should. It also checks whether an edge case the scanner does not test, such as a redirect chain or a stale sitemap entry, breaks a path an agent would take. The finding here is usually a contradiction between two places, not a missing file.
 
-Manual review also reads the agent-facing files themselves. A JSON file or a JSON-LD block can be served and still fail to parse, or arrive cut short. An MCP server card or a WebMCP tool carries descriptions that an agent's model may read, so the review records their size and quotes any sentence that tells the model more than what the tool does and when to use it. It also records which tools change data and how each one is annotated. The MCP specification tells clients to treat tool annotations as untrusted unless they come from trusted servers, so the review reports what a tool declares and makes no claim about what it does. None of this calls a tool.
+Manual review also reads the agent-facing files themselves. A JSON file or a JSON-LD block can be served and still fail to parse, or arrive cut short. An MCP server card or a WebMCP tool carries descriptions that an agent's model may read, so the review records their size and quotes any sentence that tells the model more than what the tool does and when to use it. It counts the tools and parameters that have no description and records whether the tool definitions carry a version, a hash or a signature that would show an agent they changed. It also records which tools change data and how each one is annotated. The MCP specification tells clients to treat tool annotations as untrusted unless they come from trusted servers, so the review reports what a tool declares and makes no claim about what it does. None of this calls a tool.
 
 ## AI-answer observations
 
@@ -8630,7 +8631,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.257.6",
+    "version": "3.257.7",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8939,7 +8940,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.257.6",
+  "version": "3.257.7",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
