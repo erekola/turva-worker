@@ -255,7 +255,8 @@ test("hosted validator: #Project with === is still not an H1, and a setext H2 en
 // served markdown twin with the date masked out, and the date string. A body change moves the digest and the test
 // fails until the date in the page is set to the release day and both pinned values are updated together.
 const REVISED_RE = /(This page itself was last revised on )([^.]+)(\.)/g;
-const SAMPLE_REPORT_PIN = { digest: "0b96a2bc2f50865ed00016cf3ae51140a2b58fab0f88ed8dcb182a226311578a", revised: "13 November 2026" };
+// 2026-11-17: F3, F1 and F7 wording and the scope line under the security scan table (Astra and buyer read, K7, K8, P2).
+const SAMPLE_REPORT_PIN = { digest: "fbfbe0fe92c9b864520031afd5551637bc4ee58a559a722cfd322d03d64392af", revised: "17 November 2026" };
 async function assertRevisionDateBoundToContent(page: string, pin: { digest: string; revised: string } = SAMPLE_REPORT_PIN) {
   const found = [...page.matchAll(REVISED_RE)];
   assert.equal(found.length, 1, "the sentence 'This page itself was last revised on <date>.' must occur exactly once in /samples/audit-report.md");
@@ -278,7 +279,9 @@ test("page text: services reply promise, validator implementation sentence, lega
   const legal = await (await get("/legal.md")).text();
   // Tek-782 (P30, 2026-11-08): the 14 days start at the delivery of the written re-scan or retest result.
   assert.ok(legal.includes("You can report a deviation in an earlier deliverable within 14 calendar days of delivery of the written result of the included re-scan or retest in which it first shows."));
-  assert.ok(legal.includes("**Terms last updated:** 2026-11-08"));
+  // 2026-11-17: Cancellation and refunds gained the advisory first-month opt-out in the words of
+  // /services (Astra and buyer read of 2026-11-17, K9), so the Terms date moved.
+  assert.ok(legal.includes("**Terms last updated:** 2026-11-17"));
   const audit = await (await get("/samples/audit-report.md")).text();
   await assertRevisionDateBoundToContent(audit);
   assert.ok(audit.includes("today each page weighs between 188 kB and 340 kB of markup"));

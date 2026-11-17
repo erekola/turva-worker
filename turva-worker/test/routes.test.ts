@@ -390,8 +390,14 @@ test("A2A: wrong method, bad body, unknown skill and unknown method all answer a
   assert.equal(pre.status, 204);
   assert.equal(pre.headers.get("access-control-allow-methods"), "POST, OPTIONS");
 
+  // 308 since the Astra repo read of 2026-11-17 (decision P1): the method and body survive
+  // the redirect, as on turva-mcp's /mcp/.
   const slash = await get("/v1/message:send/");
-  assert.equal(slash.status, 301);
+  assert.equal(slash.status, 308);
+  assert.equal(slash.headers.get("location"), "https://turva.dev/v1/message:send");
+  const slashPost = await get("/v1/message:send/", { method: "POST" });
+  assert.equal(slashPost.status, 308);
+  assert.equal(slashPost.headers.get("location"), "https://turva.dev/v1/message:send");
 });
 
 // v2 of the llms.txt proposal asks for the markdown version of a page at an address an
@@ -2032,4 +2038,57 @@ test("/legal: the eleven privacy topics fold into details with their own heading
   assert.ok(!terms.includes("<details"), "the engagement terms are not folded");
   const allIds = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(allIds).size, allIds.length, "no id repeats on the page");
+});
+
+// Astra repo read 2026-11-17, R4/n1: a route without a JSON form chose between HTML and
+// markdown by comparing markdown with JSON, and answered HTML to a client that refused it.
+test("Astra R4/n1: JSON in Accept does not outrank markdown on a route that serves no JSON", async () => {
+  const astra = await get("/services", { headers: { accept: "application/json, text/markdown;q=0.9, text/html;q=0" } });
+  assert.equal(astra.status, 200);
+  assert.ok((astra.headers.get("content-type") || "").startsWith("text/markdown"), "the trigger from the read gets markdown");
+  const noHtml = await get("/services", { headers: { accept: "application/json;q=1, text/markdown;q=0.9" } });
+  assert.ok((noHtml.headers.get("content-type") || "").startsWith("text/markdown"), "HTML not named: markdown, not HTML");
+  const htmlFirst = await get("/services", { headers: { accept: "text/html, text/markdown;q=0.1" } });
+  assert.ok((htmlFirst.headers.get("content-type") || "").startsWith("text/html"), "a client that ranks HTML first still gets HTML");
+  const home = await get("/", { headers: { accept: "application/json;q=1, text/markdown;q=0.9" } });
+  assert.ok((home.headers.get("content-type") || "").startsWith("application/json"), "the home page serves JSON, so JSON still wins there");
+  const validator = await get("/llms-txt-validator", { headers: { accept: "application/json;q=1, text/markdown;q=0.9" } });
+  assert.ok(!(validator.headers.get("content-type") || "").startsWith("text/markdown"), "the validator serves JSON, so its markdown twin does not win over JSON");
+  const missing = await get("/no-such-page", { headers: { accept: "application/json, text/markdown;q=0.9, text/html;q=0" } });
+  assert.equal(missing.status, 404);
+  assert.ok((missing.headers.get("content-type") || "").startsWith("text/markdown"), "the 404 has no JSON form either");
+});
+
+// Astra repo read 2026-11-17, R4/n2: the preflight and the 405 Allow name the methods the
+// route takes. Which method passes does not change, only what the headers announce.
+test("Astra R4/n2: ACP preflight and the A2A 405 name the route's own methods", async () => {
+  const pre = (path: string) => get(path, { method: "OPTIONS" }).then((r) => r.headers.get("access-control-allow-methods"));
+  assert.equal(await pre("/api/acp/checkout_sessions"), "POST, OPTIONS");
+  assert.equal(await pre("/api/acp/checkout_sessions/cs_example"), "GET, OPTIONS");
+  assert.equal(await pre("/api/acp/checkout_sessions/cs_example/complete"), "POST, OPTIONS");
+  assert.equal(await pre("/api/acp/checkout_sessions/cs_example/cancel"), "POST, OPTIONS");
+  const collectionGet = await get("/api/acp/checkout_sessions");
+  assert.equal(collectionGet.status, 405);
+  assert.equal(collectionGet.headers.get("allow"), "POST, OPTIONS");
+  const put = await get("/v1/message:send", { method: "PUT" });
+  assert.equal(put.status, 405);
+  assert.equal(put.headers.get("allow"), "POST, OPTIONS");
+  const getSend = await get("/v1/message:send");
+  assert.equal(getSend.status, 405);
+  assert.equal(getSend.headers.get("allow"), "POST, OPTIONS");
+  const putPage = await get("/services", { method: "PUT" });
+  assert.equal(putPage.status, 405);
+  assert.equal(putPage.headers.get("allow"), "GET, HEAD, OPTIONS");
+});
+
+// Astra repo read 2026-11-17, R4/n4: a body stream that errors is the client's broken
+// request and answers 400, as on the parity route, not 500 with a stack in the log.
+test("Astra R4/n4: an unreadable body answers 400 on the A2A and ACP routes", async () => {
+  const broken = () => new ReadableStream<Uint8Array>({ pull(controller) { controller.error(new Error("boom")); } });
+  const send = await worker.fetch(new Request("https://turva.dev/v1/message:send", { method: "POST", headers: { "content-type": "application/json" }, body: broken(), duplex: "half" } as RequestInit), env);
+  assert.equal(send.status, 400);
+  assert.match(await send.text(), /could not be read/);
+  const acp = await worker.fetch(new Request("https://turva.dev/api/acp/checkout_sessions", { method: "POST", headers: { "content-type": "application/json" }, body: broken(), duplex: "half" } as RequestInit), env);
+  assert.equal(acp.status, 400);
+  assert.equal(((await acp.json()) as { code: string }).code, "request_unreadable");
 });

@@ -251,7 +251,9 @@ test("K1-1: every redirect and the A2A preflight carry RateLimit-Policy, Referre
   ];
   for (const req of cases) {
     const res = await worker.fetch(req, env);
-    assert.equal(res.status, 301, req.url + " must answer 301");
+    // /v1/message:send/ answers 308 since the Astra repo read of 2026-11-17 (decision P1).
+    const expected = req.url.endsWith("/v1/message:send/") ? 308 : 301;
+    assert.equal(res.status, expected, req.url + " must answer " + expected);
     assert.ok(res.headers.has("RateLimit-Policy"), req.url + " must carry RateLimit-Policy");
     assert.ok(res.headers.has("Referrer-Policy"), req.url + " must carry Referrer-Policy");
     assert.ok(res.headers.has("X-Frame-Options"), req.url + " must carry X-Frame-Options");

@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.259.0 - fixes from the buyer and Astra repo read of 2026-11-17: the harness post corrects why a subagent's permission question is refused, says a crashed hook lets the call through only by default, scopes the gate claims and the 48 parts, names the three OWASP publications and links the lab post; the 567-sites post, the audit guide and the sample report scope the scanner, token, pass or fail, dnsAid, deliveryLeadTime and Hardenize sentences; the audit page names the human step; /legal carries the advisory first-month opt-out; Accept negotiation ranks JSON only on routes that serve it, the ACP preflight and the A2A 405 name each route's methods, an unreadable body answers 400 on A2A and ACP, and /v1/message:send/ redirects with 308.
 // turva.dev worker v3.258.1 - round 28 fixes (2026-11-17): the audit page and the audit guide say that a public MCP endpoint the site's llms.txt names may get one request to confirm that it answers and, by written scope, one tool list request; the audit guide names a documentation link in auth.md and dates its MCP source line; the agents.json guide points endpoint enforcement to active security testing; the MCP guide names the SEP-2127 card; the contents list stands before the first section when an intro ends in a table; two image alt texts, the /blog intro, and Updated lines in three posts.
 // turva.dev worker v3.258.0 - new Lab notes post /blog/everyone-has-the-same-models (2026-11-17), a month of gate logs and two mutation suites, with its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row (50 articles), META_BY_PATH, CANONICAL_PATHS and SITEMAP_ENTRIES rows.
 // turva.dev worker v3.257.7 - the audit page and the audit guide add two readings to the tool-description check (Tek-845, 2026-11-16): tools and parameters without a description are counted, and whether the tool definitions carry a version, a hash or a signature is recorded; no request is added.
@@ -677,11 +678,11 @@ A rules file tells the model how I work. It is prose, and the model reads it.
 
 Skills are procedures that load only when a task needs them, such as publishing a post or replying to a prospect. I have 27.
 
-Hooks are code that runs before or after a tool call and can block it, ask me, or leave a note. I call them gates. I have 33 numbered gates in use. Together with the hooks that have no gate number, they use 11 hook events and about 10 200 lines of code.
+Hooks are code that runs at set points in a session, most of them around a tool call. Before a call, a hook can block it or ask me. After the call, it can leave a note. I call them gates. I have 33 numbered gates in use. Together with the hooks that have no gate number, they use 11 hook events and about 10 200 lines of code.
 
 Scripts and memory files hold the rest. Before a finished text or a code change goes out, an independent check reads it.
 
-The rules file says what to do. A gate makes it happen. Some gates began as a trap I had written down after a mistake. The heredoc gate is one.
+The rules file says what to do. A gate enforces it for the calls it recognizes. Some gates began as a trap I had written down after a mistake. The heredoc gate is one.
 
 I give the gate names below as examples. I am not publishing the code, and the names are in Finnish because that is how my workspace names them.
 
@@ -702,7 +703,7 @@ Here is what those rows were:
 
 The number I find most useful is who caused them. Subagents caused 1 860 rows, the main session 1 102, and one row has no actor. Some subagent types, such as Explore and Plan, do not see my rules file, and a general-purpose subagent gets it as one more piece of text. General-purpose subagents caused 1 617 of the 1 860 subagent rows. A hook runs on the tool calls it watches, whoever makes them.
 
-A block measures friction. It does not measure harm prevented. Many blocks enforce working rules, such as no heredoc with a doubled backslash and no git in a session. The heredoc gate had rows on every one of the 30 days. The same habit came back day after day, and the gate blocked it each time.
+A block measures friction. It does not measure harm prevented. Many blocks enforce working rules, such as no heredoc with a doubled backslash and no git in a session. The heredoc gate had rows on every one of the 30 days. Day after day the same habit came back. The log shows only the instances the gate recognized, and it blocked all of them.
 
 ## Five gates, by name
 
@@ -718,11 +719,11 @@ A block measures friction. It does not measure harm prevented. Many blocks enfor
 
 The answers came at four levels. First, the block message is the instruction. Most of them name the right way to do the thing. On 16 November a subagent hit the heredoc gate and, about 13 seconds later, wrote its edit to a file with the file tool. The log records the actions and not the reasoning, so the link between the block and the change is my reading of the order of events.
 
-Second, when a gate keeps firing, my first answer is usually a tool rather than a stricter gate. In the last week of October, the gate that protects the gate log asked me well over 150 times, most of them for subagents analyzing the log with their own scripts. The answer was a read-only tool that knows where the log is, and a hook that gives the house rules to each subagent I start with the Agent tool. On 1 November I also made that gate and three others refuse a subagent's call where they would have asked me, because a subagent has no one to answer the question. From 4 to 13 November the heredoc gate blocked 187 times, so on 14 November I added a patch tool that takes its edit from a file. Heredoc blocks did not fall on the day it arrived or the day after: 45 on 14 November and 34 on 15 November, both heavy subagent days. On 16 November there were 17. I am not claiming the tool helped yet.
+Second, when a gate keeps firing, my first answer is usually a tool rather than a stricter gate. In the last week of October, the gate that protects the gate log asked me well over 150 times, most of them for subagents analyzing the log with their own scripts. The answer was a read-only tool that knows where the log is, and a hook that gives the house rules to each subagent I start with the Agent tool. On 1 November I also changed that gate and three others to refuse a subagent's call where they would have asked me, because a subagent's question would come to me as a prompt in the middle of other work. The change took effect when I installed it on 4 November. From 4 to 13 November the heredoc gate blocked 187 times, so on 14 November I added a patch tool that takes its edit from a file. Heredoc blocks did not fall on the day it arrived or the day after: 45 on 14 November and 34 on 15 November, both heavy subagent days. On 16 November there were 17. I am not claiming the tool helped yet.
 
-Third, the set of gates moves. There were 25 numbered gates in use on 18 October. On 31 October I read in the hook documentation that a hook that crashes or times out does not block the call. The same day I added a gate that records calls whose gate did not finish. On 17 November I read three OWASP publications on agent security. The same day I built a gate that asks me before a third-party MCP tool that can write is called, unless I have approved its current definition.
+Third, the set of gates moves. There were 25 numbered gates in use on 18 October. On 31 October I read in the hook documentation that, by default, a hook that crashes or times out does not block the call. A per-hook setting can make such a failure block the call. The same day I added a gate that records calls whose gate did not finish. On 17 November I read three publications of the [OWASP GenAI Security Project](https://genai.owasp.org/resources/). Its listing gives LLM Exploit Generation Guide 2.0 the date 27 October, GenAI Data Security Best Practices v2 Part 1 the date 3 November and Securing Agentic Applications V2 the date 10 November. The same day I built a gate that asks me before a third-party MCP tool that can write is called, unless I have approved its current definition.
 
-Fourth, false alarms. My rule is that a gate does not go red on a guess, because when a gate goes red for the wrong reason, the agent learns to work around it. When a gate cannot decide, it lets the call through, or, at a few gates, asks me. At most of those gates a subagent gets a refusal with a note on what to do instead, because no one is there to answer. Since 16 November I can mark a block as unfounded. So far 0 of the 2 963 rows are marked. That is too early to mean anything, and I am saying so rather than reading it as a result.
+Fourth, false alarms. My rule is that a gate does not go red on a guess, because when a gate goes red for the wrong reason, the agent learns to work around it. When a gate cannot decide, it lets the call through, or, at a few gates, asks me. At most of those gates a subagent gets a refusal with a note on what to do instead, so that its question does not interrupt me. Since 16 November I can mark a block as unfounded. So far 0 of the 2 963 rows are marked. That is too early to mean anything, and I am saying so rather than reading it as a result.
 
 ## How do I know a gate still blocks?
 
@@ -730,9 +731,9 @@ With mutation testing. I run two suites, one for the gate code and one for my ot
 
 The gate suite had 1 086 mutations on 24 October. On 17 November it had 2 114. In 48 parallel parts 2 112 were caught, and one more was caught on a rerun by itself. The last one changed the code in a way no test can observe, so I removed it, and the suite now has 2 113.
 
-The tool suite had 1 002 mutations on 22 October and took 64 minutes. On 17 November it had 1 941. All were caught. The 48 parallel parts left 14 open, and each of those was caught on a rerun by itself. That run took 80 minutes on an Intel Core i9-14900KS, and by my own reading the processor sat at about 250 W throughout. 48 is the ceiling on this machine: at 96 parts Windows reported a system error.
+The tool suite had 1 002 mutations on 22 October and took 64 minutes. On 17 November it had 1 941. All were caught. The 48 parallel parts left 14 open, and each of those was caught on a rerun by itself. That run took 80 minutes on an Intel Core i9-14900KS, and by my own reading the processor sat at about 250 W throughout. I run 48 parts, because at 96 parts Windows reported a system error. I have not looked for the exact limit between the two.
 
-The models run in the cloud, but every hook and every mutation run runs on my own machine, so for the way I work I could not use a slower one. Intel rates its laptop Core Ultra 9 285HX at 160 W maximum turbo power. In an 18-inch gaming laptop that [Notebookcheck reviewed](https://www.notebookcheck.net/MSI-Titan-18-HX-AI-A2XWJG-Review-No-holds-barred-Core-Ultra-9-285HX-and-175-W-RTX-5090-Laptop-performance.1010632.0.html), that processor settled at 174 W under Prime95 alone. In the Extreme Performance mode used in the review, the laptop's fans reach nearly 60 dBA under heavy load, measured at 15 cm. My desktop stays quiet even at full load. The cooling is an Arctic Liquid Freezer II with three 120 mm fans pushing and three pulling on its radiator, plus six 120 mm and three 140 mm case fans.
+The models run in the cloud, but every hook and every mutation run runs on my own machine, so for the way I work I would not want a slower one: the 80-minute run would only get longer. Intel rates its laptop Core Ultra 9 285HX at 160 W maximum turbo power. In an 18-inch gaming laptop that [Notebookcheck reviewed](https://www.notebookcheck.net/MSI-Titan-18-HX-AI-A2XWJG-Review-No-holds-barred-Core-Ultra-9-285HX-and-175-W-RTX-5090-Laptop-performance.1010632.0.html), that processor settled at 174 W under Prime95 alone. In the Extreme Performance mode used in the review, the laptop's fans reach nearly 60 dBA under heavy load, measured at 15 cm. My desktop stays quiet even at full load. The cooling is an Arctic Liquid Freezer II with three 120 mm fans pushing and three pulling on its radiator, plus six 120 mm and three 140 mm case fans.
 
 ## Why does this matter when the models are the same?
 
@@ -744,11 +745,14 @@ Between 18 October and 17 November the numbered gates in use went from 25 to 33.
 
 Updated 2026-11-17. The paragraph on heredoc blocks ended at 15 November, although the log window runs to 16 November. It now includes 16 November.
 
+Corrected 2026-11-17. Several sentences said more than their sources do. Subagent permission questions do reach me, so a gate refuses them to spare me the interruption, not because no one would answer. By default a crashed or timed-out hook lets the call through. A setting can change that. A gate enforces only what it recognizes, and the heredoc gate blocked the instances it recognized. I run 48 parts as a limit I chose, not a measured maximum. The gate change of 1 November took effect on 4 November. The three OWASP publications are now named.
+
 ## Related
 
 - [What agent memory in local files gets me](/blog/local-agent-memory)
 - [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph)
-- [The checks that pass for the wrong reason](/blog/checks-that-pass-for-the-wrong-reason)`,
+- [The checks that pass for the wrong reason](/blog/checks-that-pass-for-the-wrong-reason)
+- [Keeping my lab and my client work apart](/blog/keeping-my-lab-and-client-work-apart)`,
   "/blog/my-agents-notes-were-already-a-graph": `# My agent's notes were already a graph
 
 2026-11-06
@@ -2967,7 +2971,7 @@ In July I wrote up sixteen Finnish B2B sites. Since then the same measurement ha
 
 The phrase agent readiness is used for two different things, and AI assistants often answer the question with the other one. Ask an assistant what an agent-readiness audit is and the answer often describes an organization: its data, its governance, whether its teams are ready to deploy AI agents. In [a measurement of 41 such answers](/blog/what-ai-assistants-call-an-agent-readiness-audit) on the day I published this post, 18 read the term that way and 13 read it as a website. That is a real question, and it is a different one.
 
-Website agent readiness is a property of a site or an API. It asks whether a machine reading on someone's behalf can find the site, read its pages without a browser, learn what the company sells, and act on that through a declared interface. An independent scanner can measure it, and the result is a number a third party can check. That is the measurement below.
+Website agent readiness is a property of a site or an API. It asks whether a machine reading on someone's behalf can find the site, read its pages without a browser, learn what the company sells, and act on that through a declared interface. An independent scanner can measure the published side of it: the files, headers and declared interfaces a site serves. The scanner does not complete an action on the site. The result is a number a third party can check. That is the measurement below.
 
 ## The numbers
 
@@ -2997,7 +3001,7 @@ Run isitagentready.com on your domain and read the level, then read which checks
 
 **Are these 567 sites broken?**
 
-No. They load and a person can use them without trouble. The level measures something else, whether a machine reading on someone's behalf can find the site, read it without a browser, learn what the company sells and act on it. Level 1 is where most sites in this sample sat on the day I wrote to them.
+No. They load and a person can use them without trouble. The level measures something else, whether a machine reading on someone's behalf can find the site, read it without a browser, learn what the company sells and find a declared interface to act through. Level 1 is where most sites in this sample sat on the day I wrote to them.
 
 **Why do Finnish and other sites land on the same floor?**
 
@@ -3020,6 +3024,8 @@ Corrected 2026-09-28. Two more sentences needed the same care. The claim that th
 Corrected 2026-10-16. One sentence said Level 1 is the floor an ordinary CMS site reaches. That is my reading, and the study did not record which CMS each site runs, so the sentence now says so. No number changed.
 
 Corrected 2026-11-13. The paragraph on the Level 0 notes said the pattern in those 29 is "a robots.txt the CMS shipped by default". The study did not record which CMS each site runs, so that is my reading of the notes and not a measurement. No number changed.
+
+Corrected 2026-11-17. Two sentences said the scanner and the level measure whether a machine can act on a site. The scanner reads what a site publishes and does not complete an action, so both sentences now say that. No number changed.
 
 ## Related
 
@@ -4915,7 +4921,7 @@ Corrected 2026-11-13. Two sentences referred to an argument this post does not m
 
 Northwind Fasteners Oy and all readings in this report are invented. The example shows what a client receives: the finding, its evidence, who makes the correction and how the result is checked.
 
-Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 13 November 2026.
+Illustrative report date: 8 September 2026, which is the delivery date in the engagement record below. This page itself was last revised on 17 November 2026.
 
 ## What to fix first
 
@@ -5161,9 +5167,11 @@ Run on 2026-09-04, recorded so that the client can re-run them without turva.dev
 
 | Scan | Reading | What it means for agents |
 | --- | --- | --- |
-| internet.nl website test | 64 of 100. IPv6 absent, DNSSEC absent, HTTPS configuration passes, security headers partial. | F7 enables DNSSEC, which moves this reading. DNSSEC is also a prerequisite of the dnsAid check. |
+| internet.nl website test | 64 of 100. IPv6 absent, DNSSEC absent, HTTPS configuration passes, security headers partial. | F7 enables DNSSEC, which moves this reading. The scanner's dnsAid check also reports whether DNSSEC validated the record. |
 | internet.nl mail test | 55 of 100. SPF present, DKIM present, DMARC policy none. | Not an agent surface. Recorded because a buyer checks it. |
 | Hardenize | 17 of 24 categories passed. CAA, DNSSEC, HSTS preload, CSP, Referrer-Policy, security.txt and cookies did not. | security.txt is a five line file the same edge worker serves. It is listed under F3 as a same-day addition. |
+
+This report acts only on the security.txt and DNSSEC rows, under F3 and F7. The other five Hardenize failures, CAA, HSTS preload, CSP, Referrer-Policy and cookies, are outside its scope and stay on the client's own list.
 
 ## The findings in detail
 
@@ -5181,7 +5189,7 @@ Nine findings. Each one shows the evidence, why it matters, the correction, the 
 
 - Price and currency. The JSON-LD Offer price is the number the page shows, in EUR, VAT excluded as the page states, and the API's prices.price is the same number in minor units, with currency_code EUR and currency_minor_unit 2. Prices are not rounded on one surface and not on another.
 - Price basis. A product sold by the box names the box of 100 next to its price on the visible page and carries a UnitPriceSpecification with referenceQuantity 100 in JSON-LD, so neither surface can be read as a per-piece price. The Store API has no field for a price basis, and this fix adds none. Its prices.price is the price of the box the product is sold in, and nothing in the API response says so. An agent that reads only the API therefore still cannot tell a box price from a piece price for these 12 products. That is a remaining limit of this fix, and the report does not count it as corrected. The confirmed product record lets the acceptance run check the basis on the page and in the JSON-LD, but the record is the company's own document and publishes nothing to an agent that reads the API.
-- Availability from the stock state, not from the lead time text. In the Store API the stock state is two fields. BackOrder when is_on_backorder is true, OutOfStock when is_in_stock is false, InStock when is_in_stock is true and is_on_backorder is false. The schema notes that is_on_backorder also reads false when backorder notifications are turned off, so a product the confirmed record lists on backorder and the API shows only as in stock is a row to resolve, not a pass. PreOrder is not used: no product in this catalog has a release date, and a lead time on an existing product is a BackOrder with a deliveryLeadTime of six weeks, not a pre-order. The lead time is coded as a QuantitativeValue with value 6 and unitCode WEE, so an agent reads a number and a unit rather than a phrase. The lead time is published in that field and in the page text, and it does not decide the availability value on its own.
+- Availability from the stock state, not from the lead time text. In the Store API the stock state is two fields. BackOrder when is_on_backorder is true, OutOfStock when is_in_stock is false, InStock when is_in_stock is true and is_on_backorder is false. The schema notes that is_on_backorder also reads false when backorder notifications are turned off, so a product the confirmed record lists on backorder and the API shows only as in stock is a row to resolve, not a pass. PreOrder is not used: no product in this catalog has a release date, and a lead time on an existing product is a BackOrder with a deliveryLeadTime of six weeks, not a pre-order. In schema.org, deliveryLeadTime is the delay from receiving the order to the goods leaving the warehouse, and the six weeks is that delay: the time until a backordered box ships, not the time until it arrives. The lead time is coded as a QuantitativeValue with value 6 and unitCode WEE, so an agent reads a number and a unit rather than a phrase. The lead time is published in that field and in the page text, and it does not decide the availability value on its own.
 - Variants. The 19 variable products publish one offer per variant, 61 in all, with the variant's own price and stock state, matching the variation list the page shows. The Store API leaves variations out of its default listing, and the parent's variations array carries only each variant's id and attributes, so the 61 variant rows are read from /wp-json/wc/store/v1/products?type=variation, where each variant has its own prices, is_in_stock and is_on_backorder.
 
 Exceptions, listed so that the acceptance test does not read them as failures. Six products are priced on request: the page says so, and they carry no price in JSON-LD or in the API, only an availability from their stock state. After the fix the API marks them is_purchasable false. Four products are discontinued and still published: they carry availability Discontinued and no price, and after the fix the API marks them is_purchasable false as well. The Store API has no discontinued state, so the confirmed product record names the four. Neither group is then presented as purchasable on any of the three surfaces. Decision D4 says whether any of the ten stays published, and the acceptance run reads the published ones against these rules and the unpublished ones against the removal list. The exception is from the price rules, not from the run.
@@ -5229,7 +5237,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **Why it matters.** One scored check. Observed: no file, no header. Possible and not observed: an assistant that looks for llms.txt gets a 200 with an HTML body and has to read the whole page to learn there is nothing there. The AI run of 2026-09-04 does not show whether any of the four assistants asked for the file, and the report does not claim that they do.
 
-**What to change.** Write /llms.txt by hand: the company name, a four line summary, and the pages that matter grouped as products, delivery terms, technical documents and contact, each as an absolute link to the page's markdown form from F2. Announce it with Link: rel="describedby" pointing at llms.txt, which is one file for the whole site and the same target everywhere. The header goes on the responses the worker handles in this report's scope, which are the content pages F2 converts. The second relation is per page and not site wide: a response carries Link: rel="alternate" type="text/markdown" only when F2 publishes a markdown twin for that exact address, and the header points at that page's own .md address. The routes F2 passes through untouched, /cart/, /checkout/, /my-account/, /wp-admin/, /wp-login.php, every /wp-json/ route and every response that sets a cookie or carries a session, get no header added at all, neither describedby nor alternate, and any Link header the origin itself sends on them travels through as the origin sent it. Serve /.well-known/security.txt from the same worker with a contact address and an expiry date, which closes one Hardenize category the same day.
+**What to change.** Write /llms.txt by hand: the company name, a four line summary, and the pages that matter grouped as products, delivery terms, technical documents and contact, each as an absolute link to the page's markdown form from F2. Announce it with Link: rel="describedby" pointing at llms.txt, which is one file for the whole site and the same target everywhere. The header goes on the responses the worker handles in this report's scope, which are the content pages F2 converts. The second relation is per page and not site wide: a response carries Link: rel="alternate" type="text/markdown" only when F2 publishes a markdown twin for that exact address, and the header points at that page's own .md address. The routes F2 passes through untouched, /cart/, /checkout/, /my-account/, /wp-admin/, /wp-login.php, every /wp-json/ route and every response that sets a cookie or carries a session, get no header added at all, neither describedby nor alternate, and any Link header the origin itself sends on them travels through as the origin sent it. Serve /.well-known/security.txt from the same worker with a contact address and an expiry date. The Hardenize security.txt category can pass only after Hardenize reads the domain again, so the acceptance reading for this file is a direct fetch of it.
 
 **Who does it and estimated effort.** turva.dev or the company's developer, at the edge. About 90 minutes. The text of llms.txt is decision D3: it goes live after the company has read it, because it is the company's own description of itself.
 
@@ -5291,7 +5299,7 @@ The delivery is accepted when four things hold. Every price row and every availa
 
 **What was found.** No _index._agents record exists under northwind-fasteners.example, and DNSSEC is not enabled at the registrar, which internet.nl also reports.
 
-**Why it matters.** One scored check. DNSSEC moves the internet.nl website reading and is the prerequisite of dnsAid, so it is worth enabling now. The record itself is a pointer, and Northwind publishes nothing for it to point at.
+**Why it matters.** One scored check. DNSSEC moves the internet.nl website reading, and the scanner's dnsAid check reports whether DNSSEC validated the record, so it is worth enabling now. The draft itself says the records SHOULD be DNSSEC-signed, adds "if TLSA records are used they MUST be signed", and says that DNS-AID is deployable without DNSSEC. The record itself is a pointer, and Northwind publishes nothing for it to point at.
 
 **What the check reads, with versions.** The record shape follows the IETF draft DNS for AI Discovery, draft-mozleywilliams-dnsop-dnsaid-02, which defines _index._agents under the domain as an SVCB record pointing at a registry of the organization's agents, and leaves the registry's content, protocol and schema outside the draft. The scanner's dnsAid check, as it read on 2026-09-03, looks for that record and reports whether DNSSEC validated it. Both are moving: the draft has a revision number and an expiry date, and the scanner's check definition is not versioned by the scanner, so the report pins both to their state on 2026-09-03 and the retest reads them against their state on the retest day. If either has moved between the two dates, the retest report names both versions next to the two readings rather than treating the readings as comparable.
 
@@ -6069,7 +6077,7 @@ These checks read published files, including a server card's tool list. Where yo
 
 With your written permission I also run the internet.nl website and email tests on your domain. internet.nl keeps each result at a permanent public link. Without that permission I read only the security scans already published for your domain.
 
-The internet.nl tests, the published security scans and the security headers are security work. They and their report section run with GLM 5.3 through Melious AI GmbH, as the legal page describes. Claude is the AI tool for the rest of the audit.
+The internet.nl tests, the published security scans and the security headers are security work. They and their report section run with GLM 5.3 through Melious AI GmbH, as the legal page describes. Claude is the AI tool for the rest of the audit. I read the finished report and approve it before it is sent. I do not reproduce each finding by hand.
 
 ## What you receive
 
@@ -6332,9 +6340,9 @@ Payment is due within fourteen days of the invoice date unless agreed otherwise 
 
 ### Cancellation and refunds
 
-An engagement canceled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and the started service month for advisory.
+An engagement canceled before its agreed written kickoff is not charged, and anything already paid for it is refunded in full. Cancellation after its agreed written kickoff is charged for the work already delivered: the agreed share of delivered parts for a fixed-price service, the hours worked for work billed by the day and, for advisory, the months the next paragraph sets out.
 
-For advisory, notice given in the second or third month ends the retainer at the end of the three-month minimum and the months up to that end are charged. After the minimum, notice ends it at the end of the current month.
+For advisory, if you are not satisfied with the first month, you can end the retainer by email sent at any time during the first month, up to the day before the second month starts. The retainer then ends when the first month ends, and the second and third months are not charged. Notice given in the second or third month ends the retainer at the end of the three-month minimum, and the months up to that end are charged. After the minimum, notice ends it at the end of the current month.
 
 Cancellation of a fixed-price service or the correction add-on is charged by the share of listed parts or fixes delivered. Cancellation of the active security testing add-on is charged by the share of its agreed written scope delivered. A remedy under Delay or Continuity takes precedence over this share. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase.
 
@@ -6518,7 +6526,7 @@ If Cloudflare's bot protection is triggered, it can set one of its own security 
 
 This page is updated when the terms or the privacy sections change. The terms apply to engagements started on or after the Terms date below, and the privacy sections apply from the Privacy date below.
 
-- **Terms last updated:** 2026-11-08
+- **Terms last updated:** 2026-11-17
 - **Privacy last updated:** 2026-11-11
 `,
 
@@ -6758,7 +6766,7 @@ Most sites are built for human readers and search crawlers. Some AI agents read 
 
 The audit checks the parts an agent reaches first.
 
-Discoverability covers robots.txt, the sitemap, the response headers and the DNS records that let an agent find resources without parsing a full HTML page. Content accessibility covers llms.txt, markdown content negotiation and whether the site can return a clean text version that saves an agent most of the tokens an HTML page would cost.
+Discoverability covers robots.txt, the sitemap, the response headers and the DNS records that let an agent find resources without parsing a full HTML page. Content accessibility covers llms.txt, markdown content negotiation and whether the site can return a clean text version of a page, which costs an agent fewer tokens than the HTML. [This site's homepage](/blog/cheaper-pages-revisited) measured 1 723 tokens as markdown and 10 320 as HTML on 4 July 2026, and the saving on another page depends on that page.
 
 Bot access control covers the AI-bot rules, the content signals and the bot-authentication directory. The first two state the site's preferences, which a crawler follows or ignores. The directory identifies a bot without granting it anything.
 
@@ -6803,7 +6811,7 @@ Observed AI answers are a third kind of evidence, separate from the scan and the
 
 ## Findings and verification
 
-Each check passes or fails. Each failure comes with a concrete fix instruction or the reason the gap is left open, plus a link to this site's guide for that surface where one exists. Your own team can do the work from the report, so implementation is optional.
+Each scored check passes or fails. The scanner also reports some checks as information only, marked OK or INFO, and those carry no score. Each failure comes with a concrete fix instruction or the reason the gap is left open, plus a link to this site's guide for that surface where one exists. Your own team can do the work from the report, so implementation is optional.
 
 turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-11-15. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here.
 
@@ -6831,7 +6839,7 @@ An agent-readiness audit measures how well an AI agent can find and read a websi
 
 **What does an agent-readiness audit check?**
 
-It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, and each failure comes with a concrete fix or the reason the gap is left open.
+It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, except a few the scanner reports as information only, and each failure comes with a concrete fix or the reason the gap is left open.
 
 **What does an agent-readiness audit produce?**
 
@@ -8732,7 +8740,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.258.1",
+    "version": "3.259.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9041,7 +9049,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.258.1",
+  "version": "3.259.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -10138,7 +10146,7 @@ const META_BY_PATH = {
     description: "Of 567 selected company websites, 485 read Level 1 of 5, 85,5 percent. The sample is a prospecting list, and the scanner's check set changed during the study.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-11-13",
+    modified: "2026-11-17",
     image: "/og-website-agent-readiness-567-sites.jpg",
     imageAlt: "turva.dev blog card: 567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, Finnish and foreign sites alike.",
   },
@@ -10999,13 +11007,21 @@ const AGENT_JSON_MAX_BYTES = 16384;
 // More parts than this is not a question for three fixed skills, and each part is read and joined.
 const A2A_MAX_PARTS = 32;
 
+// A body stream that errors while it is read is the client's broken request, not a server
+// fault. It escaped as a 500 with a stack in the log on both routes, while the parity route
+// already answered the same stream with 400 (Astra repo read 2026-11-17, R4/n4).
 async function readAgentJson(request: Request) {
-  const read = await parityReadCapped(request.body, AGENT_JSON_MAX_BYTES);
-  if (read.over) return { tooLarge: true, value: undefined };
+  let read;
   try {
-    return { tooLarge: false, value: JSON.parse(new TextDecoder("utf-8").decode(read.buf)) };
+    read = await parityReadCapped(request.body, AGENT_JSON_MAX_BYTES);
   } catch {
-    return { tooLarge: false, value: undefined };
+    return { tooLarge: false, unreadable: true, value: undefined };
+  }
+  if (read.over) return { tooLarge: true, unreadable: false, value: undefined };
+  try {
+    return { tooLarge: false, unreadable: false, value: JSON.parse(new TextDecoder("utf-8").decode(read.buf)) };
+  } catch {
+    return { tooLarge: false, unreadable: false, value: undefined };
   }
 }
 
@@ -11016,6 +11032,9 @@ async function serveA2AMessageSend(request: Request) {
   const body = await readAgentJson(request);
   if (body.tooLarge) {
     return a2aError(-32600, "invalid request: the body is larger than " + AGENT_JSON_MAX_BYTES + " bytes", null, 413);
+  }
+  if (body.unreadable) {
+    return a2aError(-32600, "invalid request: the request body could not be read", null, 400);
   }
   const payload = body.value;
   const msg = payload && payload.message;
@@ -11119,11 +11138,16 @@ function acceptRanking(request: Request) {
   return ranking;
 }
 
-function prefersType(request: Request, wanted: string, htmlWinsTie: boolean) {
+// The rivals are the forms the route can actually serve. Comparing markdown with JSON on
+// a route that has no JSON form answered "Accept: application/json, text/markdown;q=0.9,
+// text/html;q=0" with HTML, the one form the client had refused (Astra repo read
+// 2026-11-17, R4/n1). JSON counts as a rival only where the route serves it: the home
+// page, a brief and the llms.txt validator.
+function prefersType(request: Request, wanted: string, htmlWinsTie: boolean, rivals: string[]) {
   const ranking = acceptRanking(request);
   const q = ranking[wanted];
   if (!(q > 0)) return false;
-  for (const other of ["text/html", "text/markdown", "application/json"]) {
+  for (const other of rivals) {
     if (other === wanted) continue;
     const oq = ranking[other];
     if (oq === undefined) continue;
@@ -11133,12 +11157,12 @@ function prefersType(request: Request, wanted: string, htmlWinsTie: boolean) {
   return true;
 }
 
-function wantsMarkdown(request: Request) {
-  return prefersType(request, "text/markdown", false);
+function wantsMarkdown(request: Request, routeServesJson = false) {
+  return prefersType(request, "text/markdown", false, routeServesJson ? ["text/html", "application/json"] : ["text/html"]);
 }
 
 function wantsJson(request: Request) {
-  return prefersType(request, "application/json", true);
+  return prefersType(request, "application/json", true, ["text/html", "text/markdown"]);
 }
 
 // v2 of the llms.txt proposal asks for the markdown version of a page at a URL an
@@ -13395,7 +13419,7 @@ async function serveBrief(route: { id: string; variant: string }, pathname: stri
   // the house's own promise. The page already carries `vary: Accept`.
   if (route.variant === "html") {
     if (wantsJson(request)) route = { id: route.id, variant: "json" };
-    else if (wantsMarkdown(request)) route = { id: route.id, variant: "md" };
+    else if (wantsMarkdown(request, true)) route = { id: route.id, variant: "md" };
   }
   if (route.variant === "md") {
     // Same-origin since round 19 (K6-P3): a brief is private, so no other site may load it as a
@@ -17404,6 +17428,9 @@ async function serveAcpCheckout(request: Request, pathLower: string) {
     if (body.tooLarge) {
       return new Response(JSON.stringify({ "type": "invalid_request", "code": "request_too_large", "message": "The request body is larger than " + AGENT_JSON_MAX_BYTES + " bytes." }, null, 2), { status: 413, headers: acpHeaders() });
     }
+    if (body.unreadable) {
+      return new Response(JSON.stringify({ "type": "invalid_request", "code": "request_unreadable", "message": "The request body could not be read." }, null, 2), { status: 400, headers: acpHeaders() });
+    }
     const reqBody = body.value;
     // A parse error used to become an empty object, so a body of `{`, `null`, `[]` or `""`
     // answered 201 with the default audit session and 4 300 euros: a client's input error
@@ -17753,14 +17780,24 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
     || !!X402_ROUTES[pathLower as keyof typeof X402_ROUTES] || !!X402_ROUTES[pathLower.replace(/\/$/, "") as keyof typeof X402_ROUTES]
     || pathLower.startsWith("/agent/auth/") || pathLower === "/oauth/authorize" || pathLower === "/oauth/token"
     || pathname === "/markdown-parity-check";
+  // The A2A send and cancel routes answer GET with their own 405 and Allow: POST, OPTIONS,
+  // so the gate's 405 for another method names the same set instead of GET and HEAD
+  // (Astra repo read 2026-11-17, R4/n2). Which method passes the gate does not change.
+  const a2aPostOnly = pathLower === "/v1/message:send" || (a2aTask !== null && a2aTask.cancel);
   if (!acpFamily && request.method !== "GET" && request.method !== "OPTIONS" && !(request.method === "POST" && postAllowed)) {
-    return serve405(postAllowed ? "GET, HEAD, POST, OPTIONS" : "GET, HEAD, OPTIONS", pathLower);
+    return serve405(a2aPostOnly ? "POST, OPTIONS" : postAllowed ? "GET, HEAD, POST, OPTIONS" : "GET, HEAD, OPTIONS", pathLower);
   }
+  // The ACP family's preflight names the methods of the route it is asked about, the same
+  // set as that route's 405 Allow header: the collection and the complete and cancel
+  // actions take POST, a session takes GET (Astra repo read 2026-11-17, R4/n2).
+  const acpMethods = !acpFamily ? ""
+    : pathLower === "/api/acp/checkout_sessions" || /\/(complete|cancel)$/.test(pathLower) ? "POST, OPTIONS"
+    : "GET, OPTIONS";
   if (request.method === "OPTIONS" && preflightPath && pathLower !== "/v1/message:send" && pathLower !== "/v1/message:send/") {
     const cardPath = pathLower === "/.well-known/mcp/server-card.json" || pathLower === "/.well-known/mcp.json";
     const headers = new Headers({
       "access-control-allow-origin": "*",
-      "access-control-allow-methods": cardPath ? "GET" : (acpFamily || postAllowed) ? "GET, POST, OPTIONS" : "GET, OPTIONS",
+      "access-control-allow-methods": cardPath ? "GET" : acpFamily ? acpMethods : postAllowed ? "GET, POST, OPTIONS" : "GET, OPTIONS",
       "access-control-allow-headers": cardPath ? "Content-Type, If-None-Match" : "Content-Type, Accept, X-PAYMENT",
       "access-control-max-age": "86400"
     });
@@ -17920,11 +17957,11 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
     return resp;
   }
 
-  if (wantsMarkdown(request) && pathname === "/") {
+  if (wantsMarkdown(request, true) && pathname === "/") {
     return serveMarkdown(HOME_MARKDOWN, "https://turva.dev/");
   }
 
-  if (wantsMarkdown(request) && PAGE_MARKDOWN[pathname as keyof typeof PAGE_MARKDOWN]) {
+  if (wantsMarkdown(request, pathname === "/llms-txt-validator") && PAGE_MARKDOWN[pathname as keyof typeof PAGE_MARKDOWN]) {
     const canonicalUrl = getCanonicalForPath(pathname) || "https://turva.dev" + pathname;
     return serveMarkdown(PAGE_MARKDOWN[pathname as keyof typeof PAGE_MARKDOWN], canonicalUrl);
   }
@@ -18016,8 +18053,11 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   if (pathLower === "/api" || pathLower === "/api/") {
     return serve402("/api", { label: "API", amountUsdcMicro: "1000", amountEurCents: 0, description: "turva.dev agent API. This 402 response declares x402 payment in USDC on Base, and no payment is accepted here, so ask for a quote and settle against the written scope. Free discovery stays open at /openapi.json, /.well-known/* and /api/v1. Priced services: /api/agent/audit, /api/agent/advisory, /api/agent/implementation." });
   }
+  // 308, not 301: a client that POSTs to the slashed address keeps its method and body and
+  // reaches the endpoint, as turva-mcp does for /mcp/. Under 301 the client switched to GET
+  // and got a 405 (Astra repo read 2026-11-17, R4/n3; decision P1 of that read).
   if (pathLower === "/v1/message:send/") {
-    return redirectTo(new URL("/v1/message:send", request.url).toString(), 301, pathLower);
+    return redirectTo(new URL("/v1/message:send", request.url).toString(), 308, pathLower);
   }
   if (pathLower === "/v1/message:send") {
     if (request.method === "OPTIONS") {
