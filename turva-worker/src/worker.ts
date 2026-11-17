@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.258.0 - new Lab notes post /blog/everyone-has-the-same-models (2026-11-17), a month of gate logs and two mutation suites, with its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row (50 articles), META_BY_PATH, CANONICAL_PATHS and SITEMAP_ENTRIES rows.
 // turva.dev worker v3.257.7 - the audit page and the audit guide add two readings to the tool-description check (Tek-845, 2026-11-16): tools and parameters without a description are counted, and whether the tool definitions carry a version, a hash or a signature is recorded; no request is added.
 // turva.dev worker v3.257.6 - the audit page and the audit guide name three hand checks over agent-facing files (Tek-832, 2026-11-16): machine-readable files parse in full and arrive complete, MCP and WebMCP tool descriptions are measured in bytes and read for sentences addressed to the model, and tools that change data are read for their read-only and destructive annotations, all without calling a tool; the guide cites the MCP tools page. The home page Hardenize bullet no longer repeats the measurement date, which the paragraph above it already names
 // turva.dev worker v3.257.5 - MCP server card version 1.11.0 (Tek-827, 2026-11-15): get_contact now links the legal page and the card's get_contact description names the business details and legal page; turva-mcp's get_services, get_principles and get_contact descriptions separate the engagement terms from the standing principles.
@@ -435,6 +436,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Everyone has the same models. My harness is the difference.](https://turva.dev/blog/everyone-has-the-same-models.md)
 - [My agent's notes were already a graph](https://turva.dev/blog/my-agents-notes-were-already-a-graph.md)
 - [I can't start over, so I back up every night](https://turva.dev/blog/why-i-back-up-every-night.md)
 - [What a publisher owes someone else's agent](https://turva.dev/blog/what-a-publisher-owes-someone-elses-agent.md)
@@ -660,6 +662,90 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 const PAGE_MARKDOWN = {
+  "/blog/everyone-has-the-same-models": `# Everyone has the same models. My harness is the difference.
+
+2026-11-17
+
+The models I use are the same ones anyone can use. What I have built around them is mine: rules, hooks, skills, scripts, memory files and tests that turn a general model into one that works the way my business works. I call that the harness. Right now I think it is where the advantage is. This is how it stood on 17 November 2026, with a month of its own logs. It changes almost daily, so read it as a snapshot.
+
+## What do I mean by a harness?
+
+I work in Claude Code. Around it sit layers that each do a different job.
+
+A rules file tells the model how I work. It is prose, and the model reads it.
+
+Skills are procedures that load only when a task needs them, such as publishing a post or replying to a prospect. I have 27.
+
+Hooks are code that runs before or after a tool call and can block it, ask me, or leave a note. I call them gates. I have 33 numbered gates in use. Together with the hooks that have no gate number, they use 11 hook events and about 10 200 lines of code.
+
+Scripts and memory files hold the rest. Before a finished text or a code change goes out, an independent check reads it.
+
+The rules file says what to do. A gate makes it happen. Some gates began as a trap I had written down after a mistake. The heredoc gate is one.
+
+I give the gate names below as examples. I am not publishing the code, and the names are in Finnish because that is how my workspace names them.
+
+## What did a month of gate logs show?
+
+A gate that blocks, asks or flags something writes a row in a log. From 18 October to 16 November the log has 2 963 rows under 25 gate names, with rows on every day.
+
+Here is what those rows were:
+
+| Outcome | Rows |
+|---|---|
+| Blocked the call | 1 013 |
+| Asked me | 309 |
+| Recorded an observation | 317 |
+| Let the call through, then flagged something about it | 222 |
+| Stopped a session or a subagent from ending | 104 |
+| No outcome recorded, almost all from before the log began recording one in late October | 998 |
+
+The number I find most useful is who caused them. Subagents caused 1 860 rows, the main session 1 102, and one row has no actor. Some subagent types, such as Explore and Plan, do not see my rules file, and a general-purpose subagent gets it as one more piece of text. General-purpose subagents caused 1 617 of the 1 860 subagent rows. A hook runs on the tool calls it watches, whoever makes them.
+
+A block measures friction. It does not measure harm prevented. Many blocks enforce working rules, such as no heredoc with a doubled backslash and no git in a session. The heredoc gate had rows on every one of the 30 days. The same habit came back day after day, and the gate blocked it each time.
+
+## Five gates, by name
+
+| Gate | Rows | What it does |
+|---|---|---|
+| \`kenoviivapari-heredocissa\` | 605 | Blocks a heredoc that contains a doubled backslash, because the shell tool collapses the pair and the file on disk would differ from what the agent wrote. |
+| \`gotchat-ennen-repokoodia\` | 343 | The first write to each repository file in a session is blocked once, and the block hands the agent the traps recorded for that file. |
+| \`suojattu-porttitiedosto\` | 167 | Before a write to the gate files it asks me. |
+| \`dok-kirjaamatta\` | 114 | A session that changed work files and wrote nothing down is stopped once at the end and told to record what it did. |
+| \`git-sessiossa\` | 48 | No git inside an agent session, because several sessions share one working tree. |
+
+## How were the blocks answered?
+
+The answers came at four levels. First, the block message is the instruction. Most of them name the right way to do the thing. On 16 November a subagent hit the heredoc gate and, about 13 seconds later, wrote its edit to a file with the file tool. The log records the actions and not the reasoning, so the link between the block and the change is my reading of the order of events.
+
+Second, when a gate keeps firing, my first answer is usually a tool rather than a stricter gate. In the last week of October, the gate that protects the gate log asked me well over 150 times, most of them for subagents analyzing the log with their own scripts. The answer was a read-only tool that knows where the log is, and a hook that gives the house rules to each subagent I start with the Agent tool. On 1 November I also made that gate and three others refuse a subagent's call where they would have asked me, because a subagent has no one to answer the question. From 4 to 13 November the heredoc gate blocked 187 times, so on 14 November I added a patch tool that takes its edit from a file. Heredoc blocks did not fall on the day it arrived or the day after: 45 on 14 November and 34 on 15 November, both heavy subagent days. I am not claiming the tool helped yet.
+
+Third, the set of gates moves. There were 25 numbered gates in use on 18 October. On 31 October I read in the hook documentation that a hook that crashes or times out does not block the call. The same day I added a gate that records calls whose gate did not finish. On 17 November I read three OWASP publications on agent security. The same day I built a gate that asks me before a third-party MCP tool that can write is called, unless I have approved its current definition.
+
+Fourth, false alarms. My rule is that a gate does not go red on a guess, because when a gate goes red for the wrong reason, the agent learns to work around it. When a gate cannot decide, it lets the call through, or, at a few gates, asks me. At most of those gates a subagent gets a refusal with a note on what to do instead, because no one is there to answer. Since 16 November I can mark a block as unfounded. So far 0 of the 2 963 rows are marked. That is too early to mean anything, and I am saying so rather than reading it as a result.
+
+## How do I know a gate still blocks?
+
+With mutation testing. I run two suites, one for the gate code and one for my other tools. A mutation run breaks one place in the code at a time and checks that some test notices. If no test goes red, that code could break unseen.
+
+The gate suite had 1 086 mutations on 24 October. On 17 November it had 2 114. In 48 parallel parts 2 112 were caught, and one more was caught on a rerun by itself. The last one changed the code in a way no test can observe, so I removed it, and the suite now has 2 113.
+
+The tool suite had 1 002 mutations on 22 October and took 64 minutes. On 17 November it had 1 941. All were caught. The 48 parallel parts left 14 open, and each of those was caught on a rerun by itself. That run took 80 minutes on an Intel Core i9-14900KS, and by my own reading the processor sat at about 250 W throughout. 48 is the ceiling on this machine: at 96 parts Windows reported a system error.
+
+The models run in the cloud, but every hook and every mutation run runs on my own machine, so for the way I work I could not use a slower one. Intel rates its laptop Core Ultra 9 285HX at 160 W maximum turbo power. In an 18-inch gaming laptop that [Notebookcheck reviewed](https://www.notebookcheck.net/MSI-Titan-18-HX-AI-A2XWJG-Review-No-holds-barred-Core-Ultra-9-285HX-and-175-W-RTX-5090-Laptop-performance.1010632.0.html), that processor settled at 174 W under Prime95 alone. In the Extreme Performance mode used in the review, the laptop's fans reach nearly 60 dBA under heavy load, measured at 15 cm. My desktop stays quiet even at full load. The cooling is an Arctic Liquid Freezer II with three 120 mm fans pushing and three pulling on its radiator, plus six 120 mm and three 140 mm case fans.
+
+## Why does this matter when the models are the same?
+
+In my logs the same mistakes come back day after day, and I expect the same model brings them to anyone else. My harness is the record of my own mistakes, turned into code: a trap written down, then a rule, then a gate or a tool. It is hard to copy whole, because each part answers a mistake made in my own work. That is also why I show names and numbers here and not the code. What you can take is the method: when a mistake repeats, write it down, and when it repeats again, make it a gate.
+
+## This is a snapshot
+
+Between 18 October and 17 November the numbered gates in use went from 25 to 33. The gate mutations grew from 1 086 on 24 October to 2 113, and the tool mutations from 1 002 on 22 October to 1 941. Many recent plugin releases changed only skill text and left the hooks as they were, so a release is not always a gate change. This post describes my setup on 17 November 2026. By the time you read it, some of it has changed.
+
+## Related
+
+- [What agent memory in local files gets me](/blog/local-agent-memory)
+- [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph)
+- [The checks that pass for the wrong reason](/blog/checks-that-pass-for-the-wrong-reason)`,
   "/blog/my-agents-notes-were-already-a-graph": `# My agent's notes were already a graph
 
 2026-11-06
@@ -4402,8 +4488,9 @@ Dated studies, technical investigations, build notes and lab notes from turva.de
 
 ## Browse all articles
 
-49 articles.
+50 articles.
 
+- [Everyone has the same models. My harness is the difference.](/blog/everyone-has-the-same-models) 2026-11-17. Lab notes. The models are the same for anyone, and I think the edge is the harness around them. Here is a month of my Claude Code gate logs and how blocks were answered.
 - [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph). 2026-11-06. Lab notes. I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and in two agent tests the answers stayed the same.
 - [I can't start over, so I back up every night](/blog/why-i-back-up-every-night). 2026-11-04. Lab notes. A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.
 - [What a publisher owes someone else's agent](/blog/what-a-publisher-owes-someone-elses-agent). 2026-11-02. Protocol notes. ASD's guide on agentic AI is written for operators. What an MCP server's publisher owes them, read from the MCP spec and from my own server.
@@ -8631,7 +8718,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.257.7",
+    "version": "3.258.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8772,7 +8859,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qsXGQK47V2CPvzYwIsZdO6zrY1hTmqjO_BIyopw5-WVniUfZB6Y8Hoq5XOxBlzNlJnDFWQKBnzSNcVL8oywVBA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Q1up79HXFRSjEJSlcCnKc4QQefukowX5tTUGszDVffaSZGh3NONmOiHlx5-DxJL4j0X9HsHHKNCNrokGS9JgCQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qsXGQK47V2CPvzYwIsZdO6zrY1hTmqjO_BIyopw5-WVniUfZB6Y8Hoq5XOxBlzNlJnDFWQKBnzSNcVL8oywVBA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zZCo_78oZhvQMUgQ_CIw40nP2-5pk51HQ0w5CLPUwcyRLFH0DgcHim3rb_VOFHQJovkac_Os6cx8vU1nnLiDDw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8940,7 +9027,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.257.7",
+  "version": "3.258.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9681,6 +9768,7 @@ const SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/everyone-has-the-same-models", "monthly", "0.6"],
   ["/blog/my-agents-notes-were-already-a-graph", "monthly", "0.6"],
   ["/blog/why-i-back-up-every-night", "monthly", "0.6"],
   ["/blog/what-a-publisher-owes-someone-elses-agent", "monthly", "0.6"],
@@ -9803,7 +9891,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/blog/my-agents-notes-were-already-a-graph", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/blog/everyone-has-the-same-models", "/blog/my-agents-notes-were-already-a-graph", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -9813,6 +9901,14 @@ function getCanonicalForPath(pathname: string) {
 }
 
 const META_BY_PATH = {
+  "/blog/everyone-has-the-same-models": {
+    title: "Everyone has the same models. My harness is the difference. · turva.dev",
+    description: "The models are the same for anyone, and I think the edge is the harness around them. Here is a month of my Claude Code gate logs and how blocks were answered.",
+    date: "2026-11-17",
+    kind: "Lab notes",
+    image: "/og-everyone-has-the-same-models.jpg",
+    imageAlt: "turva.dev blog card: Everyone has the same models. My harness is the difference. A month of gate logs and how the blocks were answered.",
+  },
   "/blog/my-agents-notes-were-already-a-graph": {
     title: "My agent's notes were already a graph · turva.dev",
     description: "I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and in two agent tests the answers stayed the same.",
