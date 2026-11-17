@@ -161,13 +161,15 @@ test("the primary navigation is a named landmark on every page, and a contents l
 });
 
 test("a contents list stands before the first section of every guide with more than four sections, also when an old anchor span stands in front of it (kierros 27, S3-1)", async () => {
-  // The contents list is placed after the closing </p> that precedes the first <h2>. Until 3.256.0 an old
+  // The contents list is placed after the closing </p>, or since 3.258.1 the closing </div> of a table, that
+  // precedes the first <h2>. Until 3.256.0 an old
   // anchor span between that </p> and the <h2> (a renamed heading keeps its old id as an empty span) made the
   // pattern miss: /guides/letting-agents-act-on-data got no contents list at all, and the one on
   // /guides/agentic-resource-discovery stood in the middle of the page. The expectation is read from the
   // served pages: every guide with more than four sections in <main> and no contents section of its own carries one
-  // list. Where the list stands is asserted for the two guides the span affected, because a guide whose intro ends
-  // in a table keeps its list after the first section by an older rule.
+  // list. Where the list stands is asserted for the two guides the span affected and, since 3.258.1 (kierros 28,
+  // S3-1), for the three pages whose intro ends in a table: the table's wrapping </div> used to make the pattern
+  // skip to the </p> after the first section, so the list stood there and its first link pointed above it.
   const guidesMd = await (await get("/guides.md")).text();
   const guides = [...guidesMd.matchAll(/\]\(https:\/\/turva\.dev(\/guides\/[a-z0-9-]+)\)/g)].map((m) => m[1]);
   assert.ok(guides.length >= 20, "the /guides twin lists the guides");
@@ -184,6 +186,10 @@ test("a contents list stands before the first section of every guide with more t
   for (const g of ["/guides/letting-agents-act-on-data", "/guides/agentic-resource-discovery"]) {
     const html = await (await get(g)).text();
     assert.ok(html.indexOf('<nav class="toc"') > 0 && html.indexOf('<nav class="toc"') < html.indexOf('<h2 id="'), g + " is the page the span used to hide the list on");
+  }
+  for (const g of ["/guides/well-known-for-agents", "/guides/agent-commerce-discovery", "/blog/two-auth-md-dialects"]) {
+    const html = await (await get(g)).text();
+    assert.ok(html.indexOf('<nav class="toc"') > 0 && html.indexOf('<nav class="toc"') < html.indexOf('<h2 id="'), g + " carries its contents list before the first section although its intro ends in a table");
   }
 });
 

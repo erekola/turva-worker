@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.258.1 - round 28 fixes (2026-11-17): the audit page and the audit guide say that a public MCP endpoint the site's llms.txt names may get one request to confirm that it answers and, by written scope, one tool list request; the audit guide names a documentation link in auth.md and dates its MCP source line; the agents.json guide points endpoint enforcement to active security testing; the MCP guide names the SEP-2127 card; the contents list stands before the first section when an intro ends in a table; two image alt texts, the /blog intro, and Updated lines in three posts.
 // turva.dev worker v3.258.0 - new Lab notes post /blog/everyone-has-the-same-models (2026-11-17), a month of gate logs and two mutation suites, with its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row (50 articles), META_BY_PATH, CANONICAL_PATHS and SITEMAP_ENTRIES rows.
 // turva.dev worker v3.257.7 - the audit page and the audit guide add two readings to the tool-description check (Tek-845, 2026-11-16): tools and parameters without a description are counted, and whether the tool definitions carry a version, a hash or a signature is recorded; no request is added.
 // turva.dev worker v3.257.6 - the audit page and the audit guide name three hand checks over agent-facing files (Tek-832, 2026-11-16): machine-readable files parse in full and arrive complete, MCP and WebMCP tool descriptions are measured in bytes and read for sentences addressed to the model, and tools that change data are read for their read-only and destructive annotations, all without calling a tool; the guide cites the MCP tools page. The home page Hardenize bullet no longer repeats the measurement date, which the paragraph above it already names
@@ -717,7 +718,7 @@ A block measures friction. It does not measure harm prevented. Many blocks enfor
 
 The answers came at four levels. First, the block message is the instruction. Most of them name the right way to do the thing. On 16 November a subagent hit the heredoc gate and, about 13 seconds later, wrote its edit to a file with the file tool. The log records the actions and not the reasoning, so the link between the block and the change is my reading of the order of events.
 
-Second, when a gate keeps firing, my first answer is usually a tool rather than a stricter gate. In the last week of October, the gate that protects the gate log asked me well over 150 times, most of them for subagents analyzing the log with their own scripts. The answer was a read-only tool that knows where the log is, and a hook that gives the house rules to each subagent I start with the Agent tool. On 1 November I also made that gate and three others refuse a subagent's call where they would have asked me, because a subagent has no one to answer the question. From 4 to 13 November the heredoc gate blocked 187 times, so on 14 November I added a patch tool that takes its edit from a file. Heredoc blocks did not fall on the day it arrived or the day after: 45 on 14 November and 34 on 15 November, both heavy subagent days. I am not claiming the tool helped yet.
+Second, when a gate keeps firing, my first answer is usually a tool rather than a stricter gate. In the last week of October, the gate that protects the gate log asked me well over 150 times, most of them for subagents analyzing the log with their own scripts. The answer was a read-only tool that knows where the log is, and a hook that gives the house rules to each subagent I start with the Agent tool. On 1 November I also made that gate and three others refuse a subagent's call where they would have asked me, because a subagent has no one to answer the question. From 4 to 13 November the heredoc gate blocked 187 times, so on 14 November I added a patch tool that takes its edit from a file. Heredoc blocks did not fall on the day it arrived or the day after: 45 on 14 November and 34 on 15 November, both heavy subagent days. On 16 November there were 17. I am not claiming the tool helped yet.
 
 Third, the set of gates moves. There were 25 numbered gates in use on 18 October. On 31 October I read in the hook documentation that a hook that crashes or times out does not block the call. The same day I added a gate that records calls whose gate did not finish. On 17 November I read three OWASP publications on agent security. The same day I built a gate that asks me before a third-party MCP tool that can write is called, unless I have approved its current definition.
 
@@ -740,6 +741,8 @@ In my logs the same mistakes come back day after day, and I expect the same mode
 ## This is a snapshot
 
 Between 18 October and 17 November the numbered gates in use went from 25 to 33. The gate mutations grew from 1 086 on 24 October to 2 113, and the tool mutations from 1 002 on 22 October to 1 941. Many recent plugin releases changed only skill text and left the hooks as they were, so a release is not always a gate change. This post describes my setup on 17 November 2026. By the time you read it, some of it has changed.
+
+Updated 2026-11-17. The paragraph on heredoc blocks ended at 15 November, although the log window runs to 16 November. It now includes 16 November.
 
 ## Related
 
@@ -887,7 +890,7 @@ Five incidents from my records since August, and none of them forced me to start
 - 15 October. I deleted my first two images on the NAS by accident. No snapshot existed yet and the share had no recycle bin, so both are gone for good. I set up snapshots the same day.
 - 18 and 19 October. The image failed on both nights because the power cord of the NAS was not pressed fully into its UPS, so the NAS path was not found. The clone ran normally. I did not follow it up until 27 October, when an agent session read the header of every log. A morning check now also goes red when the newest successful clone or image is older than 30 hours.
 
-From 16 October to 4 November the Macrium logs show a clone on each of the 20 days with no error, and an image on each of the 20 days with those two failures.
+From 16 October to 4 November the Macrium logs show a clone on each of the 20 days with no error, and an image attempted on each of the 20 days, of which 18 completed and 2 failed.
 
 ## How do I know a restore works?
 
@@ -920,6 +923,8 @@ Updated 2026-11-06. The sentence on the October hash check now says that it comp
 Updated 2026-11-10. I stopped syncing my workspace to Proton that day. The post now names what replaced it, a copy of my workspace on the NAS and an encrypted backup of that copy at Synology C2 Storage. The table row for the off-site disk now says that the disk holds my keys and passwords and no client material.
 
 Updated 2026-11-12. The question "Is a mirrored NAS a backup?" was removed from the Frequently asked list, because the section "Is a mirrored NAS already a backup?" answers it.
+
+Updated 2026-11-17. The sentence on the Macrium logs said there was an image on each of the 20 days "with those two failures". It now says that an image was attempted on each day and that 18 completed and 2 failed.
 
 ## Related
 
@@ -1814,6 +1819,8 @@ I did not find the cause. The run started on the evening of 10 October, an hour 
 Corrected 2026-10-31. Two sentences compared the plugin's 16-hour run with 2 hours 37 minutes from part 1 as if both were the same suite. The part 1 figure was the run of the tools' mutations, and both sentences now name it.
 
 Corrected 2026-11-02. A sentence said a mutation no test notices points to a weak test. It can also be an equivalent mutant, a change that alters no behavior, and the sentence now says so.
+
+Updated 2026-11-17. The section "What did the mutation runs cost?" says I start mutation runs by hand. That changed on 22 October, when I created a scheduled task that starts a full run every Sunday night, as [TLA+ in numbers](/blog/tla-plus-in-numbers) describes.
 
 ## Related
 
@@ -4314,13 +4321,13 @@ The check compares what the two versions say. It does not score the page. A pass
 
 ## What this version checks
 
-This hosted version checks the published pages of turva.dev. The site's own Worker renders both versions of the page, so a check sends no request over the network. It does not check the site's two tool pages, this page and the llms.txt validator, because a check must never start another check or a fetch.
+The site's own Worker renders both versions of the page, so a check sends no request over the network. It does not check the site's two tool pages, this page and the llms.txt validator, because a check must never start another check or a fetch.
 
 To check another site, run the same comparison on your own machine:
 
     npx --yes markdown-parity-check --url https://example.com/page
 
-The page and the command run the same comparison code from the open npm package. The report has the same format too.
+The page and the command run the same comparison code from the open npm package and give the same report format.
 
 ## What the check compares
 
@@ -4351,7 +4358,7 @@ The [website and API audit](/agent-readiness-audit) measures agent readiness wit
 - One page and its Markdown version per check. Nothing else is fetched.
 - HTML up to 512 KiB and Markdown up to 128 KiB.
 - Up to 250 000 block pairs. A larger page ends with an error, never with a partial result.
-- A link target longer than 8192 characters ends the check with a 422 and no comparison. The error names the length and does not repeat the target.
+- A link target over 8192 characters ends the check with a 422 and no comparison. The error names the length, not the target.
 - About 10 checks per minute from one IP address at each Cloudflare location.
 
 The command-line tool accepts larger pages.
@@ -4370,7 +4377,7 @@ The optional fields are markdownUrl and selector. The response is the report in 
 
 - HTTP 200 carries a pass or a fail.
 - 400, 413 and 415 mean that the request was malformed.
-- 403 means that this version does not check the address. It answers 403 when the address is one of turva.dev's two tool pages, is not one of turva.dev's published pages or names another site.
+- 403 means that this version does not check the address. It answers 403 for turva.dev's two tool pages, for an address outside turva.dev's published pages and for another site.
 - 422 means that the address was refused or that the comparison could not finish. For example, the host is not a public domain, the page redirects to another host or the Markdown URL is on another site.
 - 429 and 503 ask you to try again later. The Retry-After header says when.
 - 500 means that the service itself failed.
@@ -4476,7 +4483,7 @@ All free tools on this site are collected on [the tools page](/tools).
 
   "/blog": `# Research and field notes
 
-Dated studies, technical investigations, build notes and lab notes from turva.dev. Each study explains what was observed, how it was checked and what the result does not establish.
+Dated studies, protocol notes, build notes and lab notes from turva.dev. Each study explains what was observed, how it was checked and what the result does not establish.
 
 [RSS feed](/blog/feed.xml)
 
@@ -6005,7 +6012,7 @@ All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business
 
 Can an AI assistant find the right information about your product?
 
-I check what your website and API make available, whether the facts agree, and what selected AI assistants answer about your product. Then I explain what needs attention and how your team can fix it.
+I check what your website and API make available, whether the facts agree, and what selected AI assistants answer about your product.
 
 €4,300 plus VAT. Delivered within two weeks of the agreed written kickoff. Fixed scope. Price valid until 2027-06-30.
 
@@ -6015,29 +6022,23 @@ We agree the work in writing before it starts. The audit uses public information
 
 ## When this helps
 
-You may want an audit because:
-
 - Your pages, structured data and API give different answers about the same product.
 - An automated client cannot find or read information that matters.
 - You want to know what AI assistants currently say before deciding what to change.
 
 ## One example: the price is wrong
 
-In the fictional sample report, one product appears with a real price on the page, a zero price in its structured data and an empty price in the API.
-
-An assistant may quote different information depending on which source it reads. Correcting those facts is the first priority in the sample, even though its scanner does not score the conflict.
+In the fictional sample report, one product has a real price on the page, a zero price in its structured data and an empty price in the API. An assistant may quote any of them, so correcting those facts is the sample's first priority, even though its scanner does not score the conflict.
 
 [See the evidence and the fix](/samples/audit-report#f1)
 
 ## What I check
 
-The audit covers up to two targets named in the written scope, for example a Shopify store and a B2B site, at the one fixed price. Each hostname named in the written scope is one target: a site and its API on different hostnames are two targets, and on the same hostname they are one. The written scope splits the 20 recorded questions between them, and the scan and the re-scan run on each target.
-
-Three kinds of evidence, kept apart in the report so that you can see what each check found.
+The audit covers up to two targets named in the written scope, at one fixed price. Each hostname named in the written scope is one target: a site and its API count as two on different hostnames and one on the same. The written scope splits the 20 recorded questions between them, and the scan and re-scan run on each.
 
 ### Can an automated client find and read your information?
 
-I use an independent scanner and review the files, metadata and access rules that affect discovery and access.
+I use an independent scanner, isitagentready.com on its default profile, and review the files, metadata and access rules that affect discovery and access. I record each check, its result and the measurement date.
 
 ### Do your published facts say the same thing?
 
@@ -6045,27 +6046,34 @@ I compare information across your pages, structured data and API. The report sho
 
 ### What do AI assistants say about your product?
 
-I ask 20 recorded questions across three assistants named in the written scope. The questions contain only the public product name and the question text, never client material. The synthetic sample report shows a different run with 15 questions across four assistants, because it only illustrates the format. You receive the answers, the date and the conditions of the test. Each question is asked once per assistant. An assistant can answer differently from one day to the next, so a changed answer after the fixes is reported as an observation.
+I ask 20 recorded questions across three assistants named in the written scope. The questions test both what assistants say about your product by name and whether they mention it when asked about its category. They contain only the public product name and the question text, never client material. The synthetic sample report shows a different run, 15 questions across four assistants, because it only illustrates the format. Each question is asked once per assistant. An assistant can answer differently from day to day, so a changed answer after the fixes is reported as an observation.
 
 On a large site, structured data, prices and availability are read on every page reachable from the sitemap and the API. The sample report does this for all 138 of its product pages, found through the API. Head metadata and response headers are read on a sample of page templates, and the report lists every page it read. If a tool quota limits the checks, I raise the quota rather than reduce coverage. The written scope records the hostnames and the access I need before work starts.
 
 ### Technical coverage
 
-The scan uses isitagentready.com on its default profile. I record each check and its result, together with the measurement date.
-
 The manual review covers /.well-known/ files, JSON-LD, head metadata, HTTP headers, robots.txt, sitemap.xml, ai.txt, llms.txt and the consistency of published facts.
 
-I also check that each JSON file your site publishes for agents and each JSON-LD block on the pages I read parses in full and arrives complete, and that llms.txt starts with an H1 heading and ends cleanly. Where your site publishes an MCP server card or WebMCP tools, I record the size of each tool description in bytes and quote every sentence in it that tells the AI model more than what the tool does and when to use it. I count the tools and parameters that have no description, because the model has to guess what an undescribed field means, and I record whether the tool definitions carry a version, a hash or a signature from which an agent could see that they changed. I also record which tools change data and how each one is annotated, for example as read-only or destructive. Annotations are hints that a client is told not to trust from a server it does not trust, so the report states what each tool declares and makes no claim about what it does. These checks read published files, including a server card's tool list, without calling a tool, and the scanner does not score them as checks of their own.
+I check that each JSON file your site publishes for agents, and each JSON-LD block on the pages I read, parses in full and arrives complete. I check that llms.txt starts with an H1 heading and ends cleanly.
 
-With your written permission I also run the internet.nl website and email tests on your domain. internet.nl keeps each result at a permanent public link, so without that permission I read only the security scans already published for your domain.
+Where your site publishes an MCP server card or WebMCP tools, I record:
 
-The internet.nl tests, the published security scans and the security headers are security work. They and the report section that covers them run with GLM 5.3 through Melious AI GmbH, as the legal page describes. Claude is the AI tool for the rest of the audit.
+- Each tool description's size in bytes, with a quote of every sentence in it that tells the AI model more than what the tool does and when to use it.
+- A count of the tools and parameters with no description.
+- Whether the definitions carry a version, a hash or a signature from which an agent could see that they changed.
+- Which tools change data and how each is annotated, for example as read-only or destructive.
 
-The AI questions test both what assistants say about your product by name and whether they mention it when asked about its category. Questions, assistants and test conditions are recorded separately from the technical checks.
+A client is told not to trust annotations from an untrusted server. The report therefore states what each tool declares and makes no claim about what it does.
+
+These checks read published files, including a server card's tool list. Where your site's llms.txt invites agents to a public MCP endpoint, I may send it one request to confirm that it answers. When the written scope names that endpoint, I may also send one request for its tool list. Neither request calls a tool, and the scanner does not score these checks as checks of their own.
+
+With your written permission I also run the internet.nl website and email tests on your domain. internet.nl keeps each result at a permanent public link. Without that permission I read only the security scans already published for your domain.
+
+The internet.nl tests, the published security scans and the security headers are security work. They and their report section run with GLM 5.3 through Melious AI GmbH, as the legal page describes. Claude is the AI tool for the rest of the audit.
 
 ## What you receive
 
-A written report that answers four questions:
+A written report that keeps the three kinds of evidence apart and answers four questions:
 
 - What did I find?
 - What evidence supports it?
@@ -6074,43 +6082,41 @@ A written report that answers four questions:
 
 You also receive:
 
-- The recorded AI questions and answers.
+- The recorded AI questions and answers, with the date and the test conditions.
 - One round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days. The written scope agreed before kickoff sets how many questions that round covers.
 - One re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought.
 
 Each finding includes correction instructions and, where available, a link to the relevant guide. The order reflects the effect on users and agent behavior, with effort and scanner effects recorded separately.
 
-A synthetic [sample report](/samples/audit-report) shows the format. It contains the per-check scanner readings, the manual review, the AI visibility run, nine findings with their owners and acceptance tests, and the decisions the company makes. It is not a report on a real client.
+A synthetic [sample report](/samples/audit-report) shows the format. It holds the per-check scanner readings, the manual review, the AI visibility run, nine findings with their owners and acceptance tests, and the decisions the company makes.
 
 [Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
 ## How the two weeks work
 
-We agree the work. Send the URLs of up to two targets and your question. I confirm the scope, price and start date in writing. Your email reply that confirms the written scope is the order. The audit is invoiced when the report is delivered, and a card payment link pays that invoice.
+I confirm the scope, price and start date in writing. Your email reply confirming the written scope is the order. A card payment link pays the invoice.
 
-I run the checks. I complete the scan, manual review and AI questions, recording the evidence and dates.
+Dates in the written scope move by the business days spent waiting for your approval or access. Access counts as arranged when the account named in writing for it works.
 
-You receive the report. The findings and correction plan arrive within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access. Access counts as arranged when the account named in writing for that access works. One round of written follow-up questions is included. Submit it within 14 calendar days of the report and I answer it within five business days.
-
-After the corrections, you choose the day for the included re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again using the same question set. The follow-up shows both readings and any changes in the method.
+After the corrections, you choose the day for the included re-scan within 30 days of the report, or of the delivered corrections when the correction add-on is bought. Technical fixes are checked with the relevant scanner or a direct test. AI answers are observed again with the same question set. The follow-up shows both readings and any changes in the method.
 
 ## Terms in brief
 
-- Payment. The invoice comes with the report, and payment is due within fourteen days of the invoice date unless agreed otherwise in writing.
-- Cancellation. An engagement canceled before its agreed written kickoff is not charged. After kickoff, a canceled audit is charged by the agreed share of the parts already delivered.
-- Delay. If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered, and that part is not charged.
-- Continuity. turva.dev is run by one person. If I fall ill or am otherwise unable to work, delivery moves, and you can cancel the part not yet delivered.
+- Payment. The invoice comes with the report and is due within fourteen days of the invoice date unless agreed otherwise in writing.
+- Cancellation. Before the agreed written kickoff, a canceled engagement is not charged. After kickoff, a canceled audit is charged by the agreed share of the parts already delivered.
+- Delay. If a date in the written scope slips because of turva.dev, you can cancel the part not yet delivered at no charge.
+- Continuity. turva.dev is run by one person. If I am ill or unable to work, delivery moves and you can cancel the part not yet delivered.
 - Confidentiality. I sign your own NDA as it stands, at no charge, before material is shared.
 
 The [engagement terms](/legal#engagement-terms) carry the full wording.
 
 ## If you want help with the fixes
 
-Your team can implement the report. Alternatively, a €499 correction add-on covers its complete fix list when bought together with the audit, with its report, or after the report and before implementation starts, and when the required access is arranged in advance.
+Your team can implement the report, or a €499 correction add-on covers its complete fix list. It can be bought together with the audit, with its report, or after the report and before implementation starts, provided the required access is arranged in advance.
 
-For this add-on, I need an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. Access is agreed in writing and limited to the work.
+The add-on needs an edge runtime in front of your origin, deployment access and any other access the listed fixes require, such as DNS. Access is agreed in writing and limited to the work.
 
-If those prerequisites cannot be arranged, the add-on is not sold. Your team still receives the correction instructions. Work outside the list is scoped separately at €1,500 per day. Before that work starts, I agree the completion deadline as a stated number of business days from kickoff, the same arrangement the services page states.
+Without those prerequisites the add-on is not sold, and your team still receives the correction instructions. Work outside the list is scoped separately at €1,500 per day. Before that work starts, I agree its completion deadline as a stated number of business days from kickoff, as the services page states.
 
 [Implementation scope and access requirements](/services#implementation).
 
@@ -6120,7 +6126,7 @@ Corrected 2026-09-28. Named the monthly cadence and the continuous-monitoring ex
 
 ## Active security testing
 
-Active security testing is an add-on to an audit, priced by quote for each written scope. It starts only after you sign a written authorization and I have checked that you control every target. The testing and its report run with GLM 5.3 through Melious AI GmbH, as the legal page describes, and I read and approve the report before it is sent. A test does not certify that a system is safe. The [services page](/services#active-security-testing) states the full conditions: what can be tested, what you receive, what is not included and how the retest works.
+Active security testing is an add-on to an audit, priced by quote for each written scope. It starts only after you sign a written authorization and I have checked that you control every target. The testing and its report run with GLM 5.3 through Melious AI GmbH, as the legal page describes. I read and approve the report before it is sent. A test does not certify that a system is safe. The [services page](/services#active-security-testing) states the full conditions, including how the retest works.
 
 ## Tell me what you want to understand
 
@@ -6130,7 +6136,7 @@ We work in writing, with no calls or meetings.
 
 [Request an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
-All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business customers in another EU member state with a valid VAT ID, no Finnish VAT for customers outside the EU, because the place of supply is outside Finland.
+All prices exclude VAT. Finnish customers pay 25,5%. Business customers in another EU member state with a valid VAT ID pay by reverse charge. Customers outside the EU pay no Finnish VAT, because the place of supply is outside Finland.
 `,
 
   "/company": `# Work directly with Erik Rekola
@@ -6744,23 +6750,25 @@ For an audit, contact info@turva.dev.
 
   "/guides/agent-readiness-audit": `# What a website and API agent-readiness audit covers
 
-A technical scan, manual review and observed AI answers reveal different problems. This guide explains what an audit should record and how a team can use the findings.
+A technical scan, manual review and observed AI answers reveal different problems.
 
-Most sites are built for human readers and search crawlers. Some AI agents read differently. They use machine-readable entry points such as llms.txt, a sitemap, response headers, structured data and well-known manifests. Which of them a client reads varies. When those are missing, an agent that cannot parse the page's rendered layout either guesses at the fact or gives up on the page. An agent built with a fallback, such as a search result or a cached summary, may still complete the task another way.
+Most sites are built for human readers and search crawlers. Some AI agents read differently, using machine-readable entry points such as llms.txt, a sitemap, response headers, structured data and well-known manifests. Which of them a client reads varies. When those are missing, an agent that cannot parse the page's rendered layout either guesses at the fact or gives up on the page. An agent built with a fallback, such as a search result or a cached summary, may still complete the task another way.
 
 ## Technical checks
 
-The audit checks the parts an agent reaches first. Discoverability covers robots.txt, the sitemap, the response headers, and the DNS records that let an agent find resources without parsing a full HTML page. Content accessibility covers llms.txt, markdown content negotiation, and whether the site can return a clean text version that saves an agent most of the tokens an HTML page would cost.
+The audit checks the parts an agent reaches first.
 
-Bot access control covers the AI-bot rules, the content signals, and the bot-authentication directory. The first two state the site's preferences, which a crawler follows or ignores, and the directory identifies a bot without granting it anything.
+Discoverability covers robots.txt, the sitemap, the response headers and the DNS records that let an agent find resources without parsing a full HTML page. Content accessibility covers llms.txt, markdown content negotiation and whether the site can return a clean text version that saves an agent most of the tokens an HTML page would cost.
 
-API, auth, MCP and A2A discovery covers an MCP server card, an agent card, an OpenAPI description, an API catalog, and OAuth discovery. With these an agent can find what the site offers and how it asks agents to authenticate. Commerce covers payment surfaces such as x402 and structured pricing, which matter only when the site sells through agents.
+Bot access control covers the AI-bot rules, the content signals and the bot-authentication directory. The first two state the site's preferences, which a crawler follows or ignores. The directory identifies a bot without granting it anything.
 
-A surface in any of these groups helps an agent find and read the site. It does not show that an agent can authenticate or complete a purchase.
+API, auth, MCP and A2A discovery covers an MCP server card, an agent card, an OpenAPI description, an API catalog and OAuth discovery. With these an agent can find what the site offers and how it asks agents to authenticate. Commerce covers payment surfaces such as x402 and structured pricing, which matter only when the site sells through agents.
 
-The scanner's checks run against its current rule set, and what it does not score, such as llms.txt, is tested directly. That rule set moves, so a scan run today is a new measurement rather than a repeat of an earlier one.
+A surface in any of these groups helps an agent find and read the site but does not show that an agent can authenticate or complete a purchase.
 
-The table below records each surface's current status, drawn from the reference file this site maintains in its repository. Pilot means an early-stage mechanism with no ratifying body yet. It names the ratification state and does not rate adoption or production maturity. Accepted extension means the protocol's own proposal process has marked the extension Final, while the extension's reference repository can still be labeled experimental.
+The scanner runs against its current rule set, and what it does not score, such as llms.txt, is tested directly. That rule set moves, so a scan run today is a new measurement, not a repeat of an earlier one.
+
+The table below records each surface's current status, drawn from the [repository's reference file](https://github.com/erekola/turva-worker/blob/main/docs/agent-readiness.md), which holds the full citation behind each status. Pilot means an early-stage mechanism with no ratifying body yet. Pilot names the ratification state and does not rate adoption or production maturity. Accepted extension means the protocol's own proposal process has marked the extension Final, while its reference repository can still be labeled experimental.
 
 | Surface | Status |
 | --- | --- |
@@ -6777,39 +6785,43 @@ The table below records each surface's current status, drawn from the reference 
 | Agent authentication | Standard for OAuth discovery |
 | x402 and agent payments | Pilot |
 
-The full citation behind each status lives in the [repository's reference file](https://github.com/erekola/turva-worker/blob/main/docs/agent-readiness.md).
-
 ## Manual review
 
-A technical scan reads what a page serves. It does not read what a person notices when following the same path an agent would. Manual review checks whether the instructions a site publishes, such as an llms.txt entry or a registration step in auth.md, match what the site actually returns when followed. It checks whether structured data on a page agrees with the prose beside it and whether an error page reveals more than it should. It also checks whether an edge case the scanner does not test, such as a redirect chain or a stale sitemap entry, breaks a path an agent would take. The finding here is usually a contradiction between two places, not a missing file.
+A technical scan reads what a page serves, not what a person notices when following the same path an agent would. Manual review checks whether the instructions a site publishes, such as an llms.txt entry or a documentation link in auth.md, match what the site returns when followed. It checks whether structured data agrees with the prose beside it and whether an error page reveals more than it should. It also checks whether an edge case the scanner does not test, such as a redirect chain or a stale sitemap entry, breaks a path an agent would take. The finding is usually a contradiction between two places, not a missing file.
 
-Manual review also reads the agent-facing files themselves. A JSON file or a JSON-LD block can be served and still fail to parse, or arrive cut short. An MCP server card or a WebMCP tool carries descriptions that an agent's model may read, so the review records their size and quotes any sentence that tells the model more than what the tool does and when to use it. It counts the tools and parameters that have no description and records whether the tool definitions carry a version, a hash or a signature that would show an agent they changed. It also records which tools change data and how each one is annotated. The MCP specification tells clients to treat tool annotations as untrusted unless they come from trusted servers, so the review reports what a tool declares and makes no claim about what it does. None of this calls a tool.
+Manual review also reads the agent-facing files themselves. A JSON file or a JSON-LD block can be served and still fail to parse or arrive cut short.
+
+An MCP server card or a WebMCP tool carries descriptions an agent's model may read. The review records their size and quotes any sentence that tells the model more than what the tool does and when to use it. It counts the tools and parameters that have no description. It records whether the tool definitions carry a version, a hash or a signature that would show an agent they changed. It also records which tools change data and how each one is annotated.
+
+The MCP specification tells clients to treat tool annotations as untrusted unless they come from trusted servers. The review therefore reports what a tool declares and makes no claim about what it does.
+
+The review reads the published files. Where a site's llms.txt invites agents to a public MCP endpoint, the review may also send it one request to confirm that it answers. When the written scope names that endpoint, it may send one request for the tool list. None of this calls a tool.
 
 ## AI-answer observations
 
-A separate question from both of the above is what an AI assistant actually says when a buyer asks it something. Observed AI answers means asking ChatGPT, Perplexity and similar assistants the questions a buyer would ask, and recording which sources they name and what they get wrong. This does not test the site directly. It records what selected assistants answer on the test date and which sources they cite. It does not establish which site changes caused the answer, and it can surface an assistant repeating outdated information that a scan of the current site would not catch.
+Observed AI answers are a third kind of evidence, separate from the scan and the manual review. They mean asking ChatGPT, Perplexity and similar assistants the questions a buyer would ask, and recording which sources they name and what they get wrong. This does not test the site directly. It records what selected assistants answer on the test date. It does not establish which site changes caused the answer. It can surface an assistant repeating outdated information that a scan of the current site would not catch.
 
 ## Findings and verification
 
-The result of an audit is a list. Each check passes or fails. Each failure comes with a concrete fix instruction or the reason the gap is left open. Where this site has a guide for that surface, the failure also links to it. The report is written so your own team can do the work. That means implementation is something you buy if you want it rather than something the report forces on you.
+Each check passes or fails. Each failure comes with a concrete fix instruction or the reason the gap is left open, plus a link to this site's guide for that surface where one exists. Your own team can do the work from the report, so implementation is optional.
 
 turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-11-15. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here.
 
 turva.dev publishes [the scanner's raw output](/evidence/isitagentready-turva-dev-2026-11-15.txt) from that day's first run, unedited. Cloudflare runs the scanner and also hosts turva.dev.
 
-The 2026-11-15 reading is one scan on one day against one named scanner. It does not stand in for manual review or for how an assistant answers a buyer's question. It therefore counts as one input among the three above rather than a summary of all of them. A rescan after a fix shows whether that specific fix passed. The audit a client receives runs the same three kinds of check against their site.
+The 2026-11-15 reading is one scan on one day against one named scanner. It does not stand in for manual review or for how an assistant answers a buyer's question. It counts as one input among the three above, not a summary of all of them. A rescan after a fix shows whether that fix passed. The audit a client receives runs the same three kinds of check against their site.
 
 ## How do I audit my website for AI agent readiness?
 
 Run an independent scanner and request the surfaces directly, including the ones it does not score. Check that what the site publishes matches what it returns, and ask assistants what your buyers would ask. Record the date and result of each step, fix the failures and measure again.
 
-- Scan the site with [isitagentready.com](https://isitagentready.com/) and keep the result of each check with its date, because the rule set changes.
-- Request the surfaces yourself: robots.txt, the sitemap, a page with an Accept: text/markdown header and llms.txt, which the scanner does not score. The free [llms.txt validator](/llms-txt-validator) reads that file on any site. The open package behind the [Markdown parity check](/markdown-parity-check) compares a page with its Markdown when you run it on your own machine.
+- Scan the site with [isitagentready.com](https://isitagentready.com/) and keep each check's result with its date, because the rule set changes.
+- Request the surfaces yourself: robots.txt, the sitemap, a page with an Accept: text/markdown header and llms.txt, which the scanner does not score. The free [llms.txt validator](/llms-txt-validator) reads that file on any site. The open package behind the [Markdown parity check](/markdown-parity-check) compares a page with its Markdown on your own machine.
 - Follow what the site publishes: open each link in llms.txt, try any published registration step and compare the structured data with the prose beside it.
-- Put the same written questions to each assistant and record the sources it names and what it gets wrong. An answer on one date is an observation and does not show what caused it.
-- Fix what failed, then run the scanner again for the scored checks and repeat the direct requests for the rest.
+- Put the same written questions to each assistant and record the sources it names and what it gets wrong. An answer on one date is an observation, not proof of what caused it.
+- Fix what failed, then rerun the scanner for the scored checks and repeat the direct requests for the rest.
 
-A team can run these steps itself. What it cannot give itself is a reader who did not build the site. That is what an outside audit provides, and [How to choose an agent-readiness audit](/guides/choosing-an-agent-readiness-audit) covers what to ask for. The [website and API audit](/agent-readiness-audit) page states the scope and the fixed price of turva.dev's own audit, and the [sample audit report](/samples/audit-report) shows a finished report for an invented business.
+A team can run these steps itself, but it cannot give itself a reader who did not build the site. An outside audit provides one, and [How to choose an agent-readiness audit](/guides/choosing-an-agent-readiness-audit) covers what to ask for. The [website and API audit](/agent-readiness-audit) page states the scope and the fixed price of turva.dev's own audit, and the [sample audit report](/samples/audit-report) shows a finished report for an invented business.
 
 ## Frequently asked
 
@@ -6819,18 +6831,18 @@ An agent-readiness audit measures how well an AI agent can find and read a websi
 
 **What does an agent-readiness audit check?**
 
-It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, and each failure comes with a concrete fix or the reason the gap is left open. Fixes are verified by the scanner where the check is scored and by a direct test where it is not.
+It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, and each failure comes with a concrete fix or the reason the gap is left open.
 
 **What does an agent-readiness audit produce?**
 
-A pass or fail on each check, and for every failure a concrete fix instruction or the reason the gap is left open. Where this site has a guide for that surface, each failure links to it. Your own team can do the work from the report. Scored checks are verified by the scanner before and after, manual-review fixes by a direct test, and the score comes from the scanner's published checks rather than opinion.
+A pass or fail on each check, and for each failure a concrete fix or the reason the gap is left open. A failure links to this site's guide for that surface where one exists. Scored checks are verified by the scanner before and after, and manual-review fixes by a direct test. The score comes from the scanner's published checks.
 
 ## Sources
 
 - [isitagentready.com, the scanner the audit reads](https://isitagentready.com/)
 - [Well-known URIs, RFC 8615](https://www.rfc-editor.org/rfc/rfc8615.html)
 - [API catalog, RFC 9727](https://www.rfc-editor.org/rfc/rfc9727.html)
-- [MCP specification, tools, revision 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)
+- [MCP specification, tools, revision 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/server/tools), read 2026-11-17
 
 ## Related
 
@@ -6928,7 +6940,7 @@ A server card describes an MCP endpoint for clients that support the relevant di
 
 The server card lives in two places that have not converged. The isitagentready.com scanner asks for the card at /.well-known/mcp/server-card.json, and turva.dev serves its card there. [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127), the proposal behind the card, was merged on 2026-10-06 and reads Status: Final on the Extensions Track, so the protocol's proposal process has accepted it. It recommends the MCP endpoint URL followed by /server-card and lets a card be hosted at any unreserved URI. It does not recommend a /.well-known path for the card itself.
 
-Site-level discovery sits in a catalog instead. An AI Catalog at /.well-known/ai-catalog.json can link to or embed cards, and ARD v0.91 names /.well-known/ard.json. The card leaves tools, resources and prompts out. The README of the [extension repository](https://github.com/modelcontextprotocol/ext-server-card) still describes the SEP as under review and labels itself Experimental and not an accepted or official MCP extension. Until the two locations converge, a client that checks only one of them may miss a card that exists at the other.
+Site-level discovery sits in a catalog instead. An AI Catalog at /.well-known/ai-catalog.json can link to or embed cards, and ARD v0.91 names /.well-known/ard.json. The SEP-2127 card leaves tools, resources and prompts out. The README of the [extension repository](https://github.com/modelcontextprotocol/ext-server-card) still describes the SEP as under review and labels itself Experimental and not an accepted or official MCP extension. Until the two locations converge, a client that checks only one of them may miss a card that exists at the other.
 
 An MCP server card is a small JSON file that describes a site's Model Context Protocol server so a client can find it and learn what it offers. The Model Context Protocol itself is a standard way for agents to use external tools and data. A server implements the protocol and may expose tools, resources or prompts, and the card is how that server announces itself before any connection is made.
 
@@ -7023,7 +7035,9 @@ agents.json sits beside other declarations a client looks for. An MCP server car
 
 ## Limits
 
-Declaring an action in agents.json describes what exists. It does not grant a client permission to call it. The declaration does not perform the authorization or rate limiting that has to happen on the server when the call arrives. Those checks live at the endpoint, not in the declaration file, and a site still has to enforce them regardless of what agents.json says. Treat the file as documentation a client can parse, not as an access control mechanism. For an audit of whether a site's endpoints enforce what its declared actions promise, contact info@turva.dev.
+Declaring an action in agents.json describes what exists. It does not grant a client permission to call it. The declaration does not perform the authorization or rate limiting that has to happen on the server when the call arrives. Those checks live at the endpoint, not in the declaration file, and a site still has to enforce them regardless of what agents.json says. Treat the file as documentation a client can parse, not as an access control mechanism.
+
+Whether a site's endpoints enforce what its declared actions promise is tested in active security testing, an add-on to the audit. Contact info@turva.dev.
 
 ## Frequently asked
 
@@ -8718,7 +8732,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.258.0",
+    "version": "3.258.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9027,7 +9041,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.258.0",
+  "version": "3.258.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9728,7 +9742,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-16";
+const SITEMAP_LASTMOD = "2026-11-17";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9905,6 +9919,7 @@ const META_BY_PATH = {
     title: "Everyone has the same models. My harness is the difference. · turva.dev",
     description: "The models are the same for anyone, and I think the edge is the harness around them. Here is a month of my Claude Code gate logs and how blocks were answered.",
     date: "2026-11-17",
+    modified: "2026-11-17",
     kind: "Lab notes",
     image: "/og-everyone-has-the-same-models.jpg",
     imageAlt: "turva.dev blog card: Everyone has the same models. My harness is the difference. A month of gate logs and how the blocks were answered.",
@@ -9921,7 +9936,7 @@ const META_BY_PATH = {
     title: "I can't start over, so I back up every night · turva.dev",
     description: "A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.",
     date: "2026-11-04",
-    modified: "2026-11-12",
+    modified: "2026-11-17",
     kind: "Lab notes",
     image: "/og-why-i-back-up-every-night.jpg",
     imageAlt: "Card with the headline I can't start over, so I back up every night, and the line A nightly clone, encrypted NAS images and what has failed so far.",
@@ -9995,7 +10010,7 @@ const META_BY_PATH = {
     title: "Thirteen review rounds and one rollback · turva.dev",
     description: "Eight review rounds kept breaking one gate fix until I undid it, and the mutation runs put me on a forced break.",
     date: "2026-10-12",
-    modified: "2026-11-02",
+    modified: "2026-11-17",
     kind: "Lab notes",
     image: "/og-thirteen-review-rounds-and-one-rollback.jpg",
     imageAlt: "Thirteen review rounds and one rollback, a turva.dev lab note on a gate fix that was undone and on mutation runs.",
@@ -10227,7 +10242,7 @@ const META_BY_PATH = {
     kind: "Research",
     modified: "2026-11-04",
     image: "/og-measuring-the-ai-patch-surge.jpg",
-    imageAlt: "Measuring the AI patch surge from MSRC data"
+    imageAlt: "turva.dev blog card: Microsoft said the patches would get bigger. I measured how much bigger. Twelve months of MSRC data: the July package is 3,0 times the sampled baseline, and the CVE mix moved the severity figures."
   },
   "/blog/agent-secret-hygiene": {
     title: "Reducing secret exposure in coding-agent workflows · turva.dev",
@@ -10396,7 +10411,7 @@ const META_BY_PATH = {
     modified: "2026-11-13",
     kind: "Protocol notes",
     image: "/og-reliable-agent-decisions.jpg",
-    imageAlt: "turva.dev blog card: What makes an AI agent act correctly: data that arrives intact, and an envelope of settings that defines what it may do."
+    imageAlt: "turva.dev blog card: What makes an agent's decisions reliable: data that arrives intact, and an envelope of settings that defines what the agent may do."
   },
   "/blog/owning-your-fediverse-identity": {
     title: "Owning your fediverse identity · turva.dev",
@@ -12382,7 +12397,10 @@ function serveGuideHtml(pathname: string, canonicalUrl: string) {
   const toc = h2s.length > 4 && !hasOwnContents
     ? `<nav class="toc" aria-labelledby="toc-h"><p id="toc-h">On this page</p><ul>${h2s.map((h) => `<li><a href="#${h.id}">${h.text}</a></li>`).join("")}</ul></nav>`
     : "";
-  const withToc = toc ? withChecked.replace(/(<\/p>\n)(?=(?:<span id="[^"]*"><\/span>)*<h2 )/, `$1${toc}\n`) : withChecked;
+  // The list goes right before the first <h2>. An intro that ends in a table closes with the table's
+  // wrapping </div>, so that closing tag counts as well (kierros 28, S3-1); before 3.258.1 the list on
+  // such a page stood after the first section and its first link pointed above it.
+  const withToc = toc ? withChecked.replace(/(<\/(?:p|div)>\n)(?=(?:<span id="[^"]*"><\/span>)*<h2 )/, `$1${toc}\n`) : withChecked;
   // Sample reports (Tek-360): the synthetic label stands above the H1, and two actions close the
   // section SAMPLE_HEAD.cta names, and the twin's "Illustrative report date" line renders as a
   // date line. Since Tek-488 the label is the twin's line above the H1 and the actions are the
