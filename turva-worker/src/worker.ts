@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.259.1 - the audit guide's Frequently asked answer on what an audit produces says pass or fail on each scored check and lists information-only checks without a score, as the guide's two other sentences say since 3.259.0, and /guides/measurement-led-agent-readiness says the same of the checks it describes.
 // turva.dev worker v3.259.0 - fixes from the buyer and Astra repo read of 2026-11-17: the harness post corrects why a subagent's permission question is refused, says a crashed hook lets the call through only by default, scopes the gate claims and the 48 parts, names the three OWASP publications and links the lab post; the 567-sites post, the audit guide and the sample report scope the scanner, token, pass or fail, dnsAid, deliveryLeadTime and Hardenize sentences; the audit page names the human step; /legal carries the advisory first-month opt-out; Accept negotiation ranks JSON only on routes that serve it, the ACP preflight and the A2A 405 name each route's methods, an unreadable body answers 400 on A2A and ACP, and /v1/message:send/ redirects with 308.
 // turva.dev worker v3.258.1 - round 28 fixes (2026-11-17): the audit page and the audit guide say that a public MCP endpoint the site's llms.txt names may get one request to confirm that it answers and, by written scope, one tool list request; the audit guide names a documentation link in auth.md and dates its MCP source line; the agents.json guide points endpoint enforcement to active security testing; the MCP guide names the SEP-2127 card; the contents list stands before the first section when an intro ends in a table; two image alt texts, the /blog intro, and Updated lines in three posts.
 // turva.dev worker v3.258.0 - new Lab notes post /blog/everyone-has-the-same-models (2026-11-17), a month of gate logs and two mutation suites, with its OG card, a new first Blog line in LLMS_TXT (re-sign), its /blog index row (50 articles), META_BY_PATH, CANONICAL_PATHS and SITEMAP_ENTRIES rows.
@@ -6843,7 +6844,7 @@ It checks the surfaces an agent reaches first, covering discoverability, content
 
 **What does an agent-readiness audit produce?**
 
-A pass or fail on each check, and for each failure a concrete fix or the reason the gap is left open. A failure links to this site's guide for that surface where one exists. Scored checks are verified by the scanner before and after, and manual-review fixes by a direct test. The score comes from the scanner's published checks.
+A pass or fail on each scored check, and for each failure a concrete fix or the reason the gap is left open. Checks the scanner reports as information only are listed without a score. A failure links to this site's guide for that surface where one exists. Scored checks are verified by the scanner before and after, and manual-review fixes by a direct test. The score comes from the scanner's published checks.
 
 ## Sources
 
@@ -7512,7 +7513,7 @@ The difference between a scan and a self-assessment shows up the moment somethin
 
 ## What a technical scan checks
 
-A scan runs a fixed set of checks against the live site. These checks include whether a sitemap exists and parses, and whether a response carries the content type it declares. A scan checks that the sitemap file is present and well-formed. Whether the file lists every page the site should publish is a completeness question a manual review answers, not the automated check. Each check either passes or fails on the day it ran, against the site version live that day.
+A scan runs a fixed set of checks against the live site. These checks include whether a sitemap exists and parses, and whether a response carries the content type it declares. A scan checks that the sitemap file is present and well-formed. Whether the file lists every page the site should publish is a completeness question a manual review answers, not the automated check. Each scored check either passes or fails on the day it ran, against the site version live that day. Checks the scanner reports as information only carry no score.
 
 ## What a manual review adds
 
@@ -8740,7 +8741,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.259.0",
+    "version": "3.259.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9049,7 +9050,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.259.0",
+  "version": "3.259.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
