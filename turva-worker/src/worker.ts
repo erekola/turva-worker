@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.260.1 - kierros 29 fixes (2026-11-21): the MCP server security test's question round gets the 14 calendar days and five business days of the other services and a report delivery date set in the written scope, the cards define the tool table, /company and /contact name test accounts for the test, the /services description names the services, the service skill heading reads as one sentence, the validator page names both ways implementation is sold, an archived LocalScore source, and dated corrections in the 567 sites and Finnish B2B posts.
 // turva.dev worker v3.260.0 - MCP server security test as a service of its own (Tek-885, 2026-11-21): /services has a section for it between Ongoing advisory and Agent operations, the home page and /services show six cards with Implementation back as a card, /contact has a fifth prepared message, /legal names the test in the scope of the terms, the deliverables, the cancellation rule and the AI tools sections, and llms.txt, the services skill, HOME_JSON, the A2A services skill, the WebMCP get_services description and the MCP server card (1.12.0) list it as quoted on request; the /services share card is a new file, og-services-v3.jpg.
 // turva.dev worker v3.259.1 - the audit guide's Frequently asked answer on what an audit produces says pass or fail on each scored check and lists information-only checks without a score, as the guide's two other sentences say since 3.259.0, and /guides/measurement-led-agent-readiness says the same of the checks it describes.
 // turva.dev worker v3.259.0 - fixes from the buyer and Astra repo read of 2026-11-17: the harness post corrects why a subagent's permission question is refused, says a crashed hook lets the call through only by default, scopes the gate claims and the 48 parts, names the three OWASP publications and links the lab post; the 567-sites post, the audit guide and the sample report scope the scanner, token, pass or fail, dnsAid, deliveryLeadTime and Hardenize sentences; the audit page names the human step; /legal carries the advisory first-month opt-out; Accept negotiation ranks JSON only on routes that serve it, the ACP preflight and the A2A 405 name each route's methods, an unreadable body answers 400 on A2A and ACP, and /v1/message:send/ redirects with 308.
@@ -2005,7 +2006,7 @@ The 4080 SUPER figures come from tests at 32 000 tokens of context, and LocalSco
 | RTX 4060 Laptop 8 GB, Llama 3.1 8B Q4 | 1 365 t/s | 36,0 t/s | about 6 min | about 52 h |
 | Core Ultra 9 285H, no discrete graphics card, Llama 3.1 8B Q4 | 44 t/s | 11,3 t/s | about 66 min | about 23 days |
 
-The 4080 SUPER figures are hardware-corner.net's [RTX 4080 SUPER table](https://www.hardware-corner.net/gpu-llm-benchmarks/rtx-4080-super/) at 32k context. The other two rows are LocalScore results for the [RTX 4060 Laptop GPU](https://www.localscore.ai/accelerator/529) and the [Core Ultra 9 285H](https://www.localscore.ai/accelerator/3156).
+The 4080 SUPER figures are hardware-corner.net's [RTX 4080 SUPER table](https://www.hardware-corner.net/gpu-llm-benchmarks/rtx-4080-super/) at 32k context. The other two rows are LocalScore results for the RTX 4060 Laptop GPU, from an [archived copy](https://web.archive.org/web/20260809131454/https://www.localscore.ai/accelerator/529), and for the Core Ultra 9 285H, whose page is no longer online.
 
 In the cloud the five workflows took 6 hours 45 minutes added together, and the two largest ran side by side.
 
@@ -2050,6 +2051,8 @@ Not as the agents run today. For Qwen3-14B, one agent's starting context of abou
 By my estimate at least 43 hours on an RTX 4080 SUPER, if a quantized cache lets the context fit at all, and about 23 days on a laptop processor without a discrete graphics card, one agent at a time and before the tools' own time. In the cloud the five workflows took 6 hours 45 minutes added together.
 
 Corrected 2026-11-02. A sentence equated the reason HWiNFO showed with ICCmax. Intel lists other causes for that throttling as well, so the sentence now says that on my machine the limit is ICCmax.
+
+Updated 2026-11-21. LocalScore no longer serves its pages. The RTX 4060 Laptop link now points at an archived copy from 2026-08-09 that shows the same figures. I found no archived copy of the Core Ultra 9 285H page, so that row comes from the page as I read it for this post.
 
 ## Related
 
@@ -2994,7 +2997,7 @@ Of the 485 Level 1 sites, 439 have such a note, and those notes are more varied.
 
 A level from an independent scanner is a claim someone else can verify. Run the same scanner on the same site and you get the same reading, or a newer one that shows what changed, except for the handful of readings this site's own later series found unstable and recorded as such rather than as a level. That is the only reason I publish my own score, and it is why every company I wrote to got the level on the day of writing and an offer to read it again thirty days later.
 
-In this sample, four levels separate the typical site from a site an agent can read and act on, and the gap is mostly mechanical: serve markdown next to HTML, publish structured data, publish an llms.txt that lists real pages, expose the discovery files, and answer on the endpoints they declare. That is web development with a checklist, and it can start before anyone writes an AI strategy.
+In this sample, four levels separate the typical site from a Level 5 site, and the gap is mostly mechanical: serve markdown next to HTML, publish structured data, publish an llms.txt that lists real pages, expose the discovery files, and answer on the endpoints they declare. That is web development with a checklist, and it can start before anyone writes an AI strategy.
 
 ## How to read your own site
 
@@ -3029,6 +3032,8 @@ Corrected 2026-10-16. One sentence said Level 1 is the floor an ordinary CMS sit
 Corrected 2026-11-13. The paragraph on the Level 0 notes said the pattern in those 29 is "a robots.txt the CMS shipped by default". The study did not record which CMS each site runs, so that is my reading of the notes and not a measurement. No number changed.
 
 Corrected 2026-11-17. Two sentences said the scanner and the level measure whether a machine can act on a site. The scanner reads what a site publishes and does not complete an action, so both sentences now say that. No number changed.
+
+Corrected 2026-11-21. A third sentence said four levels separate the typical site from a site an agent can read and act on. It now names Level 5, which is what the scan measures. The card's alt text also said Finnish and foreign sites alike, a reading that the body dropped on 2026-09-27, and it now uses the card's own words for the floor. No number changed.
 
 ## Related
 
@@ -3181,7 +3186,7 @@ An agent that lands on a code host today can read the marketing copy. On the pat
 
 The fixes are small and mostly mechanical. A server card is a JSON file at a known path. An API catalog is a linkset. A Link header is one line of response configuration. None of it requires rebuilding a forge, and none of it was found published at the paths this scan checked on any of the fourteen surfaces I measured, GitLab's 403 answers included, which this scan recorded as a check that got no answer rather than a confirmed absence.
 
-If you want to check a site yourself, the scanner is public and the free llms.txt validator is at [turva.dev/llms-txt-validator](https://turva.dev/llms-txt-validator). The audit and advisory work is at turva.dev.
+If you want to check a site yourself, the scanner is public and the free llms.txt validator is at [turva.dev/llms-txt-validator](https://turva.dev/llms-txt-validator). The audit and the other services are at [turva.dev/services](https://turva.dev/services).
 
 ## Frequently asked
 
@@ -3757,7 +3762,7 @@ It does not say how much higher. The post runs well over a thousand words and gi
 
 Five days later Microsoft shipped the July package: 1150 CVEs.
 
-The number Microsoft would not put in the blog post is sitting in Microsoft's own API. The Security Update Guide publishes every monthly package as machine-readable CVRF, acknowledgments included, no key required. So I pulled twelve months of it and did the arithmetic.
+The number Microsoft would not put in the blog post is sitting in Microsoft's own API. The Security Update Guide publishes every monthly package as machine-readable CVRF, acknowledgments included, no key required. So I pulled a sample of twelve months from it and did the arithmetic.
 
 ## What the data says
 
@@ -3972,7 +3977,7 @@ Updated 2026-11-01. The scanner, isitagentready.com, does not score llms.txt tod
 
 On the isitagentready Level scale almost all of the sixteen landed at Level 1 of 5, which I read as the floor a default CMS ships, a couple sat at Level 0, and only one reached Level 2. None reached Level 3 or above.
 
-That does not mean these are broken websites. They load, and a person can use them without trouble. The scanner measures something else, whether an AI agent can read the site and act on it.
+That does not mean these are broken websites. They load, and a person can use them without trouble. The scanner measures something else, what the site publishes for an AI agent to read.
 
 ## The three gaps that showed up almost everywhere
 
@@ -3986,17 +3991,19 @@ The third and most consistent gap was the action and capability layer. No markdo
 
 AI agents are becoming a discovery and transaction channel. When an agent reads a site and cannot parse or act on it, the business risks being left out of the answer, which is a different problem from ranking lower. This scan read the sites. It did not record any assistant's answer or any search ranking. What it shows is that the sites in this sample are behind on being legible and actionable to the agents that increasingly read on a person's behalf.
 
-The encouraging part is that the fixes are mostly known and mechanical. Serve markdown alongside HTML, add structured data, publish an llms.txt, expose the discovery manifests. Two of the sixteen had already started, they published a real llms.txt, and that is exactly why they sat at the top of the range.
+The encouraging part is that the fixes are mostly known and mechanical. Serve markdown alongside HTML, add structured data, publish an llms.txt, expose the discovery manifests. Two of the sixteen had already started and published a real llms.txt, and both sat at the top of the range.
 
 For the larger sample, a later post ran the same scanner across [567 company sites](/blog/website-agent-readiness-567-sites).
 
-To check where a site stands, the free llms.txt validator is at [turva.dev/llms-txt-validator](https://turva.dev/llms-txt-validator), and the agent-readiness audit and advisory work is at turva.dev.
+To check where a site stands, the free llms.txt validator is at [turva.dev/llms-txt-validator](https://turva.dev/llms-txt-validator), and the audit and the other services are at [turva.dev/services](https://turva.dev/services).
 
 Corrected 2026-09-25. Three passages said more than the scan measured. The token figures were an estimate from a scanner this site no longer uses, and they are now labeled as reported and estimated. Two sentences drew what an agent can answer and whether a business appears in an answer from configuration checks, and a third said most of these sites rank fine in search, which was never measured. They now say what the scan read. The counts did not change.
 
 Corrected 2026-09-27. One more sentence still said these sites rank in search, which was not measured either. It now says only that they load and that a person can use them.
 
 Corrected 2026-10-16. One sentence called Level 1 the floor an ordinary CMS site reaches. That is my reading, and the scan did not record which CMS each site runs, so the sentence now marks it as my reading. No number changed.
+
+Corrected 2026-11-21. A sentence said the real llms.txt was exactly why two sites sat at the top of the range. The scan cannot show a cause, as the 17 July note above says, so the sentence now says only that both sat at the top. Another sentence said the scanner measures whether an AI agent can act on a site. The scanner reads what a site publishes, so that sentence now says so. No number changed.
 
 ## Related
 
@@ -4270,7 +4277,7 @@ There is no total and no percentage. Eight structural checks can honestly report
 
 It tells you that the file passed the structural checks. It does not show whether an assistant reads the file, mentions your site or answers correctly.
 
-The [website and API audit](/agent-readiness-audit) measures agent readiness with an independent public scanner, published security scans and a manual review. If you want the findings fixed, [implementation](/services#implementation) is sold with the audit. For background on the file itself, read [llms.txt explained](/guides/llms-txt).
+The [website and API audit](/agent-readiness-audit) measures agent readiness with an independent public scanner, published security scans and a manual review. If you want the findings fixed, [implementation](/services#implementation) is sold as an add-on to the audit or as separately scoped days. For background on the file itself, read [llms.txt explained](/guides/llms-txt).
 
 ## What is fetched
 
@@ -5566,7 +5573,7 @@ This example uses an invented business and invented readings. The sample's scann
 - [Active security testing](/services#active-security-testing). Price agreed for the engagement. An add-on to the audit: with GLM 5.3 and Burp Suite Professional for web traffic, I test the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so. A test starts only after you sign a written authorization.
 - [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
 - [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
-- [MCP server security test](/services#mcp-server-security-test). Price agreed for the engagement. A security test of one MCP server from the outside. A scripted walkthrough takes every tool your tool table allows to be run through the same list of checks, and two test runs with GLM 5.3 follow it. You can buy the test without an audit, and it starts only after you sign a written authorization.
+- [MCP server security test](/services#mcp-server-security-test). Price agreed for the engagement. A security test of one MCP server from the outside. Before the test you fill in a table of your tools, and a scripted walkthrough takes every tool that the table allows to be run through the same list of checks. Two test runs with GLM 5.3 follow it. You can buy the test without an audit, and it starts only after you sign a written authorization.
 - [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. Get written limits for the agent that your company already runs. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
 
 Listed prices exclude VAT and are valid until 2027-06-30.
@@ -5699,7 +5706,7 @@ You work directly with me, in writing. I reply within one business day. All pric
 - [Active security testing](/services#active-security-testing). Price agreed for the engagement. An add-on to the audit: with GLM 5.3 and Burp Suite Professional for web traffic, I test the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so. A test starts only after you sign a written authorization.
 - [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
 - [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
-- [MCP server security test](/services#mcp-server-security-test). Price agreed for the engagement. A security test of one MCP server from the outside. A scripted walkthrough takes every tool your tool table allows to be run through the same list of checks, and two test runs with GLM 5.3 follow it. You can buy the test without an audit, and it starts only after you sign a written authorization.
+- [MCP server security test](/services#mcp-server-security-test). Price agreed for the engagement. A security test of one MCP server from the outside. Before the test you fill in a table of your tools, and a scripted walkthrough takes every tool that the table allows to be run through the same list of checks. Two test runs with GLM 5.3 follow it. You can buy the test without an audit, and it starts only after you sign a written authorization.
 - [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. Get written limits for the agent that your company already runs. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
 
 See the [sample audit report](/samples/audit-report) before choosing a service.
@@ -5922,7 +5929,8 @@ Work beyond these limits is agreed in writing before it starts and quoted at the
 - A list of questions for your own team on what an outside test cannot see, such as logging, key rotation and the supply chain.
 - A timeline of the test traffic by part of the test, with start and end times, source addresses and request counts, which you can hold against your own monitoring.
 - One retest of the reported findings within 30 days of the report, on a day you choose in writing in advance, with its result delivered in writing. If you choose no day, the retest lapses.
-- One round of written questions about the report, sent within 14 days of its delivery and answered in one written appendix.
+- The report on the delivery date set in the written scope, which is agreed before the test window.
+- One round of written questions about the report, submitted within 14 calendar days of its delivery and answered within five business days in one written appendix.
 - Written notice without waiting for the report when I find a critical issue, such as exposed credentials or a way to read other users' data, and a stop of testing on that path.
 - An email stop address for the window and the right to block the test traffic's source addresses at your own perimeter, as in active security testing.
 
@@ -6259,7 +6267,7 @@ I work remotely and in writing. There are no calls, calendar bookings or on-site
 
 turva.dev is one person. If I fall ill or am otherwise unable to work, delivery moves. You can then cancel the part not yet delivered, and anything you paid for that part is refunded in full.
 
-The audit uses public information by default and does not require production credentials. A test account is used only when you name it in writing and the written scope states what it allows. If you buy implementation, we agree any required access separately and limit it to the task. For active security testing, test accounts come from you and are named in the signed authorization.
+The audit uses public information by default and does not require production credentials. A test account is used only when you name it in writing and the written scope states what it allows. If you buy implementation, we agree any required access separately and limit it to the task. For active security testing and the MCP server security test, test accounts come from you and are named in the signed authorization.
 
 The report records what I checked and what I observed, so your team can understand and check the findings.
 
@@ -6354,7 +6362,7 @@ You can write in English or Finnish. Reports are in English unless we agree on F
 
 I sign your own NDA as it stands, at no charge, before material is shared.
 
-The audit does not require production credentials. Any deployment, DNS or repository access needed for purchased implementation is agreed separately and limited to the work.
+The audit does not require production credentials. Any deployment, DNS or repository access needed for purchased implementation is agreed separately and limited to the work. For active security testing and the MCP server security test, test accounts come from you and are named in the signed authorization.
 
 ## Optional encrypted email
 
@@ -8827,7 +8835,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.260.0",
+    "version": "3.260.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9136,7 +9144,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.260.0",
+  "version": "3.260.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9583,7 +9591,7 @@ description: List the service offerings of turva.dev, with fixed prices in EUR f
 
 Use this skill to learn which services turva.dev offers, and which of them carry a fixed price.
 
-## Services (fixed prices in EUR for the audit, advisory and implementation, VAT not included. The MCP server security test is quoted on request. Agent operations and MCP server design are quoted on request)
+## Services (fixed prices in EUR for the audit, advisory and implementation, VAT not included. Agent operations and MCP server design are quoted on request, and so is the MCP server security test)
 - **Audit.** €4,300. Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, month to month; either party can end it by email before the next month starts. Async-only. Ongoing review and score tracking: a monthly re-scan with the same scanner and profile, and a monthly repeat of the AI question set across the same assistants.
 - **Implementation.** €1,500 / day. Scoped per task. Edge workers, well-known manifests, JSON-LD. A separately scoped day does not include DNS changes, tool declarations inside your application, agent payment flows or building the MCP server itself; these need their own scope.
@@ -10123,7 +10131,7 @@ const META_BY_PATH = {
     title: "What 497 cloud agents asked of my desktop · turva.dev",
     description: "497 Sonnet subagents checked 70 fixes from my desktop. The model ran in the cloud and the tests ran here. By my estimate a local model would have taken days.",
     date: "2026-10-08",
-    modified: "2026-11-02",
+    modified: "2026-11-21",
     kind: "Lab notes",
     image: "/og-cloud-agents-on-my-desktop.jpg",
     imageAlt: "turva.dev card: What 497 cloud agents asked of my desktop",
@@ -10234,9 +10242,9 @@ const META_BY_PATH = {
     description: "Of 567 selected company websites, 485 read Level 1 of 5, 85,5 percent. The sample is a prospecting list, and the scanner's check set changed during the study.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-11-17",
+    modified: "2026-11-21",
     image: "/og-website-agent-readiness-567-sites.jpg",
-    imageAlt: "turva.dev blog card: 567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, Finnish and foreign sites alike.",
+    imageAlt: "turva.dev blog card: 567 company sites read with one independent scanner in ten weeks: 85,5 percent at Level 1 of 5, 13,1 percent at Level 0, and the floor is the same in Finland and elsewhere.",
   },
   "/blog/trace-runtime-attestation": {
     title: "TRACE signs how an agent ran, not what it was allowed to reach · turva.dev",
@@ -10354,7 +10362,7 @@ const META_BY_PATH = {
     description: "Almost all of sixteen selected Finnish B2B sites read Level 1 of 5, and none read above Level 2. A historical sample, followed by the 567-site study.",
     date: "2026-07-07",
     kind: "Research",
-    modified: "2026-11-01",
+    modified: "2026-11-21",
     image: "/og-agent-readiness-finnish-b2b.jpg",
     imageAlt: "turva.dev blog card: I ran an independent scanner over sixteen Finnish B2B sites. Almost every one landed at isitagentready Level 1 of 5, and the same three gaps showed up almost everywhere."
   },
@@ -10525,7 +10533,7 @@ const META_BY_PATH = {
   },
   "/services": {
     title: "Agent-readiness services and pricing · turva.dev",
-    description: "Fixed-scope website and API audits. Compare prices, deliverables, follow-up checks and optional implementation.",
+    description: "Website and API audits, advisory, implementation, an MCP server security test, agent operations and MCP server design. Compare prices and deliverables.",
     image: "/og-services-v3.jpg",
     imageAlt: "turva.dev services card: Audit 4,300 euros, security testing as a quoted add-on. Advisory 3,000 euros per month, implementation 1,500 euros per day. Three more services on request."
   },

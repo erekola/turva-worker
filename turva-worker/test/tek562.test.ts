@@ -276,7 +276,8 @@ test("page text: services reply promise, validator implementation sentence, lega
   assert.ok(services.includes("I reply within one business day. All prices exclude VAT."));
   assert.ok(!services.includes("I acknowledge a new message"));
   const validator = await (await get("/llms-txt-validator.md")).text();
-  assert.ok(validator.includes("If you want the findings fixed, [implementation](/services#implementation) is sold with the audit."));
+  // 2026-11-21 (kierros 29 S1-4): the sentence names both ways implementation is sold, the audit add-on and separately scoped days.
+  assert.ok(validator.includes("If you want the findings fixed, [implementation](/services#implementation) is sold as an add-on to the audit or as separately scoped days."));
   const legal = await (await get("/legal.md")).text();
   // Tek-782 (P30, 2026-11-08): the 14 days start at the delivery of the written re-scan or retest result.
   assert.ok(legal.includes("You can report a deviation in an earlier deliverable within 14 calendar days of delivery of the written result of the included re-scan or retest in which it first shows."));
