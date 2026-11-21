@@ -139,10 +139,11 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
 // 2026-11-15: the card moved to MCP 1.10.2; only the two version fields changed, the length stays 4661.
 // 2026-11-15 (measurement day, Tek-826 session): the card moved to MCP 1.10.3; only the two version fields changed, the length stays 4661.
 // 2026-11-15 (Tek-827): the card moved to MCP 1.11.0 and its get_contact text names the business details and legal page, so the length is 4698.
+// 2026-11-21 (Tek-885): the card moved to MCP 1.12.0 and its service list names the MCP server security test, so the length is 4750.
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
-  assert.equal(b.length, 4698);
-  assert.equal(await sha256Hex(b), "6a0c4efb71271d6a719f5921d16d342b7d86122a2f316ffa7dfa2b4dd9ec709e");
+  assert.equal(b.length, 4750);
+  assert.equal(await sha256Hex(b), "c2fecbca76486697cb5bf7c26464a8cdad4d13189c30fffe9ce1cdb6010255b6");
 });
 
 // ---------------------------------------------------------------- PGP v6 key
@@ -281,7 +282,8 @@ test("page text: services reply promise, validator implementation sentence, lega
   assert.ok(legal.includes("You can report a deviation in an earlier deliverable within 14 calendar days of delivery of the written result of the included re-scan or retest in which it first shows."));
   // 2026-11-17: Cancellation and refunds gained the advisory first-month opt-out in the words of
   // /services (Astra and buyer read of 2026-11-17, K9), so the Terms date moved.
-  assert.ok(legal.includes("**Terms last updated:** 2026-11-17"));
+  // 2026-11-21 (Tek-885): the MCP server security test joined the services, so the Terms date moved again.
+  assert.ok(legal.includes("**Terms last updated:** 2026-11-21"));
   const audit = await (await get("/samples/audit-report.md")).text();
   await assertRevisionDateBoundToContent(audit);
   assert.ok(audit.includes("today each page weighs between 188 kB and 340 kB of markup"));

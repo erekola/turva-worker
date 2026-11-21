@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.260.0 - MCP server security test as a service of its own (Tek-885, 2026-11-21): /services has a section for it between Ongoing advisory and Agent operations, the home page and /services show six cards with Implementation back as a card, /contact has a fifth prepared message, /legal names the test in the scope of the terms, the deliverables, the cancellation rule and the AI tools sections, and llms.txt, the services skill, HOME_JSON, the A2A services skill, the WebMCP get_services description and the MCP server card (1.12.0) list it as quoted on request; the /services share card is a new file, og-services-v3.jpg.
 // turva.dev worker v3.259.1 - the audit guide's Frequently asked answer on what an audit produces says pass or fail on each scored check and lists information-only checks without a score, as the guide's two other sentences say since 3.259.0, and /guides/measurement-led-agent-readiness says the same of the checks it describes.
 // turva.dev worker v3.259.0 - fixes from the buyer and Astra repo read of 2026-11-17: the harness post corrects why a subagent's permission question is refused, says a crashed hook lets the call through only by default, scopes the gate claims and the 48 parts, names the three OWASP publications and links the lab post; the 567-sites post, the audit guide and the sample report scope the scanner, token, pass or fail, dnsAid, deliveryLeadTime and Hardenize sentences; the audit page names the human step; /legal carries the advisory first-month opt-out; Accept negotiation ranks JSON only on routes that serve it, the ACP preflight and the A2A 405 name each route's methods, an unreadable body answers 400 on A2A and ACP, and /v1/message:send/ redirects with 308.
 // turva.dev worker v3.258.1 - round 28 fixes (2026-11-17): the audit page and the audit guide say that a public MCP endpoint the site's llms.txt names may get one request to confirm that it answers and, by written scope, one tool list request; the audit guide names a documentation link in auth.md and dates its MCP source line; the agents.json guide points endpoint enforcement to active security testing; the MCP guide names the SEP-2127 card; the contents list stands before the first section when an intro ends in a table; two image alt texts, the /blog intro, and Updated lines in three posts.
@@ -293,7 +294,7 @@ max_age: 604800
 // an injected tag or script has no open destination to send anything to. media-src is not narrowed with them.
 const CSP_HTML = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-9CZbgnXRVMovEMtIPdG5WPhCET9/0d8T+B2MZmxD3CU='",
+  "script-src 'self' 'sha256-HRUEGFYBCWqdCCaEUNQ8ZUHTo953ESaM5zqy5+2+i0Q='",
   "style-src 'self' 'unsafe-inline' data:",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
@@ -380,6 +381,7 @@ const LLMS_TXT = `# turva.dev
 - Advisory: €3,000 / month (monthly retainer, three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged)
 - Implementation: €1,500 / day (scoped per task)
 - Audit fix implementation: €499 (fixed, sold only with the audit, bought together with it, with its report, or after the report and before implementation starts, only when the required access is arranged in advance)
+- MCP server security test: price agreed for the engagement (one MCP server, tested from the outside under a signed authorization, bought without an audit)
 - Agent operations: price agreed for the engagement (written limits for an agent a company already runs)
 - MCP server design: price agreed for the engagement (an MCP interface to product data, read-only by default)
 
@@ -402,7 +404,7 @@ Final price is confirmed in writing after scope is agreed.
 - Email for longer messages, Signal for short questions.
 - Existing production passwords are not requested. Correction add-ons and implementation need delegated access agreed in writing in advance: deployment access or DNS access when a fix requires it.
 - Write access to repositories is scoped per task.
-- Active security testing is an add-on to an audit, quoted per written scope. It starts only after a signed written authorization and a check that the client controls every target. That testing and an audit's internet.nl tests, published security scans and security headers, including the report on them, run with GLM 5.3 through Melious AI GmbH, and Claude is the AI tool for the rest of the work.
+- Active security testing is an add-on to an audit, quoted per written scope. The MCP server security test covers one MCP server and is bought without an audit. Each starts only after a signed written authorization and a check that the client controls every target. Both tests, and an audit's internet.nl tests, published security scans and security headers, including the writing and checking of their reports, run with GLM 5.3 through Melious AI GmbH. The scripted walkthrough of the MCP server security test uses no AI model. Claude is the AI tool for the rest of the work.
 
 ## Contact
 - Email: info@turva.dev
@@ -5562,7 +5564,9 @@ This example uses an invented business and invented readings. The sample's scann
 
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 - [Active security testing](/services#active-security-testing). Price agreed for the engagement. An add-on to the audit: with GLM 5.3 and Burp Suite Professional for web traffic, I test the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so. A test starts only after you sign a written authorization.
+- [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
 - [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
+- [MCP server security test](/services#mcp-server-security-test). Price agreed for the engagement. A security test of one MCP server from the outside. A scripted walkthrough takes every tool your tool table allows to be run through the same list of checks, and two test runs with GLM 5.3 follow it. You can buy the test without an audit, and it starts only after you sign a written authorization.
 - [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. Get written limits for the agent that your company already runs. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
 
 Listed prices exclude VAT and are valid until 2027-06-30.
@@ -5625,7 +5629,7 @@ Yes. The report includes correction instructions and ways to check the result. O
 
 **Do you need our passwords?**
 
-The audit does not require production credentials. For active security testing, test accounts come from you and are named in the signed authorization. Any access needed for separately purchased implementation is agreed before that work starts.
+The audit does not require production credentials. For active security testing and the MCP server security test, test accounts come from you and are named in the signed authorization. Any access needed for separately purchased implementation is agreed before that work starts.
 
 ## Tell me what you want to understand
 
@@ -5693,7 +5697,9 @@ You work directly with me, in writing. I reply within one business day. All pric
 
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 - [Active security testing](/services#active-security-testing). Price agreed for the engagement. An add-on to the audit: with GLM 5.3 and Burp Suite Professional for web traffic, I test the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so. A test starts only after you sign a written authorization.
+- [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
 - [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
+- [MCP server security test](/services#mcp-server-security-test). Price agreed for the engagement. A security test of one MCP server from the outside. A scripted walkthrough takes every tool your tool table allows to be run through the same list of checks, and two test runs with GLM 5.3 follow it. You can buy the test without an audit, and it starts only after you sign a written authorization.
 - [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. Get written limits for the agent that your company already runs. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
 
 See the [sample audit report](/samples/audit-report) before choosing a service.
@@ -5725,7 +5731,7 @@ The testing runs with GLM 5.3, an open-weight model, through Melious AI GmbH, as
 
 The test window is agreed in writing. If I am unable to work during the window, testing stops and the window moves to a new date you approve in writing. A test does not certify that a system is safe.
 
-It is an add-on rather than a separate service because it builds on the audit. The audit maps your agent surfaces and measures them from the outside. I plan the test on the assumption that the audit's findings have been dealt with, which leaves the test window for what an outside read cannot show.
+It is an add-on because it builds on the audit. The audit maps your agent surfaces and measures them from the outside. I plan the test on the assumption that the audit's findings have been dealt with, which leaves the test window for what an outside read cannot show. If you want one MCP server tested without an audit, the [MCP server security test](/services#mcp-server-security-test) is a service of its own.
 
 ### What can be tested
 - Agent surfaces the audit reads, such as MCP endpoints, APIs, OAuth flows, agent.json, llms.txt and ai-plugin.json, for example whether a tool or endpoint answers without the authorization it requires.
@@ -5859,6 +5865,80 @@ When the engagement ends, I deliver the final paid month's summary on its normal
 
 [Ask about ongoing advisory](mailto:info@turva.dev?subject=Ongoing%20advisory&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20advisory%20should%20cover%3A%20%0A)
 
+## MCP server security test
+
+**Price agreed for the engagement.**
+
+A security test of your MCP server from the outside. I test one MCP server with two test accounts that you provide. You can buy the test without an audit.
+
+The test starts only after you sign a written authorization and I have checked that you control the target. Where the server runs on a provider's infrastructure, such as a cloud host or a CDN, the provider's own testing policy must allow the test, or the provider must give written permission.
+
+A test finds the issues that show up during the window and does not show that no others exist. It does not certify that a server is safe, and it is not a compliance assessment.
+
+### How the test runs
+
+Before the test you fill in a tool table with one row for each tool. The row says whether the tool reads, writes or sends, whether the test may run it, and which test identifiers belong to each of the two accounts. A tool that writes or sends is run only when its row allows it, and only with a test record.
+
+The test has three parts, all inside the agreed test window. The first is a scripted walkthrough that uses no AI model. It takes every tool that the tool table allows to be run through the same list of 18 checks. Each check on each tool is one cell of a coverage matrix, so a server with 25 tools has a matrix of 450 cells. A cell records the result, or the reason when a check does not apply to the tool or was not run. The walkthrough needs a server that supports protocol version 2026-07-28 or 2025-11-25, and where the server supports both, a check that applies to both runs on each of them.
+
+The second part is a test run with GLM 5.3. It judges the walkthrough results that have no fixed expected answer, and it tests what a script cannot decide, such as who can write content that ends up in another account's tool result. The third part is a second test run with the model, which repeats each finding against the server and goes through the checks that were left as not run.
+
+The two test runs use GLM 5.3, an open-weight model, through Melious AI GmbH, as the legal page describes. Web test traffic is sent through Burp Suite Professional and stays within the rate limits the authorization states. A check the model declines or does not complete during the window is reported as not tested. A check that runs can still miss a fault, so the report lists the checks that ran and does not claim that no other faults exist.
+
+The report follows a fixed template from turva.dev that holds no client material. GLM 5.3 fills in its content and checks it against the test's own records, and I read the finished report and approve it before it is sent. I do not reproduce each finding by hand.
+
+The check list rests on a comparison with version 2026-07-28 of the MCP specification, made on 2026-11-19. The specification also requires things this test does not test, such as a rate limit on tool calls under load. The report records observations against the specification and does not state that a server meets it.
+
+### What the test checks
+- Access without authorization: every tool that the tool table allows to be run, and every resource, prompt and list call, one at a time.
+- Token handling at the MCP server: changed signatures, expired and revoked tokens, tokens issued for another resource, and the scope each tool requires. The checks with an expired or revoked token, with a token for another resource and with a token for each scope run when you provide such tokens or a way to revoke one.
+- The authorization server, only when you run it yourself and the authorization names it: variants of the redirect address, PKCE, reuse of an authorization code and rotation of refresh tokens.
+- Access between accounts: the other account's identifiers in the identifier arguments the tool table names, and the other account's resources and cached responses.
+- Rights within an account: scopes and roles, extra fields sent to a writing tool, and identity hints in arguments and headers.
+- Input handling: wrong types and boundary values for the arguments of each tool, and harmless injection strings for its string arguments. The walkthrough covers up to 20 arguments of a tool.
+- Content flows and indirect prompt injection: whether text that one party writes reaches another party's tool results, tool descriptions, resources, prompts or error messages, and whether it is kept apart from the server's own text.
+- Tool descriptions, schemas and names: instructions aimed at a model, hidden control characters, names that are easy to confuse and changes during the window.
+- State-changing tools and business flows, within what the tool table allows: whether a confirmation holds on the server and whether an action can be repeated.
+- Protocol and transport: a foreign Origin header, unsupported protocol versions, request headers that disagree with the request body, HTTP methods, TLS and CORS.
+- Data leaks and data minimization: keys, tokens, internal addresses, stack traces and file paths in responses, and personal data beyond what the task needs.
+- External fetches: whether a tool that fetches an address can be pointed at the addresses the written scope names, and whether it accepts an unencrypted address.
+
+### Standard test scope
+- One MCP server at one endpoint address.
+- At most 25 tools, and in addition at most 25 resources, resource templates and prompts in total.
+- Two test accounts that you provide, with different rights or in different tenants.
+- One environment, which can be a test environment or production with test accounts.
+
+Work beyond these limits is agreed in writing before it starts and quoted at the day rate. Two checks run only when the authorization marks them Yes: up to five failed sign-in attempts with an invented account name at a sign-in that you run yourself, and single oversized requests.
+
+### What the test delivers
+- A written authorization to sign before any test traffic, naming the target, accounts, allowed actions, exclusions, test window, rate limits and the source addresses of the test traffic.
+- A check that you control the target, normally through a DNS TXT record or a token file.
+- A report of findings. Each finding has its severity, a CVSS vector with the CVSS version named, the affected target, a command that reproduces it, the evidence with credentials redacted and a recommended fix.
+- An executive summary of one page, written without technical vocabulary.
+- The coverage matrix of tools and checks, with a result or a reason in every cell.
+- A table of observations on a selection of the requirements of the named and dated version of the MCP specification.
+- A framework map that goes through the OWASP MCP Top 10 in its beta version, the OWASP API Security Top 10 2023 and the OWASP Top 10 for LLM Applications 2025 entry by entry, saying what the test touched and what cannot be tested from the outside.
+- A list of questions for your own team on what an outside test cannot see, such as logging, key rotation and the supply chain.
+- A timeline of the test traffic by part of the test, with start and end times, source addresses and request counts, which you can hold against your own monitoring.
+- One retest of the reported findings within 30 days of the report, on a day you choose in writing in advance, with its result delivered in writing. If you choose no day, the retest lapses.
+- One round of written questions about the report, sent within 14 days of its delivery and answered in one written appendix.
+- Written notice without waiting for the report when I find a critical issue, such as exposed credentials or a way to read other users' data, and a stop of testing on that path.
+- An email stop address for the window and the right to block the test traffic's source addresses at your own perimeter, as in active security testing.
+
+### What the test leaves out
+- Denial of service, load or stress testing. Whether the server states a rate limit is recorded as an observation without load.
+- Social engineering, phishing or physical access.
+- The safeguards of the AI model and of the agent platform that use the server, MCP client programs, other MCP servers and review of source code.
+- An identity provider run by a third party, beyond a routine sign-in with a test account.
+- A hosting provider's own infrastructure, its other customers and anything else outside the written scope.
+- How a model or a client program behaves. The content flow checks show where text travels, not whether a model acts on it.
+- Changes to production data, apart from test records created through your test accounts. Those records must not trigger payments, messages to real people or changes to data that does not belong to the test accounts.
+- Use of credentials, tokens or keys found during the test, which appear in the evidence you receive only in redacted form.
+- A certificate or a statement of compliance. The framework map and the observation table say what was tested, and they do not state that a framework or the specification is met.
+
+[Ask about an MCP server security test](mailto:info@turva.dev?subject=MCP%20server%20security%20test&body=MCP%20server%20address%3A%20%0ANumber%20of%20tools%3A%20%0AWhat%20the%20test%20should%20answer%3A%20%0A)
+
 ## Agent operations
 
 **Price agreed for the engagement.**
@@ -5986,7 +6066,7 @@ Yes. I sign your own NDA as it stands, at no charge, before material is shared.
 
 **How is our material handled?**
 
-Client material is kept only on systems needed for the work and deleted within thirty days of closure, as the legal page defines closure, unless the law requires retention. Some copies follow their own rules, and the answer on copies that outlast the thirty days lists them. Engagement email and its attachments are deleted under the same closing rule. Credentials are stored in an encrypted vault, apart from the test credentials of active security testing, which sit in the virtual machine only during the test or retest window. Backups are encrypted before upload.
+Client material is kept only on systems needed for the work and deleted within thirty days of closure, as the legal page defines closure, unless the law requires retention. Some copies follow their own rules, and the answer on copies that outlast the thirty days lists them. Engagement email and its attachments are deleted under the same closing rule. Credentials are stored in an encrypted vault, apart from the test credentials of active security testing and the MCP server security test, which sit in the virtual machine only during the test or retest window. Backups are encrypted before upload.
 
 **Which copies can outlast the thirty days?**
 
@@ -5994,11 +6074,11 @@ Four kinds of copy follow their own rules: bookkeeping material, which is kept f
 
 **Do you use AI tools?**
 
-Yes. Files needed for a task are processed by the provider of the AI tool in use. In an audit the tools read what your site and API serve publicly, and a test account is used only when you name it in writing and the written scope states what it allows. The tools work in a folder of your own inside a virtual machine that is kept apart from the rest of my workstation. Security work runs with GLM 5.3, and Claude is the AI tool for the rest of the audit. Material you want excluded is named in the NDA and kept out. If the excluded material is needed for an active security test, the affected part is tested by hand or left out of scope. Vault storage and a tool's runtime permissions are separate controls.
+Yes. Files needed for a task are processed by the provider of the AI tool in use. In an audit the tools read what your site and API serve publicly, and a test account is used only when you name it in writing and the written scope states what it allows. The tools work in a folder of your own inside a virtual machine that is kept apart from the rest of my workstation. Security work runs with GLM 5.3, and Claude is the AI tool for the rest of the audit. Material you want excluded is named in the NDA and kept out. If the excluded material is needed for an active security test or an MCP server security test, the affected part is tested by hand or left out of scope. Vault storage and a tool's runtime permissions are separate controls.
 
 **Which AI model handles the security work?**
 
-GLM 5.3 through Melious AI GmbH. In active security testing the tools send test traffic from the work's virtual machine only to the targets named in your signed authorization. Security work, meaning that testing and the audit's internet.nl tests, published security scans and security headers, runs with GLM 5.3 through Melious AI GmbH, a German company, and so does its report. Melious states that it runs the model on its own hardware in Finland, and its agreement also names its own hardware at OVH SAS in France. turva.dev's account is limited to Melious's own route. For that hardware, Melious's data processing agreement states that what the model reads, such as responses and tool output, is processed only in memory. The agreement states that this content is not stored, logged or used for training, apart from operational metadata such as token counts and processing the law requires. Anything stored with Melious's storage functions is excepted too, and this work does not use them. Web test traffic is sent through Burp Suite Professional, and I switch off its own AI features.
+GLM 5.3 through Melious AI GmbH. In active security testing and the MCP server security test the tools send test traffic from the work's virtual machine only to the targets named in your signed authorization. Security work, meaning those two services and the audit's internet.nl tests, published security scans and security headers, runs with GLM 5.3 through Melious AI GmbH, a German company, and so does the writing and checking of its report. The scripted walkthrough of the MCP server security test uses no AI model, and the report of that test follows a fixed template from turva.dev that holds no client material. Melious states that it runs the model on its own hardware in Finland, and its agreement also names its own hardware at OVH SAS in France. turva.dev's account is limited to Melious's own route. For that hardware, Melious's data processing agreement states that what the model reads, such as responses and tool output, is processed only in memory. The agreement states that this content is not stored, logged or used for training, apart from operational metadata such as token counts and processing the law requires. Anything stored with Melious's storage functions is excepted too, and this work does not use them. Web test traffic is sent through Burp Suite Professional, and I switch off its own AI features.
 
 **Does the audit assess our organization's readiness for AI?**
 
@@ -6135,7 +6215,7 @@ Corrected 2026-09-28. Named the monthly cadence and the continuous-monitoring ex
 
 ## Active security testing
 
-Active security testing is an add-on to an audit, priced by quote for each written scope. It starts only after you sign a written authorization and I have checked that you control every target. The testing and its report run with GLM 5.3 through Melious AI GmbH, as the legal page describes. I read and approve the report before it is sent. A test does not certify that a system is safe. The [services page](/services#active-security-testing) states the full conditions, including how the retest works.
+Active security testing is an add-on to an audit, priced by quote for each written scope. It starts only after you sign a written authorization and I have checked that you control every target. The testing and its report run with GLM 5.3 through Melious AI GmbH, as the legal page describes. I read and approve the report before it is sent. A test does not certify that a system is safe. The [services page](/services#active-security-testing) states the full conditions, including how the retest works. One MCP server can also be tested without an audit, in the [MCP server security test](/services#mcp-server-security-test).
 
 ## Tell me what you want to understand
 
@@ -6233,6 +6313,12 @@ Include the URL and what you want me to keep track of.
 
 [Ask about ongoing advisory](mailto:info@turva.dev?subject=Ongoing%20advisory&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20advisory%20should%20cover%3A%20%0A)
 
+## MCP server security test
+
+Include the address of the MCP server and the number of tools it has.
+
+[Ask about an MCP server security test](mailto:info@turva.dev?subject=MCP%20server%20security%20test&body=MCP%20server%20address%3A%20%0ANumber%20of%20tools%3A%20%0AWhat%20the%20test%20should%20answer%3A%20%0A)
+
 ## Agent operations and MCP server design
 
 Include the URL and what you want the work to cover.
@@ -6321,7 +6407,7 @@ Contact: [info@turva.dev](mailto:info@turva.dev)
 
 ## Engagement terms
 
-These terms apply to audits, advisory, implementation, agent operations and MCP server design, including the active security testing add-on, unless a written agreement replaces them. The services are sold only to businesses and other organizations acting in their trade or profession, not to consumers.
+These terms apply to audits, advisory, implementation, the MCP server security test, agent operations and MCP server design, including the active security testing add-on, unless a written agreement replaces them. The services are sold only to businesses and other organizations acting in their trade or profession, not to consumers.
 
 ### Scope
 
@@ -6333,7 +6419,7 @@ A business day means Finland's business days, Monday to Friday, excluding Finnis
 
 ### Deliverables
 
-An audit produces a written report. Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it. A fix that fails its re-check is redone at no charge in the follow-up round of that re-check.
+An audit produces a written report. An MCP server security test produces a written report. Its section on the services page lists the parts of the report and the other deliverables. Advisory includes written reviews and a monthly summary. Implementation is delivered as the agreed changes. Code the work produces is committed to the agreed repository. A settings change, for example in a CMS, a DNS zone or a media library, is delivered as a record of what was changed and the check that confirms it. A fix that fails its re-check is redone at no charge in the follow-up round of that re-check.
 
 ### Payment
 
@@ -6345,7 +6431,7 @@ An engagement canceled before its agreed written kickoff is not charged, and any
 
 For advisory, if you are not satisfied with the first month, you can end the retainer by email sent at any time during the first month, up to the day before the second month starts. The retainer then ends when the first month ends, and the second and third months are not charged. Notice given in the second or third month ends the retainer at the end of the three-month minimum, and the months up to that end are charged. After the minimum, notice ends it at the end of the current month.
 
-Cancellation of a fixed-price service or the correction add-on is charged by the share of listed parts or fixes delivered. Cancellation of the active security testing add-on is charged by the share of its agreed written scope delivered. A remedy under Delay or Continuity takes precedence over this share. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase.
+Cancellation of a fixed-price service or the correction add-on is charged by the share of listed parts or fixes delivered. Cancellation of the active security testing add-on or of an MCP server security test is charged by the share of its agreed written scope delivered. A remedy under Delay or Continuity takes precedence over this share. Work billed by the day is charged by the hours worked, in half-hour steps, and for MCP server design and agent operations the written scope states the share of each phase.
 
 A refund is paid within fourteen days of the cancellation or of the missed deadline that triggers it.
 
@@ -6365,7 +6451,7 @@ Information shared during the work is confidential. Your own non-disclosure agre
 
 If the work gives turva.dev access to personal data you control, turva.dev acts as your processor, and your data processing agreement is signed before that data is shared. As your processor, turva.dev notifies you without undue delay after becoming aware of a personal data breach affecting that data, as Article 33(2) of the GDPR requires. Sub-processor changes follow the terms of that agreement.
 
-The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work. Test accounts for active security testing are provided by the client and named in the signed authorization.
+The audit does not require production credentials. Access for purchased implementation is agreed separately and limited to the work. Test accounts for active security testing and the MCP server security test are provided by the client and named in the signed authorization.
 
 ### Liability
 
@@ -6455,7 +6541,7 @@ The record is kept for 24 months from the latest contact. A company that asks no
 
 ### AI tools
 
-The AI tool used in the work is Claude, apart from security work, which uses GLM 5.3 as the section AI tools in security work describes. Security work means active security testing and, in an audit, the internet.nl tests, the published security scans and the security headers of the client's domain. Security headers are the response headers that set a browser security policy: Strict-Transport-Security, Content-Security-Policy, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Embedder-Policy and Cross-Origin-Resource-Policy, together with the report-only forms of those that have one. The other response headers are read in the rest of the audit. Writing and checking the report section on security work is security work too.
+The AI tool used in the work is Claude, apart from security work, which uses GLM 5.3 as the section AI tools in security work describes. Security work means active security testing, the MCP server security test and, in an audit, the internet.nl tests, the published security scans and the security headers of the client's domain. Security headers are the response headers that set a browser security policy: Strict-Transport-Security, Content-Security-Policy, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Embedder-Policy and Cross-Origin-Resource-Policy, together with the report-only forms of those that have one. The other response headers are read in the rest of the audit. Writing and checking the report section on security work is security work too. In an MCP server security test, GLM 5.3 fills in and checks the whole report on a fixed template from turva.dev that holds no client material, and the test's scripted walkthrough uses no AI model.
 
 In the rest of an audit, client material, including what is read from a client's public site, is processed only through the Anthropic API, unless the engagement agreement names another route for part of the work at the client's request, such as Claude through Amazon Bedrock. That exception does not apply to security work, whose model route the section AI tools in security work covers. The recorded questions of an audit are put to the assistants named in the written scope in anonymous sessions and contain only the public product name and the question text, never client material.
 
@@ -6463,9 +6549,9 @@ The API is used on Anthropic's [commercial terms](https://www.anthropic.com/lega
 
 Anthropic's [retention article](https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data) says that for the Anthropic API it deletes inputs and outputs within 30 days of receipt or generation. The exceptions it names are a service with longer retention, a different agreement, enforcement of its Usage Policy and the law. The same article says that inputs and outputs its systems flag under its Usage Policy are kept for up to two years and their trust and safety classification scores for up to seven years, that feedback sent to it is kept for five years, and it names limited retention for the safety review of the models it calls covered models.
 
-For client work, the AI tool is instructed to work only in the client's own folder, which holds only the files the task needs, inside the virtual machine described under Where the work runs. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. The one exception is a client's test credentials for active security testing, which are made available to the test run in the virtual machine only during the test or retest window and are removed from it when that window ends. A copy can remain in the workstation's disk images, which include the virtual machine's disk file, until the rotation described under Client material replaces them. Vault storage and the permissions a tool has while running are separate controls, and each task has its own access limits.
+For client work, the AI tool is instructed to work only in the client's own folder, which holds only the files the task needs, inside the virtual machine described under Where the work runs. Credentials are held in an encrypted vault and read by scripts at runtime, so no secret sits in a file. The one exception is a client's test credentials for active security testing or the MCP server security test, which are made available to the test run in the virtual machine only during the test or retest window and are removed from it when that window ends. A copy can remain in the workstation's disk images, which include the virtual machine's disk file, until the rotation described under Client material replaces them. Vault storage and the permissions a tool has while running are separate controls, and each task has its own access limits.
 
-In an audit the tools read what the client's site and API serve publicly, and a test account is used only when the client names it in writing and the written scope states what it allows. In active security testing the tools send test traffic only to the targets named in the client's signed authorization. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
+In an audit the tools read what the client's site and API serve publicly, and a test account is used only when the client names it in writing and the written scope states what it allows. In active security testing and the MCP server security test the tools send test traffic only to the targets named in the client's signed authorization. Material a client wants excluded from AI tooling is named in the non-disclosure agreement and excluded.
 
 ### AI tools in security work
 
@@ -6527,8 +6613,8 @@ If Cloudflare's bot protection is triggered, it can set one of its own security 
 
 This page is updated when the terms or the privacy sections change. The terms apply to engagements started on or after the Terms date below, and the privacy sections apply from the Privacy date below.
 
-- **Terms last updated:** 2026-11-17
-- **Privacy last updated:** 2026-11-11
+- **Terms last updated:** 2026-11-21
+- **Privacy last updated:** 2026-11-21
 `,
 
   "/guides/open-knowledge-format": `# Open Knowledge Format explained
@@ -8741,7 +8827,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.259.1",
+    "version": "3.260.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8882,7 +8968,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"qsXGQK47V2CPvzYwIsZdO6zrY1hTmqjO_BIyopw5-WVniUfZB6Y8Hoq5XOxBlzNlJnDFWQKBnzSNcVL8oywVBA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"zZCo_78oZhvQMUgQ_CIw40nP2-5pk51HQ0w5CLPUwcyRLFH0DgcHim3rb_VOFHQJovkac_Os6cx8vU1nnLiDDw\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"LV4y82h5sL1ezp9V5AHcbGE7V9sRzPZt5VbFRa6GeiIahtAwQTF8pk4DTw6ja67fJ5R89Syd--VSGVdgCzaQBA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"S3MvUWISp8pVCSHfr2v9Y6ytfHkT8-722RJz5-TRBZuDvT4FcEHT9WupcwyCt82hGgoTphJISE0GpyjqCvbnDw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8896,7 +8982,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -8905,8 +8991,8 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.11.0",
-    "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, agent operations, MCP server design) with prices, the active security testing add-on to the audit quoted on request, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
+    "version": "1.12.0",
+    "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, MCP server security test, agent operations, MCP server design) with prices, the active security testing add-on to the audit quoted on request, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
     "type": "streamable-http",
@@ -8925,7 +9011,7 @@ const MCP_SERVER_CARD = JSON.stringify({
     "tools": { "listChanged": false }
   },
   "tools": [
-    { "name": "get_services", "description": "Service catalog (audit, advisory, implementation, agent operations, MCP server design), the active security testing add-on to the audit quoted on request, the engagement model, and pricing." },
+    { "name": "get_services", "description": "Service catalog (audit, advisory, implementation, MCP server security test, agent operations, MCP server design), the active security testing add-on to the audit quoted on request, the engagement model, and pricing." },
     { "name": "get_agent_readiness", "description": "turva.dev's own agent-readiness score from an independent public scanner (isitagentready.com), with category sub-scores, measurement date, and a link to the scanner start page." },
     { "name": "get_security_evidence", "description": "Latest public web-security scan results for turva.dev's own domain (Hardenize, Internet.nl site and mail), each with its scan date." },
     { "name": "get_principles", "description": "Engagement principles: async-only, least access, each fix checked with a scanner or a direct test, open and verifiable." },
@@ -9050,7 +9136,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.259.1",
+  "version": "3.260.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9098,7 +9184,7 @@ const A2A_AGENT_CARD = JSON.stringify({
     {
       "id": "services",
       "name": "Service catalog",
-      "description": "List the service offerings of turva.dev (audit, advisory, implementation, agent operations, MCP server design) and the active security testing add-on to the audit, quoted on request. Fixed prices in EUR for the audit, advisory and implementation.",
+      "description": "List the service offerings of turva.dev (audit, advisory, implementation, MCP server security test, agent operations, MCP server design) and the active security testing add-on to the audit, quoted on request. Fixed prices in EUR for the audit, advisory and implementation.",
       "tags": [
         "services",
         "pricing",
@@ -9497,10 +9583,11 @@ description: List the service offerings of turva.dev, with fixed prices in EUR f
 
 Use this skill to learn which services turva.dev offers, and which of them carry a fixed price.
 
-## Services (fixed prices in EUR for the audit, advisory and implementation, VAT not included. Agent operations and MCP server design are quoted on request)
+## Services (fixed prices in EUR for the audit, advisory and implementation, VAT not included. The MCP server security test is quoted on request. Agent operations and MCP server design are quoted on request)
 - **Audit.** €4,300. Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, month to month; either party can end it by email before the next month starts. Async-only. Ongoing review and score tracking: a monthly re-scan with the same scanner and profile, and a monthly repeat of the AI question set across the same assistants.
 - **Implementation.** €1,500 / day. Scoped per task. Edge workers, well-known manifests, JSON-LD. A separately scoped day does not include DNS changes, tool declarations inside your application, agent payment flows or building the MCP server itself; these need their own scope.
+- **MCP server security test.** On request. One MCP server, tested from the outside with two test accounts: a scripted walkthrough of every tool its tool table allows to be run, and two test runs with GLM 5.3. It can be bought without an audit and starts only after a signed written authorization and a check that the client controls the target. A test does not certify that a server is safe.
 - **Agent operations.** On request. The data an agent acts on, and the decision envelope of permissions and thresholds that bounds what it is allowed to do. This covers the controls around an agent, not building the agent itself or certifying that it is safe.
 - **MCP server design.** On request. Read-only discovery tools over Streamable HTTP, plus building the server. Authentication and an audit trail are added where the data and misuse risks call for them. Submission to one agreed MCP registry is included. Writes are scoped separately.
 
@@ -9632,7 +9719,7 @@ const WEBMCP_SCRIPT = `<script>
  },
  {
  name: 'get_services',
- description: 'Return the services offered by turva.dev (audit, advisory, implementation, agent operations, MCP server design) as the full services page in markdown, together with fixed prices in EUR for the three priced services and the active security testing add-on to the audit, quoted on request.',
+ description: 'Return the services offered by turva.dev (audit, advisory, implementation, MCP server security test, agent operations, MCP server design) as the full services page in markdown, together with fixed prices in EUR for the three priced services and the active security testing add-on to the audit, quoted on request.',
  inputSchema: { type: 'object', properties: {} },
  outputSchema: { type: 'object', properties: { markdown: { type: 'string' }, pricing: { type: 'object', properties: { currency: { type: 'string' }, vatIncluded: { type: 'boolean' }, audit: { type: 'object' }, advisory: { type: 'object' }, implementation: { type: 'object' } }, required: ['currency', 'vatIncluded', 'audit', 'advisory', 'implementation'] }, bundledImplementation: { type: 'array', items: { type: 'object' } }, quotedAddOns: { type: 'array', items: { type: 'object' } }, error: { type: 'string' }, status: { type: 'number' } }, required: ['pricing'] },
  execute: async function() {
@@ -9751,7 +9838,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-17";
+const SITEMAP_LASTMOD = "2026-11-21";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -10439,8 +10526,8 @@ const META_BY_PATH = {
   "/services": {
     title: "Agent-readiness services and pricing · turva.dev",
     description: "Fixed-scope website and API audits. Compare prices, deliverables, follow-up checks and optional implementation.",
-    image: "/og-services-v2.jpg",
-    imageAlt: "turva.dev services card: Audit 4,300 euros, security testing as a quoted add-on. Advisory 3,000 euros per month, implementation 1,500 euros per day. Two more services on request."
+    image: "/og-services-v3.jpg",
+    imageAlt: "turva.dev services card: Audit 4,300 euros, security testing as a quoted add-on. Advisory 3,000 euros per month, implementation 1,500 euros per day. Three more services on request."
   },
   "/agent-readiness-audit": {
     title: "Website and API agent-readiness audit, €4,300 · turva.dev",
@@ -11101,7 +11188,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }], "quotedAddOns": [{ "name": "Active security testing", "pricing": "on request", "requires": "Audit", "scope": "Tests the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so, with GLM 5.3 and Burp Suite Professional for web traffic, and starts only after you sign a written authorization.", "soldSeparately": false, "url": "https://turva.dev/services#active-security-testing" }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-11-15" }, null, 2);
+const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "MCP server security test", "pricing": "on request" }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }], "quotedAddOns": [{ "name": "Active security testing", "pricing": "on request", "requires": "Audit", "scope": "Tests the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so, with GLM 5.3 and Burp Suite Professional for web traffic, and starts only after you sign a written authorization.", "soldSeparately": false, "url": "https://turva.dev/services#active-security-testing" }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-11-15" }, null, 2);
 const API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"
@@ -12575,12 +12662,12 @@ function serveHomeHtml(canonicalUrl: string) {
   // "Title. Body." paragraphs become a titled card; the split is the first ". " and a paragraph
   // without one throws, so a twin edit that drops the title cannot render an empty card.
   const titled = (t: string, what: string) => { const k = t.indexOf(". "); if (k < 0) throw new Error("home " + what + " paragraph has no title: " + t.slice(0, 40)); return { t: t.slice(0, k), b: t.slice(k + 2) }; };
-  // The offers are read from the twin list, four cards: name, price, what it covers and
+  // The offers are read from the twin list, six cards (Tek-885; four until 3.259.1): name, price, what it covers and
   // when it is delivered, plus a retest line when the service has one. Fail closed: a list line that stops matching the shape throws here
   // instead of rendering a card with an empty price (Tek-355, Tek-357).
   const offerParas = mdParas("/", "Start with the audit", 2);
   const offerRaw = mdSection("/", "Start with the audit").split("\n").filter((l: string) => l.startsWith("- "));
-  if (offerRaw.length !== 4) throw new Error("home starting-point list does not carry exactly four offers: " + offerRaw.length);
+  if (offerRaw.length !== 6) throw new Error("home starting-point list does not carry exactly six offers: " + offerRaw.length);
   const offerCards = offerRaw.map((line: string) => {
     const m = line.match(OFFER_ROW_RE);
     if (!m) throw new Error("home offer line does not parse: " + line.slice(0, 60));
@@ -12888,6 +12975,7 @@ ${cardPageNav("/services")}
   ${mdFoldSec("/services", "Website and API agent-readiness audit", "audit")}
   ${mdFoldSec("/services", "Implementation")}
   ${mdFoldSec("/services", "Ongoing advisory", "advisory")}
+  ${mdFoldSec("/services", "MCP server security test")}
   ${mdFoldSec("/services", "Agent operations")}
   ${mdFoldSec("/services", "MCP server design")}
   ${mdOpenSec("/services", "Work you can inspect", "how-the-method-is-measured")}
@@ -13472,13 +13560,13 @@ function serveContactHtml(canonicalUrl: string) {
   // the twin and open a draft only. The QR code is an extra route for Signal, not a step.
   // Since 2026-09-08 the prepared messages open the page as cards, each with its own
   // button, and the plain address follows for the reader who has not decided which fits.
-  // The four cards use the default cards grid: two equal columns from 768px and one column below.
+  // The five cards use the default cards grid: two equal columns from 768px and one column below.
   const body = `${head}
 ${cardPageNav("/contact")}
 <main id="main">
   ${mdPageStart("/contact")}
   <div class="cards">
-      ${mdActionCards("/contact", ["Website or API audit", "Implementation", "Ongoing advisory", "Agent operations and MCP server design"])}
+      ${mdActionCards("/contact", ["Website or API audit", "Implementation", "Ongoing advisory", "MCP server security test", "Agent operations and MCP server design"])}
   </div>
   ${mdOpenSec("/contact", "Or write your own message", "email")}
   ${mdOpenSec("/contact", "Other ways to reach me", "channels", contactSignalQr(), true)}

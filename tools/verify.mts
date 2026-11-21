@@ -1978,12 +1978,14 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       const priceNum = (s: string) => Number(((s.replace(/&#8364;/g, '€').match(/€([\d,]+)/) || [])[1] || 'NaN').replace(/,/g, ''));
       if (homePriceHtml) {
         const homeSpans = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => m[1]);
-        // Tek-761, changed by Tek-782 (P28, 2026-11-08): the home page shows four cards. Cards 1 and 3 carry a euro price (audit, advisory per month);
-        // card 2 is the active security testing add-on, which took the place of the Implementation card on the home page and, from v3.235.0
-        // (Erik 2026-11-08), on /services too, and card 4 is the shared card for agent operations and MCP server design; both are priced per
-        // engagement. /services still states every priced service in its sections, Implementation included.
-        check(homeSpans.length === 4 && homeSpans[1] === 'Price agreed for the engagement.' && homeSpans[3] === 'Price agreed for the engagement.', `home page offer cards: four, cards 2 and 4 priced per engagement (${homeSpans.length})`);
-        setSame('home page offer-price spans vs facts.json (audit and advisory)', [homeSpans[0], homeSpans[2]].map(priceNum), facts.services.filter((s: { id: string; priceKey: string | null }) => s.priceKey && s.id !== 'implementation').map((s: { priceKey: string }) => facts.prices[s.priceKey]));
+        // Tek-761, changed by Tek-782 (P28, 2026-11-08) and Tek-885 (2026-11-21): the home page shows six cards (2x3). Cards 1, 3 and 4 carry a euro price
+        // (audit, implementation per day, advisory per month); card 2 is the active security testing add-on, card 5 the MCP server security test and
+        // card 6 the shared card for agent operations and MCP server design; those three are priced per engagement.
+        // /services still states every priced service in its sections.
+        const perEngagement = 'Price agreed for the engagement.';
+        check(homeSpans.length === 6 && [1, 4, 5].every((i) => homeSpans[i] === perEngagement), `home page offer cards: six, cards 2, 5 and 6 priced per engagement (${homeSpans.length})`);
+        const cardPrice = (id: string) => facts.prices[facts.services.find((s: { id: string; priceKey: string | null }) => s.id === id).priceKey];
+        setSame('home page offer-price spans vs facts.json (audit, implementation and advisory)', [homeSpans[0], homeSpans[2], homeSpans[3]].map(priceNum), [cardPrice('audit'), cardPrice('implementation'), cardPrice('advisory')]);
       } else bad('K5-P3: the home page was not rendered, cannot check its prices');
       if (servicesPriceHtml) {
         const wantEuro = (n: number) => '\u20ac' + n.toLocaleString('en-US');

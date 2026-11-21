@@ -1693,13 +1693,13 @@ test("K6: #vurl asks for the URL keyboard and turns off capitalisation, spellche
   assert.ok(/id="vurl" name="url"[^>]*value="/.test(tag[0]), "the echo rule of the redirect tests still reads value= after name=");
 });
 
-// Mobile read 2026-10-30, K10: /contact shows four cards, one mailto draft each (Tek-758, Tek-761).
-test("K10: /contact lists the four cards, in this order, in the HTML and in the Markdown twin", async () => {
-  const names = ["Website or API audit", "Implementation", "Ongoing advisory", "Agent operations and MCP server design"];
+// Mobile read 2026-10-30, K10: /contact shows five cards, one mailto draft each (Tek-758, Tek-761; the MCP server security test card joined in Tek-885, 2026-11-21).
+test("K10: /contact lists the five cards, in this order, in the HTML and in the Markdown twin", async () => {
+  const names = ["Website or API audit", "Implementation", "Ongoing advisory", "MCP server security test", "Agent operations and MCP server design"];
   const html = await (await get("/contact", { headers: { Accept: "text/html" } })).text();
   const hi = names.map((n) => html.indexOf("<h2>" + n + "</h2>"));
   assert.ok(hi.every((i) => i > 0) && hi.every((i, k) => k === 0 || i > hi[k - 1]), "the cards are rendered in order: " + hi.join(","));
-  assert.equal((html.match(/class="btn" href="mailto:info@turva[.]dev[?]subject=/g) || []).length, 4, "one mailto draft per card");
+  assert.equal((html.match(/class="btn" href="mailto:info@turva[.]dev[?]subject=/g) || []).length, 5, "one mailto draft per card");
   assert.ok(!html.includes("External domain check"), "no withdrawn domain check card");
   assert.ok(!html.includes("Shopify check"), "no Shopify card");
   const md = await (await get("/contact", { headers: { Accept: "text/markdown" } })).text();
@@ -1973,7 +1973,7 @@ test("/blog lists exactly four kinds, every post carries one of them, and only a
   }
 });
 
-test("/services: each of the five contact links carries the href of the matching /contact button (Tek-806)", async () => {
+test("/services: each of the six contact links carries the href of the matching /contact button (Tek-806, Tek-885)", async () => {
   const drafts = (html: string): Record<string, string[]> => {
     const out: Record<string, string[]> = {};
     for (const m of html.matchAll(/<a(?: class="btn")? href="(mailto:info@turva\.dev\?subject=[^"]*)">(Ask about [^<]*)<\/a>/g)) (out[m[2]] ||= []).push(m[1]);
@@ -1981,34 +1981,35 @@ test("/services: each of the five contact links carries the href of the matching
   };
   const contact = drafts(await (await get("/contact")).text());
   const services = drafts(await (await get("/services")).text());
-  assert.deepEqual(Object.keys(contact).sort(), ["Ask about agent operations or MCP server design", "Ask about an audit", "Ask about implementation", "Ask about ongoing advisory"], "/contact has its four buttons");
+  assert.deepEqual(Object.keys(contact).sort(), ["Ask about agent operations or MCP server design", "Ask about an MCP server security test", "Ask about an audit", "Ask about implementation", "Ask about ongoing advisory"], "/contact has its five buttons");
   for (const hrefs of Object.values(contact)) assert.equal(hrefs.length, 1, "one button per label on /contact");
   assert.deepEqual(Object.keys(services).sort(), Object.keys(contact).sort(), "/services uses the labels of /contact");
-  assert.equal(Object.values(services).flat().length, 5, "five contact links, one per service section");
+  assert.equal(Object.values(services).flat().length, 6, "six contact links, one per service section");
   assert.equal(services["Ask about agent operations or MCP server design"].length, 2, "agent operations and MCP server design share one draft");
   for (const [label, hrefs] of Object.entries(services)) for (const href of hrefs) assert.equal(href, contact[label][0], "same draft as /contact: " + label);
 });
 
-// Tek-808 (2026-11-12): /services folds the 18 delivery-terms subsections of its five service sections.
+// Tek-808 (2026-11-12): /services folds the 18 delivery-terms subsections of its five service sections; Tek-885 (2026-11-21) added the MCP server security test section, six service sections and 19 folds: of its five subsections only "How the test runs" is a paragraph and folds, the other four open with a list and render as labelled checklists inside the section (as the add-on's do), with no id and no fold.
 // Each fold is a details element whose summary is the subsection's own h3, so every anchor stays on a heading that is
 // visible while the fold is closed. The contact links stay outside the folds, nothing opens by default, and the +/-
 // sign is decoration with an empty alternative text, as for the Menu summary (K5 in nav-a11y.test.ts).
-test("/services: 18 subsections fold into details with their own headings, the contact links stay visible (Tek-808)", async () => {
+test("/services: 19 subsections fold into details with their own headings, the contact links stay visible (Tek-808, Tek-885)", async () => {
   const html = await (await get("/services", { headers: { Accept: "text/html" } })).text();
   const starts = html.match(/<details class="fold"><summary><h3 id="/g) || [];
-  assert.equal(starts.length, 18, "18 folds");
+  assert.equal(starts.length, 19, "19 folds");
   assert.equal((html.match(/<\/details>/g) || []).length, (html.match(/<details/g) || []).length, "every details element is closed, the Menu one included");
-  assert.equal((html.match(/<details/g) || []).length, starts.length + 1, "the 18 folds and the Menu are the only details elements");
+  assert.equal((html.match(/<details/g) || []).length, starts.length + 1, "the 19 folds and the Menu are the only details elements");
   const ids = [...html.matchAll(/<details class="fold"><summary><h3 id="([^"]+)">/g)].map((m) => m[1]);
   assert.deepEqual(ids, [
     "active-security-testing", "separately-scoped-implementation-days", "change-plan-deadline-and-billable-day",
     "what-implementation-needs-from-you", "checking-and-follow-up", "evidence-and-scope", "advisory-kickoff", "checking-and-ending",
+    "how-the-test-runs",
     "review-deliverables", "review-scope", "review-kickoff-requirements", "review-acceptance-checks", "review-follow-up-and-price",
     "server-deliverables", "server-scope", "server-kickoff-requirements", "server-acceptance-checks", "server-follow-up-and-price",
   ], "the heading ids and their order");
-  assert.equal([...html.matchAll(/<details class="fold"><summary><h3 id="[^"]+">[^]*?<\/h3><\/summary>/g)].length, 18, "each summary holds its h3 and nothing else");
+  assert.equal([...html.matchAll(/<details class="fold"><summary><h3 id="[^"]+">[^]*?<\/h3><\/summary>/g)].length, 19, "each summary holds its h3 and nothing else");
   const folded = html.replace(/<details class="fold">[^]*?<\/details>/g, "");
-  assert.equal((folded.match(/>Ask about [^<]*<\/a>/g) || []).length, 5, "all five contact links sit outside the folds");
+  assert.equal((folded.match(/>Ask about [^<]*<\/a>/g) || []).length, 6, "all six contact links sit outside the folds");
   assert.equal((html.match(/<details class="fold" open/g) || []).length, 0, "no fold opens by default");
   assert.ok(!/<details[^>]*\sopen[\s>=]/.test(html), "no details element carries open");
   const src = readFileSync(new URL("../src/worker.ts", import.meta.url), "utf8");

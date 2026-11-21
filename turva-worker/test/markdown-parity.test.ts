@@ -515,7 +515,7 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
   const html = (await served("/services", "text/html")).body;
   const sec = md.slice(md.indexOf("\n## Choose a starting point\n"), md.indexOf("\n## ", md.indexOf("\n## Choose a starting point\n") + 4));
   const rows = [...sec.matchAll(/\n- \[([^\]]+)\]\(([^)]+)\)\. ([^.]+)\. /g)];
-  assert.equal(rows.length, 4, "four offers: the audit, the active security testing add-on, ongoing advisory and the shared agent operations and MCP server design card (Tek-761)");
+  assert.equal(rows.length, 6, "six offers: the audit, the active security testing add-on, implementation, ongoing advisory, the MCP server security test and the shared agent operations and MCP server design card (Tek-761, Tek-885)");
   for (const [, name, href, price] of rows) {
     assert.ok(html.includes('<span class="name"><a href="' + href + '">' + esc(name) + '</a>.</span> <span class="price">' + esc(price) + ".</span></span>"), href);
   }
@@ -527,10 +527,10 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
   assert.ok(!html.includes("&middot; Fixed scope"), "no middle dot in place of the twin's period");
 });
 
-// Tek-761 (F1, F3): the four service cards on / and /services. The unit of each price is read from the
+// Tek-761 (F1, F3): the service cards on / and /services. The unit of each price is read from the
 // /services twin's own bold price line under the service's heading (the site's source for units; facts.json
-// carries amounts only), the audit card must keep its delivery sentence, and /services renders exactly four
-// cards, in the order of the twin's service sections.
+// carries amounts only), the audit card must keep its delivery sentence, and /services renders exactly six
+// cards (Tek-885, 2026-11-21: Implementation and the MCP server security test joined the four), in the order of the twin's service sections.
 // Tek-782 (P28, 2026-11-08) put the active security testing add-on in place of the Implementation card on the home page,
 // and Erik's decision of 2026-11-08 (v3.235.0) did the same on /services, so the two lists are again the same four rows:
 // audit, the add-on, advisory, agent operations. The Implementation section and its price stay on /services.
@@ -548,12 +548,13 @@ test("Tek-761: the service cards keep their delivery sentence, the price units o
   const rowsOf = (md: string, h: string) => [...section(md, h).matchAll(/\n- \[([^\]]+)\]\(([^)]+)\)\. ([^.]+)\. (.+)/g)].map((m) => ({ name: m[1], price: m[3], rest: m[4] }));
   const svcRows = rowsOf(svcMd, "Choose a starting point");
   const homeRows = rowsOf(homeMd, "Start with the audit");
-  assert.equal(svcRows.length, 4, "four rows in the /services twin");
+  assert.equal(svcRows.length, 6, "six rows in the /services twin");
   assert.equal(svcRows[1].name, "Active security testing", "/services shows the add-on as its second card, as the home page does");
   const homeWant = svcRows.map((r) => ({ name: r.name, price: r.price }));
   assert.deepEqual(homeRows.map((r) => r.name), homeWant.map((r) => r.name), "the home page lists the /services cards in the same order");
   // The add-on has no ## section of its own: its heading is an h3 inside the audit section.
   const secName = (n: string) => (n === "Agent operations and MCP server design" ? "Agent operations" : n === "Active security testing" ? "Website and API agent-readiness audit" : n);
+  assert.deepEqual(svcRows.map((r) => r.name), ["Website and API agent-readiness audit", "Active security testing", "Implementation", "Ongoing advisory", "MCP server security test", "Agent operations and MCP server design"], "the six cards in their fixed order (Tek-885)");
   // The unit of a price is the one the /services twin states in the bold line of the service's own section.
   let priced = 0;
   for (const r of svcRows) {
@@ -564,18 +565,20 @@ test("Tek-761: the service cards keep their delivery sentence, the price units o
     priced++;
     assert.equal(r.price, m[1] + (m[2] ? " per " + m[2] : ""), r.name + ": the card's price and unit are the twin section's");
   }
-  assert.equal(priced, facts.services.filter((s: { id: string; priceKey: string | null }) => s.priceKey && s.id !== "implementation").length, "one priced card per priced service in facts.json except implementation, which keeps its own section");
+  assert.equal(priced, facts.services.filter((s: { id: string; priceKey: string | null }) => s.priceKey).length, "one priced card per priced service in facts.json (Tek-885: Implementation has its own card again)");
+  assert.equal(svcRows[2].price, "€1,500 per day", "the Implementation card carries the per-day price of its section's bold line");
+  assert.equal(svcRows[4].price, "Price agreed for the engagement", "the MCP server security test card is priced per engagement");
   for (const [md, rows, want] of [[svcMd, svcRows, svcRows], [homeMd, homeRows, homeWant]] as const) {
     assert.deepEqual(rows.map((r) => r.price), want.map((r) => r.price), "the prices row by row");
     assert.ok(/ Delivered [^.]+\.$/.test(rows[0].rest), "the audit row keeps its Delivered sentence: " + rows[0].rest.slice(-60));
     assert.ok(md.includes(rows[0].name), rows[0].name);
   }
-  // The same in the rendered HTML: the delivery sentence is its own span, and /services holds exactly four cards, in order.
+  // The same in the rendered HTML: the delivery sentence is its own span, and /services holds exactly six cards, in order.
   assert.ok(/<span class="offer-when">Delivered [^<]+<\/span>/.test(homeHtml), "home: the audit card renders its Delivered span");
   assert.ok(/<span class="when">Delivered [^<]+<\/span>/.test(svcHtml), "/services: the audit card renders its Delivered span");
   const grid = svcHtml.slice(svcHtml.indexOf('id="choose-a-starting-point"'), svcHtml.indexOf("</ul>", svcHtml.indexOf('id="choose-a-starting-point"')));
   const cardNames = [...grid.matchAll(/<li class="card ocard"[^>]*><span class="card-top"><span class="name"><a href="[^"]+">([^<]+)<\/a>/g)].map((m) => m[1]);
-  assert.deepEqual(cardNames, svcRows.map((r) => esc(r.name)), "/services renders exactly the four cards of its twin, in order");
+  assert.deepEqual(cardNames, svcRows.map((r) => esc(r.name)), "/services renders exactly the six cards of its twin, in order");
   const svcOrder = [...svcMd.matchAll(/\n## ([^\n]+)\n/g)].map((m) => m[1]);
   const idx = svcRows.map((r) => svcOrder.indexOf(secName(r.name)));
   assert.ok(idx.every((i, k) => i >= 0 && (k === 0 || i > idx[k - 1] || (svcRows[k].name === "Active security testing" && i === idx[k - 1]))), "the cards follow the order of the service sections: " + idx.join(","));
