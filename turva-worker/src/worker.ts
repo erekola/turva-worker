@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.260.4 - no sentence in mono (2026-11-21, CSS and class names only, text unchanged): the price terms, a price slot that holds a sentence (class price-note) and the sample report's date line (class sample-date) are set in the sans stack
 // turva.dev worker v3.260.3 - MCP server card version 1.13.0 (Tek-886, 2026-11-21): get_services of turva-mcp also returns the engagement terms of /legal and the sample report's sections and findings, get_contact also returns the privacy sections of /legal, and the card's get_services and get_contact text name them; no page text changed.
 // turva.dev worker v3.260.2 - CSS-only accessibility release (2026-11-21, four fixes from an outside design review): every px font size in the page, article, home and 404 CSS is the equal rem value at a 16px root; FOOTER_CSS carries a prefers-contrast:more block that raises hairline borders and muted text and a forced-colors block that gives .btn, .cta-btn and .vform button a ButtonText border; .rc-foot reads in the body sans stack without tracking; the mono and code stacks are one stack, ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace.
 // turva.dev worker v3.260.1 - kierros 29 fixes (2026-11-21): the MCP server security test's question round gets the 14 calendar days and five business days of the other services and a report delivery date set in the written scope, the cards define the tool table, /company and /contact name test accounts for the test, the /services description names the services, the service skill heading reads as one sentence, the validator page names both ways implementation is sold, an archived LocalScore source, and dated corrections in the 567 sites and Finnish B2B posts.
@@ -8837,7 +8838,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.260.3",
+    "version": "3.260.4",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9146,7 +9147,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.260.3",
+  "version": "3.260.4",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -11873,7 +11874,9 @@ function mdSecBodyHtml(path: string, heading: string, listOnly?: boolean, dropRo
       const pm = head[1].match(/^(€[\d,]+\.?)\s+(.+)$/);
       const price = pm ? pm[1] : head[1];
       const terms = pm ? pm[2] : "";
-      parts.push(`<p class="price-line"><span class="price">${escapeHtml(price).replace(/€/g, "&#8364;")}</span>${terms ? ` <span class="terms">${escapeHtml(terms)}</span>` : ""}</p>`);
+      // A price slot that holds a sentence instead of a euro figure carries price-note and is set in the
+      // sans stack, because the brand never sets a sentence in mono.
+      parts.push(`<p class="price-line"><span class="price${/^€/.test(price) ? "" : " price-note"}">${escapeHtml(price).replace(/€/g, "&#8364;")}</span>${terms ? ` <span class="terms">${escapeHtml(terms)}</span>` : ""}</p>`);
     } else if ((/:$/.test(lines[0].trim()) || /^### \S/.test(lines[0])) && lines.slice(1).some((l) => l.startsWith("- "))) {
       // "### Label" over the list is the twin's heading form of the same label, so the Markdown
       // carries the heading the page renders (Tek-486).
@@ -12012,7 +12015,7 @@ function mdOfferCards(path: string, heading: string, idFor?: Record<string, stri
     // Tek-488: the card reads as the row, "Name. €1,500 per day. Covers. Delivered ... One retest ...", with
     // the link on the name and a stretched link over the card, so the HTML list item and the
     // Markdown list item carry the same text and the same one link.
-    return `<li class="card ocard"${cardId}><span class="card-top"><span class="name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="price">${escapeHtml(price)}.</span></span> <span class="cov">${escapeHtml(covers)}</span>${when ? ` <span class="when">${escapeHtml(when)}</span>` : ""}${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""}</li>`;
+    return `<li class="card ocard"${cardId}><span class="card-top"><span class="name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="price${/^€/.test(price) ? "" : " price-note"}">${escapeHtml(price)}.</span></span> <span class="cov">${escapeHtml(covers)}</span>${when ? ` <span class="when">${escapeHtml(when)}</span>` : ""}${retest ? ` <span class="when">${escapeHtml(retest)}</span>` : ""}</li>`;
   }).join("\n      ");
 }
 function mdActionCards(path: string, headings: string[]) {
@@ -12551,7 +12554,8 @@ function serveGuideHtml(pathname: string, canonicalUrl: string) {
     withSample = withSample.replace(eyebrowRe, '<p class="eyebrow">$1</p>\n<h1>');
     const dateRe = new RegExp("<p>(" + (sample.date || "Illustrative report date") + ": [^<]+)</p>");
     if (!dateRe.test(withSample)) throw new Error("sample carries no illustrative report date line: " + pathname);
-    withSample = withSample.replace(dateRe, '<p class="date">$1</p>');
+    // The sample's date line is a sentence, so sample-date sets it in the sans stack.
+    withSample = withSample.replace(dateRe, '<p class="date sample-date">$1</p>');
   }
   const next = navSection === "/guides"
     ? `<aside class="next"><p>${GUIDE_NEXT[pathname as keyof typeof GUIDE_NEXT] || GUIDE_NEXT.default}</p></aside>`
@@ -12590,6 +12594,7 @@ article li::before{content:"\\203A";position:absolute;left:0.45rem;top:0;color:#
 article strong{color:#F2F4F3;}
 article pre{max-width:100%;}
 article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:-.35rem 0 1.4rem;}
+article p.sample-date{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;letter-spacing:0;}
 article .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:.875rem;letter-spacing:0;color:#5DF18F;margin:0 0 1rem;}
 .toc{margin:0 0 1.6rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;}
 ${TOC_SUB_CSS}
@@ -12695,7 +12700,7 @@ function serveHomeHtml(canonicalUrl: string) {
     const [, name, href, price, covers, when, retest] = m;
     // Tek-488 round 3: the card reads as the row, with the link on the offer name and a
     // stretched link over the card, as on /services.
-    return `<li class="offer"><span class="offer-top"><span class="offer-name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="offer-price">${escapeHtml(price)}.</span></span> <span class="offer-covers">${escapeHtml(covers)}</span>${when ? ` <span class="offer-when">${escapeHtml(when)}</span>` : ""}${retest ? ` <span class="offer-when">${escapeHtml(retest)}</span>` : ""}</li>`;
+    return `<li class="offer"><span class="offer-top"><span class="offer-name"><a href="${escapeHtml(href)}">${escapeHtml(name)}</a>.</span> <span class="offer-price${/^€/.test(price) ? "" : " price-note"}">${escapeHtml(price)}.</span></span> <span class="offer-covers">${escapeHtml(covers)}</span>${when ? ` <span class="offer-when">${escapeHtml(when)}</span>` : ""}${retest ? ` <span class="offer-when">${escapeHtml(retest)}</span>` : ""}</li>`;
   }).join("\n      ");
   // The hero card is one finding from the synthetic sample report (2026-09-08 brief, point 1).
   // Its text is the twin section "One product. Three different answers.": three "Source:
@@ -12809,6 +12814,7 @@ main{max-width:none;margin:0;padding:0;}
 .offer-top{display:flex;flex-direction:column;align-items:flex-start;gap:6px;}
 .offer-name{font-size:1.15rem;font-weight:700;color:#F2F4F3;}
 .offer-price{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
+.offer-price.price-note{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
 .offer-covers{font-size:.95rem;line-height:1.55;color:#C9D1CE;}
 .offer-when{font-size:.95rem;line-height:1.55;color:#C9D1CE;}.offer-covers+.offer-when{border-top:1px solid #2D3D3D;padding-top:10px;}
 .muted{font-size:.9rem;color:#9AA3A0;}
@@ -13107,7 +13113,7 @@ ${NAV_CORE_CSS}
 .sec details.fold[open]{padding-bottom:.4rem;}
 .price-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;margin:-.4rem 0 1.1rem;}
 .price-line .price{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:1.35rem;font-weight:700;color:#5DF18F;}
-.price-line .terms{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:.8125rem;color:#9AA3A0;}
+.price-line .terms{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:.8125rem;color:#9AA3A0;}
 .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px);margin:.6rem 0 1.2rem;}
 .cards.three{grid-template-columns:minmax(0,1fr);}
 @media (min-width:1000px){.cards.three{grid-template-columns:repeat(3,minmax(0,1fr));}}
@@ -13123,6 +13129,7 @@ a.card:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
 .card-top{display:flex;flex-direction:column;align-items:flex-start;gap:6px;}
 .card h2,.card h3,.card .name{font-size:1.15rem;line-height:1.3;font-weight:700;color:#F2F4F3;margin:0;}
 .card .price{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
+.price-line .price-note,.card .price-note{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
 .card p{font-size:.97rem;line-height:1.55;color:#C9D1CE;margin:0;}
 .card .when{font-size:.97rem;line-height:1.55;color:#C9D1CE;}.card p+.when{border-top:1px solid #2D3D3D;padding-top:10px;}
 ul.cards{list-style:none;padding:0;}

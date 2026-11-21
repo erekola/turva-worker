@@ -1977,7 +1977,8 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       // other would still render, and pass, with the wrong number.
       const priceNum = (s: string) => Number(((s.replace(/&#8364;/g, '€').match(/€([\d,]+)/) || [])[1] || 'NaN').replace(/,/g, ''));
       if (homePriceHtml) {
-        const homeSpans = [...homePriceHtml.matchAll(/<span class="offer-price">([^<]+)<[/]span>/g)].map((m) => m[1]);
+        // 2026-11-21: a sentence in the price slot carries price-note (sans), so the pattern takes both forms.
+        const homeSpans = [...homePriceHtml.matchAll(/<span class="offer-price(?: price-note)?">([^<]+)<[/]span>/g)].map((m) => m[1]);
         // Tek-761, changed by Tek-782 (P28, 2026-11-08) and Tek-885 (2026-11-21): the home page shows six cards (2x3). Cards 1, 3 and 4 carry a euro price
         // (audit, implementation per day, advisory per month); card 2 is the active security testing add-on, card 5 the MCP server security test and
         // card 6 the shared card for agent operations and MCP server design; those three are priced per engagement.

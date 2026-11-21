@@ -517,7 +517,7 @@ test("Tek-488: an offer card reads as its twin row, and a price line keeps the t
   const rows = [...sec.matchAll(/\n- \[([^\]]+)\]\(([^)]+)\)\. ([^.]+)\. /g)];
   assert.equal(rows.length, 6, "six offers: the audit, the active security testing add-on, implementation, ongoing advisory, the MCP server security test and the shared agent operations and MCP server design card (Tek-761, Tek-885)");
   for (const [, name, href, price] of rows) {
-    assert.ok(html.includes('<span class="name"><a href="' + href + '">' + esc(name) + '</a>.</span> <span class="price">' + esc(price) + ".</span></span>"), href);
+    assert.ok(html.includes('<span class="name"><a href="' + href + '">' + esc(name) + '</a>.</span> <span class="price' + (/^€/.test(price) ? "" : " price-note") + '">' + esc(price) + ".</span></span>"), href);
   }
   assert.ok(!html.includes("See the Shopify check") && !html.includes("See the audit"), "the offer name is the link, no second label");
   // Tek-542 (2026-09-28, S-20a/S-20b): the twin's bold price line gained a third sentence,
@@ -582,7 +582,10 @@ test("Tek-761: the service cards keep their delivery sentence, the price units o
   const svcOrder = [...svcMd.matchAll(/\n## ([^\n]+)\n/g)].map((m) => m[1]);
   const idx = svcRows.map((r) => svcOrder.indexOf(secName(r.name)));
   assert.ok(idx.every((i, k) => i >= 0 && (k === 0 || i > idx[k - 1] || (svcRows[k].name === "Active security testing" && i === idx[k - 1]))), "the cards follow the order of the service sections: " + idx.join(","));
-  const homeSpans = [...homeHtml.matchAll(/<span class="offer-price">([^<]+)<\/span>/g)].map((m) => m[1]);
+  // 2026-11-21: a sentence in the price slot carries price-note and is set in sans, a euro figure does not.
+  const homeSpans = [...homeHtml.matchAll(/<span class="offer-price((?: price-note)?)">([^<]+)<\/span>/g)].map((m) => m[2]);
+  const homeNotes = [...homeHtml.matchAll(/<span class="offer-price((?: price-note)?)">([^<]+)<\/span>/g)].map((m) => m[1] === " price-note");
+  assert.deepEqual(homeNotes, homeSpans.map((s) => !/^(€|&#8364;)/.test(s)), "price-note marks exactly the price slots that hold a sentence");
   assert.deepEqual(homeSpans, homeWant.map((r) => esc(r.price) + "."), "the home price spans carry the expected prices and units");
   // Tek-782 (P28): the add-on card links its own heading on /services, which renders as an h3 with that id and stays
   // a heading in the Markdown twin, inside the audit section and right above the add-on paragraph.
