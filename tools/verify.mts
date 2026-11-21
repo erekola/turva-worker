@@ -534,7 +534,7 @@ const securityDocDrift = (text: string, packages: Record<string, any>): string[]
   check(drifts(changed(/Wrangler\s+\d+\.\d+\.\d+/, () => 'Wrangler 4.0.0'), 'wrangler'), 'SECURITY.md gate self-test: a wrong wrangler version is caught');
   check(drifts(changed(/declares it at exactly `\d+\.\d+\.\d+`/, () => 'declares it at exactly `0.0.1`'), 'esbuild declared'), 'SECURITY.md gate self-test: a wrong esbuild version declared by wrangler is caught');
   check(drifts(changed(/resolves `\d+\.\d+\.\d+`/, () => 'resolves `0.0.1`'), 'esbuild resolved'), 'SECURITY.md gate self-test: a wrong resolved esbuild version is caught');
-  check(drifts(changed(/`undici` at exactly 7\.30\.1/, () => '`undici` at exactly 7.0.0'), 'undici'), 'SECURITY.md gate self-test: a wrong undici version is caught');
+  check(drifts(changed(/`undici` at exactly 7\.30\.2/, () => '`undici` at exactly 7.0.0'), 'undici'), 'SECURITY.md gate self-test: a wrong undici version is caught');
   check(drifts(changed(/`sharp` at exactly 0\.35\.5/, () => '`sharp` at exactly 0.0.1'), 'sharp'), 'SECURITY.md gate self-test: a wrong sharp version is caught');
   check(drifts(changed(/runtime tree to \d+ packages/, () => 'runtime tree to 1 packages'), 'runtime package count'), 'SECURITY.md gate self-test: a wrong runtime package count is caught');
   check(drifts(t, 'runtime package count', { ...lockPackages, 'node_modules/self-test-extra': { version: '1.0.0' } }), 'SECURITY.md gate self-test: a lockfile with one more runtime package is caught');

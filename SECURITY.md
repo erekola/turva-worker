@@ -46,10 +46,12 @@ advisories in `undici` 7.29.0, cleared when wrangler 4.145.0 brought in the
 patched `undici` 7.29.1. Three later advisories against that `undici` 7.29.1,
 GHSA-4qv8-2p9j-2685, GHSA-f72v-6w45-q472 and GHSA-xjj6-f33q-929c, all fixed in
 7.30.1, cleared on 2026-10-26, when wrangler 4.153.0 brought in `miniflare`
-5.20261023.0-beta, which pins `undici` at exactly 7.30.1. Checked 2026-11-15.
+5.20261023.0-beta, which pinned `undici` at exactly 7.30.1. Checked 2026-11-15.
+Since 2026-11-21, wrangler 4.166.0 brings in `miniflare` 5.20261119.0-beta,
+which pins `undici` at exactly 7.30.2.
 
 `esbuild` is in the toolchain only as a dependency of wrangler. Wrangler
-4.164.0 declares it at exactly `0.28.2`. The fix for GHSA-g7r4-m6w7-qqqr, an
+4.166.0 declares it at exactly `0.28.2`. The fix for GHSA-g7r4-m6w7-qqqr, an
 arbitrary file read in the esbuild development server on Windows, landed in
 `0.28.1`. `turva-worker/package-lock.json` resolves `0.28.2`, and
 `turva-worker/package.json` does not override it.
