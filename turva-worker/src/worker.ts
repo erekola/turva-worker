@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.260.5 - offer and service card names may break anywhere (2026-11-21, CSS only, text unchanged): .offer-name and .card .name take overflow-wrap:anywhere, because they sit in a column flex with align-items:flex-start, where break-word does not lower the minimum width, so a one-word name such as Implementation widened the page at 320 px with 200 % text; layout at normal text size is unchanged at 320, 390 and 1024 px
 // turva.dev worker v3.260.4 - no sentence in mono (2026-11-21, CSS and class names only, text unchanged): the price terms, a price slot that holds a sentence (class price-note) and the sample report's date line (class sample-date) are set in the sans stack
 // turva.dev worker v3.260.3 - MCP server card version 1.13.0 (Tek-886, 2026-11-21): get_services of turva-mcp also returns the engagement terms of /legal and the sample report's sections and findings, get_contact also returns the privacy sections of /legal, and the card's get_services and get_contact text name them; no page text changed.
 // turva.dev worker v3.260.2 - CSS-only accessibility release (2026-11-21, four fixes from an outside design review): every px font size in the page, article, home and 404 CSS is the equal rem value at a 16px root; FOOTER_CSS carries a prefers-contrast:more block that raises hairline borders and muted text and a forced-colors block that gives .btn, .cta-btn and .vform button a ButtonText border; .rc-foot reads in the body sans stack without tracking; the mono and code stacks are one stack, ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace.
@@ -8838,7 +8839,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.260.4",
+    "version": "3.260.5",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9147,7 +9148,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.260.4",
+  "version": "3.260.5",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -12812,7 +12813,7 @@ main{max-width:none;margin:0;padding:0;}
 .offer-name a{color:inherit;text-decoration:none;outline:none;}
 .offer-name a::after{content:"";position:absolute;inset:0;border-radius:10px;}
 .offer-top{display:flex;flex-direction:column;align-items:flex-start;gap:6px;}
-.offer-name{font-size:1.15rem;font-weight:700;color:#F2F4F3;}
+.offer-name{font-size:1.15rem;font-weight:700;color:#F2F4F3;overflow-wrap:anywhere;}
 .offer-price{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
 .offer-price.price-note{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
 .offer-covers{font-size:.95rem;line-height:1.55;color:#C9D1CE;}
@@ -13127,7 +13128,7 @@ a.card:focus-visible{outline:2px solid #5DF18F;outline-offset:3px;}
 .gcard h3 a{color:inherit;text-decoration:none;outline:none;}
 .gcard h3 a::after{content:"";position:absolute;inset:0;border-radius:10px;}
 .card-top{display:flex;flex-direction:column;align-items:flex-start;gap:6px;}
-.card h2,.card h3,.card .name{font-size:1.15rem;line-height:1.3;font-weight:700;color:#F2F4F3;margin:0;}
+.card h2,.card h3,.card .name{font-size:1.15rem;line-height:1.3;font-weight:700;color:#F2F4F3;margin:0;}.card .name{overflow-wrap:anywhere;}
 .card .price{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:1.05rem;font-weight:700;color:#5DF18F;}
 .price-line .price-note,.card .price-note{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
 .card p{font-size:.97rem;line-height:1.55;color:#C9D1CE;margin:0;}
