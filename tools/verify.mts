@@ -401,8 +401,9 @@ console.log('\nShare card manifest (tools/og-cards.json)');
     };
     const priced = names.map((n) => [n, cardAmounts(cards[n])] as [string, number[]]).filter(([, a]) => a.length > 0);
     const wrongAmounts = priced.filter(([, a]) => a.some((n) => !allowedAmounts.has(n)));
-    check(priced.length >= 3 && wrongAmounts.length === 0,
-      `every price on an og card is a facts.json price (${priced.length} cards carry a price, at least 3 expected)`
+    // 2026-11-22: two cards carry a price, the services card and the audit card; the floor was 3 while a blog post's card carried one, and that post is withdrawn.
+    check(priced.length >= 2 && wrongAmounts.length === 0,
+      `every price on an og card is a facts.json price (${priced.length} cards carry a price, at least 2 expected)`
       + (wrongAmounts.length ? ' :: wrong: ' + wrongAmounts.map(([n, a]) => n + ' ' + JSON.stringify(a)).join(', ') : ''));
     // The services card is the image META_BY_PATH gives /services, not a fixed file name: the file is
     // renamed when a social platform's cache of the old card must be broken (Tek-782 follow-up, 2026-11-08).
@@ -2280,7 +2281,6 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
     const sellPages: [string, string, string[]][] = [
       ['/agent-readiness-audit', 'title', ['audit']], ['/agent-readiness-audit', 'imageAlt', ['audit']],
       ['/services', 'imageAlt', PRICED.map((s) => s.priceKey)],
-      ['/blog/cheating-to-keep-the-old-price', 'imageAlt', ['audit']],
     ];
     let metaTokenCount = 0;
     for (const [path, field, keys] of sellPages) {
@@ -2290,7 +2290,8 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       check(text !== '' && toks.length >= keys.length && toks.every((n) => allowedAmounts.has(n)) && keys.every((k) => toks.includes(facts.prices[k])),
         `META_BY_PATH ${path} ${field} states ${keys.map((k) => euroOf(k)).join(', ')} and no other amount (read ${JSON.stringify(toks)})`);
     }
-    check(metaTokenCount >= 6, `META_BY_PATH price tokens read in the sell pages (${metaTokenCount}, at least 6 expected)`);
+    // 2026-11-22: the floor is the sum of the rows above, 1 + 1 + 3 = 5; it was 6 while a blog post's card text was a fourth row, and that post is withdrawn.
+    check(metaTokenCount >= 5, `META_BY_PATH price tokens read in the sell pages (${metaTokenCount}, at least 5 expected)`);
     // The MCP server card is signed; its add-on entry must match facts.json.
     const card = region('const MCP_SERVER_CARD = ', '\nconst OAUTH_DISCOVERY');
     const cardBundled = (card.match(/"bundledImplementation": \[([\s\S]*?)\n\s*\]/) || [])[1] || '';

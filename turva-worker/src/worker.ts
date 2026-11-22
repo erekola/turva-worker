@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.260.6 - contact sections, the audit definition, the company page and one post withdrawn (2026-11-22): the services and audit contact sections state the audit price, and the services one says which prices are fixed and that the reply proposes a price only for services priced per engagement; the home and services FAQ, the audit guide and llms.txt state in two sentences what an agent-readiness audit reads and what it does not assess, and the audit page states the second; the company page opens with the operator's name and carries AboutPage structured data with the person as its main entity, the person node carries a description and the company url, the article author node points at the company page and lists the same five sameAs addresses as the person node, guide page heads name the author, llms.txt lists the operator under Business details; the blog post withdrawn on 2026-11-22 is gone from the site with its page, listings, sitemap row, FAQ registration and card, the note that linked to it carries a dated correction, the post on what AI assistants call an agent-readiness audit carries a dated note on the new definition, the blog index counts 49 articles, and SITEMAP_LASTMOD moves to the release day
 // turva.dev worker v3.260.5 - offer and service card names may break anywhere (2026-11-21, CSS only, text unchanged): .offer-name and .card .name take overflow-wrap:anywhere, because they sit in a column flex with align-items:flex-start, where break-word does not lower the minimum width, so a one-word name such as Implementation widened the page at 320 px with 200 % text; layout at normal text size is unchanged at 320, 390 and 1024 px
 // turva.dev worker v3.260.4 - no sentence in mono (2026-11-21, CSS and class names only, text unchanged): the price terms, a price slot that holds a sentence (class price-note) and the sample report's date line (class sample-date) are set in the sans stack
 // turva.dev worker v3.260.3 - MCP server card version 1.13.0 (Tek-886, 2026-11-21): get_services of turva-mcp also returns the engagement terms of /legal and the sample report's sections and findings, get_contact also returns the privacy sections of /legal, and the card's get_services and get_contact text name them; no page text changed.
@@ -365,8 +366,10 @@ const LLMS_TXT = `# turva.dev
 > Agent-readiness audits and advisory for product teams.
 > Independent measurement of how readable a site or API is by AI agents,
 > with a prioritized fix list and implementation support.
-> An agent-readiness audit reads the website and its APIs, not an
-> organization's readiness to adopt agents.
+> An agent-readiness audit reads what a website and its APIs make
+> available and records what selected AI assistants answer about the
+> product. The audit does not assess an organization's readiness to
+> adopt agents.
 > Based in Tampere, Finland. Async-only engagement.
 > Language: English. Correspondence in English or Finnish.
 
@@ -397,6 +400,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Business details
 - Name: turva.dev
+- Operator: Erik Rekola
 - Business ID (Finland): 3600281-7
 - VAT ID: FI36002817
 - Location: Tampere, Finland
@@ -473,7 +477,6 @@ Final price is confirmed in writing after scope is agreed.
 - [Website agent readiness, measured on 567 company sites](https://turva.dev/blog/website-agent-readiness-567-sites.md)
 - [TRACE signs how an agent ran, not what it was allowed to reach](https://turva.dev/blog/trace-runtime-attestation.md)
 - [I scanned thirteen code hosts. Not one served an MCP server card.](https://turva.dev/blog/agent-readiness-code-hosts.md)
-- [It would be cheating to keep the old price](https://turva.dev/blog/cheating-to-keep-the-old-price.md)
 - [I thought it was a small job](https://turva.dev/blog/i-thought-it-was-a-small-job.md)
 - [My gate could not see a sixth](https://turva.dev/blog/my-gate-could-not-see-a-sixth.md)
 - [A red reading that measured my own client](https://turva.dev/blog/red-reading-that-measured-my-own-client.md)
@@ -2937,6 +2940,8 @@ Corrected 2026-10-31. The paragraph above says the FAQ on the services page and 
 
 Updated 2026-11-11. The FAQs on the home page and on the services page state again that the audit reads the website and its APIs, not an organization's readiness to adopt agents.
 
+Updated 2026-11-22. The FAQs on the home page and on the services page and the llms.txt summary now say in two sentences that an agent-readiness audit reads what a website and its APIs make available and records what selected AI assistants answer about the product, and that the audit does not assess an organization's readiness to adopt agents.
+
 ## Frequently asked
 
 **Is an agent readiness audit about the company or the website?**
@@ -3223,104 +3228,6 @@ Corrected 2026-10-02. A sentence said the two passes were metadata published so 
 - [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b)
 - [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites)
 `,
-  "/blog/cheating-to-keep-the-old-price": `# It would be cheating to keep the old price
-
-2026-08-21
-
-A dated account of pricing changes and the work behind them. Historical prices remain in the article, with the current service prices linked separately.
-
-Corrected 2026-09-05. The prices in this post are the ones in force when it was published. Since 2026-08-31 the Shopify agent storefront check is €999 and its correction implementation €499. The other prices did not change. The [services page](/services) carries the current prices, and this post keeps its own.
-
-Corrected 2026-11-01. The Shopify agent storefront check was withdrawn on 2026-10-31, so neither it nor its €499 correction implementation is sold any more. The FAQ answer said the check "is €999" and now says what it cost until then.
-
-The agent-readiness audit is now €4,300 and two weeks. It was €6,500 and two to three weeks. Nothing came out of the scope to pay for that.
-
-The scanner is the same one, isitagentready. The manual checks that sit over the scanner are the same. The follow-up after the fixes is still the thing the engagement is judged on: the next scan, a direct test that confirms a fix, or the report naming which tradeoff was kept on purpose.
-
-What moved is that the part the old price charged for twice is now written down once.
-
-## What the old price charged for twice
-
-An audit has two halves. One half is measuring a surface: run the scanner, read what it says, check by hand whether the number is telling the truth. That half is real work and it stays.
-
-The other half was me deciding, again, what a passing row actually looks like. Twenty-two checks, each one an open specification that moved in the last year, and for each one the question was the same: what does a correct implementation of this look like, what does the scanner accept, and what is the concrete change that flips it. I answered those questions from scratch every time, and the old price charged for the answering as well as the measuring.
-
-That is the half that is now a file. The checklist has 42 rows. Every row names the pass condition, points at a working implementation of that row on a live surface, and links the fix recipe. There are 25 recipes behind it, one per check or close group.
-
-The live surface the rows point at is this site, because it passes every scored check and I can show the code for each one.
-
-## What it cost to get there
-
-I read my own workspace file by file over seven days in August and recorded 367 findings. That was written up at the time. Since then the same treatment went to the four repositories at byte level, and then to the folders and documents, and then three verification rounds ran over the folder audit and the session before it.
-
-The folder and document audit removed 2 317 files and 116 622 446 bytes. Not one line of source was in what went. It was temporary renders, build caches, a dependency tree and six revision copies of one file. I am not quoting a before and after total for the workspace, because three measurements of it taken the same day differ by up to 39 281 bytes: tools write into the folder that was supposed to be the anchor, so that total is not a number anyone should cite.
-
-Three sessions did that work: 2 254 messages, and about 366 million tokens as the raw sum. Weighted the way billing weights them, where a cache read is a tenth of a fresh input token and an output token is five, it comes to about 88 million.
-
-Across every session recorded on this machine the raw sum is 7 197 173 453 tokens, and the weighted figure is 1 849 081 095. Those totals are a floor rather than a count. The transcript tree holds 25 days, and a disk restore in August took five weeks of it with it, so the missing period is missing from the number too.
-
-That spend is mine. It produced no invoice and it was never billable. What it produced is the file that means the next audit does not repeat it. Keeping the old price and the old clock would mean charging a client for work that is already done.
-
-## What the checklist found
-
-The obvious reading of a lower price and a shorter clock is that something got smaller. The first thing the checklist did was find a gap in my own material, before it ran on anyone else's.
-
-Writing the checklist out found a hole in my own material. The scanner scores a check called ard, the capability manifest at /.well-known/ai-catalog.json. My own recipe index named 21 checks and that one was not among them, and no recipe covered it. My own gate did not catch it either, because the gate reads the checks a recipe claims and has nothing to say about a check with no recipe at all. An audit run from that index would have skipped a scored check and still looked complete.
-
-That is one check out of 22, on a site that serves the manifest correctly and passes the check. It was invisible for as long as the method lived in my head, and it was visible as soon as the method became a list.
-
-A shorter engagement also removes a real source of error. Two to three weeks is long enough for the specifications to move underneath the report, which has already happened here. A payment specification dropped in a point release the extension that three of my guides described, and the MCP server card proposal moved onto an extensions track while the sentence about it stood still. Two weeks leaves that less room. It does not remove it.
-
-## What these numbers do not prove
-
-Between the two windows the transcript tree records, the weighted cost per message fell from about 69 700 to about 41 100 tokens. It is tempting to read that as the cleanup paying for itself, and I am not going to claim it. The two windows are five weeks apart, the models in them are different, and the mix of work is different. The drop is real in the record and its cause is not established, so it is an observation and not evidence.
-
-The checklist has also not yet run against a client surface. It was built from 13 rounds of reading my own, which is a real basis and a narrow one.
-
-## What is unchanged
-
-Fixed scope, written before any payment. Async only, no calls and no calendar links. Read access is enough, production credentials are not requested, and write access is scoped per task only if implementation is bought separately. The report names its fixes in order of impact, and the follow-up checks each one with the next scan or a direct test: it either reads higher in the categories the report named, a direct test confirms the fix or the report explains which tradeoff was kept on purpose.
-
-The other prices did not move at the time. When this was published the Shopify agent storefront check was €1,900 within 48 hours of a written kickoff, advisory was €3,000 per month with a three month minimum, and implementation was €1,500 per day. All prices exclude VAT.
-
-The scope is agreed in writing first. I reply by email within one business day.
-
-## Frequently asked
-
-**Does a lower price mean a smaller audit?**
-
-No. The scanner is the same one, the manual checks over it are the same, and the report still names its fixes in order of impact, and the follow-up checks each one with the next scan or a direct test, or the report explains which tradeoff was kept on purpose. What got shorter is the part where I work out from scratch what a passing check looks like, which is now a written checklist of 42 rows.
-
-**What does an agent-readiness audit cost?**
-
-€4,300, fixed scope, two weeks, VAT excluded. When this was published the other prices had not moved: the Shopify agent storefront check was €1,900, advisory €3,000 per month with a three month minimum, and implementation €1,500 per day. From 2026-08-31 the Shopify check cost €999 until it was withdrawn on 2026-10-31, and the services page carries the current prices.
-
-**How long does the audit take?**
-
-Two weeks from the agreed written kickoff. It was two to three weeks, and the shorter window also leaves the specifications less time to move underneath the report.
-
-**What did writing the checklist find?**
-
-Writing the checklist out immediately found a scored check, ard, that was missing from my own fix recipe index and from my own gate. That is the kind of hole the list exists to catch, and it caught it on me first.
-
-Corrected 2026-09-03. Three sentences in this post read as if a client had already paid the old price. None had: the audit had not sold at €6,500. They now say what the old price charged for. Nothing else in the post changed.
-
-Corrected 2026-09-27. A heading and a question said the accuracy does not drop. That was not measured, and one check found missing in my own material does not show it, so both now say what the checklist found. No price or number changed.
-
-Corrected 2026-09-28. The either/or promise about the next scan did not name a direct test as a way to confirm a fix, though the engagement principles and the audit page already do. The sentence now names the same three outcomes, a higher reading, a direct test that confirms the fix or the report naming which tradeoff was kept on purpose.
-
-Corrected 2026-09-29. The answer on whether a lower price means a smaller audit still said a re-scan verifies the fixes. It now names the same three outcomes as the rest of the post: the next scan, a direct test or an explained tradeoff.
-
-Corrected 2026-09-29. The introduction still called the re-scan the only claim about the result. It now names the same three outcomes as the FAQ.
-
-Corrected 2026-11-06. The section on what is unchanged and the answer on whether a lower price means a smaller audit said the report "names 3 to 10 fixes in order of impact". No current page promises a number of fixes, so both now say that the report names its fixes in order of impact.
-
-## Related
-
-- [I thought it was a small job](/blog/i-thought-it-was-a-small-job)
-- [How to choose an agent-readiness audit](/guides/choosing-an-agent-readiness-audit)
-- [Measurement-led agent readiness](/guides/measurement-led-agent-readiness)
-`,
   "/blog/i-thought-it-was-a-small-job": `# I thought it was a small job
 
 2026-08-16
@@ -3602,7 +3509,9 @@ An earlier post left these two checks red, on the reasoning that satisfying them
 
 ## The services, and how a card payment works
 
-Corrected 2026-08-21. The agent-readiness audit price and its checkout link moved to €4,300 and two weeks, from €6,500 and two to three weeks, as [It would be cheating to keep the old price](/blog/cheating-to-keep-the-old-price) explains. Advisory and implementation kept their prices and links.
+Corrected 2026-08-21. The agent-readiness audit price and its checkout link moved to €4,300 and two weeks, from €6,500 and two to three weeks. Advisory and implementation kept their prices and links.
+
+Corrected 2026-11-22. The note above linked to one of my other posts, which I have since withdrawn. That link is removed. No figure about this site changed.
 
 The three fixed offerings have a card checkout link each, prices ex VAT:
 
@@ -4515,7 +4424,7 @@ Dated studies, protocol notes, build notes and lab notes from turva.dev. Each st
 
 ## Browse all articles
 
-50 articles.
+49 articles.
 
 - [Everyone has the same models. My harness is the difference.](/blog/everyone-has-the-same-models) 2026-11-17. Lab notes. The models are the same for anyone, and I think the edge is the harness around them. Here is a month of my Claude Code gate logs and how blocks were answered.
 - [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph). 2026-11-06. Lab notes. I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and in two agent tests the answers stayed the same.
@@ -4544,7 +4453,6 @@ Dated studies, protocol notes, build notes and lab notes from turva.dev. Each st
 - [Website agent readiness, measured on 567 company sites](/blog/website-agent-readiness-567-sites). 2026-09-03. Research. Of 567 selected company websites, 485 read Level 1 of 5, 85,5 percent. The sample is a prospecting list, and the scanner's check set changed during the study.
 - [TRACE signs how an agent ran, not what it was allowed to reach](/blog/trace-runtime-attestation). 2026-08-30. Protocol notes. This article examines what a TRACE Trust Record attests to, and why runtime evidence does not itself establish the right permissions or correct decisions.
 - [I scanned thirteen code hosts. Not one served an MCP server card.](/blog/agent-readiness-code-hosts) 2026-08-22. Research. Fourteen code-host surfaces were scanned on one day. The findings concern public discovery paths, not the full capabilities of each hosting service.
-- [It would be cheating to keep the old price](/blog/cheating-to-keep-the-old-price). 2026-08-21. Build notes. A dated account of pricing changes and the work behind them. Historical prices remain in the article, with the current service prices linked separately.
 - [I thought it was a small job](/blog/i-thought-it-was-a-small-job). 2026-08-16. Build notes. A seven-day review of the author's own workspace found 367 issues across nine packages. The article records the effort, findings and limits of that work.
 - [My gate could not see a sixth](/blog/my-gate-could-not-see-a-sixth). 2026-08-04. Build notes. A passing validation gate missed elements it never expected. The investigation shows why checking required members differs from checking the complete set.
 - [A red reading that measured my own client](/blog/red-reading-that-measured-my-own-client). 2026-07-30. Build notes. An MCP request seemed to expose a server regression but selected the wrong compatibility path. The article records how request and response were told apart.
@@ -5624,7 +5532,7 @@ You work directly with me. I'm an independent consultant based in Tampere, Finla
 
 **What does agent-readiness mean?**
 
-It means how well an AI agent can find and use the information your website or API publishes. This work examines your product's public information and interfaces. An agent-readiness audit reads the website and its APIs, not an organization's readiness to adopt agents.
+It means how well an AI agent can find and use the information your website or API publishes. This work examines your product's public information and interfaces. An agent-readiness audit reads what a website and its APIs make available and records what selected AI assistants answer about the product. The audit does not assess an organization's readiness to adopt agents.
 
 **Is that the same as AI visibility?**
 
@@ -6094,13 +6002,13 @@ GLM 5.3 through Melious AI GmbH. In active security testing and the MCP server s
 
 **Does the audit assess our organization's readiness for AI?**
 
-No. An agent-readiness audit reads the website and its APIs, not an organization's readiness to adopt agents.
+No. An agent-readiness audit reads what a website and its APIs make available and records what selected AI assistants answer about the product. The audit does not assess an organization's readiness to adopt agents.
 
 Full detail is in the [terms and data handling](/legal).
 
 ## Tell me what you need
 
-Email [info@turva.dev](mailto:info@turva.dev) with the URL and your question. I'll reply within one business day with a proposed scope, price and start date.
+Email [info@turva.dev](mailto:info@turva.dev) with the URL and your question. The audit has a fixed price of €4,300 plus VAT, and the day rate, the monthly price and the correction add-on price stated above are fixed as well. I'll reply within one business day with a proposed scope and start date. For the services whose price is agreed for the engagement, the same reply proposes a price.
 
 We work in writing. There are no calls or calendar links.
 
@@ -6114,6 +6022,8 @@ All prices exclude VAT. 25,5% for Finnish customers, reverse charge for business
 Can an AI assistant find the right information about your product?
 
 I check what your website and API make available, whether the facts agree, and what selected AI assistants answer about your product.
+
+The audit does not assess an organization's readiness to adopt agents.
 
 €4,300 plus VAT. Delivered within two weeks of the agreed written kickoff. Fixed scope. Price valid until 2027-06-30.
 
@@ -6231,7 +6141,7 @@ Active security testing is an add-on to an audit, priced by quote for each writt
 
 ## Tell me what you want to understand
 
-Send the URLs of up to two targets and your question to [info@turva.dev](mailto:info@turva.dev). I reply within one business day.
+Send the URLs of up to two targets and your question to [info@turva.dev](mailto:info@turva.dev). I reply within one business day. The audit price is fixed at €4,300 plus VAT and covers up to two targets.
 
 We work in writing, with no calls or meetings.
 
@@ -6242,7 +6152,7 @@ All prices exclude VAT. Finnish customers pay 25,5%. Business customers in anoth
 
   "/company": `# Work directly with Erik Rekola
 
-I'm an independent consultant in Tampere, Finland. I check websites and APIs to understand what AI agents can access and where the information needs attention.
+I'm Erik Rekola, and I run turva.dev as an independent consultant in Tampere, Finland. I check websites and APIs to understand what AI agents can access and where the information needs attention.
 
 You work directly with me, from agreeing the scope to reading the findings and deciding what to do next. I do not use subcontractors. The service providers that client material and correspondence can reach are listed on the [legal page](/legal).
 
@@ -6858,6 +6768,8 @@ For an audit, contact info@turva.dev.
   "/guides/agent-readiness-audit": `# What a website and API agent-readiness audit covers
 
 A technical scan, manual review and observed AI answers reveal different problems.
+
+An agent-readiness audit reads what a website and its APIs make available and records what selected AI assistants answer about the product. The audit does not assess an organization's readiness to adopt agents.
 
 Most sites are built for human readers and search crawlers. Some AI agents read differently, using machine-readable entry points such as llms.txt, a sitemap, response headers, structured data and well-known manifests. Which of them a client reads varies. When those are missing, an agent that cannot parse the page's rendered layout either guesses at the fact or gives up on the page. An agent built with a fallback, such as a search result or a cached summary, may still complete the task another way.
 
@@ -8839,7 +8751,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.260.5",
+    "version": "3.260.6",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8980,7 +8892,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"p9A8peYYyPdQDU7i_rz_B1LVTZ-r0pUk7Ye1xpiLWSFktMqGVKo9eK9pGwxYL-bwHx0pa4PUFRmLkn-YTfrMBw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"S3MvUWISp8pVCSHfr2v9Y6ytfHkT8-722RJz5-TRBZuDvT4FcEHT9WupcwyCt82hGgoTphJISE0GpyjqCvbnDw\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"p9A8peYYyPdQDU7i_rz_B1LVTZ-r0pUk7Ye1xpiLWSFktMqGVKo9eK9pGwxYL-bwHx0pa4PUFRmLkn-YTfrMBw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KtbHj0PucmwHjiQFDLyWN0yHkOPwctgGQpJ03Z8UGOMDBwNYI-Uuya3q7RBBrsq3Fq6EfPywIdrxB4JDuPgADg\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -9148,7 +9060,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.260.5",
+  "version": "3.260.6",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9850,7 +9762,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-21";
+const SITEMAP_LASTMOD = "2026-11-22";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -9917,7 +9829,6 @@ const SITEMAP_ENTRIES = [
   ["/blog/website-agent-readiness-567-sites", "monthly", "0.6"],
   ["/blog/trace-runtime-attestation", "monthly", "0.6"],
   ["/blog/agent-readiness-code-hosts", "monthly", "0.6"],
-  ["/blog/cheating-to-keep-the-old-price", "monthly", "0.6"],
   ["/blog/i-thought-it-was-a-small-job", "monthly", "0.6"],
   ["/blog/my-gate-could-not-see-a-sixth", "monthly", "0.6"],
   ["/blog/red-reading-that-measured-my-own-client", "monthly", "0.6"],
@@ -10013,7 +9924,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/blog/everyone-has-the-same-models", "/blog/my-agents-notes-were-already-a-graph", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/cheating-to-keep-the-old-price", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/blog/everyone-has-the-same-models", "/blog/my-agents-notes-were-already-a-graph", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -10237,7 +10148,7 @@ const META_BY_PATH = {
     description: "Of 41 answers to the bare term agent readiness, 18 described an organization's readiness and 13 a website's. Four assistants answered on one day.",
     date: "2026-09-03",
     kind: "Research",
-    modified: "2026-11-11",
+    modified: "2026-11-22",
     image: "/og-what-ai-assistants-call-an-agent-readiness-audit.jpg",
     imageAlt: "turva.dev blog card: Fifty buyer questions to four AI assistants: 18 of 41 open answers describe an organization's readiness and 13 the website. Two services share one name.",
   },
@@ -10269,15 +10180,6 @@ const META_BY_PATH = {
     kind: "Research",
     image: "/og-agent-readiness-code-hosts.jpg",
     imageAlt: "turva.dev blog card: Fourteen code host surfaces scanned with an independent scanner on one day. Not one served an MCP server card, and the highest reading was Level 1 of 5.",
-  },
-  "/blog/cheating-to-keep-the-old-price": {
-    title: "It would be cheating to keep the old price · turva.dev",
-    description: "A dated account of pricing changes and the work behind them. Historical prices remain in the article, with the current service prices linked separately.",
-    date: "2026-08-21",
-    kind: "Build notes",
-    modified: "2026-11-06",
-    image: "/og-cheating-to-keep-the-old-price.jpg",
-    imageAlt: "turva.dev blog card: The audit drops to 4,300 euros and two weeks. The part the old price charged for twice is now a written checklist.",
   },
   "/blog/i-thought-it-was-a-small-job": {
     title: "I thought it was a small job · turva.dev",
@@ -10319,7 +10221,7 @@ const META_BY_PATH = {
     description: "A dated implementation note separates discoverable payment declarations from settlement. The scanner checks changed, the settlement boundary did not.",
     date: "2026-07-20",
     kind: "Build notes",
-    modified: "2026-11-06",
+    modified: "2026-11-22",
     image: "/og-finishing-the-optional-commerce-checks.jpg",
     imageAlt: "turva.dev blog card: Taking the last two optional commerce checks, x402 and MPP, to green on isitagentready without faking settlement, and what the scanner actually probes."
   },
@@ -10781,7 +10683,7 @@ const SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","n
 const SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"Organization","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
-{"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
+{"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","description":"Founder of turva.dev, an independent agent-readiness audit and advisory business in Tampere, Finland.","url":"https://turva.dev/company","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 ${SCHEMA_SERVICE},
 {"@type":"FAQPage","@id":"https://turva.dev/#faq","inLanguage":"en","mainEntity":[
@@ -12064,16 +11966,19 @@ function buildGuideJsonLd(pathname: string, canonicalUrl: string) {
   const isBlogHub = pathname === "/blog";
   const article: { [k: string]: any } = {
     "@context": "https://schema.org",
-    "@type": pathname === "/guides" ? "CollectionPage" : (isGuide ? "TechArticle" : (isBlogPost ? "BlogPosting" : (isBlogHub ? "Blog" : "WebPage"))),
+    "@type": pathname === "/guides" ? "CollectionPage" : (isGuide ? "TechArticle" : (isBlogPost ? "BlogPosting" : (isBlogHub ? "Blog" : (pathname === "/company" ? "AboutPage" : "WebPage")))),
     "headline": headline,
     "description": m.description,
     "url": url,
     "image": { "@type": "ImageObject", "url": "https://turva.dev" + (m.image || "/og.jpg"), "width": 1200, "height": 630 },
     "inLanguage": "en",
-    "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://gravatar.com/erekola"] },
+    "author": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "url": "https://turva.dev/company", "sameAs": ["https://www.wikidata.org/wiki/Q140276321", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://social.turva.dev/@erik", "https://gravatar.com/erekola"] },
     "publisher": { "@type": "Organization", "@id": "https://turva.dev/#business", "name": "turva.dev", "url": "https://turva.dev/", "sameAs": ["https://www.wikidata.org/wiki/Q140276251"] },
     "isPartOf": { "@type": "WebSite", "name": "turva.dev", "url": "https://turva.dev/" },
-    ...(isBlogPost ? {} : { "about": "agent-readiness" })
+    ...(isBlogPost ? {} : { "about": "agent-readiness" }),
+    // The company page is the page about the person behind the business: it is an AboutPage and
+    // names that person as its main entity, with the same @id, url and sameAs as the home graph.
+    ...(pathname === "/company" ? { "mainEntity": { "@type": "Person", "@id": "https://turva.dev/#person", "name": "Erik Rekola", "jobTitle": "Agent-readiness consultant", "description": "Founder of turva.dev, an independent agent-readiness audit and advisory business in Tampere, Finland.", "url": "https://turva.dev/company", "worksFor": { "@id": "https://turva.dev/#business" }, "sameAs": ["https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://www.wikidata.org/wiki/Q140276321", "https://social.turva.dev/@erik", "https://gravatar.com/erekola"] } } : {})
   };
   if (isBlogPost && m.date) {
     article.datePublished = m.date;
@@ -12171,7 +12076,6 @@ const GUIDE_PAGE_FAQ = {
   "/services": mdFaqBlocks("/services", "Frequently asked").pairs,
   "/guides/agentic-resource-discovery": mdFaqBlocks("/guides/agentic-resource-discovery", "Frequently asked").pairs,
   "/blog/agent-readiness-code-hosts": mdFaqBlocks("/blog/agent-readiness-code-hosts", "Frequently asked").pairs,
-  "/blog/cheating-to-keep-the-old-price": mdFaqBlocks("/blog/cheating-to-keep-the-old-price", "Frequently asked").pairs,
   "/blog/i-thought-it-was-a-small-job": mdFaqBlocks("/blog/i-thought-it-was-a-small-job", "Frequently asked").pairs,
   "/guides/ai-agent-use-cases": mdFaqBlocks("/guides/ai-agent-use-cases", "Frequently asked").pairs,
   "/guides/letting-agents-act-on-data": mdFaqBlocks("/guides/letting-agents-act-on-data", "Frequently asked").pairs,
@@ -12524,8 +12428,9 @@ function serveGuideHtml(pathname: string, canonicalUrl: string) {
   // a publication or modification date and is not written into the JSON-LD as one. Since Tek-730
   // (2026-10-31) it is carried as schema.org lastReviewed on the mainEntityOfPage WebPage, the
   // property that names exactly this, and datePublished and dateModified stay off the guides.
+  // Since 3.260.6 the head also names the author, in the form of the blog byline above.
   const checkedLine = navSection === "/guides" && meta.checked
-    ? `<p class="date">Sources checked ${meta.checked}</p>\n`
+    ? `<p class="date">Erik Rekola &middot; Sources checked ${meta.checked}</p>\n`
     : "";
   const pageHead = crumb || byline || checkedLine ? `<header class="pagehead">\n${crumb}${byline}${checkedLine}</header>\n` : "";
   const withChecked = aliased;

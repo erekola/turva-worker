@@ -224,7 +224,8 @@ test("the article frame sits outside <main>: back link, frame dates and next ste
   const gm = mainOf(guide);
   assert.ok(gm.includes("<h1>llms.txt explained</h1>"), "the guide's main holds the article");
   for (const frame of ['class="crumb"', "Sources checked", 'class="next"']) assert.ok(!gm.includes(frame), "not inside the guide's main: " + frame);
-  assert.match(guide, /<header class="pagehead">\n<p class="crumb"><a href="\/guides">&#8249; all guides<\/a><\/p>\n<p class="date">Sources checked \d{4}-\d{2}-\d{2}<\/p>\n<\/header>\n<main id="main" class="has-next">/, "back link and checked date in the page head");
+  // 2026-11-22 (3.260.6): the guide's page head names the author before the checked date, as the blog byline does.
+  assert.match(guide, /<header class="pagehead">\n<p class="crumb"><a href="\/guides">&#8249; all guides<\/a><\/p>\n<p class="date">Erik Rekola &middot; Sources checked \d{4}-\d{2}-\d{2}<\/p>\n<\/header>\n<main id="main" class="has-next">/, "back link and checked date in the page head");
   assert.match(guide, /<\/main>\n<div class="pagefoot"><aside class="next"><p>/, "the next step follows main");
   const post = await (await get("/blog/html-and-markdown-can-disagree")).text();
   const pm = mainOf(post);
