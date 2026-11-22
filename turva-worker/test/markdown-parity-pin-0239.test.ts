@@ -142,9 +142,9 @@ async function viaRoute(htmlBody: string, markdownBody: string, input: Record<st
 const shapeHtml = `<main><h1>Tools</h1><p>Read the guide.</p></main>`;
 const shapeMd = `# Tools\n\nWrite to user:${SECRET}@host.tld/path for access.\n\nRead the guide.\n\n[user:${SECRET}@host.tld/p?k=v](https://turva.dev/x)\n`;
 
-test("pin 0.2.40: the package is the pinned one", () => {
-  assert.equal(TOOL_VERSION, "0.2.40");
-  assert.equal(JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).dependencies["markdown-parity-check"], "0.2.40");
+test("pin 0.2.41: the package is the pinned one", () => {
+  assert.equal(TOOL_VERSION, "0.2.41");
+  assert.equal(JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).dependencies["markdown-parity-check"], "0.2.41");
 });
 
 test("pin 0.2.40: text of the shape name:secret@host.tld/path is masked in the JSON answer of the route", async () => {
@@ -182,5 +182,25 @@ test("pin 0.2.40: an invalid selector that holds the shape answers 422 with the 
     assert.ok(!reply.includes(SECRET), accept + ": the secret is not in the answer");
     assert.ok(r.text.includes("The CSS selector is not valid."), accept + ": the fixed sentence");
     if (accept === "json") assert.equal(JSON.parse(r.text).summary.errorValue, `a[href="user:***@host.tld/p`, "the value shown apart is the masked one");
+  }
+});
+
+// markdown-parity-check 0.2.41 (hosted since v3.260.8) shows a link target with a special scheme and fewer than two
+// slashes after the colon that holds an @, as in https:/user:secret@host.tld/x, as https://***/. Against a base of the
+// same scheme the URL parser resolved it as a path of the page's own host, so the package 0.2.40 showed the secret in
+// that path (P3-1 in the package changelog). Through this route 0.2.40 already kept the secret out of both answers
+// (measured 2026-11-22 with 0.2.40 installed: the secret check passed and the shown-form check failed), so the test
+// pins the form 0.2.41 shows.
+test("pin 0.2.41: a link target whose user information the parser reads as a path is masked in both answers of the route", async () => {
+  const markdown = `# Tools\n\nRead the [guide](https:/user:${SECRET}@host.tld/x).\n`;
+  for (const accept of ["json", "html"] as const) {
+    const r = await viaRoute(shapeHtml, markdown, { url: PAGE }, accept);
+    assert.equal(r.status, 200, accept);
+    assert.ok(!r.text.includes(SECRET), accept + ": the secret is not in the answer");
+    assert.ok(r.text.includes("https://***/"), accept + ": the masked target is shown");
+    if (accept === "json") {
+      const link = JSON.parse(r.text).findings.find((f: { code: string }) => f.code === "LINK_ADDED");
+      assert.equal(link && link.after, "https://***/", "the link finding shows the target with no host: " + JSON.stringify(link ?? JSON.parse(r.text)).slice(0, 600));
+    }
   }
 });

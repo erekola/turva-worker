@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.260.8 - the hosted Markdown parity check moves from markdown-parity-check 0.2.40 to 0.2.41 (2026-11-22): a link target with a special scheme and fewer than two slashes after the colon that holds an @, as in https:/user:secret@host/x, is shown as https://***/ in a link finding, and the package masks more link target shapes whose user information a URL parser and a reader split differently. Through this route the report already kept such a secret out, so the answer changes only in the shown form and in the toolVersion field. The hosted llms.txt validator trims the ends of an address and of a media type with index loops instead of a regular expression of the form /^[set]+|[set]+$/g, whose time grew with the square of a run of spaces inside the value (CodeQL js/polynomial-redos on the package turva-llms-txt-validator 0.8.1); every result is unchanged, and the package mirrors this from 0.8.2. The sitemap date stays, because no page text changed.
 // turva.dev worker v3.260.7 - masking repairs in the hosted llms.txt validator from an outside fuzz run (2026-11-22): maskLocation reads a backslash between a Windows domain and a user name as part of the user information, so a DOMAIN-backslash-user address with a # or a ? in its password no longer shows the start of the password; a scheme-less user:password@host is masked from its text before it is resolved against a base, so a fifth redirect refused as too many no longer prints the password inside the path of the shown address; C0 controls and spaces at either end of an address go before it is read, as the URL parser removes them; and the content-type check lowercases ASCII letters only and trims HTTP white space only, so a media type with a leading no-break space or a Kelvin sign warns instead of passing. The package turva-llms-txt-validator 0.8.1 mirrors the four repairs. The MCP server card names version 1.13.1 (C3 protocol fixes, Tek-895).
 // turva.dev worker v3.260.6 - contact sections, the audit definition, the company page and one post withdrawn (2026-11-22): the services and audit contact sections state the audit price, and the services one says which prices are fixed and that the reply proposes a price only for services priced per engagement; the home and services FAQ, the audit guide and llms.txt state in two sentences what an agent-readiness audit reads and what it does not assess, and the audit page states the second; the company page opens with the operator's name and carries AboutPage structured data with the person as its main entity, the person node carries a description and the company url, the article author node points at the company page and lists the same five sameAs addresses as the person node, guide page heads name the author, llms.txt lists the operator under Business details; the blog post withdrawn on 2026-11-22 is gone from the site with its page, listings, sitemap row, FAQ registration and card, the note that linked to it carries a dated correction, the post on what AI assistants call an agent-readiness audit carries a dated note on the new definition, the blog index counts 49 articles, and SITEMAP_LASTMOD moves to the release day
 // turva.dev worker v3.260.5 - offer and service card names may break anywhere (2026-11-21, CSS only, text unchanged): .offer-name and .card .name take overflow-wrap:anywhere, because they sit in a column flex with align-items:flex-start, where break-word does not lower the minimum width, so a one-word name such as Implementation widened the page at 320 px with 200 % text; layout at normal text size is unchanged at 320, 390 and 1024 px
@@ -8752,7 +8753,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.260.7",
+    "version": "3.260.8",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9061,7 +9062,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.260.7",
+  "version": "3.260.8",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -13699,6 +13700,31 @@ function isValidPublicHost(host: string): boolean {
   if (["localhost", "localdomain", "local", "internal", "home", "lan", "corp", "test", "invalid", "arpa", "onion"].includes(tld)) return false;
   return true;
 }
+// Removes a run of the characters strip accepts from each end of s, with two index loops. The regex form
+// s.replace(/^[set]+|[set]+$/g, "") tries the trailing alternative again from every position inside a long run of
+// those characters that does not reach the end, so its time grows with the square of the run (CodeQL
+// js/polynomial-redos on the package turva-llms-txt-validator, 2026-11-22). The result is the same string.
+// The package mirrors this as trimEnds() from 0.8.2.
+function trimEnds(s: string, strip: (c: number) => boolean): string {
+  let a = 0;
+  let b = s.length;
+  while (a < b && strip(s.charCodeAt(a))) a++;
+  while (b > a && strip(s.charCodeAt(b - 1))) b--;
+  return s.slice(a, b);
+}
+// The characters maskLocation() removes at either end of an address: C0 controls and spaces, which a URL parser
+// drops, and the Unicode white space, U+0085, U+180E, U+200B and U+FFFD, which a reader does not see.
+function isUrlEdge(c: number): boolean {
+  return c <= 0x20 || c === 0x85 || c === 0x180e || c === 0x200b || c === 0xfffd || /\s/.test(String.fromCharCode(c));
+}
+// C0 controls and spaces, the characters a URL parser removes at either end of an address.
+function isC0OrSpace(c: number): boolean {
+  return c <= 0x20;
+}
+// HTTP white space: tab, LF, CR and space.
+function isHttpSpace(c: number): boolean {
+  return c === 0x09 || c === 0x0a || c === 0x0d || c === 0x20;
+}
 // A redirect target the way a report may show it. The scheme, the host and the path stay readable,
 // and the parts that can carry a secret do not: the user name and the password are removed, every
 // query value becomes ***, and the fragment is dropped. The caller cuts the result to length
@@ -13722,8 +13748,7 @@ function maskLocation(href: string, base?: string, written?: string): string {
   // The same reading also removes, at either end, the invisible characters that a URL parser keeps: the Unicode
   // white space, U+0085, U+180E, U+200B and U+FFFD. A reader does not see them, so a value that starts with U+2003
   // and then https:/user:pw@host is read as the address it shows (L3 of the third independent check).
-  const edge = "[\\x00-\\x20\\s" + String.fromCharCode(0x85, 0x180e, 0x200b, 0xfffd) + "]+";
-  const parserInput = (t: string) => t.replace(/[\t\n\r]/g, "").replace(new RegExp("^" + edge + "|" + edge + "$", "g"), "");
+  const parserInput = (t: string) => trimEnds(t.replace(/[\t\n\r]/g, ""), isUrlEdge);
   const text = parserInput(String(href));
   // Where an authority starts in a text, read from the text and not from the parser: after a scheme and two slashes, the
   // scheme being whatever stands before "://" with no / \ ? or # in it. invalid is true when that "scheme" is not one.
@@ -13765,7 +13790,7 @@ function maskLocation(href: string, base?: string, written?: string): string {
     const w = parserInput(String(written));
     // A written form that lost invisible characters at its ends was resolved by the parser with them, so href is not the
     // address the reading sees, and the written form is masked instead (differential fuzz against 3.260.6).
-    const parserOwn = String(written).replace(/[\t\n\r]/g, "").replace(/^[\x00-\x20]+|[\x00-\x20]+$/g, "");
+    const parserOwn = trimEnds(String(written).replace(/[\t\n\r]/g, ""), isC0OrSpace);
     if (ambiguous(w) || shapeOf(w).invalid || (w !== parserOwn && w.includes("@"))) return maskLocation(written, base);
   }
   if (ambiguous(text)) {
@@ -14984,7 +15009,7 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   }
   // The media type is compared whole, without its parameters. A substring test passed
   // application/x-text/plain and text/markdownish until 2026-09-27 (Tek-496).
-  const mediaType = ct.split(";")[0].replace(/^[\t\n\r ]+|[\t\n\r ]+$/g, "");
+  const mediaType = trimEnds(ct.split(";")[0], isHttpSpace);
   if (mediaType === "text/plain" || mediaType === "text/markdown") {
     add("content-type", "pass", "Response is plain text", mediaType);
   } else {

@@ -507,7 +507,10 @@ function loadMaskLocation(): (href: string, base?: string, written?: string) => 
   assert.ok(start >= 0, "maskLocation is in worker.ts");
   const close = /\n\}\r?\n/.exec(src.slice(start));
   assert.ok(close, "maskLocation has a closing brace at column 0");
-  return new Function(src.slice(start, start + close.index + 2) + "\nreturn maskLocation;")();
+  // maskLocation calls the trim helpers declared right above its comment block (3.260.8), so the slice starts there.
+  const helpers = src.search(/function trimEnds\(/);
+  assert.ok(helpers >= 0 && helpers < start, "the trim helpers stand before maskLocation");
+  return new Function(src.slice(helpers, start + close.index + 2) + "\nreturn maskLocation;")();
 }
 
 test("maskLocation hides user information that holds a ? or a #, whether or not the URL parser reads the text as a URL", () => {

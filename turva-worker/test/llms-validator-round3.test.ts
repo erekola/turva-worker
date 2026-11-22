@@ -209,7 +209,10 @@ function loadMaskLocation() {
   assert.ok(start >= 0, "maskLocation is in worker.ts");
   const close = /\n\}\r?\n/.exec(src.slice(start));
   assert.ok(close, "maskLocation has a closing brace at column 0");
-  const body = src.slice(start, start + close.index + 2);
+  // maskLocation calls the trim helpers declared right above its comment block (3.260.8), so the slice starts there.
+  const helpers = src.search(/function trimEnds\(/);
+  assert.ok(helpers >= 0 && helpers < start, "the trim helpers stand before maskLocation");
+  const body = src.slice(helpers, start + close.index + 2);
   return new Function(body + "\nreturn maskLocation;")();
 }
 

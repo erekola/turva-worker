@@ -19,7 +19,10 @@ function loadMaskLocation(): (href: string, base?: string, written?: string) => 
   assert.ok(start >= 0, "maskLocation is in worker.ts");
   const close = /\n\}\r?\n/.exec(src.slice(start));
   assert.ok(close, "maskLocation has a closing brace at column 0");
-  return new Function(src.slice(start, start + close.index + 2) + "\nreturn maskLocation;")();
+  // maskLocation calls the trim helpers declared right above its comment block (3.260.8), so the slice starts there.
+  const helpers = src.search(/function trimEnds\(/);
+  assert.ok(helpers >= 0 && helpers < start, "the trim helpers stand before maskLocation");
+  return new Function(src.slice(helpers, start + close.index + 2) + "\nreturn maskLocation;")();
 }
 
 function loadInternals() {
@@ -132,4 +135,25 @@ test("CT-1: the content-type check lowercases ASCII only and trims HTTP white sp
     "text/markdown" + String.fromCharCode(0x0c),
   ];
   for (const t of bad) assert.equal(check(t).status, "warn", JSON.stringify(t));
+});
+
+test("ReDoS: trimming the ends of an address and of a media type takes linear time (CodeQL js/polynomial-redos)", () => {
+  // Until 3.260.7 the ends were trimmed with a regex of the form /^[set]+|[set]+$/g, which tries the trailing
+  // alternative again from every position of a run that does not reach the end. Measured 2026-11-22: 50 000 spaces
+  // inside a value took 0.55 to 0.75 s in each of the three places, and the time grows with the square of the run.
+  // CodeQL flagged the same lines in the package turva-llms-txt-validator 0.8.1. The bound below is loose on purpose,
+  // so that a loaded machine passes and the quadratic form still fails.
+  const maskLocation = loadMaskLocation();
+  const { validateLlmsTxt } = loadInternals();
+  const run = " ".repeat(200000);
+  const wide = String.fromCharCode(0x3000).repeat(200000);
+  const check = (contentType: string) => validateLlmsTxt({ status: 200, contentType, linkHeader: "", text: "# Example\n\n> Summary.\n", bytes: 22 }).find((c: { id: string }) => c.id === "content-type");
+  const started = performance.now();
+  assert.equal(typeof maskLocation("https://example.com/a" + run + "b"), "string");
+  assert.equal(typeof maskLocation("https://example.com/a" + wide + "b"), "string");
+  assert.equal(typeof maskLocation("https://example.com/a%20b", BASE, "/a" + run + "b"), "string");
+  assert.equal(check("text/plain" + run + "x").status, "warn");
+  assert.equal(check(run + "text/plain" + run).status, "pass");
+  const took = performance.now() - started;
+  assert.ok(took < 3000, "the trims took " + Math.round(took) + " ms");
 });
