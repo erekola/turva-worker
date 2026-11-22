@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.260.9 - masking repairs in the hosted llms.txt validator from an independent rerun against 3.260.7 (2026-11-22): a followed same-host redirect whose Location reads as user information, such as user_name:password@example.com, is shown as the scheme, the host and /*** instead of the resolved address with the password in its path; a typed path whose user information the parser moved, as in https://corp.example\erik:password@host.example, is shown as /***; and the input field repeats a parsed host only when it follows the last @. Nothing changes in what passes or fails.
 // turva.dev worker v3.260.8 - the hosted Markdown parity check moves from markdown-parity-check 0.2.40 to 0.2.41 (2026-11-22): a link target with a special scheme and fewer than two slashes after the colon that holds an @, as in https:/user:secret@host/x, is shown as https://***/ in a link finding, and the package masks more link target shapes whose user information a URL parser and a reader split differently. Through this route the report already kept such a secret out, so the answer changes only in the shown form and in the toolVersion field. The hosted llms.txt validator trims the ends of an address and of a media type with index loops instead of a regular expression of the form /^[set]+|[set]+$/g, whose time grew with the square of a run of spaces inside the value (CodeQL js/polynomial-redos on the package turva-llms-txt-validator 0.8.1); every result is unchanged, and the package mirrors this from 0.8.2. The sitemap date stays, because no page text changed.
 // turva.dev worker v3.260.7 - masking repairs in the hosted llms.txt validator from an outside fuzz run (2026-11-22): maskLocation reads a backslash between a Windows domain and a user name as part of the user information, so a DOMAIN-backslash-user address with a # or a ? in its password no longer shows the start of the password; a scheme-less user:password@host is masked from its text before it is resolved against a base, so a fifth redirect refused as too many no longer prints the password inside the path of the shown address; C0 controls and spaces at either end of an address go before it is read, as the URL parser removes them; and the content-type check lowercases ASCII letters only and trims HTTP white space only, so a media type with a leading no-break space or a Kelvin sign warns instead of passing. The package turva-llms-txt-validator 0.8.1 mirrors the four repairs. The MCP server card names version 1.13.1 (C3 protocol fixes, Tek-895).
 // turva.dev worker v3.260.6 - contact sections, the audit definition, the company page and one post withdrawn (2026-11-22): the services and audit contact sections state the audit price, and the services one says which prices are fixed and that the reply proposes a price only for services priced per engagement; the home and services FAQ, the audit guide and llms.txt state in two sentences what an agent-readiness audit reads and what it does not assess, and the audit page states the second; the company page opens with the operator's name and carries AboutPage structured data with the person as its main entity, the person node carries a description and the company url, the article author node points at the company page and lists the same five sameAs addresses as the person node, guide page heads name the author, llms.txt lists the operator under Business details; the blog post withdrawn on 2026-11-22 is gone from the site with its page, listings, sitemap row, FAQ registration and card, the note that linked to it carries a dated correction, the post on what AI assistants call an agent-readiness audit carries a dated note on the new definition, the blog index counts 49 articles, and SITEMAP_LASTMOD moves to the release day
@@ -8753,7 +8754,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.260.8",
+    "version": "3.260.9",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9062,7 +9063,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.260.8",
+  "version": "3.260.9",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -13663,7 +13664,7 @@ function normalizeHostInput(raw: unknown): string | null {
   const typedHost = u.hostname;
   return typedHost.length > 1 && typedHost.endsWith(".") ? typedHost.slice(0, -1) : typedHost;
 }
-interface FetchedLlmsTxt { redirect?: undefined; reason?: undefined; location?: undefined; status: number; contentType: string; linkHeader: string; text: string; bytes: number; truncated: boolean; redirectedFrom: string | null; finalUrl: string }
+interface FetchedLlmsTxt { redirect?: undefined; reason?: undefined; location?: undefined; status: number; contentType: string; linkHeader: string; text: string; bytes: number; truncated: boolean; redirectedFrom: string | null; finalUrl: string; shownFinalUrl?: string }
 // True when the typed address carries a port or a non-numeric port after the host, as in
 // https://turva.dev:invalid/ or turva.dev:8443. It only picks which fixed sentence the error shows,
 // so the set of accepted addresses is the one normalizeHostInput defines and nothing typed is echoed.
@@ -13673,7 +13674,7 @@ function inputNamesPort(raw: unknown): boolean {
   const host = authority.slice(authority.lastIndexOf("@") + 1);
   return host.startsWith("[") ? /\]:/.test(host) : /^[^:\[\]]+:[a-z0-9_-]*$/.test(host);
 }
-interface FetchRedirect { redirect: true; reason: "no-location" | "too-many" | "bad-location" | "unsafe-target" | "off-host"; status: number; location: string; contentType?: undefined; linkHeader?: undefined; text?: undefined; bytes?: undefined; truncated?: undefined; redirectedFrom?: undefined; finalUrl?: undefined }
+interface FetchRedirect { redirect: true; reason: "no-location" | "too-many" | "bad-location" | "unsafe-target" | "off-host"; status: number; location: string; contentType?: undefined; linkHeader?: undefined; text?: undefined; bytes?: undefined; truncated?: undefined; redirectedFrom?: undefined; finalUrl?: undefined; shownFinalUrl?: undefined }
 // The path of the address as typed, when it is neither the root nor /llms.txt. The fetch stays pinned
 // to https://<host>/llms.txt, because a fixed path is part of its guard against use as a fetch proxy
 // (item T10 of the private threat model), so a typed /docs/llms.txt used to be dropped without a word while the report
@@ -13685,7 +13686,12 @@ function enteredPath(raw: unknown): string {
   let u;
   try { u = new URL(s); } catch { return ""; }
   const path = u.pathname;
-  return path === "/" || path === "" || path === "/llms.txt" ? "" : path;
+  if (path === "/" || path === "" || path === "/llms.txt") return "";
+  // A typed address whose user information the parser moved into the path, as in
+  // https://corp.example\erik:password@host.example, read as host corp.example and path
+  // /erik:password@host.example, repeated the password in this value (n7, independent rerun
+  // 2026-11-22). The path is shown only when maskLocation shows it for the whole typed address.
+  return s.includes("@") && !maskLocation(s).includes(path) ? "/***" : path;
 }
 type LlmsFetchResult = FetchedLlmsTxt | FetchRedirect;
 function isValidPublicHost(host: string): boolean {
@@ -13921,7 +13927,12 @@ function maskLocation(href: string, base?: string, written?: string): string {
 // review of the repair, same day).
 function validatorEcho(typed: string, shown: string): string {
   if (!/[@?#]/.test(typed)) return shown;
-  return normalizeHostInput(typed) || "";
+  // The parsed host is named only when it is the text right after the last @, or the text has no @: with a ? or #
+  // before the @ the parser reads the user name as the host, and //user?@example.com echoed "user" (n8, independent
+  // rerun 2026-11-22). Mirrors the package's typedHostEcho().
+  const host = normalizeHostInput(typed) || "";
+  const at = typed.lastIndexOf("@");
+  return host && (at < 0 || typed.slice(at + 1).toLowerCase().startsWith(host)) ? host : "";
 }
 // Tek-680: the visitor's address must not reach the checked site. Cloudflare's HTTP headers
 // documentation (updated 2026-10-09) says a Worker controls CF-Connecting-IP and x-real-ip on a
@@ -13942,6 +13953,7 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
   const cap = 262144;
   let url = "https://" + host + (path || "/llms.txt");
   let redirectedFrom = null;
+  let hidden = false;
   // One 8 s budget for the whole redirect chain, not 8 s per hop: the error shown to
   // the reader says "timed out after 8 seconds", and with up to five hops a per-hop
   // signal made that message false by a factor of five.
@@ -13965,9 +13977,10 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
       try { await res.body?.cancel(); } catch { /* the verdict below is the answer */ }
       const loc = res.headers.get("location") || "";
       if (!loc) return { redirect: true, reason: "no-location", status: res.status, location: "" };
-      if (hop >= 4) return { redirect: true, reason: "too-many", status: res.status, location: cut(maskLocation(loc, url), 120) };
+      if (hop >= 4) return { redirect: true, reason: "too-many", status: res.status, location: cut(maskLocation(loc, hidden ? undefined : url), 120) };
       let next;
-      try { next = new URL(loc, url); } catch { return { redirect: true, reason: "bad-location", status: res.status, location: cut(maskLocation(loc, url), 120) }; }
+      try { next = new URL(loc, url); } catch { return { redirect: true, reason: "bad-location", status: res.status, location: cut(maskLocation(loc, hidden ? undefined : url), 120) }; }
+      const parsedHref = next.href;
       // LV-22 (round S3, Tek-546): one trailing dot names the same host, as it does in the typed
       // address (normalizeHostInput), so a redirect to https://example.com./ is a same-site redirect.
       // A second dot still fails the host test below.
@@ -13976,6 +13989,19 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
       const twin = (next.hostname.startsWith("www.") ? next.hostname.slice(4) : next.hostname) === reqApex;
       if (!safeTarget) return { redirect: true, reason: "unsafe-target", status: res.status, location: cut(maskLocation(next.href, undefined, loc), 120) };
       if (!twin) return { redirect: true, reason: "off-host", status: res.status, location: cut(maskLocation(next.href, undefined, loc), 120) };
+      // A followed Location that reads as user information, as user_name:password@example.com resolved into
+      // https://example.com/user_name:password@example.com, kept the password in the address the report showed (n1,
+      // independent rerun 2026-11-22). The Location is read as written, against the address it came from, as a refused
+      // one is. When that reading masks more than the parsed address shows, the chain is marked: every later address
+      // that keeps its path is resolved from this one, so the final address is shown as its scheme, its host and "/***", and a later
+      // refused Location is read without this address as its base. Mirrors the package's fetchLlmsTxt().
+      // A later Location that keeps nothing of the marked address, such as an absolute address or a path from the root,
+      // clears the mark: it is resolved against the marked address and against the same origin with every path segment
+      // and the query replaced, at the same depth, and when both give the same address the path and the query of the
+      // marked address did not reach it. Bases one segment deep let ".." and "../x" clear the mark while the hidden
+      // segments stayed (F1 of the seventh check, 2026-11-22).
+      const inheritsBase = (() => { const u0 = new URL(url); let n = 0; const alt = u0.origin + u0.pathname.replace(/[^\/]+/g, () => "zz9q" + n++) + (u0.search ? "?zz9q" : ""); try { return new URL(loc, url).href !== new URL(loc, alt).href; } catch { return true; } })();
+      hidden = maskLocation(loc, url) !== maskLocation(parsedHref) || maskLocation(next.href, undefined, loc) !== maskLocation(next.href) || (hidden && inheritsBase);
       if (!redirectedFrom) redirectedFrom = url;
       url = next.href;
       continue;
@@ -14009,7 +14035,8 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
       bytes,
       truncated,
       redirectedFrom,
-      finalUrl: url
+      finalUrl: url,
+      ...(hidden ? { shownFinalUrl: "https://" + new URL(url).host + "/***" } : {})
     };
   }
 }
@@ -14990,7 +15017,9 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   }
   // An accepted redirect is shown masked as well (round 19, K7-2). Until v3.164.0 only a refused
   // one was, so a query value or a fragment in a same-host Location reached this detail as sent. An input with redirectedFrom and no finalUrl (fetchLlmsTxt always sets both) names the address it was redirected from alone instead of ending in "to undefined" (Tek-668, NULL-2).
-  add("http-status", "pass", "File exists at /llms.txt", f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + (f.finalUrl ? " to " + maskLocation(f.finalUrl) : "") : "HTTP 200");
+  // shownFinalUrl, when fetchLlmsTxt set it, stands in for finalUrl (n1, independent rerun 2026-11-22).
+  const shownFinal = f.shownFinalUrl !== undefined ? maskLocation(f.shownFinalUrl) : f.finalUrl ? maskLocation(f.finalUrl) : "";
+  add("http-status", "pass", "File exists at /llms.txt", f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + (shownFinal ? " to " + shownFinal : "") : "HTTP 200");
   // A leading byte-order mark is stripped the same way the fetch path already strips it: the
   // TextDecoder in fetchLlmsTxt removes a BOM by default, so the direct API took a different
   // document than the fetched one for the exact same bytes. V3 (Tek-526): the h1-title check saw

@@ -1614,7 +1614,9 @@ test("F04: the hosted validator masks a refused redirect target and a typed secr
       // Found by the independent review of the first version: an @ past the 300 character cut, and a
       // second scheme that makes the parser read "https" as the host and put the secret in the path.
       ["https://user:" + SECRET + "S".repeat(300) + "@example.com/", ""],
-      ["https:/user:" + SECRET + "@example.com/path", "https"]
+      // Until 3.260.8 this echoed "https", the host the parser reads. Since 3.260.9 a parsed host is echoed only
+      // when it is the text right after the last @ (n8 of the independent rerun 2026-11-22), and "https" is not.
+      ["https:/user:" + SECRET + "@example.com/path", ""]
     ];
     for (const [typed, shown] of typedCases) {
       const page = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(typed)), env, {})).text();

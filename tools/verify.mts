@@ -2183,8 +2183,11 @@ check(twPlanted.length >= 80, 'twin gate self-test: planted paragraph reads as l
       `every redirect detail in fetchLlmsTxt is masked or empty (${maskedFields} masked, ${emptyFields} empty, ${locFields} total)`);
 
     const validateLlmsTxtSrc = region('function validateLlmsTxt', '\nfunction startsTag');
-    check(validateLlmsTxtSrc.includes('f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + (f.finalUrl ? " to " + maskLocation(f.finalUrl) : "")'),
-      'validateLlmsTxt masks both sides of an accepted redirect (redirectedFrom and finalUrl) with maskLocation');
+    // Since 3.260.9 the shown end of the chain is shownFinalUrl when fetchLlmsTxt set it, and finalUrl otherwise; both
+    // still go through maskLocation (n1 of the independent rerun 2026-11-22).
+    check(validateLlmsTxtSrc.includes('const shownFinal = f.shownFinalUrl !== undefined ? maskLocation(f.shownFinalUrl) : f.finalUrl ? maskLocation(f.finalUrl) : "";')
+      && validateLlmsTxtSrc.includes('f.redirectedFrom ? "HTTP 200, followed a redirect from " + maskLocation(f.redirectedFrom) + (shownFinal ? " to " + shownFinal : "")'),
+      'validateLlmsTxt masks both sides of an accepted redirect (redirectedFrom, and shownFinalUrl or finalUrl) with maskLocation');
 
     // V6-U1 (round 19): a validator check's detail can quote a third-party llms.txt
     // verbatim, so a bidirectional control character in that quoted text must not reach
