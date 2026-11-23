@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.261.0 - new Research post /blog/finnish-health-sites-and-ai-training (2026-11-23) on the agent-readiness of 33 Finnish public and private health service sites, read with isitagentready.com and own curl requests: the two sites above Level 1 both carry a Cloudflare managed robots.txt with a content signal; with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign) and the version mirrors.
 // turva.dev worker v3.260.12 - round 30 fixes (2026-11-23): the audit card on the home and services pages names the two-target limit, the services page and LLMS_TXT define a target as one hostname (re-sign), the separately scoped implementation section drops a second two-day estimate, the audit-choosing guide no longer counts three kinds of evidence, the response-headers guide reads IETF revision 12, two posts name what their corrections changed, and the MCP server card moves to 1.13.3 (re-sign).
 // turva.dev worker v3.260.11 - the hosted llms.txt validator removes tab, CR and LF inside normalizeHostInput and enteredPath as the package does, so the address echoed in the form is read the same way as the address that is checked.
 // turva.dev worker v3.260.10 - the audit's two-target limit and the order step on the price surfaces and corrections after the ChatGPT reads of 2026-11-22: the services page, the contact page, the choosing guide, llms.txt, agent.json, ai-plugin.json, the services skill and the two JSON-LD offers state the limit, the home page and the guide word the fix add-on as the services page does, llms.txt and the services skill say which prices are fixed, llms.txt names the operator form and the reply time by channel, the guide names the manual review and the AI answers, and two blog posts are corrected. The MCP server card moves to 1.13.2 with turva-mcp, and the hosted Markdown parity check moves from markdown-parity-check 0.2.41 to 0.2.43 with the masking repairs of 0.2.42 and 0.2.43, and a role attribute is read as a list of tokens, so an element with role="navigation foo" is left out of the comparison as a navigation element is. The hosted llms.txt validator reads a redirect Location that arrives as UTF-8 bytes read as Latin-1 as the text it spells before it masks it, and its edge characters are defined by Unicode class, so a leading U+3000, U+00A0 or U+200B no longer shows the password in the followed address; a setext H1 whose text renders nothing now fails like the same text after #.
@@ -456,6 +457,7 @@ Final price is confirmed in writing after scope is agreed. The audit, advisory, 
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [The top Finnish health sites say no to AI training](https://turva.dev/blog/finnish-health-sites-and-ai-training.md)
 - [Everyone has the same models. My harness is the difference.](https://turva.dev/blog/everyone-has-the-same-models.md)
 - [My agent's notes were already a graph](https://turva.dev/blog/my-agents-notes-were-already-a-graph.md)
 - [I can't start over, so I back up every night](https://turva.dev/blog/why-i-back-up-every-night.md)
@@ -681,6 +683,106 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 const PAGE_MARKDOWN = {
+  "/blog/finnish-health-sites-and-ai-training": `# The top Finnish health sites say no to AI training
+
+2026-11-23
+
+I read 33 Finnish public and private health service sites with an agent-readiness scanner and my own requests. Most sit at Level 1 of 5. The two highest, Varsinais-Suomi at Level 3 and Keski-Suomi at Level 2, both run a Cloudflare setting that tells AI training crawlers to stay out. That setting is what lifts a site in this set from Level 1 to Level 2.
+
+## Key figures
+
+- 33 sites: all 21 wellbeing services counties, the City of Helsinki and HUS, plus Mehiläinen, Terveystalo, Pihlajalinna, Aava, Coronaria, Oral, Plusterveys, Omaolo, Kanta and Terveyskylä. Read on 23 November 2026.
+- 31 sites gave a reading. 25 sat at isitagentready Level 1 of 5, four at Level 0, one at Level 2 and one at Level 3.
+- Mehiläinen answered 429 Too Many Requests and Omaolo 403 Forbidden to the scanner in three runs each, so neither has a reading.
+- No site passed any of the scanner's checks for API catalogs, OAuth discovery, MCP server cards, A2A agent cards, Agent Skills or WebMCP.
+- Two sites declare a content signal in robots.txt. Both robots.txt files mark that part as Cloudflare managed content, and the two are the same for their first 90 lines.
+
+## Who is in the set
+
+The public side is every organizer of public health care in mainland Finland: the 21 wellbeing services counties, the City of Helsinki, which organizes its own services, and HUS, the joint authority that runs specialized care in Uusimaa. Åland organizes its own health care and is not in the set. I added the largest private providers I could name and three national services, Omaolo, Kanta and Terveyskylä.
+
+By level:
+
+- Level 3: Varsinais-Suomi, at varha.fi.
+- Level 2: Keski-Suomi, at hyvaks.fi.
+- Level 0: Etelä-Karjala, Länsi-Uusimaa, Kainuu and Pohjois-Karjala, whose organization runs as Siun sote.
+- No reading: Mehiläinen and Omaolo.
+- Level 1: the other 25.
+
+## What separates Level 1 from Level 2
+
+The scanner builds its levels on each other. Level 1 needs two of robots.txt, a sitemap and Link headers. Level 2 adds two checks: rules for AI bots in robots.txt and a Content-Signal line.
+
+The first of those two passes on almost every site in this set. On a robots.txt that names no AI bot, the scanner reads that "wildcard rules apply to all crawlers including AI bots" and passes the check. 28 of the 31 sites passed it that way or with named rules.
+
+So the one check that separates Level 1 from Level 2 here is the content signal. Of the sites whose robots.txt I could read, only Varsinais-Suomi and Keski-Suomi have one, and in both it is the same line: \`Content-Signal: search=yes,ai-train=no,use=reference\`.
+
+It sits under a comment that reads \`# BEGIN Cloudflare Managed content\`, above 32 named crawlers that each get \`Disallow: /\`, among them GPTBot, ClaudeBot, Google-Extended, CCBot and Bytespider.
+
+## What the Cloudflare setting does
+
+Cloudflare's documentation for its robots.txt setting says the managed block appears only when Bot Preference Sync is turned on and at least one of the Search, Agent or Training policies is set to block. With Training set to Disallow, Cloudflare writes the training crawlers into robots.txt and also blocks them at its edge. Mixed-use crawlers are left out of that edge block.
+
+Read with that documentation, the Level 2 here comes from a decision about training. The scanner scores a site higher for stating how its content may be used, and the statement these two counties make is that it may be indexed for search and may not be used to train models.
+
+A third county shows the other side. Keski-Pohjanmaa, which runs as Soite, disallows a list of crawlers in its robots.txt, four of them AI crawlers by the scanner's reading: GPTBot, ClaudeBot, Amazonbot and Bytespider. It has no content signal, and it stays at Level 1.
+
+## What it means for a patient's assistant
+
+The crawlers in the disallowed list collect content for training or for an index. When a patient asks ChatGPT or Claude about their health station and the assistant fetches the page for that question, it identifies itself with a different user agent, such as ChatGPT-User or Claude-User. Neither robots.txt names those, so the rules for \`User-agent: *\` apply to them. In both files those are the managed group's \`Allow: /\` and, after the managed block, the site's own group, which disallows system paths such as \`/admin/\` and \`/search/\` and leaves the content pages open.
+
+The signal leaves one use open. Cloudflare's text defines \`ai-input\` as feeding content into an AI model for real-time answers, and these files do not set it. Their own preamble says that a signal left unset neither grants nor restricts permission.
+
+For a public health site that is a coherent position. A model trained on last year's guidance does not help anyone, and an assistant that reads today's page at the moment of the question does. Whether that was the intent behind the setting I cannot tell from the outside.
+
+## What Varsinais-Suomi added beyond the setting
+
+Level 3 needs one more thing: Markdown on request. When I asked varha.fi for its front page with an \`Accept: text/markdown\` header, it answered with Markdown, and its response headers link to a Markdown version of the page. It also publishes an llms.txt, which the scanner does not score, and it marks itself up as a MedicalOrganization in JSON-LD.
+
+That is work the robots.txt setting does not do. HUS has started on the same path: it publishes an llms.txt and links to a Markdown version in its headers, but asked for Markdown it still answers with HTML.
+
+## Smaller readings
+
+- Five sites publish an llms.txt: Etelä-Karjala, HUS, Varsinais-Suomi, Pihlajalinna and Coronaria. On Etelä-Karjala the heading sits behind a byte order mark, which a strict reader of the first line would miss.
+- hel.fi answers /llms.txt with 200 and a Markdown content type, and an empty body.
+- Four sites answer /robots.txt with 404: Etelä-Karjala, Länsi-Uusimaa, Siun sote and Omaolo.
+- Omaolo answers three of the five agent discovery paths I asked for with an HTML page and status 200, so a check that reads only the status code would count them as present.
+- Mehiläinen answered 429 to every request I made, robots.txt included.
+
+## What this does not say
+
+This is a reading of 33 front pages and their discovery files on one day. It says nothing about the quality of care, about how any of these organizations protects patient data, or about their apps and booking services, which I did not open.
+
+Mehiläinen answered 429 to the scanner and to my own curl requests. Omaolo answered the scanner with 403 and my own request for its front page with 200. Whether ChatGPT's or Claude's own agents get the same answers, I did not measure.
+
+Cloudflare's edge blocking is not visible from outside. I read what the robots.txt files say, not which requests Cloudflare actually stops.
+
+## Method
+
+- Scanner: isitagentready.com with its default checks, run on 23 November 2026, one site at a time. Four runs went through its MCP tool and the rest through its public scan API, which returned the same levels and passing checks on the four sites read both ways. Every site with a reading completed at least two runs except Lappi and Kanta-Häme, which completed one run of four. Pirkanmaa and Pohjois-Savo completed their third and fourth runs after two timeouts, and Mehiläinen and Omaolo completed none. A check counts as passed when the completed runs passed it.
+- Own reading: curl on the same day, one request at a time, without following redirects, with each redirect target fetched separately: robots.txt, llms.txt, the front page with Accept: text/markdown, five .well-known paths and the front page's JSON-LD.
+- Cloudflare's behavior is from its robots.txt setting documentation as read on 23 November 2026. The page gives 2 November as its last update.
+
+## Frequently asked
+
+**Are Finnish health service websites ready for AI agents?**
+
+Mostly at the first step. On 23 November 2026, 25 of the 31 sites that gave a reading sat at isitagentready Level 1 of 5, and none passed any of the scanner's checks for APIs, OAuth discovery or agent protocols.
+
+**Why do Varsinais-Suomi and Keski-Suomi score higher?**
+
+Both run a Cloudflare setting that adds a content signal and AI crawler rules to robots.txt, and the content signal is the check that separates Level 1 from Level 2. Varsinais-Suomi also serves Markdown on request, which takes it to Level 3.
+
+**Does blocking AI training crawlers stop a patient's AI assistant from reading the site?**
+
+Not in these two robots.txt files. They disallow crawlers that collect for training or indexing, and they do not name the user agents that assistants use when they fetch a page for a user's question, so the rules for all user agents apply to them, and those leave the content pages open.
+
+## Related
+
+- [Finnish MiCA crypto providers and AI agents](/blog/finnish-crypto-providers-and-ai-agents)
+- [How agent-ready are Finnish B2B sites? I scanned sixteen](/blog/agent-readiness-finnish-b2b)
+- [Serving Markdown to AI clients](/guides/markdown-for-agents)
+`,
   "/blog/everyone-has-the-same-models": `# Everyone has the same models. My harness is the difference.
 
 2026-11-17
@@ -4434,8 +4536,9 @@ Dated studies, protocol notes, build notes and lab notes from turva.dev. Each st
 
 ## Browse all articles
 
-49 articles.
+50 articles.
 
+- [The top Finnish health sites say no to AI training](/blog/finnish-health-sites-and-ai-training). 2026-11-23. Research. Of 33 Finnish health service sites, the two above Level 1 of 5 got there with a Cloudflare setting that says no to AI training crawlers.
 - [Everyone has the same models. My harness is the difference.](/blog/everyone-has-the-same-models) 2026-11-17. Lab notes. The models are the same for anyone, and I think the edge is the harness around them. Here is a month of my Claude Code gate logs and how blocks were answered.
 - [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph). 2026-11-06. Lab notes. I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and two agent tests showed no measurable score difference.
 - [I can't start over, so I back up every night](/blog/why-i-back-up-every-night). 2026-11-04. Lab notes. A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.
@@ -8761,7 +8864,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.260.12",
+    "version": "3.261.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8902,7 +9005,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"NZBy2NA7YgGu-zCHhZNrMFzypvK_Ippg_ufwzeAtGrf0TIxK4CskfHBvyFP38cdi9yiIYFQQKEylJFJUUkixAQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"Em_ym5c0UblmwfefEtRqff5rBi7Msp_BeNkB4hnn3EGOJis9spIY2Qp40LFsIRad8vV1VHDX1uyQ83b2n8JIAw\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"NZBy2NA7YgGu-zCHhZNrMFzypvK_Ippg_ufwzeAtGrf0TIxK4CskfHBvyFP38cdi9yiIYFQQKEylJFJUUkixAQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"guAf3Iu24lpvQQA2tbfvdb3MhG61k_ds5VSxLAAOuv0E7uv5sTTHA-RXrXKcvkeMnaXL1yJPFssD33ozlk9uBQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -9070,7 +9173,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.260.12",
+  "version": "3.261.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9812,6 +9915,7 @@ const SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/finnish-health-sites-and-ai-training", "monthly", "0.6"],
   ["/blog/everyone-has-the-same-models", "monthly", "0.6"],
   ["/blog/my-agents-notes-were-already-a-graph", "monthly", "0.6"],
   ["/blog/why-i-back-up-every-night", "monthly", "0.6"],
@@ -9934,7 +10038,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/blog/everyone-has-the-same-models", "/blog/my-agents-notes-were-already-a-graph", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/blog/finnish-health-sites-and-ai-training", "/blog/everyone-has-the-same-models", "/blog/my-agents-notes-were-already-a-graph", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -9944,6 +10048,14 @@ function getCanonicalForPath(pathname: string) {
 }
 
 const META_BY_PATH = {
+  "/blog/finnish-health-sites-and-ai-training": {
+    title: "The top Finnish health sites say no to AI training · turva.dev",
+    description: "Of 33 Finnish health service sites, the two above Level 1 of 5 got there with a Cloudflare setting that says no to AI training crawlers.",
+    date: "2026-11-23",
+    kind: "Research",
+    image: "/og-finnish-health-sites-and-ai-training.jpg",
+    imageAlt: "turva.dev blog card: The top Finnish health sites say no to AI training. Two of 33 sites rise above Level 1, both through one Cloudflare setting.",
+  },
   "/blog/everyone-has-the-same-models": {
     title: "Everyone has the same models. My harness is the difference. · turva.dev",
     description: "The models are the same for anyone, and I think the edge is the harness around them. Here is a month of my Claude Code gate logs and how blocks were answered.",
@@ -12060,6 +12172,7 @@ ${json}
 // (the homepage and /guides do not go through here), against the twins that carry a
 // Frequently asked section. A page in the twins and in neither list fails the run.
 const GUIDE_PAGE_FAQ = {
+  "/blog/finnish-health-sites-and-ai-training": mdFaqBlocks("/blog/finnish-health-sites-and-ai-training", "Frequently asked").pairs,
   "/blog/my-agents-notes-were-already-a-graph": mdFaqBlocks("/blog/my-agents-notes-were-already-a-graph", "Frequently asked").pairs,
   "/blog/why-i-back-up-every-night": mdFaqBlocks("/blog/why-i-back-up-every-night", "Frequently asked").pairs,
   "/blog/what-a-publisher-owes-someone-elses-agent": mdFaqBlocks("/blog/what-a-publisher-owes-someone-elses-agent", "Frequently asked").pairs,
