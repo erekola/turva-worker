@@ -312,3 +312,26 @@ test("Round 24 V1-2: a tab or a line break inside the typed scheme is removed be
     globalThis.fetch = realFetch;
   }
 });
+
+// The echo in the form calls normalizeHostInput on the typed value as it came, not on the stripped one, so the
+// hosted function removes tab, CR and LF itself, as the package's normalizeHostInput and typedHostEcho do.
+test("Echo: a tab or a line break inside the typed address does not change the host the form shows", async () => {
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    const u = String(url);
+    if (u === "https://example.com/llms.txt") return new Response(base, { status: 200, headers: { "content-type": "text/plain; charset=utf-8" } });
+    if (u === "https://example.com/") return new Response("", { status: 404, headers: { "content-type": "text/html" } });
+    throw new Error("unexpected fetch to " + u);
+  };
+  try {
+    for (const typed of ["ht%09tps://example.com/%3Fx", "exa%09mple.com/%3Fx", "https:%0A//Exam%0Dple.com/p%3Fx=1", "ht%09tps://example.com/%23f"]) {
+      const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + typed, { headers: { accept: "text/html" } }), {});
+      assert.equal(res.status, 200, typed);
+      const html = await res.text();
+      assert.ok(html.includes('id="vurl" name="url"'), typed);
+      assert.match(html, /id="vurl"[^>]* value="example\.com"/, typed);
+    }
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});

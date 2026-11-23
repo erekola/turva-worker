@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.260.11 - the hosted llms.txt validator removes tab, CR and LF inside normalizeHostInput and enteredPath as the package does, so the address echoed in the form is read the same way as the address that is checked.
 // turva.dev worker v3.260.10 - the audit's two-target limit and the order step on the price surfaces and corrections after the ChatGPT reads of 2026-11-22: the services page, the contact page, the choosing guide, llms.txt, agent.json, ai-plugin.json, the services skill and the two JSON-LD offers state the limit, the home page and the guide word the fix add-on as the services page does, llms.txt and the services skill say which prices are fixed, llms.txt names the operator form and the reply time by channel, the guide names the manual review and the AI answers, and two blog posts are corrected. The MCP server card moves to 1.13.2 with turva-mcp, and the hosted Markdown parity check moves from markdown-parity-check 0.2.41 to 0.2.43 with the masking repairs of 0.2.42 and 0.2.43, and a role attribute is read as a list of tokens, so an element with role="navigation foo" is left out of the comparison as a navigation element is. The hosted llms.txt validator reads a redirect Location that arrives as UTF-8 bytes read as Latin-1 as the text it spells before it masks it, and its edge characters are defined by Unicode class, so a leading U+3000, U+00A0 or U+200B no longer shows the password in the followed address; a setext H1 whose text renders nothing now fails like the same text after #.
 // turva.dev worker v3.260.9 - masking repairs in the hosted llms.txt validator from an independent rerun against 3.260.7 (2026-11-22): a followed same-host redirect whose Location reads as user information, such as user_name:password@example.com, is shown as the scheme, the host and /*** instead of the resolved address with the password in its path; a typed path whose user information the parser moved, as in https://corp.example\erik:password@host.example, is shown as /***; and the input field repeats a parsed host only when it follows the last @. Nothing changes in what passes or fails.
 // turva.dev worker v3.260.8 - the hosted Markdown parity check moves from markdown-parity-check 0.2.40 to 0.2.41 (2026-11-22): a link target with a special scheme and fewer than two slashes after the colon that holds an @, as in https:/user:secret@host/x, is shown as https://***/ in a link finding, and the package masks more link target shapes whose user information a URL parser and a reader split differently. Through this route the report already kept such a secret out, so the answer changes only in the shown form and in the toolVersion field. The hosted llms.txt validator trims the ends of an address and of a media type with index loops instead of a regular expression of the form /^[set]+|[set]+$/g, whose time grew with the square of a run of spaces inside the value (CodeQL js/polynomial-redos on the package turva-llms-txt-validator 0.8.1); every result is unchanged, and the package mirrors this from 0.8.2. The sitemap date stays, because no page text changed.
@@ -8759,7 +8760,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.260.10",
+    "version": "3.260.11",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9068,7 +9069,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.260.10",
+  "version": "3.260.11",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -13657,7 +13658,10 @@ ${footerHtml()}
 // out after 8 seconds and the body read is capped at 256 KiB. Results are
 // never stored and result pages are served with no-store.
 function normalizeHostInput(raw: unknown): string | null {
-  let s = String(raw || "").trim().toLowerCase();
+  // Mirrors the package's normalizeHostInput(): tab, CR and LF are removed before the scheme test, because the
+  // URL parser would remove them from anywhere in the string, so "ht<TAB>tps://example.com" would otherwise be read as a host name
+  // here and as example.com there. The route strips them too; validatorEcho passes the typed value as it came.
+  let s = String(raw || "").replace(/[\t\r\n]/g, "").trim().toLowerCase();
   if (!s) return null;
   if (!/^[a-z][a-z0-9+.-]*:\/\//.test(s)) s = "https://" + s;
   let u;
@@ -13687,7 +13691,8 @@ interface FetchRedirect { redirect: true; reason: "no-location" | "too-many" | "
 // described the root file (ChatGPT retest 2026-09-26, Tek-487). The report now names the unused path in
 // an information line. The case of the path is kept, and the query and fragment are never shown.
 function enteredPath(raw: unknown): string {
-  let s = String(raw || "").trim();
+  // Mirrors the package's enteredPath(): remove tab, CR and LF first, as normalizeHostInput does.
+  let s = String(raw || "").replace(/[\t\r\n]/g, "").trim();
   if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) s = "https://" + s;
   let u;
   try { u = new URL(s); } catch { return ""; }
