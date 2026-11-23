@@ -142,9 +142,52 @@ async function viaRoute(htmlBody: string, markdownBody: string, input: Record<st
 const shapeHtml = `<main><h1>Tools</h1><p>Read the guide.</p></main>`;
 const shapeMd = `# Tools\n\nWrite to user:${SECRET}@host.tld/path for access.\n\nRead the guide.\n\n[user:${SECRET}@host.tld/p?k=v](https://turva.dev/x)\n`;
 
-test("pin 0.2.41: the package is the pinned one", () => {
-  assert.equal(TOOL_VERSION, "0.2.41");
-  assert.equal(JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).dependencies["markdown-parity-check"], "0.2.41");
+test("pin 0.2.43: the package is the pinned one", () => {
+  assert.equal(TOOL_VERSION, "0.2.43");
+  assert.equal(JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).dependencies["markdown-parity-check"], "0.2.43");
+});
+
+// markdown-parity-check 0.2.43 reads the text of a report like a link target, so an address with a backslash domain in a
+// paragraph that only the Markdown holds is masked in the excerpt of the finding, where 0.2.42 showed it in full.
+test("pin 0.2.43: an address with a backslash domain in running text is masked in both answers of the route", async () => {
+  const text = `https://CORP${String.fromCharCode(92)}erik:${SECRET}@host.tld/x`;
+  const markdown = `# Tools\n\nRead the guide.\n\nWrite to ${text} for access.\n`;
+  for (const accept of ["json", "html"] as const) {
+    const r = await viaRoute(shapeHtml, markdown, { url: PAGE }, accept);
+    assert.equal(r.status, 200, accept);
+    assert.ok(!r.text.includes(SECRET), accept + ": the secret is not in the answer");
+    if (accept === "json") assert.ok(r.text.includes("https://***/"), "the masked form is shown");
+  }
+});
+
+// 0.2.43 reads the role attribute as a list of tokens, so an element with role="navigation foo" is left out of the
+// comparison as a navigation element is, where 0.2.42 compared it as content.
+test("pin 0.2.43: an element with role=\"navigation foo\" is left out of the comparison", async () => {
+  const html = `<main><h1>Tools</h1><p>Read the guide.</p><div role="navigation foo"><p>Menu words only here</p></div></main>`;
+  const markdown = `# Tools\n\nRead the guide.\n`;
+  const r = await viaRoute(html, markdown, { url: PAGE }, "json");
+  assert.equal(r.status, 200);
+  const report = JSON.parse(r.text);
+  assert.ok(!r.text.includes("Menu words only here"), "the navigation text is not compared: " + r.text.slice(0, 400));
+  assert.equal(report.summary.result, "pass");
+});
+
+// markdown-parity-check 0.2.42 shows a scheme-less link target with a colon and no slash before its last @, as a
+// Windows domain user CORP\erik:secret@host.tld/x or an empty user name :secret@host.tld/x, as *** (n3 to n5 of the
+// independent rerun of 0.2.41, 2026-11-22). 0.2.41 showed both in full in the link finding.
+test("pin 0.2.42: a scheme-less target with a colon before its last @ is masked in both answers of the route", async () => {
+  for (const target of [`CORP${String.fromCharCode(92)}erik:${SECRET}@host.tld/x`, `:${SECRET}@host.tld/x`, `erik@:${SECRET}@host.tld/x`]) {
+    const markdown = `# Tools\n\nRead the [guide](<${target}>).\n`;
+    for (const accept of ["json", "html"] as const) {
+      const r = await viaRoute(shapeHtml, markdown, { url: PAGE }, accept);
+      assert.equal(r.status, 200, accept);
+      assert.ok(!r.text.includes(SECRET), accept + ": the secret is not in the answer for " + JSON.stringify(target));
+      if (accept === "json") {
+        const link = JSON.parse(r.text).findings.find((f: { code: string }) => f.code === "LINK_ADDED");
+        assert.equal(link && link.after, "***", "the link finding shows ***: " + JSON.stringify(link ?? JSON.parse(r.text)).slice(0, 600));
+      }
+    }
+  }
 });
 
 test("pin 0.2.40: text of the shape name:secret@host.tld/path is masked in the JSON answer of the route", async () => {

@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.260.10 - the audit's two-target limit and the order step on the price surfaces and corrections after the ChatGPT reads of 2026-11-22: the services page, the contact page, the choosing guide, llms.txt, agent.json, ai-plugin.json, the services skill and the two JSON-LD offers state the limit, the home page and the guide word the fix add-on as the services page does, llms.txt and the services skill say which prices are fixed, llms.txt names the operator form and the reply time by channel, the guide names the manual review and the AI answers, and two blog posts are corrected. The MCP server card moves to 1.13.2 with turva-mcp, and the hosted Markdown parity check moves from markdown-parity-check 0.2.41 to 0.2.43 with the masking repairs of 0.2.42 and 0.2.43, and a role attribute is read as a list of tokens, so an element with role="navigation foo" is left out of the comparison as a navigation element is. The hosted llms.txt validator reads a redirect Location that arrives as UTF-8 bytes read as Latin-1 as the text it spells before it masks it, and its edge characters are defined by Unicode class, so a leading U+3000, U+00A0 or U+200B no longer shows the password in the followed address; a setext H1 whose text renders nothing now fails like the same text after #.
 // turva.dev worker v3.260.9 - masking repairs in the hosted llms.txt validator from an independent rerun against 3.260.7 (2026-11-22): a followed same-host redirect whose Location reads as user information, such as user_name:password@example.com, is shown as the scheme, the host and /*** instead of the resolved address with the password in its path; a typed path whose user information the parser moved, as in https://corp.example\erik:password@host.example, is shown as /***; and the input field repeats a parsed host only when it follows the last @. Nothing changes in what passes or fails.
 // turva.dev worker v3.260.8 - the hosted Markdown parity check moves from markdown-parity-check 0.2.40 to 0.2.41 (2026-11-22): a link target with a special scheme and fewer than two slashes after the colon that holds an @, as in https:/user:secret@host/x, is shown as https://***/ in a link finding, and the package masks more link target shapes whose user information a URL parser and a reader split differently. Through this route the report already kept such a secret out, so the answer changes only in the shown form and in the toolVersion field. The hosted llms.txt validator trims the ends of an address and of a media type with index loops instead of a regular expression of the form /^[set]+|[set]+$/g, whose time grew with the square of a run of spaces inside the value (CodeQL js/polynomial-redos on the package turva-llms-txt-validator 0.8.1); every result is unchanged, and the package mirrors this from 0.8.2. The sitemap date stays, because no page text changed.
 // turva.dev worker v3.260.7 - masking repairs in the hosted llms.txt validator from an outside fuzz run (2026-11-22): maskLocation reads a backslash between a Windows domain and a user name as part of the user information, so a DOMAIN-backslash-user address with a # or a ? in its password no longer shows the start of the password; a scheme-less user:password@host is masked from its text before it is resolved against a base, so a fifth redirect refused as too many no longer prints the password inside the path of the shown address; C0 controls and spaces at either end of an address go before it is read, as the URL parser removes them; and the content-type check lowercases ASCII letters only and trims HTTP white space only, so a media type with a leading no-break space or a Kelvin sign warns instead of passing. The package turva-llms-txt-validator 0.8.1 mirrors the four repairs. The MCP server card names version 1.13.1 (C3 protocol fixes, Tek-895).
@@ -388,7 +389,7 @@ const LLMS_TXT = `# turva.dev
 - [The agent-ready badge](https://turva.dev/badge.md)
 
 ## Pricing (EUR, VAT not included)
-- Audit: €4,300 (fixed scope, within two weeks of the agreed written kickoff)
+- Audit: €4,300 (fixed scope, within two weeks of the agreed written kickoff, up to two targets named in the written scope at one fixed price)
 - Advisory: €3,000 / month (monthly retainer, three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged)
 - Implementation: €1,500 / day (scoped per task)
 - Audit fix implementation: €499 (fixed, sold only with the audit, bought together with it, with its report, or after the report and before implementation starts, only when the required access is arranged in advance)
@@ -396,14 +397,14 @@ const LLMS_TXT = `# turva.dev
 - Agent operations: price agreed for the engagement (written limits for an agent a company already runs)
 - MCP server design: price agreed for the engagement (an MCP interface to product data, read-only by default)
 
-Final price is confirmed in writing after scope is agreed.
+Final price is confirmed in writing after scope is agreed. The audit, advisory, implementation day rate and audit fix implementation prices above are fixed. The price of every other service is set in the written scope.
 
 ## Sample reports
 - [Sample audit report](https://turva.dev/samples/audit-report.md)
 
 ## Business details
 - Name: turva.dev
-- Operator: Erik Rekola
+- Operator: Erik Rekola (sole proprietorship, Finland)
 - Business ID (Finland): 3600281-7
 - VAT ID: FI36002817
 - Location: Tampere, Finland
@@ -412,7 +413,7 @@ Final price is confirmed in writing after scope is agreed.
 
 ## Engagement model
 - Async-only. No calls, no calendar links.
-- First reply in writing within one business day. A full answer follows within the time each service states.
+- First reply in writing within one business day by email or Signal, with no set reply time on LinkedIn. A full answer follows within the time each service states.
 - Email for longer messages, Signal for short questions.
 - Existing production passwords are not requested. Correction add-ons and implementation need delegated access agreed in writing in advance: deployment access or DNS access when a fix requires it.
 - Write access to repositories is scoped per task.
@@ -421,7 +422,7 @@ Final price is confirmed in writing after scope is agreed.
 ## Contact
 - Email: info@turva.dev
 - Signal: https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK
-- Written contact only, first reply within one business day.
+- Written contact only, first reply by email or Signal within one business day. LinkedIn has no set reply time.
 - [Contact page](https://turva.dev/contact.md)
 
 ## Guides
@@ -662,7 +663,7 @@ Both documents were read on 2026-09-04.
 ## Engagement principles
 
 - Async-only. No calls, no calendar links.
-- First reply in writing within one business day. A full answer follows within the time each service states.
+- First reply in writing within one business day by email or Signal, with no set reply time on LinkedIn. A full answer follows within the time each service states.
 - Existing production passwords are not requested. Correction add-ons and implementation need delegated access agreed in writing in advance: deployment access or DNS access when a fix requires it.
 - No analytics cookies, tracking pixels or third-party scripts on this site, as the legal page describes; Cloudflare, the host, still keeps standard traffic logs.
 
@@ -771,13 +772,13 @@ Corrected 2026-11-17. Several sentences said more than their sources do. Subagen
 
 2026-11-06
 
-My Claude Code sessions keep their working memory in plain files: a decision log, a trap log, a measurement log, a dated changelog and a memory folder with one fact per file. On 5 November I built a reference graph and a full-text search over those files. The next day I tuned it three times, twice against fixed query sets and once against real searches from earlier sessions, and ran two experiments with agents. I hoped it would become the way my sessions find things. It stays as a tool, and it replaced nothing. The measurements show that the agents' answers did not change, and my reading is that the documentation was already doing most of that work.
+My Claude Code sessions keep their working memory in plain files: a decision log, a trap log, a measurement log, a dated changelog and a memory folder with one fact per file. On 5 November I built a reference graph and a full-text search over those files. The next day I tuned it three times, twice against fixed query sets and once against real searches from earlier sessions, and ran two experiments with agents. I hoped it would become the way my sessions find things. It stays as a tool, and it replaced nothing. The graph made no measurable difference to the scores, and my reading is that the documentation was already doing most of that work.
 
 ## Where did the idea come from?
 
 I saw an example where a language model reads a long PDF and builds a knowledge graph of the people, companies, places and dates in it. I did not test that model, so this post says nothing about how well it works. My problem is a different one. My sessions ask which decision covers a rule and whether that decision still holds. Those links are already written into the files as decision numbers, dated log tags, links between memory facts, file paths and skill names.
 
-So the graph reads those references and uses no model. On 5 November it counted 810 decisions, 1 329 trap entries, 746 measurement entries, 1 918 changelog entries and 312 memory files, with about 29 200 references between them. Each one was written by a session or by me for the next reader. The search uses SQLite's full-text index with trigrams and folded diacritics, because older entries are written without the Finnish letters ä and ö and newer ones with them, and a Finnish compound word is found only as a substring. The index is never saved. A topic search builds it in memory on every run, because several sessions write to the same files at once and the folder is under constant sync, and a lookup by reference does not build it at all.
+So the graph reads those references and uses no model. On 5 November it counted 810 decisions, 1 329 trap entries, 746 measurement entries, 1 918 changelog entries and 312 memory files, with about 29 200 references between them. Each one was written by a session or by me for the next reader. The search uses SQLite's full-text index with trigrams and folded diacritics, because older entries are written without the Finnish letters ä and ö and newer ones with them, and part of a Finnish compound word is found only as a substring. The index is never saved. A topic search builds it in memory on every run, because several sessions write to the same files at once and the folder is under constant sync, and a lookup by reference does not build it at all.
 
 ## What did the first measurement promise?
 
@@ -813,11 +814,11 @@ The first experiment ran 8 tasks under three conditions: the brief named the gra
 
 The second experiment used the graph as it stood after tuning 2, 12 tasks meant to separate right answers from wrong ones, two conditions and three repeats, 72 runs in all. Both conditions averaged 1,93, and 3 of 36 runs in each scored below 2. I had fixed in advance that the tasks separate the conditions only if at least 6 runs in one of them scored below 2, so they did not. Correctness sat near the ceiling, and a small difference would not have shown. With the graph the summed duration was 11,1 percent lower, the summed tokens 16,0 percent lower and the tool calls 20,7 percent lower. None of those differences held up task by task. The p values were 0,77 for duration and 0,39 for tokens, and 0,065 for tool calls. One more figure did separate: the context of the last API call was smaller with the graph in 10 of 12 tasks, with a p value of 0,039, but that is the size of the final context and not what a run consumed. I measured the durations while another experiment ran on the same machine. None of the 49 graph calls ended in an error or an empty result. Tuning 3 came after both experiments, so no agent experiment covers it.
 
-The searches found the right entry far more often, and in both experiments the answers stayed the same.
+The searches found the right entry far more often, and in both experiments the graph made no measurable difference to the scores.
 
 ## Why did it change so little?
 
-I did not measure how sessions follow references, so this is my reading. Many rules in my instruction file name the decision or the log entry they come from, and the instruction file names the home of each kind of record. A session that greps a cited tag lands on the entry, and a session that knows where decisions live opens that file. The graph does that in one call and adds the status and who cites the entry. The answers came out the same either way.
+I did not measure how sessions follow references, so this is my reading. Many rules in my instruction file name the decision or the log entry they come from, and the instruction file names the home of each kind of record. A session that greps a cited tag lands on the entry, and a session that knows where decisions live opens that file. The graph does that in one call and adds the status and who cites the entry. The scores showed no measurable difference with the graph and without it.
 
 A graph read from references finds only the links someone wrote down. Where nobody wrote them, a model that extracts entities is the obvious thing to try. I have tested neither that nor a messier knowledge base.
 
@@ -839,7 +840,7 @@ The most lasting part may be a gate built on the same parser. It checks that eve
 
 **Does a reference graph make a coding agent faster?**
 
-Not in my two experiments. The tuned version had lower totals in the three measures I compared, but none of those differences held up across the 12 tasks of the second experiment.
+Not in my two experiments. The version after tuning 2 had lower totals in the three measures I compared, but none of those differences held up across the 12 tasks of the second experiment.
 
 **Why not use a model to extract the graph?**
 
@@ -848,6 +849,8 @@ The links my sessions need were already written into the files as decision numbe
 **What does the graph still do well?**
 
 It answers where a cited entry lives, what its own status line says and who cites it, in one call of about 0,37 seconds. About a third of my decisions have no status line, and the graph marks those as unmarked instead of guessing. A gate built on it checks that the references in the instruction files resolve.
+
+Corrected 2026-11-22. Three sentences said that the agents' answers did not change or came out the same. The measurements cover the scores, and they show no measurable difference, so the post now says that. The sentence on Finnish compound words now says that part of a compound word is found only as a substring.
 
 ## Related
 
@@ -987,7 +990,7 @@ A publisher owes a name that says what the tool acts on, because the name will s
 
 ### Schemas
 
-ASD tells the operator to validate tool parameters and outputs, and an operator can validate only against what you publish. \`outputSchema\` is optional in MCP, and a tool without one leaves the operator nothing to check a result against.
+ASD tells the operator to validate tool parameters and outputs, and an operator can validate only against what you publish. \`outputSchema\` is optional in MCP, and a tool without one leaves the operator no schema to check a structured result against.
 
 A publisher owes an input schema that refuses what the tool does not read, an output schema where the result has a stable shape, and a server that enforces both.
 
@@ -995,7 +998,7 @@ A publisher owes an input schema that refuses what the tool does not read, an ou
 
 MCP calls a description human-readable. The same page also asks servers for a deterministic tool order, because that helps prompt caching when tools are included in model context. I read that as the specification allowing for these sentences to reach a model. A description is then text from you to a model you will never see.
 
-Say what the tool does and when it fits, and stop there. Nothing about other servers' tools, the operator's policy or what the user wants belongs in a description. Length is a cost charged to someone else's context, and my own five descriptions total 3 174 bytes.
+Say what the tool does and when it fits, and stop there. Nothing about other servers' tools, the operator's policy or what the user wants belongs in a description. Length is a cost charged to someone else's context, and my own five descriptions totaled 3 174 bytes on version 1.7.1 on 2 November.
 
 ### Read-only signals
 
@@ -1068,7 +1071,7 @@ It does not rank anyone. I read one server and no client, and I tested neither r
 
 The ASD guide comes from text extracted from its PDF, and the publication date of 11 September 2026 from ASD's news page. The MCP tools page and schema reference of revision 2026-07-28 come from the extracted pages.
 
-For the server I made my own requests, one at a time, with every raw response saved. I listed the tools three times within five minutes, called each tool with no arguments, then sent an unknown argument key and an unknown tool name at short and long lengths. A first round of tool calls failed on a header that my own script left out, and I do not count it. Byte figures are UTF-8 bytes of the raw response or field. I ran the scanner twice with its default profile on 2 November 2026 and both runs read Level 5.
+For the server I made my own requests, one at a time, with every raw response saved except two from version 1.7.1, for which only the log lines were kept. I listed the tools three times within five minutes, called each tool with no arguments, then sent an unknown argument key and an unknown tool name at short and long lengths. A first round of tool calls failed on a header that my own script left out, and I do not count it. Byte figures are UTF-8 bytes of the raw response or field. I ran the scanner twice with its default profile on 2 November 2026 and both runs read Level 5.
 
 ## Frequently asked
 
@@ -1083,6 +1086,8 @@ Not from a server it does not trust. The MCP specification says clients must tre
 **Does a high agent-readiness score mean an MCP server's tools are well defined?**
 
 No. On isitagentready.com the MCP row reads the fields of the server card, which is a discovery check. The row reports fields such as tools and description and nothing from a call to the server, so tool definitions and error text have to be read separately.
+
+Corrected 2026-11-22. A tool without an output schema leaves the operator no schema to check a structured result against, and the post no longer says that it leaves nothing to check. The figure of 3 174 bytes now names the version and the day it was read. The method said that every raw response was saved. Two were not: the responses of version 1.7.1 to a short and a long unknown key were overwritten during the run, and only their log lines were kept.
 
 ## Related
 
@@ -4430,7 +4435,7 @@ Dated studies, protocol notes, build notes and lab notes from turva.dev. Each st
 49 articles.
 
 - [Everyone has the same models. My harness is the difference.](/blog/everyone-has-the-same-models) 2026-11-17. Lab notes. The models are the same for anyone, and I think the edge is the harness around them. Here is a month of my Claude Code gate logs and how blocks were answered.
-- [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph). 2026-11-06. Lab notes. I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and in two agent tests the answers stayed the same.
+- [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph). 2026-11-06. Lab notes. I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and two agent tests showed no measurable score difference.
 - [I can't start over, so I back up every night](/blog/why-i-back-up-every-night). 2026-11-04. Lab notes. A nightly disk clone, encrypted images on a mirrored NAS and off-site copies, what has failed so far, and what I have not yet restored.
 - [What a publisher owes someone else's agent](/blog/what-a-publisher-owes-someone-elses-agent). 2026-11-02. Protocol notes. ASD's guide on agentic AI is written for operators. What an MCP server's publisher owes them, read from the MCP spec and from my own server.
 - [Finnish MiCA crypto providers and AI agents](/blog/finnish-crypto-providers-and-ai-agents). 2026-10-31. Research. All five Finnish crypto providers in the MiCA register sit at isitagentready Level 1 of 5, and none passes the scanner's nine agent protocol checks.
@@ -5486,7 +5491,7 @@ This example uses an invented business and invented readings. The sample's scann
 
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 - [Active security testing](/services#active-security-testing). Price agreed for the engagement. An add-on to the audit: with GLM 5.3 and Burp Suite Professional for web traffic, I test the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so. A test starts only after you sign a written authorization.
-- [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
+- [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. Work outside an audit's fix list is scoped separately in days, and the complete fix list is a fixed €499 add-on sold only with the audit.
 - [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
 - [MCP server security test](/services#mcp-server-security-test). Price agreed for the engagement. A security test of one MCP server from the outside. Before the test you fill in a table of your tools, and a scripted walkthrough takes every tool that the table allows to be run through the same list of checks. Two test runs with GLM 5.3 follow it. You can buy the test without an audit, and it starts only after you sign a written authorization.
 - [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. Get written limits for the agent that your company already runs. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
@@ -5619,7 +5624,7 @@ You work directly with me, in writing. I reply within one business day. All pric
 
 - [Website and API agent-readiness audit](/agent-readiness-audit). €4,300. Find out what automated clients can access and what selected AI assistants say about your product. I combine a technical scan, manual review and a recorded set of AI questions, and include one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. Delivered within two weeks of the agreed written kickoff.
 - [Active security testing](/services#active-security-testing). Price agreed for the engagement. An add-on to the audit: with GLM 5.3 and Burp Suite Professional for web traffic, I test the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so. A test starts only after you sign a written authorization.
-- [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. The work follows the fix list of an audit, or it is scoped separately in days.
+- [Implementation](/services#implementation). €1,500 per day. I make your existing website readable by AI agents. Work outside an audit's fix list is scoped separately in days, and the complete fix list is a fixed €499 add-on sold only with the audit.
 - [Ongoing advisory](/services#advisory). €3,000 per month. Keep track of what changes after the audit. I repeat the measurements, review relevant work your team ships and help you decide what to do next. Minimum three months.
 - [MCP server security test](/services#mcp-server-security-test). Price agreed for the engagement. A security test of one MCP server from the outside. Before the test you fill in a table of your tools, and a scripted walkthrough takes every tool that the table allows to be run through the same list of checks. Two test runs with GLM 5.3 follow it. You can buy the test without an audit, and it starts only after you sign a written authorization.
 - [Agent operations and MCP server design](/services#agent-operations). Price agreed for the engagement. Get written limits for the agent that your company already runs. I review the data and permissions an agent relies on, the decisions it can make, and when a person needs to take over. I design and build an MCP interface with agreed tools, data sources and access rules.
@@ -5632,7 +5637,7 @@ See the [sample audit report](/samples/audit-report) before choosing a service.
 
 A technical scan, a manual review of your website and API surfaces, and a recorded question set put to selected AI assistants. The report keeps the technical findings and the observed AI answers apart.
 
-The audit is delivered within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works.
+The audit covers up to two targets named in the written scope, at one fixed price. The audit is delivered within two weeks of the agreed written kickoff. Dates in the written scope move by the business days spent waiting for your approval or access, and access counts as arranged when the account named in writing for that access works.
 
 ### What the audit delivers
 - The findings and a correction plan with acceptance checks.
@@ -6222,7 +6227,7 @@ I'll reply within one business day with a proposed next step, scope and start da
 
 ## Website or API audit
 
-Include the URL and what you want the audit to answer.
+Include the URL and what you want the audit to answer. The audit has a fixed price of €4,300 plus VAT and covers up to two targets named in the written scope. Your email reply confirming the written scope is the order.
 
 [Ask about an audit](mailto:info@turva.dev?subject=Agent-readiness%20audit&body=Site%20or%20API%20URL%3A%20%0AWhat%20the%20audit%20should%20answer%3A%20%0A)
 
@@ -7815,7 +7820,7 @@ A technical scan against an independent scanner's current rule set gives the pas
 
 A written report that lists each check, what was found, and a concrete fix for each gap it asks you to close, ordered by priority. The report also lists the reason for any gap it records and leaves open. The result is verifiable. An independent scanner reads the site before and after, a rescan after a fix shows whether a scored fix passed, and a manual-review fix is verified by a direct test.
 
-The fixed-scope audit on the [services page](/services) is the website and API audit at €4,300 within two weeks of the agreed written kickoff. Implementing the audit's own complete fix list is a €499 correction add-on when it is bought with the audit, with its report, or after the report and before implementation starts, and the required access is arranged in advance: an edge runtime, deployment access and any other access the listed fixes need. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions.
+The fixed-scope audit on the [services page](/services) is the website and API audit at €4,300 within two weeks of the agreed written kickoff, and it covers up to two targets named in the written scope at one fixed price. Implementing the audit's own complete fix list is a €499 correction add-on when it is bought with the audit, with its report, or after the report and before implementation starts, and the required access is arranged in advance: an edge runtime, deployment access and any other access the listed fixes need. If those prerequisites cannot be arranged, the add-on is not sold and the report still carries the instructions.
 
 The [sample audit report](/samples/audit-report) shows the deliverable for an invented business.
 
@@ -7827,11 +7832,11 @@ The audit includes one re-scan after the fixes, within 30 days of the report, or
 
 **Who provides agent-readiness audits?**
 
-turva.dev provides independent agent-readiness audits and advisory for product teams. It is a registered business in Tampere, Finland, business ID 3600281-7, run by Erik Rekola. The audit measures a site or API with an independent public scanner plus published security scans, then returns a written report with prioritized fixes.
+turva.dev provides independent agent-readiness audits and advisory for product teams. It is a registered business in Tampere, Finland, business ID 3600281-7, run by Erik Rekola. The audit measures a site or API with an independent public scanner, published security scans, a manual review and a recorded question set put to AI assistants, then returns a written report with prioritized fixes.
 
 **What does an agent-readiness audit cost?**
 
-turva.dev prices an audit at a fixed €4,300, delivered within two weeks of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged, and implementation is €1,500 per day, scoped per task. Prices exclude VAT and are valid until 2027-06-30, and the scope is written before any payment.
+turva.dev prices an audit at a fixed €4,300 for up to two targets named in the written scope, delivered within two weeks of the agreed written kickoff. Advisory is €3,000 per month with a three month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. Implementation is €1,500 per day, scoped per task, except that the complete fix list of an audit is a separate add-on at a fixed price, sold only with the audit. Prices exclude VAT and are valid until 2027-06-30, and the scope is written before any payment.
 
 **How long does an agent-readiness audit take?**
 
@@ -8754,7 +8759,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.260.9",
+    "version": "3.260.10",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8885,7 +8890,7 @@ const AGENT_JSON = JSON.stringify({
   "name_for_human": "turva.dev",
   "name_for_model": "turva_dev",
   "description_for_human": "Agent-readiness audits and advisory for product teams.",
-  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, and the follow-up checks each implemented fix with the relevant scanner or a direct test. Async-only engagement. Pricing (EUR, VAT not included): Audit €4,300 (fixed, within two weeks of the agreed written kickoff), Advisory €3,000/month (three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged), Implementation €1,500/day (scoped per task). Pages support Accept: text/markdown.",
+  "description_for_model": "turva.dev provides agent-readiness audits and advisory for product teams. An independent scanner measures the site or API, a written report names the prioritized fixes, and the follow-up checks each implemented fix with the relevant scanner or a direct test. Async-only engagement. Pricing (EUR, VAT not included): Audit €4,300 (fixed, within two weeks of the agreed written kickoff), Advisory €3,000/month (three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged), Implementation €1,500/day (scoped per task). The audit covers up to two targets named in the written scope, at one fixed price. Pages support Accept: text/markdown.",
   "contact_email": "info@turva.dev",
   "legal_info_url": "https://turva.dev/legal",
   "logo_url": "https://turva.dev/logo.png",
@@ -8895,7 +8900,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"D1YEessLkeAkyZi2gxNzDmoMQ4stQHAv9Vl4ATfxPFtwor4AwtpDYOXxl8QhJuBUHKtfddozwgqPbqs-6jmCDA\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"9mpzr_KIrfdzeCBiiGG98NPosRkHxvbvaln0--S2lcaf_lQ0tLiJQbokIHjPhB7Hl5UNP8c-VH0EN08KgXJWCg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"KtbHj0PucmwHjiQFDLyWN0yHkOPwctgGQpJ03Z8UGOMDBwNYI-Uuya3q7RBBrsq3Fq6EfPywIdrxB4JDuPgADg\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"EzukBt2qKu-xIGQgPhJc05lG4j398MH-f30yQoWGCiSRaiEHhE91JlOkpKGWhD-4-T1PZpTfYOuuuRVl71VyDw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"1IuO7XstzvVDK0-yMsyCwZ4RtTEHBKuNljUYWaqeqicwm9TzrenWFDC22_kk7KviUdKAq5kVMpKxCtaogCNhBA\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -8909,7 +8914,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.13.1",
+  "version": "1.13.2",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -8918,7 +8923,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.13.1",
+    "version": "1.13.2",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, MCP server security test, agent operations, MCP server design) with prices, the active security testing add-on to the audit quoted on request, own-domain agent-readiness and web-security scan evidence, and engagement principles (async-only, no calls, no calendar links). No authentication, no write operations."
   },
   "transport": {
@@ -9063,7 +9068,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.260.9",
+  "version": "3.260.10",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9511,7 +9516,7 @@ description: List the service offerings of turva.dev, with fixed prices in EUR f
 Use this skill to learn which services turva.dev offers, and which of them carry a fixed price.
 
 ## Services (fixed prices in EUR for the audit, advisory and implementation, VAT not included. Agent operations and MCP server design are quoted on request, and so is the MCP server security test)
-- **Audit.** €4,300. Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
+- **Audit.** €4,300. Fixed scope for up to two targets named in the written scope, at one fixed price, delivered within two weeks of the agreed written kickoff. An independent scanner and a live check of how AI assistants retrieve the site (answer engine optimization, AEO), manual review, written report with prioritized fix list.
 - **Advisory.** €3,000 / month. Monthly retainer, three-month minimum, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, month to month; either party can end it by email before the next month starts. Async-only. Ongoing review and score tracking: a monthly re-scan with the same scanner and profile, and a monthly repeat of the AI question set across the same assistants.
 - **Implementation.** €1,500 / day. Scoped per task. Edge workers, well-known manifests, JSON-LD. A separately scoped day does not include DNS changes, tool declarations inside your application, agent payment flows or building the MCP server itself; these need their own scope.
 - **MCP server security test.** On request. One MCP server, tested from the outside with two test accounts: a scripted walkthrough of every tool its tool table allows to be run, and two test runs with GLM 5.3. It can be bought without an audit and starts only after a signed written authorization and a check that the client controls the target. A test does not certify that a server is safe.
@@ -9522,7 +9527,7 @@ One implementation add-on is sold only with the audit it follows, bought togethe
 
 Active security testing is an add-on to an audit, priced by quote per written scope, and it starts only after a signed written authorization and a check that the client controls every target. The testing runs with GLM 5.3 through Melious AI GmbH, and web test traffic goes through Burp Suite Professional.
 
-Final price is confirmed in writing after scope is agreed.
+Final price is confirmed in writing after scope is agreed. The audit, advisory, implementation day rate and audit fix implementation prices above are fixed. The price of every other service is set in the written scope.
 
 ## Model
 Async-only engagement. No calls, no calendar links. Existing production passwords are not requested; correction add-ons and implementation need delegated access agreed in writing in advance. Repo write access is scoped per task.
@@ -9948,11 +9953,12 @@ const META_BY_PATH = {
   },
   "/blog/my-agents-notes-were-already-a-graph": {
     title: "My agent's notes were already a graph · turva.dev",
-    description: "I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and in two agent tests the answers stayed the same.",
+    description: "I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and two agent tests showed no measurable score difference.",
     date: "2026-11-06",
+    modified: "2026-11-22",
     kind: "Lab notes",
     image: "/og-my-agents-notes-were-already-a-graph.jpg",
-    imageAlt: "turva.dev blog card: My agent's notes were already a graph. Tuning made the searches better. In two agent tests the answers stayed the same.",
+    imageAlt: "turva.dev blog card: My agent's notes were already a graph. Tuning made the searches better. In two agent tests the graph made no measurable difference to the scores.",
   },
   "/blog/why-i-back-up-every-night": {
     title: "I can't start over, so I back up every night · turva.dev",
@@ -9967,7 +9973,7 @@ const META_BY_PATH = {
     title: "What a publisher owes someone else's agent · turva.dev",
     description: "ASD's guide on agentic AI is written for operators. What an MCP server's publisher owes them, read from the MCP spec and from my own server.",
     date: "2026-11-02",
-    modified: "2026-11-02",
+    modified: "2026-11-22",
     kind: "Protocol notes",
     image: "/og-what-a-publisher-owes-someone-elses-agent.jpg",
     imageAlt: "Card with the headline What a publisher owes someone else's agent, and the line Tool definitions and error text, read from the MCP spec and my own server.",
@@ -10678,7 +10684,7 @@ const PRICE_VALID_UNTIL = "2027-06-30";
 // pages carry it: the home page inside SCHEMA_HOME and /services inside its own graph. A
 // second copy would be a second price list, and verify.mts reads this one against facts.json.
 const SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","name":"Agent-readiness audits and advisory","provider":{"@id":"https://turva.dev/#business"},"serviceType":"Agent-readiness consulting","areaServed":{"@type":"Place","name":"Worldwide"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":"https://turva.dev/services","availableLanguage":["en","fi"]},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"1500","highPrice":"4300","offerCount":"3","availability":"https://schema.org/InStock","url":"https://turva.dev/services","priceValidUntil":"${PRICE_VALID_UNTIL}"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"turva.dev services with a fixed price","itemListElement":[
-{"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
+{"@type":"Offer","name":"Audit","description":"Fixed scope, delivered within two weeks of the agreed written kickoff. An independent scanner runs against the site or API and is recorded check by check, plus manual review of /.well-known/ manifests, JSON-LD, head metadata and whether published facts agree, and a documented question set put to several AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers. The audit covers up to two targets named in the written scope, at one fixed price.","url":"https://turva.dev/agent-readiness-audit","price":"4300","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"PriceSpecification","price":"4300","priceCurrency":"EUR","valueAddedTaxIncluded":false,"description":"€4,300 fixed price, delivered within two weeks of the agreed written kickoff. VAT (25,5%) added per Finnish law."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness audit"},"addOn":{"@type":"Offer","name":"Audit fix implementation","description":"Exactly the fixes the audit report lists. Sold only with the audit: bought with it, with its report, or after the report and before implementation starts, and only when the required access, an edge runtime in front of your origin, deployment access and any other access the listed fixes require such as DNS, is arranged in advance. If that access cannot be arranged, the add-on is not sold and the report still carries the correction instructions.","price":"499","priceCurrency":"EUR","priceSpecification":{"@type":"PriceSpecification","price":"499","priceCurrency":"EUR","valueAddedTaxIncluded":false},"itemOffered":{"@type":"Service","name":"Audit fix implementation"}}},
 {"@type":"Offer","name":"Advisory","description":"Monthly retainer, async-only. Monthly re-scan and score delta report, a monthly AI-visibility delta across the same assistants, written review of shipped work within one business day up to four reviews a month, roadmap input, a monthly written summary within five business days after the month ends and a quarterly summary of measured changes within five business days after every third service month. Minimum three months, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged. After the minimum, the retainer runs month to month and either party can end it by email before the next month starts.","url":"https://turva.dev/services","price":"3000","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"3000","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"MON","unitText":"month","description":"€3,000 per month, retainer-based. Minimum three months commitment, which can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Agent-readiness advisory"}},
 {"@type":"Offer","name":"Implementation","description":"Hands-on work on the fixes the audit identified, or new agent-ready infrastructure. Edge workers, well-known manifests, JSON-LD generators, ai.txt and llms.txt authoring. A separately scoped day excludes DNS changes, tool declarations inside your application and agent payment flows. An MCP server is a separate engagement.","url":"https://turva.dev/services","price":"1500","priceCurrency":"EUR","priceValidUntil":"${PRICE_VALID_UNTIL}","priceSpecification":{"@type":"UnitPriceSpecification","price":"1500","priceCurrency":"EUR","valueAddedTaxIncluded":false,"unitCode":"DAY","unitText":"day","description":"€1,500 per day. Scoped per task."},"availability":"https://schema.org/InStock","businessFunction":"http://purl.org/goodrelations/v1#Sell","itemOffered":{"@type":"Service","name":"Implementation work"}}
 ]}}`;
@@ -12141,7 +12147,7 @@ function buildAuditServiceJsonLd(canonicalUrl: string) {
     "serviceType": "Agent-readiness audit",
     "provider": { "@id": "https://turva.dev/#business" },
     "areaServed": { "@type": "Place", "name": "Worldwide" },
-    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers. Delivered within two weeks of the agreed written kickoff.",
+    "description": "A fixed-scope audit of a website or API: an independent scanner run recorded check by check, manual review of the agent-facing surfaces and of whether published facts agree, and a documented question set observed across selected AI assistants. Written findings with evidence, a correction plan ordered by impact with acceptance checks, one round of written follow-up questions submitted within 14 calendar days of the report and answered within five business days, and one re-scan within 30 days of the report, or within 30 days of the delivered corrections when the correction add-on is bought. The written scope agreed before kickoff sets how many questions that round covers. Delivered within two weeks of the agreed written kickoff. The audit covers up to two targets named in the written scope, at one fixed price.",
     "availableChannel": { "@type": "ServiceChannel", "serviceUrl": url, "availableLanguage": ["en", "fi"] },
     "offers": {
       "@type": "Offer",
@@ -13714,14 +13720,71 @@ function isValidPublicHost(host: string): boolean {
 function trimEnds(s: string, strip: (c: number) => boolean): string {
   let a = 0;
   let b = s.length;
-  while (a < b && strip(s.charCodeAt(a))) a++;
-  while (b > a && strip(s.charCodeAt(b - 1))) b--;
+  // The characters are read as code points, so a character outside the Basic Multilingual Plane (the tag characters
+  // U+E0000 to U+E007F, for one) is one character at an end and not two lone surrogates.
+  while (a < b) {
+    const c = s.codePointAt(a)!;
+    if (!strip(c)) break;
+    a += c > 0xffff ? 2 : 1;
+  }
+  while (b > a) {
+    const lo = s.charCodeAt(b - 1);
+    const pair = lo >= 0xdc00 && lo <= 0xdfff && b - 2 >= a && s.charCodeAt(b - 2) >= 0xd800 && s.charCodeAt(b - 2) <= 0xdbff;
+    const c = pair ? s.codePointAt(b - 2)! : lo;
+    if (!strip(c)) break;
+    b -= pair ? 2 : 1;
+  }
   return s.slice(a, b);
 }
 // The characters maskLocation() removes at either end of an address: C0 controls and spaces, which a URL parser
-// drops, and the Unicode white space, U+0085, U+180E, U+200B and U+FFFD, which a reader does not see.
+// drops, and every character a reader does not see: the white space, the separators, the control and format characters
+// and the default-ignorable code points of Unicode (soft hyphen, the direction marks, the word joiner, the Hangul
+// fillers, the variation selectors and the tag characters among them), plus U+0085, U+180E, U+200B, U+2800 and U+FFFD.
+// A list of three such characters left the rest in front of "//user:password@host", which then read as a relative path
+// and showed the password (K2-F1 of the outside reading, 2026-11-22). Every other character at an end stays.
+const URL_EDGE_CLASS = /^[\s\p{Cc}\p{Cf}\p{Z}\p{Default_Ignorable_Code_Point}]$/u;
 function isUrlEdge(c: number): boolean {
-  return c <= 0x20 || c === 0x85 || c === 0x180e || c === 0x200b || c === 0xfffd || /\s/.test(String.fromCharCode(c));
+  if (c <= 0x20 || c === 0x85 || c === 0x180e || c === 0x200b || c === 0x2800 || c === 0xfffd) return true;
+  if (c >= 0xd800 && c <= 0xdfff) return false;
+  return URL_EDGE_CLASS.test(String.fromCodePoint(c));
+}
+// A header value reaches this code as one code unit per byte (fetch hands out a ByteString), so a Location whose bytes are
+// UTF-8 text shows each character as two or three Latin-1 characters, and an invisible character at its start (U+3000 as
+// the bytes E3 80 80) is then not the character the edge trim removes (V1 of the C1c outside run, 2026-11-22). The value
+// is read as UTF-8 text when every code unit is a byte, one valid sequence at a time. Only
+// the masking reads this text: the address that is followed is resolved from the value as it arrived.
+function headerText(raw: string): string {
+  let high = false;
+  for (let i = 0; i < raw.length; i++) {
+    const c = raw.charCodeAt(i);
+    if (c > 0xff) return raw;
+    if (c > 0x7f) high = true;
+  }
+  if (!high) return raw;
+  // Valid UTF-8 sequences are decoded one by one, so a multi-byte invisible lead is read as the character it spells even when
+  // another byte of the value is invalid (QA-1, 2026-11-23). A byte that is not valid UTF-8 stays as it arrived between the
+  // first and the last printable ASCII character, and is U+FFFD, an edge character, before the first and after the last one,
+  // so such a byte cannot shield the edge characters next to it from the trim.
+  const bytes = Uint8Array.from(raw, (ch) => ch.charCodeAt(0));
+  let firstAscii = -1;
+  let lastAscii = -1;
+  for (let i = 0; i < bytes.length; i++) {
+    if (bytes[i]! > 0x20 && bytes[i]! < 0x7f) { if (firstAscii < 0) firstAscii = i; lastAscii = i; }
+  }
+  const decoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
+  let out = "";
+  let i = 0;
+  while (i < bytes.length) {
+    const b = bytes[i]!;
+    if (b < 0x80) { out += raw[i]; i++; continue; }
+    const len = b >= 0xc2 && b <= 0xdf ? 2 : b >= 0xe0 && b <= 0xef ? 3 : b >= 0xf0 && b <= 0xf4 ? 4 : 0;
+    if (len > 0 && i + len <= bytes.length) {
+      try { out += decoder.decode(bytes.subarray(i, i + len)); i += len; continue; } catch { /* not valid UTF-8 */ }
+    }
+    out += firstAscii < 0 || i < firstAscii || i > lastAscii ? "\ufffd" : raw[i];
+    i++;
+  }
+  return out;
 }
 // C0 controls and spaces, the characters a URL parser removes at either end of an address.
 function isC0OrSpace(c: number): boolean {
@@ -13976,10 +14039,11 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
       // failed cancel must not turn a redirect verdict into a throw (2026-09-10).
       try { await res.body?.cancel(); } catch { /* the verdict below is the answer */ }
       const loc = res.headers.get("location") || "";
+      const shown = headerText(loc);
       if (!loc) return { redirect: true, reason: "no-location", status: res.status, location: "" };
-      if (hop >= 4) return { redirect: true, reason: "too-many", status: res.status, location: cut(maskLocation(loc, hidden ? undefined : url), 120) };
+      if (hop >= 4) return { redirect: true, reason: "too-many", status: res.status, location: cut(maskLocation(shown, hidden ? undefined : url), 120) };
       let next;
-      try { next = new URL(loc, url); } catch { return { redirect: true, reason: "bad-location", status: res.status, location: cut(maskLocation(loc, hidden ? undefined : url), 120) }; }
+      try { next = new URL(loc, url); } catch { return { redirect: true, reason: "bad-location", status: res.status, location: cut(maskLocation(shown, hidden ? undefined : url), 120) }; }
       const parsedHref = next.href;
       // LV-22 (round S3, Tek-546): one trailing dot names the same host, as it does in the typed
       // address (normalizeHostInput), so a redirect to https://example.com./ is a same-site redirect.
@@ -13987,8 +14051,8 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
       if (next.hostname.length > 1 && next.hostname.endsWith(".")) next.hostname = next.hostname.slice(0, -1);
       const safeTarget = next.protocol === "https:" && !next.port && !next.username && !next.password && isValidPublicHost(next.hostname);
       const twin = (next.hostname.startsWith("www.") ? next.hostname.slice(4) : next.hostname) === reqApex;
-      if (!safeTarget) return { redirect: true, reason: "unsafe-target", status: res.status, location: cut(maskLocation(next.href, undefined, loc), 120) };
-      if (!twin) return { redirect: true, reason: "off-host", status: res.status, location: cut(maskLocation(next.href, undefined, loc), 120) };
+      if (!safeTarget) return { redirect: true, reason: "unsafe-target", status: res.status, location: cut(maskLocation(next.href, undefined, shown), 120) };
+      if (!twin) return { redirect: true, reason: "off-host", status: res.status, location: cut(maskLocation(next.href, undefined, shown), 120) };
       // A followed Location that reads as user information, as user_name:password@example.com resolved into
       // https://example.com/user_name:password@example.com, kept the password in the address the report showed (n1,
       // independent rerun 2026-11-22). The Location is read as written, against the address it came from, as a refused
@@ -14001,7 +14065,7 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
       // marked address did not reach it. Bases one segment deep let ".." and "../x" clear the mark while the hidden
       // segments stayed (F1 of the seventh check, 2026-11-22).
       const inheritsBase = (() => { const u0 = new URL(url); let n = 0; const alt = u0.origin + u0.pathname.replace(/[^\/]+/g, () => "zz9q" + n++) + (u0.search ? "?zz9q" : ""); try { return new URL(loc, url).href !== new URL(loc, alt).href; } catch { return true; } })();
-      hidden = maskLocation(loc, url) !== maskLocation(parsedHref) || maskLocation(next.href, undefined, loc) !== maskLocation(next.href) || (hidden && inheritsBase);
+      hidden = maskLocation(shown, url) !== maskLocation(parsedHref) || maskLocation(next.href, undefined, shown) !== maskLocation(next.href) || (hidden && inheritsBase);
       if (!redirectedFrom) redirectedFrom = url;
       url = next.href;
       continue;
@@ -15059,9 +15123,13 @@ function validateLlmsTxt(f: LlmsTxtInput): LlmsCheck[] {
   const h1End = setext ? firstIdx + 1 : firstIdx;
   // A title that renders no text, "# &#32;" or a code span of spaces, is an empty H1 as well (S3, LV-15).
   const titleBlank = title !== null && !hasVisibleText(title);
-  if ((title && !titleBlank) || setext) {
+  // A setext title whose text renders nothing is an empty H1 as well (P14, the K2 reading of 2026-11-22): "&#32;" or a
+  // code span of one space over a line of "=" passed until 0.8.3 while the same text after "# " failed. A line of nothing
+  // but spaces is no first line at all, so it never gets here.
+  const setextBlank = setext && !hasVisibleText(firstRaw.trim());
+  if ((title && !titleBlank) || (setext && !setextBlank)) {
     add("h1-title", "pass", "Starts with an H1 title", JSON.stringify(cut(first, 80)));
-  } else if (titleBlank) {
+  } else if (titleBlank || setextBlank) {
     add("h1-title", "fail", "Starts with an H1 title", "the H1 has no text. The format requires the project name there");
   } else {
     add("h1-title", "fail", "Starts with an H1 title", "the first non-empty line should be a markdown H1 (# Site name, or one line of text underlined with =)");

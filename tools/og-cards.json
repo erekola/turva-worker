@@ -350,7 +350,7 @@
   "og-my-agents-notes-were-already-a-graph.jpg": {
     "green": "were already a graph",
     "kicker": "Blog",
-    "subhead": "Tuning made the searches better. In two agent tests the answers stayed the same.",
+    "subhead": "Tuning made the searches better. In two agent tests the graph made no measurable difference to the scores.",
     "white": "My agent's notes"
   },
   "og-my-gate-could-not-see-a-sixth.jpg": {
@@ -407,7 +407,6 @@
     "subhead": "Every scanner check, nine findings with evidence and acceptance tests. Synthetic.",
     "white": "What an audit report looks like,"
   },
-
   "og-services-v3.jpg": {
     "green": "security testing as a quoted add-on",
     "kicker": "Services",
