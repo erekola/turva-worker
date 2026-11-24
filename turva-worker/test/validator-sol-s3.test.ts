@@ -1,12 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Markdown parsing round S3 (outside audit 2026-11-05, decision P1, Tek-546): the hosted llms.txt
 // validator, the canonical copy. The package turva-llms-txt-validator carries the same inputs and
 // expectations in test/sol-s3.test.ts. Each test name starts with the audit item it covers.
 
-const env = {};
+const env = validatorEnv();
 type Check = { id: string; status: string; label: string; detail: string };
 
 async function getChecks(llms: string): Promise<Check[]> {

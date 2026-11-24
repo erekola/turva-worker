@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker, { findLinkRelations } from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Growth check for the tests that say a scan "stays linear".
 // The package turva-llms-txt-validator keeps the same function in test/growth.ts; it is inline here
@@ -74,7 +75,7 @@ async function check(llms: string, { home = "" } = {}) {
     throw new Error("unexpected fetch to " + u);
   };
   try {
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), validatorEnv());
     assert.equal(res.status, 200);
     return JSON.parse(await res.text());
   } finally {
@@ -275,7 +276,7 @@ test("Tek-680: the validator sets the client IP headers to the fixed address on 
     const req = new Request("https://turva.dev/llms-txt-validator?url=example.com", {
       headers: { accept: "application/json", "cf-connecting-ip": visitor, "x-real-ip": visitor, "x-forwarded-for": visitor }
     });
-    const res = await worker.fetch(req, {});
+    const res = await worker.fetch(req, validatorEnv());
     assert.equal(res.status, 200);
   } finally {
     globalThis.fetch = realFetch;
@@ -303,7 +304,7 @@ test("Round 24 V1-2: a tab or a line break inside the typed scheme is removed be
   };
   try {
     for (const typed of ["ht%09tps://example.com", "https:%0A//example.com", "https:%0D%0A//Exam%09ple.com/path"]) {
-      const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + typed, { headers: { accept: "application/json" } }), {});
+      const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + typed, { headers: { accept: "application/json" } }), validatorEnv());
       assert.equal(res.status, 200, typed);
       assert.equal(JSON.parse(await res.text()).target, "https://example.com/llms.txt", typed);
     }
@@ -325,7 +326,7 @@ test("Echo: a tab or a line break inside the typed address does not change the h
   };
   try {
     for (const typed of ["ht%09tps://example.com/%3Fx", "exa%09mple.com/%3Fx", "https:%0A//Exam%0Dple.com/p%3Fx=1", "ht%09tps://example.com/%23f"]) {
-      const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + typed, { headers: { accept: "text/html" } }), {});
+      const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + typed, { headers: { accept: "text/html" } }), validatorEnv());
       assert.equal(res.status, 200, typed);
       const html = await res.text();
       assert.ok(html.includes('id="vurl" name="url"'), typed);

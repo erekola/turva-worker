@@ -1,12 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Regression tests for the Sol repo read 2026-10-07, Tek-578 session S2, the Worker logic and
 // header items: WL-02, WL-19, WL-20, WL-21, WL-23, WL-30, U-1 and U-2. Each test fails when its
 // fix is removed. Offline, against the module itself.
 
-const env = {};
+const env = validatorEnv();
 const limited = { RATE_LIMITER: { limit: async () => ({ success: false }) } };
 const call = (url: string, init: RequestInit = {}, e: object = env) => worker.fetch(new Request(url, init), e as never);
 

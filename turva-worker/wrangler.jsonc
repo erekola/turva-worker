@@ -23,6 +23,21 @@
       "name": "PARITY_LIMITER",
       "namespace_id": "1002",
       "simple": { "limit": 10, "period": 60 }
+    },
+    {
+      // Tek-910. The hosted llms.txt validator: about 10 validations a minute per client IP, in its own
+      // namespace. serveLlmsValidatorHtml refuses to fetch without it (503), because its requests are
+      // signed with Web Bot Auth and carry turva.dev's identity to the checked site.
+      "name": "VALIDATOR_LIMITER",
+      "namespace_id": "1003",
+      "simple": { "limit": 10, "period": 60 }
+    },
+    {
+      // Tek-910. The same validator: about 30 validations a minute for one checked host, so no single
+      // site receives a stream of signed requests from here. Also fails closed (503) when missing.
+      "name": "VALIDATOR_HOST_LIMITER",
+      "namespace_id": "1004",
+      "simple": { "limit": 30, "period": 60 }
     }
   ],
   // Phase 2 switch of the parity check: "on" lets it forward other hosts to a PARITY service

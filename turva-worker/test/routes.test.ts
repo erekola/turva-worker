@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker, { findLinkRelations, markdownToHtml } from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 import { readFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 
@@ -72,7 +73,7 @@ const facts = JSON.parse(readFileSync(new URL("../../tools/facts.json", import.m
 // the site's HTML 404 page. Nothing caught it because nothing exercised the router
 // before a deploy. These cases make the promise mechanical: they run in well under
 // a second, need no network, and fail before wrangler is ever invoked.
-const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
+const env = validatorEnv(); // no RATE_LIMITER binding: exercises the documented fail-open path; only the validator limiters (Tek-910) are bound
 
 const get = (path: string, opts: { method?: string; headers?: Record<string, string> } = {}): Promise<Omit<Response, "json"> & { json(): Promise<any> }> =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);

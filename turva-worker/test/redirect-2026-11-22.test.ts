@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Regression tests for the leaks an independent rerun against site 3.260.7 found on 2026-11-22 (n2, the hosted copy of
 // n1, and n7 and n8 in the hosted route): a followed redirect, the unused typed path and the host echoed in the input
@@ -31,7 +32,7 @@ async function call(typed: string, locations: string[], accept: string) {
   const orig = globalThis.fetch;
   globalThis.fetch = mockFetch(locations) as typeof fetch;
   try {
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(typed), { headers: { accept } }), {}, {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(typed), { headers: { accept } }), validatorEnv(), {});
     return { status: res.status, text: await res.text() };
   } finally {
     globalThis.fetch = orig;

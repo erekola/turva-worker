@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Regression tests for the masking leaks of the C1c outside run (V1) and the K2 reading (K2-F1), and for the setext title
 // of the K2 plan (n1, P14), all of 2026-11-22/23 (decision Tek-898). V1: a Location header reaches the code as one code
@@ -33,7 +34,7 @@ async function call(typed: string, locations: string[], accept: string, page = P
   const orig = globalThis.fetch;
   globalThis.fetch = mockFetch(locations, page) as typeof fetch;
   try {
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(typed), { headers: { accept } }), {}, {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(typed), { headers: { accept } }), validatorEnv(), {});
     return { status: res.status, text: await res.text() };
   } finally {
     globalThis.fetch = orig;

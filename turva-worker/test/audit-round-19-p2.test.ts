@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { stripTypes } from "../test-support/strip-types.ts";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Regression tests for audit round 19, patch 2.
 // Each test names the item id from the patch brief of that round so a failure maps back to
@@ -11,7 +12,7 @@ import worker from "../src/worker.ts";
 // v3.164.0 release) and fails there, except the tests that call themselves a safety net;
 // the mutation run that proves this is recorded in the session report, not in this file.
 
-const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
+const env = validatorEnv(); // no RATE_LIMITER binding: exercises the documented fail-open path
 
 const get = (path: string, opts: { method?: string; headers?: Record<string, string> } = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
@@ -169,7 +170,7 @@ test("18-F02: leading whitespace before a long address does not shift the checke
   globalThis.fetch = async () => { throw new Error("must not be called for a refused host"); };
   try {
     const padded = " ".repeat(291) + "turva.dev.invalid";
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(padded), { headers: { accept: "application/json" } }), {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(padded), { headers: { accept: "application/json" } }), validatorEnv());
     assert.equal(res.status, 400, "a long padded invalid host must be refused, not silently truncated to something valid");
     const body = JSON.parse(await res.text());
     assert.match(body.error, /does not look like a public domain/, "the untruncated host is read and refused");
@@ -186,7 +187,7 @@ test("P3, K7-P5: the validator refuses arpa and onion hosts without fetching, an
   globalThis.fetch = async (url) => { seen.push(String(url)); throw new Error("must not be called for a refused host"); };
   try {
     for (const bad of ["router.home.arpa", "1.0.0.127.in-addr.arpa", "somesite.onion"]) {
-      const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(bad), { headers: { accept: "application/json" } }), {});
+      const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(bad), { headers: { accept: "application/json" } }), validatorEnv());
       assert.equal(res.status, 400, bad);
       const body = JSON.parse(await res.text());
       assert.match(body.error, /does not look like a public domain/, bad);
@@ -212,14 +213,14 @@ test("P3, K7-P5: the validator refuses arpa and onion hosts without fetching, an
     throw new Error("unexpected fetch to " + u);
   };
   try {
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent("example.com."), { headers: { accept: "application/json" } }), {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent("example.com."), { headers: { accept: "application/json" } }), validatorEnv());
     assert.equal(res.status, 200);
     const body = JSON.parse(await res.text());
     assert.equal(body.target, "https://example.com/llms.txt", "a trailing dot must be read as example.com, not refused or fetched with the dot");
 
     const accepted = await get("/llms-txt-validator?url=turva.dev");
     assert.equal(accepted.status, 200);
-    const goodHost = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.org", { headers: { accept: "application/json" } }), {});
+    const goodHost = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.org", { headers: { accept: "application/json" } }), validatorEnv());
     assert.notEqual(goodHost.status, 400, "an ordinary public host must still be accepted (isValidPublicHost is not over-broadened)");
   } finally {
     globalThis.fetch = realFetch;

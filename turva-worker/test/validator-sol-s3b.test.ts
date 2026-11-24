@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Growth check for the tests that say a scan "stays linear".
 // The package turva-llms-txt-validator keeps the same function in test/growth.ts; it is inline here
@@ -62,7 +63,7 @@ async function assertLinear(label: string, work: (input: string) => unknown, sma
 // inputs and expectations in test/sol-s3b.test.ts. Each test name starts with the audit item it covers,
 // except the cases of the discovery table, whose names start with the word "discovery".
 
-const env = {};
+const env = validatorEnv();
 // Strip tags until nothing changes, so a tag split around an inner one cannot survive a single pass (CodeQL js/incomplete-multi-character-sanitization).
 const stripTags = (html: string) => {
   let prev: string;

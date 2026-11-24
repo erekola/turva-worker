@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import worker, { markdownToHtml, renderInline } from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Regression tests for audit round 19.
 // Each test names the finding id it guards (F1, K6-1, ... G1-5) so a failure maps back
@@ -10,7 +11,7 @@ import worker, { markdownToHtml, renderInline } from "../src/worker.ts";
 // safety net and passes on both versions; every G1 test checks a surface round 19 did
 // not touch and passes on both versions.
 
-const env = {}; // no RATE_LIMITER binding: exercises the documented fail-open path
+const env = validatorEnv(); // no RATE_LIMITER binding: exercises the documented fail-open path
 
 const get = (path: string, opts: { method?: string; headers?: Record<string, string> } = {}) =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);

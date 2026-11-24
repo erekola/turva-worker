@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.263.0 - the hosted llms.txt validator signs the requests it sends with Web Bot Auth (Tek-910, 2026-11-24): an Ed25519 key held as the Worker secret WBA_SIGNING_KEY, a Signature-Agent header that names https://turva.dev, a signed key directory at /.well-known/http-message-signatures-directory, and two fail-closed rate limits on the validator (10 validations a minute per visitor, 30 a minute per checked site); the validator page says so. The npm package never signs.
 // turva.dev worker v3.262.0 - /services Agent operations scope list gains two items for a coding agent such as Claude Code: hooks that check a tool call before it runs with the tests that show which calls they block, and skills that load the client's procedure; prices and terms unchanged
 // turva.dev worker v3.261.1 - MCP server card version 1.14.0 (Tek-908, 2026-11-24): turva-mcp gets a sixth tool, get_page, which reads one page of turva.dev through a service binding, and its get_contact now quotes the two privacy sections AI tools in security work and Where the work runs; the card names the new tool and carries the new serverInfo description, so the card changes bytes and its signature must be renewed.
 // turva.dev worker v3.261.0 - new Research post /blog/finnish-health-sites-and-ai-training (2026-11-23) on the agent-readiness of 33 Finnish public and private health service sites, read with isitagentready.com and own curl requests: the two sites above Level 1 both carry a Cloudflare managed robots.txt with a content signal; with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign) and the version mirrors.
@@ -4313,6 +4314,8 @@ The validator requests two documents: /llms.txt and the home page. A path in the
 Fetched content is checked and discarded. The response uses a no-store header.
 
 The address you enter is part of the request URL, so it appears in the Worker logs, which are kept for at most seven days as the [legal page](/legal) describes. The validator's code sends the checked site new requests with its own user agent and accept headers and does not pass on the headers of your request.
+
+The hosted validator signs its requests with Web Bot Auth, which builds on HTTP Message Signatures. Each request carries a Signature-Agent header that names https://turva.dev, and turva.dev publishes the public key at https://turva.dev/.well-known/http-message-signatures-directory. Requests carry the User-Agent turva-llms-txt-validator (+https://turva.dev/llms-txt-validator). One IP address can run about 10 validations per minute, and all visitors together can validate one site about 30 times per minute. The npm package does not sign its requests.
 
 Cloudflare's [HTTP headers documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/) says that when the checked site is not hosted on Cloudflare, the Worker controls the CF-Connecting-IP and X-Real-IP headers. The validator therefore sets both to the fixed address 2a06:98c0:3600::103, which that documentation names for a Worker's requests to another Cloudflare zone. The same documentation says Cloudflare adds a CF-Worker header carrying the name of the zone that runs the validator, turva.dev.
 
@@ -8868,7 +8871,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.262.0",
+    "version": "3.263.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8985,7 +8988,7 @@ const OPENAPI_SPEC = JSON.stringify({
     "/api/acp/checkout_sessions/{session_id}": { "get": { "summary": "Retrieve an ACP checkout session", "operationId": "acpGetCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "session", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "GET only", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/api/acp/checkout_sessions/{session_id}/complete": { "post": { "summary": "Complete an ACP checkout session", "operationId": "acpCompleteCheckoutSession", "description": "Scope is agreed in writing before payment; no API completes it. The response is 422 intervention_required, never 200.", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "422": { "description": "intervention_required: human confirmation in writing is required before this session can complete", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/api/acp/checkout_sessions/{session_id}/cancel": { "post": { "summary": "Cancel an ACP checkout session", "operationId": "acpCancelCheckoutSession", "parameters": [{ "name": "session_id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "canceled", "content": { "application/json": { "schema": { "type": "object" } } } }, "404": { "description": "unknown session id", "content": { "application/json": { "schema": { "type": "object" } } } }, "405": { "description": "POST only", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
-    "/llms-txt-validator": { "get": { "summary": "llms.txt validator, JSON form", "operationId": "validateLlmsTxt", "description": "Send Accept: application/json to get the report as JSON; without that header the same address answers the HTML page. The validator always reads /llms.txt at the root of the host, and a path in the address is reported and not used.", "parameters": [{ "name": "url", "in": "query", "required": true, "description": "A public domain such as example.com.", "schema": { "type": "string" } }], "responses": { "200": { "description": "The report: target, summary and checks", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "No address, an address that is not a public domain, or a file that could not be fetched; the body is { error }", "content": { "application/json": { "schema": { "type": "object" } } } }, "429": { "description": "Rate limited by the site-wide limiter; plain text with Retry-After", "content": { "text/plain": { "schema": { "type": "string" } } } } } } },
+    "/llms-txt-validator": { "get": { "summary": "llms.txt validator, JSON form", "operationId": "validateLlmsTxt", "description": "Send Accept: application/json to get the report as JSON; without that header the same address answers the HTML page. The validator always reads /llms.txt at the root of the host, and a path in the address is reported and not used.", "parameters": [{ "name": "url", "in": "query", "required": true, "description": "A public domain such as example.com.", "schema": { "type": "string" } }], "responses": { "200": { "description": "The report: target, summary and checks", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "No address, an address that is not a public domain, or a file that could not be fetched; the body is { error }", "content": { "application/json": { "schema": { "type": "object" } } } }, "429": { "description": "Rate limited. The site-wide limiter answers in plain text. The validator also has its own limits, about 10 validations per minute per IP address and about 30 per minute per checked site, and answers a JSON request with { error }. Retry-After is 60 seconds", "content": { "text/plain": { "schema": { "type": "string" } }, "application/json": { "schema": { "type": "object" } } } }, "503": { "description": "The validator's rate limiter is unavailable, so nothing was fetched; a JSON request gets { error }", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/markdown-parity-check": { "post": { "summary": "Compare the main content of a turva.dev page with its Markdown version", "operationId": "checkMarkdownParity", "description": "Checks the published pages of turva.dev only; any other address answers 403. The response is the report in the JSON format of the markdown-parity-check package, and summary.exitCode carries 0, 1 or 2.", "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string", "description": "Full https address of a published turva.dev page" }, "markdownUrl": { "type": "string", "description": "Optional separate Markdown address on the same site" }, "selector": { "type": "string", "description": "Optional CSS selector for the HTML content" }, "strict": { "type": "boolean", "description": "Count warnings as failures" }, "frontMatter": { "type": "string", "enum": ["keep", "strip"], "description": "Keep or strip front matter at the top of the Markdown" } } } } } }, "responses": { "200": { "description": "A pass or a fail report", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "description": "Malformed request or invalid field", "content": { "application/json": { "schema": { "type": "object" } } } }, "403": { "description": "This version does not check that address", "content": { "application/json": { "schema": { "type": "object" } } } }, "413": { "description": "Request body larger than 8192 bytes", "content": { "application/json": { "schema": { "type": "object" } } } }, "415": { "description": "Send application/json. The answer is a JSON report when the request sends Accept: application/json, and the HTML page otherwise", "content": { "application/json": { "schema": { "type": "object" } }, "text/html": { "schema": { "type": "string" } } } }, "422": { "description": "The address was refused or the comparison could not finish", "content": { "application/json": { "schema": { "type": "object" } } } }, "429": { "description": "Too many checks; Retry-After says when to retry. The check's own limiter answers with a JSON report when the request sends Accept: application/json or a JSON body, and with the HTML page otherwise; the site-wide limiter answers with plain text", "content": { "application/json": { "schema": { "type": "object" } }, "text/html": { "schema": { "type": "string" } }, "text/plain": { "schema": { "type": "string" } } } }, "503": { "description": "Busy or unavailable; Retry-After says when to retry. A JSON report when the request sends Accept: application/json or a JSON body, the HTML page otherwise", "content": { "application/json": { "schema": { "type": "object" } }, "text/html": { "schema": { "type": "string" } } } } } } },
     "/api/acp": { "get": { "summary": "ACP base: lists the checkout session routes and points at the discovery manifest", "operationId": "getAcpIndex", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/v1/tasks/{id}": { "get": { "summary": "A2A task lookup", "operationId": "getA2aTask", "description": "message:send answers at once with a message and never creates a task, so every task id is unknown and this answers the A2A error -32001 task not found.", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "404": { "description": "task not found (-32001)", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
@@ -9178,7 +9181,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.262.0",
+  "version": "3.263.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -14129,13 +14132,130 @@ function validatorEcho(typed: string, shown: string): string {
 // 2026-10-22 against one test site outside Cloudflare: both requests carried this address in
 // CF-Connecting-IP and neither carried x-real-ip or x-forwarded-for (Tek-680).
 const VALIDATOR_CLIENT_IP = "2a06:98c0:3600::103";
+// Tek-910: Web Bot Auth. The hosted validator signs every request it sends to the checked site (every
+// redirect hop) with an Ed25519 key, in the Cloudflare form: a Signature-Agent header that is a structured
+// string naming https://turva.dev, covered together with @authority by a signature labelled sig1 and tagged
+// web-bot-auth (RFC 9421 section 2.5 signature base, no trailing line feed). The private key is the Worker
+// secret WBA_SIGNING_KEY, a private JWK as JSON; without a usable key the validator fetches unsigned, as it
+// did before, and the directory route answers 503. Signing is Worker-only by design: the npm package
+// turva-llms-txt-validator runs on users' machines and never signs, so this block has no mirror there.
+const WBA_AGENT_URL = "https://turva.dev";
+// The public half, filled from the output of tools/wba-avain.mjs and checked by verify --live against the
+// live directory. The runtime signs with the secret and serves the directory from it, never from this constant.
+const WBA_PUBLIC_JWK = { kty: "OKP", crv: "Ed25519", x: "lj6dRqhjXD0V9h5SNip7vX_5N_FcCxZiv8BxRMy_I6U", kid: "3CTZqv7-4QRq7sHyGLhI0VLal6qhyzd7PN8TQvpWTGY" };
+interface WbaKey { key: CryptoKey; x: string; kid: string }
+type WbaSigner = (authority: string) => Promise<Record<string, string>>;
+// One import per isolate: the cache is keyed by the secret text itself, so a rotated secret is read again.
+let wbaKeyCache: { secret: string; loaded: WbaKey | null } | null = null;
+function wbaBase64(bytes: Uint8Array): string {
+  let s = "";
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  return btoa(s);
+}
+function wbaBase64Url(bytes: Uint8Array): string {
+  return wbaBase64(bytes).split("+").join("-").split("/").join("_").split("=").join("");
+}
+// RFC 7638 thumbprint of an Ed25519 public key: SHA-256 over the required members in lexicographic order.
+async function wbaThumbprint(x: string): Promise<string> {
+  const canonical = "{\"crv\":\"Ed25519\",\"kty\":\"OKP\",\"x\":\"" + x + "\"}";
+  return wbaBase64Url(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canonical))));
+}
+// The secret is never logged or echoed: a bad one only makes the key unavailable.
+async function loadWbaKey(env?: Env): Promise<WbaKey | null> {
+  const secret = env && typeof env.WBA_SIGNING_KEY === "string" ? env.WBA_SIGNING_KEY : "";
+  if (!secret) return null;
+  if (wbaKeyCache && wbaKeyCache.secret === secret) return wbaKeyCache.loaded;
+  let loaded: WbaKey | null = null;
+  try {
+    const jwk = JSON.parse(secret);
+    if (jwk && jwk.kty === "OKP" && jwk.crv === "Ed25519" && typeof jwk.x === "string" && /^[A-Za-z0-9_-]{43}$/.test(jwk.x) && typeof jwk.d === "string") {
+      const key = await crypto.subtle.importKey("jwk", { kty: "OKP", crv: "Ed25519", x: jwk.x, d: jwk.d }, { name: "Ed25519" }, false, ["sign"]);
+      const pub = await crypto.subtle.importKey("jwk", { kty: "OKP", crv: "Ed25519", x: jwk.x }, { name: "Ed25519" }, false, ["verify"]);
+      // A secret whose d does not belong to its x would publish a directory that no signature verifies against.
+      const probe = new TextEncoder().encode("wba-key-check");
+      if (await crypto.subtle.verify({ name: "Ed25519" }, pub, await crypto.subtle.sign({ name: "Ed25519" }, key, probe), probe)) {
+        loaded = { key, x: jwk.x, kid: await wbaThumbprint(jwk.x) };
+      }
+    }
+  } catch { loaded = null; }
+  wbaKeyCache = { secret, loaded };
+  return loaded;
+}
+async function wbaSigner(env?: Env): Promise<WbaSigner | null> {
+  const k = await loadWbaKey(env);
+  if (!k) return null;
+  return async (authority: string) => {
+    const agent = "\"" + WBA_AGENT_URL + "\"";
+    const created = Math.floor(Date.now() / 1000);
+    const nonce = wbaBase64(crypto.getRandomValues(new Uint8Array(32)));
+    const params = "(\"@authority\" \"signature-agent\");created=" + created + ";keyid=\"" + k.kid + "\";alg=\"ed25519\";expires=" + (created + 60) + ";nonce=\"" + nonce + "\";tag=\"web-bot-auth\"";
+    const base = "\"@authority\": " + authority + "\n\"signature-agent\": " + agent + "\n\"@signature-params\": " + params;
+    const sig = new Uint8Array(await crypto.subtle.sign({ name: "Ed25519" }, k.key, new TextEncoder().encode(base)));
+    return { "signature-agent": agent, "signature-input": "sig1=" + params, "signature": "sig1=:" + wbaBase64(sig) + ":" };
+  };
+}
+// The signed key directory (draft-meunier-http-message-signatures-directory, Cloudflare's form): the response
+// is signed over the authority of the request that fetched it ("@authority";req) and over its own
+// content-digest, so nobody can mirror the directory and register the key on turva.dev's behalf.
+async function serveWbaDirectory(request: Request, env?: Env): Promise<Response> {
+  const k = await loadWbaKey(env);
+  const headers = new Headers({ "access-control-allow-origin": "*" });
+  if (!k) {
+    headers.set("content-type", "text/plain; charset=utf-8");
+    headers.set("cache-control", "no-store");
+    applySecurityHeaders(headers, "agent-api");
+    return new Response("503 Service Unavailable. The signing key is not configured.", { status: 503, headers });
+  }
+  const body = JSON.stringify({ keys: [{ kty: "OKP", crv: "Ed25519", x: k.x, kid: k.kid, use: "sig" }] });
+  const digest = "sha-256=:" + wbaBase64(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(body)))) + ":";
+  const authority = new URL(request.url).host.toLowerCase();
+  const created = Math.floor(Date.now() / 1000);
+  const nonce = wbaBase64(crypto.getRandomValues(new Uint8Array(32)));
+  const params = "(\"@authority\";req \"content-digest\");alg=\"ed25519\";keyid=\"" + k.kid + "\";nonce=\"" + nonce + "\";tag=\"http-message-signatures-directory\";created=" + created + ";expires=" + (created + 86400);
+  const base = "\"@authority\";req: " + authority + "\n\"content-digest\": " + digest + "\n\"@signature-params\": " + params;
+  const sig = new Uint8Array(await crypto.subtle.sign({ name: "Ed25519" }, k.key, new TextEncoder().encode(base)));
+  headers.set("content-type", "application/http-message-signatures-directory+json");
+  headers.set("cache-control", "public, max-age=3600");
+  headers.set("content-digest", digest);
+  headers.set("signature-input", "sig1=" + params);
+  headers.set("signature", "sig1=:" + wbaBase64(sig) + ":");
+  appendAgentLinks(headers);
+  applySecurityHeaders(headers, "agent-api");
+  return new Response(body, { status: 200, headers });
+}
+// Tek-910: the validator's own outbound fetch is the thing guarded. Two limits, 10 validations a minute for
+// one visitor address and 30 a minute for one checked host, each in its own namespace. Like the parity check
+// and unlike the site-wide limiter this fails closed: a missing binding or a limiter that throws answers 503,
+// because the signed requests carry turva.dev's identity to a third party.
+async function validatorLimit(request: Request, env: Env | undefined, host: string): Promise<{ status: number; message: string } | null> {
+  if (!env || !env.VALIDATOR_LIMITER || !env.VALIDATOR_HOST_LIMITER) {
+    return { status: 503, message: "The validator is unavailable because its rate limiter is not configured. Try again later." };
+  }
+  try {
+    const ip = request.headers.get("CF-Connecting-IP") || "no-ip";
+    if ((await env.VALIDATOR_LIMITER.limit({ key: "val:" + ip })).success !== true) {
+      return { status: 429, message: "Too many validations from your IP address. Wait a minute and try again." };
+    }
+    // One bucket per site: the validator treats www.example.com and example.com as the same site (reqApex in fetchLlmsTxt).
+    const apex = host.startsWith("www.") ? host.slice(4) : host;
+    if ((await env.VALIDATOR_HOST_LIMITER.limit({ key: "valhost:" + apex })).success !== true) {
+      return { status: 429, message: "Too many validations of this site in the last minute. Wait a minute and try again." };
+    }
+  } catch {
+    return { status: 503, message: "The validator is unavailable because its rate limiter did not answer. Try again later." };
+  }
+  return null;
+}
 // The second and third arguments (path, accept) were added for the v2 discovery checks, which
 // need the site's home page as well as its llms.txt, read with an Accept header for HTML.
 // Nothing else moved:
 // the redirect budget, the same-host rule, the credential and port rejections and
 // the 256 KiB cap are the guards this function was measured against, and a rewrite
 // would have put them back in play for a feature that does not need them.
-async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promise<LlmsFetchResult> {
+// Tek-910: the fourth argument signs each hop with Web Bot Auth (see wbaSigner). It is a parameter and not a
+// read of the environment so that every caller says explicitly whether its requests are signed. Signing is
+// Worker-only by design: the package's fetchLlmsTxt() mirrors the guards of this function and never signs.
+async function fetchLlmsTxt(host: string, path?: string, accept?: string, sign?: WbaSigner | null): Promise<LlmsFetchResult> {
   const reqApex = host.startsWith("www.") ? host.slice(4) : host;
   const cap = 262144;
   let url = "https://" + host + (path || "/llms.txt");
@@ -14146,6 +14266,8 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
   // signal made that message false by a factor of five.
   const deadline = Date.now() + 8000;
   for (let hop = 0; ; hop++) {
+    // The signature covers the authority of this hop's own address, so each redirect hop is signed again.
+    const signed: Record<string, string> = sign ? await sign(new URL(url).host) : {};
     const res = await fetch(url, {
       redirect: "manual",
       signal: AbortSignal.timeout(Math.max(1, deadline - Date.now())),
@@ -14153,7 +14275,8 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
         "user-agent": "turva-llms-txt-validator (+https://turva.dev/llms-txt-validator)",
         "accept": accept || "text/plain, text/markdown;q=0.9, */*;q=0.1",
         "cf-connecting-ip": VALIDATOR_CLIENT_IP,
-        "x-real-ip": VALIDATOR_CLIENT_IP
+        "x-real-ip": VALIDATOR_CLIENT_IP,
+        ...signed
       }
     });
     if (res.status >= 300 && res.status < 400) {
@@ -14182,7 +14305,8 @@ async function fetchLlmsTxt(host: string, path?: string, accept?: string): Promi
       // independent rerun 2026-11-22). The Location is read as written, against the address it came from, as a refused
       // one is. When that reading masks more than the parsed address shows, the chain is marked: every later address
       // that keeps its path is resolved from this one, so the final address is shown as its scheme, its host and "/***", and a later
-      // refused Location is read without this address as its base. Mirrors the package's fetchLlmsTxt().
+      // refused Location is read without this address as its base. Mirrors the package's fetchLlmsTxt(), except
+      // that signing is Worker-only by design: the package never signs (Tek-910).
       // A later Location that keeps nothing of the marked address, such as an absolute address or a path from the root,
       // clears the mark: it is resolved against the marked address and against the same origin with every path segment
       // and the query replaced, at the same depth, and when both give the same address the path and the query of the
@@ -16511,7 +16635,7 @@ function summarizeChecks(checks: LlmsCheck[]): ChecksSummary {
   return "valid";
 }
 
-async function serveLlmsValidatorHtml(request: Request, canonicalUrl: string) {
+async function serveLlmsValidatorHtml(request: Request, canonicalUrl: string, env?: Env) {
   const reqUrl = new URL(request.url);
   const typed = reqUrl.searchParams.get("url") || "";
   // 18-F02 (Tek-496 audit round): trim before cutting to 300, not after. A long run of
@@ -16531,6 +16655,8 @@ async function serveLlmsValidatorHtml(request: Request, canonicalUrl: string) {
   const raw = typed.replace(/[\t\r\n]/g, "").trim();
   let result: Omit<ValidationResult, "summary" | "error"> | null = null;
   let error: string | null = null;
+  // Tek-910: set when a rate limit refuses the validation, so the answer carries 429 or 503 and not the usual 400 or 200.
+  let limited: { status: number; message: string } | null = null;
   if (raw) {
     const host = normalizeHostInput(raw);
     if (!host || !isValidPublicHost(host)) {
@@ -16552,12 +16678,17 @@ async function serveLlmsValidatorHtml(request: Request, canonicalUrl: string) {
           truncated: false
         }).concat(validateV2Discovery(findLinkRelations(ownHtml, ownHome.headers.get("link") || "", false, ["https://turva.dev/"])))
       };
+    } else if ((limited = await validatorLimit(request, env, host)) !== null) {
+      error = limited.message;
     } else {
       try {
-        const fetched = await fetchLlmsTxt(host);
+        // Decision (Tek-910): without a usable signing key the validator stays available and fetches unsigned, as it did
+        // before signing existed. A missing key is caught by verify --live, because the directory then answers 503.
+        const wbaSign = await wbaSigner(env);
+        const fetched = await fetchLlmsTxt(host, undefined, undefined, wbaSign);
         let discovery;
         try {
-          const home = await fetchLlmsTxt(host, "/", "text/html, */*;q=0.1");
+          const home = await fetchLlmsTxt(host, "/", "text/html, */*;q=0.1", wbaSign);
           discovery = home.redirect
             ? validateV2Discovery(null, "the home page redirects away from this host, so this was not measured")
             : home.status !== 200
@@ -16594,7 +16725,8 @@ async function serveLlmsValidatorHtml(request: Request, canonicalUrl: string) {
     const headers = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "access-control-allow-origin": "*", "vary": "Accept" });
     appendAgentLinks(headers);
     applySecurityHeaders(headers, "agent-api");
-    return new Response(JSON.stringify(payload, null, 2), { status: payload.error ? 400 : 200, headers });
+    if (limited && limited.status === 429) headers.set("retry-after", "60");
+    return new Response(JSON.stringify(payload, null, 2), { status: limited ? limited.status : payload.error ? 400 : 200, headers });
   }
   const head = cardPageHead(buildMetaBlock("/llms-txt-validator", canonicalUrl), buildGuideJsonLd("/llms-txt-validator", canonicalUrl) + "\n" + buildValidatorAppJsonLd(canonicalUrl), canonicalUrl);
   // The result names each check with its status as a word (colour only accompanies it), and
@@ -16651,7 +16783,8 @@ ${footerHtml()}
 </html>`;
   const headers = cardPageHeaders(canonicalUrl);
   if (raw) headers.set("cache-control", "no-store");
-  return new Response(body, { status: 200, headers });
+  if (limited && limited.status === 429) headers.set("retry-after", "60");
+  return new Response(body, { status: limited ? limited.status : 200, headers });
 }
 
 // ---------------------------------------------------------------------------
@@ -17921,7 +18054,7 @@ function serveX402Root() {
   applySecurityHeaders(headers, "agent-api");
   return new Response(X402_INDEX_402, { status: 402, headers });
 }
-interface Env { BRIEFIT?: { get(key: string, options: { type: "json" }): Promise<BriefRec | null> }; RATE_LIMITER?: RateLimit; PARITY_LIMITER?: RateLimit; PARITY?: Pick<Fetcher, "fetch">; PARITY_REMOTE_FETCH?: string } type SatisfiesExportedHandler<T extends ExportedHandler<Env>> = T;
+interface Env { BRIEFIT?: { get(key: string, options: { type: "json" }): Promise<BriefRec | null> }; RATE_LIMITER?: RateLimit; PARITY_LIMITER?: RateLimit; VALIDATOR_LIMITER?: RateLimit; VALIDATOR_HOST_LIMITER?: RateLimit; WBA_SIGNING_KEY?: string; PARITY?: Pick<Fetcher, "fetch">; PARITY_REMOTE_FETCH?: string } type SatisfiesExportedHandler<T extends ExportedHandler<Env>> = T;
 const worker_default: SatisfiesExportedHandler<{ fetch(request: Request, env: Env, ctx?: unknown): Promise<Response>; scheduled(event: Pick<ScheduledController, "scheduledTime">, env: Env, ctx: Pick<ExecutionContext, "waitUntil">): Promise<void> }> = {
   async fetch(request, env) {
     const originalMethod = request.method;
@@ -18326,7 +18459,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
     return serveBadgeHtml("https://turva.dev/badge");
   }
   if (pathname === "/llms-txt-validator") {
-    return serveLlmsValidatorHtml(request, "https://turva.dev/llms-txt-validator");
+    return serveLlmsValidatorHtml(request, "https://turva.dev/llms-txt-validator", env);
   }
   if (pathname === "/tools") {
     return serveToolsHtml("https://turva.dev/tools");
@@ -18431,6 +18564,9 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   }
   if (pathLower === "/api/v1" || pathLower === "/api/v1/") {
     return serveStatic(API_INDEX_JSON, "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/http-message-signatures-directory") {
+    return serveWbaDirectory(request, env);
   }
   if (pathLower === "/.well-known/jwks.json") {
     return serveStatic(JWKS_JSON, "application/json; charset=utf-8", "agent-api");

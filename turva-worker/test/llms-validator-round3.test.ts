@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Growth check for the tests that say a scan "stays linear".
 // The package turva-llms-txt-validator keeps the same function in test/growth.ts; it is inline here
@@ -65,7 +66,7 @@ async function assertLinear(label: string, work: (input: string) => unknown, sma
 // GET /llms-txt-validator?url=... with Accept: application/json and a mocked global fetch
 // standing in for the target host's /llms.txt and home page.
 
-const env = {};
+const env = validatorEnv();
 const prefix = "# Example\n\n> Summary\n\n## Docs\n\n";
 
 function mockFetch(routes: Record<string, { text: string; status?: number; contentType?: string }>) {

@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // ChatGPT last read 2026-10-02 (W5 V-1, W6 F01, F08, F09, F10): the hosted validator's HTML check,
 // the ai-catalog MCP media type, the root security.txt Canonical lines, representativeQueries on
@@ -17,7 +18,7 @@ async function noHtmlStatus(llms: string) {
     throw new Error("unexpected fetch to " + u);
   };
   try {
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), validatorEnv());
     assert.equal(res.status, 200);
     const body = JSON.parse(await res.text());
     return body.checks.find((c: { id: string; status: string }) => c.id === "no-html").status;
@@ -40,7 +41,7 @@ test("validator HTML check: autolinks and plain prose still pass", async () => {
 });
 
 async function getJson(path: string) {
-  const res = await worker.fetch(new Request("https://turva.dev" + path), {});
+  const res = await worker.fetch(new Request("https://turva.dev" + path), validatorEnv());
   assert.equal(res.status, 200, path);
   return { res, body: JSON.parse(await res.text()) };
 }
@@ -66,7 +67,7 @@ test("representativeQueries are on ard.json only, 2 to 5 per entry", async () =>
 
 test("security.txt names both retrieval URLs as Canonical", async () => {
   for (const path of ["/security.txt", "/.well-known/security.txt"]) {
-    const res = await worker.fetch(new Request("https://turva.dev" + path), {});
+    const res = await worker.fetch(new Request("https://turva.dev" + path), validatorEnv());
     const txt = await res.text();
     assert.match(txt, /^Canonical: https:\/\/turva\.dev\/security\.txt$/m, path);
     assert.match(txt, /^Canonical: https:\/\/turva\.dev\/\.well-known\/security\.txt$/m, path);

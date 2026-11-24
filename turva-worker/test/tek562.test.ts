@@ -1,13 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Regression tests for Tek-562 (outside reviews W26 to W35): the x402 EIP-712 name, the UCP key,
 // the closed ACP capabilities object, the A2A task routes, the server card CORS headers, the v6 key
 // footer and the H2 rule of the hosted llms.txt validator. The package turva-llms-txt-validator
 // 0.3.18 carries the same H2 cases in test/tek562.test.ts.
 
-const env = {};
+const env = validatorEnv();
 const get = (path: string, opts: { method?: string; headers?: Record<string, string> } = {}): Promise<Omit<Response, "json"> & { json(): Promise<any> }> =>
   worker.fetch(new Request("https://turva.dev" + path, { method: opts.method || "GET", headers: opts.headers || {} }), env);
 // The digests below pin public bytes, so they go through WebCrypto rather than a hash CodeQL reads as a password hash.
@@ -176,7 +177,7 @@ async function check(llms: string) {
     throw new Error("unexpected fetch to " + u);
   };
   try {
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), validatorEnv());
     assert.equal(res.status, 200);
     return JSON.parse(await res.text());
   } finally {

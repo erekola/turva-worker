@@ -2778,6 +2778,32 @@ console.log('\nMTA-STS policy hash, offline');
     `facts.json mtaSts.policySha256 == the policy in worker.ts, offline (facts ${String(staticMs.policySha256).slice(0, 16)}..., worker.ts ${staticSha.slice(0, 16)}...)`);
 }
 
+// Web Bot Auth (Tek-910). The hosted llms.txt validator signs the requests it sends and the Worker serves a signed key
+// directory. Static checks: the signer is passed through fetchLlmsTxt for every hop and both callers pass it, the
+// directory route exists, and the public JWK constant is a real key whose kid is the RFC 7638 thumbprint of its x.
+// A placeholder is a failure on purpose: shipping one would publish a key nobody holds.
+const wbaPubM = src.worker.text.match(/const WBA_PUBLIC_JWK = \{ kty: "OKP", crv: "Ed25519", x: "([^"]*)", kid: "([^"]*)" \};/);
+const wbaPub = wbaPubM ? { x: wbaPubM[1], kid: wbaPubM[2] } : null;
+{
+  const wt = src.worker.text;
+  check(/async function fetchLlmsTxt\(host: string, path\?: string, accept\?: string, sign\?: WbaSigner \| null\)/.test(wt)
+    && wt.includes('const signed: Record<string, string> = sign ? await sign(new URL(url).host) : {};')
+    && /"x-real-ip": VALIDATOR_CLIENT_IP,\s*\.\.\.signed\s*\}/.test(wt),
+    'fetchLlmsTxt passes the Web Bot Auth signer through to the headers of every redirect hop');
+  check(wt.includes('await fetchLlmsTxt(host, undefined, undefined, wbaSign)') && wt.includes('await fetchLlmsTxt(host, "/", "text/html, */*;q=0.1", wbaSign)'),
+    'both validator fetches (llms.txt and the home page) pass the Web Bot Auth signer');
+  check(wt.includes('pathLower === "/.well-known/http-message-signatures-directory"') && wt.includes('return serveWbaDirectory(request, env);')
+    && wt.includes('"application/http-message-signatures-directory+json"'),
+    'the Web Bot Auth key directory route exists at /.well-known/http-message-signatures-directory');
+  if (!wbaPub) bad('WBA_PUBLIC_JWK was not found in worker.ts in its documented form');
+  else if (wbaPub.x === 'PLACEHOLDER' || wbaPub.kid === 'PLACEHOLDER') bad('WBA_PUBLIC_JWK is a placeholder');
+  else {
+    const wbaThumb = /^[A-Za-z0-9_-]{43}$/.test(wbaPub.x)
+      ? createHash('sha256').update('{"crv":"Ed25519","kty":"OKP","x":"' + wbaPub.x + '"}').digest('base64url') : '';
+    check(wbaThumb !== '' && wbaPub.kid === wbaThumb, `WBA_PUBLIC_JWK.kid is the RFC 7638 thumbprint of its x (kid ${wbaPub.kid}, computed ${wbaThumb || 'x is not a 32 byte base64url value'})`);
+  }
+}
+
 if (LIVE) {
   console.log('\nLive (URLs + signatures)');
   const base = 'https://turva.dev';
@@ -3525,6 +3551,35 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
       check(stray.length === 0, `agent-skills ${name} states no other Business ID${stray.length ? ' :: ' + stray.join(', ') : ''}`);
     }
   } catch (e) { bad('agent skills: ' + (errWhy(e))); }
+
+  // Web Bot Auth directory (Tek-910): status, media type, content-digest, the directory's own signature verified with
+  // the key it publishes, and that key equal to WBA_PUBLIC_JWK. The signature base is rebuilt here as RFC 9421 section 2.5
+  // describes it; the signed authority is the host this run asked.
+  try {
+    const dirPath = '/.well-known/http-message-signatures-directory';
+    const r = await fetch(base + dirPath, { redirect: 'manual', headers: { accept: 'application/http-message-signatures-directory+json' } });
+    const bodyBuf = Buffer.from(await r.arrayBuffer());
+    check(r.status === 200, `GET ${dirPath} -> ${r.status}`);
+    check((r.headers.get('content-type') || '').split(';')[0].trim().toLowerCase() === 'application/http-message-signatures-directory+json', 'the Web Bot Auth directory is served with the media type application/http-message-signatures-directory+json');
+    const digest = 'sha-256=:' + createHash('sha256').update(bodyBuf).digest('base64') + ':';
+    check(r.headers.get('content-digest') === digest, 'the Web Bot Auth directory content-digest matches its body');
+    const dir = JSON.parse(bodyBuf.toString('utf8'));
+    const k = dir && Array.isArray(dir.keys) ? dir.keys[0] : null;
+    check(!!k && k.kty === 'OKP' && k.crv === 'Ed25519' && !('d' in k), 'the Web Bot Auth directory lists an Ed25519 public key and no private part');
+    check(!!k && !!wbaPub && wbaPub.x !== 'PLACEHOLDER' && k.x === wbaPub.x && k.kid === wbaPub.kid, 'the live Web Bot Auth directory key and kid equal WBA_PUBLIC_JWK');
+    const input = r.headers.get('signature-input') || '';
+    const im = /^sig1=\(("@authority";req "content-digest")\);alg="ed25519";keyid="([^"]+)";nonce="[^"]*";tag="http-message-signatures-directory";created=(\d+);expires=(\d+)$/.exec(input);
+    const sm = /^sig1=:([A-Za-z0-9+/=]+):$/.exec(r.headers.get('signature') || '');
+    check(!!im && !!k && im[2] === k.kid, 'the Web Bot Auth directory Signature-Input covers "@authority";req and "content-digest" and names the listed key');
+    if (im && sm && k) {
+      const sigBase = '"@authority";req: ' + new URL(base).host + '\n"content-digest": ' + digest + '\n"@signature-params": ' + input.slice('sig1='.length);
+      let sigOk = false;
+      try { sigOk = edVerify(null, Buffer.from(sigBase, 'utf8'), createPublicKey({ key: { kty: 'OKP', crv: 'Ed25519', x: k.x }, format: 'jwk' }), Buffer.from(sm[1], 'base64')); } catch { sigOk = false; }
+      check(sigOk, 'the Web Bot Auth directory signature verifies with the key the directory publishes');
+      const nowSec = Math.floor(Date.now() / 1000);
+      check(Number(im[3]) <= nowSec + 60 && Number(im[4]) > nowSec, 'the Web Bot Auth directory signature is current (created not in the future, expires not passed)');
+    } else bad('the Web Bot Auth directory carries no Signature header in the form sig1=:...:');
+  } catch (e) { bad('Web Bot Auth directory: ' + errWhy(e)); }
 
   const fetchBytesMcp = async (p: string) => Buffer.from(await (await fetch(base + p)).arrayBuffer());
   // Verify the four signed manifests against the published JWKS. Public-key

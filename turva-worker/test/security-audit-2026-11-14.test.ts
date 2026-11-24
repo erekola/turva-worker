@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import worker, { findLinkRelations, renderInline, markdownToHtml } from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 import { stripTypes } from "../test-support/strip-types.ts";
 
 // Repairs after a security read of the public repositories (2026-11-14). The hosted parity check refuses a
@@ -341,7 +342,7 @@ async function validate(llms: string, home: string = ""): Promise<{ checks: Arra
     throw new Error("unexpected fetch to " + u);
   }) as typeof fetch;
   try {
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), validatorEnv());
     assert.equal(res.status, 200);
     const raw = await res.text();
     return { checks: JSON.parse(raw).checks, raw };
@@ -604,13 +605,13 @@ test("a redirect to an ambiguous address names no host, and the detail does not 
         return new Response("", { status: 404, headers: { "content-type": "text/html" } });
       }) as typeof fetch;
       for (const accept of ["application/json", "text/html"]) {
-        const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept } }), {});
+        const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept } }), validatorEnv());
         const raw = await res.text();
         assert.ok(!/secret/i.test(raw), location + " leaks into the " + accept + " answer");
         assert.ok(!raw.includes("zzhost"), location + " names a host in the " + accept + " answer");
         assert.ok(!/validate that host/.test(raw), location + " tells the reader to validate a host in the " + accept + " answer");
       }
-      const json = JSON.parse(await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), {})).text());
+      const json = JSON.parse(await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), validatorEnv())).text());
       const detail = json.checks.find((c: { id: string }) => c.id === "http-status").detail as string;
       // The parser refuses the last location outright, and that answer prints no address at all.
       assert.match(detail, /^(redirects to https:\/\/\*\*\*, a different host that this report does not name\. llms\.txt is host-scoped, so find the host that this redirect points to and validate it directly|redirects to an unsupported target \(https:\/\/\*\*\*\)\. Only https redirects to the same site are followed|got a 302 redirect without a usable Location header)$/, location);
@@ -658,7 +659,7 @@ test("a redirect with three slashes or a scheme and no slashes names no wrong ho
         return new Response("", { status: 404, headers: { "content-type": "text/html" } });
       }) as typeof fetch;
       for (const accept of ["application/json", "text/html"]) {
-        const raw = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept } }), {})).text();
+        const raw = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept } }), validatorEnv())).text();
         assert.ok(!/secret/i.test(raw), location + " leaks into the " + accept + " answer");
         assert.ok(!raw.includes("zzhost"), location + " names a host in the " + accept + " answer");
         assert.ok(!/validate that host/.test(raw), location + " tells the reader to validate a host in the " + accept + " answer");
@@ -697,7 +698,7 @@ test("a refused redirect target with user information inside its query part is s
     return new Response("", { status: 404, headers: { "content-type": "text/html" } });
   }) as typeof fetch;
   try {
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), validatorEnv());
     const raw = await res.text();
     assert.match(raw, /unsupported target/);
     assert.ok(!/secret/i.test(raw), raw);
@@ -792,7 +793,7 @@ test("the head scan reads past <!--> and <!---> inside a script, as the HTML tok
 
 test("every 402 challenge body is ASCII, so the base64 PAYMENT-REQUIRED header (btoa) can carry it", async () => {
   for (const path of ["/api", "/api/", "/x402", "/api/agent/audit", "/api/agent/advisory", "/api/agent/implementation"]) {
-    const res = await worker.fetch(new Request("https://turva.dev" + path, { headers: { accept: "application/json" } }), {});
+    const res = await worker.fetch(new Request("https://turva.dev" + path, { headers: { accept: "application/json" } }), validatorEnv());
     assert.equal(res.status, 402, path);
     const body = await res.text();
     assert.ok(/^[\x00-\x7f]*$/.test(body), path + " has a character outside ASCII");
@@ -816,7 +817,7 @@ test("the validator fetches only the public host a typed address names, whatever
   ];
   try {
     for (const typed of refused) {
-      const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(typed), { headers: { accept: "application/json", "cf-connecting-ip": "203.0.113.7" } }), {});
+      const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(typed), { headers: { accept: "application/json", "cf-connecting-ip": "203.0.113.7" } }), validatorEnv());
       assert.equal(res.status, 400, typed);
     }
     assert.deepEqual(fetched, [], "an address that names an IP literal, a local name or credentials was fetched: " + fetched.join(", "));
@@ -824,7 +825,7 @@ test("the validator fetches only the public host a typed address names, whatever
     // and text after a # or a backslash that would read as a second host.
     for (const typed of ["EXAMPLE.COM", "example.com.", "xn--nxasmq6b.com", "example.com#@127.0.0.1", "https://example.com" + String.fromCharCode(92) + "@127.0.0.1"]) {
       fetched.length = 0;
-      await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(typed), { headers: { accept: "application/json", "cf-connecting-ip": "203.0.113.7" } }), {});
+      await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=" + encodeURIComponent(typed), { headers: { accept: "application/json", "cf-connecting-ip": "203.0.113.7" } }), validatorEnv());
       assert.ok(fetched.length > 0, typed + " fetched nothing");
       for (const u of fetched) assert.ok(/^https:\/\/(example\.com|xn--nxasmq6b\.com)\/(llms\.txt)?$/.test(u), typed + " fetched " + u);
     }
@@ -904,7 +905,7 @@ async function inlineScriptProblems(html: string, page: string): Promise<string[
     const a = attrsOf("<script" + m[1] + ">");
     if (a.src) {
       if (!ownOrigin(a.src, page)) { bad.push("script src " + a.src); continue; }
-      const res = await worker.fetch(new Request(new URL(a.src, page).href), {});
+      const res = await worker.fetch(new Request(new URL(a.src, page).href), validatorEnv());
       const text = await res.text();
       if (/\bfetch\s*\(/.test(text) || NETWORK_API.test(text)) bad.push(a.src + " calls a network API");
       continue;
@@ -945,13 +946,13 @@ test("the scan for external loads finds each kind of external reference it is me
 });
 
 test("no page of the site loads an external image or media file or connects to another origin", async () => {
-  const sitemap = await (await worker.fetch(new Request(SITE + "/sitemap.xml"), {})).text();
+  const sitemap = await (await worker.fetch(new Request(SITE + "/sitemap.xml"), validatorEnv())).text();
   const pages = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
   assert.ok(pages.length >= 80, "the sitemap lists " + pages.length + " pages");
   const extra = [SITE + "/no-such-page-for-this-test", SITE + "/markdown-parity-check", SITE + "/llms-txt-validator", SITE + "/blog", SITE + "/guides"];
   let images = 0, scripts = 0, scanned = 0;
   for (const url of [...pages, ...extra]) {
-    const res = await worker.fetch(new Request(url, { headers: { accept: "text/html" } }), {});
+    const res = await worker.fetch(new Request(url, { headers: { accept: "text/html" } }), validatorEnv());
     if (!/text\/html/.test(res.headers.get("content-type") || "")) continue;
     const html = await res.text();
     scanned++;
@@ -972,7 +973,7 @@ test("the validator result page, a brief page with hostile Markdown and the page
   const realFetch = globalThis.fetch;
   globalThis.fetch = (async (url: unknown) => String(url) === "https://example.com/llms.txt" ? new Response(hostile, { status: 200, headers: { "content-type": "text/plain" } }) : new Response("", { status: 404 })) as typeof fetch;
   try {
-    const page = await worker.fetch(new Request(SITE + "/llms-txt-validator?url=example.com", { headers: { accept: "text/html" } }), {});
+    const page = await worker.fetch(new Request(SITE + "/llms-txt-validator?url=example.com", { headers: { accept: "text/html" } }), validatorEnv());
     const html = await page.text();
     assert.ok(html.includes("llms.txt"));
     assert.deepEqual(externalLoads(html, SITE + "/llms-txt-validator"), []);
@@ -992,7 +993,7 @@ test("the validator result page, a brief page with hostile Markdown and the page
 });
 
 test("the content security policy of an HTML page lets images and connections reach only the site itself", async () => {
-  const res = await worker.fetch(new Request(SITE + "/", { headers: { accept: "text/html" } }), {});
+  const res = await worker.fetch(new Request(SITE + "/", { headers: { accept: "text/html" } }), validatorEnv());
   const csp = res.headers.get("content-security-policy")!;
   const directive = (name: string) => csp.split(";").map((d) => d.trim()).find((d) => d.startsWith(name + " "));
   assert.equal(directive("img-src"), "img-src 'self' data: blob:");
@@ -1115,7 +1116,7 @@ test("a redirect to a host the report does not name says how to find it, and a n
       if (String(url) === "https://example.com/llms.txt") return new Response(null, { status: 302, headers: { location } });
       return new Response("", { status: 404, headers: { "content-type": "text/html" } });
     }) as typeof fetch;
-    const json = JSON.parse(await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), {})).text());
+    const json = JSON.parse(await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), validatorEnv())).text());
     return json.checks.find((c: { id: string }) => c.id === "http-status").detail as string;
   };
   try {
@@ -1128,7 +1129,7 @@ test("a redirect to a host the report does not name says how to find it, and a n
 
 test("the x402 note says that neither funds nor a signed payment authorization change the answer", async () => {
   const note = "No facilitator is configured. X-PAYMENT is not verified and this resource answers 402 regardless of payment, so neither sending funds nor sending a signed payment authorization changes that answer. Ask for a quote and settle against the written scope.";
-  const body = await (await worker.fetch(new Request("https://turva.dev/api", { headers: { accept: "application/json" } }), {})).text();
+  const body = await (await worker.fetch(new Request("https://turva.dev/api", { headers: { accept: "application/json" } }), validatorEnv())).text();
   assert.ok(body.includes(note), "the 402 body carries the note");
   assert.ok(!/achieves nothing/.test(body));
   assert.ok(/^[\x00-\x7f]*$/.test(note));

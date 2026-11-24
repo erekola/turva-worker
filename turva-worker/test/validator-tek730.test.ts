@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Growth check for the tests that say a scan "stays linear".
 // The package turva-llms-txt-validator keeps the same function in test/growth.ts; it is inline here
@@ -67,7 +68,7 @@ const EN = String.fromCharCode(0x2013);
 const EM = String.fromCharCode(0x2014);
 const BULLET = String.fromCharCode(0x2022);
 const base = "# Example\n\n> Summary.\n\n## Docs\n\n- [Guide](https://example.com/guide)\n";
-const env = {};
+const env = validatorEnv();
 
 async function check(llms: string) {
   const realFetch = globalThis.fetch;

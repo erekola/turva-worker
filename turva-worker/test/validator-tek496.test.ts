@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.ts";
+import { validatorEnv } from "../test-support/validator-env.ts";
 
 // Growth check for the tests that say a scan "stays linear".
 // The package turva-llms-txt-validator keeps the same function in test/growth.ts; it is inline here
@@ -78,7 +79,7 @@ async function check(llms: string, { contentType = "text/plain; charset=utf-8", 
     throw new Error("unexpected fetch to " + u);
   };
   try {
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=example.com", { headers: { accept: "application/json" } }), validatorEnv());
     assert.equal(res.status, 200);
     return JSON.parse(await res.text());
   } finally {
@@ -171,7 +172,7 @@ test("Tek-496, host: localhost.localdomain is refused without a fetch", async ()
   const seen: string[] = [];
   globalThis.fetch = async (url) => { seen.push(String(url)); throw new Error("must not be called"); };
   try {
-    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=localhost.localdomain", { headers: { accept: "application/json" } }), {});
+    const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=localhost.localdomain", { headers: { accept: "application/json" } }), validatorEnv());
     assert.equal(res.status, 400);
     assert.deepEqual(seen, []);
   } finally {
@@ -231,7 +232,7 @@ test("Tek-745 K10b: a home page cut by the 256 KiB read limit reports the part t
 });
 
 test("Tek-496: turva.dev's own llms.txt stays valid", async () => {
-  const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=turva.dev", { headers: { accept: "application/json" } }), {});
+  const res = await worker.fetch(new Request("https://turva.dev/llms-txt-validator?url=turva.dev", { headers: { accept: "application/json" } }), validatorEnv());
   const body = JSON.parse(await res.text());
   assert.equal(body.summary, "valid");
 });
