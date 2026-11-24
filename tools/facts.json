@@ -3,15 +3,15 @@
   "businessId": "3600281-7",
   "vatId": "FI36002817",
   "versions": {
-    "site": "3.263.0",
-    "mcp": "1.14.0"
+    "site": "3.264.0",
+    "mcp": "1.14.1"
   },
   "mtaSts": {
     "txtId": "20260910202321",
     "policySha256": "b056f5c25f57f294adb9e26a6b65f3734fa37ef965d3aa9b3095685f60e54199"
   },
   "released": {
-    "site": "2026-11-24"
+    "site": "2026-11-25"
   },
   "prices": {
     "audit": 4300,
@@ -93,21 +93,25 @@
     "wikidataPerson": "https://www.wikidata.org/wiki/Q140276321"
   },
   "agentReadiness": {
-    "measuredAt": "2026-11-15",
+    "measuredAt": "2026-11-25",
     "isitagentready": {
       "level": "Level 5",
       "score": "100/100",
       "_categoryScoreComment": "The score field was added 2026-08-30. measuredAt moved from 2026-08-20 to 2026-08-30 the same day as its own change and its own deploy, because the date is mirrored on five published surfaces (worker.ts in three places, the HOME_JSON lastVerified field, README.md and docs/agent-readiness.md). Behind the date are three independent runs on the same day, and all three gave exactly what 2026-08-20 gave: Level 5/5 and every category full. So the number did not change, it was measured again, and the page's own text says that a new run is a new measurement and not a confirmation of the old one. Before that, every surface repeated the TOTAL score in every category, and the gate checked it with a line that required cell.val === iar.score. That holds only while everything passes. THE VALUE IS A SCORE OUT OF A HUNDRED, NOT CHECKS OUT OF CHECKS, and that is forced and not chosen: the scanner reports a different DENOMINATOR on its public page than on its MCP interface (commerce 5/5 against 4/4, api/auth 9 against 8), but the SHARE is the same in both, since 9/9 and 8/8 are each 100. The form 100/100 was chosen because the home page table already uses it. The field checks does not return: it is the number of checks, and verify.mts fails the run if it appears.",
+      "_scoredSetComment": "Added 2026-11-24 (Tek-911). The scanner's own web page now sends a default check list that leaves out a2aAgentCard and ap2, and it marks the Commerce category optional: its checks are shown for information and do not affect the score. turva measures with that same list, because a buyer verifies a result by opening the scanner's page. So the scored categories are the four with countsInScore true, and Commerce is countsInScore false and keeps its score (the scanner still shows it). A category that does not count is always written with the suffix in commerceSuffix wherever it is listed with its score: verify.mts builds that display label from this file and compares the board, the evidence twin and the README table with it. The category id api_auth_mcp_a2a_discovery stays: it is a public key in turva-mcp's get_agent_readiness output, and renaming it would break clients for no gain. Its label follows the scanner's page, API, Auth, MCP & Skill Discovery. The old label survives only as historicalProse, which verify.mts reads for the dated sample report and nowhere else. The scanner's other surfaces (scan_site without enabledChecks, the API, its llms.txt) still describe the older shape; the UI default is the one followed.",
+      "commerceSuffix": " (optional, not scored)",
       "categories": [
         {
           "id": "discoverability",
           "label": "Discoverability",
+          "countsInScore": true,
           "score": "100/100",
           "prose": []
         },
         {
           "id": "content",
           "label": "Content Accessibility",
+          "countsInScore": true,
           "score": "100/100",
           "prose": [
             "content"
@@ -116,22 +120,27 @@
         {
           "id": "bot_access_control",
           "label": "Bot Access Control",
+          "countsInScore": true,
           "score": "100/100",
           "prose": []
         },
         {
           "id": "api_auth_mcp_a2a_discovery",
-          "label": "API, Auth, MCP & A2A",
+          "label": "API, Auth, MCP & Skill Discovery",
+          "countsInScore": true,
           "score": "100/100",
           "prose": [
-            "api, auth, mcp and a2a discovery",
-            "api/auth/mcp and a2a discovery",
+            "api, auth, mcp and skill discovery",
+            "api/auth/mcp and skill discovery"
+          ],
+          "historicalProse": [
             "api, auth, mcp & a2a discovery"
           ]
         },
         {
           "id": "commerce",
           "label": "Commerce",
+          "countsInScore": false,
           "score": "100/100",
           "prose": []
         }
@@ -146,7 +155,7 @@
             0,
             0,
             0,
-            0
+            1
           ],
           "template": "scanner: isitagentready.com, third party, cloudflare. - {0}: {score}. - {1}: {score}. - {2}: {score}. - {3}: {score}. - {4}: {score}. verified {score}, {level}, "
         },
@@ -156,7 +165,7 @@
         },
         "readme": {
           "countSentence": "groups its checks into {countWord} categories",
-          "allSentence": "passes every check in all {countWord}"
+          "allSentence": "passes every scored check and every commerce check the scanner shows"
         }
       }
     }

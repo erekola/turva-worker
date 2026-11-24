@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.264.0 - the living surfaces follow the shape of the scanner's own web page (Tek-911, 2026-11-24): the group once named API, Auth, MCP & A2A is API, Auth, MCP & Skill Discovery, Commerce is listed as optional and not scored, the evidence link points at the scanner API's raw response of 2026-11-25 (Helsinki day; 22:20 UTC on 2026-11-24), and the two guides that said the scanner checks the A2A Agent Card and the AP2 declaration say it leaves them out of its default run
 // turva.dev worker v3.263.0 - the hosted llms.txt validator signs the requests it sends with Web Bot Auth (Tek-910, 2026-11-24): an Ed25519 key held as the Worker secret WBA_SIGNING_KEY, a Signature-Agent header that names https://turva.dev, a signed key directory at /.well-known/http-message-signatures-directory, and two fail-closed rate limits on the validator (10 validations a minute per visitor, 30 a minute per checked site); the validator page says so. The npm package never signs.
 // turva.dev worker v3.262.0 - /services Agent operations scope list gains two items for a coding agent such as Claude Code: hooks that check a tool call before it runs with the tests that show which calls they block, and skills that load the client's procedure; prices and terms unchanged
 // turva.dev worker v3.261.1 - MCP server card version 1.14.0 (Tek-908, 2026-11-24): turva-mcp gets a sixth tool, get_page, which reads one page of turva.dev through a service binding, and its get_contact now quotes the two privacy sections AI tools in security work and Where the work runs; the card names the new tool and carries the new serverInfo description, so the card changes bytes and its signature must be renewed.
@@ -5536,7 +5537,7 @@ turva.dev publishes a UCP profile with empty capabilities and payment_handlers b
 
 These surfaces exist so an agent can act without guessing. That only holds when every claim resolves to something real. A card whose skills lead nowhere breaks the same way a checkout that never responds does, because the agent follows the signal and finds nothing.
 
-turva.dev publishes an A2A Agent Card, an AP2 merchant declaration, an ACP discovery document and a UCP profile, and an independent scanner verifies that all four are published. The checkout endpoint behind the discovery document answers as well, which is the part the scanner does not read. For an audit of a site's agent commerce surface, contact info@turva.dev.
+turva.dev publishes an A2A Agent Card, an AP2 merchant declaration, an ACP discovery document and a UCP profile, and an independent scanner reads the ACP and UCP documents among them. The default run on the scanner's own page leaves out the A2A Agent Card and the AP2 declaration. The checkout endpoint behind the discovery document answers as well, which is the part the scanner does not read. For an audit of a site's agent commerce surface, contact info@turva.dev.
 
 ## Frequently asked
 
@@ -5577,7 +5578,7 @@ I'm Erik. I compare what your web page, its structured data and your API say abo
 
 We work in writing. I reply within one business day. [Scope and pricing](/services).
 
-Technical agent-readiness of turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-11-15. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
+Technical agent-readiness of turva.dev: 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-11-25. Business ID 3600281-7, registered in Finland, based in Tampere and run by Erik Rekola.
 
 Example from a fictional audit, finding F1.
 
@@ -5616,21 +5617,21 @@ Sample report. See how I explain a finding, show the evidence and describe the f
 
 Research. Read what I measured across company websites and AI assistants. Each study includes its methods, dates and limits. These are research observations, not client results. [Website agent-readiness study](/blog/website-agent-readiness-567-sites), [What AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit) and [Thirty days after the brief](/blog/thirty-days-after-the-brief).
 
-My own site. I use turva.dev to put this work into practice. You can inspect the source code and the published checks. The [public scanner](https://isitagentready.com/) link opens the scanner's start page, where you can run a new check of your own. That page does not show the recorded result below. I publish [the scanner's raw output](/evidence/isitagentready-turva-dev-2026-11-15.txt) from that day's first run, unedited. It shows Level 5 with every scored check passing. Cloudflare runs the scanner and also hosts this site. You can also [read the source](https://github.com/erekola/turva-worker).
+My own site. I use turva.dev to put this work into practice. You can inspect the source code and the published checks. The [public scanner](https://isitagentready.com/) link opens the scanner's start page, where you can run a new check of your own. That page does not show the recorded result below. I publish [the scanner API's raw response](/evidence/isitagentready-turva-dev-2026-11-25.json) from a run that day, unedited, made with the check list the scanner's own page sends by default. A second run a few seconds later returned the same result. It shows Level 5 with every scored check passing. Commerce is optional on that page, so its checks are shown for information and do not count toward the score. Cloudflare runs the scanner and also hosts this site. You can also [read the source](https://github.com/erekola/turva-worker).
 
-Independent agent-readiness scan of turva.dev. Measured 2026-11-15.
+Independent agent-readiness scan of turva.dev. Measured 2026-11-25.
 
 Scanner: isitagentready.com, third party, Cloudflare.
 
 - Discoverability: 100/100.
 - Content Accessibility: 100/100.
 - Bot Access Control: 100/100.
-- API, Auth, MCP & A2A: 100/100.
-- Commerce: 100/100.
+- API, Auth, MCP & Skill Discovery: 100/100.
+- Commerce (optional, not scored): 100/100.
 
 Verified 100/100, Level 5, Agent-Native.
 
-I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. I measured all three on 2026-11-15. The scanner reading above is from the same day.
+I also publish the site's security checks. Hardenize reads the domain's security configuration, and Internet.nl tests the website and the mail against current internet standards. They measure different things from the agent-readiness scan, and like it they are measurable rather than asserted. I measured all three on 2026-11-15. I measured the scanner again on 2026-11-25, and the reading above is that later one.
 
 - Hardenize: all 24 categories passed. [hardenize.com/report/turva.dev](https://www.hardenize.com/report/turva.dev)
 - Internet.nl website test: 98/100. [internet.nl/site/turva.dev](https://internet.nl/site/turva.dev/)
@@ -6169,7 +6170,7 @@ The audit covers up to two targets named in the written scope, at one fixed pric
 
 ### Can an automated client find and read your information?
 
-I use an independent scanner, isitagentready.com on its default profile, and review the files, metadata and access rules that affect discovery and access. I record each check, its result and the measurement date.
+I use an independent scanner, isitagentready.com, with the check list its own page runs by default, and review the files, metadata and access rules that affect discovery and access. I record each check, its result and the measurement date.
 
 ### Do your published facts say the same thing?
 
@@ -6901,7 +6902,7 @@ Discoverability covers robots.txt, the sitemap, the response headers and the DNS
 
 Bot access control covers the AI-bot rules, the content signals and the bot-authentication directory. The first two state the site's preferences, which a crawler follows or ignores. The directory identifies a bot without granting it anything.
 
-API, auth, MCP and A2A discovery covers an MCP server card, an agent card, an OpenAPI description, an API catalog and OAuth discovery. With these an agent can find what the site offers and how it asks agents to authenticate. Commerce covers payment surfaces such as x402 and structured pricing, which matter only when the site sells through agents.
+API, auth, MCP and skill discovery covers an API catalog, OAuth discovery and protected resource metadata, an auth.md file, an MCP server card, agent skills, WebMCP and an ARD manifest. With these an agent can find what the site offers and how it asks agents to authenticate. Commerce covers payment surfaces such as x402 and structured pricing, which matter only when the site sells through agents. The scanner's own page shows commerce for information and does not count it toward the score.
 
 A surface in any of these groups helps an agent find and read the site but does not show that an agent can authenticate or complete a purchase.
 
@@ -6944,11 +6945,11 @@ Observed AI answers are a third kind of evidence, separate from the scan and the
 
 Each scored check passes or fails. The scanner also reports some checks as information only, marked OK or INFO, and those carry no score. Each failure comes with a concrete fix instruction or the reason the gap is left open, plus a link to this site's guide for that surface where one exists. Your own team can do the work from the report, so implementation is optional.
 
-turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-11-15. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here.
+turva.dev applies the same standard to its own site. Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-11-25. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here.
 
-turva.dev publishes [the scanner's raw output](/evidence/isitagentready-turva-dev-2026-11-15.txt) from that day's first run, unedited. Cloudflare runs the scanner and also hosts turva.dev.
+turva.dev publishes [the scanner API's raw response](/evidence/isitagentready-turva-dev-2026-11-25.json) from a run that day, unedited, made with the check list the scanner's own page sends by default. A second run a few seconds later returned the same result. Commerce is optional on that page, so the scanner shows its checks for information and does not count them toward the score. Cloudflare runs the scanner and also hosts turva.dev.
 
-The 2026-11-15 reading is one scan on one day against one named scanner. It does not stand in for manual review or for how an assistant answers a buyer's question. It counts as one input among the three above, not a summary of all of them. A rescan after a fix shows whether that fix passed. The audit a client receives runs the same three kinds of check against their site.
+The 2026-11-25 reading is one scan on one day against one named scanner. It does not stand in for manual review or for how an assistant answers a buyer's question. It counts as one input among the three above, not a summary of all of them. A rescan after a fix shows whether that fix passed. The audit a client receives runs the same three kinds of check against their site.
 
 ## How do I audit my website for AI agent readiness?
 
@@ -6970,7 +6971,7 @@ An agent-readiness audit measures how well an AI agent can find and read a websi
 
 **What does an agent-readiness audit check?**
 
-It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. Each check passes or fails, except a few the scanner reports as information only, and each failure comes with a concrete fix or the reason the gap is left open.
+It checks the surfaces an agent reaches first, covering discoverability, content accessibility, bot access control, API/auth/MCP and skill discovery, and commerce. Each check passes or fails, except a few the scanner reports as information only, and each failure comes with a concrete fix or the reason the gap is left open. On the scanner's own page, commerce is shown for information and does not count toward the score.
 
 **What does an agent-readiness audit produce?**
 
@@ -7657,7 +7658,7 @@ Asking a named assistant a buyer's question and recording what it says is a thir
 
 Each conclusion should say which of the three it rests on and when it was taken. This is the standard turva.dev applies to its own site. An audit reports the exact checks that pass or fail. Each failure comes with a concrete fix or the reason the gap is left open. The categories the report named are the ones a later scan is checked against.
 
-Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-11-15. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. turva.dev publishes [the scanner's raw output](/evidence/isitagentready-turva-dev-2026-11-15.txt) from that day's first run, unedited. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
+Measured by an independent scanner, turva.dev reaches 100/100 and Level 5, Agent-Native, on isitagentready.com. Measured 2026-11-25. The scanner's public link opens its start page, where anyone can run a new check. That page does not keep the result recorded here. turva.dev publishes [the scanner API's raw response](/evidence/isitagentready-turva-dev-2026-11-25.json) from a run that day, unedited, made with the check list the scanner's own page sends by default. A second run a few seconds later returned the same result. A later scan can read a different check set, so it is reported as a new measurement and never as a re-confirmation of the old one.
 
 For an audit that reports measured results, naming the method behind each one, contact info@turva.dev.
 
@@ -7920,7 +7921,7 @@ This page answers the practical questions a buyer asks before commissioning an a
 
 ## Scope
 
-The website and API audit covers the five surface groups the independent scanner checks: discoverability, content accessibility, bot access control, API/auth/MCP and A2A discovery, and commerce. It also compares the facts published across pages, structured data and API.
+The website and API audit covers the four surface groups the independent scanner's own page scores: discoverability, content accessibility, bot access control, and API/auth/MCP and skill discovery. It reads commerce too, which the scanner's own page shows for information and does not score. It also compares the facts published across pages, structured data and API.
 
 ## Evidence
 
@@ -8084,7 +8085,7 @@ Each one ends the purchase silently for the agent it stops. The agent does not c
 
 Whether an agent can buy is observable, the same way agent-readiness is. Declare the offer as structured data, expose a checkout an agent can call, publish the discovery files the protocols define, and back every claim with an endpoint that answers. Then test it the way an agent would, by driving the path end to end and watching where it stops.
 
-turva.dev built its own agent commerce surface this way, across A2A, AP2, ACP and x402, and an independent scanner checks its discovery files. The path stops on purpose before payment. The ACP checkout answers not_ready_for_payment and the x402 endpoint answers 402 whether or not a payment is sent, because turva.dev sells on a written quote. Tested 2026-09-28 by sending a POST to /api/acp/checkout_sessions and a GET to /x402: both answered exactly as described. The test shows where the path stops. It does not show a payment accepted or settled automatically.
+turva.dev built its own agent commerce surface this way, across A2A, AP2, ACP and x402. The default run on the independent scanner's own page checks the ACP and x402 discovery files and leaves out the A2A Agent Card and the AP2 declaration. The path stops on purpose before payment. The ACP checkout answers not_ready_for_payment and the x402 endpoint answers 402 whether or not a payment is sent, because turva.dev sells on a written quote. Tested 2026-09-28 by sending a POST to /api/acp/checkout_sessions and a GET to /x402: both answered exactly as described. The test shows where the path stops. It does not show a payment accepted or settled automatically.
 
 For a website or API, the [audit](/agent-readiness-audit) covers the commerce surfaces among the rest.
 
@@ -8871,7 +8872,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.263.0",
+    "version": "3.264.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9012,7 +9013,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"d6fM0CYFV87RHuqiDpVdc-fyK_jYbmYVHOWVZMtgteqC7tt6tpBy_jit-Dv_DW2oZyINP83kcPR8GocBOyRzCA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"guAf3Iu24lpvQQA2tbfvdb3MhG61k_ds5VSxLAAOuv0E7uv5sTTHA-RXrXKcvkeMnaXL1yJPFssD33ozlk9uBQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"f_PVxKJM2WyQIVsZ5nFwBBbb9i7R3_EuVDSQ97WPDxxdNSuFjmFL7FOtJF2U6M6S-6IwrY_o7D1oTF5br3_TBQ\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"guAf3Iu24lpvQQA2tbfvdb3MhG61k_ds5VSxLAAOuv0E7uv5sTTHA-RXrXKcvkeMnaXL1yJPFssD33ozlk9uBQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -9026,7 +9027,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.14.0",
+  "version": "1.14.1",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
   "remotes": [
@@ -9035,7 +9036,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.14.0",
+    "version": "1.14.1",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, MCP server security test, agent operations, MCP server design) with prices, the active security testing add-on to the audit quoted on request, own-domain agent-readiness and web-security scan evidence, engagement principles: async-only, no calls and no calendar links, the contact and privacy details, and the markdown of pages on turva.dev. No authentication, no write operations."
   },
   "transport": {
@@ -9181,7 +9182,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.263.0",
+  "version": "3.264.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9883,7 +9884,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-24";
+const SITEMAP_LASTMOD = "2026-11-25";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
@@ -10566,7 +10567,7 @@ const META_BY_PATH = {
   "/": {
     title: "Agent-readiness audits for websites and APIs · turva.dev",
     description: "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.",
-    imageAlt: "turva.dev: Independent agent-readiness audits. Know what AI assistants can find out about your product. A written report on where your facts disagree and what to fix first. 100/100 and Level 5, Agent-Native, on isitagentready.com, with all five categories at 100."
+    imageAlt: "turva.dev: Independent agent-readiness audits. Know what AI assistants can find out about your product. A written report on where your facts disagree and what to fix first. 100/100 and Level 5, Agent-Native, on isitagentready.com, with the four scored categories at 100 and commerce, which is not scored, at 100."
   },
   "/services": {
     title: "Agent-readiness services and pricing · turva.dev",
@@ -11233,7 +11234,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "MCP server security test", "pricing": "on request" }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }], "quotedAddOns": [{ "name": "Active security testing", "pricing": "on request", "requires": "Audit", "scope": "Tests the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so, with GLM 5.3 and Burp Suite Professional for web traffic, and starts only after you sign a written authorization.", "soldSeparately": false, "url": "https://turva.dev/services#active-security-testing" }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-11-15" }, null, 2);
+const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "MCP server security test", "pricing": "on request" }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }], "quotedAddOns": [{ "name": "Active security testing", "pricing": "on request", "requires": "Audit", "scope": "Tests the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so, with GLM 5.3 and Burp Suite Professional for web traffic, and starts only after you sign a written authorization.", "soldSeparately": false, "url": "https://turva.dev/services#active-security-testing" }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-11-25" }, null, 2);
 const API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"
@@ -12964,8 +12965,8 @@ ${navMenuHtml(`    <li><a href="/" aria-current="page">home</a></li>
       <li class="cell"><span class="cat">Discoverability:</span> <span class="val">100/100.</span></li>
       <li class="cell"><span class="cat">Content Accessibility:</span> <span class="val">100/100.</span></li>
       <li class="cell"><span class="cat">Bot Access Control:</span> <span class="val">100/100.</span></li>
-      <li class="cell"><span class="cat">API, Auth, MCP &amp; A2A:</span> <span class="val">100/100.</span></li>
-      <li class="cell"><span class="cat">Commerce:</span> <span class="val">100/100.</span></li>
+      <li class="cell"><span class="cat">API, Auth, MCP &amp; Skill Discovery:</span> <span class="val">100/100.</span></li>
+      <li class="cell"><span class="cat">Commerce (optional, not scored):</span> <span class="val">100/100.</span></li>
     </ul>
     <p class="board-sum">Verified <b>100/100</b>, <span class="pill">Level 5</span>, <span class="pill">Agent-Native</span>.</p>
   </section>

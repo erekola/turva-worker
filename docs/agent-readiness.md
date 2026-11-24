@@ -53,11 +53,11 @@ Most marketing sites are strong for human readers and weak for agents. The recur
 
 ## Reference measurements for turva.dev
 
-turva.dev is the reference build maintained alongside this repository. Measured on `https://turva.dev` on 2026-11-15:
+turva.dev is the reference build maintained alongside this repository. Measured on `https://turva.dev` on 2026-11-25:
 
 - isitagentready.com (Cloudflare’s agent-readiness scanner): 100 / 100, Level 5 Agent-Native.
 
-isitagentready.com groups its checks into five categories: Discoverability; Content Accessibility; Bot Access Control; API, Auth, MCP & A2A Discovery; and Commerce. turva.dev passes every check in all five, Commerce included since 2026-07-20. The commerce surface declares a real x402 challenge and real card payment links, so the discovery checks read what the site actually accepts. Settlement is still quote-on-request rather than automatic, which the checks do not test.
+isitagentready.com groups its checks into five categories: Discoverability; Content Accessibility; Bot Access Control; API, Auth, MCP & Skill Discovery; and Commerce, which is optional on the scanner's page and does not count toward the score. turva.dev passes every scored check and every commerce check the scanner shows. The commerce checks have passed since 2026-07-20. The commerce surface declares a real x402 challenge and real card payment links, so the discovery checks read what the site actually accepts. Settlement is still quote-on-request rather than automatic, which the checks do not test.
 
 These figures describe one site. They are a worked example rather than a target every site needs to match.
 

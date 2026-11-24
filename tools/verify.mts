@@ -111,7 +111,7 @@ const timedFetch = (input: string | URL | Request, init: any = {}) => (
     ? nativeFetch(input, init)
     : nativeFetch(input, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
 );
-type VerifyFactsCat = { id: string; label: string; score: string; prose?: string[]; checks?: unknown };
+type VerifyFactsCat = { id: string; label: string; score: string; prose?: string[]; checks?: unknown; countsInScore?: boolean; historicalProse?: string[] };
 // THE SITE'S OWN RATE LIMIT, added 2026-09-23 (Tek-455). Both Workers allow about 100 requests
 // per 60 s per client IP, counted approximately in each Cloudflare location, and answer above
 // that with 429 and Retry-After: 60. A --live run makes
@@ -471,6 +471,34 @@ const iar = facts.agentReadiness.isitagentready, lvl = iar.level;
 // checks below must name that and fail, not compare undefined against undefined and
 // report a pass, which is how a repaired gate went green in round 7.
 const CATS: VerifyFactsCat[] = Array.isArray(iar.categories) ? iar.categories : [];
+// Tek-911 (2026-11-24). The scanner's own web page sends a default check list without a2aAgentCard and ap2 and marks
+// Commerce optional: its checks are shown for information and do not affect the score. facts.json carries that as
+// countsInScore on every category, and a category that does not count is written with commerceSuffix wherever it is
+// listed with its score (home board, evidence twin, README table). catDisplay is that one spelling, built here from
+// the data so the gate holds no copy of the wording; catSpellings is every spelling a surface may use for a category.
+const COMMERCE_SUFFIX: string = typeof iar.commerceSuffix === 'string' ? iar.commerceSuffix : '';
+const catDisplay = (c: VerifyFactsCat): string => (c.countsInScore === false ? String(c.label) + COMMERCE_SUFFIX : String(c.label));
+const catSpellings = (c: VerifyFactsCat): string[] =>
+  [...new Set([c.label, catDisplay(c), ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase()))];
+check(CATS.length > 0 && CATS.every((c) => typeof c.countsInScore === 'boolean'),
+  'every category declares countsInScore as a boolean (Tek-911)');
+check(CATS.filter((c) => c.countsInScore === true).length === 4 && CATS.filter((c) => c.countsInScore === false).map((c) => c.id).join(',') === 'commerce',
+  `the scanner's page shape holds: four scored categories and commerce as the one that is not scored (scored ${CATS.filter((c) => c.countsInScore === true).map((c) => c.id).join(', ') || 'none'}; not scored ${CATS.filter((c) => c.countsInScore === false).map((c) => c.id).join(', ') || 'none'})`);
+check(COMMERCE_SUFFIX.trim().length > 0 && /not scored/.test(COMMERCE_SUFFIX),
+  `facts.json commerceSuffix says the category is not scored (saw ${JSON.stringify(iar.commerceSuffix)})`);
+{
+  const disc = CATS.find((c) => c.id === 'api_auth_mcp_a2a_discovery');
+  check(!!disc && !/a2a/i.test(disc.label) && /skill discovery$/i.test(disc.label),
+    `the discovery group is labelled the way the scanner's page labels it, without A2A (saw ${JSON.stringify(disc && disc.label)})`);
+  // The raw-output link of the evidence sentences carries the measurement date, so a date that moves without the
+  // link (or the link without the date) fails here, and the file it names has to exist in public/evidence.
+  const evLinks = [...src.worker.text.matchAll(/\/evidence\/isitagentready-turva-dev-(\d{4}-\d{2}-\d{2})\.(?:json|txt)/g)];
+  check(evLinks.length >= 3 && evLinks.every((m) => m[1] === facts.agentReadiness.measuredAt),
+    `worker.ts evidence links all carry the agent-readiness date ${facts.agentReadiness.measuredAt} (saw ${[...new Set(evLinks.map((m) => m[1]))].join(', ') || 'none'}, n=${evLinks.length})`);
+  const evFiles = [...new Set(evLinks.map((m) => m[0]))];
+  check(evFiles.length > 0 && evFiles.every((p) => existsSync(join(ROOT, 'turva-worker/public' + p))),
+    `every evidence file the sentences link exists under public/evidence (${evFiles.join(', ') || 'none'})`);
+}
 for (const k of Object.keys(src)) {
   check(containsAny(src[k].text, slashVariants(iar.score)), `${src[k].rel} shows ${iar.score}`);
   check(src[k].text.includes(lvl), `${src[k].rel} shows "${lvl}"`);
@@ -580,7 +608,7 @@ console.log('\nCategory set (facts.json owns which categories exist)');
   check(Array.isArray(SW.evidenceTwin && SW.evidenceTwin.spellingIndex) && SW.evidenceTwin.spellingIndex.length === CATS.length,
     `evidence twin spellingIndex has one entry per category (${(SW.evidenceTwin && SW.evidenceTwin.spellingIndex || []).length} of ${CATS.length})`);
 
-  const spellings = (c: VerifyFactsCat) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase());
+  const spellings = catSpellings;
   const resolve = (item: unknown) => CATS.find((c) => spellings(c).includes(String(item).trim().toLowerCase()));
   // The same lookup is needed on three other surfaces (the README table, the home table and the
   // MCP live response), and until 2026-08-30 all three compared their row with the TOTAL SCORE.
@@ -747,6 +775,10 @@ console.log('\nCategory set (facts.json owns which categories exist)');
         .map((m) => ({ cat: m[1].trim(), val: m[2].trim() }))
         .filter((r) => r.cat !== 'Category' && !/^-+$/.test(r.cat));
       enumerated(rows.map((r) => r.cat), 'README table', true);
+      // Tek-911: a category that does not count is listed with its suffix.
+      const notDisplay = rows.filter((r) => { const c = CAT_LOOKUP(r.cat); return !c || (c.countsInScore === false && r.cat.toLowerCase() !== catDisplay(c).toLowerCase()); });
+      check(rows.length > 0 && notDisplay.length === 0,
+        `README table rows use the display label of facts.json (${notDisplay.length ? 'wrong: ' + notDisplay.map((r) => r.cat).join(', ') : 'all ' + rows.length + ' rows'})`);
       // Fixed 2026-08-30 together with the home table: the row used to be compared with the
       // total score, which is correct only as long as every category is full.
       // A missing expected value is a FAIL and not a skip, so that two vanishing values cannot
@@ -783,7 +815,10 @@ console.log('\nCategory set (facts.json owns which categories exist)');
         rows2.push({ path: p, cat: m[1].trim() });
       }
     }
-    const unknown2 = rows2.filter((r) => !resolve(r.cat));
+    // The sample report is dated history and keeps the scanner's group name of the day it was written, so its rows
+    // may also use historicalProse; no other surface reads that field (Tek-911).
+    const resolveSample = (item: unknown) => CATS.find((c) => [...spellings(c), ...(Array.isArray(c.historicalProse) ? c.historicalProse : []).map((x) => String(x).toLowerCase())].includes(String(item).trim().toLowerCase()));
+    const unknown2 = rows2.filter((r) => !resolveSample(r.cat));
     check(rows2.length > 0 && unknown2.length === 0,
       `the scan table of each page in SAMPLE_PATHS (${SAMPLE_PATHS.length}) uses only the scanner's real category names (${rows2.length} rows checked)${unknown2.length ? ' :: unknown ' + unknown2.map((r) => `${r.path} "${r.cat}"`).join(', ') : ''}`);
   }
@@ -2352,9 +2387,9 @@ const boardProblems = (source: string, categories: unknown, totalScore: unknown,
   }
   if (cells.length !== want.length) faults.push(`board has ${cells.length} cells, facts.json declares ${want.length} categories`);
   const gotLabels = cells.map((c) => c.cat).join(' | ');
-  const wantLabels = want.map((c) => String(c.label)).join(' | ');
+  const wantLabels = want.map((c) => catDisplay(c)).join(' | ');
   if (!cells.length || gotLabels !== wantLabels) faults.push(`board labels/order [${gotLabels}] != facts.json [${wantLabels}]`);
-  const byLabel = new Map(want.map((c) => [String(c.label), c]));
+  const byLabel = new Map(want.map((c) => [catDisplay(c), c]));
   for (const c of cells) {
     const w = (byLabel.get(c.cat) || {}).score;
     if (typeof w !== 'string' || !w.trim() || c.val !== w) faults.push(`cell "${c.cat}" reads ${JSON.stringify(c.val)}, facts.json says ${JSON.stringify(w)}`);
@@ -2388,14 +2423,18 @@ const boardProblems = (source: string, categories: unknown, totalScore: unknown,
   const c6 = boardProblems(cGood, cEmptyData, '100/100', 'Level 5').length > 0;   // the data lost its value
   const c7 = boardProblems(cGood, [], '100/100', 'Level 5').length > 0;           // empty is not agreement
   const c8 = boardProblems('<p>no board here</p>', cCats, '100/100', 'Level 5').length > 0;
-  const allCases = c1 && c2 && c3 && c4 && c5 && c6 && c7 && c8;
+  // Tek-911: a category that does not count must carry the suffix on the board, and a board that has it passes.
+  const cNotScored = [{ id: 'a', label: 'alpha', score: '100/100', countsInScore: true }, { id: 'b', label: 'beta', score: '90/100', countsInScore: false }];
+  const c9 = boardProblems(cBoard(cCell('alpha', '100/100') + cCell('beta' + COMMERCE_SUFFIX, '90/100'), '100/100'), cNotScored, '100/100', 'Level 5').length === 0;
+  const c10 = boardProblems(cGood, cNotScored, '100/100', 'Level 5').length > 0;   // the not-scored cell lost its suffix
+  const allCases = c1 && c2 && c3 && c4 && c5 && c6 && c7 && c8 && c9 && c10;
   if (!allCases) {
     bad(`static board gate: OWN CONTROLS DO NOT HOLD (clean ${c1}, drifted cell ${c2}, missing cell ${c3}, `
-      + `reordered ${c4}, drifted summary ${c5}, empty data ${c6}, no categories ${c7}, no board ${c8})`);
+      + `reordered ${c4}, drifted summary ${c5}, empty data ${c6}, no categories ${c7}, no board ${c8}, suffix kept ${c9}, suffix lost ${c10})`);
   } else {
     const boardFound = boardProblems(src.worker.text, CATS, iar.score, lvl);
     check(boardFound.length === 0,
-      `static board gate: worker.ts source board == facts.json (${boardFound.length ? boardFound.join(' | ') : `${CATS.length} cells, labels, order, values and summary; 8 controls green; the SERVED page is proved by --live, not here`})`);
+      `static board gate: worker.ts source board == facts.json (${boardFound.length ? boardFound.join(' | ') : `${CATS.length} cells, labels, order, values and summary; 10 controls green; the SERVED page is proved by --live, not here`})`);
   }
 }
 
@@ -2910,7 +2949,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
     else {
       const cells = [...gridM[1].matchAll(/<li class="cell"><span class="cat">([^<]*):<\/span>\s*<span class="val">([^<]*)\.<\/span><\/li>/g)]
         .map((m) => ({ cat: twDecode(m[1]).trim(), val: twDecode(m[2]).trim() }));
-      const wantLabels = CATS.map((c: { label: string }) => c.label);
+      const wantLabels = CATS.map((c) => catDisplay(c));
       // Both sides can go empty at once, and then two empty joins compare equal. The
       // label check and the count check are separate lines so an empty facts.json
       // cannot make the order check below vacuously true.
@@ -2927,7 +2966,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
       // that lost the field and a board that lost the number would compare undefined against
       // undefined and print `pass ... saw undefined`, which is the second case of the 2026-08-01 finding and
       // was measured in this very file.
-      const catByLabel = new Map<string, any>(CATS.map((c: { label: string }) => [String(c.label), c]));
+      const catByLabel = new Map<string, any>(CATS.map((c) => [catDisplay(c), c]));
       const wrongVal = cells.filter((c) => {
         const want = (catByLabel.get(c.cat) || {}).score;
         return typeof want !== 'string' || want.trim().length === 0 || c.val !== want;
@@ -2966,7 +3005,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
   // fetch it.
   try {
     const md = await (await fetch(base + '/', { headers: { accept: 'text/markdown' } })).text();
-    const sp = CATS.map((c: { label: string; prose?: string[] }) => [c.label, ...(Array.isArray(c.prose) ? c.prose : [])].map((x) => String(x).toLowerCase()));
+    const sp = CATS.map(catSpellings);
     const sc = iar.score.toLowerCase(), lv = lvl.toLowerCase();
     // Since Tek-488 round 3 the served twin is built from the same facts.json template as the static
     // one, so the two gates cannot drift into two sentence shapes.

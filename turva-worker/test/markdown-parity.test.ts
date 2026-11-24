@@ -621,8 +621,10 @@ test("Tek-488: the scan board shows the twin's own rows, and its labels are the 
   const cats = facts.agentReadiness.isitagentready.categories;
   const md = (await served("/", "text/markdown")).body.replace(/\r\n/g, "\n");
   const html = (await served("/", "text/html")).body;
-  const rows = [...md.matchAll(/\n- ([^:\n]+): (\d+\/100)\.(?=\n)/g)].filter((m) => cats.some((c: { label: string }) => c.label === m[1]));
-  assert.deepEqual(rows.map((m) => m[1]), cats.map((c: { label: string }) => c.label), "the twin lists every category by its label, in order");
+  // Tek-911: a category that does not count toward the score is listed with the suffix from facts.json.
+  const display = (c: { label: string; countsInScore?: boolean }) => c.label + (c.countsInScore === false ? facts.agentReadiness.isitagentready.commerceSuffix : "");
+  const rows = [...md.matchAll(/\n- ([^:\n]+): (\d+\/100)\.(?=\n)/g)].filter((m) => cats.some((c: { label: string; countsInScore?: boolean }) => display(c) === m[1]));
+  assert.deepEqual(rows.map((m) => m[1]), cats.map(display), "the twin lists every category by its display label, in order");
   for (const [, label, score] of rows) {
     assert.ok(html.includes('<li class="cell"><span class="cat">' + esc(label) + ':</span> <span class="val">' + score + ".</span></li>"), label);
   }

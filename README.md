@@ -137,24 +137,24 @@ See [docs/endpoints.md](docs/endpoints.md) for the other endpoints, including A2
 
 ## Scanner results
 
-The published turva.dev reference build recorded 100/100, Level 5 Agent-Native on [isitagentready.com](https://isitagentready.com/) on 2026-11-15. This is a dated measurement of this domain. A fork needs its own checks.
+The published turva.dev reference build recorded 100/100, Level 5 Agent-Native on [isitagentready.com](https://isitagentready.com/) on 2026-11-25. This is a dated measurement of this domain. A fork needs its own checks.
 
 <details>
 <summary>Category results and measurement limits</summary>
 
 ### isitagentready.com category breakdown
 
-isitagentready.com groups its checks into five categories. turva.dev passes every check in all five in the recorded snapshot.
+isitagentready.com groups its checks into five categories. turva.dev passes every scored check and every commerce check the scanner shows in the recorded snapshot. Four of the five count toward the score. Commerce is optional on the scanner's page and does not count.
 
 | Category | Result |
 | --- | --- |
 | Discoverability | 100/100 |
 | Content | 100/100 |
 | Bot Access Control | 100/100 |
-| API, Auth, MCP & A2A Discovery | 100/100 |
-| Commerce | 100/100 |
+| API, Auth, MCP & Skill Discovery | 100/100 |
+| Commerce (optional, not scored) | 100/100 |
 
-Commerce is included in the table and passes. Individual check counts are omitted because the scanner's public page and MCP interface report different check sets.
+Commerce is shown for information and passes. Individual check counts are omitted because the scanner's public page and MCP interface report different check sets.
 
 </details>
 
