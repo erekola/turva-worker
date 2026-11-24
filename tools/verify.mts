@@ -3684,7 +3684,7 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
     const liveTools = ((liveList.body.result && liveList.body.result.tools) || []).map((t: { name: string }) => t.name).sort();
     check(cardTools.length > 0 && cardTools.join(',') === liveTools.join(','),
       `tool-name parity: card [${cardTools}] == live [${liveTools}]`);
-    // Since turva-mcp 1.5.0 every tool describes its output, and none takes an argument.
+    // Since turva-mcp 1.5.0 every tool describes its output, and each names the arguments it allows and refuses any other (get_page names path since 1.14.0).
     for (const t of (liveList.body.result && liveList.body.result.tools) || []) {
       check(!!t.outputSchema && t.outputSchema.type === 'object',
         `tools/list ${t.name} declares an outputSchema`);
@@ -3745,8 +3745,10 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
     // envelope lands on the SDK compatibility lane and returns the same 2486 bytes with a
     // 200 and no resultType. A gate that only read the payload would pass while measuring
     // a lane this server no longer claims to serve.
+    // get_page is the one tool with an argument, so it is called with the path of the site's own index.
+    const TOOL_ARGUMENTS: Record<string, object> = { get_page: { path: '/llms.txt' } };
     const callTool = async (name: string) => {
-      const r = await rpc('tools/call', { name, arguments: {} }, { 'mcp-name': name });
+      const r = await rpc('tools/call', { name, arguments: TOOL_ARGUMENTS[name] ?? {} }, { 'mcp-name': name });
       const result = r.body.result || {};
       const first = (result.content || [])[0] || {};
       if (r.body.error || first.type !== 'text') {
@@ -4034,6 +4036,20 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
       check(op.legal_page === 'https://turva.dev/legal',
         `get_contact operator links https://turva.dev/legal (saw ${JSON.stringify(op.legal_page)})`);
     }
+
+    // Since turva-mcp 1.14.0 (Tek-908) get_page reads one page of turva.dev through a service binding to
+    // this Worker. Its answer for /llms.txt is the site's own index, so the gate proves the binding is wired
+    // (a missing one answers a tool error), that the status and the byte count are the ones the tool states,
+    // and that a path outside turva.dev is refused as a tool error and not read.
+    const pg = await callTool('get_page');
+    if (pg) {
+      check(pg.path === '/llms.txt' && pg.status === 200 && typeof pg.markdown === 'string' && pg.markdown.startsWith('# turva.dev') && pg.bytes === Buffer.byteLength(pg.markdown),
+        `get_page /llms.txt answers 200 with the index and its byte count (saw ${JSON.stringify([pg.path, pg.status, pg.bytes])})`);
+      check(pg.markdown.includes('https://turva.dev/services.md'), 'get_page /llms.txt carries the markdown address of the services page');
+    }
+    const pgRefused = await rpc('tools/call', { name: 'get_page', arguments: { path: '//evil.example/x' } }, { 'mcp-name': 'get_page' });
+    check(!!pgRefused.body.result && pgRefused.body.result.isError === true,
+      `get_page refuses //evil.example/x as a tool error (saw ${JSON.stringify(pgRefused.body.result ? pgRefused.body.result.isError : pgRefused.body.error)})`);
 
     // The name-agreement rule, proven rather than assumed. Without this a server that
     // ignored Mcp-Name would answer get_services to a header asking for get_principles,
