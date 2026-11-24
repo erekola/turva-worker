@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.262.0 - /services Agent operations scope list gains two items for a coding agent such as Claude Code: hooks that check a tool call before it runs with the tests that show which calls they block, and skills that load the client's procedure; prices and terms unchanged
 // turva.dev worker v3.261.1 - MCP server card version 1.14.0 (Tek-908, 2026-11-24): turva-mcp gets a sixth tool, get_page, which reads one page of turva.dev through a service binding, and its get_contact now quotes the two privacy sections AI tools in security work and Where the work runs; the card names the new tool and carries the new serverInfo description, so the card changes bytes and its signature must be renewed.
 // turva.dev worker v3.261.0 - new Research post /blog/finnish-health-sites-and-ai-training (2026-11-23) on the agent-readiness of 33 Finnish public and private health service sites, read with isitagentready.com and own curl requests: the two sites above Level 1 both carry a Cloudflare managed robots.txt with a content signal; with its Frequently asked section, its OG card, a new first Blog line in LLMS_TXT (re-sign) and the version mirrors.
 // turva.dev worker v3.260.12 - round 30 fixes (2026-11-23): the audit card on the home and services pages names the two-target limit, the services page and LLMS_TXT define a target as one hostname (re-sign), the separately scoped implementation section drops a second two-day estimate, the audit-choosing guide no longer counts three kinds of evidence, the response-headers guide reads IETF revision 12, two posts name what their corrections changed, and the MCP server card moves to 1.13.3 (re-sign).
@@ -5989,6 +5990,8 @@ Get written limits for the agent that your company already runs. I review the da
 - What memory keeps between sessions, and where untrusted content reaches the agent.
 - How a change to the agent's tools or connectors is reviewed.
 - The worst outcome if these controls fail or are misconfigured, and what limits it.
+- For a coding agent such as Claude Code, the hooks that check a tool call before it runs, and the tests that show which calls they block.
+- For the same agent, the skills that load your procedure when a task needs it.
 
 The Australian Signals Directorate [announced its Agentic AI Harnesses guidance](https://www.cyber.gov.au/news/asd-releases-new-guidance-on-the-agentic-ai-harnesses) in September 2026. The guidance describes the software layer that connects the model to an organization's data and tools, and it treats that layer as the part of an agent system that an organization can most directly govern. I use its eleven components and seven executive questions as a reference, and the written scope states which of them the engagement covers. ASD has no connection to this service and has not endorsed it.
 
@@ -8865,7 +8868,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.261.1",
+    "version": "3.262.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9175,7 +9178,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.261.1",
+  "version": "3.262.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9877,7 +9880,7 @@ const WEBMCP_SCRIPT = `<script>
 })();
 <\/script>`;
 
-const SITEMAP_LASTMOD = "2026-11-23";
+const SITEMAP_LASTMOD = "2026-11-24";
 const SITEMAP_ENTRIES = [
   ["/", "weekly", "1.0"],
   ["/services", "monthly", "0.9"],
