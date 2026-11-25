@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.265.1 - the public repositories moved to the GitHub organization turva-dev (Tek-916, 2026-11-25): every repository link, the company source code links, the footer GitHub link and the Organization sameAs point at github.com/turva-dev, the Person sameAs keeps Erik's profile github.com/erekola, the source-move post gets a dated status line, and the MCP server card's repository URL changes, so the card changes bytes and its signature must be renewed.
 // turva.dev worker v3.265.0 - MCP server card version 1.15.0 (Tek-915, 2026-11-25): turva-mcp gets a seventh tool, get_page_index, which lists the pages of turva.dev by section from the site's own llms.txt, so a client no longer has to know to call get_page with /llms.txt; the card names the new tool and carries version 1.15.0, so the card changes bytes and its signature must be renewed.
 // turva.dev worker v3.264.0 - the living surfaces follow the shape of the scanner's own web page (Tek-911, 2026-11-24): the group once named API, Auth, MCP & A2A is API, Auth, MCP & Skill Discovery, Commerce is listed as optional and not scored, the evidence link points at the scanner API's raw response of 2026-11-25 (Helsinki day; 22:20 UTC on 2026-11-24), and the two guides that said the scanner checks the A2A Agent Card and the AP2 declaration say it leaves them out of its default run
 // turva.dev worker v3.263.0 - the hosted llms.txt validator signs the requests it sends with Web Bot Auth (Tek-910, 2026-11-24): an Ed25519 key held as the Worker secret WBA_SIGNING_KEY, a Signature-Agent header that names https://turva.dev, a signed key directory at /.well-known/http-message-signatures-directory, and two fail-closed rate limits on the validator (10 validations a minute per visitor, 30 a minute per checked site); the validator page says so. The npm package never signs.
@@ -594,7 +595,7 @@ on this site sits behind a credential.
 - Register: https://tietopalvelu.ytj.fi/yritys/3600281-7
 - Verified contact: <mailto:info@turva.dev>
 - Public profile: https://www.linkedin.com/in/erikrekola/
-- Source code: https://github.com/erekola
+- Source code: https://github.com/turva-dev
 
 ## Supported identity types
 
@@ -1141,7 +1142,7 @@ Web pages come first in ASD's list of content that can read as an instruction. A
 
 ## One sample: my own server
 
-I read [turva-mcp](https://github.com/erekola/turva-mcp) at \`mcp.turva.dev/mcp\`, version 1.7.1, on 2 November 2026. It is one sample and it is mine, so it compares with nothing. The case is also an easy one: five tools, no arguments and data compiled into the server. With no write tool, no login and no third-party text passing through, the server cannot show the hardest items above.
+I read [turva-mcp](https://github.com/turva-dev/turva-mcp) at \`mcp.turva.dev/mcp\`, version 1.7.1, on 2 November 2026. It is one sample and it is mine, so it compares with nothing. The case is also an easy one: five tools, no arguments and data compiled into the server. With no write tool, no login and no third-party text passing through, the server cannot show the hardest items above.
 
 | Reading | Value |
 | --- | --- |
@@ -2438,7 +2439,7 @@ Updated 2026-11-06. The section on what happens when nothing has changed now say
 
 2026-09-26
 
-GitHub counts 544 commits in nine of my repositories for September, and the month still has four days to go. My website alone shipped 54 minor versions between 6 and 26 September, seven of them on 26 September before this post shipped and an eighth counting it, and 15 patch releases besides. I sell audits of how ready a website is for AI agents, and my own site is the one piece of proof I can hand a buyer. [Its code is public](https://github.com/erekola/turva-worker), so anyone can read every line and its commit history.
+GitHub counts 544 commits in nine of my repositories for September, and the month still has four days to go. My website alone shipped 54 minor versions between 6 and 26 September, seven of them on 26 September before this post shipped and an eighth counting it, and 15 patch releases besides. I sell audits of how ready a website is for AI agents, and my own site is the one piece of proof I can hand a buyer. [Its code is public](https://github.com/turva-dev/turva-worker), so anyone can read every line and its commit history.
 
 ## Why does my own site change this often?
 
@@ -2633,7 +2634,7 @@ Updated 2026-11-10. Two sentences named a Proton backup as the offsite copy. I s
 
 A Markdown version can leave out part of a page or send a reader to a different link. I built markdown-parity-check to compare what the two versions contain.
 
-My own tools page gave the checker something to report. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown version that the HTML page left out. The comparison returned five errors. That dated result is recorded in the [tool's README](https://github.com/erekola/markdown-parity-check#command-line-and-hosted-page).
+My own tools page gave the checker something to report. A check recorded on 11 September 2026 found a Related heading and four links in its Markdown version that the HTML page left out. The comparison returned five errors. That dated result is recorded in the [tool's README](https://github.com/turva-dev/markdown-parity-check#command-line-and-hosted-page).
 
 The difference was structural rather than missing content. The HTML page linked to the same four destinations from its tool cards, so nothing was unreachable, but the Markdown reader got a Related section the HTML reader never saw. Neither version looked broken on its own.
 
@@ -2653,7 +2654,7 @@ Serving a Markdown response and keeping it consistent with the HTML are separate
 
 It compares the main content of the two versions block by block. The checks cover headings and paragraphs, list items, tables, code blocks and links, and every reported difference points back to the text it came from.
 
-I built [markdown-parity-check](https://github.com/erekola/markdown-parity-check) for this comparison. It extracts the main content from HTML and lines it up with the Markdown.
+I built [markdown-parity-check](https://github.com/turva-dev/markdown-parity-check) for this comparison. It extracts the main content from HTML and lines it up with the Markdown.
 
 Missing or added blocks are errors. Changed wording and changed numbers can fail the comparison too, and so can a link that keeps its label but points to a different address. Changes in heading level or order are reported as warnings, as are changes in case or punctuation.
 
@@ -2665,7 +2666,7 @@ With Node.js 22 or newer available, this command requests both representations o
 
     npx --yes markdown-parity-check --url https://turva.dev/tools
 
-It sends one request with the header Accept: text/html and another with Accept: text/markdown. Replace the address with your own public page. When Markdown lives at a separate address, supply it with --markdown-url. The [usage documentation](https://github.com/erekola/markdown-parity-check#check-your-own-site) also covers comparing two local files.
+It sends one request with the header Accept: text/html and another with Accept: text/markdown. Replace the address with your own public page. When Markdown lives at a separate address, supply it with --markdown-url. The [usage documentation](https://github.com/turva-dev/markdown-parity-check#check-your-own-site) also covers comparing two local files.
 
 In URL mode the delivery check runs first. An HTTP error or an HTML response in place of Markdown fails that check. The content comparison stops there.
 
@@ -3640,7 +3641,7 @@ Scope is agreed in writing before any of the three is paid. That is what the ter
 
 ## The rule, again
 
-A green check is worth something only when it reflects what an agent actually finds. Commerce is optional, so none of this moved the headline number. It moved whether the payment surface is real and discoverable for the moment agents start to pay, which is the part that will matter. The worker that produces these results is open source at [github.com/erekola/turva-worker](https://github.com/erekola/turva-worker), readable line by line.
+A green check is worth something only when it reflects what an agent actually finds. Commerce is optional, so none of this moved the headline number. It moved whether the payment surface is real and discoverable for the moment agents start to pay, which is the part that will matter. The worker that produces these results is open source at [github.com/turva-dev/turva-worker](https://github.com/turva-dev/turva-worker), readable line by line.
 
 For an agent-readiness audit that reports measured results, contact info@turva.dev.
 
@@ -4170,6 +4171,8 @@ Corrected 2026-11-11. The closing line offered an audit that measures what agent
 
 The source moved to Codeberg and later returned to GitHub. This dated incident log preserves the sequence and links readers to the current public source.
 
+Status, November 25: the source of turva-worker, turva-mcp, markdown-parity-check and llms-txt-validator moved from my personal account erekola to the organization [turva-dev](https://github.com/turva-dev), so the code now sits under a name that matches the domain. The old erekola addresses of those four repositories redirect to the new ones.
+
 Status, July 26: the source is on GitHub only, at [github.com/erekola](https://github.com/erekola). This post is the dated log of a move that later reversed, and the three updates at the end record each step in order. The account of the incident itself stands as written.
 
 The company page of this site tells a buyer they can read every line before hiring me. That promise depends on the source being reachable, and for two weeks it was not, in a way I could not see. This is the log of what broke and why the source moved to Codeberg.
@@ -4281,7 +4284,7 @@ The browser page and the JSON response run the same checks, listed below.
 
 ## What the validator checks
 
-Eight checks examine the file. The [package README](https://github.com/erekola/llms-txt-validator#how-links-headings-and-list-items-are-read) lists the forms of Markdown links, headings and list items the checks read, and the forms they do not read.
+Eight checks examine the file. The [package README](https://github.com/turva-dev/llms-txt-validator#how-links-headings-and-list-items-are-read) lists the forms of Markdown links, headings and list items the checks read, and the forms they do not read.
 
 - It exists at /llms.txt and returns HTTP 200.
 - It is plain text, not an HTML error page.
@@ -4432,7 +4435,7 @@ The optional fields are markdownUrl and selector. The response is the report in 
 
 A 429 from the site-wide limiter and a 500 from an unhandled error can arrive as plain text with the content type text/plain, and not as a JSON report.
 
-In CI, run the package with --strict. Source and releases are on [GitHub](https://github.com/erekola/markdown-parity-check) and the package is on [npm](https://www.npmjs.com/package/markdown-parity-check).
+In CI, run the package with --strict. Source and releases are on [GitHub](https://github.com/turva-dev/markdown-parity-check) and the package is on [npm](https://www.npmjs.com/package/markdown-parity-check).
 
 ## What is kept
 
@@ -4476,8 +4479,8 @@ Read the eligibility criteria and get the embed code. The badge is self-declared
 
 ## For developers
 
-- The validator returns the same checks as JSON when requested with Accept: application/json. Its eight structural checks use pass, warn or fail. The two v2 discovery checks use pass or information and do not change the structural result. The same checks are available in the open npm package [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator). Its CLI returns the same JSON result shape for a completed validation, while error responses are shaped differently. Source on [GitHub](https://github.com/erekola/llms-txt-validator).
-- The Markdown parity check takes a JSON POST and returns the report format of the open npm package [markdown-parity-check](https://www.npmjs.com/package/markdown-parity-check), which runs the same comparison on any public site. Source on [GitHub](https://github.com/erekola/markdown-parity-check).
+- The validator returns the same checks as JSON when requested with Accept: application/json. Its eight structural checks use pass, warn or fail. The two v2 discovery checks use pass or information and do not change the structural result. The same checks are available in the open npm package [turva-llms-txt-validator](https://www.npmjs.com/package/turva-llms-txt-validator). Its CLI returns the same JSON result shape for a completed validation, while error responses are shaped differently. Source on [GitHub](https://github.com/turva-dev/llms-txt-validator).
+- The Markdown parity check takes a JSON POST and returns the report format of the open npm package [markdown-parity-check](https://www.npmjs.com/package/markdown-parity-check), which runs the same comparison on any public site. Source on [GitHub](https://github.com/turva-dev/markdown-parity-check).
 - The read-only MCP endpoint is https://mcp.turva.dev/mcp. It uses Streamable HTTP and requires no authentication. Connect with an MCP client rather than a browser. Its server card is published at https://turva.dev/.well-known/mcp/server-card.json.
 - The badge is an SVG served by turva.dev. Its link takes readers to the eligibility criteria.
 
@@ -4665,7 +4668,7 @@ An ai-catalog.json is easy to misread as another search file. It is not. It inde
 
 ## Honest about adoption
 
-In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft, and that check covered only the companies the announcement names as contributors, a small, named set whose exact count I did not record at the time, and not adoption across the web. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at [github.com/erekola/turva-worker](https://github.com/erekola/turva-worker).
+In a June 2026 check I ran against their public well-known paths, none of the companies named as contributors to the specification yet served a discoverable ai-catalog.json. The specification is an early draft, and that check covered only the companies the announcement names as contributors, a small, named set whose exact count I did not record at the time, and not adoption across the web. That is the honest frame for this post. turva.dev is early rather than late, and being early on a verifiable standard is a position worth holding when the work is open source and readable line by line at [github.com/turva-dev/turva-worker](https://github.com/turva-dev/turva-worker).
 
 For an audit of a site's discovery surface, contact info@turva.dev.
 
@@ -5618,7 +5621,7 @@ Sample report. See how I explain a finding, show the evidence and describe the f
 
 Research. Read what I measured across company websites and AI assistants. Each study includes its methods, dates and limits. These are research observations, not client results. [Website agent-readiness study](/blog/website-agent-readiness-567-sites), [What AI assistants call an agent-readiness audit](/blog/what-ai-assistants-call-an-agent-readiness-audit) and [Thirty days after the brief](/blog/thirty-days-after-the-brief).
 
-My own site. I use turva.dev to put this work into practice. You can inspect the source code and the published checks. The [public scanner](https://isitagentready.com/) link opens the scanner's start page, where you can run a new check of your own. That page does not show the recorded result below. I publish [the scanner API's raw response](/evidence/isitagentready-turva-dev-2026-11-25.json) from a run that day, unedited, made with the check list the scanner's own page sends by default. A second run a few seconds later returned the same result. It shows Level 5 with every scored check passing. Commerce is optional on that page, so its checks are shown for information and do not count toward the score. Cloudflare runs the scanner and also hosts this site. You can also [read the source](https://github.com/erekola/turva-worker).
+My own site. I use turva.dev to put this work into practice. You can inspect the source code and the published checks. The [public scanner](https://isitagentready.com/) link opens the scanner's start page, where you can run a new check of your own. That page does not show the recorded result below. I publish [the scanner API's raw response](/evidence/isitagentready-turva-dev-2026-11-25.json) from a run that day, unedited, made with the check list the scanner's own page sends by default. A second run a few seconds later returned the same result. It shows Level 5 with every scored check passing. Commerce is optional on that page, so its checks are shown for information and do not count toward the score. Cloudflare runs the scanner and also hosts this site. You can also [read the source](https://github.com/turva-dev/turva-worker).
 
 Independent agent-readiness scan of turva.dev. Measured 2026-11-25.
 
@@ -6289,7 +6292,7 @@ From 2015 to 2021, I worked hands-on with industrial and laboratory equipment:
 
 Those roles involved reliable machine data and working within defined limits.
 
-After a career break from 2021 to early 2026, I built turva.dev around technical checks, reviews and implementation. You can inspect my current work through [public source code](https://github.com/erekola), [dated research](/blog) and a clearly labeled [sample report](/samples/audit-report). The sample report describes a fictional business.
+After a career break from 2021 to early 2026, I built turva.dev around technical checks, reviews and implementation. You can inspect my current work through [public source code](https://github.com/turva-dev), [dated research](/blog) and a clearly labeled [sample report](/samples/audit-report). The sample report describes a fictional business.
 
 ## Why I do this work
 
@@ -6318,7 +6321,7 @@ The report records what I checked and what I observed, so your team can understa
 - **Location:** Tampere, Pirkanmaa, Finland
 - **Postal address:** c/o turva.dev, P.O. Box 999, 42011 YRITYSLOKERO, Finland
 - **Register:** [tietopalvelu.ytj.fi/yritys/3600281-7](https://tietopalvelu.ytj.fi/yritys/3600281-7)
-- **Source code:** [github.com/erekola](https://github.com/erekola)
+- **Source code:** [github.com/turva-dev](https://github.com/turva-dev)
 
 ## Invoicing
 
@@ -6909,7 +6912,7 @@ A surface in any of these groups helps an agent find and read the site but does 
 
 The scanner runs against its current rule set, and what it does not score, such as llms.txt, is tested directly. That rule set moves, so a scan run today is a new measurement, not a repeat of an earlier one.
 
-The table below records each surface's current status, drawn from the [repository's reference file](https://github.com/erekola/turva-worker/blob/main/docs/agent-readiness.md), which holds the full citation behind each status. Pilot means an early-stage mechanism with no ratifying body yet. Pilot names the ratification state and does not rate adoption or production maturity. Accepted extension means the protocol's own proposal process has marked the extension Final, while its reference repository can still be labeled experimental.
+The table below records each surface's current status, drawn from the [repository's reference file](https://github.com/turva-dev/turva-worker/blob/main/docs/agent-readiness.md), which holds the full citation behind each status. Pilot means an early-stage mechanism with no ratifying body yet. Pilot names the ratification state and does not rate adoption or production maturity. Accepted extension means the protocol's own proposal process has marked the extension Final, while its reference repository can still be labeled experimental.
 
 | Surface | Status |
 | --- | --- |
@@ -8873,7 +8876,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.265.0",
+    "version": "3.265.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9014,7 +9017,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"5mHRNpgoI4WsANo3FTnOmGiJwOLOquTDJTABpy5fySo9cGAN35py_EPNej-MUCeBW_yMq2Vtz0d_GnMUq7rhAA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"guAf3Iu24lpvQQA2tbfvdb3MhG61k_ds5VSxLAAOuv0E7uv5sTTHA-RXrXKcvkeMnaXL1yJPFssD33ozlk9uBQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"O5b5wKd9rkCsjvdB4mr-LCZkLu6K93CbQ6cgEFnzWpy0zHbDpDOA6VeNXYLoXMXYen4Ws_pBNHPSl8MxUmzODg\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"guAf3Iu24lpvQQA2tbfvdb3MhG61k_ds5VSxLAAOuv0E7uv5sTTHA-RXrXKcvkeMnaXL1yJPFssD33ozlk9uBQ\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -9030,7 +9033,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
   "version": "1.15.0",
   "websiteUrl": "https://turva.dev/",
-  "repository": { "url": "https://github.com/erekola/turva-mcp", "source": "github" },
+  "repository": { "url": "https://github.com/turva-dev/turva-mcp", "source": "github" },
   "remotes": [
     { "type": "streamable-http", "url": "https://mcp.turva.dev/mcp" }
   ],
@@ -9184,7 +9187,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.265.0",
+  "version": "3.265.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -10439,7 +10442,7 @@ const META_BY_PATH = {
     description: "The source moved to Codeberg and later returned to GitHub. This dated incident log preserves the sequence and links readers to the current public source.",
     date: "2026-07-04",
     kind: "Build notes",
-    modified: "2026-09-06",
+    modified: "2026-11-25",
     image: "/og-moving-source-to-codeberg.jpg",
     imageAlt: "turva.dev blog card: GitHub's spam filter silently hid this site's source from everyone but its owner for two weeks."
   },
@@ -10816,7 +10819,7 @@ const SCHEMA_SERVICE = `{"@type":"Service","@id":"https://turva.dev/#service","n
 
 const SCHEMA_HOME = `<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
-{"@type":"Organization","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276251"]},
+{"@type":"Organization","@id":"https://turva.dev/#business","name":"turva.dev","url":"https://turva.dev/","image":"https://turva.dev/og.jpg","logo":"https://turva.dev/logo.png","description":"Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.","taxID":"3600281-7","vatID":"FI36002817","email":"info@turva.dev","areaServed":{"@type":"Place","name":"Worldwide"},"address":{"@type":"PostalAddress","addressLocality":"Tampere","addressCountry":"FI"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"info@turva.dev","availableLanguage":["English","Finnish"]},"founder":{"@id":"https://turva.dev/#person"},"sameAs":["https://tietopalvelu.ytj.fi/yritys/3600281-7","https://www.linkedin.com/in/erikrekola/","https://github.com/turva-dev","https://www.wikidata.org/wiki/Q140276251"]},
 {"@type":"Person","@id":"https://turva.dev/#person","name":"Erik Rekola","jobTitle":"Agent-readiness consultant","description":"Founder of turva.dev, an independent agent-readiness audit and advisory business in Tampere, Finland.","url":"https://turva.dev/company","worksFor":{"@id":"https://turva.dev/#business"},"sameAs":["https://www.linkedin.com/in/erikrekola/","https://github.com/erekola","https://www.wikidata.org/wiki/Q140276321","https://social.turva.dev/@erik","https://gravatar.com/erekola"]},
 {"@type":"WebSite","@id":"https://turva.dev/#website","url":"https://turva.dev/","name":"turva.dev","publisher":{"@id":"https://turva.dev/#business"},"inLanguage":"en"},
 ${SCHEMA_SERVICE},
@@ -11236,7 +11239,7 @@ function serveMtaStsPolicy() {
   return new Response(MTA_STS_POLICY, { status: 200, headers });
 }
 
-const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/erekola", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "MCP server security test", "pricing": "on request" }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }], "quotedAddOns": [{ "name": "Active security testing", "pricing": "on request", "requires": "Audit", "scope": "Tests the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so, with GLM 5.3 and Burp Suite Professional for web traffic, and starts only after you sign a written authorization.", "soldSeparately": false, "url": "https://turva.dev/services#active-security-testing" }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-11-25" }, null, 2);
+const HOME_JSON = JSON.stringify({ "name": "turva.dev", "url": "https://turva.dev/", "description": "Agent-readiness audits for websites and APIs. Evidence, prioritized fixes and optional implementation. Async-only.", "founder": "Erik Rekola", "location": { "city": "Tampere", "country": "FI" }, "businessId": "3600281-7", "email": "info@turva.dev", "signal": "https://signal.me/#eu/2qzayURnxbJ8wl7dmQOd5c3sAF7cW8xvDVUrNiG6Cl7rEsXfkSlIsYOS9FSjJixK", "sameAs": ["https://www.wikidata.org/wiki/Q140276251", "https://www.linkedin.com/in/erikrekola/", "https://github.com/turva-dev", "https://tietopalvelu.ytj.fi/yritys/3600281-7"], "services": [{ "name": "Audit", "price": 4300, "currency": "EUR", "unit": "fixed", "duration": "2 weeks", "durationFrom": "agreed written kickoff", "vatIncluded": false }, { "name": "Advisory", "price": 3000, "currency": "EUR", "unit": "month", "minimumCommitment": "3 months", "firstMonthOptOut": "The retainer can be ended by email during the first month if the client is not satisfied with it, so that only the first month is charged.", "vatIncluded": false }, { "name": "Implementation", "price": 1500, "currency": "EUR", "unit": "day", "vatIncluded": false }, { "name": "MCP server security test", "pricing": "on request" }, { "name": "Agent operations", "pricing": "on request" }, { "name": "MCP server design", "pricing": "on request" }], "bundledImplementation": [{ "name": "Audit fix implementation", "price": 499, "currency": "EUR", "unit": "fixed", "vatIncluded": false, "requires": "Audit", "scope": "Exactly the fixes the audit report lists.", "soldSeparately": false }], "quotedAddOns": [{ "name": "Active security testing", "pricing": "on request", "requires": "Audit", "scope": "Tests the agent surfaces the audit reads, or your own AI agent or web application where the written scope says so, with GLM 5.3 and Burp Suite Professional for web traffic, and starts only after you sign a written authorization.", "soldSeparately": false, "url": "https://turva.dev/services#active-security-testing" }], "engagement": "Async only. No calls, no calendar links. Reply within one business day. Fixed scope written before payment.", "useCases": ["Reading a product catalog and completing a checkout for a buyer", "Watching an API and acting when a threshold is crossed", "Guiding a field technician from the same data an expert would use", "Triaging incoming requests and resolving the routine ones", "Operating a remote system over an unreliable link", "Reconciling records across systems and flagging mismatches", "Making a time-critical decision locally when no human can respond in time"], "resources": { "guides": "https://turva.dev/guides", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "openapi": "https://turva.dev/openapi.json", "mcp": "https://mcp.turva.dev/mcp", "apiCatalog": "https://turva.dev/.well-known/api-catalog" }, "lastVerified": "2026-11-25" }, null, 2);
 const API_INDEX_JSON = JSON.stringify({ "service": "turva.dev", "version": "v1", "description": "Agent endpoint index for turva.dev. The machine-readable surfaces an AI agent can read and call.", "endpoints": { "a2aMessageSend": "https://turva.dev/v1/message:send", "agentCard": "https://turva.dev/.well-known/agent-card.json", "openapi": "https://turva.dev/openapi.json", "apiCatalog": "https://turva.dev/.well-known/api-catalog", "mcp": "https://mcp.turva.dev/mcp", "mcpServerCard": "https://turva.dev/.well-known/mcp/server-card.json", "aiPlugin": "https://turva.dev/.well-known/ai-plugin.json", "agentJson": "https://turva.dev/.well-known/agent.json", "llmsTxt": "https://turva.dev/llms.txt", "llmsFullTxt": "https://turva.dev/llms-full.txt", "signatures": "https://turva.dev/.well-known/signatures.json", "jwks": "https://turva.dev/.well-known/jwks.json" }, "homepage": "https://turva.dev/", "contact": "info@turva.dev" }, null, 2);
 
 // RFC 9110 12.5.1: a q-value is a preference and q=0 is a refusal. Splitting on ";"
@@ -12414,7 +12417,7 @@ function footerHtml(language?: string) { const fi = language === "fi"; return `<
     <a class="ft-row" href="https://www.linkedin.com/in/erikrekola/"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.4 8.9h3.1V21H3.4zM9.2 8.9h2.97v1.65h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V21h-3.1v-5.35c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9.2z"/></svg><span>LinkedIn</span></a>
     <a class="ft-row" rel="me" href="https://social.turva.dev/@erik"><svg viewBox="0 0 24 24" fill="#5DF18F" aria-hidden="true"><path d="M21.327 8.566c0-4.339-2.843-5.61-2.843-5.61-1.433-.658-3.894-.935-6.451-.956h-.063c-2.557.021-5.016.298-6.45.956 0 0-2.843 1.272-2.843 5.61 0 .993-.019 2.181.012 3.441.103 4.243.778 8.425 4.701 9.463 1.809.479 3.362.579 4.612.51 2.268-.126 3.541-.809 3.541-.809l-.075-1.646s-1.621.511-3.441.449c-1.804-.062-3.707-.194-3.999-2.409a4.523 4.523 0 0 1-.04-.621s1.77.433 4.014.536c1.372.063 2.658-.08 3.965-.236 2.506-.299 4.688-1.843 4.962-3.254.434-2.223.398-5.424.398-5.424zm-3.353 5.59h-2.081V9.057c0-1.075-.452-1.62-1.357-1.62-1 0-1.501.647-1.501 1.927v2.791h-2.069V9.364c0-1.28-.501-1.927-1.502-1.927-.905 0-1.357.546-1.357 1.62v5.099H5.626V8.903c0-1.074.273-1.927.823-2.558.566-.631 1.307-.955 2.228-.955 1.065 0 1.872.41 2.405 1.228l.518.869.519-.869c.533-.818 1.34-1.228 2.405-1.228.92 0 1.662.324 2.228.955.549.631.822 1.484.822 2.558v5.253z"/></svg><span>Mastodon</span></a>
     <a class="ft-row" rel="me" href="https://gravatar.com/erekola"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18.5c1-2.4 3-3.8 5.5-3.8s4.5 1.4 5.5 3.8"/></svg><span>Gravatar</span></a>
-    <a class="ft-row" href="https://github.com/erekola"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span>GitHub</span></a>
+    <a class="ft-row" href="https://github.com/turva-dev"><svg viewBox="0 0 24 24" fill="none" stroke="#5DF18F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span>GitHub</span></a>
   </div>
   <div class="foot-meta">${fi ? "Tampere, Suomi" : "Tampere, Finland"} · <a href="https://tietopalvelu.ytj.fi/yritys/3600281-7">${fi ? "Y-tunnus" : "Business ID"} 3600281-7</a> · © ${new Date().getUTCFullYear()} turva.dev</div>
 </footer>`; }

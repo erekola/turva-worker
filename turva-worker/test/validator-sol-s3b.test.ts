@@ -424,7 +424,7 @@ test("LV-21 and U-3: the page and its markdown twin say how www.turva.dev is rea
   const twin = await (await worker.fetch(new Request("https://turva.dev/llms-txt-validator.md"), env)).text();
   for (const text of [page, twin]) {
     assert.match(stripTags(text), /reads www\.turva\.dev the same way as turva\.dev, without a request, and reports https:\/\/turva\.dev\/llms\.txt as the target/);
-    assert.match(text, /https:\/\/github\.com\/erekola\/llms-txt-validator#how-links-headings-and-list-items-are-read/);
+    assert.match(text, /https:\/\/github\.com\/turva-dev\/llms-txt-validator#how-links-headings-and-list-items-are-read/);
   }
 });
 

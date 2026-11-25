@@ -77,7 +77,7 @@ npx --yes turva-llms-txt-validator example.com --json
 npx --yes markdown-parity-check --url https://example.com/page --format json
 ```
 
-The comparison requests both formats from the same URL. Add `--markdown-url https://example.com/page.md` if your Markdown has a separate address. See the [validator](https://github.com/erekola/llms-txt-validator) and [parity checker](https://github.com/erekola/markdown-parity-check) READMEs for exit codes and limits.
+The comparison requests both formats from the same URL. Add `--markdown-url https://example.com/page.md` if your Markdown has a separate address. See the [validator](https://github.com/turva-dev/llms-txt-validator) and [parity checker](https://github.com/turva-dev/markdown-parity-check) READMEs for exit codes and limits.
 
 This Worker also hosts both checks in the browser. The [llms.txt validator](https://turva.dev/llms-txt-validator) accepts any public domain. The [Markdown parity check](https://turva.dev/markdown-parity-check) checks turva.dev's own published pages only, so use the command above for another site.
 
@@ -89,17 +89,17 @@ The public site runs without a separate CMS or origin server. Static assets are 
 
 The Worker also serves the hosted llms.txt validator, the hosted Markdown parity check and a public sample report. It publishes an Ed25519 public key and signatures for four discovery resources so readers can verify their response bytes.
 
-The [MCP server](https://github.com/erekola/turva-mcp#connect) runs separately. This repository publishes its discovery card and links to it. The [standalone validator](https://github.com/erekola/llms-txt-validator) provides a CLI and Node package.
+The [MCP server](https://github.com/turva-dev/turva-mcp#connect) runs separately. This repository publishes its discovery card and links to it. The [standalone validator](https://github.com/turva-dev/llms-txt-validator) provides a CLI and Node package.
 
 Three mechanisms let someone outside turva.dev check a claim against evidence instead of taking it on trust:
 
 - A signature lets a reader confirm that a fetched manifest still matches the bytes that were signed. The four signed paths are `/llms.txt`, `/.well-known/agent.json`, `/.well-known/ai-plugin.json` and `/.well-known/mcp/server-card.json`, and `/.well-known/signatures.json` carries their signatures.
 - A public-site brief stays at its unlisted address until it is removed on request or expires, no later than 400 days after its latest publication. It stays there so the company it named can reread what was sent. [The legal page](https://turva.dev/legal) states the rule.
-- An npm package's provenance attestation lets an installer trace a published version back to the repository and workflow run that built it. Each package's SECURITY.md states its publishing provenance: [turva-llms-txt-validator](https://github.com/erekola/llms-txt-validator/blob/main/SECURITY.md) and [markdown-parity-check](https://github.com/erekola/markdown-parity-check/blob/main/SECURITY.md).
+- An npm package's provenance attestation lets an installer trace a published version back to the repository and workflow run that built it. Each package's SECURITY.md states its publishing provenance: [turva-llms-txt-validator](https://github.com/turva-dev/llms-txt-validator/blob/main/SECURITY.md) and [markdown-parity-check](https://github.com/turva-dev/markdown-parity-check/blob/main/SECURITY.md).
 
 ## Hosted Markdown parity check
 
-`/markdown-parity-check` runs the comparison from the npm package [markdown-parity-check](https://github.com/erekola/markdown-parity-check). The Worker imports the package's library entry, which Wrangler bundles at deploy time. [turva-worker/package.json](turva-worker/package.json) and its lockfile pin the version, and the command-line tool runs the same comparison code. Fetching and limits belong to this route:
+`/markdown-parity-check` runs the comparison from the npm package [markdown-parity-check](https://github.com/turva-dev/markdown-parity-check). The Worker imports the package's library entry, which Wrangler bundles at deploy time. [turva-worker/package.json](turva-worker/package.json) and its lockfile pin the version, and the command-line tool runs the same comparison code. Fetching and limits belong to this route:
 
 - It checks turva.dev's own published pages only. The Worker renders the page and its Markdown version through its own request handler, so a check sends no request over the network. The two tool pages are not accepted as targets.
 - An address on another host is refused with HTTP 403 and a pointer to `npx --yes markdown-parity-check`. Forwarding other hosts to a separate Worker is switched off in [wrangler.jsonc](turva-worker/wrangler.jsonc).

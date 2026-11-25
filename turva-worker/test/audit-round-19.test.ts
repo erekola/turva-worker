@@ -327,15 +327,18 @@ test("K5-1: a prefers-reduced-motion rule names .cell:hover, .step:hover and .sv
   }
 });
 
-// ---- C4-1: the Codeberg post's meta date and its own correction note both read 2026-09-06 ----
+// ---- C4-1: the Codeberg post's meta date follows its newest dated note, and the 2026-09-06 correction stays its own paragraph ----
+// 2026-11-25 (Tek-916): the post gained the dated status line of the move to the turva-dev organization, so its
+// modified date moved from 2026-09-06 to 2026-11-25; the 2026-09-06 correction note is unchanged.
 
-test("C4-1: the Codeberg post's article:modified_time and its correction note both read 2026-09-06", async () => {
+test("C4-1: the Codeberg post's article:modified_time reads its newest dated note and the 2026-09-06 correction is its own paragraph", async () => {
   const htmlRes = await get("/blog/moving-source-to-codeberg");
   const html = await htmlRes.text();
   assert.ok(
-    html.includes('property="article:modified_time" content="2026-09-06"'),
-    "article:modified_time must read 2026-09-06"
+    html.includes('property="article:modified_time" content="2026-11-25"'),
+    "article:modified_time must read 2026-11-25"
   );
+  assert.ok(html.includes("Status, November 25:"), "the November 25 status line must be on the page");
   const mdRes = await get("/blog/moving-source-to-codeberg.md");
   const md = await mdRes.text();
   const hasOwnLine = md.split("\n").some((l) => l.trim().startsWith("Corrected 2026-09-06"));
