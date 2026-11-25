@@ -147,10 +147,11 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
 // 2026-11-23 (round 30 fixes): the card moved to MCP 1.13.3; only the two version fields changed, the length stays 4820.
 // 2026-11-24 (Tek-908): the card moved to MCP 1.14.0, lists the sixth tool get_page and carries the serverInfo description that names the contact, privacy and page reads, so the length is 5080; the stored signature must be renewed by the resign script before the ship.
 // 2026-11-24 (Tek-911): the card moved to MCP 1.14.1; only the two version fields changed, the length stays 5080.
+// 2026-11-25 (Tek-915): the card moved to MCP 1.15.0 and lists the seventh tool get_page_index (get_page's text now points to it), so the length is 5277; the stored signature must be renewed by the resign script before the ship.
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
-  assert.equal(b.length, 5080);
-  assert.equal(await sha256Hex(b), "47954f74b616ca73c71eb4b2480193f4eb375ff401c15969ec262b4a732246ef");
+  assert.equal(b.length, 5277);
+  assert.equal(await sha256Hex(b), "9cc819ad01eee4e43c5e1a52aa8a400fbc339ffa9040cf8e697a81ab7d952a43");
 });
 
 // ---------------------------------------------------------------- PGP v6 key

@@ -4145,6 +4145,21 @@ type FaqLdNode = { '@type'?: string; mainEntity?: { name: string; acceptedAnswer
     check(!!pgRefused.body.result && pgRefused.body.result.isError === true,
       `get_page refuses //evil.example/x as a tool error (saw ${JSON.stringify(pgRefused.body.result ? pgRefused.body.result.isError : pgRefused.body.error)})`);
 
+    // Since turva-mcp 1.15.0 (Tek-915) get_page_index reads the same /llms.txt through the same binding and returns it
+    // parsed into sections. The gate proves the count is the sum of the listed pages, that every listed path is a path
+    // on this site that the index above links as an https://turva.dev address, and that the services page is among them.
+    const pgi = await callTool('get_page_index');
+    if (pgi) {
+      const listed: string[] = Array.isArray(pgi.sections)
+        ? pgi.sections.flatMap((s: { pages?: { path?: unknown }[] }) => (s.pages || []).map((p) => String(p.path)))
+        : [];
+      check(pgi.source === '/llms.txt' && listed.length > 0 && pgi.count === listed.length && typeof pgi.skipped_links === 'number',
+        `get_page_index answers the parsed /llms.txt with a count equal to its listed pages (saw ${JSON.stringify([pgi.source, pgi.count, listed.length, pgi.skipped_links])})`);
+      check(listed.includes('/services.md'), 'get_page_index lists the markdown address of the services page');
+      const unlinked = pg ? listed.filter((p) => !p.startsWith('/') || !pg.markdown.includes('https://turva.dev' + p)) : [];
+      check(unlinked.length === 0, `every path get_page_index lists is a turva.dev address of the index (not found: ${unlinked.slice(0, 3).join(', ') || 'none'})`);
+    }
+
     // The name-agreement rule, proven rather than assumed. Without this a server that
     // ignored Mcp-Name would answer get_services to a header asking for get_principles,
     // and every check above would still pass because the body asked for the right tool.
