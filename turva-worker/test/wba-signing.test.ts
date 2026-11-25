@@ -102,7 +102,8 @@ test("the key directory: media type, digest, signed over the request authority a
   const body = await res.text();
   assert.equal(body, JSON.stringify({ keys: [{ kty: "OKP", crv: "Ed25519", x: pubJwk.x, kid: thumbprint, use: "sig" }] }));
   assert.ok(!body.includes(privJwk.d) && !body.includes("\"d\""), "the private part is not in the directory");
-  const digest = "sha-256=:" + createHash("sha256").update(body).digest("base64") + ":";
+  // WebCrypto, not createHash: CodeQL's crypto model reads createHash over served bytes as a password hash (mds/gotchas.md 2026-10-03 (jatko 1)).
+  const digest = "sha-256=:" + Buffer.from(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(body))).toString("base64") + ":";
   assert.equal(res.headers.get("content-digest"), digest);
   const input = res.headers.get("signature-input") || "";
   const m = /^sig1=\("@authority";req "content-digest"\);alg="ed25519";keyid="([^"]+)";nonce="([A-Za-z0-9+/]{43}=)";tag="http-message-signatures-directory";created=(\d+);expires=(\d+)$/.exec(input);
