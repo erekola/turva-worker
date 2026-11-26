@@ -149,10 +149,11 @@ test("MCP server card: the GET exposes ETag and the preflight answers 204 with t
 // 2026-11-24 (Tek-911): the card moved to MCP 1.14.1; only the two version fields changed, the length stays 5080.
 // 2026-11-25 (Tek-915): the card moved to MCP 1.15.0 and lists the seventh tool get_page_index (get_page's text now points to it), so the length is 5277; the stored signature must be renewed by the resign script before the ship.
 // 2026-11-25 (Tek-916): the public repositories moved to the GitHub organization turva-dev, so the card's repository URL is https://github.com/turva-dev/turva-mcp and the length is 5279; the MCP version stays 1.15.0 and the stored signature must be renewed by the resign script before the ship.
+// 2026-11-26 (site 3.265.2): the card moved to MCP 1.15.1 after the seven tool descriptions of turva-mcp were shortened; only the two version fields changed, the length stays 5279 and the sha256 is new; the stored signature must be renewed by the resign script before the ship.
 test("MCP server card: the signed bytes are unchanged", async () => {
   const b = Buffer.from(await (await get("/.well-known/mcp/server-card.json")).arrayBuffer());
   assert.equal(b.length, 5279);
-  assert.equal(await sha256Hex(b), "087b3b4ac4cf58cdb98ae33083b48154e30834ae632e3f23a3b072340d556da1");
+  assert.equal(await sha256Hex(b), "75e2964a82ffd246312bb95444efbd13b604ed2ba8bae473293e7908d401893a");
 });
 
 // ---------------------------------------------------------------- PGP v6 key
