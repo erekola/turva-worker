@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.266.0 - Search for Agents served by the Worker (Tek-925, 2026-11-27): GET /.well-known/search?q={query} is a keyword search over the sitemap's pages that have a Markdown twin (all but /auth.md), answered as Markdown under the heading "# Search results for:", and the four agent: meta tags in every page head advertise it; Cloudflare's own zone feature stays off so the HTML ETag survives. No page text changed.
 // turva.dev worker v3.265.4 - MCP server card version 1.15.3 (2026-11-26): the card's two version fields move 1.15.2 to 1.15.3 and its length stays 5279; the turva-mcp get_principles description was reworded, which the card does not carry. No page text changed.
 // turva.dev worker v3.265.3 - MCP server card version 1.15.2 (2026-11-26): the card's two version fields move 1.15.1 to 1.15.2 and its length stays 5279; the turva-mcp tool descriptions and server instructions were reworded, which the card does not carry. No page text changed.
 // turva.dev worker v3.265.2 - MCP server card version 1.15.1 (2026-11-26): the seven tool descriptions of turva-mcp no longer repeat the fields their output schemas already describe; the card's two version fields move 1.15.0 to 1.15.1 and its length stays 5279. No page text changed.
@@ -8879,7 +8880,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.265.4",
+    "version": "3.266.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -8971,6 +8972,7 @@ const OPENAPI_SPEC = JSON.stringify({
     "/llms-full.txt": { "get": { "summary": "Full concatenated content", "operationId": "getLlmsFullTxt", "responses": { "200": { "description": "ok", "content": { "text/plain": { "schema": { "type": "string" } } } } } } },
     "/auth.md": { "get": { "summary": "Agent registration metadata", "operationId": "getAuthMd", "responses": { "200": { "description": "ok", "content": { "text/markdown": { "schema": { "type": "string" } } } } } } },
     "/sitemap.xml": { "get": { "summary": "Sitemap", "operationId": "getSitemap", "responses": { "200": { "description": "ok", "content": { "application/xml": { "schema": { "type": "string" } } } } } } },
+    "/.well-known/search": { "get": { "summary": "Keyword search over turva.dev's own pages (Search for Agents), results as Markdown", "operationId": "searchSite", "parameters": [{ "name": "q", "in": "query", "required": true, "description": "The search words, at most 200 characters", "schema": { "type": "string", "maxLength": 200 } }, { "name": "limit", "in": "query", "required": false, "description": "How many results to return, 1 to 50, default 10", "schema": { "type": "integer", "minimum": 1, "maximum": 50, "default": 10 } }], "responses": { "200": { "description": "A Markdown list of matching pages, best first, under the heading Search results for the query", "content": { "text/markdown": { "schema": { "type": "string" } } } }, "400": { "description": "q is missing, too long or has no searchable word", "content": { "text/markdown": { "schema": { "type": "string" } } } } } } },
     "/.well-known/ai.txt": { "get": { "summary": "AI policy", "operationId": "getAiPolicy", "responses": { "200": { "description": "ok", "content": { "text/plain": { "schema": { "type": "string" } } } } } } },
     "/.well-known/mcp/server-card.json": { "get": { "summary": "MCP Server Card", "operationId": "getMcpCard", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/agent-skills/index.json": { "get": { "summary": "Agent Skills index", "operationId": "getSkillsIndex", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
@@ -9190,7 +9192,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.265.4",
+  "version": "3.266.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -10014,6 +10016,118 @@ function getSitemapXml() {
   return _sitemapCache;
 }
 
+// Search for Agents (Tek-925). GET /.well-known/search?q={query} answers with the pages of the
+// site that match the query, as Markdown, the way the isitagentready check and Cloudflare's own
+// zone feature define it. The zone feature was tried on 2026-11-25 and switched off, because the
+// edge rewrote every HTML page to add its meta tags and so removed the weak ETag that
+// withValidator sets; serving the endpoint here keeps the ETag, as withValidator hashes the
+// final body. The search is a plain keyword match over the sitemap's pages that have a Markdown
+// twin in PAGE_MARKDOWN, which is every sitemap page except /auth.md (never an unlisted or
+// noindex page). The score weighs a title hit above a description hit above body text, and the
+// output names itself a keyword search and prints each page's score.
+// No Accept-Query header is sent. The scanner needs either that header or the "# Search results
+// for:" heading, and this endpoint sends the heading. Accept-Query would advertise a QUERY method
+// that this endpoint does not accept (the method gate turns QUERY away with a 405).
+const SEARCH_MAX_QUERY = 200;
+const SEARCH_MAX_TERMS = 10;
+const SEARCH_DEFAULT_LIMIT = 10;
+const SEARCH_MAX_LIMIT = 50;
+type SearchDoc = { path: string; title: string; description: string; snippet: string; lt: string; ld: string; lb: string };
+let _searchCorpus: SearchDoc[] | null = null;
+// Built once per isolate, in the one site order, so a tie in score keeps the site's own order.
+function getSearchCorpus(): SearchDoc[] {
+  if (_searchCorpus === null) {
+    const metas = META_BY_PATH as Record<string, Partial<PageMeta>>;
+    const pages = PAGE_MARKDOWN as Record<string, string>;
+    const rows = SITEMAP_ENTRIES.map(function(e, idx) { return { path: e[0], idx: idx, r: siteRank(e[0]) }; }).sort(compareSiteRank);
+    const seen = new Set<string>();
+    const docs: SearchDoc[] = [];
+    for (const row of rows) {
+      const body = pages[row.path];
+      if (typeof body !== "string" || seen.has(row.path)) continue;
+      seen.add(row.path);
+      const meta = metas[row.path] || {};
+      const h1 = /^# (.+)$/m.exec(body);
+      const title = String(meta.title || (h1 ? h1[1] : row.path)).replace(/\s*[|\xb7]\s*turva\.dev$/, "");
+      const description = String(meta.description || "");
+      let snippet = description;
+      if (!snippet) {
+        const para = body.split(/\n\s*\n/).map(function(p) { return p.trim(); }).find(function(p) { return p !== "" && !/^[#|>*-]/.test(p); });
+        snippet = para ? para.replace(/\s+/g, " ").slice(0, 300) : "";
+      }
+      docs.push({ path: row.path, title: title, description: description, snippet: snippet, lt: title.toLowerCase(), ld: description.toLowerCase(), lb: body.toLowerCase() });
+    }
+    _searchCorpus = docs;
+  }
+  return _searchCorpus;
+}
+function searchTerms(q: string): string[] {
+  const out: string[] = [];
+  for (const raw of q.toLowerCase().split(/\s+/)) {
+    const t = raw.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
+    if (t.length >= 2 && out.indexOf(t) === -1) out.push(t);
+    if (out.length >= SEARCH_MAX_TERMS) break;
+  }
+  return out;
+}
+function searchOccurrences(haystack: string, term: string, cap: number) {
+  let n = 0;
+  let i = haystack.indexOf(term);
+  while (i !== -1 && n < cap) { n++; i = haystack.indexOf(term, i + term.length); }
+  return n;
+}
+// Title hit 10, description hit 3, each body occurrence 1 (at most 20 per word); a page needs one hit.
+function scoreSearchDoc(doc: SearchDoc, terms: string[]) {
+  let score = 0;
+  for (const t of terms) {
+    if (doc.lt.indexOf(t) !== -1) score += 10;
+    if (doc.ld.indexOf(t) !== -1) score += 3;
+    score += searchOccurrences(doc.lb, t, 20);
+  }
+  return score;
+}
+function searchResponse(body: string, status: number) {
+  const headers = new Headers({
+    "content-type": "text/markdown; charset=utf-8",
+    "content-language": "en",
+    "access-control-allow-origin": "*",
+    "cache-control": status === 200 ? "public, max-age=300" : "no-store"
+  });
+  appendAgentLinks(headers);
+  applySecurityHeaders(headers, "agent-api");
+  return new Response(body, { status: status, headers: headers });
+}
+function serveSiteSearch(url: URL) {
+  const usage = "Usage: GET https://turva.dev/.well-known/search?q={query}, with the search words in q (at most " + SEARCH_MAX_QUERY + " characters) and an optional limit from 1 to " + SEARCH_MAX_LIMIT + ". The answer is Markdown. Every page is listed in https://turva.dev/llms.txt.\n";
+  const q = (url.searchParams.get("q") || "").replace(/[\x00-\x1f\x7f]+/g, " ").replace(/\s+/g, " ").trim();
+  if (q === "") return searchResponse("# Search query missing\n\nThe q parameter is empty or absent.\n\n" + usage, 400);
+  if (q.length > SEARCH_MAX_QUERY) return searchResponse("# Search query too long\n\nThe q parameter is longer than " + SEARCH_MAX_QUERY + " characters.\n\n" + usage, 400);
+  const terms = searchTerms(q);
+  if (terms.length === 0) return searchResponse("# Search query has no searchable word\n\nA search word has at least two letters or digits.\n\n" + usage, 400);
+  const rawLimit = parseInt(url.searchParams.get("limit") || "", 10);
+  const limit = isNaN(rawLimit) ? SEARCH_DEFAULT_LIMIT : Math.min(SEARCH_MAX_LIMIT, Math.max(1, rawLimit));
+  const hits: { doc: SearchDoc; score: number; idx: number }[] = [];
+  getSearchCorpus().forEach(function(doc, idx) {
+    const score = scoreSearchDoc(doc, terms);
+    if (score > 0) hits.push({ doc: doc, score: score, idx: idx });
+  });
+  hits.sort(function(a, b) { return b.score - a.score || a.idx - b.idx; });
+  const shown = hits.slice(0, limit);
+  let out = '# Search results for: "' + q.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"\n\n';
+  if (hits.length === 0) {
+    out += "0 results. Keyword search over turva.dev's own pages. Every page is listed in https://turva.dev/llms.txt.\n";
+    return searchResponse(out, 200);
+  }
+  out += hits.length + (hits.length === 1 ? " result" : " results") + (hits.length > shown.length ? ", showing the first " + shown.length : "") + ". Keyword search over turva.dev's own pages.\n";
+  for (const h of shown) {
+    const loc = h.doc.path === "/" ? "https://turva.dev/" : "https://turva.dev" + h.doc.path;
+    const twin = h.doc.path === "/" ? "https://turva.dev/index.md" : "https://turva.dev" + h.doc.path + ".md";
+    out += "\n## [" + h.doc.title + "](" + loc + ")\n\nMarkdown: " + twin + "\nScore: " + h.score + "\n";
+    if (h.doc.snippet) out += "\n" + h.doc.snippet + "\n";
+  }
+  return searchResponse(out, 200);
+}
+
 let _blogFeedCache: string | null = null;
 
 function buildBlogFeedXml() {
@@ -10806,7 +10920,11 @@ function buildMetaBlock(pathname: string, canonicalUrl: string) {
 <meta name="twitter:title" content="${sot}" />
 <meta name="twitter:description" content="${sd}" />
 <meta name="twitter:image" content="${ogImage}" />
-<meta name="twitter:image:alt" content="${sa}" />${articleMeta}`;
+<meta name="twitter:image:alt" content="${sa}" />${articleMeta}
+<meta name="agent:instructions" content="Use this search endpoint to find relevant pages on turva.dev with keywords, instead of crawling individual pages. Results are returned in Markdown." />
+<meta name="agent:endpoint" content="https://turva.dev/.well-known/search?q={query}" />
+<meta name="agent:method" content="GET" />
+<meta name="agent:documentation" content="https://github.com/turva-dev/turva-worker/blob/main/docs/endpoints.md" />`;
 }
 
 const PRICE_VALID_UNTIL = "2027-06-30";
@@ -18640,6 +18758,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   if (pathLower === "/.well-known/mcp-registry-auth") {
     return serveStatic(MCP_REGISTRY_AUTH, "text/plain; charset=utf-8", "agent-api");
   }
+  if (pathLower === "/.well-known/search") return serveSiteSearch(url);
   if (pathLower === "/sitemap.xml") return serveStatic(getSitemapXml(), "application/xml; charset=utf-8", "agent-api");
   if (pathLower === "/blog/feed.xml") return serveStatic(getBlogFeedXml(), "application/rss+xml; charset=utf-8", "agent-api");
   if (pathLower === "/llms.txt") return serveStatic(LLMS_TXT, "text/plain; charset=utf-8", "agent-api", "en");
