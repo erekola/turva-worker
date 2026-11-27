@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.268.1 - the post /blog/why-i-built-two-cloudflare-agent-features-myself (2026-11-27) gets its Frequently asked section with four question and answer pairs on the Search for Agents ETag, Markdown for Agents on a Worker-served site, the Workers AI toMarkdown conversion and how to check for a removed ETag, and the path joins GUIDE_PAGE_FAQ, so the page publishes FAQPage structured data; the post text is otherwise unchanged, and no signed surface changes bytes.
 // turva.dev worker v3.268.0 - Poppy discovery document, a blog date spacing fix and a paragraph fix (Tek-926, 2026-11-27): GET and HEAD /.well-known/poppy.json serves the website-only form of the Personal Agent Protocol 0.1 document (protocol_version, organization and an empty web object) with the same caching and weak ETag as the other static well-known JSON files; there is no apis or agent field because turva handles no Poppy Session tokens and its OAuth metadata has only closed endpoints and no poppy_domains, and the path is declared in OPENAPI_SPEC but not in the catalogs, which list turva's own APIs; article p.date moves its top margin from -.35rem to 1.2rem so the date no longer sits against the H1; the post why-i-built-two-cloudflare-agent-features-myself gets a blank line so the scanner search sentence is its own paragraph. llms.txt and the other signed surfaces are unchanged.
 // turva.dev worker v3.267.0 - new Build notes post /blog/why-i-built-two-cloudflare-agent-features-myself (2026-11-27) on why the Worker serves Markdown and site search itself after a trial of Cloudflare's Markdown for Agents and Search for Agents, with the Search for Agents trial of 2026-11-25 and the Markdown for Agents measurement of 2026-11-27 as its measured basis; its card, its row on the blog index (51 articles), its llms.txt line, its sitemap row and its metadata. SITEMAP_LASTMOD stays, because no non-blog page text changed.
 // turva.dev worker v3.266.0 - Search for Agents served by the Worker (Tek-925, 2026-11-27): GET /.well-known/search?q={query} is a keyword search over the sitemap's pages that have a Markdown twin (all but /auth.md), answered as Markdown under the heading "# Search results for:", and the four agent: meta tags in every page head advertise it; Cloudflare's own zone feature stays off so the HTML ETag survives. No page text changed.
@@ -751,6 +752,24 @@ Three limits apply. My search is a plain substring match that does not stem word
 The scanner's check for search is informational and does not affect the level or the score. Level 5 held with the switch on and with it off.
 
 To check your own site, request an HTML page, copy its ETag and request it again with that value in If-None-Match. A 304 means conditional requests still work. If the first response has no ETag, there was nothing for a switch to remove.
+
+## Frequently asked
+
+**Does Cloudflare's Search for Agents remove the ETag?**
+
+On turva.dev it did. With the switch on, Cloudflare removed the Worker's weak ETag from all 87 HTML pages, while Markdown and JSON responses kept theirs. A client that fetched an HTML page then had no tag to send in If-None-Match.
+
+**Does Markdown for Agents change anything for a site that already serves Markdown?**
+
+Nothing I could measure on turva.dev. Cloudflare converts only HTML, and the Worker answered every Markdown request itself. In a full dump of the site, all 174 HTML and Markdown responses matched the Worker's local output byte for byte, ETag included.
+
+**How close is a Workers AI toMarkdown conversion to authored Markdown?**
+
+Very close on prose. For the 87 pages of turva.dev, the median word-by-word similarity of body text was 0,991. The conversion added 29 940 words of JSON-LD, plus front matter, a skip link and 495 backslash escapes, 143 of them inside field names.
+
+**How do I check whether a switch removed my ETag?**
+
+Request an HTML page before and after you turn the switch on and compare the ETag headers. Then send the ETag in If-None-Match: a 304 means conditional requests still work. If the tag is missing only after the switch, the switch removed it.
 
 ## Related
 
@@ -8947,7 +8966,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.268.0",
+    "version": "3.268.1",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9269,7 +9288,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.268.0",
+  "version": "3.268.1",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -12403,6 +12422,7 @@ const GUIDE_PAGE_FAQ = {
   "/blog/what-shopify-changed-for-agent-shopping": mdFaqBlocks("/blog/what-shopify-changed-for-agent-shopping", "Frequently asked").pairs,
   "/blog/three-outside-reviews-of-my-tla-plus-models": mdFaqBlocks("/blog/three-outside-reviews-of-my-tla-plus-models", "Frequently asked").pairs,
   "/blog/microsofts-own-cve-count": mdFaqBlocks("/blog/microsofts-own-cve-count", "Frequently asked").pairs,
+  "/blog/why-i-built-two-cloudflare-agent-features-myself": mdFaqBlocks("/blog/why-i-built-two-cloudflare-agent-features-myself", "Frequently asked").pairs,
   "/blog/thirteen-review-rounds-and-one-rollback": mdFaqBlocks("/blog/thirteen-review-rounds-and-one-rollback", "Frequently asked").pairs,
   "/blog/twelve-days-of-tla-plus": mdFaqBlocks("/blog/twelve-days-of-tla-plus", "Frequently asked").pairs,
   "/blog/cloud-agents-on-my-desktop": mdFaqBlocks("/blog/cloud-agents-on-my-desktop", "Frequently asked").pairs,
