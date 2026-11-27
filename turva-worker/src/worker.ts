@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.267.0 - new Build notes post /blog/why-i-built-two-cloudflare-agent-features-myself (2026-11-27) on why the Worker serves Markdown and site search itself after a trial of Cloudflare's Markdown for Agents and Search for Agents, with the Search for Agents trial of 2026-11-25 and the Markdown for Agents measurement of 2026-11-27 as its measured basis; its card, its row on the blog index (51 articles), its llms.txt line, its sitemap row and its metadata. SITEMAP_LASTMOD stays, because no non-blog page text changed.
 // turva.dev worker v3.266.0 - Search for Agents served by the Worker (Tek-925, 2026-11-27): GET /.well-known/search?q={query} is a keyword search over the sitemap's pages that have a Markdown twin (all but /auth.md), answered as Markdown under the heading "# Search results for:", and the four agent: meta tags in every page head advertise it; Cloudflare's own zone feature stays off so the HTML ETag survives. No page text changed.
 // turva.dev worker v3.265.4 - MCP server card version 1.15.3 (2026-11-26): the card's two version fields move 1.15.2 to 1.15.3 and its length stays 5279; the turva-mcp get_principles description was reworded, which the card does not carry. No page text changed.
 // turva.dev worker v3.265.3 - MCP server card version 1.15.2 (2026-11-26): the card's two version fields move 1.15.1 to 1.15.2 and its length stays 5279; the turva-mcp tool descriptions and server instructions were reworded, which the card does not carry. No page text changed.
@@ -467,6 +468,7 @@ Final price is confirmed in writing after scope is agreed. The audit, advisory, 
 
 ## Blog
 - [Blog](https://turva.dev/blog.md)
+- [Why I built two Cloudflare agent features myself](https://turva.dev/blog/why-i-built-two-cloudflare-agent-features-myself.md)
 - [The top Finnish health sites say no to AI training](https://turva.dev/blog/finnish-health-sites-and-ai-training.md)
 - [Everyone has the same models. My harness is the difference.](https://turva.dev/blog/everyone-has-the-same-models.md)
 - [My agent's notes were already a graph](https://turva.dev/blog/my-agents-notes-were-already-a-graph.md)
@@ -693,6 +695,68 @@ Corrected 2026-09-28. The engagement principles said no tracking, no analytics, 
 `;
 
 const PAGE_MARKDOWN = {
+  "/blog/why-i-built-two-cloudflare-agent-features-myself": `# Why I built two Cloudflare agent features myself
+
+2026-11-27
+
+Cloudflare offers Markdown for Agents and Search for Agents as switches. I tried both, and my Worker serves its own. One removed the ETag from every HTML page.
+
+Markdown for Agents converts a page's HTML to Markdown when a client sends Accept: text/markdown. Search for Agents adds a search endpoint at /.well-known/search and four agent: meta tags to every HTML page. Each is a switch in the dashboard, and both run at Cloudflare's edge. Markdown for Agents is free on Pro plans and above. Search for Agents is in beta on all plans, with usage subject to AI Search pricing.
+
+If your origin serves only HTML and you have no Worker of your own, the switches are worth trying, because they give you something you would otherwise have to build. Check your ETag before and after, as the last section shows. turva.dev is a special case, because its Worker holds every page as authored Markdown before anything is rendered. After trying both switches I serve both features from the Worker.
+
+## Why the Worker serves Markdown itself
+
+Every page here is Markdown in the Worker's source file. The Worker renders the prose of every HTML page from it and answers a request for text/markdown with the authored text, the page's Markdown twin, as [The twin is the page](/blog/the-twin-is-the-page) describes. On ten card pages, the home page among them, the layout around that prose stays code. The Markdown is the source of the text, so a converter that reads my HTML has to rebuild what the Worker already holds.
+
+The Markdown also does more than answer an Accept header. I build llms-full.txt from it, the get_page tool of my MCP server reads it and the search route below searches it. I generate each page's FAQ structured data from it, and the parity test compares the HTML against it on every sitemap page except /auth.md and the two tool pages. Every page also answers at a .md address, and a request for a missing page that asks for Markdown gets a Markdown 404. A converter answers requests for pages. It gives me no source to build the rest from.
+
+The Worker also puts a weak ETag on every cacheable 200 text response. The tag is a hash of the exact body, so a client that holds a page can send If-None-Match and get a 304 without the body. Cloudflare's documentation says a converted response loses its ETag and Last-Modified headers, because conditional requests cannot be honored for it.
+
+## Markdown for Agents on 27 November
+
+I switched it on at 09:39 UTC and compared the full dump of the site with what the Worker renders locally. All 174 HTML and Markdown responses in that dump were byte-identical to the Worker's local output, ETag included. For requests with a mixed Accept header, the Worker's own negotiation chose the response. None of the Markdown responses I probed for headers carried a Content-Signal header, which the documentation says a converted response gets when the origin sets none.
+
+It changed nothing I could measure here, because the Worker answered every Markdown request in the dump itself and Cloudflare converts only HTML. The documentation says: "We only convert from HTML". I switched it off again after the measurement. The one effect I can name is hypothetical. If the Worker ever answered a Markdown request with HTML, the conversion would turn that HTML into Markdown and drop the tag, and a client would get Markdown that looks normal, so the mistake would be easy to miss.
+
+## What a conversion of my pages looks like
+
+The zone switch never showed me its Markdown, because the Worker answers first. So at 10:14 UTC I converted all 87 HTML pages with Workers AI toMarkdown instead. It is a REST API that Cloudflare's documentation lists beside Markdown for Agents as a separate conversion feature. The output had the layout that the Markdown for Agents documentation describes for its own responses: front matter from the meta tags, the body, and the JSON-LD as a fenced json block. That documentation also refers to the Workers AI conversion docs for its pre-processing. Neither page says the zone switch calls this API, so this shows what a conversion of my HTML looks like and does not prove what the zone switch would return.
+
+The result is close to my own Markdown. The heading counts matched, 851 against 851, and so did the table rows, 401 against 401, and the FAQ sections on 58 of 58 pages. I compared each page's body text word by word with its twin. The median similarity was 0,991 and the lowest 0,9529, and 48 pages scored 0,99 or higher. That is expected when the prose of the HTML is rendered from the Markdown.
+
+The differences were additions and small changes. Every page gained its JSON-LD as a json code block. Across the 87 pages that is 29 940 words, about 23 % of the 131 645 words in my twins. Every page also gained front matter and a Skip to content link. Outside the JSON-LD, toMarkdown added 495 backslash escapes on 64 pages. Of those, 345 sit before a period that follows a number, as in Level 2. Another 143, on 16 pages, sit inside field names: agent_auth came back with a backslash inside it, so a literal search for the name would miss. The 87 conversions total 1 112 111 bytes, against 789 368 for the twins.
+
+For a site whose HTML is as clean as mine, this suggests a conversion loses little of the text. It says less about HTML built by hand or by a page builder. Cloudflare's documentation says toMarkdown is free for most format conversions. For a site that already has the source, the same output is a second copy with extra material in it.
+
+## Search for Agents on 25 November
+
+I switched it on at about 15:25 UTC and measured the whole site before and after. Every one of the 87 HTML pages grew by exactly 457 bytes, which is the four agent: meta tags in the head. Nothing else in the page changed, the Markdown twins were identical, and the isitagentready scanner read Level 5 with the switch on and off.
+
+The ETag was gone. Cloudflare removed the Worker's weak ETag from all 87 HTML pages I fetched, and nothing replaced it. Markdown and JSON responses kept theirs.
+
+I read the reason this way. The tag is a hash of the bytes the Worker sends, and once the edge adds four tags it delivers different bytes, so the tag would describe a body nobody received. Search for Agents converts nothing. It does change the body after the Worker has hashed it, so I expect the same reason applies as for a conversion. A client that fetched an HTML page while the feature was on got no tag, so it had nothing to send in If-None-Match and no way to get a 304 the next time.
+
+The search endpoint was the other problem. /.well-known/search answered 503 with a try-again-later message about the index at 15:27 and again at 15:35, while every page already advertised it. Cloudflare's documentation says to wait for the crawl and indexing before searching, so that is expected for a new index. I switched the feature off at 15:37:35, about twelve minutes in, so I do not know how the endpoint answers once indexing has finished. The home page came back with the same ETag it had before.
+
+## What I built, and what it costs
+
+The Worker has its own route at /.well-known/search. It is a keyword search over every page in the sitemap except /auth.md. For each search word, a title match scores 10, a description match 3 and each body occurrence 1, at most 20 per word. The four meta tags are rendered by the Worker before the ETag is computed, so the tag is the hash of the final body and stays.
+
+I left out the Accept-Query header. It would advertise the QUERY method, and this route answers GET and HEAD and turns QUERY away with a 405. The scanner accepts either that header or the results heading. Mine has the heading. The four agent: tags exist only in the HTML head. The Markdown twins carry no agent: front matter, and the scanner's pass note says so.
+
+Three limits apply. My search is a plain substring match that does not stem words or know synonyms, while Cloudflare's documentation describes hybrid vector and keyword search, which is the better design for a question in natural language. Authoring the Markdown is work, and Cloudflare's switch saves it for a site that has none. I also did not measure how many clients send If-None-Match to turva.dev, so I cannot say what the lost tag would have cost.
+The scanner's check for search is informational and does not affect the level or the score. Level 5 held with the switch on and with it off.
+
+To check your own site, request an HTML page, copy its ETag and request it again with that value in If-None-Match. A 304 means conditional requests still work. If the first response has no ETag, there was nothing for a switch to remove.
+
+## Related
+
+- [The twin is the page](/blog/the-twin-is-the-page)
+- [HTML and Markdown can disagree](/blog/html-and-markdown-can-disagree)
+- [Serving Markdown to AI clients](/guides/markdown-for-agents)
+`,
+
   "/blog/finnish-health-sites-and-ai-training": `# The top Finnish health sites say no to AI training
 
 2026-11-23
@@ -4550,8 +4614,9 @@ Dated studies, protocol notes, build notes and lab notes from turva.dev. Each st
 
 ## Browse all articles
 
-50 articles.
+51 articles.
 
+- [Why I built two Cloudflare agent features myself](/blog/why-i-built-two-cloudflare-agent-features-myself). 2026-11-27. Build notes. Cloudflare offers Markdown for Agents and Search for Agents as switches. I tried both, and my Worker serves its own. One removed the ETag from every HTML page.
 - [The top Finnish health sites say no to AI training](/blog/finnish-health-sites-and-ai-training). 2026-11-23. Research. Of 33 Finnish health service sites, the two above Level 1 of 5 got there with a Cloudflare setting that says no to AI training crawlers.
 - [Everyone has the same models. My harness is the difference.](/blog/everyone-has-the-same-models) 2026-11-17. Lab notes. The models are the same for anyone, and I think the edge is the harness around them. Here is a month of my Claude Code gate logs and how blocks were answered.
 - [My agent's notes were already a graph](/blog/my-agents-notes-were-already-a-graph). 2026-11-06. Lab notes. I built a reference graph over my agent's knowledge base and tuned it. The searches got better, and two agent tests showed no measurable score difference.
@@ -8880,7 +8945,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.266.0",
+    "version": "3.267.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9022,7 +9087,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"2CXJ8_bVwYuZ_EUx5vAtic7iLU2DVN2eAlkkSBEqbqwAib1OcwSr9qZvju_IBsSh7Izzf13NH9qSS2SzwI4gCw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"guAf3Iu24lpvQQA2tbfvdb3MhG61k_ds5VSxLAAOuv0E7uv5sTTHA-RXrXKcvkeMnaXL1yJPFssD33ozlk9uBQ\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"2CXJ8_bVwYuZ_EUx5vAtic7iLU2DVN2eAlkkSBEqbqwAib1OcwSr9qZvju_IBsSh7Izzf13NH9qSS2SzwI4gCw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"b15n1gCY3kfcjzx-PLlQcctNOuL964H3I14Zd2iFnEyS9WVPEmWdakC2zPsveGjA_g_IXj2HKvT1Tla3XHbbAw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -9192,7 +9257,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.266.0",
+  "version": "3.267.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -9934,6 +9999,7 @@ const SITEMAP_ENTRIES = [
   ["/guides/letting-agents-act-on-data", "monthly", "0.7"],
   ["/guides/ai-agent-use-cases", "monthly", "0.7"],
   ["/blog", "weekly", "0.7"],
+  ["/blog/why-i-built-two-cloudflare-agent-features-myself", "monthly", "0.6"],
   ["/blog/finnish-health-sites-and-ai-training", "monthly", "0.6"],
   ["/blog/everyone-has-the-same-models", "monthly", "0.6"],
   ["/blog/my-agents-notes-were-already-a-graph", "monthly", "0.6"],
@@ -10169,7 +10235,7 @@ function getBlogFeedXml() {
   return _blogFeedCache;
 }
 
-const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/blog/finnish-health-sites-and-ai-training", "/blog/everyone-has-the-same-models", "/blog/my-agents-notes-were-already-a-graph", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
+const CANONICAL_PATHS = new Set(["/", "/services", "/agent-readiness-audit", "/samples/audit-report", "/blog/why-i-built-two-cloudflare-agent-features-myself", "/blog/finnish-health-sites-and-ai-training", "/blog/everyone-has-the-same-models", "/blog/my-agents-notes-were-already-a-graph", "/blog/why-i-back-up-every-night", "/blog/what-a-publisher-owes-someone-elses-agent", "/blog/finnish-crypto-providers-and-ai-agents", "/blog/keeping-my-lab-and-client-work-apart", "/blog/tla-plus-in-numbers", "/blog/what-shopify-changed-for-agent-shopping", "/blog/three-outside-reviews-of-my-tla-plus-models", "/blog/microsofts-own-cve-count", "/blog/thirteen-review-rounds-and-one-rollback", "/blog/twelve-days-of-tla-plus", "/blog/cloud-agents-on-my-desktop", "/blog/browser-my-agent-and-i-run", "/blog/clean-windows-install-for-agent-work", "/blog/why-i-publish-every-guide", "/blog/my-own-site-is-my-proof-of-work", "/blog/local-agent-memory", "/blog/html-and-markdown-can-disagree", "/blog/i-rebuilt-turva-dev-around-the-report", "/blog/agent-readiness-identity-vendors", "/blog/two-auth-md-dialects", "/blog/thirty-days-after-the-brief", "/blog/what-ai-assistants-call-an-agent-readiness-audit", "/company", "/contact", "/legal", "/guides", "/guides/agent-readiness-audit", "/guides/llms-txt", "/guides/mcp-server-card", "/guides/agents-json", "/guides/x402-agent-payments", "/guides/response-headers-for-agents", "/guides/seo-vs-agent-readiness", "/guides/json-ld-structured-data", "/guides/well-known-for-agents", "/guides/agent-authentication", "/guides/measurement-led-agent-readiness", "/guides/prerendering-for-agents", "/guides/sitemaps-and-robots-for-agents", "/guides/markdown-for-agents", "/guides/agent-readiness-gaps", "/guides/choosing-an-agent-readiness-audit", "/guides/get-cited-by-ai-assistants", "/blog", "/blog/agent-access-is-now-a-setting", "/blog/cheaper-pages-for-agents", "/guides/agent-commerce-discovery", "/blog/owning-your-fediverse-identity", "/blog/reliable-agent-decisions", "/blog/verifiable-agent-identity", "/guides/agent-readiness-aeo-geo", "/guides/agentic-commerce-readiness", "/guides/letting-agents-act-on-data", "/guides/ai-agent-use-cases", "/guides/open-knowledge-format", "/blog/open-knowledge-format", "/guides/agentic-resource-discovery", "/blog/publishing-an-ai-catalog", "/badge", "/llms-txt-validator", "/markdown-parity-check", "/blog/free-llms-txt-validator", "/blog/moving-source-to-codeberg", "/blog/cheaper-pages-revisited", "/blog/re-checking-the-guides", "/blog/honesty-and-the-checker", "/blog/agent-readiness-finnish-b2b", "/blog/agent-secret-hygiene", "/blog/measuring-the-ai-patch-surge", "/blog/enforcing-the-rate-limit-i-advertised", "/blog/the-twin-is-the-page", "/blog/finishing-the-optional-commerce-checks", "/blog/checks-that-pass-for-the-wrong-reason", "/blog/red-reading-that-measured-my-own-client", "/blog/i-thought-it-was-a-small-job", "/blog/my-gate-could-not-see-a-sixth", "/blog/agent-readiness-code-hosts", "/blog/website-agent-readiness-567-sites", "/blog/trace-runtime-attestation", "/tools"]);
 
 function getCanonicalForPath(pathname: string) {
   if (CANONICAL_PATHS.has(pathname)) {
@@ -10179,6 +10245,14 @@ function getCanonicalForPath(pathname: string) {
 }
 
 const META_BY_PATH = {
+  "/blog/why-i-built-two-cloudflare-agent-features-myself": {
+    title: "Why I built two Cloudflare agent features myself · turva.dev",
+    description: "Cloudflare offers Markdown for Agents and Search for Agents as switches. I tried both, and my Worker serves its own. One removed the ETag from every HTML page.",
+    date: "2026-11-27",
+    kind: "Build notes",
+    image: "/og-why-i-built-two-cloudflare-agent-features-myself.jpg",
+    imageAlt: "turva.dev blog card: Why I built two Cloudflare agent features myself. One Cloudflare switch removed the ETag from all 87 HTML pages.",
+  },
   "/blog/finnish-health-sites-and-ai-training": {
     title: "The top Finnish health sites say no to AI training · turva.dev",
     description: "Of 33 Finnish health service sites, the two above Level 1 of 5 got there with a Cloudflare setting that says no to AI training crawlers.",

@@ -509,6 +509,12 @@
     "subhead": "A nightly clone, encrypted NAS images and what has failed so far.",
     "white": "I can't start over,"
   },
+  "og-why-i-built-two-cloudflare-agent-features-myself.jpg": {
+    "green": "agent features myself",
+    "kicker": "Blog",
+    "subhead": "One Cloudflare switch removed the ETag from all 87 HTML pages.",
+    "white": "Why I built two Cloudflare"
+  },
   "og-why-i-publish-every-guide.jpg": {
     "green": "for free",
     "kicker": "Blog",
