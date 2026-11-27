@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.268.0 - Poppy discovery document, a blog date spacing fix and a paragraph fix (Tek-926, 2026-11-27): GET and HEAD /.well-known/poppy.json serves the website-only form of the Personal Agent Protocol 0.1 document (protocol_version, organization and an empty web object) with the same caching and weak ETag as the other static well-known JSON files; there is no apis or agent field because turva handles no Poppy Session tokens and its OAuth metadata has only closed endpoints and no poppy_domains, and the path is declared in OPENAPI_SPEC but not in the catalogs, which list turva's own APIs; article p.date moves its top margin from -.35rem to 1.2rem so the date no longer sits against the H1; the post why-i-built-two-cloudflare-agent-features-myself gets a blank line so the scanner search sentence is its own paragraph. llms.txt and the other signed surfaces are unchanged.
 // turva.dev worker v3.267.0 - new Build notes post /blog/why-i-built-two-cloudflare-agent-features-myself (2026-11-27) on why the Worker serves Markdown and site search itself after a trial of Cloudflare's Markdown for Agents and Search for Agents, with the Search for Agents trial of 2026-11-25 and the Markdown for Agents measurement of 2026-11-27 as its measured basis; its card, its row on the blog index (51 articles), its llms.txt line, its sitemap row and its metadata. SITEMAP_LASTMOD stays, because no non-blog page text changed.
 // turva.dev worker v3.266.0 - Search for Agents served by the Worker (Tek-925, 2026-11-27): GET /.well-known/search?q={query} is a keyword search over the sitemap's pages that have a Markdown twin (all but /auth.md), answered as Markdown under the heading "# Search results for:", and the four agent: meta tags in every page head advertise it; Cloudflare's own zone feature stays off so the HTML ETag survives. No page text changed.
 // turva.dev worker v3.265.4 - MCP server card version 1.15.3 (2026-11-26): the card's two version fields move 1.15.2 to 1.15.3 and its length stays 5279; the turva-mcp get_principles description was reworded, which the card does not carry. No page text changed.
@@ -746,6 +747,7 @@ The Worker has its own route at /.well-known/search. It is a keyword search over
 I left out the Accept-Query header. It would advertise the QUERY method, and this route answers GET and HEAD and turns QUERY away with a 405. The scanner accepts either that header or the results heading. Mine has the heading. The four agent: tags exist only in the HTML head. The Markdown twins carry no agent: front matter, and the scanner's pass note says so.
 
 Three limits apply. My search is a plain substring match that does not stem words or know synonyms, while Cloudflare's documentation describes hybrid vector and keyword search, which is the better design for a question in natural language. Authoring the Markdown is work, and Cloudflare's switch saves it for a site that has none. I also did not measure how many clients send If-None-Match to turva.dev, so I cannot say what the lost tag would have cost.
+
 The scanner's check for search is informational and does not affect the level or the score. Level 5 held with the switch on and with it off.
 
 To check your own site, request an HTML page, copy its ETag and request it again with that value in If-None-Match. A 304 means conditional requests still work. If the first response has no ETag, there was nothing for a switch to remove.
@@ -8945,7 +8947,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.267.0",
+    "version": "3.268.0",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9054,6 +9056,7 @@ const OPENAPI_SPEC = JSON.stringify({
     "/.well-known/oauth-authorization-server": { "get": { "summary": "OAuth Authorization Server Metadata", "operationId": "getOauthDiscovery", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/oauth-protected-resource": { "get": { "summary": "OAuth Protected Resource Metadata", "operationId": "getOauthProtectedResource", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/ap2": { "get": { "summary": "AP2 manifest", "operationId": "getAp2", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/poppy.json": { "get": { "summary": "Poppy discovery document (Personal Agent Protocol 0.1, website only)", "operationId": "getPoppy", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/acp": { "get": { "summary": "ACP manifest", "operationId": "getAcp", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/x402": { "get": { "summary": "x402 discovery manifest", "operationId": "getX402", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
     "/.well-known/mpp": { "get": { "summary": "MPP discovery", "operationId": "getMpp", "responses": { "200": { "description": "ok", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
@@ -9195,6 +9198,15 @@ const OAUTH_PROTECTED_RESOURCE = JSON.stringify({
   "agent_auth": AGENT_AUTH_BLOCK
 }, null, 2);
 
+// Poppy discovery (Tek-926). The Personal Agent Protocol 0.1 document in its website-only form: protocol_version,
+// organization and an empty web object. The spec requires every listed API to accept Poppy Session tokens and an
+// OAuth issuer for apis or agent. turva handles no Poppy Session tokens and its OAuth metadata has only closed endpoints and no poppy_domains, so those fields stay out.
+const POPPY_MANIFEST = JSON.stringify({
+  "protocol_version": "0.1",
+  "organization": { "name": "turva.dev", "domain": "turva.dev" },
+  "web": {}
+}, null, 2);
+
 const AP2_MANIFEST = JSON.stringify({
   "$schema": "https://ap2.dev/schemas/manifest/v1.json",
   "version": "1.0",
@@ -9257,7 +9269,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.267.0",
+  "version": "3.268.0",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
@@ -12832,7 +12844,7 @@ article li{position:relative;padding:0 0 0 1.45rem;margin:0 0 0.5rem;color:#C9D1
 article li::before{content:"\\203A";position:absolute;left:0.45rem;top:0;color:#5DF18F;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;}
 article strong{color:#F2F4F3;}
 article pre{max-width:100%;}
-article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:-.35rem 0 1.4rem;}
+article p.date{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:.8rem;letter-spacing:.04em;color:#9AA3A0;margin:1.2rem 0 1.4rem;}
 article p.sample-date{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;letter-spacing:0;}
 article .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,"Cascadia Mono",Consolas,monospace;font-size:.875rem;letter-spacing:0;color:#5DF18F;margin:0 0 1rem;}
 .toc{margin:0 0 1.6rem;padding:.9rem 1.1rem;border:1px solid rgba(255,255,255,0.1);border-radius:10px;}
@@ -18783,6 +18795,9 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
   }
   if (pathLower === "/.well-known/ap2" || pathLower === "/.well-known/ap2.json") {
     return serveStatic(AP2_MANIFEST, "application/json; charset=utf-8", "agent-api");
+  }
+  if (pathLower === "/.well-known/poppy.json") {
+    return serveStatic(POPPY_MANIFEST, "application/json; charset=utf-8", "agent-api");
   }
   if (pathLower === "/.well-known/acp" ||
       pathLower === "/.well-known/acp.json" ||

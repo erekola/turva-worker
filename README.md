@@ -122,6 +122,7 @@ The pinned release can be older than the latest npm release, and the report's `t
 | `/llms.txt`, `/llms-full.txt` | Site guide and consolidated text |
 | `/robots.txt`, `/sitemap.xml` | Crawler directives and URL inventory |
 | `/.well-known/search?q={query}` | Keyword search over the site's own pages, answered as Markdown (Search for Agents) |
+| `/.well-known/poppy.json` | Poppy discovery document (Personal Agent Protocol 0.1), website only: protocol version, organization and an empty web object |
 | `/openapi.json`, `/api/v1` | API description and endpoint index |
 | `/.well-known/*` | Agent, API, authentication and commerce discovery |
 | `/.well-known/mcp/server-card.json` | Discovery card for the separate MCP server |
