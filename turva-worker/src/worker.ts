@@ -1,4 +1,5 @@
 // src/worker.ts
+// turva.dev worker v3.268.2 - the table in /blog/measuring-the-ai-patch-surge is now a two-column Month and CVEs table of twelve rows in date order, with the same figures, because the four-column form left empty cells that the phone card view showed as empty headings; the post text outside the table is unchanged, and the MCP server card moves to 1.15.4 (version fields only, the length stays 5279) after two code comments and the get_page description and server instructions of turva-mcp were corrected to say that a refused path sends no request. SITEMAP_LASTMOD stays.
 // turva.dev worker v3.268.1 - the post /blog/why-i-built-two-cloudflare-agent-features-myself (2026-11-27) gets its Frequently asked section with four question and answer pairs on the Search for Agents ETag, Markdown for Agents on a Worker-served site, the Workers AI toMarkdown conversion and how to check for a removed ETag, and the path joins GUIDE_PAGE_FAQ, so the page publishes FAQPage structured data; the post text is otherwise unchanged, and no signed surface changes bytes.
 // turva.dev worker v3.268.0 - Poppy discovery document, a blog date spacing fix and a paragraph fix (Tek-926, 2026-11-27): GET and HEAD /.well-known/poppy.json serves the website-only form of the Personal Agent Protocol 0.1 document (protocol_version, organization and an empty web object) with the same caching and weak ETag as the other static well-known JSON files; there is no apis or agent field because turva handles no Poppy Session tokens and its OAuth metadata has only closed endpoints and no poppy_domains, and the path is declared in OPENAPI_SPEC but not in the catalogs, which list turva's own APIs; article p.date moves its top margin from -.35rem to 1.2rem so the date no longer sits against the H1; the post why-i-built-two-cloudflare-agent-features-myself gets a blank line so the scanner search sentence is its own paragraph. llms.txt and the other signed surfaces are unchanged.
 // turva.dev worker v3.267.0 - new Build notes post /blog/why-i-built-two-cloudflare-agent-features-myself (2026-11-27) on why the Worker serves Markdown and site search itself after a trial of Cloudflare's Markdown for Agents and Search for Agents, with the Search for Agents trial of 2026-11-25 and the Markdown for Agents measurement of 2026-11-27 as its measured basis; its card, its row on the blog index (51 articles), its llms.txt line, its sitemap row and its metadata. SITEMAP_LASTMOD stays, because no non-blog page text changed.
@@ -3888,16 +3889,20 @@ The number Microsoft would not put in the blog post is sitting in Microsoft's ow
 
 I sampled eight months before the ramp and four after it.
 
-| Month | CVEs | Month | CVEs |
-| --- | --- | --- | --- |
-| 2024-07 | 454 | 2026-04 | 737 |
-| 2025-01 | 343 | 2026-05 | 991 |
-| 2025-04 | 374 | 2026-06 | 1281 |
-| 2025-07 | 527 | 2026-07 | 1150 |
-| 2025-10 | 427 | | |
-| 2026-01 | 310 | | |
-| 2026-02 | 169 | | |
-| 2026-03 | 460 | | |
+| Month | CVEs |
+| --- | --- |
+| 2024-07 | 454 |
+| 2025-01 | 343 |
+| 2025-04 | 374 |
+| 2025-07 | 527 |
+| 2025-10 | 427 |
+| 2026-01 | 310 |
+| 2026-02 | 169 |
+| 2026-03 | 460 |
+| 2026-04 | 737 |
+| 2026-05 | 991 |
+| 2026-06 | 1281 |
+| 2026-07 | 1150 |
 
 The eight pre-ramp months average 383 CVEs. July 2026 is 1150, so the package is 3,0 times the old normal. The baseline broke in April and peaked in June at 1281.
 
@@ -8966,7 +8971,7 @@ const OPENAPI_SPEC = JSON.stringify({
   "openapi": "3.1.0",
   "info": {
     "title": "turva.dev Agent API",
-    "version": "3.268.1",
+    "version": "3.268.2",
     "description": "Read-only metadata + endpoints that declare payment, for AI agents. MPP and x402 on the /api/agent/* routes; the x402 manifest also names /x402 and /api as challenge roots. ACP checkout sessions live under /api/acp/checkout_sessions and are stateless. The free endpoint index is /api/v1. It also lists the free llms.txt validator, the free Markdown parity check, the ACP index and the A2A task routes.",
     "contact": { "name": "Erik Rekola", "email": "info@turva.dev", "url": "https://turva.dev/" },
     "license": { "name": "Proprietary", "url": "https://turva.dev/legal" }
@@ -9109,7 +9114,7 @@ const AGENT_JSON = JSON.stringify({
 
 // --- signed manifests (provenance) ---
 const JWKS_JSON = "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"fZpH2DFoup6FI_leaxJWrvpfP4xf8gPLjh6okbFOrJU\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"use\": \"sig\",\n      \"alg\": \"EdDSA\"\n    }\n  ]\n}";
-const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"2CXJ8_bVwYuZ_EUx5vAtic7iLU2DVN2eAlkkSBEqbqwAib1OcwSr9qZvju_IBsSh7Izzf13NH9qSS2SzwI4gCw\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"b15n1gCY3kfcjzx-PLlQcctNOuL964H3I14Zd2iFnEyS9WVPEmWdakC2zPsveGjA_g_IXj2HKvT1Tla3XHbbAw\"\n    }\n  }\n}";
+const SIGNATURES_JSON = "{\n  \"keys\": \"https://turva.dev/.well-known/jwks.json\",\n  \"signed_bytes\": \"Each signature covers the response body of its path exactly as served, byte for byte. Verify the raw bytes against the Ed25519 key in jwks.json; do not parse and re-serialise the JSON first, because that changes the whitespace and the signature will not match.\",\n  \"signatures\": {\n    \"/.well-known/ai-plugin.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/agent.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4fNO01CNrXMPYPfEHp9LgkCRMRlJxpb3fG9I5wSIbvyqbaoat8adqq2AXAgkuQIF6A4MsnYlNlQwzo49EFoOCw\"\n    },\n    \"/.well-known/mcp/server-card.json\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"4BgElMW97UJ4obftRZnaC5N6FclTKU3v50sqm0BSvSR8yhE5r5TJ6jWKaBtch1YBsW0XFQIYrXwToxOUBPzFCA\"\n    },\n    \"/llms.txt\": {\n      \"alg\": \"EdDSA\",\n      \"kid\": \"PZRTs_ImGOXwRYOPD6K4nwNN7q52PRdTsRcxGYzxEjQ\",\n      \"signature\": \"b15n1gCY3kfcjzx-PLlQcctNOuL964H3I14Zd2iFnEyS9WVPEmWdakC2zPsveGjA_g_IXj2HKvT1Tla3XHbbAw\"\n    }\n  }\n}";
 
 // The four keys the Server Card schema requires live at the top level, and the keys the
 // deployed convention uses live beside them. The schema restricts neither additional nor
@@ -9123,7 +9128,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "name": "dev.turva/turva-mcp",
   "title": "turva.dev",
   "description": "Read-only MCP server for turva.dev with the service catalog, prices and published scan evidence.",
-  "version": "1.15.3",
+  "version": "1.15.4",
   "websiteUrl": "https://turva.dev/",
   "repository": { "url": "https://github.com/turva-dev/turva-mcp", "source": "github" },
   "remotes": [
@@ -9132,7 +9137,7 @@ const MCP_SERVER_CARD = JSON.stringify({
   "serverInfo": {
     "name": "turva-mcp",
     "title": "turva.dev",
-    "version": "1.15.3",
+    "version": "1.15.4",
     "description": "Public read-only MCP server for turva.dev. Exposes the service catalog (audit, advisory, implementation, MCP server security test, agent operations, MCP server design) with prices, the active security testing add-on to the audit quoted on request, own-domain agent-readiness and web-security scan evidence, engagement principles: async-only, no calls and no calendar links, the contact and privacy details, and the markdown of pages on turva.dev. No authentication, no write operations."
   },
   "transport": {
@@ -9288,7 +9293,7 @@ const A2A_AGENT_CARD = JSON.stringify({
   "description": "Public read-only agent interface for turva.dev, an independent agent-readiness audit and advisory business operated by Erik Rekola. Exposes the service catalog with prices, contact channels, and company information over HTTP+JSON. No authentication and no write operations.",
   "url": "https://turva.dev",
   "preferredTransport": "HTTP+JSON",
-  "version": "3.268.1",
+  "version": "3.268.2",
   "provider": {
     "organization": "turva.dev",
     "url": "https://turva.dev/"
